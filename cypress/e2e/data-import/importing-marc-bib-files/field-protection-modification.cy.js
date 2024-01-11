@@ -147,7 +147,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileName);
+        Logs.waitFileIsImported(fileName);
         Logs.openFileDetails(fileName);
         [
           FileDetails.columnNameInResultList.srsMarc,

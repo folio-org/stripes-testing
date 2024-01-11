@@ -18,7 +18,7 @@ const item = {
   barcode: `123${getRandomPostfix()}`,
 };
 
-describe('circulation-log', () => {
+describe('Circulation log', () => {
   before('creating user and checking out item', () => {
     cy.createTempUser([]).then((userProperties) => {
       user = userProperties;

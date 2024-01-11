@@ -10,7 +10,7 @@ describe('ui-circulation-settings: create patron notice policies', () => {
     });
   });
 
-  it('C6530 Create notice policy (vega)', { tags: ['smoke', 'vega'] }, () => {
+  it('C6530 Create notice policy (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
     NewNoticePolicy.waitLoading();
     NewNoticePolicy.startAdding();
     NewNoticePolicy.checkInitialState();

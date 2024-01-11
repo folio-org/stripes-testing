@@ -14,7 +14,7 @@ import NewActionProfile from '../../../support/fragments/data_import/action_prof
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
 
-describe('data import', () => {
+describe('data-import', () => {
   describe('Settings', () => {
     const testData = {};
 

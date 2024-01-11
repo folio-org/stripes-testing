@@ -20,7 +20,7 @@ describe('Fee/fine management', () => {
 
   it(
     'C5558 Verify that you can create/edit/delete lost item fee policies (vega)',
-    { tags: ['smoke', 'vega'] },
+    { tags: ['smoke', 'vega', 'system'] },
     () => {
       // creating
       LostItemFeePolicy.startAdding();

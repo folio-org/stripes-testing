@@ -260,7 +260,7 @@ describe('data-import', () => {
       JobProfiles.waitFileIsUploaded();
       JobProfiles.search(testData.jobProfileForCreate.profile.name);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(marcFileForCreate);
+      Logs.waitFileIsImported(marcFileForCreate);
       Logs.openFileDetails(marcFileForCreate);
       [
         FileDetails.columnNameInResultList.srsMarc,
@@ -387,7 +387,7 @@ describe('data-import', () => {
           JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfileForUpdate.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
+          Logs.waitFileIsImported(nameMarcFileForUpdate);
           Logs.openFileDetails(nameMarcFileForUpdate);
           FileDetails.checkStatusInColumn(
             RECORD_STATUSES.UPDATED,

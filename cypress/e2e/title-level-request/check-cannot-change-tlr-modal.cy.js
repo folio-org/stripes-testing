@@ -78,8 +78,8 @@ describe('Title Level Request', () => {
   });
 
   it(
-    'C1285 Check that "Cannot change -Allow title level requests-" modal appears (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    'C1285 Check that "Cannot change "Allow title level requests"" modal appears (vega) (TaaS)',
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       TitleLevelRequests.clickOnTLRCheckbox();
       TitleLevelRequests.checkCannotChangeTLRModal();
