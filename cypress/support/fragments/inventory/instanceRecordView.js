@@ -19,7 +19,7 @@ import InventoryEditMarcRecord from './inventoryEditMarcRecord';
 
 const rootSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
-const marcViewSection = Section({ id: 'marc-view-pane' });
+const marcViewSection = Pane({ id: 'marc-view-pane' });
 const catalogedDateKeyValue = KeyValue('Cataloged date');
 const sourceKeyValue = KeyValue('Source');
 const instanceStatusTermKeyValue = KeyValue('Instance status term');

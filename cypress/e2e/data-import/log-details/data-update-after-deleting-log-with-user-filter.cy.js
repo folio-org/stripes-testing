@@ -32,7 +32,7 @@ describe('data-import', () => {
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileNameForUpload);
+      Logs.waitFileIsImported(fileNameForUpload);
     });
 
     afterEach(() => {

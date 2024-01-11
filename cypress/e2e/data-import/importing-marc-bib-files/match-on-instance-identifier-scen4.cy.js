@@ -158,7 +158,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForCreateInstance);
+        Logs.waitFileIsImported(fileNameForCreateInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreateInstance);
         Logs.clickOnHotLink(0, 3, RECORD_STATUSES.CREATED);
@@ -221,7 +221,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
+        Logs.waitFileIsImported(fileNameForUpdateInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdateInstance);
         FileDetails.checkStatusInColumn(

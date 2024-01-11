@@ -36,7 +36,7 @@ describe('data-export', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFile.fileName);
+        Logs.waitFileIsImported(marcFile.fileName);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(marcFile.fileName);
         cy.login(user.userProperties.username, user.userProperties.password, {

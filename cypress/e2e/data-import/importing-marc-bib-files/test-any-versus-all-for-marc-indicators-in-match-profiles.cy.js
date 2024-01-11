@@ -261,7 +261,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(editedMarcFileName);
+        Logs.waitFileIsImported(editedMarcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(editedMarcFileName);
         [
@@ -338,7 +338,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForUpdateWithFail.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileNameForFirstUpdate);
+        Logs.waitFileIsImported(marcFileNameForFirstUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileNameForFirstUpdate);
         FileDetails.checkStatusInColumn(
@@ -359,7 +359,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForUpdateWithSucceed.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileNameForSecondUpdate);
+        Logs.waitFileIsImported(marcFileNameForSecondUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileNameForSecondUpdate);
         FileDetails.checkStatusInColumn(

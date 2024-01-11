@@ -175,7 +175,7 @@ describe('data-import', () => {
         JobProfiles.selectJobProfile();
         cy.wait(1000);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForFirstImport);
+        Logs.waitFileIsImported(fileNameForFirstImport);
         Logs.checkImportFile(collectionOfProfiles[0].jobProfile.profileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
@@ -198,7 +198,7 @@ describe('data-import', () => {
         JobProfiles.search(collectionOfProfiles[1].jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForSecondImport);
+        Logs.waitFileIsImported(fileNameForSecondImport);
         Logs.checkImportFile(collectionOfProfiles[1].jobProfile.profileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 

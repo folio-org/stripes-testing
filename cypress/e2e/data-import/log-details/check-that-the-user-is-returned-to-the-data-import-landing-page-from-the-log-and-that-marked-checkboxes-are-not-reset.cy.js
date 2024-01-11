@@ -34,7 +34,7 @@ describe('data-import', () => {
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.waitFileIsImported(marcFile.fileName);
           if (i === 0) {
             Logs.checkStatusOfJobProfile('Completed');
           } else {
