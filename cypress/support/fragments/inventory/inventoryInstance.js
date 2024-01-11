@@ -140,6 +140,7 @@ const itemStatusKeyValue = KeyValue('Item status');
 const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(viewHoldingsButton);
 const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
 const detailsViewPaneheader = PaneHeader({ id: 'paneHeaderpane-instancedetails' });
+const expandConsortiaHoldingsButton = Button({ id: 'accordion-toggle-button-consortial-holdings' });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -426,6 +427,7 @@ export default {
   },
 
   searchByTitle(title, result = true) {
+    cy.log('1');
     cy.do([filterPane.find(inputSearchField).fillIn(title), filterPane.find(searchButton).click()]);
     if (result) {
       cy.expect(MultiColumnListRow({ index: 0 }).exists());
@@ -721,6 +723,18 @@ export default {
 
     return HoldingsRecordView;
   },
+
+  expandConsortiaHoldings() {
+    cy.do(expandConsortiaHoldingsButton.click());
+  },
+
+  expandMemberHoldings(memberName) {
+    const memberNameFirstCharToUpperCase = memberName.charAt(0).toUpperCase() + memberName.slice(1);
+    cy.do(
+      Button({ id: `accordion-toggle-button-${memberNameFirstCharToUpperCase}-holdings` }).click(),
+    );
+  },
+
   createHoldingsRecord: (permanentLocation) => {
     pressAddHoldingsButton();
     InventoryNewHoldings.fillRequiredFields(permanentLocation);

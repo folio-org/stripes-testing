@@ -51,20 +51,18 @@ describe('Inventory -> Instance -> Consortia', () => {
     cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
       user = userProperties;
 
-      // cy.assignAffiliationToUser(Affiliations.College, user.userId);
-      // cy.setTenant(Affiliations.College);
-      // cy.assignPermissionsToExistingUser(user.userId, [
-      //  Permissions.inventoryAll.gui,
-      // ]);
-
-      cy.login(user.username, user.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
+      cy.assignAffiliationToUser(Affiliations.College, user.userId);
+      cy.setTenant(Affiliations.College);
+      cy.assignPermissionsToExistingUser(user.userId, [Permissions.inventoryAll.gui]).then(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        // ConsortiumManager.switchActiveAffiliation(tenantNames.college);
       });
-      ConsortiumManager.switchActiveAffiliation(tenantNames.college);
     });
   });
-  /*
+
   after('Delete test data', () => {
     cy.resetTenant();
     cy.getAdminToken();
@@ -72,13 +70,20 @@ describe('Inventory -> Instance -> Consortia', () => {
     InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
     Locations.deleteViaApi(testData.location);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
-    Users.deleteViaApi(testData.user.userId);
+    Users.deleteViaApi(user.userId);
   });
-*/
+
   it(
     'C407751 (CONSORTIA) Verify the permission for editing shared instance on Member tenant (folijet)',
     { tags: ['smoke', 'folijet'] },
     () => {
+      cy.log('0');
+      cy.log(testData.instance.title);
+      InventoryInstance.searchByTitle(testData.instance.instanceTitle);
+      InventoryInstances.selectInstance();
+      InventoryInstance.expandConsortiaHoldings();
+      InventoryInstance.expandMemberHoldings('College');
+      InventoryInstance.openHoldingView();
       /*
       InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
       InstanceRecordView.verifyInstanceRecordViewOpened();
