@@ -34,6 +34,7 @@ const linkToMarcRecordButton = Button({ ariaLabel: 'link' });
 const unlinkIconButton = Button({ ariaLabel: 'unlink' });
 const viewAuthorutyIconButton = Button({ ariaLabel: 'eye-open' });
 const arrowUpButton = Button({ ariaLabel: 'arrow-up' });
+const arrowDownFieldButton = Button({ ariaLabel: 'arrow-down' });
 const saveAndCloseButton = Button({ id: 'quick-marc-record-save' });
 const saveAndKeepEditingBtn = Button({ id: 'quick-marc-record-save-edit' });
 const saveAndCloseButtonEnabled = Button({ id: 'quick-marc-record-save', disabled: false });
@@ -1736,5 +1737,9 @@ export default {
     );
     cy.expect(saveButton.exists());
     cy.expect(keepEditingButton.exists());
+  },
+
+  moveFieldDown(rowNumber) {
+    cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownFieldButton).click());
   },
 };
