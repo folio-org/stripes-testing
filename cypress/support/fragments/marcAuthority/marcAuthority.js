@@ -7,6 +7,7 @@ import {
   QuickMarcEditorRow,
   TextArea,
   MultiColumnListHeader,
+  MultiColumnListCell,
   Callout,
   Modal,
   PaneHeader,
@@ -287,4 +288,6 @@ export default {
   verifySharedAuthorityDetailsHeading(heading) {
     cy.expect(detailsPaneHeader.has({ title: `Shared • ${heading}` }));
   },
+
+  verifySearchResult: (cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).exists()),
 };

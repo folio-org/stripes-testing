@@ -742,4 +742,16 @@ export default {
       MultiColumnListCell({ columnIndex, content: value }).exists(),
     ]);
   },
+
+  checkMarcViewSectionIsVisible(isVisible) {
+    cy.expect(marcViewSection.has({ visible: isVisible }));
+  },
+
+  checkDefaultSearchOptions: (searchValue) => {
+    cy.expect([
+      marcViewSection.absent(),
+      SearchField({ id: 'textarea-authorities-search', value: searchValue }).absent(),
+      selectField.has({ content: including('Keyword') }),
+    ]);
+  },
 };

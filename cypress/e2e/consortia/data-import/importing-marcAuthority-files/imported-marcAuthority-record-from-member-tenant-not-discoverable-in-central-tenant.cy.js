@@ -1,0 +1,102 @@
+import Permissions from '../../../../support/dictionary/permissions';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
+import Users from '../../../../support/fragments/users/users';
+import TopMenu from '../../../../support/fragments/topMenu';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import getRandomPostfix from '../../../../support/utils/stringTools';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../../support/fragments/data_import/logs/logs';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
+
+describe('Data import', () => {
+  describe('Importing MARC Authority files', () => {
+    const marcFile = {
+      marc: 'marcAuthFileForC405519.mrc',
+      fileName: `C405519 testMarcFile${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      numOfRecords: 1,
+    };
+    let createdAuthorityID;
+    const searchRecordName = 'C405519 Gabaldon, Diana. Outlander novel.';
+    const users = {};
+
+    before('Create users, data', () => {
+      cy.getAdminToken();
+      cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+      ])
+        .then((userProperties) => {
+          users.userProperties = userProperties;
+
+          cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
+          cy.setTenant(Affiliations.University);
+          cy.assignPermissionsToExistingUser(users.userProperties.userId, [
+            Permissions.moduleDataImportEnabled.gui,
+            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          ]);
+        })
+        .then(() => {
+          cy.login(users.userProperties.username, users.userProperties.password, {
+            path: TopMenu.dataImportPath,
+            waiter: DataImport.waitLoading,
+          }).then(() => {
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+          });
+        });
+    });
+
+    after('Delete users, data', () => {
+      cy.resetTenant();
+      cy.getAdminToken();
+      Users.deleteViaApi(users.userProperties.userId);
+      MarcAuthority.deleteViaAPI(createdAuthorityID);
+    });
+
+    it(
+      'C405519 Imported "MARC authority" record from Member tenant is not discoverable in Central tenant (consortia) (spitfire)',
+      { tags: ['criticalPath', 'spitfire'] },
+      () => {
+        DataImport.verifyUploadState();
+        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+        JobProfiles.waitLoadingList();
+        JobProfiles.search(marcFile.jobProfileToRun);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(marcFile.fileName);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(marcFile.fileName);
+        Logs.getCreatedItemsID().then((link) => {
+          createdAuthorityID = link.split('/')[5];
+        });
+        cy.visit(TopMenu.marcAuthorities);
+        MarcAuthorities.waitLoading();
+        MarcAuthorities.searchBy('Keyword', searchRecordName);
+        MarcAuthorities.verifyResultsRowContent(searchRecordName, 'Authorized', 'Personal Name');
+        MarcAuthorities.checkRowsCount(1);
+        MarcAuthorities.checkMarcViewSectionIsVisible(true);
+        MarcAuthorities.switchToBrowse();
+        MarcAuthorityBrowse.searchBy('Name-title', searchRecordName);
+        MarcAuthorityBrowse.checkResultWithValue('Authorized', searchRecordName);
+
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+
+        MarcAuthorities.searchBeats(searchRecordName);
+        MarcAuthority.verifySearchResult(`${searchRecordName} would be here`);
+        MarcAuthorities.switchToSearch();
+        MarcAuthorities.checkDefaultSearchOptions(searchRecordName);
+        MarcAuthorities.searchBeats(searchRecordName);
+        MarcAuthorities.checkNoResultsMessage(
+          `No results found for "${searchRecordName}". Please check your spelling and filters.`,
+        );
+      },
+    );
+  });
+});
