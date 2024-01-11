@@ -20,7 +20,7 @@ const item = {
   ITEM_BARCODE: `123${getRandomPostfix()}`,
 };
 
-describe('circulation-log', () => {
+describe('Circulation log', () => {
   before('create checked out item', () => {
     cy.createTempUser().then((userProperties) => {
       user = userProperties;

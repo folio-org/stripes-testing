@@ -1021,13 +1021,13 @@ export default {
       );
     });
     if (searchType === 'Holdings') {
-      for (const [key] of Object.entries(advSearchHoldingsOptions)) {
+      advSearchHoldingsOptions.forEach((option) => {
         cy.expect(
           AdvancedSearchRow({ index: rowIndex })
             .find(advSearchOptionSelect)
-            .has({ content: including(key) }),
+            .has({ content: including(option) }),
         );
-      }
+      });
     }
     if (searchType === 'Instance') {
       advSearchInstancesOptions.forEach((option) => {

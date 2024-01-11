@@ -299,7 +299,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForCreatingInstance);
+        Logs.waitFileIsImported(fileNameForCreatingInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreatingInstance);
         [
@@ -336,7 +336,7 @@ describe('data-import', () => {
           JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfileForUpdate.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(fileNameForProtect);
+          Logs.waitFileIsImported(fileNameForProtect);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(fileNameForProtect);
           [
@@ -386,7 +386,7 @@ describe('data-import', () => {
           JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfileForOverride.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(fileNameForOverride);
+          Logs.waitFileIsImported(fileNameForOverride);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(fileNameForOverride);
           [
