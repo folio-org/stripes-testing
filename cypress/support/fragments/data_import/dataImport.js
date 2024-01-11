@@ -424,10 +424,10 @@ export default {
         if (isDeleteFilesButtonExists) {
           cy.do(Button('Delete files').click());
           cy.expect(Button('or choose files').exists());
-          cy.allure().endStep();
         }
       },
     );
+    cy.allure().endStep();
   },
 
   clickResumeButton: () => {
