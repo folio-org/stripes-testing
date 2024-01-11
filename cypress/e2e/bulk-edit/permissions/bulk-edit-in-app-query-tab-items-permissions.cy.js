@@ -36,8 +36,8 @@ describe('bulk-edit', () => {
       'C413369 Verify Query tab permissions (In app items) (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');
 
         cy.visit(TopMenu.usersPath);
         UsersSearchPane.searchByUsername(user.username);
