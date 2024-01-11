@@ -80,7 +80,11 @@ export default {
     cy.do(
       MultiColumnListCell({ content: materialTypeName }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        cy.do(getEditableListRow(rowNumber).find(Button({ icon: 'edit' })).click());
+        cy.do(
+          getEditableListRow(rowNumber)
+            .find(Button({ icon: 'edit' }))
+            .click(),
+        );
       }),
     );
     cy.do(TextField({ placeholder: 'name' }).fillIn(newMaterialTypeName));
@@ -91,7 +95,11 @@ export default {
     cy.do(
       MultiColumnListCell({ content: newMaterialTypeName }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        cy.do(getEditableListRow(rowNumber).find(Button({ icon: 'trash' })).click());
+        cy.do(
+          getEditableListRow(rowNumber)
+            .find(Button({ icon: 'trash' }))
+            .click(),
+        );
       }),
     );
     ModalDeleteMaterialType.deleteMaterialType();
