@@ -5,7 +5,7 @@ import Users from '../../support/fragments/users/users';
 
 let user;
 
-describe('export manager', () => {
+describe('Export Manager', () => {
   before('create user', () => {
     cy.createTempUser([]).then((userProperties) => {
       user = userProperties;

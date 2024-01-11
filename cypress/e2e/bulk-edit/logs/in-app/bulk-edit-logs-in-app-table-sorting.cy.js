@@ -33,8 +33,8 @@ describe('Bulk Edit - Logs', () => {
       cy.viewport(2560, 1440);
       BulkEditSearchPane.openLogsSearch();
       BulkEditSearchPane.verifyLogsPane();
-      BulkEditSearchPane.checkLogsStatus('Completed');
-      BulkEditSearchPane.checkLogsStatus('Completed with errors');
+      BulkEditSearchPane.checkLogsCheckbox('Completed');
+      BulkEditSearchPane.checkLogsCheckbox('Completed with errors');
       BulkEditSearchPane.verifyLogsTableHeaders();
       BulkEditSearchPane.verifyDirection('Ended');
 
@@ -59,7 +59,7 @@ describe('Bulk Edit - Logs', () => {
         'Completed with errors',
         'Failed',
       ].forEach((status) => {
-        BulkEditSearchPane.checkLogsStatus(status);
+        BulkEditSearchPane.checkLogsCheckbox(status);
       });
       BulkEditSearchPane.checkHoldingsCheckbox();
       BulkEditSearchPane.checkUsersCheckbox();

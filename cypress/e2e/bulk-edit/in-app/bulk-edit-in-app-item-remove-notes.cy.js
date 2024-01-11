@@ -93,14 +93,17 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Copy note', 'Electronic bookplate');
-        BulkEditSearchPane.verifyResultsUnderColumns(
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Copy note',
-          `${notes.copyNote}|${notes.copyNoteStaffOnly}(staff only)`,
+          'Electronic bookplate note',
         );
         BulkEditSearchPane.verifyResultsUnderColumns(
-          'Electronic bookplate',
-          `${notes.electronicBookplateNote}|${notes.electronicBookplateNoteStaffOnly}(staff only)`,
+          'Copy note',
+          `${notes.copyNote} | ${notes.copyNoteStaffOnly} (staff only)`,
+        );
+        BulkEditSearchPane.verifyResultsUnderColumns(
+          'Electronic bookplate note',
+          `${notes.electronicBookplateNote} | ${notes.electronicBookplateNoteStaffOnly} (staff only)`,
         );
         BulkEditActions.openInAppStartBulkEditFrom();
 
@@ -112,7 +115,7 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyExactChangesUnderColumns('Copy note', '');
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Electronic bookplate', '');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Electronic bookplate note', '');
 
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToItem();

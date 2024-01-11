@@ -21,7 +21,7 @@ for (let i = 0; i < 5; i++) {
 }
 
 describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+  describe('permissions', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
