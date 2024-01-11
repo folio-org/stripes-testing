@@ -67,7 +67,7 @@ describe('data-import', () => {
       JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfile.profileName);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileName);
+      Logs.waitFileIsImported(fileName);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
       cy.createTempUser([Permissions.dataImportDeleteLogs.gui]).then((userProperties) => {

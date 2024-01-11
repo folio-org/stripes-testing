@@ -20,8 +20,8 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 import ConfirmDeleteItemModal from '../../../support/fragments/inventory/modals/confirmDeleteItemModal';
 
 const testData = {
-  inventoryTitle: 'C360405',
-  inventorySubject: 'C375163 SuperCorp',
+  inventoryTitle: 'C380405',
+  inventorySubject: 'C380405 SuperCorp',
   user: {},
   instanceId: '',
   instanceIDs: [],
@@ -71,7 +71,7 @@ describe('inventory', () => {
           DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.waitFileIsImported(marcFile.fileName);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(marcFile.fileName);
           for (let i = 0; i < marcFile.numberOfRecords; i++) {

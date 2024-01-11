@@ -8,7 +8,7 @@ import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 
-describe('MARC', () => {
+describe('marc', () => {
   describe('MARC Authority', () => {
     describe('Advanced Search', () => {
       const testData = {

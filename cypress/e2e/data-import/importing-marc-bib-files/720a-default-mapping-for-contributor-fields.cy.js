@@ -49,10 +49,11 @@ describe('data-import', () => {
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(testData.filePathForUpload, testData.marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(testData.jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.marcFileName);
+        Logs.waitFileIsImported(testData.marcFileName);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(testData.marcFileName);
         Logs.getCreatedItemsID().then((link) => {

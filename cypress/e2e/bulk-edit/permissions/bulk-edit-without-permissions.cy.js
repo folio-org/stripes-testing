@@ -50,8 +50,8 @@ describe('bulk-edit', () => {
           waiter: BulkEditSearchPane.waitLoading,
         });
 
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
       },
     );
   });

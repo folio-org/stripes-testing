@@ -172,7 +172,7 @@ describe('ui-users-loans: Loans', () => {
     );
   });
 
-  it('C9191 Loans: Declare lost (vega)', { tags: ['smoke', 'vega'] }, () => {
+  it('C9191 Loans: Declare lost (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
     UsersCard.getApi(testData.userId).then((user) => {
       Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);
       Loans.startDeclareLost(SECOND_LOAN_ROW_INDEX);

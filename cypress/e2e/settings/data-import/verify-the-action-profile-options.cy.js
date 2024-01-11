@@ -12,7 +12,7 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
 
-describe('Data Import', () => {
+describe('data-import', () => {
   describe('Settings', () => {
     let user;
 

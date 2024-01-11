@@ -18,7 +18,7 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 
-describe('export-manager', () => {
+describe('Export Manager', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.bulkEditView.gui,

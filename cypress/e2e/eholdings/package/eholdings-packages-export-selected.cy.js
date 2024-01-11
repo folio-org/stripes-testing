@@ -59,7 +59,7 @@ describe('eHoldings', () => {
         EHoldingsPackages.sortPackagesByTitlesCount().then((packages) => {
           testData.package.id = packages[0].id;
           testData.package.name = packages[0].name;
-          testData.package.titles = packages[0].count;
+          testData.package.titles = packages[0].countTotalTitles;
 
           testData.packageData = `package_data_${testData.package.id}.csv`;
           testData.titleData = `title_data_${testData.package.id}.csv`;

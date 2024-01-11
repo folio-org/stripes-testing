@@ -13,7 +13,7 @@ const values = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'];
 const csvContent = values.join('\n');
 
 describe('bulk-edit', () => {
-  describe('Identify user records for bulk edit', () => {
+  describe('csv approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         Permissions.bulkEditView.gui,
@@ -31,12 +31,14 @@ describe('bulk-edit', () => {
         FileManager.createFile(`cypress/fixtures/${invalidIdentifiersFileName}`, csvContent);
       });
     });
+
     after('delete test data', () => {
       cy.getAdminToken(() => {
         Users.deleteViaApi(user.userId);
       });
       FileManager.deleteFile(`cypress/fixtures/${invalidIdentifiersFileName}`);
     });
+
     it(
       'C353651 - "New bulk edit" button with invalid data (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },

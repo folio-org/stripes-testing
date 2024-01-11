@@ -41,7 +41,7 @@ const marcFiles = [
     numOfRecords: 1,
   },
 ];
-describe('MARC', () => {
+describe('marc', () => {
   describe('MARC Authority', () => {
     before('Creating user', () => {
       cy.getAdminToken();
@@ -75,7 +75,7 @@ describe('MARC', () => {
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.waitFileIsImported(marcFile.fileName);
           Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(marcFile.fileName);
 

@@ -121,6 +121,10 @@ export default {
     );
   },
 
+  verifyFirstFileNameInLogList: (fileName) => {
+    cy.get('#job-logs-list [class*="mclCell-"]:nth-child(1) a').eq(0).should('have.text', fileName);
+  },
+
   clickFirstFileNameCell: () => {
     cy.do(
       MultiColumnList({ id: 'job-logs-list' })
@@ -137,5 +141,12 @@ export default {
 
   waitFileIsImported: (fileName) => {
     cy.expect(runningAccordion.find(HTML(including(fileName))).absent(), getLongDelay());
+    // wait until uploaded file is displayed in the list
+    cy.expect(
+      MultiColumnList({ id: 'job-logs-list' })
+        .find(Button(including(fileName)))
+        .exists(),
+    );
+    cy.wait(60000);
   },
 };

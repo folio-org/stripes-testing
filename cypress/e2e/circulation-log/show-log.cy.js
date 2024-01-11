@@ -1,7 +1,7 @@
 import { Pane } from '../../../interactors';
 import TopMenu from '../../support/fragments/topMenu';
 
-describe('circulation-log', () => {
+describe('Circulation log', () => {
   beforeEach('login', () => {
     cy.loginAsAdmin();
   });

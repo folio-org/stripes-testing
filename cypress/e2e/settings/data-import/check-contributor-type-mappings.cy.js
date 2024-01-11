@@ -17,7 +17,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { ORDER_STATUSES, JOB_STATUS_NAMES } from '../../../support/constants';
 
-describe('Data Import', () => {
+describe('data-import', () => {
   describe('Settings', () => {
     const fieldMappingProfile = `autotest_mapping_profile_name_${getRandomPostfix()}`;
     const actionProfile = `autotest_action_profile_name_${getRandomPostfix()}`;
@@ -172,7 +172,7 @@ describe('Data Import', () => {
         DataImportJobProfiles.search(jobProfile);
 
         // Click on the "Actions" button,  Select "Run", Click on the "Run" button
-        DataImportJobProfiles.runImportFile();
+        JobProfiles.runImportFile();
         DataImportJobProfiles.waitFileIsImported(testData.marcFile.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 

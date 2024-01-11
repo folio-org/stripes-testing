@@ -72,7 +72,7 @@ export default {
     cy.expect(addTransferModal.absent());
   },
   clickConfirmButton({ transferCreated = true, ammountAllocated = false, confirmNegative } = {}) {
-    cy.wait(300);
+    cy.wait(2000);
     cy.do(confirmButton.click());
 
     if (confirmNegative) {

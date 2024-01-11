@@ -9,7 +9,7 @@ import MaterialTypes from '../../../support/fragments/settings/inventory/materia
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('Data Import', () => {
+describe('data-import', () => {
   describe('Settings', () => {
     const organization = NewOrganization.getDefaultOrganization();
     const mappingFields = [{ name: 'vendor', value: `"${organization.id}"` }];

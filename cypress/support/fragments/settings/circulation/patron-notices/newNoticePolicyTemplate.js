@@ -150,13 +150,14 @@ export default {
   addToken(noticePolicyTemplateToken) {
     cy.do(tokenButton.click());
     cy.expect(Heading(titles.addToken).exists());
-    cy.do([
-      Checkbox(`${noticePolicyTemplateToken}`).click(),
-      // waiting for the html body input to be available for adding symbols
-      cy.wait(1000),
-      addTokenButton.click(),
+    cy.do(Checkbox(`${noticePolicyTemplateToken}`).click());
+    // waiting for the html body input to be available for adding symbols
+    cy.wait(2000);
+    cy.do(addTokenButton.click());
+    cy.expect([
+      Heading(titles.addToken).absent(),
+      bodyField.has({ value: `{{${noticePolicyTemplateToken}}}` }),
     ]);
-    cy.expect(bodyField.has({ value: `{{${noticePolicyTemplateToken}}}` }));
     return cy.wrap(noticePolicyTemplateToken);
   },
 

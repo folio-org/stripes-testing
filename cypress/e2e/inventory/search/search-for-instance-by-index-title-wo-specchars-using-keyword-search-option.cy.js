@@ -68,7 +68,7 @@ describe('inventory', () => {
         DataImport.uploadFileAndRetry(testData.marcFile.marc, testData.marcFile.fileName);
         JobProfiles.search(testData.marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.marcFile.fileName);
+        Logs.waitFileIsImported(testData.marcFile.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(testData.marcFile.fileName);
         for (let i = 0; i < testData.marcFile.numberOfRecords; i++) {

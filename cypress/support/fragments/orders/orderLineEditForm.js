@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   RepeatableFieldItem,
   Section,
   Select,
@@ -44,6 +45,8 @@ const orderLineFields = {
   orderFormat: orderLineDetailsSection.find(Select({ name: 'orderFormat' })),
   receiptStatus: orderLineDetailsSection.find(Select({ name: 'receiptStatus' })),
   paymentStatus: orderLineDetailsSection.find(Select({ name: 'paymentStatus' })),
+  claimingActive: orderLineDetailsSection.find(Checkbox({ name: 'claimingActive' })),
+  claimingInterval: orderLineDetailsSection.find(TextField({ name: 'claimingInterval' })),
 };
 
 const vendorDetailsFields = {
@@ -87,6 +90,9 @@ export default {
   },
   checkItemDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: itemDetailsFields });
+  },
+  checkOrderLineDetailsSection(fields = []) {
+    this.checkFieldsConditions({ fields, section: orderLineFields });
   },
   checkOngoingOrderInformationSection(fields = []) {
     this.checkFieldsConditions({ fields, section: ongoingInformationFields });
@@ -161,6 +167,13 @@ export default {
     if (poLineDetails.orderFormat) {
       cy.do(orderLineFields.orderFormat.choose(poLineDetails.orderFormat));
     }
+    if (poLineDetails.claimingActive) {
+      cy.do(orderLineFields.claimingActive.click());
+    }
+    if (poLineDetails.claimingInterval) {
+      cy.do(orderLineFields.claimingInterval.fillIn(poLineDetails.claimingInterval));
+      cy.do(orderLineFields.claimingInterval.has({ value: poLineDetails.claimingInterval }));
+    }
   },
   fillOngoingOrderInformation({ renewalNote }) {
     if (renewalNote) {
@@ -186,8 +199,8 @@ export default {
       });
     });
   },
-  searchLocationByName({ name, checkOptions = true }) {
-    this.filterDropDownValue('Name (code)', name);
+  searchLocationByName({ name, open = true, checkOptions = true }) {
+    this.filterDropDownValue({ label: 'Name (code)', option: name, open });
 
     if (checkOptions) {
       cy.then(() => SelectionList().optionList()).then((options) => {
@@ -219,13 +232,16 @@ export default {
     );
     cy.wait(2000);
   },
-  filterDropDownValue(label, option, index = 0) {
-    cy.do([
-      RepeatableFieldItem({ index })
-        .find(Selection(including(label)))
-        .open(),
-      SelectionList().filter(option),
-    ]);
+  filterDropDownValue({ label, option, open = true, index = 0 } = {}) {
+    if (open) {
+      cy.do(
+        RepeatableFieldItem({ index })
+          .find(Selection(including(label)))
+          .open(),
+      );
+    }
+
+    cy.do(SelectionList().filter(option));
   },
   selectDropDownValue(label, option, index = 0) {
     cy.do([

@@ -14,7 +14,10 @@ import {
   including,
   MultiColumnListRow,
   TextField,
+  TextInput,
   Image,
+  SelectionList,
+  SelectionOption,
 } from '../../../../interactors';
 import { ListRow } from '../../../../interactors/multi-column-list';
 
@@ -34,9 +37,11 @@ const bulkEditPane = Pane(including('Bulk edit'));
 const usersRadio = RadioButton('Users');
 const itemsRadio = RadioButton('Inventory - items');
 const holdingsRadio = RadioButton('Inventory - holdings');
+const instancesRadio = RadioButton('Inventory - instances');
 const usersCheckbox = Checkbox('Users');
 const holdingsCheckbox = Checkbox('Inventory - holdings');
 const itemsCheckbox = Checkbox('Inventory - items');
+const instancesCheckbox = Checkbox('Inventory - instances');
 const identifierToggle = Button('Identifier');
 const queryToggle = Button('Query');
 const logsToggle = Button('Logs');
@@ -44,6 +49,9 @@ const setCriteriaPane = Pane('Set criteria');
 const searchButton = Button('Search');
 const resetAllButton = Button('Reset all');
 const logsStatusesAccordion = Accordion('Statuses');
+const logsUsersAccordion = Accordion('User');
+const clearAccordionButton = Button({ icon: 'times-circle-solid' });
+const usersSelectionList = SelectionList({ id: 'sl-container-stripes-selection-18' });
 const saveAndClose = Button('Save and close');
 const textFieldTo = TextField('To');
 const textFieldFrom = TextField('From');
@@ -132,17 +140,18 @@ export default {
     ]);
   },
 
-  verifySetCriteriaPaneItems() {
+  verifySetCriteriaPaneItems(query = true) {
     cy.expect([
       setCriteriaPane.find(identifierToggle).exists(),
-      setCriteriaPane.find(queryToggle).absent(),
       setCriteriaPane.find(logsToggle).exists(),
       setCriteriaPane.find(recordIdentifierDropdown).exists(),
       setCriteriaPane.find(recordTypesAccordion).has({ open: true }),
       setCriteriaPane.find(HTML('Drag and drop')).exists(),
       fileButton.has({ disabled: true }),
     ]);
+    if (query) cy.expect(setCriteriaPane.find(queryToggle).exists());
   },
+
   verifySetCriteriaPaneElements() {
     cy.expect([
       setCriteriaPane.find(identifierToggle).exists(),
@@ -182,6 +191,7 @@ export default {
       recordTypesAccordion.find(HTML('Users')).exists(),
       recordTypesAccordion.find(HTML('Inventory - items')).exists(),
       recordTypesAccordion.find(HTML('Inventory - holdings')).exists(),
+      recordTypesAccordion.find(HTML('Inventory - instances')).exists(),
     ]);
   },
 
@@ -246,6 +256,38 @@ export default {
     ]);
   },
 
+  verifyInstanceIdentifiers() {
+    this.checkInstanceRadio();
+    cy.expect([
+      instancesRadio.has({ checked: true }),
+      recordIdentifierDropdown.find(HTML('Instance UUIDs')).exists(),
+      recordIdentifierDropdown.find(HTML('Instance HRIDs')).exists(),
+      recordIdentifierDropdown.find(HTML('ISBN')).exists(),
+      recordIdentifierDropdown.find(HTML('ISSN')).exists(),
+      bulkEditPane.find(HTML('Select a "record identifier" when on the Identifier tab')).exists(),
+    ]);
+  },
+
+  verifyAfterChoosingIdentifier(identifier) {
+    // If identifier is an abbreviation, leave it as it is
+    // If it's not, change the first letter to lowercase
+    let lowercase = identifier;
+    if (identifier.charAt(1).match(/[a-z]/)) {
+      lowercase = identifier.charAt(0).toLowerCase() + identifier.slice(1);
+    }
+    cy.expect([
+      HTML(`Select a file with ${lowercase}`).exists(),
+      HTML(`Drag and drop or choose file with ${lowercase}`).exists(),
+      fileButton.has({ disabled: false }),
+    ]);
+  },
+
+  verifyDragNDropInstanceIdentifierArea(identifier = 'Instance UUIDs') {
+    this.checkInstanceRadio();
+    this.selectRecordIdentifier(identifier);
+    this.verifyAfterChoosingIdentifier(identifier);
+  },
+
   verifyDragNDropItemBarcodeArea() {
     this.checkItemsRadio();
     this.selectRecordIdentifier('Item barcode');
@@ -274,6 +316,9 @@ export default {
       HTML('Drag and drop or choose file with item HRIDs').exists(),
       fileButton.has({ disabled: false }),
     ]);
+  },
+  verifyCheckboxIsSelected(checkbox, isChecked = false) {
+    cy.expect(Checkbox({ name: checkbox }).has({ checked: isChecked }));
   },
 
   verifyDragNDropItemFormerIdentifierArea() {
@@ -429,14 +474,22 @@ export default {
     cy.expect([
       logsToggle.has({ default: false }),
       resetAllButton.has({ disabled: true }),
-      recordTypesAccordion.find(Checkbox('Users')).has({ checked: false }),
-      recordTypesAccordion.find(Checkbox('Inventory - items')).has({ checked: false }),
-      recordTypesAccordion.find(Checkbox('Inventory - holdings')).has({ checked: false }),
+      recordTypesAccordion.find(usersCheckbox).has({ checked: false }),
+      recordTypesAccordion.find(itemsCheckbox).has({ checked: false }),
+      recordTypesAccordion.find(holdingsCheckbox).has({ checked: false }),
+      recordTypesAccordion.find(instancesCheckbox).has({ checked: false }),
       logsStartDateAccordion.has({ open: false }),
       logsEndDateAccordion.has({ open: false }),
       bulkEditPane.find(HTML('Bulk edit logs')).exists(),
       bulkEditPane.find(HTML('Enter search criteria to start search')).exists(),
       bulkEditPane.find(HTML('Choose a filter to show results.')).exists(),
+    ]);
+  },
+
+  verifyLogsPaneHeader() {
+    cy.expect([
+      bulkEditPane.find(HTML('Bulk edit logs')).exists(),
+      bulkEditPane.find(HTML(including('records found'))).exists(),
     ]);
   },
 
@@ -553,6 +606,18 @@ export default {
     cy.expect(holdingsRadio.has({ checked }));
   },
 
+  checkInstanceRadio() {
+    cy.do(instancesRadio.click());
+  },
+
+  instancesRadioIsDisabled(isDisabled) {
+    cy.expect(instancesRadio.has({ disabled: isDisabled }));
+  },
+
+  isInstancesRadioChecked(checked = true) {
+    cy.expect(instancesRadio.has({ checked }));
+  },
+
   verifyRadioHidden(name) {
     cy.expect(RadioButton(name).absent());
   },
@@ -659,8 +724,7 @@ export default {
   verifyErrorLabel(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(
       HTML(
-        `${fileName}: ${
-          validRecordCount + invalidRecordCount
+        `${fileName}: ${validRecordCount + invalidRecordCount
         } entries * ${validRecordCount} records matched * ${invalidRecordCount} errors`,
       ).exists(),
     );
@@ -773,7 +837,7 @@ export default {
       DropdownMenu().find(Checkbox('Acquisition method')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Receipt status')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Note')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Administrative notes')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Administrative note')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Ill policy')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Retention policy')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Digitization policy')).has({ checked: false }),
@@ -823,8 +887,12 @@ export default {
     });
   },
 
-  verifyRecordTypesSortedAlphabetically() {
-    cy.get('#entityType [class*="labelText"]').then((checkboxes) => {
+  // In Identifier pane - radio, in Logs pane - checkbox
+  verifyRecordTypesSortedAlphabetically(checkbox = true) {
+    let locator;
+    if (checkbox) locator = '#entityType [class*="labelText"]';
+    else locator = '[class*="labelText"]';
+    cy.get(locator).then((checkboxes) => {
       const textArray = checkboxes.get().map((el) => el.innerText);
       const sortedArray = [...textArray].sort((a, b) => a - b);
       expect(sortedArray).to.eql(textArray);
@@ -994,15 +1062,59 @@ export default {
     cy.expect(Accordion(accordion).find(TextField(fieldName)).has({ value: valueToVerify }));
   },
 
-  // verifyClearSelectedFiltersButton(accordion, verification = 'exists') {
-  //   if (!['exists', 'absent'].includes(verification)) {
-  //     throw new Error(`${verification} is not supported`);
-  //   }
-  //   cy.expect(
-  //     Accordion(accordion)
-  //       .find(Button({ icon: 'times-circle-solid', ariaLabel: including('Clear selected filters') }))[verification]()
-  //   );
-  // },
+  verifyClearSelectedFiltersButton(accordion, verification = 'exists') {
+    cy.expect(
+      Accordion(accordion)
+        .find(Button({ icon: 'times-circle-solid' }))[verification]()
+    );
+  },
+
+  clickUserAccordion() {
+    cy.do(logsUsersAccordion.clickHeader());
+  },
+
+  selectUserFromDropdown(name) {
+    cy.do([usersSelectionList.select(including(name))]);
+  },
+
+  fillUserFilterInput(userName) {
+    cy.do([usersSelectionList.find(TextInput()).fillIn(userName)]);
+  },
+
+  verifyDropdown(userName) {
+    cy.get('[id*="option-stripes-selection-"]').should('exist');
+    cy.then(() => usersSelectionList.optionList()).then((options) => {
+      cy.wrap(options).then(opts => expect(opts.some(opt => opt.includes(userName))).to.be.true);
+    });
+  },
+
+  verifyUserIsNotInUserList(name) {
+    cy.do([usersSelectionList.find(SelectionOption(including(name))).absent()]);
+  },
+
+  verifyEmptyUserDropdown() {
+    cy.expect([
+      usersSelectionList.find(HTML('-List is empty-')).exists(),
+      usersSelectionList.find(HTML('No matching options')).exists(),
+    ]);
+  },
+
+  clickChooseUserUnderUserAccordion() {
+    cy.do(logsUsersAccordion.find(Button(including('Select control'))).click());
+  },
+
+  verifyClearSelectedButtonExists(accordion, presence = true) {
+    cy.wait(1000);
+    if (presence) {
+      cy.expect(Accordion(accordion).find(clearAccordionButton).exists());
+    } else {
+      cy.expect(Accordion(accordion).find(clearAccordionButton).absent());
+    }
+  },
+
+  clickClearSelectedButton(accordion) {
+    cy.do(Accordion(accordion).find(clearAccordionButton).click());
+  },
 
   verifyClearSelectedDateButtonExists(accordion, textField) {
     cy.expect(
@@ -1135,18 +1247,21 @@ export default {
     this.waitingFileDownload();
   },
 
-  verifyLogsTableHeaders() {
+  verifyLogsTableHeaders(verification = 'exists') {
+    if (cy.get('div.mclScrollable---JvHuN')) {
+      cy.get('div.mclScrollable---JvHuN').scrollTo('right');
+    }
     cy.expect([
-      MultiColumnListHeader('Record type').exists(),
-      MultiColumnListHeader('Status').exists(),
-      MultiColumnListHeader('Editing').exists(),
-      MultiColumnListHeader('# of records').exists(),
-      MultiColumnListHeader('Processed').exists(),
-      MultiColumnListHeader('Started').exists(),
-      MultiColumnListHeader('Ended').exists(),
-      MultiColumnListHeader('Run by').exists(),
-      MultiColumnListHeader('ID').exists(),
-      MultiColumnListHeader('Actions').exists(),
+      MultiColumnListHeader('Record type')[verification](),
+      MultiColumnListHeader('Status')[verification](),
+      MultiColumnListHeader('Editing')[verification](),
+      MultiColumnListHeader('# of records')[verification](),
+      MultiColumnListHeader('Processed')[verification](),
+      MultiColumnListHeader('Started')[verification](),
+      MultiColumnListHeader('Ended')[verification](),
+      MultiColumnListHeader('Run by')[verification](),
+      MultiColumnListHeader('ID')[verification](),
+      MultiColumnListHeader('Actions')[verification](),
     ]);
   },
 
@@ -1176,6 +1291,22 @@ export default {
 
   applyEndDateFilters() {
     cy.do(logsEndDateAccordion.find(applyBtn).click());
+  },
+
+  verifyLogsStartedAccordionCollapsed() {
+    cy.expect([
+      logsStartDateAccordion.has({ open: false }),
+      logsStartDateAccordion.find(textFieldFrom).absent(),
+      logsStartDateAccordion.find(textFieldTo).absent(),
+    ]);
+  },
+
+  verifyLogsEndedAccordionCollapsed() {
+    cy.expect([
+      logsEndDateAccordion.has({ open: false }),
+      logsEndDateAccordion.find(textFieldFrom).absent(),
+      logsEndDateAccordion.find(textFieldTo).absent(),
+    ]);
   },
 
   verifyDirection(header, direction = 'descending') {

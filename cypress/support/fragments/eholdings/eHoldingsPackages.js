@@ -88,16 +88,20 @@ export default {
       const prefix = 'data-test-eholdings-package-list-item';
       const sortedPackages = (links?.length ? [...links] : [])
         .map((link) => {
-          const count = link.querySelector(`[${prefix}-num-titles="true"]`).innerText;
+          const countTotalTitles = link.querySelector(`[${prefix}-num-titles="true"]`).innerText;
+          const countSelected = link.querySelector(
+            '[data-test-eholdings-provider-list-item-num-packages-selected="true"]',
+          ).innerText;
 
           return {
             id: link.getAttribute('href').replace('/eholdings/packages/', ''),
             name: link.querySelector(`[${prefix}-name="true"]`).innerText,
-            count: parseFloat(count.replace(/,/g, '')),
+            countTotalTitles: parseFloat(countTotalTitles.replace(/,/g, '')),
+            countSelected: parseFloat(countSelected.replace(/,/g, '')),
           };
         })
-        .filter((item) => item.count >= minTitlesCount)
-        .sort((a, b) => a.count - b.count);
+        .filter((item) => item.countTotalTitles >= minTitlesCount)
+        .sort((a, b) => a.countTotalTitles - b.countTotalTitles);
 
       cy.wrap(sortedPackages).as('selectedPackages');
     });
