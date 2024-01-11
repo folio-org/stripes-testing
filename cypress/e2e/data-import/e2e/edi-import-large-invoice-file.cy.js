@@ -91,7 +91,7 @@ describe('data-import', () => {
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
         DataImport.waitFileIsUploaded();
-        JobProfiles.waitFileIsImported(fileName);
+        Logs.waitFileIsImported(fileName);
         Logs.checkImportFile(jobProfile.profileName);
         Logs.checkStatusOfJobProfile();
         Logs.checkQuantityRecordsInFile(Logs.quantityRecordsInInvoice.firstQuantity);

@@ -43,7 +43,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileName);
+        Logs.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile('Completed with errors');
         Logs.openFileDetails(fileName);
         cy.wrap([0, 6]).each((rowNumber) => {

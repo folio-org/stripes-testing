@@ -8,7 +8,7 @@ import Users from '../../../support/fragments/users/users';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Call Number Browse', () => {
     const testData = {
       randomPostfix: randomFourDigitNumber(),

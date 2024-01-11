@@ -23,7 +23,7 @@ let source;
 let servicePointId;
 let firstName;
 
-describe('circulation-log', () => {
+describe('Circulation log', () => {
   before('create inventory instance', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,

@@ -334,7 +334,7 @@ describe('data-import', () => {
         DataImport.uploadExportedFile(nameMarcFileForUpdate);
         JobProfiles.search(updateJobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
+        Logs.waitFileIsImported(nameMarcFileForUpdate);
         Logs.openFileDetails(nameMarcFileForUpdate);
         FileDetails.checkItemQuantityInSummaryTable('7', 1);
         FileDetails.checkItemQuantityInSummaryTable('3', 2);

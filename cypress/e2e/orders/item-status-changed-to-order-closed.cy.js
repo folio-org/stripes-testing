@@ -105,7 +105,7 @@ describe('Orders', () => {
 
   it(
     'C367963: Linked items status is updated to "Order closed" when cancelling one PO line in the order with multiple PO lines (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'nonParallel'] },
     () => {
       // Click on the record with Order name from precondition
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

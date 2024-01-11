@@ -8,7 +8,7 @@ import NewMatchProfile from '../../../support/fragments/settings/dataImport/matc
 import getRandomPostfix from '../../../support/utils/stringTools';
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 
-describe('Data Import', () => {
+describe('data-import', () => {
   describe('Settings', () => {
     let user;
 

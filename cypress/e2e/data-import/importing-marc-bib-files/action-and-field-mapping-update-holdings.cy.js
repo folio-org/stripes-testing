@@ -198,7 +198,7 @@ describe('data-import', () => {
       JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileForCreate.profileName);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(marcFileName);
+      Logs.waitFileIsImported(marcFileName);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileName);
       FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
@@ -282,7 +282,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileNameForUpdate);
+        Logs.waitFileIsImported(marcFileNameForUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
         cy.visit(TopMenu.inventoryPath);

@@ -88,7 +88,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(...itemBarcodes);
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [note]);
-        BulkEditSearchPane.changeShowColumnCheckbox('Administrative notes');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Administrative note');
         BulkEditSearchPane.verifySpecificItemsMatched(note);
 
         BulkEditActions.openInAppStartBulkEditFrom();

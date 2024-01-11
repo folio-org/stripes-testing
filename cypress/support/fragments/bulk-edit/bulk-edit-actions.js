@@ -41,11 +41,8 @@ const bulkEditFirstRow = RepeatableFieldItem({ index: 0 });
 const bulkEditSecondRow = RepeatableFieldItem({ index: 1 });
 const commitChanges = Button('Commit changes');
 const locationSelection = Selection({ name: 'locationId' });
-
-function getEmailField() {
-  // 2 the same selects without class, id or someone different attr
-  return cy.get('[class^=textField]');
-}
+const oldEmail = TextField({ testid: 'input-email-0' });
+const newEmail = TextField({ testid: 'input-email-1' });
 
 const bulkPageSelections = {
   valueType: Select({ content: including('Select option') }),
@@ -224,22 +221,22 @@ export default {
     ]);
   },
 
+  enterOldEmail(oldEmailDomain) {
+    cy.do([oldEmail.clear(), oldEmail.fillIn(oldEmailDomain)]);
+  },
+
+  enterNewEmail(newEmailDomain) {
+    cy.do([newEmail.clear(), newEmail.fillIn(newEmailDomain)]);
+  },
+
   replaceEmail(oldEmailDomain, newEmailDomain, rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
     );
     BulkEditSearchPane.isConfirmButtonDisabled(true);
-    getEmailField().first().type(oldEmailDomain);
+    cy.do(oldEmail.fillIn(oldEmailDomain));
     BulkEditSearchPane.isConfirmButtonDisabled(true);
-    getEmailField().eq(2).type(newEmailDomain);
-  },
-
-  enterOldEmail(oldEmailDomain) {
-    getEmailField().first().clear().type(oldEmailDomain);
-  },
-
-  enterNewEmail(newEmailDomain) {
-    getEmailField().eq(2).clear().type(newEmailDomain);
+    cy.do(newEmail.fillIn(newEmailDomain));
   },
 
   clickLocationLookup(rowIndex = 0) {

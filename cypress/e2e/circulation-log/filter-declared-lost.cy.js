@@ -30,7 +30,7 @@ const ownerBody = {
   ],
 };
 
-describe('circulation-log', () => {
+describe('Circulation log', () => {
   before('create test data', () => {
     cy.createTempUser([]).then((userProperties) => {
       user = userProperties;

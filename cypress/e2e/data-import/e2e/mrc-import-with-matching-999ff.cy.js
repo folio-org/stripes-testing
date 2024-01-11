@@ -132,7 +132,7 @@ describe('data-import', { retries: 3 }, () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForExport.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(nameForMarcFile);
+        Logs.waitFileIsImported(nameForMarcFile);
         Logs.openFileDetails(nameForMarcFile);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.CREATED,
@@ -192,7 +192,7 @@ describe('data-import', { retries: 3 }, () => {
           DataImport.uploadExportedFile(nameForExportedMarcFile);
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(nameForExportedMarcFile);
+          Logs.waitFileIsImported(nameForExportedMarcFile);
           Logs.openFileDetails(nameForExportedMarcFile);
           FileDetails.checkStatusInColumn(
             RECORD_STATUSES.UPDATED,

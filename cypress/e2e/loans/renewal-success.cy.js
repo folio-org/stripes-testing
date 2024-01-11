@@ -188,7 +188,7 @@ describe('Renewal', () => {
 
   it(
     'C567: Renewal: success, from open loans (multiple items) (vega)',
-    { tags: ['smoke', 'vega'] },
+    { tags: ['smoke', 'vega', 'system'] },
     () => {
       cy.visit(TopMenu.usersPath);
       cy.intercept('GET', '/configurations/entries?*').as('getEntries');
