@@ -821,21 +821,22 @@ export default {
     );
   },
 
-  verifyCheckboxInAccordion(accordionName, checkboxValue) {
+  verifyCheckboxInAccordion(accordionName, checkboxValue, isChecked = null) {
     cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).exists());
+    if (isChecked !== null) cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).has({ checked: isChecked }));
   },
 
   verifyTextFieldInAccordion(accordionName, textFieldValue) {
-    cy.expect(Accordion(accordionName).find(TextField({ value: including(textFieldValue) })).exists());
+    cy.expect(
+      Accordion(accordionName)
+        .find(TextField({ value: including(textFieldValue) }))
+        .exists(),
+    );
   },
 
   verifyNameTypeOption(option) {
     cy.do(nameTypeAccordion.find(Button({ ariaLabel: 'open menu' })).click());
-    cy.expect(
-      nameTypeAccordion
-        .find(MultiSelectOption(including(option)))
-        .exists()
-    );
+    cy.expect(nameTypeAccordion.find(MultiSelectOption(including(option))).exists());
   },
 
   selectOptionInExpandedFilter(accordionName, optionName, selected = true) {
