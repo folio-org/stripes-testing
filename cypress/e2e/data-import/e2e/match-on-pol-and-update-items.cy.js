@@ -408,7 +408,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(specialJobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(editedMarcFileName);
+        Logs.waitFileIsImported(editedMarcFileName);
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(editedMarcFileName);
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');

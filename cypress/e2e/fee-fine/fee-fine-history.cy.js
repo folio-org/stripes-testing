@@ -117,7 +117,7 @@ describe('Fee/Fine history ', { retries: 1 }, () => {
 
   it(
     'C347919 Check that the user can add "Additional information" on the fee/fine history (vega)',
-    { tags: ['smoke', 'vega'] },
+    { tags: ['smoke', 'vega', 'system'] },
     () => {
       // the bug for this flaky issue is created FAT-2442. As temporary fix for this bug we need a waiter to be sure that the fee-fine is created before opening its page.
       // eslint-disable-next-line cypress/no-unnecessary-waiting

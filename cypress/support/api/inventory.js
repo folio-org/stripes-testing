@@ -231,7 +231,6 @@ Cypress.Commands.add('updateHoldingRecord', (holdingsRecordId, newParams) => {
   delete newParams.holdingsItems;
   delete newParams.bareHoldingsItems;
   delete newParams.holdingsTypeId;
-  delete newParams.temporaryLocationId;
   cy.okapiRequest({
     method: 'PUT',
     path: `holdings-storage/holdings/${holdingsRecordId}`,

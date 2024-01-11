@@ -100,7 +100,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(firstMarcFileName);
+        Logs.waitFileIsImported(firstMarcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(firstMarcFileName);
         // check the first instance with Cataloged date
@@ -137,7 +137,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(secondMarcFileName);
+        Logs.waitFileIsImported(secondMarcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(secondMarcFileName);
         // check the first instance with Cataloged date
@@ -174,7 +174,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(thirdMarcFileName);
+        Logs.waitFileIsImported(thirdMarcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(thirdMarcFileName);
         // check the first instance with Cataloged date
@@ -211,7 +211,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(forthMarcFileName);
+        Logs.waitFileIsImported(forthMarcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(forthMarcFileName);
         // check the first instance with Cataloged date

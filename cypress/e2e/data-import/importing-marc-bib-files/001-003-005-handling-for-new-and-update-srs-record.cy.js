@@ -91,7 +91,7 @@ describe('data-import', () => {
       JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileName);
+      Logs.waitFileIsImported(fileName);
       Logs.openFileDetails(fileName);
 
       // open Instance for getting hrid
@@ -137,7 +137,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(nameMarcFileForCreate);
+        Logs.waitFileIsImported(nameMarcFileForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForCreate);
         [
@@ -220,7 +220,7 @@ describe('data-import', () => {
           JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(fileNameAfterUpload);
+          Logs.waitFileIsImported(fileNameAfterUpload);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(fileNameAfterUpload);
           FileDetails.checkStatusInColumn(
@@ -268,7 +268,7 @@ describe('data-import', () => {
           DataImport.uploadExportedFile(exportedFileName);
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(exportedFileName);
+          Logs.waitFileIsImported(exportedFileName);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(exportedFileName);
           [

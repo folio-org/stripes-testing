@@ -44,7 +44,7 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
     Users.deleteViaApi(userId);
   });
 
-  it('C476: Scenario#1&Scenario#2 (vega)', { tags: ['smoke', 'vega'] }, () => {
+  it('C476: Scenario#1&Scenario#2 (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
     UsersSearchPane.searchByKeywords(userName);
     UsersCard.patronBlocksAccordionCovered();
 
@@ -55,7 +55,7 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
     UsersCard.selectPatronBlock(testDescription);
     UsersCard.deletePatronBlock();
   });
-  it('C476: Scenario#3&Scenario#4 (vega)', { tags: ['smoke', 'vega'] }, () => {
+  it('C476: Scenario#3&Scenario#4 (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
     UsersSearchPane.searchByKeywords(userName);
     UsersCard.openPatronBlocks();
     // Scenario#3
@@ -65,7 +65,7 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
     UsersCard.closeNewBlockPage();
     UsersCard.patronBlocksAccordionCovered();
   });
-  it('C476: Scenario#5,6,7,8,9 (vega)', { tags: ['smoke', 'vega'] }, () => {
+  it('C476: Scenario#5,6,7,8,9 (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
     // scenario#5
     UsersSearchPane.searchByKeywords(userName);
     UsersCard.patronBlocksAccordionCovered();
@@ -84,7 +84,7 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
     // scenario#9
     UsersCard.deletePatronBlock();
   });
-  it('C476: Scenario#10,11,12,13,14,15,16 (vega)', { tags: ['smoke', 'vega'] }, () => {
+  it('C476: Scenario#10,11,12,13,14,15,16 (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
     UsersSearchPane.searchByKeywords(userName);
     UsersCard.patronBlocksAccordionCovered();
 
@@ -102,7 +102,7 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
     UsersCard.selectPatronBlock(testDescription);
     UsersCard.deletePatronBlock();
   });
-  it('C476: Scenario#17,18 (vega)', { tags: ['smoke', 'vega'] }, () => {
+  it('C476: Scenario#17,18 (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
     UsersSearchPane.searchByKeywords(userName);
     UsersCard.openPatronBlocks();
     UsersCard.createPatronBlock();

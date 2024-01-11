@@ -42,8 +42,8 @@ describe('bulk-edit', () => {
       'C366072 Verify Bulk edit elements in the left pane -- Users Local & In app (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs', 'Query');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
         BulkEditSearchPane.verifyRecordIdentifierEmpty();
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
 
@@ -54,9 +54,12 @@ describe('bulk-edit', () => {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs', 'Query');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
         BulkEditSearchPane.isUsersRadioChecked(false);
+        ['Inventory - holdings', 'Inventory - instances', 'Inventory - items'].forEach(
+          (identifier) => BulkEditSearchPane.verifyRadioHidden(identifier),
+        );
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
       },
     );

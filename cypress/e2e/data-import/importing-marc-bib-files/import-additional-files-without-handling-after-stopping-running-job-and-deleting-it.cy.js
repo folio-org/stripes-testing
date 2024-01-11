@@ -68,7 +68,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(smallFileName);
+        Logs.waitFileIsImported(smallFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       },
     );

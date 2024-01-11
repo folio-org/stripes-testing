@@ -13,7 +13,7 @@ const invalidUserUUID = getRandomPostfix();
 const matchedRecordsFileName = `*Matching-Records-Errors-${userUUIDsFileName}`;
 
 describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+  describe('permissions', () => {
     before('Create test data', () => {
       cy.createTempUser([
         Permissions.bulkEditCsvView.gui,

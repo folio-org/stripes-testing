@@ -56,7 +56,7 @@ describe('data-import', () => {
         JobProfiles.search(marcFiles[0].jobProfileToRun);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFiles[0].fileName);
+        Logs.waitFileIsImported(marcFiles[0].fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(marcFiles[0].fileName);
         FileDetails.checkStatusInColumn(
@@ -79,7 +79,7 @@ describe('data-import', () => {
         JobProfiles.search(marcFiles[1].jobProfileToRun);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFiles[1].fileName);
+        Logs.waitFileIsImported(marcFiles[1].fileName);
         Logs.openFileDetails(marcFiles[1].fileName);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.NO_ACTION,
