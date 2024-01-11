@@ -49,7 +49,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.checkFileIsRunning(fileNames[1]);
-        JobProfiles.waitFileIsImported(fileNames[1]);
+        Logs.waitFileIsImported(fileNames[1]);
         Logs.openFileDetails(fileNames[1]);
         FileDetails.verifyHeader(fileNames[1], numberOfRecords[1]);
         FileDetails.paginateThroughAllPages(2);

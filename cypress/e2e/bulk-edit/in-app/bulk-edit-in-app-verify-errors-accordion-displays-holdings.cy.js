@@ -32,11 +32,7 @@ describe('bulk-edit', () => {
           query: `"instanceId"="${item.instanceId}"`,
         }).then((holdings) => {
           item.holdingUUID = holdings[0].id;
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            // Online
-            permanentLocationId: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5',
-          });
+          item.holdingHRID = holdings[0].hrid;
           FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, item.holdingUUID);
         });
 
@@ -76,8 +72,8 @@ describe('bulk-edit', () => {
         // Click the "Commit changes" button
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditActions.verifySuccessBanner(0);
-        BulkEditSearchPane.verifyNonMatchedResults(item.holdingUUID);
+        BulkEditActions.verifySuccessBanner(1);
+        BulkEditSearchPane.verifyChangedResults(item.holdingHRID);
       },
     );
   });

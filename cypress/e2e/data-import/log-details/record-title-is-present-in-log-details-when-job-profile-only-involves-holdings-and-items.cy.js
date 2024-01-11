@@ -341,7 +341,7 @@ describe('data-import', () => {
         DataImport.uploadExportedFile(marcFileNameForUpdate);
         JobProfiles.search(jobProfileWithMatch.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileNameForUpdate);
+        Logs.waitFileIsImported(marcFileNameForUpdate);
         Logs.openFileDetails(marcFileNameForUpdate);
         FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems, 1);
         FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 1);
@@ -564,7 +564,7 @@ describe('data-import', () => {
         DataImport.uploadExportedFile(marcFileNameForUpdate);
         JobProfiles.search(jobProfileWithoutMatch.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileNameForUpdate);
+        Logs.waitFileIsImported(marcFileNameForUpdate);
         Logs.openFileDetails(marcFileNameForUpdate);
         FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems, 1);
         FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 1);

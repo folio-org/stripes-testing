@@ -105,7 +105,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(firstMarcFileNameForCreate);
+        Logs.waitFileIsImported(firstMarcFileNameForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(firstMarcFileNameForCreate);
         [
@@ -169,7 +169,7 @@ describe('data-import', () => {
           JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(firstFileNameAfterUpload);
+          Logs.waitFileIsImported(firstFileNameAfterUpload);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(firstFileNameAfterUpload);
           FileDetails.checkStatusInColumn(
@@ -235,7 +235,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(secondMarcFileNameForCreate);
+        Logs.waitFileIsImported(secondMarcFileNameForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(secondMarcFileNameForCreate);
         cy.wrap(fieldsContent).each((row) => {
@@ -331,7 +331,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(secondFileNameAfterUpload);
+        Logs.waitFileIsImported(secondFileNameAfterUpload);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(secondFileNameAfterUpload);
         cy.wrap(fieldsContent).each((row) => {

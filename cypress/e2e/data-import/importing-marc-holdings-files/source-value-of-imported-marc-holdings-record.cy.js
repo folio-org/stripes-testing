@@ -38,7 +38,7 @@ describe('data-import', () => {
       JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileForCreatingInstance);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileName);
+      Logs.waitFileIsImported(fileName);
       Logs.openFileDetails(fileName);
       FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
@@ -97,7 +97,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForCreatingHoldings);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(editedMarcFileName);
+        Logs.waitFileIsImported(editedMarcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(editedMarcFileName);
         [
