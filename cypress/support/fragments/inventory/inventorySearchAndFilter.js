@@ -81,6 +81,7 @@ const itemStatusSearchField = TextField('itemStatus-field');
 const holdingsToggleButton = Button({ id: 'segment-navigation-holdings' });
 const itemToggleButton = Button({ id: 'segment-navigation-items' });
 const searchTypeDropdown = Select('Search field index');
+const nameTypeAccordion = Accordion({ id: 'nameType' });
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -798,6 +799,10 @@ export default {
     cy.expect(keywordInput.has({ value: '' }));
   },
 
+  verifyAccordionExistance(accordionName) {
+    cy.expect(Accordion(accordionName).exists());
+  },
+
   verifyAccordionByNameExpanded(accordionName, status = true) {
     cy.expect(Accordion(accordionName).has({ open: status }));
   },
@@ -813,6 +818,23 @@ export default {
           HTML({ className: including('checkbox---'), text: `${optionName}\n${expectedCount}` }),
         )
         .exists(),
+    );
+  },
+
+  verifyCheckboxInAccordion(accordionName, checkboxValue) {
+    cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).exists());
+  },
+
+  verifyTextFieldInAccordion(accordionName, textFieldValue) {
+    cy.expect(Accordion(accordionName).find(TextField({ value: including(textFieldValue) })).exists());
+  },
+
+  verifyNameTypeOption(option) {
+    cy.do(nameTypeAccordion.find(Button({ ariaLabel: 'open menu' })).click());
+    cy.expect(
+      nameTypeAccordion
+        .find(MultiSelectOption(including(option)))
+        .exists()
     );
   },
 
