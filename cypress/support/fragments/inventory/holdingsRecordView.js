@@ -104,6 +104,14 @@ export default {
     // close openned Actions
     cy.do(actionsButton.click());
   },
+  checkActionsMenuOptions() {
+    cy.do(actionsButton.click());
+    cy.expect(editButton.exists());
+    cy.expect(duplicateButton.exists());
+    cy.expect(deleteButton.exists());
+    // close openned Actions
+    cy.do(actionsButton.click());
+  },
   checkSource: (sourceValue) => cy.expect(KeyValue('Source', { value: sourceValue }).exists()),
   checkInstanceHrId: (expectedInstanceHrId) => cy.expect(
     holdingsRecordViewSection
