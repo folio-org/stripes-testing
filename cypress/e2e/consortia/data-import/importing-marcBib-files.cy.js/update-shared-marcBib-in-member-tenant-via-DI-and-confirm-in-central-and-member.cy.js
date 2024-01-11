@@ -72,40 +72,21 @@ describe('Data Import', () => {
       const jobProfileName = `C405528 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
 
       before('Create test data', () => {
-        cy.getAdminToken().then(() => {
-          NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
-            (mappingProfileResponse) => {
-              NewActionProfile.createActionProfileViaApiMarc(
-                actionProfile,
-                mappingProfileResponse.body.id,
-              ).then((actionProfileResponse) => {
-                NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
-                  matchProfile,
-                ).then((matchProfileResponse) => {
-                  NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
-                    jobProfileName,
-                    matchProfileResponse.body.id,
-                    actionProfileResponse.body.id,
-                  );
-                });
-              });
-            },
-          );
-          cy.loginAsAdmin({
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          });
-          DataImport.verifyUploadState();
-          DataImport.uploadFileAndRetry(testData.marcFile.marc, testData.marcFile.fileName);
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(testData.marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(testData.marcFile.fileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(testData.marcFile.fileName);
-          Logs.getCreatedItemsID().then((link) => {
-            testData.sharedInstanceId.push(link.split('/')[5]);
-          });
+        cy.getAdminToken();
+        cy.loginAsAdmin({
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
+        DataImport.verifyUploadState();
+        DataImport.uploadFileAndRetry(testData.marcFile.marc, testData.marcFile.fileName);
+        JobProfiles.waitLoadingList();
+        JobProfiles.search(testData.marcFile.jobProfileToRun);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(testData.marcFile.fileName);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(testData.marcFile.fileName);
+        Logs.getCreatedItemsID().then((link) => {
+          testData.sharedInstanceId.push(link.split('/')[5]);
         });
 
         // create user A
@@ -115,14 +96,38 @@ describe('Data Import', () => {
           })
           .then(() => {
             cy.assignAffiliationToUser(Affiliations.Consortia, users.userAProperties.userId);
+            cy.setTenant(Affiliations.Consortia);
+            cy.assignPermissionsToExistingUser(users.userAProperties.userId, [
+              Permissions.moduleDataImportEnabled.gui,
+            ]);
+            cy.resetTenant();
             cy.assignAffiliationToUser(Affiliations.College, users.userAProperties.userId);
             cy.setTenant(Affiliations.College);
-            cy.assignPermissionsToExistingUser(users.userAProperties, [
+            cy.assignPermissionsToExistingUser(users.userAProperties.userId, [
               Permissions.moduleDataImportEnabled.gui,
               Permissions.inventoryAll.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
               Permissions.dataExportEnableApp.gui,
             ]);
+            NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
+              (mappingProfileResponse) => {
+                NewActionProfile.createActionProfileViaApiMarc(
+                  actionProfile,
+                  mappingProfileResponse.body.id,
+                ).then((actionProfileResponse) => {
+                  NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
+                    matchProfile,
+                  ).then((matchProfileResponse) => {
+                    NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+                      jobProfileName,
+                      matchProfileResponse.body.id,
+                      actionProfileResponse.body.id,
+                    );
+                  });
+                });
+              },
+            );
+            cy.resetTenant();
           });
 
         // create user B
@@ -135,12 +140,24 @@ describe('Data Import', () => {
           })
           .then(() => {
             cy.assignAffiliationToUser(Affiliations.Consortia, users.userBProperties.userId);
-            cy.assignAffiliationToUser(Affiliations.University, users.userBProperties.userId);
-            cy.setTenant(Affiliations.University);
-            cy.assignPermissionsToExistingUser(users.userBProperties, [
+            cy.setTenant(Affiliations.Consortia);
+            cy.assignPermissionsToExistingUser(users.userBProperties.userId, [
               Permissions.inventoryAll.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             ]);
+            cy.resetTenant();
+            cy.assignAffiliationToUser(Affiliations.University, users.userBProperties.userId);
+            cy.setTenant(Affiliations.University);
+            cy.assignPermissionsToExistingUser(users.userBProperties.userId, [
+              Permissions.inventoryAll.gui,
+              Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+            ]);
+          })
+          .then(() => {
+            cy.resetTenant();
+            cy.login(users.userAProperties.username, users.userAProperties.password);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+            cy.visit(TopMenu.inventoryPath);
           });
       });
 
@@ -148,57 +165,52 @@ describe('Data Import', () => {
         'C405528 User can update shared "MARC Bib" in member tenant via Data import and confirm in central & member tenants (consortia) (folijet)',
         { tags: ['extendedPath', 'folijet'] },
         () => {
-          cy.resetTenant();
-          cy.login(users.userAProperties.username, users.userAProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college);
           InventoryInstance.searchByTitle(testData.sharedInstanceId[0]);
-          // InventorySearchAndFilter.closeInstanceDetailPane();
-          // InventorySearchAndFilter.selectResultCheckboxes(1);
-          // InventorySearchAndFilter.verifySelectedRecords(1);
-          // InventorySearchAndFilter.exportInstanceAsMarc();
+          InventorySearchAndFilter.closeInstanceDetailPane();
+          InventorySearchAndFilter.selectResultCheckboxes(1);
+          InventorySearchAndFilter.verifySelectedRecords(1);
+          InventorySearchAndFilter.exportInstanceAsMarc();
 
-          // // download exported marc file
-          // cy.visit(TopMenu.dataExportPath);
-          // cy.wait(1000);
-          // ExportFile.getExportedFileNameViaApi().then((name) => {
-          //   testData.marcFile.exportedFileName = name;
-          //   ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
-          //   // change exported file
-          //   DataImport.editMarcFile(
-          //     testData.marcFile.exportedFileName,
-          //     testData.marcFile.modifiedMarcFile,
-          //     ['Shared Centra', 'Proceedings'],
-          //     ['Shared Centra Updated', 'Proceedings Updated'],
-          //   );
+          // download exported marc file
+          cy.visit(TopMenu.dataExportPath);
+          cy.wait(1000);
+          ExportFile.getExportedFileNameViaApi().then((name) => {
+            testData.marcFile.exportedFileName = name;
+            ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
+            // change exported file
+            DataImport.editMarcFile(
+              testData.marcFile.exportedFileName,
+              testData.marcFile.modifiedMarcFile,
+              ['Shared Centra', 'Proceedings'],
+              ['Shared Centra Updated', 'Proceedings Updated'],
+            );
+          });
 
-          //   // upload the exported and edited marc file
-          //   cy.visit(TopMenu.dataImportPath);
-          //   // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-          //   DataImport.verifyUploadState();
-          //   DataImport.uploadExportedFile(testData.marcFile.modifiedMarcFile);
-          //   JobProfiles.waitFileIsUploaded();
-          //   JobProfiles.search(jobProfileName);
-          //   JobProfiles.runImportFile();
-          //   JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
-          //   Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          // upload the exported and edited marc file
+          cy.visit(TopMenu.dataImportPath);
+          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.verifyUploadState();
+          DataImport.uploadExportedFile(testData.marcFile.modifiedMarcFile);
+          JobProfiles.waitFileIsUploaded();
+          JobProfiles.search(jobProfileName);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
-          //   cy.visit(TopMenu.inventoryPath);
-          //   InventorySearchAndFilter.verifyPanesExist();
-          //   InventoryInstance.searchByTitle(testData.sharedInstanceId[0]);
-          //   InventoryInstance.waitInstanceRecordViewOpened('C405528 Instance Shared Centra Updatedl');
-          //   InventoryInstance.verifyLastUpdatedSource(
-          //     users.userAProperties.firstName,
-          //     users.userAProperties.lastName,
-          //   );
-          //   cy.logout();
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.verifyPanesExist();
+          InventoryInstance.searchByTitle(testData.sharedInstanceId[0]);
+          InventoryInstance.waitInstanceRecordViewOpened('C405528 Instance Shared Centra Updatedl');
+          InventoryInstance.verifyLastUpdatedSource(
+            users.userAProperties.firstName,
+            users.userAProperties.lastName,
+          );
+          cy.logout();
 
-          //   cy.login(users.userBProperties.username, users.userBProperties.password, {
-          //     path: TopMenu.inventoryPath,
-          //     waiter: InventoryInstances.waitContentLoading,
-          //   });
+          // cy.login(users.userBProperties.username, users.userBProperties.password, {
+          //   path: TopMenu.inventoryPath,
+          //   waiter: InventoryInstances.waitContentLoading,
+          // });
           //   InventorySearchAndFilter.verifyPanesExist();
           //   // ConsortiumManager.switchActiveAffiliation(tenantNames.central);
           //   InventoryInstance.searchByTitle(testData.sharedInstanceId[0]);
