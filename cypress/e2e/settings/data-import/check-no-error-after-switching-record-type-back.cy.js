@@ -120,7 +120,7 @@ describe('data-import', () => {
           profileUpdated: true,
         });
         FieldMappingProfileView.checkSummaryFieldsConditions([
-          { label: 'Name', conditions: { value: fieldMappingProfile } },
+          { label: 'Name', conditions: { value: `"${fieldMappingProfile}"` } },
           { label: 'FOLIO record type', conditions: { value: 'Order' } },
         ]);
       },
