@@ -15,23 +15,23 @@ import { CodeTools, StringTools } from '../../../support/utils';
 describe('Finance', () => {
   describe('Funds', () => {
     const date = new Date();
-    const code = CodeTools(4);
+    const code = `${CodeTools(4)}${StringTools.randomTwoDigitNumber()}`;
     const fiscalYears = {
       current: {
         ...FiscalYears.getDefaultFiscalYear(),
-        code: `${code}${StringTools.randomTwoDigitNumber()}01`,
+        code: `${code}01`,
         periodStart: new Date(date.getFullYear(), 0, 1),
         periodEnd: new Date(date.getFullYear(), 11, 31),
       },
       upcoming: {
         ...FiscalYears.getDefaultFiscalYear(),
-        code: `${code}${StringTools.randomTwoDigitNumber()}02`,
+        code: `${code}02`,
         periodStart: new Date(date.getFullYear() + 1, 0, 1),
         periodEnd: new Date(date.getFullYear() + 1, 11, 31),
       },
       next: {
         ...FiscalYears.getDefaultFiscalYear(),
-        code: `${code}${StringTools.randomTwoDigitNumber()}03`,
+        code: `${code}03`,
         periodStart: new Date(date.getFullYear() + 2, 0, 1),
         periodEnd: new Date(date.getFullYear() + 2, 11, 31),
       },
