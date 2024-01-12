@@ -10,6 +10,7 @@ import {
   Callout,
   Modal,
   PaneHeader,
+  TableRow,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 
@@ -286,5 +287,13 @@ export default {
 
   verifySharedAuthorityDetailsHeading(heading) {
     cy.expect(detailsPaneHeader.has({ title: `Shared • ${heading}` }));
+  },
+
+  verifyFieldPositionInView(index, tag, content) {
+    cy.expect(
+      rootSection
+        .find(TableRow({ index, innerText: including(content) }))
+        .has({ innerText: including(`${tag}  `) }),
+    );
   },
 };
