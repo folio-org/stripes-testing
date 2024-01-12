@@ -76,29 +76,22 @@ export default {
   closeLoansHistory() {
     cy.do(loansHistoryPane.find(Button({ ariaLabel: 'Close ' })).click());
   },
-  expandActionsMenu(barcode) {
-    cy.get('div[class^="mclRow--"]')
-      .contains('div[class^="mclCell-"]', barcode)
-      .then((elem) => {
-        elem.parent()[0].querySelector('button[icon="ellipsis"]').click();
-      });
-  },
   declareLoanLost(barcode) {
-    this.expandActionsMenu(barcode);
+    openActionsMenuOfLoanByBarcode(barcode);
     cy.expect(declaredLostButton.exists());
     cy.do(declaredLostButton.click());
 
     return ConfirmItemStatusModal;
   },
   markAsMissing(barcode) {
-    this.expandActionsMenu(barcode);
+    openActionsMenuOfLoanByBarcode(barcode);
     cy.expect(markAsMissingButton.exists());
     cy.do(markAsMissingButton.click());
 
     return ConfirmItemStatusModal;
   },
   createNewFeeFine(barcode, ownerId, feeFineType) {
-    this.expandActionsMenu(barcode);
+    openActionsMenuOfLoanByBarcode(barcode);
     cy.do([
       newFeeFineButton.click(),
       Select({ id: 'ownerId' }).choose(ownerId),

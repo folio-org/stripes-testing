@@ -1,17 +1,21 @@
 import {
+  Accordion,
   Button,
-  including,
-  RadioButton,
-  Link,
-  HTML,
-  TextField,
-  TextArea,
   Callout,
-  calloutTypes,
-  MultiColumnListRow,
-  MultiColumnListCell,
+  Checkbox,
+  HTML,
+  Link,
   Modal,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Pane,
+  RadioButton,
+  TextArea,
+  TextField,
+  calloutTypes,
+  including,
 } from '../../../../interactors';
+import ArrayUtils from '../../utils/arrays';
 
 const closeModal = Modal();
 const saveButton = Button('Save');
@@ -28,6 +32,12 @@ const editList = Button('Edit list');
 const exportList = Button('Export list (CSV)');
 const testQuery = Button('Test query');
 const runQuery = Button('Run query & save');
+const filterPane = Pane('Filter');
+const statusAccordion = filterPane.find(Accordion('Status'));
+const visibilityAccordion = filterPane.find(Accordion('Visibility'));
+const recordTypesAccordion = filterPane.find(Accordion('Record types'));
+const resetAllButton = filterPane.find(Button('Reset all'));
+const clearFilterButton = Button({ icon: 'times-circle-solid' });
 
 export default {
   waitLoading: () => {
@@ -49,6 +59,7 @@ export default {
     cy.do(actions.click());
     cy.wait(1000);
   },
+
   refreshList() {
     cy.do(refreshList.click());
     cy.wait(5000);
@@ -87,6 +98,7 @@ export default {
     cy.do(cancelButton.click());
     cy.wait(5000);
   },
+
   closeWithoutSaving() {
     cy.do(closeWithoutSavingButton.click());
     cy.wait(5000);
@@ -131,6 +143,10 @@ export default {
 
   verifySuccessCalloutMessage(message) {
     cy.expect(Callout({ type: calloutTypes.info }).is({ textContent: message }));
+  },
+
+  verifyCalloutMessage: (message) => {
+    cy.expect(Callout(including(message)).exists());
   },
 
   cancelListPopup: () => {
@@ -178,5 +194,153 @@ export default {
       path: `lists/${id}`,
       isDefaultSearchParamsRequired: false,
     });
+  },
+
+  clickOnAccordionInFilter(accordionName) {
+    cy.do(filterPane.find(Accordion(accordionName)).clickHeader());
+  },
+
+  verifyAccordionExpandedInFilter(accordionName) {
+    cy.expect(filterPane.find(Accordion(accordionName)).has({ open: true }));
+  },
+
+  verifyAccordionCollapsedInFilter(accordionName) {
+    cy.expect(filterPane.find(Accordion(accordionName)).has({ open: false }));
+  },
+
+  verifyStatusAccordionDefaultContent() {
+    cy.expect([
+      statusAccordion.find(Checkbox('Active')).has({ checked: true }),
+      statusAccordion.find(Checkbox('Inactive')).has({ checked: false }),
+      statusAccordion.find(clearFilterButton).exists(),
+    ]);
+  },
+
+  verifyVisibilityAccordionDefaultContent() {
+    cy.expect([
+      visibilityAccordion.find(Checkbox('Shared')).has({ checked: false }),
+      visibilityAccordion.find(Checkbox('Private')).has({ checked: false }),
+    ]);
+  },
+
+  verifyRecordTypesAccordionDefaultContent() {
+    cy.expect([
+      recordTypesAccordion.find(Checkbox('Items')).has({ checked: false }),
+      recordTypesAccordion.find(Checkbox('Loans')).has({ checked: false }),
+      recordTypesAccordion.find(Checkbox('Users')).has({ checked: false }),
+      recordTypesAccordion.find(Checkbox('Purchase order Lines')).has({ checked: false }),
+    ]);
+  },
+
+  clickOnCheckbox(name) {
+    cy.do(filterPane.find(Checkbox(name)).click());
+  },
+
+  verifyCheckboxChecked(name) {
+    cy.expect(filterPane.find(Checkbox(name)).has({ checked: true }));
+  },
+
+  verifyCheckboxUnchecked(name) {
+    cy.expect(filterPane.find(Checkbox(name)).has({ checked: false }));
+  },
+
+  clickOnClearFilterButton(accordionName) {
+    cy.do(
+      filterPane
+        .find(Accordion(accordionName))
+        .find(Button({ icon: 'times-circle-solid' }))
+        .click(),
+    );
+  },
+
+  verifyClearFilterButton(accordionName) {
+    cy.expect(
+      filterPane
+        .find(Accordion(accordionName))
+        .find(Button({ icon: 'times-circle-solid' }))
+        .exists(),
+    );
+  },
+
+  verifyClearFilterButtonAbsent(accordionName) {
+    cy.expect(
+      filterPane
+        .find(Accordion(accordionName))
+        .find(Button({ icon: 'times-circle-solid' }))
+        .absent(),
+    );
+  },
+
+  resetAll() {
+    cy.get('button[id="clickable-reset-all"]').then((element) => {
+      const disabled = element.attr('disabled');
+      if (!disabled) {
+        cy.do(resetAllButton.click());
+      }
+    });
+    cy.expect([
+      resetAllButton.has({ disabled: true }),
+      statusAccordion.find(Checkbox('Active')).has({ checked: true }),
+      statusAccordion.find(clearFilterButton).exists(),
+    ]);
+  },
+
+  verifyResetAllButtonEnabled() {
+    cy.expect(resetAllButton.has({ disabled: false }));
+  },
+
+  verifyResetAllButtonDisabled() {
+    cy.expect(resetAllButton.has({ disabled: true }));
+  },
+
+  verifyListsFileredByStatus: (filters) => {
+    const cells = [];
+    cy.get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .each(($row) => {
+        cy.get('[class*="mclCell-"]:nth-child(4)', { withinSubject: $row })
+          .invoke('text')
+          .then((cellValue) => {
+            cells.push(cellValue);
+            cy.log(cellValue);
+          });
+      })
+      .then(() => {
+        cy.expect(ArrayUtils.compareArrays(cells, filters)).to.equal(true);
+      });
+  },
+
+  verifyListsFileredByRecordType: (filters) => {
+    const cells = [];
+    cy.get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .each(($row) => {
+        cy.get('[class*="mclCell-"]:nth-child(2)', { withinSubject: $row })
+          .invoke('text')
+          .then((cellValue) => {
+            cells.push(cellValue);
+            cy.log(cellValue);
+          });
+      })
+      .then(() => {
+        cy.expect(ArrayUtils.compareArrays(cells, filters)).to.equal(true);
+      });
+  },
+
+  verifyListsFileredByVisiblity: (filters) => {
+    const cells = [];
+    cy.get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .each(($row) => {
+        cy.get('[class*="mclCell-"]:nth-child(7)', { withinSubject: $row })
+          .invoke('text')
+          .then((cellValue) => {
+            cells.push(cellValue);
+            cy.log(cellValue);
+          });
+      })
+      .then(() => {
+        cy.expect(ArrayUtils.compareArrays(cells, filters)).to.equal(true);
+      });
   },
 };

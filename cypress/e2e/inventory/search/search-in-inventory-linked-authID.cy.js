@@ -13,123 +13,125 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Search in Inventory', () => {
-  const testData = {
-    tag010: '010',
-    tag700: '700',
-    authUUIDSearchOption: 'Authority UUID',
-    searchResultsC367974: [
-      'C367974 Aviator / Leonardo DiCaprio, Matt Damon, Jack Nicholson, Robert De Niro, Ray Liotta, Martin Scorsese, Barbara De Fina, Brad Grey, Alan Mak, Felix Chong, Nicholas Pileggi, William Monahan.',
-      'C367974 Titanic / written and directed by James Cameron.',
-    ],
-  };
+describe('inventory', () => {
+  describe('Search in Inventory', () => {
+    const testData = {
+      tag010: '010',
+      tag700: '700',
+      authUUIDSearchOption: 'Authority UUID',
+      searchResultsC367974: [
+        'C367974 Aviator / Leonardo DiCaprio, Matt Damon, Jack Nicholson, Robert De Niro, Ray Liotta, Martin Scorsese, Barbara De Fina, Brad Grey, Alan Mak, Felix Chong, Nicholas Pileggi, William Monahan.',
+        'C367974 Titanic / written and directed by James Cameron.',
+      ],
+    };
 
-  const marcFiles = [
-    {
-      marc: 'marcBibFileC367974.mrc',
-      fileName: `testMarcFileC367974.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-      numberOfRecords: 2,
-    },
-    {
-      marc: 'marcAuthFileC367974.mrc',
-      fileName: `testMarcFileC367974.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
-      authorityHeading: 'DiCaprio, Leonardo C367974',
-      authority010FieldValue: 'n94000330367974',
-      numberOfRecords: 1,
-    },
-  ];
+    const marcFiles = [
+      {
+        marc: 'marcBibFileC367974.mrc',
+        fileName: `testMarcFileC367974.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        numberOfRecords: 2,
+      },
+      {
+        marc: 'marcAuthFileC367974.mrc',
+        fileName: `testMarcFileC367974.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        authorityHeading: 'DiCaprio, Leonardo C367974',
+        authority010FieldValue: 'n94000330367974',
+        numberOfRecords: 1,
+      },
+    ];
 
-  const createdRecordIDs = [];
+    const createdRecordIDs = [];
 
-  before('Importing data, linking Bib fields', () => {
-    cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
-      testData.userProperties = createdUserProperties;
-      marcFiles.forEach((marcFile) => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numberOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                createdRecordIDs.push(link.split('/')[5]);
-              });
-            }
-          },
-        );
-      });
-      // linking fields in MARC Bib records
-      cy.visit(TopMenu.inventoryPath).then(() => {
-        InventoryInstances.waitContentLoading();
-        InventoryInstances.searchByTitle(createdRecordIDs[1]);
-        InventoryInstances.selectInstance();
-        // here and below - wait for detail view to be fully loaded
-        cy.wait(1500);
-        InventoryInstance.editMarcBibliographicRecord();
-        InventoryInstance.verifyAndClickLinkIconByIndex(22);
-        InventoryInstance.verifySelectMarcAuthorityModal();
-        MarcAuthorities.switchToSearch();
-        InventoryInstance.searchResults(marcFiles[1].authorityHeading);
-        MarcAuthorities.checkFieldAndContentExistence(
-          testData.tag010,
-          `$a ${marcFiles[1].authority010FieldValue}`,
-        );
-        InventoryInstance.clickLinkButton();
-        QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(22, testData.tag700);
-        QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.checkAfterSaveAndClose();
-        InventoryInstances.searchByTitle(createdRecordIDs[0]);
-        InventoryInstances.selectInstance();
-        cy.wait(1500);
-        InventoryInstance.editMarcBibliographicRecord();
-        InventoryInstance.verifyAndClickLinkIconByIndex(65);
-        InventoryInstance.verifySelectMarcAuthorityModal();
-        MarcAuthorities.switchToSearch();
-        InventoryInstance.searchResults(marcFiles[1].authorityHeading);
-        MarcAuthorities.checkFieldAndContentExistence(
-          testData.tag010,
-          `$a ${marcFiles[1].authority010FieldValue}`,
-        );
-        InventoryInstance.clickLinkButton();
-        QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(65, testData.tag700);
-        QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.checkAfterSaveAndClose();
-      });
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
+    before('Importing data, linking Bib fields', () => {
+      cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
+        testData.userProperties = createdUserProperties;
+        marcFiles.forEach((marcFile) => {
+          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
+            () => {
+              DataImport.verifyUploadState();
+              DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+              JobProfiles.search(marcFile.jobProfileToRun);
+              JobProfiles.runImportFile();
+              Logs.waitFileIsImported(marcFile.fileName);
+              Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+              Logs.openFileDetails(marcFile.fileName);
+              for (let i = 0; i < marcFile.numberOfRecords; i++) {
+                Logs.getCreatedItemsID(i).then((link) => {
+                  createdRecordIDs.push(link.split('/')[5]);
+                });
+              }
+            },
+          );
+        });
+        // linking fields in MARC Bib records
+        cy.visit(TopMenu.inventoryPath).then(() => {
+          InventoryInstances.waitContentLoading();
+          InventoryInstances.searchByTitle(createdRecordIDs[1]);
+          InventoryInstances.selectInstance();
+          // here and below - wait for detail view to be fully loaded
+          cy.wait(1500);
+          InventoryInstance.editMarcBibliographicRecord();
+          InventoryInstance.verifyAndClickLinkIconByIndex(22);
+          InventoryInstance.verifySelectMarcAuthorityModal();
+          MarcAuthorities.switchToSearch();
+          InventoryInstance.searchResults(marcFiles[1].authorityHeading);
+          MarcAuthorities.checkFieldAndContentExistence(
+            testData.tag010,
+            `$a ${marcFiles[1].authority010FieldValue}`,
+          );
+          InventoryInstance.clickLinkButton();
+          QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(22, testData.tag700);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveAndClose();
+          InventoryInstances.searchByTitle(createdRecordIDs[0]);
+          InventoryInstances.selectInstance();
+          cy.wait(1500);
+          InventoryInstance.editMarcBibliographicRecord();
+          InventoryInstance.verifyAndClickLinkIconByIndex(65);
+          InventoryInstance.verifySelectMarcAuthorityModal();
+          MarcAuthorities.switchToSearch();
+          InventoryInstance.searchResults(marcFiles[1].authorityHeading);
+          MarcAuthorities.checkFieldAndContentExistence(
+            testData.tag010,
+            `$a ${marcFiles[1].authority010FieldValue}`,
+          );
+          InventoryInstance.clickLinkButton();
+          QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(65, testData.tag700);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveAndClose();
+        });
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
       });
     });
-  });
 
-  after('Deleting user, records', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(testData.userProperties.userId);
-    createdRecordIDs.forEach((id, index) => {
-      if (index > 1) MarcAuthority.deleteViaAPI(id);
-      else InventoryInstance.deleteInstanceViaApi(id);
-    });
-  });
-
-  it(
-    'C367974 Search for two "Instance" records by "Authority UUID" value of linked "MARC Authority" record (spitfire)',
-    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
-    () => {
-      InventoryInstances.verifyInstanceSearchOptions();
-      InventoryInstances.searchInstancesWithOption(
-        testData.authUUIDSearchOption,
-        createdRecordIDs[2],
-      );
-      testData.searchResultsC367974.forEach((expectedTitle) => {
-        InventorySearchAndFilter.verifyInstanceDisplayed(expectedTitle);
+    after('Deleting user, records', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(testData.userProperties.userId);
+      createdRecordIDs.forEach((id, index) => {
+        if (index > 1) MarcAuthority.deleteViaAPI(id);
+        else InventoryInstance.deleteInstanceViaApi(id);
       });
-      InventorySearchAndFilter.checkRowsCount(2);
-    },
-  );
+    });
+
+    it(
+      'C367974 Search for two "Instance" records by "Authority UUID" value of linked "MARC Authority" record (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+      () => {
+        InventoryInstances.verifyInstanceSearchOptions();
+        InventoryInstances.searchInstancesWithOption(
+          testData.authUUIDSearchOption,
+          createdRecordIDs[2],
+        );
+        testData.searchResultsC367974.forEach((expectedTitle) => {
+          InventorySearchAndFilter.verifyInstanceDisplayed(expectedTitle);
+        });
+        InventorySearchAndFilter.checkRowsCount(2);
+      },
+    );
+  });
 });

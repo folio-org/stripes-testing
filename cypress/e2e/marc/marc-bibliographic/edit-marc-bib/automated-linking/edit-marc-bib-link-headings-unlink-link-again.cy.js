@@ -63,6 +63,10 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     'n2008052404',
     'sh85009933',
   ];
+  const authority = {
+    searchOption: 'Identifier (all)',
+    searchInput: 'n83169267',
+  };
   const marcFiles = [
     {
       marc: 'marcBibFileForC388515.mrc',
@@ -140,7 +144,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.waitFileIsImported(marcFile.fileName);
           Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(marcFile.fileName);
           for (let i = 0; i < marcFile.numOfRecords; i++) {
@@ -197,7 +201,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       QuickMarcEditor.clickLinkIconInTagField(manuallyUnlinkedFields[0].rowIndex);
       InventoryInstance.verifySelectMarcAuthorityModal();
       MarcAuthorities.switchToSearch();
-      InventoryInstance.searchResults('n83169267');
+      InventoryInstance.searchResultsWithOption(authority.searchOption, authority.searchInput);
       MarcAuthoritiesSearch.selectAuthorityByIndex(0);
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.verifyTagFieldAfterLinking(

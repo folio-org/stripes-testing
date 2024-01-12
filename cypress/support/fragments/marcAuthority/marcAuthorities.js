@@ -27,8 +27,11 @@ import {
   ValueChipRoot,
   including,
   not,
+  or,
+  Tooltip,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
+import { MARC_AUTHORITY_SEARCH_OPTIONS, MARC_AUTHORITY_BROWSE_OPTIONS } from '../../constants';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -36,11 +39,13 @@ const authoritiesList = rootSection.find(MultiColumnList({ id: 'authority-result
 const filtersSection = Section({ id: 'pane-authorities-filters' });
 const marcViewSectionContent = PaneContent({ id: 'marc-view-pane-content' });
 const searchInput = SearchField({ id: 'textarea-authorities-search' });
+const searchResults = PaneContent({ id: 'authority-search-results-pane-content' });
 const searchButton = Button({ id: 'submit-authorities-search' });
 const browseSearchAndFilterInput = Select('Search field index');
 const marcViewSection = Section({ id: 'marc-view-pane' });
 const editorSection = Section({ id: 'quick-marc-editor-pane' });
 const typeOfHeadingSelect = MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' });
+const findAuthorityModal = Modal({ id: 'find-authority-modal' });
 
 // actions dropdown window
 const authorityActionsDropDown = DropdownMenu();
@@ -59,8 +64,10 @@ const resetButton = Button('Reset all');
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
 const headingTypeAccordion = Accordion('Type of heading');
 const nextButton = Button({ id: 'authority-result-list-next-paging-button' });
+const previousButton = Button({ id: 'authority-result-list-prev-paging-button' });
 const searchNav = Button({ id: 'segment-navigation-search' });
 const buttonLink = Button('Link');
+const linkIconButton = Button({ ariaLabel: 'Link' });
 const buttonAdvancedSearch = Button('Advanced search');
 const modalAdvancedSearch = Modal('Advanced search');
 const buttonSearchInAdvancedModal = Button({ ariaLabel: 'Search' });
@@ -206,7 +213,49 @@ export default {
   },
 
   verifyNumberOfTitles(columnIndex, linkValue) {
-    cy.expect(MultiColumnListCell({ columnIndex, content: linkValue }).find(Link()).exists());
+    cy.expect(
+      MultiColumnListRow({ indexRow: 'row-0' })
+        .find(MultiColumnListCell({ columnIndex, content: linkValue }))
+        .find(Link())
+        .exists(),
+    );
+  },
+
+  verifyNumberOfTitlesForRowWithValue(value, itemCount) {
+    cy.expect(
+      MultiColumnListRow({
+        isContainer: true,
+        content: including(value),
+      })
+        .find(MultiColumnListCell({ column: 'Number of titles' }))
+        .has({ content: itemCount.toString() }),
+    );
+  },
+
+  verifyEmptyNumberOfTitlesForRowWithValue(value) {
+    cy.expect(
+      MultiColumnListRow({
+        isContainer: true,
+        content: including(value),
+      })
+        .find(MultiColumnListCell({ column: 'Number of titles' }))
+        .has({ content: '' }),
+    );
+  },
+
+  clickOnNumberOfTitlesForRowWithValue(value, itemCount) {
+    cy.wrap(
+      MultiColumnListRow({
+        isContainer: true,
+        content: including(value),
+      })
+        .find(MultiColumnListCell({ column: 'Number of titles', content: itemCount.toString() }))
+        .find(Link())
+        .href(),
+    ).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
   },
 
   verifyFirstValueSaveSuccess(successMsg, txt) {
@@ -280,7 +329,7 @@ export default {
     cy.do(searchButton.click());
     cy.expect(
       MultiColumnListRow({ index: 0 })
-        .find(Button({ text: including('Beethoven, Ludwig van (no 010)') }))
+        .find(Button({ text: including(value) }))
         .exists(),
     );
     cy.expect(marcViewSection.exists());
@@ -317,6 +366,10 @@ export default {
       MultiColumnListCell({ columnIndex: 1, content: authorized }).exists(),
       MultiColumnListCell({ columnIndex: 1, content: reference }).exists(),
     ]);
+  },
+
+  checkAuthorizedColumn(authorized) {
+    cy.expect([MultiColumnListCell({ columnIndex: 1, content: authorized }).exists()]);
   },
 
   checkAfterSearch(type, record) {
@@ -366,6 +419,10 @@ export default {
     cy.do(buttonLink.click());
   },
 
+  clickLinkIcon() {
+    cy.do(searchResults.find(linkIconButton).click());
+  },
+
   verifyLinkButtonExistOnMarcViewPane(isExist = true) {
     if (isExist) {
       cy.expect(marcViewSection.find(buttonLink).exists());
@@ -380,6 +437,14 @@ export default {
       marcViewSectionContent.has({ text: including(tag) }),
       marcViewSectionContent.has({ text: including(value) }),
     ]);
+  },
+
+  verifyViewPaneContent(value) {
+    cy.expect([marcViewSection.exists(), marcViewSectionContent.has({ text: including(value) })]);
+  },
+
+  getViewPaneContent() {
+    cy.wrap(marcViewSectionContent.text()).as('viewAuthorityPaneContent');
   },
 
   check010FieldAbsence: () => {
@@ -465,8 +530,12 @@ export default {
     cy.do(Checkbox(value).click());
   },
 
-  downloadSelectedRecordWithRowIdx(checkBoxNumber = 1) {
-    cy.get(`div[class^="mclRow--"]:nth-child(${checkBoxNumber}) input[type="checkbox"]`).click();
+  downloadSelectedRecordWithRowIdx(checkBoxNumber = 0) {
+    cy.do(
+      MultiColumnListRow({ index: checkBoxNumber })
+        .find(Checkbox({ ariaLabel: 'Select Authority record' }))
+        .click(),
+    );
     cy.do([actionsButton.click(), exportSelectedRecords.click()]);
   },
 
@@ -521,10 +590,11 @@ export default {
     cy.expect(modalAdvancedSearch.exists());
   },
 
-  fillAdvancedSearchField(rowIndex, value, searchOption, booleanOption) {
+  fillAdvancedSearchField(rowIndex, value, searchOption, booleanOption, matchOption) {
     cy.do(AdvancedSearchRow({ index: rowIndex }).fillQuery(value));
     cy.do(AdvancedSearchRow({ index: rowIndex }).selectSearchOption(rowIndex, searchOption));
     if (booleanOption) cy.do(AdvancedSearchRow({ index: rowIndex }).selectBoolean(rowIndex, booleanOption));
+    if (matchOption) cy.do(AdvancedSearchRow({ index: rowIndex }).selectMatchOption(rowIndex, matchOption));
   },
 
   clickSearchButton() {
@@ -543,7 +613,13 @@ export default {
     cy.expect(modalAdvancedSearch.absent());
   },
 
-  checkAdvancedSearchModalFields: (row, value, searchOption, boolean) => {
+  checkAdvancedSearchModalFields: (
+    row,
+    value,
+    searchOption,
+    boolean,
+    matchOption = 'Contains all',
+  ) => {
     cy.expect([
       modalAdvancedSearch.exists(),
       AdvancedSearchRow({ index: 0 }).has({ text: including('Search for') }),
@@ -554,6 +630,9 @@ export default {
       AdvancedSearchRow({ index: row })
         .find(Select({ label: 'Search options*' }))
         .has({ content: including(searchOption) }),
+      AdvancedSearchRow({ index: row })
+        .find(Select({ label: 'Match option*' }))
+        .has({ content: including(matchOption) }),
       modalAdvancedSearch.find(buttonSearchInAdvancedModal).exists(),
       modalAdvancedSearch.find(buttonCancelInAdvancedModal).exists(),
     ]);
@@ -727,7 +806,11 @@ export default {
       );
     });
   },
-
+  verifyNoHeadingsUpdatesDataViaAPI(startDate, endDate) {
+    cy.getAuthorityHeadingsUpdatesViaAPI(startDate, endDate).then((updatesData) => {
+      cy.expect(updatesData.length).to.be.equal(0);
+    });
+  },
   verifyHeadingsUpdateExistsViaAPI(startDate, endDate, newHeading, matchesCounter = 1) {
     cy.getAuthorityHeadingsUpdatesViaAPI(startDate, endDate).then((updatesData) => {
       const selectedUpdate = updatesData.filter((update) => update.headingNew === newHeading);
@@ -788,6 +871,7 @@ export default {
       );
     }
   },
+
   verifyTextOfPaneHeaderMarcAuthority(text) {
     cy.expect(
       PaneHeader('MARC authority')
@@ -942,17 +1026,26 @@ export default {
     cy.expect(sourceFileAccordion.find(MultiSelectOption(including(option))).has({ totalRecords }));
   },
 
-  verifyColumnValuesOnlyExist(column, expectedValues = []) {
-    const actualValues = [];
+  verifyColumnValuesOnlyExist({ column, expectedValues, browsePane = false } = {}) {
+    let actualValues = [];
+
     cy.then(() => authoritiesList.rowCount())
       .then((rowsCount) => {
-        for (let i = 0; i < rowsCount; i++) {
-          cy.then(() => authoritiesList.find(MultiColumnListCell({ column, row: i })).content()).then((content) => {
-            actualValues.push(content);
-          });
-        }
+        Array.from({ length: rowsCount }).forEach((_, index) => {
+          authoritiesList
+            .find(MultiColumnListCell({ column, row: index }))
+            .content()
+            .then((content) => {
+              actualValues.push(content);
+            });
+        });
       })
       .then(() => {
+        if (browsePane && actualValues.includes('')) {
+          actualValues = actualValues
+            .slice(0, actualValues.indexOf(''))
+            .concat(actualValues.slice(actualValues.indexOf('') + 1));
+        }
         const isOnlyValuesExist = actualValues.every((value) => expectedValues.includes(value));
         expect(isOnlyValuesExist).to.equal(true);
       });
@@ -1044,5 +1137,130 @@ export default {
     } else {
       marcViewSection.absent();
     }
+  },
+
+  checkSearchInputInFocus() {
+    cy.expect(TextArea({ id: 'textarea-authorities-search' }).has({ focused: true }));
+  },
+
+  checkResetAllButtonDisabled(isDisabled = true) {
+    cy.expect(resetButton.is({ disabled: isDisabled }));
+  },
+
+  verifyAllAuthorizedAreBold() {
+    const actualValues = [];
+
+    cy.then(() => authoritiesList.rowCount())
+      .then((rowsCount) => {
+        for (let i = 0; i < rowsCount; i++) {
+          actualValues[i] = {};
+
+          cy.wrap(i).then((index) => {
+            const cellContent = MultiColumnListCell({ column: 'Authorized/Reference', row: index });
+
+            cy.wrap(authoritiesList.find(cellContent).content()).then((content) => {
+              actualValues[index].content = content;
+            });
+
+            cy.wrap(authoritiesList.find(cellContent).boldText()).then((bold) => {
+              actualValues[index].bold = bold;
+            });
+          });
+        }
+      })
+      .then(() => {
+        const isValuesBold = actualValues
+          .filter((obj) => obj.content === 'Authorized')
+          .every((obj) => obj.bold === 'Authorized');
+        expect(isValuesBold).to.equal(true);
+      });
+  },
+
+  verifyAllAuthorizedHaveLinks() {
+    const actualValues = [];
+
+    cy.then(() => authoritiesList.rowCount())
+      .then((rowsCount) => {
+        Array.from({ length: rowsCount }).forEach((_, index) => {
+          actualValues[index] = {};
+
+          const cellAuthorizedContent = MultiColumnListCell({
+            column: 'Authorized/Reference',
+            row: index,
+          });
+          const cellLinkContent = MultiColumnListCell({ column: 'Link', row: index });
+
+          cy.wrap(authoritiesList.find(cellAuthorizedContent).content()).then((content) => {
+            actualValues[index].content = content;
+          });
+
+          cy.wrap(authoritiesList.find(cellLinkContent).innerHTML()).then((text) => {
+            actualValues[index].hasLink = text.includes('button');
+          });
+        });
+      })
+      .then(() => {
+        const hasLinkForAuthorized = actualValues
+          .filter((obj) => obj.content === 'Authorized')
+          .every((obj) => obj.hasLink);
+
+        const hasNoLinkForOthers = actualValues
+          .filter((obj) => obj.content !== 'Authorized')
+          .every((obj) => !obj.hasLink);
+
+        expect(hasLinkForAuthorized).to.equal(true);
+        expect(hasNoLinkForOthers).to.equal(true);
+      });
+  },
+
+  verifyPagination() {
+    cy.expect([
+      previousButton.has({ disabled: or(true, false) }),
+      nextButton.has({ disabled: or(true, false) }),
+    ]);
+    cy.then(() => authoritiesList.rowCount()).then((rowsCount) => {
+      expect(rowsCount).to.lessThan(101);
+    });
+  },
+
+  closeFindAuthorityModal() {
+    cy.do(findAuthorityModal.find(buttonClose).click());
+  },
+
+  checkLinkButtonToolTipText(text) {
+    cy.do(
+      marcViewSection
+        .find(Button({ ariaLabelledby: 'marc-authority-link-tooltip-text' }))
+        .hoverMouse(),
+    );
+    cy.expect(Tooltip().has({ text }));
+  },
+
+  selectRecordByIndex(rowIndex) {
+    cy.do(MultiColumnListCell({ row: rowIndex, columnIndex: 2 }).find(Button()).click());
+  },
+
+  checkRowByContent: (rowContent) => cy.expect(authoritiesList.find(MultiColumnListRow(including(rowContent))).exists()),
+
+  checkRowAbsentByContent: (rowContent) => cy.expect(authoritiesList.find(MultiColumnListRow(including(rowContent))).absent()),
+
+  selectSearchOptionInDropdown(searchOption) {
+    cy.do(selectField.choose(searchOption));
+  },
+
+  checkSearchOptionsInDropdownInOrder() {
+    cy.wrap(selectField.allOptionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(MARC_AUTHORITY_SEARCH_OPTIONS));
+    });
+  },
+
+  checkBrowseOptionsInDropdownInOrder() {
+    cy.wrap(selectField.optionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(MARC_AUTHORITY_BROWSE_OPTIONS));
+    });
+  },
+
+  checkSelectOptionFieldContent(option) {
+    cy.expect(selectField.has({ checkedOptionText: option }));
   },
 };

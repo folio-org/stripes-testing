@@ -6,7 +6,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   let user;
   const defaultSearchOption = 'Keyword (title, contributor, identifier, HRID, UUID)';
 
@@ -126,7 +126,7 @@ describe('Inventory', () => {
       // * "Effective location (item)" accordion appears below the search field
       InventorySearchAndFilter.selectBrowseCallNumbers();
       InventorySearchAndFilter.verifySearchButtonDisabled();
-      InventorySearchAndFilter.verifyResetAllButtonDisabled();
+      InventorySearchAndFilter.verifyResetAllButtonDisabled(true);
 
       // #15 Enter any existing call number in the search field, for example: "DE3"  => Click "Search" button
       // Search results appear in "Browse inventory" pane

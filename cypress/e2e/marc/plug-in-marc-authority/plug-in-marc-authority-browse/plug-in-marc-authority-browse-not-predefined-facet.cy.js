@@ -13,14 +13,16 @@ import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAut
 import getRandomStringCode from '../../../../support/utils/genereteTextCode';
 
 describe('plug-in MARC authority | Browse', () => {
+  const randomCode = getRandomStringCode(4);
   const testData = {
     authoritySourceFile: {
       id: uuid(),
-      name: `Test_source_browse_C365110${getRandomPostfix()}`,
-      codes: [getRandomStringCode(4)],
-      type: 'Personal Name',
-      baseUrl: `id.loc.gov/authorities/personalname/test${getRandomPostfix()}`,
-      source: 'local',
+      name: `Source option created by USER 6${getRandomPostfix()}`,
+      code: randomCode,
+      type: 'names',
+      baseUrl: `id.loc.gov/authorities/pv6/${getRandomPostfix()}`,
+      selectable: false,
+      hridManagement: { startNumber: 112 },
     },
   };
   const createdAuthorityIDs = [];
@@ -66,6 +68,18 @@ describe('plug-in MARC authority | Browse', () => {
   ];
 
   before('Create test data', () => {
+    cy.getAdminToken().then(() => {
+      MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C365110"' }).then(
+        (records) => {
+          records.forEach((record) => {
+            if (record.authRefType === 'Authorized') {
+              MarcAuthority.deleteViaAPI(record.id);
+            }
+          });
+        },
+      );
+    });
+
     cy.createTempUser([
       Permissions.moduleDataImportEnabled.gui,
       Permissions.inventoryAll.gui,
@@ -83,7 +97,7 @@ describe('plug-in MARC authority | Browse', () => {
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(marcFile.fileName);
+            Logs.waitFileIsImported(marcFile.fileName);
             Logs.checkStatusOfJobProfile('Completed');
             Logs.openFileDetails(marcFile.fileName);
             for (let i = 0; i < marcFile.numOfRecords; i++) {
@@ -123,7 +137,7 @@ describe('plug-in MARC authority | Browse', () => {
           marcFileToEdit,
           marcFiles[2].marc,
           ['PLKV'],
-          testData.authoritySourceFile.codes,
+          [testData.authoritySourceFile.code],
         );
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(marcFiles[2].marc, marcFiles[2].fileName);
@@ -148,7 +162,7 @@ describe('plug-in MARC authority | Browse', () => {
       // #9 - #10 Select facet option which you created at step 1 (e.g.: "Test_source_browse") from "Authority source" dropdown.
       MarcAuthorities.chooseAuthoritySourceOption(testData.authoritySourceFile.name);
       // #11 Verify that the prefix value from "010 $a" field matched to selected "Authority source" facet option which you created by API request at step 1.
-      MarcAuthority.contains(testData.authoritySourceFile.codes[0]);
+      MarcAuthority.contains(testData.authoritySourceFile.code);
 
       // #12 Select "LC Name Authority file (LCNAF)" facet option from pre-defined list:
       MarcAuthorities.chooseAuthoritySourceOption('LC Name Authority file (LCNAF)');

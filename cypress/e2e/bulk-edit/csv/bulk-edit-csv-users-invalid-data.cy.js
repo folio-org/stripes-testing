@@ -15,7 +15,7 @@ const errorsFromCommittingFileName = `*-Committing-changes-Errors-${userUUIDsFil
 const patronGroup = {
   name: getTestEntityValue('staff'),
 };
-const invalidPatronGroup = 'invalidPatronGroup';
+const invalidPatronGroup = `invalidPatronGroup${getRandomPostfix()}`;
 
 describe('bulk-edit', () => {
   describe('csv approach', () => {
@@ -47,6 +47,7 @@ describe('bulk-edit', () => {
       });
     });
 
+    // TODO: implement the steps fully
     it(
       'C353943 Negative: Verify Local updating records with invalid data (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },

@@ -121,6 +121,6 @@ describe('Create a new list', () => {
       Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
         Lists.checkResultSearch(listData.status[1], rowIndex);
       });
-    },
+    }
   );
 });

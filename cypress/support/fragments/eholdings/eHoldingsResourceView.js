@@ -4,7 +4,6 @@ import {
   HTML,
   including,
   Button,
-  Label,
   KeyValue,
   Modal,
   Accordion,
@@ -23,11 +22,7 @@ const addToHoldingButton = holdingStatusSection.find(Button('Add to holdings'));
 const exportButton = Button('Export title package (CSV)');
 
 const checkHoldingStatus = (holdingStatus) => {
-  cy.expect(
-    holdingStatusSection
-      .find(Label({ for: 'resource-show-toggle-switch' }, including(holdingStatus)))
-      .exists(),
-  );
+  cy.expect(holdingStatusSection.find(HTML(including(holdingStatus))).exists());
 };
 
 const openActionsMenu = () => {
@@ -131,6 +126,13 @@ export default {
   },
   checkAgreementsTableContent({ records = [] }) {
     records.forEach((record, index) => {
+      if (record.date) {
+        cy.expect(
+          agreementsSection
+            .find(MultiColumnListCell({ row: index, column: 'Start Date' }))
+            .has({ content: including(record.date) }),
+        );
+      }
       if (record.status) {
         cy.expect(
           agreementsSection

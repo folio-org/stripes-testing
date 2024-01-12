@@ -58,7 +58,7 @@ describe('Title Level Request', () => {
         Permissions.uiRequestsCreate.gui,
         Permissions.uiRequestsView.gui,
         Permissions.uiRequestsEdit.gui,
-        Permissions.requestsAll.gui,
+        Permissions.uiRequestsAll.gui,
         Permissions.checkinAll.gui,
       ],
       patronGroup.name,

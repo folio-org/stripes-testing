@@ -14,11 +14,15 @@ import FieldMappingProfileEdit from './fieldMappingProfileEdit';
 import NewFieldMappingProfile from './newFieldMappingProfile';
 import FieldMappingProfileView from './fieldMappingProfileView';
 import Callout from '../../../../../interactors/callout';
+import ArrayUtils from '../../../utils/arrays';
 
 const actionsButton = Button('Actions');
 const searchButton = Button('Search');
 const resultsPane = Pane({ id: 'pane-results' });
 const searchField = TextField({ id: 'input-search-mapping-profiles-field' });
+const deleteButton = Button('Delete');
+const editButton = Button('Edit');
+const dublicateButton = Button('Duplicate');
 
 const openNewMappingProfileForm = () => {
   cy.do([actionsButton.click(), Button('New field mapping profile').click()]);
@@ -58,6 +62,10 @@ export default {
     NewFieldMappingProfile.fillMappingProfile(mappingProfile);
     FieldMappingProfileView.closeViewMode(mappingProfile.name);
     cy.expect(actionsButton.exists());
+  },
+  verifyActionMenu: () => {
+    cy.do([Pane({ id: 'full-screen-view' }).find(actionsButton).click()]);
+    cy.expect([editButton.exists(), deleteButton.exists(), dublicateButton.exists()]);
   },
   createInvoiceMappingProfile: (mappingProfile, defaultProfile) => {
     search(defaultProfile);
@@ -136,5 +144,20 @@ export default {
         ),
       }).exists(),
     );
+  },
+
+  verifyProfilesIsSortedInAlphabeticalOrder: () => {
+    const cells = [];
+    cy.get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .each(($row) => {
+        cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
+          .invoke('text')
+          .then((cellValue) => {
+            cells.push(cellValue);
+            cy.log(cellValue);
+          });
+      })
+      .then(() => cy.expect(ArrayUtils.checkIsSortedAlphabetically({ array: cells })).to.equal(true));
   },
 };

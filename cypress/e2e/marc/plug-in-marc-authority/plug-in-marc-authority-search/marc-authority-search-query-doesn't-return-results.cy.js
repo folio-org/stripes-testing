@@ -27,7 +27,7 @@ describe('MARC -> plug-in MARC authority | Search', () => {
       InventoryInstances.searchByTitle('Crossfire');
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
-      QuickMarcEditor.clickLinkIconInTagField(12);
+      QuickMarcEditor.clickLinkIconInTagField(9);
       MarcAuthorities.switchToSearch();
     });
   });

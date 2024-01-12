@@ -7,6 +7,12 @@ import {
   PROFILE_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -17,13 +23,12 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
@@ -221,7 +226,7 @@ describe('data-import', () => {
     };
 
     before('create test data', () => {
-      cy.loginAsAdmin();
+      cy.getAdminToken();
       testData.jobProfileForCreate = jobProfileForCreate;
 
       testData.forEach((specialPair) => {
@@ -232,7 +237,7 @@ describe('data-import', () => {
           cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
         });
       });
-      SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate).then(
+      SettingsJobProfiles.createJobProfileViaApi(testData.jobProfileForCreate).then(
         (bodyWithjobProfile) => {
           testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
         },
@@ -246,6 +251,7 @@ describe('data-import', () => {
         [uniqSubject],
       );
 
+      cy.loginAsAdmin();
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
@@ -254,7 +260,7 @@ describe('data-import', () => {
       JobProfiles.waitFileIsUploaded();
       JobProfiles.search(testData.jobProfileForCreate.profile.name);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(marcFileForCreate);
+      Logs.waitFileIsImported(marcFileForCreate);
       Logs.openFileDetails(marcFileForCreate);
       [
         FileDetails.columnNameInResultList.srsMarc,
@@ -269,17 +275,31 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
-        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-        ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
-        ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
-        ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
-        ActionProfiles.deleteActionProfile(itemActionProfileForUpdate.name);
-        FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
-        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
-        FieldMappingProfileView.deleteViaApi(itemMappingProfileForCreate.profile.name);
-        FieldMappingProfileView.deleteViaApi(itemMappingProfileForUpdate.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(
+          instanceActionProfileForCreate.profile.name,
+        );
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(
+          holdingsActionProfileForCreate.profile.name,
+        );
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(
+          itemActionProfileForCreate.profile.name,
+        );
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(itemActionProfileForUpdate.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          instanceMappingProfileForCreate.profile.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          holdingsMappingProfileForCreate.profile.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          itemMappingProfileForCreate.profile.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          itemMappingProfileForUpdate.name,
+        );
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (initialInstance) => {
             cy.deleteItemViaApi(initialInstance.items[0].id);
@@ -317,6 +337,7 @@ describe('data-import', () => {
 
             // download exported marc file
             cy.visit(TopMenu.dataExportPath);
+            cy.getAdminToken();
             ExportFile.uploadFile(nameForCSVFile);
             ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
             ExportFile.downloadExportedMarcFile(nameMarcFileForUpload);
@@ -366,7 +387,7 @@ describe('data-import', () => {
           JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfileForUpdate.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
+          Logs.waitFileIsImported(nameMarcFileForUpdate);
           Logs.openFileDetails(nameMarcFileForUpdate);
           FileDetails.checkStatusInColumn(
             RECORD_STATUSES.UPDATED,

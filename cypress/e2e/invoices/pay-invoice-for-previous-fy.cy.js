@@ -85,13 +85,13 @@ describe('Invoices', () => {
           ...fiscalYears.prev,
           _version: 1,
           periodStart: new Date(date.getFullYear(), 0, 1),
-          periodEnd: new Date(date.getFullYear(), date.getMonth(), date.getDay() - 2),
+          periodEnd: new Date(date.getFullYear(), date.getMonth(), date.getDate() - 2),
         });
 
         FiscalYears.updateFiscalYearViaApi({
           ...fiscalYears.next,
           _version: 1,
-          periodStart: new Date(date.getFullYear(), date.getMonth(), date.getDay() - 1),
+          periodStart: new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1),
           periodEnd: new Date(date.getFullYear() + 1, 11, 31),
         });
 
@@ -165,7 +165,7 @@ describe('Invoices', () => {
     });
 
     it(
-      'C388520 Approve and pay invoice created in current FY for previous FY when related order line was created in previous FY (thunderjet) (TaaS)',
+      'C388520: Approve and pay invoice created in current FY for previous FY when related order line was created in previous FY (thunderjet) (TaaS)',
       { tags: ['criticalPath', 'thunderjet', 'nonParallel'] },
       () => {
         // Click on "PO number" link on "Orders" pane

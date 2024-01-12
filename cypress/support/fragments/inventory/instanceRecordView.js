@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, not } from '@interactors/html';
 import {
   KeyValue,
   MultiColumnList,
@@ -19,7 +19,7 @@ import InventoryEditMarcRecord from './inventoryEditMarcRecord';
 
 const rootSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
-const marcViewSection = Section({ id: 'marc-view-pane' });
+const marcViewSection = Pane({ id: 'marc-view-pane' });
 const catalogedDateKeyValue = KeyValue('Cataloged date');
 const sourceKeyValue = KeyValue('Source');
 const instanceStatusTermKeyValue = KeyValue('Instance status term');
@@ -478,6 +478,22 @@ export default {
             content: 'Linked to MARC authority' + value,
           }),
         )
+        .exists(),
+    );
+  },
+
+  verifyContributorNameWithoutMarcAppIcon: (row, value) => {
+    cy.expect(
+      Accordion('Contributor')
+        .find(MultiColumnListCell({ row, content: including(value) }))
+        .has({ content: not(including('Linked to MARC authority')) }),
+    );
+  },
+
+  verifyInstanceAdministrativeNote: (note) => {
+    cy.expect(
+      MultiColumnList({ id: 'administrative-note-list' })
+        .find(HTML(including(note)))
         .exists(),
     );
   },

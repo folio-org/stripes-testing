@@ -14,22 +14,21 @@ const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${userBarcodesFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
-describe('export-manager', () => {
+describe('Export Manager', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.bulkEditCsvView.gui,
       permissions.bulkEditCsvEdit.gui,
       permissions.uiUserEdit.gui,
       permissions.exportManagerAll.gui,
-    ])
-      .then((userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-        FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
       });
+      FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+    });
   });
 
   after('delete test data', () => {

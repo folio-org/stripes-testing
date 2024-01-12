@@ -101,7 +101,7 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
   const marcFieldProtectionRules = [];
   const createdAuthorityID = [];
 
-  before('', () => {
+  before('create test data', () => {
     cy.createTempUser([
       Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -117,7 +117,7 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFile.fileName);
+        Logs.waitFileIsImported(marcFile.fileName);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(marcFile.fileName);
         Logs.getCreatedItemsID().then((link) => {
@@ -127,14 +127,14 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
     });
   });
 
-  beforeEach('', () => {
+  beforeEach('login', () => {
     cy.login(testData.userProperties.username, testData.userProperties.password, {
       path: TopMenu.marcAuthorities,
       waiter: MarcAuthorities.waitLoading,
     });
   });
 
-  after('', () => {
+  after('delete test data', () => {
     cy.getAdminToken();
     createdAuthorityID.forEach((id) => {
       MarcAuthority.deleteViaAPI(id);

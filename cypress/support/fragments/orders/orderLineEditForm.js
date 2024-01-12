@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   RepeatableFieldItem,
   Section,
   Select,
@@ -13,6 +14,7 @@ import {
 } from '../../../../interactors';
 import OrderStates from './orderStates';
 import SelectInstanceModal from './modals/selectInstanceModal';
+import SelectLocationModal from './modals/selectLocationModal';
 import InteractorsTools from '../../utils/interactorsTools';
 
 const orderLineEditFormRoot = Section({ id: 'pane-poLineForm' });
@@ -35,12 +37,16 @@ const edition = TextField({ name: 'edition' });
 const itemDetailsFields = {
   title: itemDetailsSection.find(TextField({ name: 'titleOrPackage' })),
   receivingNote: itemDetailsSection.find(TextArea({ name: 'details.receivingNote' })),
+  subscriptionFrom: itemDetailsSection.find(TextField({ name: 'details.subscriptionFrom' })),
+  subscriptionTo: itemDetailsSection.find(TextField({ name: 'details.subscriptionTo' })),
 };
 
 const orderLineFields = {
   orderFormat: orderLineDetailsSection.find(Select({ name: 'orderFormat' })),
   receiptStatus: orderLineDetailsSection.find(Select({ name: 'receiptStatus' })),
   paymentStatus: orderLineDetailsSection.find(Select({ name: 'paymentStatus' })),
+  claimingActive: orderLineDetailsSection.find(Checkbox({ name: 'claimingActive' })),
+  claimingInterval: orderLineDetailsSection.find(TextField({ name: 'claimingInterval' })),
 };
 
 const vendorDetailsFields = {
@@ -82,11 +88,26 @@ export default {
       cy.expect(section[label].has(conditions));
     });
   },
+  checkItemDetailsSection(fields = []) {
+    this.checkFieldsConditions({ fields, section: itemDetailsFields });
+  },
+  checkOrderLineDetailsSection(fields = []) {
+    this.checkFieldsConditions({ fields, section: orderLineFields });
+  },
   checkOngoingOrderInformationSection(fields = []) {
     this.checkFieldsConditions({ fields, section: ongoingInformationFields });
   },
   checkNotAvailableInstanceData(fields = []) {
     this.checkFieldsConditions({ fields, section: disabledButtons });
+  },
+  checkLocationDetailsSection({ rows = [] } = {}) {
+    if (!rows.length) {
+      cy.expect([
+        locationSection.find(Selection({ name: 'locations[0].locationId' })).exists(),
+        locationSection.find(TextField({ name: 'locations[0].quantityPhysical' })).exists(),
+        locationSection.find(TextField({ name: 'locations[0].quantityElectronic' })).exists(),
+      ]);
+    }
   },
   fillOrderLineFields(orderLine) {
     if (orderLine.itemDetails) {
@@ -121,6 +142,13 @@ export default {
 
     return SelectInstanceModal;
   },
+  clickLocationLookUpButton() {
+    cy.do(locationSection.find(Button('Location look-up')).click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.verifyModalView();
+
+    return SelectLocationModal;
+  },
   fillItemDetailsTitle({ instanceTitle }) {
     this.clickTitleLookUpButton();
     SelectInstanceModal.searchByName(instanceTitle);
@@ -138,6 +166,13 @@ export default {
     }
     if (poLineDetails.orderFormat) {
       cy.do(orderLineFields.orderFormat.choose(poLineDetails.orderFormat));
+    }
+    if (poLineDetails.claimingActive) {
+      cy.do(orderLineFields.claimingActive.click());
+    }
+    if (poLineDetails.claimingInterval) {
+      cy.do(orderLineFields.claimingInterval.fillIn(poLineDetails.claimingInterval));
+      cy.do(orderLineFields.claimingInterval.has({ value: poLineDetails.claimingInterval }));
     }
   },
   fillOngoingOrderInformation({ renewalNote }) {
@@ -164,6 +199,18 @@ export default {
       });
     });
   },
+  searchLocationByName({ name, open = true, checkOptions = true }) {
+    this.filterDropDownValue({ label: 'Name (code)', option: name, open });
+
+    if (checkOptions) {
+      cy.then(() => SelectionList().optionList()).then((options) => {
+        options.forEach((option) => cy.expect(option).to.include(name));
+      });
+    }
+  },
+  clickAddLocationButton() {
+    cy.do(Button('Add location').click());
+  },
   clickAddFundDistributionButton() {
     cy.do(Button('Add fund distribution').click());
   },
@@ -184,6 +231,17 @@ export default {
         .click(),
     );
     cy.wait(2000);
+  },
+  filterDropDownValue({ label, option, open = true, index = 0 } = {}) {
+    if (open) {
+      cy.do(
+        RepeatableFieldItem({ index })
+          .find(Selection(including(label)))
+          .open(),
+      );
+    }
+
+    cy.do(SelectionList().filter(option));
   },
   selectDropDownValue(label, option, index = 0) {
     cy.do([
@@ -259,5 +317,8 @@ export default {
 
     // wait for changes to be applied
     cy.wait(2000);
+  },
+  verifyOrderLineEditFormClosed() {
+    cy.expect(orderLineEditFormRoot.absent());
   },
 };

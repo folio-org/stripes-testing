@@ -13,6 +13,12 @@ import {
   PROFILE_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
@@ -25,11 +31,10 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
@@ -323,6 +328,7 @@ describe('data-import', () => {
     };
 
     beforeEach('create test data', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
 
       const jobProfile = {
@@ -344,7 +350,7 @@ describe('data-import', () => {
           cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
         });
       });
-      SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate).then(
+      SettingsJobProfiles.createJobProfileViaApi(testData.jobProfileForCreate).then(
         (bodyWithjobProfile) => {
           testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
         },
@@ -354,23 +360,25 @@ describe('data-import', () => {
     afterEach('delete test data', () => {
       cy.getAdminToken().then(() => {
         // delete generated profiles
-        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         collectionOfMatchProfiles.forEach((profile) => {
-          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
         });
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
         });
-        JobProfiles.deleteJobProfile(jobProfileNameCreate);
-        ActionProfiles.deleteActionProfile(nameMarcBibActionProfile);
-        ActionProfiles.deleteActionProfile(nameInstanceActionProfile);
-        ActionProfiles.deleteActionProfile(nameHoldingsActionProfile);
-        ActionProfiles.deleteActionProfile(nameItemActionProfile);
-        FieldMappingProfileView.deleteViaApi(nameMarcBibMappingProfile);
-        FieldMappingProfileView.deleteViaApi(nameInstanceMappingProfile);
-        FieldMappingProfileView.deleteViaApi(nameHoldingsMappingProfile);
-        FieldMappingProfileView.deleteViaApi(nameItemMappingProfile);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileNameCreate);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(nameMarcBibActionProfile);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(nameInstanceActionProfile);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(nameHoldingsActionProfile);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(nameItemActionProfile);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(nameMarcBibMappingProfile);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(nameInstanceMappingProfile);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(nameHoldingsMappingProfile);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(nameItemMappingProfile);
         // delete created files in fixtures
         FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
         FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
@@ -431,7 +439,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(testData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
+        Logs.waitFileIsImported(nameMarcFileForImportCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForImportCreate);
         [
@@ -524,7 +532,7 @@ describe('data-import', () => {
         DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(nameMarcFileForImportUpdate);
+        Logs.waitFileIsImported(nameMarcFileForImportUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForImportUpdate);
         [

@@ -8,6 +8,12 @@ import {
   LOCATION_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -18,8 +24,8 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -176,10 +182,12 @@ describe('data-import', () => {
       cy.getAdminToken().then(() => {
         MarcFieldProtection.deleteViaApi(testData.protectedFieldId);
         InstanceStatusTypes.deleteViaApi(testData.instanceStatusTypeId);
-        JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
         collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
         });
         Users.deleteViaApi(user.userId);
         instanceHrids.forEach((hrid) => {
@@ -264,7 +272,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForCreate);
+        Logs.waitFileIsImported(fileNameForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreate);
         [
@@ -336,7 +344,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForUpdate);
+        Logs.waitFileIsImported(fileNameForUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdate);
         FileDetails.checkStatusInColumn(
@@ -354,12 +362,18 @@ describe('data-import', () => {
 
         cy.getAdminToken().then(() => {
           // delete profiles
-          JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-          MatchProfiles.deleteMatchProfile(collectionOfMatchProfiles[1].matchProfile.profileName);
-          MatchProfiles.deleteMatchProfile(collectionOfMatchProfiles[0].matchProfile.profileName);
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
+          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(
+            collectionOfMatchProfiles[1].matchProfile.profileName,
+          );
+          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(
+            collectionOfMatchProfiles[0].matchProfile.profileName,
+          );
           collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
-            ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-            FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+            SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+            SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+              profile.mappingProfile.name,
+            );
           });
         });
         // delete created files
@@ -425,7 +439,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForCreate);
+        Logs.waitFileIsImported(fileNameForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreate);
         [
@@ -487,7 +501,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForUpdate);
+        Logs.waitFileIsImported(fileNameForUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdate);
         [
@@ -507,11 +521,13 @@ describe('data-import', () => {
 
         cy.getAdminToken().then(() => {
           // delete profiles
-          JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
+          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
           collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
-            ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-            FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+            SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+            SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+              profile.mappingProfile.name,
+            );
           });
         });
         // delete created files
@@ -614,7 +630,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForCreate);
+        Logs.waitFileIsImported(fileNameForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreate);
         [
@@ -712,7 +728,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForUpdate);
+        Logs.waitFileIsImported(fileNameForUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdate);
         [
@@ -736,13 +752,15 @@ describe('data-import', () => {
 
         cy.getAdminToken().then(() => {
           // delete profiles
-          JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
           collectionOfMatchProfiles.forEach((profile) => {
-            MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+            SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
           });
           collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
-            ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-            FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+            SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+            SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+              profile.mappingProfile.name,
+            );
           });
         });
         // delete created files

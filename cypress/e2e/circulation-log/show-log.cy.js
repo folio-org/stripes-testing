@@ -1,9 +1,9 @@
 import { Pane } from '../../../interactors';
 import TopMenu from '../../support/fragments/topMenu';
 
-describe('circulation-log', () => {
+describe('Circulation log', () => {
   beforeEach('login', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
   });
 
   // TODO: think about redesign and moving checking inside another test

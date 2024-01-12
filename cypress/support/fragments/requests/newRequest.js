@@ -38,6 +38,7 @@ const selectRequestType = Select({ name: 'requestType' });
 const titleLevelRequest = Checkbox({ name: 'createTitleLevelRequest' });
 const selectItemPane = Pane({ id: 'items-dialog-instance-items-list' });
 const requestInfoSection = Section({ id: 'new-requester-info' });
+const itemInfoSection = Section({ id: 'new-item-info' });
 const title = 'Title';
 const tlRequest = 'Title level requests';
 const contributors = 'Contributor';
@@ -73,7 +74,7 @@ export default {
       cy.do(titleLevelRequest.click());
       cy.do(instanceHridInput.fillIn(newRequest.instanceHRID));
       cy.intercept('/inventory/instances?*').as('getLoans');
-      cy.do(Section({ id: 'new-item-info' }).find(Button('Enter')).click());
+      cy.do(itemInfoSection.find(Button('Enter')).click());
     } else {
       cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
       cy.intercept('/circulation/loans?*').as('getLoans');
@@ -166,7 +167,7 @@ export default {
   enterHridInfo(hrid) {
     cy.do(titleLevelRequest.click());
     cy.do(instanceHridInput.fillIn(hrid));
-    cy.do(Section({ id: 'new-item-info' }).find(Button('Enter')).click());
+    cy.do(itemInfoSection.find(Button('Enter')).click());
   },
 
   verifyErrorMessage(message) {
@@ -175,9 +176,7 @@ export default {
 
   verifyTitleLevelRequestsCheckbox(isChecked = false) {
     cy.expect(titleLevelRequest.exists());
-    if (isChecked) {
-      cy.expect(titleLevelRequest.has({ checked: true }));
-    } else cy.expect(titleLevelRequest.has({ checked: false }));
+    cy.expect(titleLevelRequest.has({ checked: isChecked }));
   },
 
   verifyErrorMessageForRequestTypeField: (errorMessage) => {
@@ -303,14 +302,14 @@ export default {
   checkRequestIsNotAllowedModal() {
     cy.expect(
       Modal('Request not allowed').has({
-        message: 'Not allowed to move title level page request to the same item',
+        message: 'This requester already has an open request for this item',
       }),
     );
   },
   checkRequestIsNotAllowedInstanceModal() {
     cy.expect(
       Modal('Request not allowed').has({
-        message: 'Not allowed to move title level page request to the same item',
+        message: 'This requester already has an open request for this instance',
       }),
     );
   },
@@ -333,6 +332,10 @@ export default {
       KeyValue('Item status').has({ value: itemStatus }),
     ]);
   },
+  checkTitleInformationSection(data) {
+    InteractorsTools.checkKeyValue(itemInfoSection, 'Title', data.instanceTitle);
+    InteractorsTools.checkKeyValue(itemInfoSection, 'Title level requests', data.titleLevelRequest);
+  },
   checkTLRRequestsFields(instanceHrid) {
     cy.expect([
       rootSection.exists(),
@@ -349,5 +352,9 @@ export default {
       cancelButton.has({ disabled: false, visible: true }),
       saveAndCloseButton.has({ disabled: true, visible: true }),
     ]);
+  },
+
+  openTitleLookUp() {
+    cy.do(rootSection.find(Button({ id: 'find-instance-trigger' })).click());
   },
 };

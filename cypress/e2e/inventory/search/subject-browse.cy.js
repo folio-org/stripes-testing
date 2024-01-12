@@ -31,7 +31,7 @@ describe('inventory', () => {
             JobProfiles.waitLoadingList();
             JobProfiles.search(jobProfileToRun);
             JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(fileName);
+            Logs.waitFileIsImported(fileName);
             Logs.checkStatusOfJobProfile('Completed');
             Logs.openFileDetails(fileName);
             for (let i = 0; i < 2; i++) {

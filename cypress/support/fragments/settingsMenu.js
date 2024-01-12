@@ -38,6 +38,7 @@ export default {
   urlRelationshipPath: 'settings/inventory/URLrelationship',
   instanceStatusTypesPath: 'settings/inventory/instanceStatusTypes',
   statisticalCodesPath: 'settings/inventory/StatisticalCodeSettings',
+  hridHandlingPath: 'settings/inventory/hridHandling',
   loantypesPath: 'settings/inventory/loantypes',
   // Invoice
   invoiceApprovalsPath: 'settings/invoice/approvals',
@@ -63,6 +64,7 @@ export default {
   tenantLibrariesPath: 'settings/tenant-settings/location-libraries',
   tenantLocationsPath: 'settings/tenant-settings/location-locations',
   tenantCampusesPath: 'settings/tenant-settings/location-campuses',
+  tenantInstitutionsPath: 'settings/tenant-settings/location-institutions',
   // Orders
   approvalsPath: 'settings/orders/approvals',
   acquisitionMethodsPath: 'settings/orders/acquisition-methods',

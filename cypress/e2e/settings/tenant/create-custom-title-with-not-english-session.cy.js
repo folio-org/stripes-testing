@@ -6,7 +6,6 @@ import {
   EHoldingsTitles,
 } from '../../../support/fragments/eholdings';
 import TemporarySessionLocale from '../../../support/fragments/settings/developer/session-locale/temporarySessionLocale';
-import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import { Localization } from '../../../support/fragments/settings/tenant/general';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -36,7 +35,6 @@ describe('eHoldings', () => {
       Permissions.settingsTenantEditLanguageLocationAndCurrency.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
-      AssignedUsers.assignUserToDefaultCredentialsViaApi({ userId: testData.user.userId });
       EHoldingsPackages.getCustomPackageViaApi().then((packageName) => {
         testData.packageName = packageName;
       });

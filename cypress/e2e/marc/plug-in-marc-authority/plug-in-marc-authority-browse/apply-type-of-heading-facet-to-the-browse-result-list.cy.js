@@ -44,6 +44,12 @@ describe('plug-in MARC authority | Browse', () => {
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numberOfRecords: 3,
       },
+      {
+        marc: 'marcAuthC359184_3.mrc',
+        fileName: `testMarcFileAuthC359184_2.${randomFourDigitNumber()}.mrc`,
+        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        numberOfRecords: 1,
+      },
     ],
   };
 
@@ -74,7 +80,7 @@ describe('plug-in MARC authority | Browse', () => {
           DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.waitFileIsImported(marcFile.fileName);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(marcFile.fileName);
           for (let i = 0; i < marcFile.numberOfRecords; i++) {
@@ -95,7 +101,7 @@ describe('plug-in MARC authority | Browse', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
-        InventoryInstance.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag700);
@@ -128,23 +134,43 @@ describe('plug-in MARC authority | Browse', () => {
       // Need to wait, while data will be updated
       cy.wait(1000);
       MarcAuthorities.verifySearchResultTabletIsAbsent(false);
-      MarcAuthorities.verifyColumnValuesOnlyExist('Type of heading', testData.headingTypes);
+      MarcAuthorities.verifyColumnValuesOnlyExist({
+        column: 'Type of heading',
+        expectedValues: testData.headingTypes,
+        browsePane: true,
+      });
 
       MarcAuthorities.chooseTypeOfHeading(testData.headingTypes[1]);
-      MarcAuthorities.verifyColumnValuesOnlyExist('Type of heading', testData.headingTypes[1]);
+      MarcAuthorities.verifyColumnValuesOnlyExist({
+        column: 'Type of heading',
+        expectedValues: testData.headingTypes[1],
+        browsePane: true,
+      });
       MarcAuthorities.verifySelectedTypeOfHeading(testData.headingTypes[1]);
 
       MarcAuthorities.chooseTypeOfHeading(testData.headingTypes[0]);
-      MarcAuthorities.verifyColumnValuesOnlyExist('Type of heading', testData.headingTypes);
+      MarcAuthorities.verifyColumnValuesOnlyExist({
+        column: 'Type of heading',
+        expectedValues: testData.headingTypes,
+        browsePane: true,
+      });
       MarcAuthorities.verifySelectedTypeOfHeading(testData.headingTypes[1]);
       MarcAuthorities.verifySelectedTypeOfHeading(testData.headingTypes[0]);
 
       MarcAuthorities.enterTypeOfHeading('Personal Name');
-      MarcAuthorities.verifyColumnValuesOnlyExist('Type of heading', testData.headingTypes);
+      MarcAuthorities.verifyColumnValuesOnlyExist({
+        column: 'Type of heading',
+        expectedValues: testData.headingTypes,
+        browsePane: true,
+      });
       MarcAuthorities.verifySelectedTypeOfHeading('Personal Name');
 
       MarcAuthorities.unselectHeadingType(testData.headingTypes[0]);
-      MarcAuthorities.verifyColumnValuesOnlyExist('Type of heading', testData.headingTypes[1]);
+      MarcAuthorities.verifyColumnValuesOnlyExist({
+        column: 'Type of heading',
+        expectedValues: [testData.headingTypes[1]],
+        browsePane: true,
+      });
       MarcAuthorities.verifySelectedTypeOfHeading(testData.headingTypes[0], false);
 
       MarcAuthorities.unselectHeadingType(testData.headingTypes[1]);
@@ -152,7 +178,11 @@ describe('plug-in MARC authority | Browse', () => {
       MarcAuthorityBrowse.checkResultWithNoValue(testData.searchQuery);
 
       MarcAuthorities.resetTypeOfHeading();
-      MarcAuthorities.verifyColumnValuesOnlyExist('Type of heading', testData.headingTypes);
+      MarcAuthorities.verifyColumnValuesOnlyExist({
+        column: 'Type of heading',
+        expectedValues: testData.headingTypes,
+        browsePane: true,
+      });
       MarcAuthorities.verifySelectedTypeOfHeading(testData.headingTypes[0], false);
       MarcAuthorities.verifySelectedTypeOfHeadingCount(0);
     },

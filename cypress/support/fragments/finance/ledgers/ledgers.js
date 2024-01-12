@@ -49,6 +49,9 @@ const actionsButton = Button('Actions');
 const exportSettingsModal = Modal('Export settings');
 const expenseClassesSelect = Select({ name: 'expenseClasses' });
 const exportButton = Button('Export');
+const ledgerResultsPaneSection = Section({ id: 'ledger-results-pane' });
+const searchField = SearchField({ id: 'input-record-search' });
+const searchButton = Button('Search');
 
 export default {
   defaultUiLedger: {
@@ -132,6 +135,15 @@ export default {
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
     ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+    this.continueRollover();
+    cy.do([rolloverConfirmButton.click()]);
+  },
+
+  fillInclearRolloverInfo(fiscalYear) {
+    cy.do(fiscalYearSelect.click());
+    // Need to wait,while date of fiscal year will be loaded
+    cy.do([fiscalYearSelect.choose(fiscalYear)]);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
@@ -440,6 +452,7 @@ export default {
     fiscalYear,
     rolloverBudgetValue,
     rolloverValueAs,
+    basedOn,
   ) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
@@ -451,13 +464,12 @@ export default {
       rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
       Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
-      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Initial encumbrance'),
+      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose(basedOn),
     ]);
     cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
     cy.wait(2000);
     this.continueRollover();
     cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
-    cy.wait(4000);
   },
 
   fillInRolloverInfoForOngoingOrdersWithoutAllocations(
@@ -486,6 +498,7 @@ export default {
     fiscalYear,
     rolloverBudgetValue,
     rolloverValueAs,
+    basedOn,
   ) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
@@ -497,13 +510,12 @@ export default {
       rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
       Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
-      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Initial encumbrance'),
+      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose(basedOn),
     ]);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
     cy.wait(4000);
     this.continueRollover();
     cy.do(rolloverConfirmButton.click());
-    cy.wait(4000);
   },
 
   checkZeroSearchResultsHeader: () => {
@@ -600,10 +612,11 @@ export default {
       });
   },
 
-  deleteledgerViaApi: (ledgerId) => cy.okapiRequest({
+  deleteledgerViaApi: (ledgerId, failOnStatusCode) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/ledgers/${ledgerId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   }),
 
   selectLedger: (ledgerName) => {
@@ -1257,5 +1270,17 @@ export default {
       expect(actualData[9]).to.equal(`"${fund.description}"`);
       expect(actualData[10]).to.equal('"No budget found"');
     });
+  },
+
+  waitLoading() {
+    cy.expect([ledgerResultsPaneSection.exists(), ledgersFiltersSection.exists()]);
+  },
+
+  searchByName: (name) => {
+    cy.do([searchField.selectIndex('Name'), searchField.fillIn(name), searchButton.click()]);
+  },
+
+  verifyLedgerLinkExists: (name) => {
+    cy.expect(ledgerResultsPaneSection.find(Link(name)).exists());
   },
 };

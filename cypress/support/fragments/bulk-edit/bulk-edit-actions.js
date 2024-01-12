@@ -41,11 +41,8 @@ const bulkEditFirstRow = RepeatableFieldItem({ index: 0 });
 const bulkEditSecondRow = RepeatableFieldItem({ index: 1 });
 const commitChanges = Button('Commit changes');
 const locationSelection = Selection({ name: 'locationId' });
-
-function getEmailField() {
-  // 2 the same selects without class, id or someone different attr
-  return cy.get('[class^=textField]');
-}
+const oldEmail = TextField({ testid: 'input-email-0' });
+const newEmail = TextField({ testid: 'input-email-1' });
 
 const bulkPageSelections = {
   valueType: Select({ content: including('Select option') }),
@@ -119,9 +116,6 @@ export default {
   isDisabledRowIcons(isDisabled) {
     cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: isDisabled }).exists()]);
     BulkEditSearchPane.isConfirmButtonDisabled(true);
-  },
-  afterAllSelectedActions() {
-    cy.expect([plusBtn.absent(), Button({ icon: 'trash', disabled: false }).exists()]);
   },
   deleteRow(rowIndex = 0) {
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click());
@@ -216,10 +210,20 @@ export default {
     cy.do(Button('Cancel').click());
   },
 
-  replaceWithIsDisabled() {
-    cy.xpath(
-      '(//div[contains(@class, "select--")]//select[contains(@class, "selectControl--")])[3]',
-    ).should('be.disabled');
+  replaceWithIsDisabled(rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ content: 'Replace with' }))
+        .has({ disabled: true }),
+    ]);
+  },
+
+  enterOldEmail(oldEmailDomain) {
+    cy.do([oldEmail.clear(), oldEmail.fillIn(oldEmailDomain)]);
+  },
+
+  enterNewEmail(newEmailDomain) {
+    cy.do([newEmail.clear(), newEmail.fillIn(newEmailDomain)]);
   },
 
   replaceEmail(oldEmailDomain, newEmailDomain, rowIndex = 0) {
@@ -227,17 +231,9 @@ export default {
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
     );
     BulkEditSearchPane.isConfirmButtonDisabled(true);
-    getEmailField().first().type(oldEmailDomain);
+    cy.do(oldEmail.fillIn(oldEmailDomain));
     BulkEditSearchPane.isConfirmButtonDisabled(true);
-    getEmailField().eq(2).type(newEmailDomain);
-  },
-
-  enterOldEmail(oldEmailDomain) {
-    getEmailField().first().clear().type(oldEmailDomain);
-  },
-
-  enterNewEmail(newEmailDomain) {
-    getEmailField().eq(2).clear().type(newEmailDomain);
+    cy.do(newEmail.fillIn(newEmailDomain));
   },
 
   clickLocationLookup(rowIndex = 0) {

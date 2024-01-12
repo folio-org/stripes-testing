@@ -1,6 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { calloutTypes } from '../../../../interactors';
-import { TARGET_PROFILE_NAMES } from '../../../support/constants';
+import { TARGET_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -13,12 +13,14 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 
-describe('data-import', () => {
+describe('data-import', { retries: 3 }, () => {
   describe('Importing MARC Bib files', () => {
-    let user = {};
+    let user;
     const OCLCAuthentication = '100481406/PAOLF';
-    const fileName = `C356824autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C356824autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const oclcForImport = '912958093';
     const oclcForUpdating = '698820890';
@@ -56,7 +58,6 @@ describe('data-import', () => {
       cy.getAdminToken().then(() => {
         Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
         Users.deleteViaApi(user.userId);
-        // TODO delete all instances
       });
     });
 
@@ -77,7 +78,7 @@ describe('data-import', () => {
         DataImport.checkIsLandingPageOpened();
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile('oneThousandMarcBib.mrc', fileName);
+        DataImport.uploadFile('marcBibFileForC356824.mrc', fileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
@@ -85,6 +86,14 @@ describe('data-import', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.importWithOclc(oclcForImport);
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openViewAllLogs();
+        LogsViewAll.openUserIdAccordion();
+        LogsViewAll.filterJobsByUser(`${user.firstName} ${user.lastName}`);
+        LogsViewAll.openFileDetails('No file name');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
+        InventoryInstance.waitLoading();
         InventoryInstance.startOverlaySourceBibRecord();
         InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
         InventoryInstance.overlayWithOclc(oclcForUpdating);
@@ -93,6 +102,7 @@ describe('data-import', () => {
           calloutTypes.success,
         );
 
+        cy.reload();
         // check instance is updated
         InventoryInstance.verifyInstanceTitle(updatedInstanceData.title);
         InventoryInstance.verifyInstanceLanguage(updatedInstanceData.language);

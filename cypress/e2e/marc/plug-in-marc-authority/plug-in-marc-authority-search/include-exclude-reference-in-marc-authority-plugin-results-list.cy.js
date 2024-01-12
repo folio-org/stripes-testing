@@ -93,7 +93,7 @@ describe('plug-in MARC authority | Search', () => {
           DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.waitFileIsImported(marcFile.fileName);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(marcFile.fileName);
           for (let i = 0; i < marcFile.numberOfRecords; i++) {
@@ -155,19 +155,18 @@ describe('plug-in MARC authority | Search', () => {
       MarcAuthoritiesSearch.unselectExcludeReferencesFilter(
         REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM,
       );
-      MarcAuthorities.verifyColumnValuesOnlyExist(testData.authorizedColumnName, [
-        'Authorized',
-        'Reference',
-      ]);
+      MarcAuthorities.verifyColumnValuesOnlyExist({
+        column: testData.authorizedColumnName,
+        expectedValues: ['Authorized', 'Reference'],
+      });
 
       MarcAuthoritiesSearch.unselectExcludeReferencesFilter(
         REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM_ALSO,
       );
-      MarcAuthorities.verifyColumnValuesOnlyExist(testData.authorizedColumnName, [
-        'Authorized',
-        'Reference',
-        'Auth/Ref',
-      ]);
+      MarcAuthorities.verifyColumnValuesOnlyExist({
+        column: testData.authorizedColumnName,
+        expectedValues: ['Authorized', 'Reference', 'Auth/Ref'],
+      });
 
       MarcAuthorities.searchBy('Keyword', 'Mostly Wagner');
       MarcAuthorities.selectItem(testData.authRows.wagnerAuth.title, false);

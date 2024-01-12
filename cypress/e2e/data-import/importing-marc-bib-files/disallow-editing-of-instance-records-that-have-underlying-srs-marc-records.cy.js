@@ -13,7 +13,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Data Import', () => {
+describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let instanceHrid;
@@ -33,7 +33,7 @@ describe('Data Import', () => {
       JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(jobProfileToRun);
+      Logs.waitFileIsImported(jobProfileToRun);
       Logs.openFileDetails(marcFileName);
       FileDetails.verifyLogDetailsPageIsOpened();
       FileDetails.openJsonScreen(title);

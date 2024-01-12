@@ -49,7 +49,7 @@ describe('ui-inventory: Create page type request', () => {
             permissions.uiUsersEdituserservicepoints.gui,
             permissions.uiUserAccounts.gui,
             permissions.usersViewRequests.gui,
-            permissions.requestsAll.gui,
+            permissions.uiRequestsAll.gui,
           ],
           patronGroup.name,
         );
@@ -106,18 +106,22 @@ describe('ui-inventory: Create page type request', () => {
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
-  it('C546: Create new request for "Page" type (vega)', { tags: ['smoke', 'vega'] }, () => {
-    cy.visit(TopMenu.inventoryPath);
-    createPageTypeRequest.findAvailableItem(instanceData, createdItem.barcode);
-    createPageTypeRequest.clickNewRequest(createdItem.barcode);
-    createPageTypeRequest.selectActiveFacultyUser(user.username, patronGroup.name);
-    createPageTypeRequest.saveAndClose(servicePoint.name, patronGroup.name);
-    cy.wait(['@postRequest']);
-    createPageTypeRequest.clickItemBarcodeLink(createdItem.barcode);
-    createPageTypeRequest.verifyRequestsCountOnItemRecord();
-    createPageTypeRequest.clickRequestsCountLink();
-    createPageTypeRequest.clickRequesterBarcode(user.username);
-    createPageTypeRequest.verifyOpenRequestCounts();
-    createPageTypeRequest.clickOpenRequestsCountLink();
-  });
+  it(
+    'C546: Create new request for "Page" type (vega)',
+    { tags: ['smoke', 'vega', 'system'] },
+    () => {
+      cy.visit(TopMenu.inventoryPath);
+      createPageTypeRequest.findAvailableItem(instanceData, createdItem.barcode);
+      createPageTypeRequest.clickNewRequest(createdItem.barcode);
+      createPageTypeRequest.selectActiveFacultyUser(user.username, patronGroup.name);
+      createPageTypeRequest.saveAndClose(servicePoint.name, patronGroup.name);
+      cy.wait(['@postRequest']);
+      createPageTypeRequest.clickItemBarcodeLink(createdItem.barcode);
+      createPageTypeRequest.verifyRequestsCountOnItemRecord();
+      createPageTypeRequest.clickRequestsCountLink();
+      createPageTypeRequest.clickRequesterBarcode(user.username);
+      createPageTypeRequest.verifyOpenRequestCounts();
+      createPageTypeRequest.clickOpenRequestsCountLink();
+    },
+  );
 });

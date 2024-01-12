@@ -113,5 +113,55 @@ describe('inventory', () => {
         });
       },
     );
+
+    it(
+      'C16972 Create a fast add record from Inventory. Journal issue. (folijet) (TaaS)',
+      { tags: ['extendedPath', 'folijet'] },
+      () => {
+        const fastAddRecord = { ...FastAddNewRecord.fastAddNewRecordFormDetails };
+        fastAddRecord.resourceTitle = 'Journal issue';
+        fastAddRecord.note = 'Note For Journal Issue';
+
+        cy.visit(TopMenu.inventoryPath);
+        InventoryActions.openNewFastAddRecordForm();
+        FastAddNewRecord.waitLoading();
+        FastAddNewRecord.fillFastAddNewRecordForm(fastAddRecord);
+
+        // set starting timestamp right before saving
+        timeStamp.start = new Date();
+        FastAddNewRecord.saveAndClose();
+
+        cy.wait(['@createInstance', '@createHolding', '@createItem'], getLongDelay()).then(() => {
+          // set ending timestamp after saving
+          timeStamp.end = new Date();
+
+          InteractorsTools.checkCalloutMessage(
+            FastAdd.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS,
+          );
+          InventorySearchAndFilter.searchInstanceByTitle(fastAddRecord.resourceTitle);
+          FastAddNewRecord.openRecordDetails();
+
+          // verify instance details
+          FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
+          InstanceRecordView.verifyResourceTitle(fastAddRecord.resourceTitle);
+          InstanceRecordView.verifyInstanceStatusCode(fastAddRecord.instanceStatusCodeValue);
+          InstanceRecordView.verifyResourceType(fastAddRecord.resourceType);
+
+          // verify holdings details
+          FastAddNewRecord.viewHoldings();
+          FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
+          FastAddNewRecord.verifyPermanentLocation(fastAddRecord.permanentLocationValue);
+          FastAddNewRecord.closeHoldingsRecordView();
+
+          // verify item details
+          InventoryInstance.openHoldings([fastAddRecord.permanentLocationValue]);
+          InventoryInstance.openItemByBarcode(fastAddRecord.itemBarcode);
+          FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
+          ItemRecordView.verifyPermanentLoanType(fastAddRecord.permanentLoanType);
+          ItemRecordView.verifyItemBarcode(fastAddRecord.itemBarcode);
+          ItemRecordView.verifyNote(fastAddRecord.note);
+        });
+      },
+    );
   });
 });

@@ -8,6 +8,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import { JobProfiles as SettingsJobProfiles } from '../../../support/fragments/settings/dataImport';
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   JOB_STATUS_NAMES,
@@ -60,7 +61,7 @@ describe('data-import', () => {
         MarcAuthority.deleteViaAPI(id);
       });
 
-      JobProfiles.deleteJobProfile(createdJobProfile.profileName);
+      SettingsJobProfiles.deleteJobProfileByNameViaApi(createdJobProfile.profileName);
       Users.deleteViaApi(testData.userProperties.userId);
     });
 
@@ -73,7 +74,7 @@ describe('data-import', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileName);
+        Logs.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
         Logs.getCreatedItemsID().then((link) => {
@@ -93,7 +94,7 @@ describe('data-import', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(createdJobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileName);
+        Logs.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
         Logs.getCreatedItemsID().then((link) => {

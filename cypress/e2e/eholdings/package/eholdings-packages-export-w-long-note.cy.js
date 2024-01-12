@@ -1,5 +1,4 @@
 import { Permissions } from '../../../support/dictionary';
-import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import {
   EHoldingsPackages,
   EHoldingsPackagesSearch,
@@ -44,8 +43,6 @@ describe('eHoldings', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
-        AssignedUsers.assignUserToDefaultCredentialsViaApi({ userId: testData.user.userId });
-
         cy.login(testData.user.username, testData.user.password, {
           path: `${TopMenu.eholdingsPath}?searchType=packages`,
           waiter: EHoldingsPackages.waitLoading,
@@ -79,7 +76,7 @@ describe('eHoldings', () => {
         EHoldingsPackages.sortPackagesByTitlesCount({ minTitlesCount: 9000 }).then((packages) => {
           testData.package.id = packages[0].id;
           testData.package.name = packages[0].name;
-          testData.package.titles = packages[0].count;
+          testData.package.titles = packages[0].countTotalTitles;
 
           testData.packageData = `package_data_${testData.package.id}.csv`;
           testData.titleData = `title_data_${testData.package.id}.csv`;

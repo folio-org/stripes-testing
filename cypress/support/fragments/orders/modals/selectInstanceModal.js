@@ -7,6 +7,7 @@ import {
   TextField,
   including,
 } from '../../../../../interactors';
+import ChangeInstanceModal from './changeInstanceModal';
 
 const selectInstanceModal = Modal('Select instance');
 
@@ -55,9 +56,13 @@ export default {
       selectInstanceModal.find(HTML(including('Enter search criteria to start search'))).absent(),
     );
   },
-  selectInstance() {
+  selectInstance({ shouldConfirm = false } = {}) {
     cy.do(selectInstanceModal.find(MultiColumnListRow({ index: 0 })).click());
     cy.expect(selectInstanceModal.absent());
+
+    if (shouldConfirm) {
+      ChangeInstanceModal.verifyModalView();
+    }
   },
   clickSearchButton() {
     cy.expect(searchButton.has({ disabled: false }));

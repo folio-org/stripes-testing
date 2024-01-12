@@ -72,7 +72,7 @@ describe('plug-in MARC authority | Search', () => {
           DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.waitFileIsImported(marcFile.fileName);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(marcFile.fileName);
           for (let i = 0; i < marcFile.numberOfRecords; i++) {
@@ -118,18 +118,33 @@ describe('plug-in MARC authority | Search', () => {
     { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.searchByParameter(testData.authSearchOption.CORPORATE_NAME, '*');
-      MarcAuthorities.verifyColumnValuesOnlyExist('Type of heading', testData.headingTypes);
+      MarcAuthorities.verifyColumnValuesOnlyExist({
+        column: 'Type of heading',
+        expectedValues: testData.headingTypes,
+      });
       MarcAuthorities.chooseTypeOfHeading(testData.headingTypes[0]);
-      MarcAuthorities.verifyColumnValuesOnlyExist('Type of heading', testData.headingTypes[0]);
+      MarcAuthorities.verifyColumnValuesOnlyExist({
+        column: 'Type of heading',
+        expectedValues: testData.headingTypes[0],
+      });
 
       MarcAuthorities.chooseTypeOfHeading(testData.headingTypes[1]);
-      MarcAuthorities.verifyColumnValuesOnlyExist('Type of heading', testData.headingTypes);
+      MarcAuthorities.verifyColumnValuesOnlyExist({
+        column: 'Type of heading',
+        expectedValues: testData.headingTypes,
+      });
 
       MarcAuthorities.unselectHeadingType(testData.headingTypes[0]);
-      MarcAuthorities.verifyColumnValuesOnlyExist('Type of heading', testData.headingTypes[1]);
+      MarcAuthorities.verifyColumnValuesOnlyExist({
+        column: 'Type of heading',
+        expectedValues: testData.headingTypes[1],
+      });
 
       MarcAuthorities.resetTypeOfHeading();
-      MarcAuthorities.verifyColumnValuesOnlyExist('Type of heading', testData.headingTypes);
+      MarcAuthorities.verifyColumnValuesOnlyExist({
+        column: 'Type of heading',
+        expectedValues: testData.headingTypes,
+      });
 
       MarcAuthorities.clickResetAndCheck();
     },

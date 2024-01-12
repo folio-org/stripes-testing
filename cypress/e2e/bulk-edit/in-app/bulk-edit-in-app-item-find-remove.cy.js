@@ -90,8 +90,9 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Action note',
-          'Circulation Notes',
-          'Administrative notes',
+          'Check out notes',
+          'Check in notes',
+          'Administrative note',
           'Copy note',
         );
         BulkEditActions.openInAppStartBulkEditFrom();
@@ -117,10 +118,11 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
 
         BulkEditSearchPane.verifyChangesUnderColumns(
-          'Circulation Notes',
-          `Check out;${notes.checkIn};true`,
+          'Check out notes',
+          `${notes.checkIn} (staff only)`,
         );
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative notes', '');
+        BulkEditSearchPane.verifyChangesUnderColumns('Check in notes', '');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', '');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Action note', '');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Copy note', notes.copy);
 

@@ -8,6 +8,12 @@ import {
   LOCATION_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -17,8 +23,8 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -131,16 +137,22 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
-        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-        MatchProfiles.deleteMatchProfile(instanceMatchProfile.profileName);
-        MatchProfiles.deleteMatchProfile(holdingsMatchProfile.profileName);
-        ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.name);
-        ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.name);
-        ActionProfiles.deleteActionProfile(holdingsActionProfileForUpdate.name);
-        FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.name);
-        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.name);
-        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForUpdate.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(instanceMatchProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(holdingsMatchProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(instanceActionProfileForCreate.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(holdingsActionProfileForCreate.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(holdingsActionProfileForUpdate.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          instanceMappingProfileForCreate.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          holdingsMappingProfileForCreate.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          holdingsMappingProfileForUpdate.name,
+        );
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (instance) => {
             cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
@@ -232,7 +244,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileNameForCreate);
+        Logs.waitFileIsImported(marcFileNameForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileNameForCreate);
         [
@@ -347,7 +359,7 @@ describe('data-import', () => {
           JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfileForUpdate.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFileNameForUpdate);
+          Logs.waitFileIsImported(marcFileNameForUpdate);
           Logs.checkStatusOfJobProfile();
           Logs.openFileDetails(marcFileNameForUpdate);
           FileDetails.checkStatusInColumn(

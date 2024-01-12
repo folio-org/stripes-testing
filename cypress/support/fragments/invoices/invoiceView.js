@@ -34,33 +34,17 @@ const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }
 // invoice lines section
 const invoiceLinesSection = Section({ id: 'invoiceLines' });
 
-// vendor details section
-const vendorDetailsSection = invoiceDetailsPane.find(Section({ id: 'vendorDetails' }));
-
 // Links & documents section
 const linksAndDocumentsSection = Section({ id: 'documents' });
 
 // voucher details
 const voucherExportDetailsSection = invoiceDetailsPane.find(Section({ id: 'batchVoucherExport' }));
 const voucherInformationSection = invoiceDetailsPane.find(Section({ id: 'voucher' }));
+const vendorDetailsSection = invoiceDetailsPane.find(Section({ id: 'vendorDetails' }));
 
 export default {
   expandActionsDropdown() {
     cy.do(invoiceDetailsPaneHeader.find(actionsButton).click());
-  },
-  verifyLinksDocumentsSection(linkName, externalUrl, documentName) {
-    cy.do(Button('Links & documents').click());
-    cy.expect([
-      linksAndDocumentsSection.find(MultiColumnListCell({ column: 'Link name' })).has({
-        content: linkName,
-      }),
-      linksAndDocumentsSection.find(MultiColumnListCell({ column: 'External URL' })).has({
-        content: externalUrl,
-      }),
-      linksAndDocumentsSection.find(MultiColumnListCell({ column: 'Document name' })).has({
-        content: documentName,
-      }),
-    ]);
   },
   selectFirstInvoice() {
     cy.do(
@@ -142,6 +126,7 @@ export default {
     vendorDetails = [],
     voucherExport = [],
     voucherInformation = [],
+    vendorDetailsInformation = [],
   } = {}) {
     if (title) {
       cy.expect(invoiceDetailsPane.has({ title: `Vendor invoice number - ${title}` }));
@@ -163,6 +148,10 @@ export default {
       cy.expect(voucherInformationSection.find(KeyValue(key)).has({ value: including(value) }));
     });
 
+    vendorDetailsInformation.forEach(({ key, value }) => {
+      cy.expect(vendorDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
+
     if (invoiceLines) {
       cy.expect(
         invoiceLinesSection.has({
@@ -181,6 +170,33 @@ export default {
           .exists(),
       );
     });
+  },
+  checkDocumentsSection({ linkName, externalUrl, documentName, shouldExpand = true } = {}) {
+    if (shouldExpand) {
+      cy.do(linksAndDocumentsSection.toggle());
+    }
+
+    if (linkName) {
+      cy.expect(
+        linksAndDocumentsSection.find(MultiColumnListCell({ column: 'Link name' })).has({
+          content: linkName,
+        }),
+      );
+    }
+    if (externalUrl) {
+      cy.expect(
+        linksAndDocumentsSection.find(MultiColumnListCell({ column: 'External URL' })).has({
+          content: externalUrl,
+        }),
+      );
+    }
+    if (documentName) {
+      cy.expect(
+        linksAndDocumentsSection.find(MultiColumnListCell({ column: 'Document name' })).has({
+          content: documentName,
+        }),
+      );
+    }
   },
   copyOrderNumber(vendorInvoiceNo) {
     cy.do(
@@ -281,7 +297,27 @@ export default {
         .click(),
     );
   },
+  verifyInvoicesList() {
+    cy.expect(MultiColumnList({ id: 'invoices-list' }).exists());
+  },
+  verifyInvoiceLinkExists(linkName) {
+    cy.expect(
+      MultiColumnList({ id: 'invoices-list' })
+        .find(MultiColumnListCell({ content: linkName }))
+        .find(Link())
+        .exists(),
+    );
+  },
+  selectInvoiceLineByName(linkName) {
+    cy.do(
+      MultiColumnList({ id: 'invoices-list' })
+        .find(MultiColumnListCell({ content: linkName }))
+        .find(Link())
+        .click(),
+    );
 
+    return InvoiceLineDetails;
+  },
   verifyWarningMessage(message) {
     cy.expect(HTML(including(message)).exists());
   },

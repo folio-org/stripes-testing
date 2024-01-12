@@ -34,7 +34,7 @@ export default {
   fill(specialNote = defaultNote) {
     cy.do([
       titleTextField.fillIn(specialNote.title),
-      RichEditor('Details').fillIn(specialNote.details),
+      RichEditor({ id: 'note-details-field' }).fillIn(specialNote.details),
     ]);
 
     cy.wait(100);

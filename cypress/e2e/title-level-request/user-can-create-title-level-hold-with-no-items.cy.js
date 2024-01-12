@@ -81,7 +81,7 @@ describe('Title Level Request', () => {
       NewRequest.openNewRequestPane();
       NewRequest.enterHridInfo(instanceHRID);
       NewRequest.enterRequesterBarcode(testData.user.barcode);
-      NewRequest.verifyTitleLevelRequestsCheckbox('checked');
+      NewRequest.verifyTitleLevelRequestsCheckbox(true);
       NewRequest.verifyRequestTypeHasOptions('Hold');
       NewRequest.chooseRequestType('Hold');
       NewRequest.choosePickupServicePoint(testData.userServicePoint.name);

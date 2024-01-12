@@ -8,7 +8,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 
-describe('MARC', () => {
+describe('marc', () => {
   describe('MARC Authority', () => {
     const testData = {
       authority: {
@@ -38,7 +38,7 @@ describe('MARC', () => {
           JobProfiles.waitLoadingList();
           JobProfiles.search(testData.jobProfileToRun);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.waitFileIsImported(marcFile.fileName);
           Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(marcFile.fileName);
           for (let i = 0; i < marcFile.numOfRecords; i++) {

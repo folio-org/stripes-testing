@@ -6,6 +6,12 @@ import {
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -14,7 +20,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -180,17 +186,21 @@ describe('data-import', () => {
         MarcFieldProtection.deleteViaApi(firstFieldId);
         MarcFieldProtection.deleteViaApi(secondFieldId);
         // delete profiles
-        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-        JobProfiles.deleteJobProfile(jobProfileForOverride.profileName);
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-        ActionProfiles.deleteActionProfile(marcBibActionProfile.name);
-        ActionProfiles.deleteActionProfile(instanceActionProfile.name);
-        ActionProfiles.deleteActionProfile(marcBibActionProfileOverride.name);
-        ActionProfiles.deleteActionProfile(instanceActionProfileOverride.name);
-        FieldMappingProfileView.deleteViaApi(marcBibMappingProfile.name);
-        FieldMappingProfileView.deleteViaApi(instanceMappingProfile.name);
-        FieldMappingProfileView.deleteViaApi(marcBibMappingProfileOverride.name);
-        FieldMappingProfileView.deleteViaApi(instanceMappingProfileOverride.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForOverride.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(marcBibActionProfile.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(instanceActionProfile.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(marcBibActionProfileOverride.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(instanceActionProfileOverride.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(marcBibMappingProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(instanceMappingProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          marcBibMappingProfileOverride.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          instanceMappingProfileOverride.name,
+        );
         // delete created files
         FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
         FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
@@ -289,7 +299,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForCreatingInstance);
+        Logs.waitFileIsImported(fileNameForCreatingInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreatingInstance);
         [
@@ -326,7 +336,7 @@ describe('data-import', () => {
           JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfileForUpdate.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(fileNameForProtect);
+          Logs.waitFileIsImported(fileNameForProtect);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(fileNameForProtect);
           [
@@ -376,7 +386,7 @@ describe('data-import', () => {
           JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfileForOverride.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(fileNameForOverride);
+          Logs.waitFileIsImported(fileNameForOverride);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(fileNameForOverride);
           [

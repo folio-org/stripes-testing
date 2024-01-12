@@ -39,7 +39,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFile.fileName);
+        Logs.waitFileIsImported(marcFile.fileName);
         Logs.checkStatusOfJobProfile('Completed');
       });
 

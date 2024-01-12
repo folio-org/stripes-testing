@@ -35,7 +35,7 @@ describe('data-import', () => {
       JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileName);
+      Logs.waitFileIsImported(fileName);
       Logs.openFileDetails(fileName);
       FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
@@ -62,7 +62,6 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (instance) => {
             cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
@@ -70,6 +69,7 @@ describe('data-import', () => {
           },
         );
       });
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     });
 
     it(
@@ -91,7 +91,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search('Default - Create Holdings and SRS MARC Holdings');
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(editedMarcFileName);
+        Logs.waitFileIsImported(editedMarcFileName);
         Logs.openFileDetails(editedMarcFileName);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.NO_ACTION,

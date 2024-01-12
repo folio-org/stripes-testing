@@ -41,7 +41,7 @@ const marcFiles = [
     numOfRecords: 1,
   },
 ];
-describe('MARC', () => {
+describe('marc', () => {
   describe('MARC Authority', () => {
     before('Creating user', () => {
       cy.getAdminToken();
@@ -75,7 +75,7 @@ describe('MARC', () => {
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.waitFileIsImported(marcFile.fileName);
           Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(marcFile.fileName);
 
@@ -94,7 +94,7 @@ describe('MARC', () => {
 
       cy.visit(TopMenu.inventoryPath).then(() => {
         InventoryInstances.waitContentLoading();
-        InventoryInstance.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tag);
@@ -143,6 +143,9 @@ describe('MARC', () => {
       () => {
         // Step 1: Input query in search input field that will return imported "MARC authority" record → Click "Search"
         MarcAuthorities.searchBy('Keyword', testData.marcValue);
+        MarcAuthoritiesSearch.selectExcludeReferencesFilter(
+          REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM_ALSO,
+        );
         MarcAuthorities.checkAfterSearch(testData.authorizedTypes.AUTHORIZED, testData.marcValue);
         MarcAuthorities.verifyNumberOfTitles(5, '1');
 

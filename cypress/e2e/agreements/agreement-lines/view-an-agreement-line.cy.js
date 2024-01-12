@@ -7,39 +7,43 @@ let agreementLine;
 let agreementId;
 let agreementLineId;
 
-describe('Agreement Lines', () => {
-  before(() => {
-    cy.getAdminToken();
-    Agreements.createViaApi()
-      .then((agreement) => {
-        agreementId = agreement.id;
-      })
-      .then(() => {
-        agreementLine = AgreementLines.defaultAgreementLine(agreementId);
-        AgreementLines.createViaApi(agreementLine);
-      })
-      .then((response) => {
-        agreementLineId = response.id;
+describe('agreements', () => {
+  describe('Agreement Lines', () => {
+    before(() => {
+      cy.getAdminToken();
+      Agreements.createViaApi()
+        .then((agreement) => {
+          agreementId = agreement.id;
+        })
+        .then(() => {
+          agreementLine = AgreementLines.defaultAgreementLine(agreementId);
+          AgreementLines.createViaApi(agreementLine);
+        })
+        .then((response) => {
+          agreementLineId = response.id;
+        });
+      cy.loginAsAdmin({
+        path: TopMenu.agreementsPath,
+        waiter: Agreements.waitLoading,
       });
-    cy.loginAsAdmin({
-      path: TopMenu.agreementsPath,
-      waiter: Agreements.waitLoading,
     });
-  });
 
-  after(() => {
-    AgreementLines.deleteViaApi({ agreementId, agreementLineId });
-    Agreements.deleteViaApi(agreementId);
-  });
+    after(() => {
+      AgreementLines.deleteViaApi({ agreementId, agreementLineId });
+      Agreements.deleteViaApi(agreementId);
+    });
 
-  it('C761 View an Agreement line (erm) (TaaS)', { tags: ['extendedPath', 'erm'] }, () => {
-    AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
-    AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(Agreements.defaultAgreement.name);
-    AgreementViewDetails.verifyAgreementLinesCount('1');
+    it('C761 View an Agreement line (erm) (TaaS)', { tags: ['extendedPath', 'erm'] }, () => {
+      AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
+      AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(
+        Agreements.defaultAgreement.name,
+      );
+      AgreementViewDetails.verifyAgreementLinesCount('1');
 
-    AgreementViewDetails.openAgreementLineSection();
-    AgreementViewDetails.verifySpecialAgreementLineRow({
-      description: agreementLine.description,
+      AgreementViewDetails.openAgreementLineSection();
+      AgreementViewDetails.verifySpecialAgreementLineRow({
+        description: agreementLine.description,
+      });
     });
   });
 });

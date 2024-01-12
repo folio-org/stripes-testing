@@ -23,7 +23,7 @@ describe('Check Out', () => {
   let testInstanceIds;
   const instanceTitle = `autotest_instance_title_${getRandomPostfix()}`;
   const testItems = [];
-  const defautlDescription = `autotest_description_${getRandomPostfix()}`;
+  const defaultDescription = `autotest_description_${getRandomPostfix()}`;
 
   beforeEach(() => {
     cy.getAdminToken()
@@ -37,7 +37,7 @@ describe('Check Out', () => {
         cy.getInstanceTypes({ limit: 1 });
       })
       .then(() => {
-        const getTestItem = (numberOfPieces, hasDiscription, hasMissingPieces) => {
+        const getTestItem = (numberOfPieces, hasDescription, hasMissingPieces) => {
           const defaultItem = {
             barcode: Helper.getRandomBarcode(),
             status: { name: ITEM_STATUS_NAMES.AVAILABLE },
@@ -47,12 +47,12 @@ describe('Check Out', () => {
           if (numberOfPieces) {
             defaultItem.numberOfPieces = numberOfPieces;
           }
-          if (hasDiscription) {
-            defaultItem.descriptionOfPieces = defautlDescription;
+          if (hasDescription) {
+            defaultItem.descriptionOfPieces = defaultDescription;
           }
           if (hasMissingPieces) {
             defaultItem.numberOfMissingPieces = 2;
-            defaultItem.missingPieces = defautlDescription;
+            defaultItem.missingPieces = defaultDescription;
           }
           return defaultItem;
         };
@@ -143,7 +143,7 @@ describe('Check Out', () => {
     );
   };
 
-  it('C591 Check out: multipiece items (vega)', { tags: ['smoke', 'vega'] }, () => {
+  it('C591 Check out: multipiece items (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
     cy.visit(TopMenu.checkOutPath);
     Checkout.waitLoading();
     CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);

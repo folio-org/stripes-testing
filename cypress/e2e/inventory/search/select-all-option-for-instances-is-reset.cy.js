@@ -6,7 +6,7 @@ import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Search In Inventory', () => {
     const testData = {
       instanceTitle: `C366119 autoTestInstanceTitle${getRandomPostfix()}`,
@@ -47,7 +47,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventoryInstances.verifyInventoryLabelText('Enter search criteria to start search');
         InventorySearchAndFilter.byKeywords();
-        InventoryInstances.verifyAllCheckboxesAreUnchecked();
+        InventoryInstances.verifyAllCheckboxesAreChecked(false);
         InventoryInstances.verifyInventoryLabelText('records found');
       },
     );

@@ -70,6 +70,11 @@ const descriptiveDataAccordion = Accordion('Descriptive data');
 const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
 const titleDataAccordion = Accordion('Title data');
 const contributorAccordion = Accordion('Contributor');
+const acquisitionAccordion = Accordion('Acquisition');
+const subjectAccordion = Accordion('Subject');
+const listInstanceAcquisitions = acquisitionAccordion.find(
+  MultiColumnList({ id: 'list-instance-acquisitions' }),
+);
 const callNumberTextField = TextArea('Call number');
 const copyNumberTextField = TextField('Copy number');
 const callNumSuffixTextField = TextArea('Call number suffix');
@@ -272,7 +277,7 @@ const verifySeriesStatement = (indexRow, value) => {
 
 const verifySubjectHeading = (value) => {
   cy.expect(
-    Accordion('Subject')
+    subjectAccordion
       .find(MultiColumnList({ id: 'list-subject' }))
       .find(MultiColumnListCell({ content: value }))
       .exists(),
@@ -301,7 +306,7 @@ const verifyContributorWithMarcAppLink = (indexRow, indexColumn, value) => {
 
 const verifyInstanceSubject = (indexRow, indexColumn, value) => {
   cy.expect(
-    Accordion('Subject')
+    subjectAccordion
       .find(MultiColumnList({ id: 'list-subject' }))
       .find(MultiColumnListRow({ index: indexRow }))
       .find(MultiColumnListCell({ columnIndex: indexColumn }))
@@ -354,8 +359,7 @@ export default {
     cy.expect(instanceDetailsSection.exists());
   },
 
-  openSubjectAccordion: () => cy.do(Accordion('Subject').click()),
-
+  openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
   checkAuthorityAppIconInSection: (sectionId, value, isPresent) => {
     if (isPresent) {
       cy.expect(
@@ -427,6 +431,7 @@ export default {
   },
 
   viewSource: () => {
+    cy.wait(2000);
     cy.do(actionsButton.click());
     cy.wait(2000);
     cy.do(viewSourceButton.click());
@@ -785,7 +790,13 @@ export default {
     InventoryNewHoldings.saveAndClose();
     waitLoading();
   },
-
+  createHoldingsRecordForTemporaryLocation: (permanentLocation, temporaryLocation) => {
+    pressAddHoldingsButton();
+    InventoryNewHoldings.fillRequiredFields(permanentLocation);
+    InventoryNewHoldings.fillRequiredFieldsForTemporaryLocation(temporaryLocation);
+    InventoryNewHoldings.saveAndClose();
+    waitLoading();
+  },
   checkHoldingsTable: (
     locationName,
     rowNumber,
@@ -809,6 +820,15 @@ export default {
     if (effectiveLocation) {
       cy.expect(row.find(MultiColumnListCell({ content: effectiveLocation })).exists());
     }
+  },
+
+  checkHoldingsStatus: (rowNumber, status, languageAccordionValue = 'Holdings: Main Library >') => {
+    const indexRowNumber = `row-${rowNumber}`;
+    cy.do(Accordion({ label: including(languageAccordionValue) }).clickHeader());
+    const row = Accordion({ label: including(languageAccordionValue) }).find(
+      MultiColumnListRow({ indexRow: indexRowNumber }),
+    );
+    cy.expect([row.find(MultiColumnListCell({ content: status })).exists()]);
   },
 
   moveItemToAnotherHolding({ fromHolding, toHolding, shouldOpen = true, itemMoved = false }) {
@@ -1188,12 +1208,15 @@ export default {
     cy.do(Button({ icon: 'times' }).click());
   },
 
-  verifyItemBarcode(barcode) {
-    cy.expect(MultiColumnListCell({ content: barcode }).exists());
+  verifyItemBarcode(barcode, isExist = true) {
+    if (isExist) {
+      cy.expect(MultiColumnListCell({ content: barcode }).exists());
+    } else {
+      cy.expect(MultiColumnListCell({ content: barcode }).absent());
+    }
   },
 
   openItemByBarcodeAndIndex: (barcode) => {
-    cy.wait(4000);
     cy.get(`div[class^="mclCell-"]:contains('${barcode}')`).then((cell) => {
       const row = cell.closest('div[class^="mclRow-"]');
       row.find('button').first().click();
@@ -1293,17 +1316,48 @@ export default {
 
   verifyOrdersCount(ordersCount) {
     if (ordersCount === 0) {
-      cy.expect(
-        Accordion({ label: including('Acquisition') })
-          .find(MultiColumnList({ id: 'list-instance-acquisitions' }))
-          .absent(),
-      );
+      cy.expect(listInstanceAcquisitions.absent());
     } else {
-      cy.expect(
-        Accordion({ label: including('Acquisition') })
-          .find(MultiColumnList({ id: 'list-instance-acquisitions' }))
-          .has({ rowCount: ordersCount }),
-      );
+      cy.expect(listInstanceAcquisitions.has({ rowCount: ordersCount }));
     }
+  },
+  checkAcquisitionsDetails(orderLines = []) {
+    orderLines.forEach((item, index) => {
+      if (item.polNumber) {
+        cy.expect(
+          acquisitionAccordion
+            .find(MultiColumnListCell({ row: index, column: 'POL number' }))
+            .has({ content: including(item.polNumber) }),
+        );
+      }
+      if (item.orderStatus) {
+        cy.expect(
+          acquisitionAccordion
+            .find(MultiColumnListCell({ row: index, column: 'Order status' }))
+            .has({ content: including(item.orderStatus) }),
+        );
+      }
+      if (item.receiptStatus) {
+        cy.expect(
+          acquisitionAccordion
+            .find(MultiColumnListCell({ row: index, column: 'POL receipt status' }))
+            .has({ content: including(item.receiptStatus) }),
+        );
+      }
+      if (item.unit) {
+        cy.expect(
+          acquisitionAccordion
+            .find(MultiColumnListCell({ row: index, column: 'Acquisition unit' }))
+            .has({ content: including(item.unit) }),
+        );
+      }
+      if (item.orderType) {
+        cy.expect(
+          acquisitionAccordion
+            .find(MultiColumnListCell({ row: index, column: 'Order type' }))
+            .has({ content: including(item.orderType) }),
+        );
+      }
+    });
   },
 };
