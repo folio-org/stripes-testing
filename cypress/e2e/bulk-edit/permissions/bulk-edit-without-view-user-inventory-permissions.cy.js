@@ -56,7 +56,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs');
         BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
         BulkEditSearchPane.verifyPanesBeforeImport();
-        BulkEditSearchPane.verifyBulkEditPaneItems();
         BulkEditSearchPane.openLogsSearch();
         BulkEditSearchPane.verifyLogsPane();
         BulkEditSearchPane.checkHoldingsCheckbox();
@@ -74,7 +73,7 @@ describe('bulk-edit', () => {
 
         BulkEditSearchPane.verifyPanesBeforeImport();
         BulkEditSearchPane.verifyBulkEditPaneItems();
-        BulkEditSearchPane.verifySetCriteriaPaneItems();
+        BulkEditSearchPane.verifySetCriteriaPaneItems(false);
         BulkEditSearchPane.verifyRecordTypesAccordion();
         BulkEditSearchPane.verifyRecordIdentifierItems();
         BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();

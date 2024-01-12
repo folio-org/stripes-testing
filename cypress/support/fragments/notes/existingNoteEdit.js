@@ -7,7 +7,7 @@ export default class ExistingNoteEdit {
 
   static #noteTypeSelect = Select('Note type');
   static #titleTextField = TextField('Note title*');
-  static #detailsTextField = RichEditor('Details');
+  static #detailsTextField = RichEditor({ id: 'note-details-field' });
 
   static #saveButton = Button('Save & close');
 

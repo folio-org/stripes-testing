@@ -1,4 +1,4 @@
-import { including, Link } from '@interactors/html';
+import { including } from '@interactors/html';
 
 import { REQUEST_TYPES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
@@ -36,7 +36,6 @@ describe('Title Level Request', () => {
   };
   let firstItemBarcode;
   let secondItemBarcode;
-  const instanceLinkText = Link(including('Instance-')).text();
 
   before('Create test data', () => {
     cy.getAdminToken();
@@ -149,7 +148,6 @@ describe('Title Level Request', () => {
       NewRequest.verifyRequestInformation(REQUEST_TYPES.HOLD);
       NewRequest.saveRequestAndClose();
       NewRequest.waitLoading();
-      cy.wrap(instanceLinkText).as('instanceTitle');
       RequestDetail.checkItemBarcode(testData.requester.barcode);
       RequestDetail.checkRequestsCount('1');
 
@@ -162,28 +160,28 @@ describe('Title Level Request', () => {
         circAction: 'Recall requested',
       });
 
-      cy.get('@instanceTitle').then((title) => {
-        cy.visit(TopMenu.requestsPath);
-        Requests.waitLoading();
-        EditRequest.findAndOpenCreatedRequest({ instanceTitle: title });
-        EditRequest.editPickupServicePoint();
-        InteractorsTools.checkCalloutMessage(including('Request has been successfully edited for'));
-        RequestDetail.openItemByBarcode(firstItemBarcode);
-        ItemRecordView.waitLoading();
-        ItemRecordView.openBorrowerPage();
-        UsersCard.viewCurrentLoans();
-        UserLoans.openLoanDetails(firstItemBarcode);
-        UserLoans.renewItem(firstItemBarcode, true);
-        RenewConfirmationModal.verifyRenewConfirmationModal(
-          [
-            {
-              itemBarcode: firstItemBarcode,
-              status: 'Item not renewed:',
-            },
-          ],
-          true,
-        );
+      cy.visit(TopMenu.requestsPath);
+      Requests.waitLoading();
+      EditRequest.findAndOpenCreatedRequest({
+        instanceTitle: testData.folioInstances[0].instanceTitle,
       });
+      EditRequest.editPickupServicePoint();
+      InteractorsTools.checkCalloutMessage(including('Request has been successfully edited for'));
+      RequestDetail.openItemByBarcode(firstItemBarcode);
+      ItemRecordView.waitLoading();
+      ItemRecordView.openBorrowerPage();
+      UsersCard.viewCurrentLoans();
+      UserLoans.openLoanDetails(firstItemBarcode);
+      UserLoans.renewItem(firstItemBarcode, true);
+      RenewConfirmationModal.verifyRenewConfirmationModal(
+        [
+          {
+            itemBarcode: firstItemBarcode,
+            status: 'Item not renewed:',
+          },
+        ],
+        true,
+      );
     },
   );
 });

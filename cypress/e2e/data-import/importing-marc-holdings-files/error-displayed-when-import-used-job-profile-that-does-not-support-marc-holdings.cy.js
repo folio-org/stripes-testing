@@ -36,6 +36,7 @@ describe('data-import', () => {
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       Logs.waitFileIsImported(fileNameForCreateInstance);
+      Logs.waitFileIsImported(fileNameForCreateInstance);
       Logs.openFileDetails(fileNameForCreateInstance);
       FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {

@@ -1,7 +1,6 @@
 import { Permissions } from '../../support/dictionary';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -63,7 +62,6 @@ describe('Loans', () => {
                 Cypress.env('users')[0].barcode,
                 folioInstances[0].barcodes[0],
               );
-              MultipieceCheckOut.confirmMultipleCheckOut(folioInstances[0].barcodes[0]);
               CheckOutActions.endCheckOutSession();
               cy.updateUser({
                 ...Cypress.env('users')[0],

@@ -5,10 +5,11 @@ function label(el) {
 }
 
 export default HTML.extend('rich text editor')
-  .selector('[class^="quill editor"]')
+  .selector('[class^="quill"][class*="editor"]')
   .locator(label)
   .filters({
     value: (element) => element.querySelector('.ql-editor').textContent,
+    id: (el) => el.id,
   })
   .actions({
     fillIn: ({ perform }, value) => perform((element) => {
