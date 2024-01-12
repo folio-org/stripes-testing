@@ -2,6 +2,7 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   FOLIO_RECORD_TYPE,
   RECORD_STATUSES,
+  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import {
@@ -148,6 +149,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileName);
+        Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
         [
           FileDetails.columnNameInResultList.srsMarc,

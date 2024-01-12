@@ -56,12 +56,6 @@ describe('data-import', () => {
       {
         fileName: `C389590 testMarcFile${getRandomPostfix()}.mrc`,
       },
-      {
-        fileName: `C389590 testMarcFile${getRandomPostfix()}.mrc`,
-      },
-      {
-        fileName: `C389590 testMarcFile${getRandomPostfix()}.mrc`,
-      },
     ];
     const matchProfile = {
       profileName: `C389589/C389590 Updating SRS by 035 to OCLC number${getRandomPostfix()}`,
@@ -126,7 +120,7 @@ describe('data-import', () => {
         JobProfiles.search(testData.jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(name.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(name.fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(name.fileName);
         Logs.getCreatedItemsID().then((link) => {
           testData.createdRecordIDs.push(link.split('/')[5]);
@@ -236,7 +230,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(fileName);
         FileDetails.openJsonScreen(testData.title);
         JsonScreenView.verifyJsonScreenIsOpened();
@@ -259,7 +253,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(fileName);
         FileDetails.openJsonScreen(testData.title);
         JsonScreenView.verifyJsonScreenIsOpened();

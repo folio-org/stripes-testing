@@ -11,7 +11,7 @@ import Users from '../../../../support/fragments/users/users';
 import { randomizeArray } from '../../../../support/utils/arrays';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
-describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
+describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () => {
   const alphabetLowerCase = 'abcdefghijklmnopqrstuvwxyz';
   const alphabetUpperCase = 'abcdefghijklmnopqrstuvwxyz'.toUpperCase();
   const digits = '0123456789';

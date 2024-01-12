@@ -12,7 +12,7 @@ import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
-describe('Manual Linking Bib field to Authority 1XX', () => {
+describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => {
   const testData = {
     tag651: '651',
     subjectValue: 'C377034 Clear Creek (Tex.)--Place in Texas--TestV--TestX--TestY--TestZ',

@@ -11,7 +11,7 @@ import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
-describe('Manual Unlinking Bib field from Authority 1XX', () => {
+describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () => {
   const testData = {};
 
   const marcFiles = [

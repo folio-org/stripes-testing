@@ -138,7 +138,7 @@ describe('data-import', () => {
 
     it(
       'C347830 Match on Instance identifier match meets both the Identifier type and Data requirements Scenario 3 (folijet)',
-      { tags: ['criticalPath', 'folijet', 'parallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         DataImport.editMarcFile(
           filePathForCreateInstance,
