@@ -3,6 +3,7 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import {
@@ -122,7 +123,7 @@ describe('data-import', () => {
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFile.fileName);
+              Logs.waitFileIsImported(marcFile.fileName);
               Logs.checkStatusOfJobProfile('Completed');
               Logs.openFileDetails(marcFile.fileName);
               for (let i = 0; i < marcFile.numOfRecords; i++) {
@@ -247,9 +248,10 @@ describe('data-import', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(nameForUpdatedMarcFile);
+        Logs.waitFileIsImported(nameForUpdatedMarcFile);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(nameForUpdatedMarcFile);
+        Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);

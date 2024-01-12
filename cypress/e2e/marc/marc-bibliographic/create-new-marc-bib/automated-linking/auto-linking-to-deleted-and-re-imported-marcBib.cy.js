@@ -87,7 +87,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.waitFileIsImported(marcFile.fileName);
           Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(marcFile.fileName);
         });

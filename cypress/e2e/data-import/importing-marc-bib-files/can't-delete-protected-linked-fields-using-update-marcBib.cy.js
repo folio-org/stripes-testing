@@ -30,6 +30,7 @@ import {
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
@@ -185,7 +186,7 @@ describe('data-import', () => {
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFile.fileName);
+              Logs.waitFileIsImported(marcFile.fileName);
               Logs.checkStatusOfJobProfile('Completed');
               Logs.openFileDetails(marcFile.fileName);
               for (let i = 0; i < marcFile.numOfRecords; i++) {
@@ -319,12 +320,11 @@ describe('data-import', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(nameForUpdatedMarcFile);
+        Logs.waitFileIsImported(nameForUpdatedMarcFile);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(nameForUpdatedMarcFile);
 
-        cy.visit(TopMenu.inventoryPath);
-        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
+        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.updated245Field);
         QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated100Field);

@@ -38,6 +38,7 @@ describe('Data Import -> Log details', () => {
       JobProfiles.waitLoadingList();
       JobProfiles.search(testData.jobProfileToRun);
       JobProfiles.runImportFile();
+      Logs.waitFileIsImported(testData.marcFileName);
       Logs.verifyFirstFileNameInLogList(testData.marcFileName);
       Logs.checkStatusOfJobProfile();
     },

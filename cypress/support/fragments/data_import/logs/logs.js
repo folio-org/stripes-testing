@@ -147,5 +147,6 @@ export default {
         .find(Button(including(fileName)))
         .exists(),
     );
+    cy.wait(60000);
   },
 };

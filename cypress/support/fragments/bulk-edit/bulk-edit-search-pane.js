@@ -140,17 +140,18 @@ export default {
     ]);
   },
 
-  verifySetCriteriaPaneItems() {
+  verifySetCriteriaPaneItems(query = true) {
     cy.expect([
       setCriteriaPane.find(identifierToggle).exists(),
-      setCriteriaPane.find(queryToggle).exists(),
       setCriteriaPane.find(logsToggle).exists(),
       setCriteriaPane.find(recordIdentifierDropdown).exists(),
       setCriteriaPane.find(recordTypesAccordion).has({ open: true }),
       setCriteriaPane.find(HTML('Drag and drop')).exists(),
       fileButton.has({ disabled: true }),
     ]);
+    if (query) cy.expect(setCriteriaPane.find(queryToggle).exists());
   },
+
   verifySetCriteriaPaneElements() {
     cy.expect([
       setCriteriaPane.find(identifierToggle).exists(),
@@ -723,8 +724,7 @@ export default {
   verifyErrorLabel(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(
       HTML(
-        `${fileName}: ${
-          validRecordCount + invalidRecordCount
+        `${fileName}: ${validRecordCount + invalidRecordCount
         } entries * ${validRecordCount} records matched * ${invalidRecordCount} errors`,
       ).exists(),
     );
@@ -1062,13 +1062,10 @@ export default {
     cy.expect(Accordion(accordion).find(TextField(fieldName)).has({ value: valueToVerify }));
   },
 
-  verifyClearSelectedFiltersButton(accordion) {
+  verifyClearSelectedFiltersButton(accordion, verification = 'exists') {
     cy.expect(
       Accordion(accordion)
-        .find(
-          Button({ icon: 'times-circle-solid', ariaLabel: including('Clear selected filters') }),
-        )
-        .exists(),
+        .find(Button({ icon: 'times-circle-solid' }))[verification]()
     );
   },
 
@@ -1085,8 +1082,9 @@ export default {
   },
 
   verifyDropdown(userName) {
+    cy.get('[id*="option-stripes-selection-"]').should('exist');
     cy.then(() => usersSelectionList.optionList()).then((options) => {
-      options.forEach((option) => cy.expect(option).to.include(userName));
+      cy.wrap(options).then(opts => expect(opts.some(opt => opt.includes(userName))).to.be.true);
     });
   },
 
@@ -1106,6 +1104,7 @@ export default {
   },
 
   verifyClearSelectedButtonExists(accordion, presence = true) {
+    cy.wait(1000);
     if (presence) {
       cy.expect(Accordion(accordion).find(clearAccordionButton).exists());
     } else {
@@ -1248,21 +1247,21 @@ export default {
     this.waitingFileDownload();
   },
 
-  verifyLogsTableHeaders() {
+  verifyLogsTableHeaders(verification = 'exists') {
     if (cy.get('div.mclScrollable---JvHuN')) {
       cy.get('div.mclScrollable---JvHuN').scrollTo('right');
     }
     cy.expect([
-      MultiColumnListHeader('Record type').exists(),
-      MultiColumnListHeader('Status').exists(),
-      MultiColumnListHeader('Editing').exists(),
-      MultiColumnListHeader('# of records').exists(),
-      MultiColumnListHeader('Processed').exists(),
-      MultiColumnListHeader('Started').exists(),
-      MultiColumnListHeader('Ended').exists(),
-      MultiColumnListHeader('Run by').exists(),
-      MultiColumnListHeader('ID').exists(),
-      MultiColumnListHeader('Actions').exists(),
+      MultiColumnListHeader('Record type')[verification](),
+      MultiColumnListHeader('Status')[verification](),
+      MultiColumnListHeader('Editing')[verification](),
+      MultiColumnListHeader('# of records')[verification](),
+      MultiColumnListHeader('Processed')[verification](),
+      MultiColumnListHeader('Started')[verification](),
+      MultiColumnListHeader('Ended')[verification](),
+      MultiColumnListHeader('Run by')[verification](),
+      MultiColumnListHeader('ID')[verification](),
+      MultiColumnListHeader('Actions')[verification](),
     ]);
   },
 

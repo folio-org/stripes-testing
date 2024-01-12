@@ -368,7 +368,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForCreateInstance);
+        Logs.waitFileIsImported(fileNameForCreateInstance);
         Logs.openFileDetails(fileNameForCreateInstance);
         [
           FileDetails.columnNameInResultList.srsMarc,
@@ -526,7 +526,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
+        Logs.waitFileIsImported(fileNameForUpdateInstance);
         Logs.openFileDetails(fileNameForUpdateInstance);
         // check Created counter in the Summary table
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfCreatedItems);

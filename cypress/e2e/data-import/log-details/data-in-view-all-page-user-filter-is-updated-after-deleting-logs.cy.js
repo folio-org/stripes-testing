@@ -46,7 +46,7 @@ describe('data-import', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(filesNames[1]);
+        Logs.waitFileIsImported(filesNames[1]);
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
         LogsViewAll.openUserIdAccordion();
