@@ -229,4 +229,10 @@ export default {
       MultiColumnListCell(record).has({ innerHTML: including(`<strong>${record}</strong>`) }),
     );
   },
+
+  checkResultIsAbsent(subjectValue) {
+    cy.expect(
+      inventorySearchResultsPane.find(MultiColumnListRow({ content: subjectValue })).absent(),
+    );
+  },
 };
