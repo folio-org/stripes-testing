@@ -127,22 +127,22 @@ describe('marc', () => {
               MarcAuthoritiesDelete.checkDelete(newField.marcValue);
             });
 
-      marcFiles.forEach((marcFile) => {
-        cy.visit(TopMenu.dataImportPath);
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(marcFile.marc, testData.fileName);
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(marcFile.jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.fileName);
-        Logs.checkStatusOfJobProfile('Completed');
-        Logs.openFileDetails(testData.fileName);
-        for (let i = 0; i < marcFile.numOfRecords; i++) {
-          Logs.getCreatedItemsID(i).then((link) => {
-            createdAuthorityIDs.push(link.split('/')[5]);
-          });
-        }
-      });
+            marcFiles.forEach((marcFile) => {
+              cy.visit(TopMenu.dataImportPath);
+              DataImport.verifyUploadState();
+              DataImport.uploadFile(marcFile.marc, testData.fileName);
+              JobProfiles.waitLoadingList();
+              JobProfiles.search(marcFile.jobProfileToRun);
+              JobProfiles.runImportFile();
+              Logs.waitFileIsImported(testData.fileName);
+              Logs.checkStatusOfJobProfile('Completed');
+              Logs.openFileDetails(testData.fileName);
+              for (let i = 0; i < marcFile.numOfRecords; i++) {
+                Logs.getCreatedItemsID(i).then((link) => {
+                  createdAuthorityIDs.push(link.split('/')[5]);
+                });
+              }
+            });
 
             cy.visit(TopMenu.inventoryPath);
             InventoryInstance.newMarcBibRecord();
