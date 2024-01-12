@@ -16,12 +16,12 @@ describe('data-import', () => {
     const marcFiles = [
       {
         marc: 'marcBibC357050-1.mrc',
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        fileName: `C357050 testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       },
       {
         marc: 'marcBibC357050-2.mrc',
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        fileName: `C357050 testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       },
     ];
@@ -36,9 +36,9 @@ describe('data-import', () => {
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(marcFile.fileName);
           if (i === 0) {
-            Logs.checkStatusOfJobProfile('Completed');
+            Logs.checkJobStatus(marcFile.fileName, 'Completed');
           } else {
-            Logs.checkStatusOfJobProfile('Completed with errors');
+            Logs.checkJobStatus(marcFile.fileName, 'Completed with errors');
           }
           Logs.openFileDetails(marcFile.fileName);
           Logs.getCreatedItemsID().then((link) => {

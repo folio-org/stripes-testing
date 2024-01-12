@@ -133,7 +133,7 @@ describe('data-import', () => {
         JobProfiles.search(testData.marcAuthorityCreate.jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(testData.marcAuthorityCreate.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(testData.marcAuthorityCreate.fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(testData.marcAuthorityCreate.fileName);
         for (let i = 0; i < testData.marcAuthorityCreate.numOfRecords; i++) {
           Logs.getCreatedItemsID(i).then((link) => {

@@ -72,6 +72,7 @@ describe('data-import', () => {
         FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
 
         FieldMappingProfiles.verifyActionMenu();
+        FieldMappingProfileView.clickCloseButton();
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfileC365634.name);
 
         FieldMappingProfileView.checkSummaryFieldsConditions([
