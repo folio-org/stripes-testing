@@ -56,6 +56,22 @@ export default {
   },
 
   checkStatusOfJobProfile: (status = 'Completed', rowNumber = 0) => cy.do(MultiColumnListCell({ row: rowNumber, content: status }).exists()),
+
+  checkJobStatus: (fileName, status) => {
+    cy.do(
+      MultiColumnListCell({ content: fileName }).perform((element) => {
+        const rowNumber = element.parentElement.getAttribute('data-row-inner');
+
+        cy.expect(
+          MultiColumnList({ id: 'job-logs-list' })
+            .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+            .find(MultiColumnListCell({ content: status }))
+            .exists(),
+        );
+      }),
+    );
+  },
+
   openFileDetails: (fileName) => {
     cy.do(Link(fileName).click());
     FileDetails.verifyLogDetailsPageIsOpened(fileName);
@@ -121,8 +137,19 @@ export default {
     );
   },
 
-  verifyFirstFileNameInLogList: (fileName) => {
-    cy.get('#job-logs-list [class*="mclCell-"]:nth-child(1) a').eq(0).should('have.text', fileName);
+  verifyFirstFileNameInLogList: (username, fileName) => {
+    cy.do(
+      MultiColumnListCell({ content: username }).perform((element) => {
+        const rowNumber = element.parentElement.getAttribute('data-row-inner');
+
+        cy.expect(
+          MultiColumnList({ id: 'job-logs-list' })
+            .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+            .find(MultiColumnListCell({ content: fileName }))
+            .exists(),
+        );
+      }),
+    );
   },
 
   clickFirstFileNameCell: () => {

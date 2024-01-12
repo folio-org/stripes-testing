@@ -101,7 +101,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(firstMarcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(firstMarcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(firstMarcFileName);
         // check the first instance with Cataloged date
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
@@ -138,7 +138,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(secondMarcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(secondMarcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(secondMarcFileName);
         // check the first instance with Cataloged date
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
@@ -175,7 +175,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(thirdMarcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(thirdMarcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(thirdMarcFileName);
         // check the first instance with Cataloged date
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
@@ -212,7 +212,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(forthMarcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(forthMarcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(forthMarcFileName);
         // check the first instance with Cataloged date
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);

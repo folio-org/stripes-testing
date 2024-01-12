@@ -17,6 +17,7 @@ describe('marc', () => {
       servicePoint: ServicePoints.getDefaultServicePoint(),
     };
     let marcInstanceData;
+
     before('Create test data', () => {
       cy.getAdminToken();
       ServicePoints.createViaApi(testData.servicePoint);

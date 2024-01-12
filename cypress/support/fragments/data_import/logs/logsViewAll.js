@@ -18,7 +18,6 @@ import {
 } from '../../../../../interactors';
 import UrlParams from '../url-params';
 import InteractorsTools from '../../../utils/interactorsTools';
-import Z3950TargetProfiles from '../../settings/inventory/integrations/z39.50TargetProfiles';
 
 const singleRecordImportsAccordion = Accordion('Inventory single record imports');
 const dataImportList = MultiColumnList({ id: 'list-data-import' });
@@ -317,9 +316,8 @@ export default {
           cy.expect(
             MultiColumnListCell({
               content: or(
-                'Inventory Single Record - Default Create Instance',
-                'Inventory Single Record - Default Update Instance',
-                Z3950TargetProfiles.jobProfileNameForCreating,
+                including('Inventory Single Record - Default Create Instance'),
+                including('Inventory Single Record - Default Update Instance'),
               ),
               row: i,
             }).exists(),
@@ -328,9 +326,8 @@ export default {
           cy.expect(
             MultiColumnListCell({
               content: or(
-                'Inventory Single Record - Default Create Instance',
-                'Inventory Single Record - Default Update Instance',
-                Z3950TargetProfiles.jobProfileNameForCreating,
+                including('Inventory Single Record - Default Create Instance'),
+                including('Inventory Single Record - Default Update Instance'),
               ),
               row: i,
             }).absent(),

@@ -12,7 +12,7 @@ import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
-describe('Manual Unlinking Bib field from Authority 1XX', () => {
+describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => {
   const testData = {
     tag100: {
       tag: '100',
