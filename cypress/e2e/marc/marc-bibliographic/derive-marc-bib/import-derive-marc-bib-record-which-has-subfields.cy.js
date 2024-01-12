@@ -47,7 +47,7 @@ describe('Importing MARC Authority files', () => {
     { tags: ['extendedPath', 'spitfire'] },
     () => {
       DataImport.verifyUploadState();
-      DataImport.uploadFileAndRetry(fileName, updatedFileName);
+      DataImport.uploadFile(fileName, updatedFileName);
       JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);

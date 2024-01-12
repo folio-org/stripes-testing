@@ -78,7 +78,7 @@ describe('Edit Authority record', () => {
       marcFiles.forEach((marcFile) => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();

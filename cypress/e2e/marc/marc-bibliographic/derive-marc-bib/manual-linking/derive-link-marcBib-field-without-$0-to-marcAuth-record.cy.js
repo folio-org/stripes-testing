@@ -85,7 +85,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
     });
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
-    DataImport.uploadFileAndRetry(testData.marcBibFile.marc, testData.marcBibFile.fileName);
+    DataImport.uploadFile(testData.marcBibFile.marc, testData.marcBibFile.fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.search(testData.marcBibFile.jobProfileToRun);
     JobProfiles.runImportFile();

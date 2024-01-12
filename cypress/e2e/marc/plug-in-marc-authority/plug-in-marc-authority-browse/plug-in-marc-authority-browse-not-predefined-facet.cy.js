@@ -93,7 +93,7 @@ describe('plug-in MARC authority | Browse', () => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
             DataImport.verifyUploadState();
-            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
@@ -140,7 +140,7 @@ describe('plug-in MARC authority | Browse', () => {
           [testData.authoritySourceFile.code],
         );
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(marcFiles[2].marc, marcFiles[2].fileName);
+        DataImport.uploadFile(marcFiles[2].marc, marcFiles[2].fileName);
         JobProfiles.waitLoadingList();
         JobProfiles.search(marcFiles[2].jobProfileToRun);
         JobProfiles.runImportFile();

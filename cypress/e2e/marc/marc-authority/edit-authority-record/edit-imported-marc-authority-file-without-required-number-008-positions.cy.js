@@ -32,7 +32,7 @@ describe('MARC › MARC Authority › Edit Authority record', () => {
         waiter: DataImport.waitLoading,
       }).then(() => {
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(fileName, updatedFileName);
+        DataImport.uploadFile(fileName, updatedFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileToRun);

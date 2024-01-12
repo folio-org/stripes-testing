@@ -34,7 +34,7 @@ describe('marc', () => {
         waiter: DataImport.waitLoading,
       }).then(() => {
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(marcFiles[0].marc, marcFiles[0].fileName);
+        DataImport.uploadFile(marcFiles[0].marc, marcFiles[0].fileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(marcFiles[0].jobProfileToRun);

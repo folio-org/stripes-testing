@@ -126,6 +126,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
       );
       marcFiles.forEach((marcFile) => {
         cy.visit(TopMenu.dataImportPath);
+        DataImport.verifyUploadState();
         DataImport.uploadFile(marcFile.marc, marcFile.fileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();

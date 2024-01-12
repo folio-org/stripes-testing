@@ -137,7 +137,7 @@ describe('data-import', () => {
       marcFiles.forEach((marcFile) => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(marcFile.fileName);
