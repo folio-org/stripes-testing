@@ -21,7 +21,7 @@ import topMenu from '../fragments/topMenu';
 import getRandomPostfix from '../utils/stringTools';
 
 const titleField = TextField({ name: 'title' });
-const detailsField = RichEditor('Details');
+const detailsField = RichEditor({ id: 'note-details-field' });
 const submitButton = Button({ type: 'submit' });
 const newButton = Button('New');
 const checkOutApp = Checkbox({ name: 'popUpOnCheckOut' });
