@@ -47,7 +47,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFile.fileName);
+        Logs.waitFileIsImported(marcFile.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFile.fileName);
         Logs.getCreatedItemsID().then((link) => {

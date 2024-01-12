@@ -112,7 +112,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(testData.jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(name.fileName);
+        Logs.waitFileIsImported(name.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(name.fileName);
         Logs.getCreatedItemsID().then((link) => {
@@ -221,7 +221,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.fileName);
+        Logs.waitFileIsImported(testData.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(testData.fileName);
         FileDetails.openJsonScreen(testData.title);

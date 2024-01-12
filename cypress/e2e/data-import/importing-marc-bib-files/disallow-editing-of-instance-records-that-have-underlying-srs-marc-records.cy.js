@@ -33,7 +33,7 @@ describe('data-import', () => {
       JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(jobProfileToRun);
+      Logs.waitFileIsImported(jobProfileToRun);
       Logs.openFileDetails(marcFileName);
       FileDetails.verifyLogDetailsPageIsOpened();
       FileDetails.openJsonScreen(title);

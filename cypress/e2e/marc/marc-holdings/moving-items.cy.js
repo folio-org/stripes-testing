@@ -160,9 +160,6 @@ describe('marc', { retries: 2 }, () => {
             InventoryInstances.selectInstance();
             InventoryInstance.openHoldingView();
             HoldingsRecordView.checkHrId(holdingsRecordhrId);
-            // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
-            HoldingsRecordView.close();
-            InventoryInstance.openHoldingView();
             HoldingsRecordView.viewSource();
             InventoryViewSource.contains(`004\t${initialInstanceHrId}`);
           });

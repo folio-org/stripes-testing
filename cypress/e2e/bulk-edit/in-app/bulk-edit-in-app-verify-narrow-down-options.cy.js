@@ -45,6 +45,7 @@ describe('bulk-edit', () => {
       'C356778 Verify narrow down options dropdown choices on Items in-app bulk edit form (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
+        // TODO: improve how the options are checked
         const options = [
           'Administrative note',
           'Check in note',
@@ -124,7 +125,6 @@ describe('bulk-edit', () => {
         BulkEditActions.clearTemporaryLocation('item', 14);
         removeItem(options);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.afterAllSelectedActions();
         removeItem(options);
         BulkEditActions.verifyTheOptionsAfterSelectedAllOptions('Suppress from discovery', 15);
         // Click "Select option" dropdown on the added row

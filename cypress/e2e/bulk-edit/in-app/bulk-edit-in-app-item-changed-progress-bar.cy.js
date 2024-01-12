@@ -31,8 +31,11 @@ describe('bulk-edit', () => {
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
           (res) => {
-            item.hrid = FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, res.id);
+            FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, res.id);
             FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
+            // Selected loan type
+            res.permanentLoanType = { id: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845' };
+            cy.updateItemViaApi(res);
           },
         );
       });
@@ -67,7 +70,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.fillPermanentLoanType('Selected');
+        BulkEditActions.fillPermanentLoanType('Can circulate');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();

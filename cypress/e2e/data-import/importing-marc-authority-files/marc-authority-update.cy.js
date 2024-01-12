@@ -116,7 +116,7 @@ describe('data-import', () => {
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(marcFile.fileName);
+            Logs.waitFileIsImported(marcFile.fileName);
             Logs.checkStatusOfJobProfile('Completed');
             Logs.openFileDetails(marcFile.fileName);
             for (let i = 0; i < marcFile.numOfRecords; i++) {
@@ -220,7 +220,7 @@ describe('data-import', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(testData.jobProfileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.uploadModifiedMarcFile);
+        Logs.waitFileIsImported(testData.uploadModifiedMarcFile);
         Logs.checkStatusOfJobProfile('Completed');
 
         cy.visit(TopMenu.marcAuthorities);

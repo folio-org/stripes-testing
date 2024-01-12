@@ -3,6 +3,7 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import {
@@ -230,6 +231,7 @@ describe('data-import', () => {
         Logs.waitFileIsImported(nameForUpdatedMarcFile);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(nameForUpdatedMarcFile);
+        Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);

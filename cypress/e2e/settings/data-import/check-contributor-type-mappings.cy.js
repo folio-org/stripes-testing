@@ -172,7 +172,7 @@ describe('data-import', () => {
         DataImportJobProfiles.search(jobProfile);
 
         // Click on the "Actions" button,  Select "Run", Click on the "Run" button
-        DataImportJobProfiles.runImportFile();
+        JobProfiles.runImportFile();
         DataImportJobProfiles.waitFileIsImported(testData.marcFile.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 

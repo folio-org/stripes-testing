@@ -63,7 +63,7 @@ describe('inventory', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForC360548);
+        Logs.waitFileIsImported(fileNameForC360548);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForC360548);
         for (let i = 0; i < 5; i++) {
@@ -106,7 +106,7 @@ describe('inventory', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForC360555);
+        Logs.waitFileIsImported(fileNameForC360555);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForC360555);
         for (let i = 0; i < 2; i++) {

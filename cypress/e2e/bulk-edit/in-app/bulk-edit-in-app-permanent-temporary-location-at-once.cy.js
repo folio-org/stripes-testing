@@ -29,6 +29,7 @@ const testData = {
   folioInstances: InventoryInstances.generateFolioInstances(),
   servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
 };
+
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
