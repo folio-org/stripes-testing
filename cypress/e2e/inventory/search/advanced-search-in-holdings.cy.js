@@ -104,7 +104,7 @@ describe('inventory', () => {
         // #2 Click on "Advanced search" button
         InventoryInstances.clickAdvSearchButton();
         // #3 - #5 Check advanced search dropdowns, including operator, search modifier and search option
-        InventoryInstances.checkAdvSearchInstancesModalFields(0, 'Holdings');
+        InventoryInstances.checkAdvSearchHoldingsModalFields(0);
         // #6 Click on "X" icon in the upper left corner of the modal
         InventoryInstances.clickCloseBtnInAdvSearchModal();
         // "Advanced search" modal window is closed

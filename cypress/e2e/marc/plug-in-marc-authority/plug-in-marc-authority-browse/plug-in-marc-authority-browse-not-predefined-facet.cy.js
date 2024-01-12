@@ -128,7 +128,7 @@ describe('plug-in MARC authority | Browse', () => {
 
   it(
     'C365110 MARC Authority plug-in | Apply "Authority source" facet not from pre-defined list to the browse result list (spitfire) (TaaS)',
-    { tags: ['extendedPath', 'spitfire'] },
+    { tags: ['extendedPath', 'spitfire', 'nonParallel'] },
     () => {
       // #1 Create autority source
       MarcAuthority.createAuthoritySource(testData.authoritySourceFile).then(() => {
