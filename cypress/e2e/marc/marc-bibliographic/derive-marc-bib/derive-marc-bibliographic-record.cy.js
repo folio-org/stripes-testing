@@ -32,7 +32,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
         waiter: DataImport.waitLoading,
       }).then(() => {
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(testData.marcBibFilePath, testData.marcBibFileName);
+        DataImport.uploadFile(testData.marcBibFilePath, testData.marcBibFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(testData.jobProfileToRun);

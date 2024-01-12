@@ -60,7 +60,7 @@ describe('inventory', () => {
           () => {
             marcFiles.forEach((marcFile) => {
               DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
               JobProfiles.waitFileIsUploaded();
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFile.jobProfileToRun);

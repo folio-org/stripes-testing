@@ -18,7 +18,7 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
   before('Creating data', () => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
       DataImport.verifyUploadState();
-      DataImport.uploadFileAndRetry('uniform_title.mrc', fileName);
+      DataImport.uploadFile('uniform_title.mrc', fileName);
       JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);

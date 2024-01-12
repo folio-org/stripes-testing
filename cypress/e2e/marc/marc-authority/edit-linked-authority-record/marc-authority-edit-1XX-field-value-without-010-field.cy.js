@@ -64,7 +64,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
             DataImport.verifyUploadState();
-            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
             Logs.waitFileIsImported(marcFile.fileName);

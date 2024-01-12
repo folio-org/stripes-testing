@@ -112,7 +112,7 @@ describe('data-import', () => {
             marcFiles.forEach((marcFile) => {
               cy.visit(TopMenu.dataImportPath);
               DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
@@ -225,7 +225,7 @@ describe('data-import', () => {
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
+        DataImport.uploadFile(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();

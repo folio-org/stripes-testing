@@ -43,7 +43,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         // #1 - #4 upload test marcBibFile
         marcFiles.forEach((marcFile) => {
           DataImport.verifyUploadState();
-          DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();

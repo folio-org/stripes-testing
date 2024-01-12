@@ -95,11 +95,11 @@ describe('marc', () => {
             cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
               () => {
                 DataImport.verifyUploadState();
-                DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
                 JobProfiles.waitLoadingList();
                 JobProfiles.search(marcFile.jobProfileToRun);
                 JobProfiles.runImportFile();
-                JobProfiles.waitFileIsImported(marcFile.fileName);
+                Logs.waitFileIsImported(marcFile.fileName);
                 Logs.checkStatusOfJobProfile('Completed');
                 Logs.openFileDetails(marcFile.fileName);
                 for (let i = 0; i < marcFile.numOfRecords; i++) {
@@ -142,11 +142,11 @@ describe('marc', () => {
               [testData.authoritySourceFile.code],
             );
             DataImport.verifyUploadState();
-            DataImport.uploadFileAndRetry(marcFiles[2].marc, marcFiles[2].fileName);
+            DataImport.uploadFile(marcFiles[2].marc, marcFiles[2].fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFiles[2].jobProfileToRun);
             JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(marcFiles[2].fileName);
+            Logs.waitFileIsImported(marcFiles[2].fileName);
             Logs.checkStatusOfJobProfile('Completed');
             Logs.openFileDetails(marcFiles[2].fileName);
             Logs.getCreatedItemsID().then((link) => {

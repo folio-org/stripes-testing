@@ -42,7 +42,7 @@ describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
     tag: '240',
     rowIndex: 18,
     value: 'C374160 Beethoven, Ludwig van',
-    boxFourth: '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
+    boxFourth: '$m piano, violin, cello, $n op. 44, $r E♭ major $a Variations,',
     boxFifth: '',
     boxSifth: '$0 id.loc.gov/authorities/names/n83130832',
     boxSeventh: '',
@@ -66,7 +66,7 @@ describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
       marcFiles.forEach((marcFile) => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(marcFile.fileName);
