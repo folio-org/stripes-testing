@@ -82,19 +82,19 @@ describe('marc', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-      cy.loginAsAdmin().then(() => {
-        marcFiles.forEach((marcFile) => {
-          cy.visit(TopMenu.dataImportPath);
-          DataImport.verifyUploadState();
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(marcFile.fileName);
-        });
-      });
+            cy.loginAsAdmin().then(() => {
+              marcFiles.forEach((marcFile) => {
+                cy.visit(TopMenu.dataImportPath);
+                DataImport.verifyUploadState();
+                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+                JobProfiles.waitLoadingList();
+                JobProfiles.search(marcFile.jobProfileToRun);
+                JobProfiles.runImportFile();
+                Logs.waitFileIsImported(marcFile.fileName);
+                Logs.checkStatusOfJobProfile('Completed');
+                Logs.openFileDetails(marcFile.fileName);
+              });
+            });
 
             cy.login(userData.username, userData.password, {
               path: TopMenu.marcAuthorities,

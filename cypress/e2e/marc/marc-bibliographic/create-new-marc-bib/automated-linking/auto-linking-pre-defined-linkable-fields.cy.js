@@ -207,24 +207,24 @@ describe('marc', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-      cy.loginAsAdmin().then(() => {
-        marcFiles.forEach((marcFile) => {
-          cy.visit(TopMenu.dataImportPath);
-          DataImport.verifyUploadState();
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(marcFile.fileName);
-          for (let i = 0; i < marcFile.numOfRecords; i++) {
-            Logs.getCreatedItemsID(i).then((link) => {
-              createdAuthorityIDs.push(link.split('/')[5]);
+            cy.loginAsAdmin().then(() => {
+              marcFiles.forEach((marcFile) => {
+                cy.visit(TopMenu.dataImportPath);
+                DataImport.verifyUploadState();
+                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+                JobProfiles.waitLoadingList();
+                JobProfiles.search(marcFile.jobProfileToRun);
+                JobProfiles.runImportFile();
+                Logs.waitFileIsImported(marcFile.fileName);
+                Logs.checkStatusOfJobProfile('Completed');
+                Logs.openFileDetails(marcFile.fileName);
+                for (let i = 0; i < marcFile.numOfRecords; i++) {
+                  Logs.getCreatedItemsID(i).then((link) => {
+                    createdAuthorityIDs.push(link.split('/')[5]);
+                  });
+                }
+              });
             });
-          }
-        });
-      });
 
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
