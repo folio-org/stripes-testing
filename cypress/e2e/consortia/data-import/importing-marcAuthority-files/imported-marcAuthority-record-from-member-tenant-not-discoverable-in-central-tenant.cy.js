@@ -23,6 +23,9 @@ describe('Data import', () => {
     let createdAuthorityID;
     const searchRecordName = 'C405519 Gabaldon, Diana. Outlander novel.';
     const users = {};
+    const type = 'Authorized';
+    const headingType = 'Personal Name';
+    const browseOption = 'Name-title';
 
     before('Create users, data', () => {
       cy.getAdminToken();
@@ -77,19 +80,23 @@ describe('Data import', () => {
         cy.visit(TopMenu.marcAuthorities);
         MarcAuthorities.waitLoading();
         MarcAuthorities.searchBy('Keyword', searchRecordName);
-        MarcAuthorities.verifyResultsRowContent(searchRecordName, 'Authorized', 'Personal Name');
+        MarcAuthorities.verifyResultsRowContent(searchRecordName, type, headingType);
         MarcAuthorities.checkRowsCount(1);
+        MarcAuthorities.selectFirstRecord();
         MarcAuthorities.checkMarcViewSectionIsVisible(true);
+
         MarcAuthorities.switchToBrowse();
-        MarcAuthorityBrowse.searchBy('Name-title', searchRecordName);
-        MarcAuthorityBrowse.checkResultWithValue('Authorized', searchRecordName);
+        MarcAuthorityBrowse.searchBy(browseOption, searchRecordName);
+        MarcAuthorities.verifyResultsRowContent(searchRecordName, type, headingType);
 
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
 
-        MarcAuthorities.searchBeats(searchRecordName);
+        MarcAuthorities.switchToBrowse();
+        MarcAuthorityBrowse.searchBy(browseOption, searchRecordName);
         MarcAuthority.verifySearchResult(`${searchRecordName} would be here`);
+
         MarcAuthorities.switchToSearch();
         MarcAuthorities.checkDefaultSearchOptions(searchRecordName);
         MarcAuthorities.searchBeats(searchRecordName);

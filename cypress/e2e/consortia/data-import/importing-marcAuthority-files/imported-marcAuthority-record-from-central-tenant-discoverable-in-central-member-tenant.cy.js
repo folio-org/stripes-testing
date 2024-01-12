@@ -78,6 +78,7 @@ describe('Data import', () => {
         MarcAuthorities.waitLoading();
         MarcAuthorities.searchBy('Keyword', searchRecordName);
         MarcAuthorities.verifyResultsRowContent(searchRecordName, type, headingType);
+        MarcAuthorities.checkRowsCount(1);
 
         MarcAuthorities.switchToBrowse();
         MarcAuthorityBrowse.searchBy(browseOption, searchRecordName);
@@ -94,6 +95,7 @@ describe('Data import', () => {
         MarcAuthorities.switchToSearch();
         MarcAuthorities.checkDefaultSearchOptions(searchRecordName);
         MarcAuthorities.searchBeats(searchRecordName);
+        MarcAuthorities.checkRowsCount(1);
         MarcAuthorities.verifyResultsRowContent(searchRecordName, type, headingType);
       },
     );
