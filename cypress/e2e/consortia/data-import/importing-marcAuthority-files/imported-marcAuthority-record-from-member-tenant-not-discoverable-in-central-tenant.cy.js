@@ -59,6 +59,7 @@ describe('Data import', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(users.userProperties.userId);
+      cy.setTenant(Affiliations.University);
       MarcAuthority.deleteViaAPI(createdAuthorityID);
     });
 
@@ -95,7 +96,7 @@ describe('Data import', () => {
 
         MarcAuthorities.switchToBrowse();
         MarcAuthorityBrowse.searchBy(browseOption, searchRecordName);
-        MarcAuthority.verifySearchResult(`${searchRecordName} would be here`);
+        MarcAuthorityBrowse.checkResultWithNoValue(searchRecordName);
 
         MarcAuthorities.switchToSearch();
         MarcAuthorities.checkDefaultSearchOptions(searchRecordName);
