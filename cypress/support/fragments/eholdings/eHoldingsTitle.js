@@ -93,11 +93,9 @@ export default {
   checkPackagesSelectionStatus: (expectedSelectionStatus) => {
     Object.values(FILTER_STATUSES)
       .filter((packageStatus) => packageStatus !== expectedSelectionStatus)
-      .forEach((notExpectedStatus) =>
-        cy.expect(
-          packagesSection.find(HTML(including(FILTER_STATUSES[notExpectedStatus]))).absent(),
-        ),
-      );
+      .forEach((notExpectedStatus) => cy.expect(
+        packagesSection.find(HTML(including(FILTER_STATUSES[notExpectedStatus]))).absent(),
+      ));
   },
 
   searchTitle(title) {

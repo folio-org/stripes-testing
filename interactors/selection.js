@@ -24,21 +24,19 @@ export const SelectionList = HTML.extend('selection list')
     placeholder: (el) => el.querySelector('input').placeholder,
   })
   .actions({
-    filter: ({ find }, value) =>
-      find(TextField()).perform((el) => {
-        el.focus();
-        const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
-        property.set.call(el, value);
-        el.dispatchEvent(
-          new InputEvent('input', {
-            inputType: 'insertFromPaste',
-            bubbles: true,
-            cancelable: false,
-          }),
-        );
-      }),
-    focusFilter: ({ perform }) =>
-      perform((el) => el.querySelector('[class^=selectionFilter]').focus()),
+    filter: ({ find }, value) => find(TextField()).perform((el) => {
+      el.focus();
+      const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
+      property.set.call(el, value);
+      el.dispatchEvent(
+        new InputEvent('input', {
+          inputType: 'insertFromPaste',
+          bubbles: true,
+          cancelable: false,
+        }),
+      );
+    }),
+    focusFilter: ({ perform }) => perform((el) => el.querySelector('[class^=selectionFilter]').focus()),
     select: async (interactor, value) => {
       await interactor.find(SelectionOption(value)).click();
     },

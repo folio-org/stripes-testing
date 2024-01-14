@@ -130,14 +130,10 @@ export default {
       descriptionField.has({ value: '' }),
       activeCheckbox.has({ checked: false }),
     ]);
-    Object.values(sections).forEach((specialSection) =>
-      cy.expect(specialSection.find(addNoticeButton).has({ disabled: false, visible: true })),
-    );
+    Object.values(sections).forEach((specialSection) => cy.expect(specialSection.find(addNoticeButton).has({ disabled: false, visible: true })));
   },
   checkAfterSaving: (patronNoticePolicy) => {
-    Object.values(patronNoticePolicy).forEach((prop) =>
-      cy.expect(PaneSet().find(KeyValue({ value: prop }))),
-    );
+    Object.values(patronNoticePolicy).forEach((prop) => cy.expect(PaneSet().find(KeyValue({ value: prop }))));
   },
 
   checkNoticeActions(patronNoticePolicy) {

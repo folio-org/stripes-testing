@@ -80,9 +80,7 @@ describe('agreements', () => {
         AgreementViewDetails.downloadFileFromSupplementaryDocument(supplementaryDocument.name);
         // Need to wait,while file to be downloaded
         cy.wait(1000);
-        FileManager.findDownloadedFilesByMask(`*${fileName}.*`).then((files) =>
-          expect(files.length).eq(1),
-        );
+        FileManager.findDownloadedFilesByMask(`*${fileName}.*`).then((files) => expect(files.length).eq(1));
       },
     );
   });

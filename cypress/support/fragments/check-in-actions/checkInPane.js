@@ -80,14 +80,12 @@ export default {
   },
 
   checkResultsInTheRow(allContentToCheck, rowNumber = 0) {
-    allContentToCheck.forEach((contentToCheck) =>
-      cy.expect(
-        MultiColumnListCell({
-          row: rowNumber,
-          content: contentToCheck,
-        }).exists(),
-      ),
-    );
+    allContentToCheck.forEach((contentToCheck) => cy.expect(
+      MultiColumnListCell({
+        row: rowNumber,
+        content: contentToCheck,
+      }).exists(),
+    ));
   },
 
   checkItemIsNotCheckedIn(itemBarcode) {

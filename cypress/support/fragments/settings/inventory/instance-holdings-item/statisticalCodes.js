@@ -51,9 +51,7 @@ export default {
 
   verifyListOfStatisticalCodesIsIdenticalToListInInstance(statusesFromInstance) {
     getListOfStatisticalCodesNames().then((codesFromList) => {
-      const result = codesFromList.every((element2) =>
-        statusesFromInstance.some((element1) => element1.includes(element2)),
-      );
+      const result = codesFromList.every((element2) => statusesFromInstance.some((element1) => element1.includes(element2)));
       expect(result).to.equal(true);
     });
   },

@@ -148,8 +148,7 @@ export default {
     InteractorsTools.checkKeyValue(requestInfoSection, 'Position in queue', data.position);
     InteractorsTools.checkKeyValue(requestInfoSection, 'Request level', data.level);
     InteractorsTools.checkKeyValue(requestInfoSection, 'Patron comments', data.comments);
-    if (data.reason)
-      InteractorsTools.checkKeyValue(requestInfoSection, 'Cancellation reason', data.reason);
+    if (data.reason) InteractorsTools.checkKeyValue(requestInfoSection, 'Cancellation reason', data.reason);
   },
 
   checkItemBarcode: (barcode) => {
@@ -329,15 +328,11 @@ export default {
     notYetFilledAccordionOption = true,
   ) {
     if (inProgressAccordionOption) {
-      this.requestQueueColumns.forEach(({ title }) =>
-        cy.expect(fulfillmentInProgressAccordion.find(MultiColumnListHeader(title)).exists()),
-      );
+      this.requestQueueColumns.forEach(({ title }) => cy.expect(fulfillmentInProgressAccordion.find(MultiColumnListHeader(title)).exists()));
     }
     if (notYetFilledAccordionOption) {
       this.requestQueueColumns.splice(1, 1);
-      this.requestQueueColumns.forEach(({ title }) =>
-        cy.expect(notYetFilledAccordion.find(MultiColumnListHeader(title)).exists()),
-      );
+      this.requestQueueColumns.forEach(({ title }) => cy.expect(notYetFilledAccordion.find(MultiColumnListHeader(title)).exists()));
     }
   },
 

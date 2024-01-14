@@ -162,14 +162,12 @@ const checkItemsQuantityInSummaryTable = (rowNumber, quantity) => {
 };
 
 const checkStatusInColumn = (specialStatus, specialColumnName, rowIndex = 0) => {
-  cy.then(() => specialColumnName.index()).then((index) =>
-    cy.expect(
-      resultsList
-        .find(MultiColumnListRow({ index: rowIndex }))
-        .find(MultiColumnListCell({ columnIndex: index }))
-        .has({ content: including(specialStatus) }),
-    ),
-  );
+  cy.then(() => specialColumnName.index()).then((index) => cy.expect(
+    resultsList
+      .find(MultiColumnListRow({ index: rowIndex }))
+      .find(MultiColumnListCell({ columnIndex: index }))
+      .has({ content: including(specialStatus) }),
+  ));
 };
 
 function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
@@ -351,7 +349,8 @@ export default {
   },
 
   openJsonScreen: (title) => {
-    cy.get('#search-results-list').find('a').contains(title).invoke('removeAttr', 'target').click();
+    cy.get('#search-results-list').find('a').contains(title).invoke('removeAttr', 'target')
+      .click();
     cy.wait(2000);
   },
 
@@ -424,9 +423,7 @@ export default {
         .perform((element) => {
           const extractedMatches = [];
           // get text contains e.g. 'Created (it00000000123)' and put it to an array
-          Array.from(element.querySelectorAll('[class*="baselineCell-"]')).map((el) =>
-            extractedMatches.push(el.innerText.match(/(Created \(it\d+\)|No action|-)/g)),
-          );
+          Array.from(element.querySelectorAll('[class*="baselineCell-"]')).map((el) => extractedMatches.push(el.innerText.match(/(Created \(it\d+\)|No action|-)/g)));
           // get the first element from an array
           const currentArray = Array.from(extractedMatches[0]);
 
@@ -444,9 +441,7 @@ export default {
           const extractedMatches = [];
 
           // get text contains e.g. 'Error' and put it to an array
-          Array.from(element.querySelectorAll('[class*="baselineCell-"]')).map((el) =>
-            extractedMatches.push(el.innerText.match(/(Error)/g)),
-          );
+          Array.from(element.querySelectorAll('[class*="baselineCell-"]')).map((el) => extractedMatches.push(el.innerText.match(/(Error)/g)));
           // get the first element from an array
           const currentArray = Array.from(extractedMatches[0]);
 
@@ -495,14 +490,12 @@ export default {
   },
 
   verifyTitle: (title, specialColumnName, rowIndex = 0) => {
-    cy.then(() => specialColumnName.index()).then((index) =>
-      cy.expect(
-        resultsList
-          .find(MultiColumnListRow({ index: rowIndex }))
-          .find(MultiColumnListCell({ columnIndex: index }))
-          .has({ content: title }),
-      ),
-    );
+    cy.then(() => specialColumnName.index()).then((index) => cy.expect(
+      resultsList
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(MultiColumnListCell({ columnIndex: index }))
+        .has({ content: title }),
+    ));
   },
 
   verifyRecordsSortingOrder() {

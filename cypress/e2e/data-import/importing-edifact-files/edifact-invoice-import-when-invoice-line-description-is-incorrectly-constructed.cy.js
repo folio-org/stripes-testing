@@ -78,9 +78,7 @@ describe('data-import', () => {
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         invoiceNumbers.forEach((number) => {
-          cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${number}"` }).then((id) =>
-            cy.deleteInvoiceFromStorageViaApi(id),
-          );
+          cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${number}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
         });
         Users.deleteViaApi(user.userId);
       });

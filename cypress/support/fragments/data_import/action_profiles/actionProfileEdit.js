@@ -26,8 +26,7 @@ export default {
 
   fieldMappingProfileAbsent: () => cy.expect(Button('Link Profile').exists()),
   verifyScreenName: (profileName) => cy.expect(Form(including(`Edit ${profileName}`)).exists()),
-  changeAction: (action = 'Update (all record types except Orders, Invoices, or MARC Holdings)') =>
-    cy.do(selectActionProfile.choose(action)),
+  changeAction: (action = 'Update (all record types except Orders, Invoices, or MARC Holdings)') => cy.do(selectActionProfile.choose(action)),
 
   changesNotSaved: () => {
     cy.expect(TextField({ name: 'profile.name' }).exists());

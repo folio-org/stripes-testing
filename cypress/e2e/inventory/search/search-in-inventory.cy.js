@@ -86,8 +86,7 @@ describe('inventory', () => {
           InventorySearchAndFilter.clickSearch();
           InventorySearchAndFilter.checkContributorsColumResult('Sauguet');
           InventorySearchAndFilter.checkContributorsColumResult('Henri');
-          if (query.includes('1901-1989'))
-            InventorySearchAndFilter.checkContributorsColumResult('Henri');
+          if (query.includes('1901-1989')) InventorySearchAndFilter.checkContributorsColumResult('Henri');
           InventorySearchAndFilter.resetAll();
         });
       },

@@ -184,9 +184,7 @@ export default {
   },
 
   verifyItemInformation: (allContentToCheck) => {
-    return allContentToCheck.forEach((contentToCheck) =>
-      cy.expect(Section({ id: 'new-item-info' }, including(contentToCheck)).exists()),
-    );
+    return allContentToCheck.forEach((contentToCheck) => cy.expect(Section({ id: 'new-item-info' }, including(contentToCheck)).exists()));
   },
 
   verifyTitleInformation() {
@@ -207,9 +205,7 @@ export default {
   },
 
   verifyHridInformation: (allContentToCheck) => {
-    return allContentToCheck.forEach((contentToCheck) =>
-      cy.expect(HTML({ id: 'section-instance-info' }, including(contentToCheck)).exists()),
-    );
+    return allContentToCheck.forEach((contentToCheck) => cy.expect(HTML({ id: 'section-instance-info' }, including(contentToCheck)).exists()));
   },
 
   verifyRequestInformation: (itemStatus) => {

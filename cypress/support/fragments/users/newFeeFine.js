@@ -55,26 +55,24 @@ const getNewFeeFineAccount = (values) => {
   }
 };
 
-const createFeeFineAccountViaApi = (feeFineAccount) =>
-  cy
-    .okapiRequest({
-      method: 'POST',
-      path: 'accounts',
-      body: feeFineAccount,
-      isDefaultSearchParamsRequired: false,
-    })
-    .then((res) => res.body.id);
+const createFeeFineAccountViaApi = (feeFineAccount) => cy
+  .okapiRequest({
+    method: 'POST',
+    path: 'accounts',
+    body: feeFineAccount,
+    isDefaultSearchParamsRequired: false,
+  })
+  .then((res) => res.body.id);
 
-const chargeAmountFeeFineActionsViaApi = (chargeFeeFineAction) =>
-  cy
-    .okapiRequest({
-      method: 'POST',
-      path: 'feefineactions',
-      body: chargeFeeFineAction,
-      searchParams: { limit: 1000, query: `(userId==${chargeFeeFineAction.userId})` },
-      isDefaultSearchParamsRequired: false,
-    })
-    .then((res) => res.body.accountId);
+const chargeAmountFeeFineActionsViaApi = (chargeFeeFineAction) => cy
+  .okapiRequest({
+    method: 'POST',
+    path: 'feefineactions',
+    body: chargeFeeFineAction,
+    searchParams: { limit: 1000, query: `(userId==${chargeFeeFineAction.userId})` },
+    isDefaultSearchParamsRequired: false,
+  })
+  .then((res) => res.body.accountId);
 
 export default {
   waitLoading: () => {
@@ -153,19 +151,17 @@ export default {
 
   createViaApi: (feeFineAccount) => {
     return createFeeFineAccountViaApi(getNewFeeFineAccount(feeFineAccount)).then(
-      (feeFineAccountId) =>
-        chargeAmountFeeFineActionsViaApi(
-          getChargeFeeFine({ ...feeFineAccount, id: feeFineAccountId }),
-        ),
+      (feeFineAccountId) => chargeAmountFeeFineActionsViaApi(
+        getChargeFeeFine({ ...feeFineAccount, id: feeFineAccountId }),
+      ),
     );
   },
 
-  deleteFeeFineAccountViaApi: (feeFineAccountId) =>
-    cy.okapiRequest({
-      method: 'DELETE',
-      path: `accounts/${feeFineAccountId}`,
-      isDefaultSearchParamsRequired: false,
-    }),
+  deleteFeeFineAccountViaApi: (feeFineAccountId) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `accounts/${feeFineAccountId}`,
+    isDefaultSearchParamsRequired: false,
+  }),
 
   keepEditing() {
     cy.do(Button({ id: 'clickable-cancel-editing-confirmation-confirm' }).click());

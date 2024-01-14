@@ -12,6 +12,5 @@ export default HTML.extend('section')
   })
   .actions({
     focus: ({ perform }) => perform((el) => el.querySelector('section').focus()),
-    toggle: ({ perform }) =>
-      perform((el) => el.querySelector('[class^=defaultCollapseButton-]').click()),
+    toggle: ({ perform }) => perform((el) => el.querySelector('[class^=defaultCollapseButton-]').click()),
   });

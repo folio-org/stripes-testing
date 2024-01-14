@@ -160,7 +160,8 @@ export default {
 
   selectFund: (fundName) => {
     cy.wait(4000);
-    cy.get('#FundDistribution').find('a').contains(fundName).invoke('removeAttr', 'target').click();
+    cy.get('#FundDistribution').find('a').contains(fundName).invoke('removeAttr', 'target')
+      .click();
   },
 
   resetFilters: () => {
@@ -1751,11 +1752,13 @@ export default {
   },
 
   openPageCurrentEncumbrance: (title) => {
-    cy.get('#FundDistribution').find('a').contains(title).invoke('removeAttr', 'target').click();
+    cy.get('#FundDistribution').find('a').contains(title).invoke('removeAttr', 'target')
+      .click();
   },
 
   openPageConnectedInstance: () => {
-    cy.get('#itemDetails').find('a').contains('Connected').invoke('removeAttr', 'target').click();
+    cy.get('#itemDetails').find('a').contains('Connected').invoke('removeAttr', 'target')
+      .click();
   },
 
   cancelPOL: () => {
@@ -1827,8 +1830,7 @@ export default {
     );
   },
 
-  getAssignedPOLNumber: () =>
-    cy.then(() => Accordion('Purchase order line').find(KeyValue('POL number')).value()),
+  getAssignedPOLNumber: () => cy.then(() => Accordion('Purchase order line').find(KeyValue('POL number')).value()),
 
   verifyPOLDetailsIsOpened: () => {
     cy.expect(orderLineDetailsPane.find(paneHeaderOrderLinesDetailes).exists());

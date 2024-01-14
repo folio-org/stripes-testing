@@ -1,35 +1,35 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import {
-  TextField,
-  Button,
-  Select,
-  TextArea,
-  Modal,
-  HTML,
-  including,
-  MultiColumnListCell,
-  MultiColumnListRow,
-  SearchField,
   Accordion,
+  Button,
+  Callout,
   Checkbox,
   Dropdown,
   DropdownMenu,
-  Callout,
-  Pane,
   Form,
-  Option,
+  HTML,
   IconButton,
-  Popover,
   Label,
   ListItem,
+  Modal,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Option,
+  Pane,
+  Popover,
+  SearchField,
+  Select,
+  TextArea,
+  TextField,
+  including,
 } from '../../../../../interactors';
-import getRandomPostfix from '../../../utils/stringTools';
 import {
+  ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES,
+  EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
-  EXISTING_RECORDS_NAMES,
-  ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES,
 } from '../../../constants';
+import getRandomPostfix from '../../../utils/stringTools';
 
 const saveButton = Button('Save as profile & Close');
 const searchButton = Button('Search');
@@ -149,8 +149,7 @@ const selectOrganizationByName = (organizationName) => {
   cy.expect(TextField({ value: `"${organizationName}"` }).exists());
 };
 
-const selectFromResultsList = (rowNumber = 0) =>
-  cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
+const selectFromResultsList = (rowNumber = 0) => cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
 
 const addContributor = (profile) => {
   if (profile.contributor) {
@@ -850,15 +849,13 @@ export default {
 
   fillPermanentLocation: (location) => cy.do(permanentLocationField.fillIn(location)),
   fillCatalogedDate: (date = catalogedDate) => cy.do(catalogedDateField.fillIn(date)),
-  fillInstanceStatusTerm: (statusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED) =>
-    cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`)),
+  fillInstanceStatusTerm: (statusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED) => cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`)),
   fillHoldingsType: (type) => cy.do(TextField('Holdings type').fillIn(`"${type}"`)),
   fillCallNumberType: (type) => cy.do(TextField('Call number type').fillIn(type)),
   fillCallNumberPrefix: (prefix) => cy.do(TextField('Call number prefix').fillIn(prefix)),
   fillcallNumberSuffix: (sufix) => cy.do(TextField('Call number suffix').fillIn(sufix)),
   fillStatus: (itemStatus) => cy.do(TextField('Status').fillIn(itemStatus)),
-  fillPermanentLoanType: (loanType) =>
-    cy.do(TextField('Permanent loan type').fillIn(`"${loanType}"`)),
+  fillPermanentLoanType: (loanType) => cy.do(TextField('Permanent loan type').fillIn(`"${loanType}"`)),
   fillTemporaryLoanType: (loanType) => cy.do(TextField('Temporary loan type').fillIn(loanType)),
   fillMaterialType: (type) => cy.do(materialTypeField.fillIn(type)),
   fillIllPolicy: (policy) => cy.do(TextField('ILL policy').fillIn(`"${policy}"`)),
@@ -1193,32 +1190,6 @@ export default {
 
   checkNewMatchProfileFormIsOpened: () => {
     cy.expect(Pane('New field mapping profile').exists());
-  },
-
-  createMappingProfileForUpdateMarcBibViaApi: (profile) => {
-    return cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'data-import-profiles/mappingProfiles',
-        body: {
-          profile: {
-            name: profile.name,
-            incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-            existingRecordType: 'MARC_BIBLIOGRAPHIC',
-            description: '',
-            mappingDetails: {
-              name: 'marcBib',
-              recordType: 'MARC_BIBLIOGRAPHIC',
-              marcMappingDetails: [],
-              marcMappingOption: 'UPDATE',
-            },
-          },
-        },
-        isDefaultSearchParamsRequired: false,
-      })
-      .then(({ response }) => {
-        return response;
-      });
   },
 
   checkPreviouslyPopulatedDataIsDisplayed: (profile) => {

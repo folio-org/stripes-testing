@@ -407,10 +407,8 @@ export default {
     cy.expect(logsPane.has({ subtitle }));
   },
 
-  verifyLogsPaneSubtitleAbsent: () =>
-    cy.expect(logsPane.find(HTML(including('selected'))).absent()),
-  verifyChooseFileButtonState: ({ isDisabled }) =>
-    cy.expect(orChooseFilesButton.has({ disabled: isDisabled })),
+  verifyLogsPaneSubtitleAbsent: () => cy.expect(logsPane.find(HTML(including('selected'))).absent()),
+  verifyChooseFileButtonState: ({ isDisabled }) => cy.expect(orChooseFilesButton.has({ disabled: isDisabled })),
 
   verifyDeleteLogsButtonDisabled: () => {
     cy.do(actionsButton.click());

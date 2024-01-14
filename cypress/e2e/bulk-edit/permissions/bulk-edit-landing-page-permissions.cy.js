@@ -53,9 +53,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyDragNDropHoldingsItemBarcodesArea();
 
         BulkEditSearchPane.verifyInstanceIdentifiers();
-        ['Instance UUIDs', 'Instance HRIDs', 'ISBN', 'ISSN'].forEach((identifier) =>
-          BulkEditSearchPane.verifyDragNDropInstanceIdentifierArea(identifier),
-        );
+        ['Instance UUIDs', 'Instance HRIDs', 'ISBN', 'ISSN'].forEach((identifier) => BulkEditSearchPane.verifyDragNDropInstanceIdentifierArea(identifier));
 
         BulkEditSearchPane.verifyItemIdentifiersDefaultState();
         BulkEditSearchPane.clickRecordTypesAccordion();

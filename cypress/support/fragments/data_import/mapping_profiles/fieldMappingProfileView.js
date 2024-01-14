@@ -133,22 +133,18 @@ export default {
   },
 
   verifyProfileName: (profileName) => cy.expect(PaneHeader(profileName).exists()),
-  verifyValueBySection: (sectionName, value) =>
-    cy.expect(KeyValue(sectionName).has({ value: `"${value}"` })),
+  verifyValueBySection: (sectionName, value) => cy.expect(KeyValue(sectionName).has({ value: `"${value}"` })),
   verifyValueByAccordionAndSection: (accordion, sectionName, value) => {
     cy.expect(Accordion(accordion).find(KeyValue(sectionName)).has({ value }));
   },
-  verifyInstanceStatusTerm: (status) =>
-    cy.expect(KeyValue('Instance status term').has({ value: status })),
+  verifyInstanceStatusTerm: (status) => cy.expect(KeyValue('Instance status term').has({ value: status })),
   verifyActionMenuAbsent: () => cy.expect(fullScreenView.find(actionsButton).absent()),
   verifyMappingProfileOpened: () => cy.expect(fullScreenView.exists()),
   verifyVendorName: (vendorName) => cy.expect(KeyValue('Vendor name').has({ value: vendorName })),
   verifyCurrency: (value) => cy.expect(KeyValue('Currency').has({ value })),
-  verifyDefaultPurchaseOrderLinesLimit: (value) =>
-    cy.expect(KeyValue('Purchase order lines limit setting').has({ value })),
+  verifyDefaultPurchaseOrderLinesLimit: (value) => cy.expect(KeyValue('Purchase order lines limit setting').has({ value })),
   verifyPaymentStatus: (value) => cy.expect(KeyValue('Payment status').has({ value })),
-  verifyMappingProfileTitleName: (profileName) =>
-    cy.get('#full-screen-view-content h2').should('have.text', profileName),
+  verifyMappingProfileTitleName: (profileName) => cy.get('#full-screen-view-content h2').should('have.text', profileName),
   verifyCannotDeleteModalOpened: () => cy.expect(cannotDeleteModal.exists()),
   verifyEnabledIndicatorSetToTrueViaApi: (profileId) => {
     cy.okapiRequest({

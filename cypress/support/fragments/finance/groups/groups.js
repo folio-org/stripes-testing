@@ -180,12 +180,11 @@ export default {
     );
   },
 
-  deleteGroupViaApi: (groupId) =>
-    cy.okapiRequest({
-      method: 'DELETE',
-      path: `finance/groups/${groupId}`,
-      isDefaultSearchParamsRequired: false,
-    }),
+  deleteGroupViaApi: (groupId) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `finance/groups/${groupId}`,
+    isDefaultSearchParamsRequired: false,
+  }),
 
   selectGroup: (GroupName) => {
     cy.do(Section({ id: 'group-results-pane' }).find(Link(GroupName)).click());

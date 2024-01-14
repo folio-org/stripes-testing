@@ -52,9 +52,7 @@ describe('bulk-edit', () => {
 
     after('delete test data', () => {
       cy.getAdminToken();
-      items.forEach((item) =>
-        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode),
-      );
+      items.forEach((item) => InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode));
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
       FileManager.deleteFileFromDownloadsByMask(changedRecordsFileName);

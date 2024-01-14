@@ -81,12 +81,12 @@ describe('inventory', () => {
                   callNumber: instance.callNumber,
                   notes: instance.holdingsNote
                     ? [
-                        {
-                          note: instance.holdingsNote,
-                          staffOnly: false,
-                          holdingsNoteTypeId: testData.holdingsNotesType,
-                        },
-                      ]
+                      {
+                        note: instance.holdingsNote,
+                        staffOnly: false,
+                        holdingsNoteTypeId: testData.holdingsNotesType,
+                      },
+                    ]
                     : [],
                 },
               ],

@@ -38,9 +38,7 @@ describe('marc', () => {
       };
       function checkLDRbyPosition(value, positions) {
         QuickMarcEditor.getRegularTagContent('LDR').then((content) => {
-          positions.forEach((i) =>
-            value[i] !== ' ' ? expect(content[i]).to.eq(value[i]) : expect(content[i]).to.eq('\\'),
-          );
+          positions.forEach((i) => (value[i] !== ' ' ? expect(content[i]).to.eq(value[i]) : expect(content[i]).to.eq('\\')));
         });
       }
 

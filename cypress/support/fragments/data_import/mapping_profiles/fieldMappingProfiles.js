@@ -129,11 +129,9 @@ export default {
         .exists(),
     );
   },
-  checkNewMappingProfileFormIsOpened: () =>
-    cy.expect(Form({ id: 'mapping-profiles-form' }).exists()),
+  checkNewMappingProfileFormIsOpened: () => cy.expect(Form({ id: 'mapping-profiles-form' }).exists()),
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
-  verifyMappingProfileAbsent: () =>
-    cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
+  verifyMappingProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
   verifySearchFieldIsEmpty: () => cy.expect(searchField.has({ value: '' })),
   verifySearchResult: (profileName) => {
     cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
@@ -160,8 +158,6 @@ export default {
             cy.log(cellValue);
           });
       })
-      .then(() =>
-        cy.expect(ArrayUtils.checkIsSortedAlphabetically({ array: cells })).to.equal(true),
-      );
+      .then(() => cy.expect(ArrayUtils.checkIsSortedAlphabetically({ array: cells })).to.equal(true));
   },
 };

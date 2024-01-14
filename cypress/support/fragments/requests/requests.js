@@ -261,47 +261,39 @@ export default {
 
   waitLoading: () => cy.expect(Pane({ title: 'Requests' }).exists()),
   resetAllFilters: () => cy.do(Button('Reset all').click()),
-  selectAwaitingDeliveryRequest: () =>
-    cy.do(Checkbox({ name: 'Open - Awaiting delivery' }).click()),
+  selectAwaitingDeliveryRequest: () => cy.do(Checkbox({ name: 'Open - Awaiting delivery' }).click()),
   selectAwaitingPickupRequest: () => cy.do(Checkbox({ name: 'Open - Awaiting pickup' }).click()),
   selectInTransitRequest: () => cy.do(Checkbox({ name: 'Open - In transit' }).click()),
   selectNotYetFilledRequest: () => cy.do(Checkbox({ name: 'Open - Not yet filled' }).click()),
   selectClosedCancelledRequest: () => cy.do(Checkbox({ name: 'Closed - Cancelled' }).click()),
   selectItemRequestLevel: () => selectSpecifiedRequestLevel('Item'),
   selectTitleRequestLevel: () => selectSpecifiedRequestLevel('Title'),
-  selectFirstRequest: (title) =>
-    cy.do(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).click()),
-  selectRequest: (title, rowIndex) =>
-    cy.do(
-      requestsPane
-        .find(
-          MultiColumnListCell({
-            row: rowIndex,
-            content: title,
-          }),
-        )
-        .click(),
-    ),
+  selectFirstRequest: (title) => cy.do(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).click()),
+  selectRequest: (title, rowIndex) => cy.do(
+    requestsPane
+      .find(
+        MultiColumnListCell({
+          row: rowIndex,
+          content: title,
+        }),
+      )
+      .click(),
+  ),
   openTagsPane: () => cy.do(showTagsButton.click()),
-  closePane: (title) =>
-    cy.do(
-      Pane({ title })
-        .find(IconButton({ ariaLabel: 'Close ' }))
-        .click(),
-    ),
+  closePane: (title) => cy.do(
+    Pane({ title })
+      .find(IconButton({ ariaLabel: 'Close ' }))
+      .click(),
+  ),
   selectHoldsRequestType: () => cy.do(holdCheckbox.click()),
   selectPagesRequestType: () => cy.do(pageCheckbox.click()),
   selectRecallsRequestType: () => cy.do(recallCheckbox.click()),
-  verifyNoResultMessage: (noResultMessage) =>
-    cy.expect(requestsResultsSection.find(HTML(including(noResultMessage))).exists()),
+  verifyNoResultMessage: (noResultMessage) => cy.expect(requestsResultsSection.find(HTML(including(noResultMessage))).exists()),
   navigateToApp: (appName) => cy.do([appsButton.click(), Button(appName).click()]),
-  verifyCreatedRequest: (title) =>
-    cy.expect(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).exists()),
+  verifyCreatedRequest: (title) => cy.expect(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).exists()),
   verifyColumnsPresence() {
     cy.expect([
-      [...this.columns, this.sortingColumns].forEach(({ title }) =>
-        MultiColumnListHeader(title).exists(),
-      ),
+      [...this.columns, this.sortingColumns].forEach(({ title }) => MultiColumnListHeader(title).exists()),
     ]);
   },
 
@@ -601,25 +593,23 @@ export default {
     cy.wait(2000);
   },
 
-  getRequestIdViaApi: (searchParams) =>
-    cy
-      .okapiRequest({
-        path: 'circulation/requests',
-        searchParams,
-      })
-      .then((res) => res.body.requests[0].id),
+  getRequestIdViaApi: (searchParams) => cy
+    .okapiRequest({
+      path: 'circulation/requests',
+      searchParams,
+    })
+    .then((res) => res.body.requests[0].id),
 
   verifyShowTagsButtonIsDisabled: () => {
     cy.expect(showTagsButton.has({ disabled: true }));
   },
 
-  createNewRequestViaApi: (requestBody) =>
-    cy.okapiRequest({
-      method: 'POST',
-      path: 'circulation/requests',
-      body: requestBody,
-      isDefaultSearchParamsRequired: false,
-    }),
+  createNewRequestViaApi: (requestBody) => cy.okapiRequest({
+    method: 'POST',
+    path: 'circulation/requests',
+    body: requestBody,
+    isDefaultSearchParamsRequired: false,
+  }),
 
   /* for miltiselect 'Pickup service point' we have to redefine attribute 'aria-labelledby' to make it unique,
  because there are 4 elements with same 'aria-labelledby' on the page so the function 'createInteractor()'

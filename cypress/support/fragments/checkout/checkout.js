@@ -98,12 +98,10 @@ export default {
   },
 
   verifyResultsInTheRow: (allContentToCheck, rowIndex = 0) => {
-    return allContentToCheck.forEach((contentToCheck) =>
-      cy.expect(
-        MultiColumnListRow({ indexRow: `row-${rowIndex}` })
-          .find(MultiColumnListCell({ content: including(contentToCheck) }))
-          .exists(),
-      ),
-    );
+    return allContentToCheck.forEach((contentToCheck) => cy.expect(
+      MultiColumnListRow({ indexRow: `row-${rowIndex}` })
+        .find(MultiColumnListCell({ content: including(contentToCheck) }))
+        .exists(),
+    ));
   },
 };

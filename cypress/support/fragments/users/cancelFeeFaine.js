@@ -17,11 +17,10 @@ export default {
     cy.expect(Callout(including('has been successfully cancelled as error for ')).exists());
   },
 
-  cancelFeeFineViaApi: (apiBody, feeFineId) =>
-    cy.okapiRequest({
-      method: 'POST',
-      path: `accounts/${feeFineId}/cancel`,
-      body: apiBody,
-      isDefaultSearchParamsRequired: false,
-    }),
+  cancelFeeFineViaApi: (apiBody, feeFineId) => cy.okapiRequest({
+    method: 'POST',
+    path: `accounts/${feeFineId}/cancel`,
+    body: apiBody,
+    isDefaultSearchParamsRequired: false,
+  }),
 };

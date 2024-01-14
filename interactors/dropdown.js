@@ -21,8 +21,7 @@ const open = (el) => el.querySelector('[aria-haspopup]').getAttribute('aria-expa
 const visible = (el) => [el, el.querySelector(['[aria-haspopup]'])].every(isVisible);
 
 const control =
-  ({ shouldOpen = true } = {}) =>
-  async (interactor) => {
+  ({ shouldOpen = true } = {}) => async (interactor) => {
     let isOpen;
     await interactor.perform((el) => {
       isOpen = open(el);

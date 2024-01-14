@@ -165,10 +165,8 @@ export default {
   },
   selectMatchProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
-  verifyMatchProfileAbsent: () =>
-    cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
-  verifySearchFieldIsEmpty: () =>
-    cy.expect(TextField({ id: 'input-search-match-profiles-field' }).has({ value: '' })),
+  verifyMatchProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
+  verifySearchFieldIsEmpty: () => cy.expect(TextField({ id: 'input-search-match-profiles-field' }).has({ value: '' })),
   verifySearchResult: (profileName) => {
     cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
   },

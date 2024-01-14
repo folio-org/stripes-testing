@@ -35,8 +35,7 @@ export default {
     });
   },
 
-  verifyActionsButtonEnabled: () =>
-    cy.do(actionsButtonInSearchResultsPane.has({ disabled: false })),
+  verifyActionsButtonEnabled: () => cy.do(actionsButtonInSearchResultsPane.has({ disabled: false })),
 
   openFinancialTransactionDetailReportModal: () => {
     cy.do([

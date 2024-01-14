@@ -187,8 +187,7 @@ export default {
     expectedArray.forEach((expectedItem) => expect(actual).to.include(expectedItem));
   },
 
-  select: (specialInternalId) =>
-    cy.do(authoritiesList.find(Button({ href: including(specialInternalId) })).click()),
+  select: (specialInternalId) => cy.do(authoritiesList.find(Button({ href: including(specialInternalId) })).click()),
 
   selectFirst: (title) => cy.do(MultiColumnListRow({ index: 0 }).find(Button(title)).click()),
 
@@ -280,8 +279,7 @@ export default {
     ]);
   },
 
-  checkRow: (expectedHeadingReference) =>
-    cy.expect(authoritiesList.find(MultiColumnListCell(expectedHeadingReference)).exists()),
+  checkRow: (expectedHeadingReference) => cy.expect(authoritiesList.find(MultiColumnListCell(expectedHeadingReference)).exists()),
 
   checkRowsCount: (expectedRowsCount) => {
     cy.expect([
@@ -290,12 +288,11 @@ export default {
     ]);
   },
 
-  checkRowUpdatedAndHighlighted: (expectedHeadingReference) =>
-    cy.expect(
-      authoritiesList
-        .find(MultiColumnListCell({ selected: true }, including(expectedHeadingReference)))
-        .exists(),
-    ),
+  checkRowUpdatedAndHighlighted: (expectedHeadingReference) => cy.expect(
+    authoritiesList
+      .find(MultiColumnListCell({ selected: true }, including(expectedHeadingReference)))
+      .exists(),
+  ),
 
   switchToBrowse: () => cy.do(Button({ id: 'segment-navigation-browse' }).click()),
 
@@ -601,10 +598,8 @@ export default {
   fillAdvancedSearchField(rowIndex, value, searchOption, booleanOption, matchOption) {
     cy.do(AdvancedSearchRow({ index: rowIndex }).fillQuery(value));
     cy.do(AdvancedSearchRow({ index: rowIndex }).selectSearchOption(rowIndex, searchOption));
-    if (booleanOption)
-      cy.do(AdvancedSearchRow({ index: rowIndex }).selectBoolean(rowIndex, booleanOption));
-    if (matchOption)
-      cy.do(AdvancedSearchRow({ index: rowIndex }).selectMatchOption(rowIndex, matchOption));
+    if (booleanOption) cy.do(AdvancedSearchRow({ index: rowIndex }).selectBoolean(rowIndex, booleanOption));
+    if (matchOption) cy.do(AdvancedSearchRow({ index: rowIndex }).selectMatchOption(rowIndex, matchOption));
   },
 
   clickSearchButton() {
@@ -1114,9 +1109,7 @@ export default {
       .then((rowsCount) => {
         if (rowsCount) {
           for (let i = 0; i < rowsCount; i++) {
-            cy.then(() =>
-              authoritiesList.find(MultiColumnListCell({ column, row: i })).content(),
-            ).then((content) => {
+            cy.then(() => authoritiesList.find(MultiColumnListCell({ column, row: i })).content()).then((content) => {
               actualValues.push(content);
             });
           }
@@ -1264,11 +1257,9 @@ export default {
     cy.do(MultiColumnListCell({ row: rowIndex, columnIndex: 2 }).find(Button()).click());
   },
 
-  checkRowByContent: (rowContent) =>
-    cy.expect(authoritiesList.find(MultiColumnListRow(including(rowContent))).exists()),
+  checkRowByContent: (rowContent) => cy.expect(authoritiesList.find(MultiColumnListRow(including(rowContent))).exists()),
 
-  checkRowAbsentByContent: (rowContent) =>
-    cy.expect(authoritiesList.find(MultiColumnListRow(including(rowContent))).absent()),
+  checkRowAbsentByContent: (rowContent) => cy.expect(authoritiesList.find(MultiColumnListRow(including(rowContent))).absent()),
 
   selectSearchOptionInDropdown(searchOption) {
     cy.do(selectField.choose(searchOption));

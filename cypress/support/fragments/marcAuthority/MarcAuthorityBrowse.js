@@ -55,10 +55,7 @@ export default {
     cy.expect(rootSection.find(MultiColumnListRow({ indexRow: getFirstLineIndexRow(0) })).exists());
   },
 
-  checkPresentedColumns: () =>
-    presentedColumns.forEach((columnName) =>
-      cy.expect(rootSection.find(MultiColumnListHeader(columnName)).exists()),
-    ),
+  checkPresentedColumns: () => presentedColumns.forEach((columnName) => cy.expect(rootSection.find(MultiColumnListHeader(columnName)).exists())),
   // TODO: add checing of ""Type of heading" accordion button."
   checkFiltersInitialState: () => {
     cy.expect(mainFilter.has({ selectedFilter: defaultMainFilterValue.htmlValue }));
@@ -118,8 +115,7 @@ export default {
     cy.expect(mainFilter.has({ selectedFilter: searchOption.value }));
   },
 
-  getNotExistingHeadingReferenceValue: (requestedHeadingReference) =>
-    `${requestedHeadingReference}\xa0would be here`,
+  getNotExistingHeadingReferenceValue: (requestedHeadingReference) => `${requestedHeadingReference}\xa0would be here`,
   checkHeadingReferenceInRow(rowNumber, headingReferenceValue, isRef) {
     const specialCell = rootSection
       .find(MultiColumnListRow({ rowIndexInParent: `row-${rowNumber}` }))

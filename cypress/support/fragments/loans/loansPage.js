@@ -127,13 +127,11 @@ export default {
     expectedArray.forEach((expectedItem) => expect(actual).to.include(expectedItem));
   },
   verifyResultsInTheRow: (allContentToCheck, rowIndex = 0) => {
-    return allContentToCheck.forEach((contentToCheck) =>
-      cy.expect(
-        MultiColumnListRow({ indexRow: `row-${rowIndex}` })
-          .find(MultiColumnListCell({ content: including(contentToCheck) }))
-          .exists(),
-      ),
-    );
+    return allContentToCheck.forEach((contentToCheck) => cy.expect(
+      MultiColumnListRow({ indexRow: `row-${rowIndex}` })
+        .find(MultiColumnListCell({ content: including(contentToCheck) }))
+        .exists(),
+    ));
   },
   checkLoanDate(date) {
     cy.expect(LoanDateKeyValue.has({ value: including(date) }));

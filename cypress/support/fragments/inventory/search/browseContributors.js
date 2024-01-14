@@ -65,8 +65,7 @@ const nameTypeButton = typeSelect.find(Button('Name type'));
 const nameTypeSearch = typeSelect.find(MultiSelect());
 const nameTypeClear = typeSelect.find(Button({ icon: 'times-circle-solid' }));
 const actionsButton = Button('Actions');
-const rowContributorName = (ContributorName, contributorNameType) =>
-  MultiColumnListRow(`${ContributorName}${contributorNameType}1`);
+const rowContributorName = (ContributorName, contributorNameType) => MultiColumnListRow(`${ContributorName}${contributorNameType}1`);
 
 export default {
   defaultInstanceAWithContributor,

@@ -82,14 +82,13 @@ const defaultAuthority = {
       changedProperties.splice(19, 0, '    ');
       return changedProperties;
     },
-    getNewValueSourceLine: () =>
-      defaultAuthority.tag008AuthorityBytesProperties
-        .convertToSource(
-          defaultAuthority.tag008AuthorityBytesProperties
-            .getAllProperties()
-            .map((property) => property.newValue),
-        )
-        .join(''),
+    getNewValueSourceLine: () => defaultAuthority.tag008AuthorityBytesProperties
+      .convertToSource(
+        defaultAuthority.tag008AuthorityBytesProperties
+          .getAllProperties()
+          .map((property) => property.newValue),
+      )
+      .join(''),
   },
   // 24 symbols
   ldrValue: '00846cz\\\\a2200241n\\\\4500',
@@ -112,8 +111,7 @@ export default {
     cy.do(Button('Delete').click());
   },
   contains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists()),
-  notContains: (expectedText) =>
-    cy.expect(rootSection.find(HTML(including(expectedText))).absent()),
+  notContains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).absent()),
   checkTagInRow: (rowIndex, tag) => {
     cy.expect(
       rootSection
@@ -182,8 +180,7 @@ export default {
     this.waitLoading();
     cy.expect([calloutUpdatedRecordSuccess.exists(), rootSection.exists()]);
   },
-  checkPresentedColumns: (presentedColumns) =>
-    presentedColumns.forEach((columnName) => cy.expect(MultiColumnListHeader(columnName).exists())),
+  checkPresentedColumns: (presentedColumns) => presentedColumns.forEach((columnName) => cy.expect(MultiColumnListHeader(columnName).exists())),
   checkLDRValue: (ldrValue) => {
     cy.expect(
       QuickMarcEditorRow({ tagValue: 'LDR' })

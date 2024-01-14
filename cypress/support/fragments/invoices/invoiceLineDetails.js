@@ -130,8 +130,8 @@ export default {
   clickTheLinkInFundDetailsSection({ fundName, columnIndex = 0 } = {}) {
     const tableRow = fundName
       ? fundDistributionsSection.find(
-          MultiColumnListRow({ content: including(fundName), isContainer: true }),
-        )
+        MultiColumnListRow({ content: including(fundName), isContainer: true }),
+      )
       : fundDistributionsSection.find(MultiColumnListRow({ rowIndexInParent: 'row-0' }));
     const link = tableRow.find(MultiColumnListCell({ columnIndex })).find(Link());
 

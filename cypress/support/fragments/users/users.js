@@ -44,29 +44,27 @@ const defaultUser = {
 
 export default {
   defaultUser,
-  createViaApi: (user) =>
-    cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'users',
-        body: user,
-        isDefaultSearchParamsRequired: false,
-      })
-      .then((response) => ({
-        id: response.body.id,
-        username: response.body.username,
-        barcode: response.body.barcode,
-        lastName: response.body.personal.lastName,
-        firstName: response.body.personal.firstName,
-        middleName: response.body.personal.middleName,
-      })),
-
-  deleteViaApi: (userId) =>
-    cy.okapiRequest({
-      method: 'DELETE',
-      path: `bl-users/by-id/${userId}`,
+  createViaApi: (user) => cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'users',
+      body: user,
       isDefaultSearchParamsRequired: false,
-    }),
+    })
+    .then((response) => ({
+      id: response.body.id,
+      username: response.body.username,
+      barcode: response.body.barcode,
+      lastName: response.body.personal.lastName,
+      firstName: response.body.personal.firstName,
+      middleName: response.body.personal.middleName,
+    })),
+
+  deleteViaApi: (userId) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `bl-users/by-id/${userId}`,
+    isDefaultSearchParamsRequired: false,
+  }),
 
   getUsers: (searchParams) => {
     return cy
@@ -252,10 +250,9 @@ export default {
     cy.expect(userDetailsPane.exists());
   },
 
-  getUserAddressTypesApi: (addressTypeId) =>
-    cy
-      .okapiRequest({
-        path: `addresstypes/${addressTypeId}`,
-      })
-      .then(({ body }) => body),
+  getUserAddressTypesApi: (addressTypeId) => cy
+    .okapiRequest({
+      path: `addresstypes/${addressTypeId}`,
+    })
+    .then(({ body }) => body),
 };

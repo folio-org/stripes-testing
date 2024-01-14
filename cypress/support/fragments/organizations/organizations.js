@@ -391,32 +391,29 @@ export default {
     ]);
   },
 
-  deleteOrganizationViaApi: (organizationId) =>
-    cy.okapiRequest({
-      method: 'DELETE',
-      path: `organizations/organizations/${organizationId}`,
-      isDefaultSearchParamsRequired: false,
+  deleteOrganizationViaApi: (organizationId) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `organizations/organizations/${organizationId}`,
+    isDefaultSearchParamsRequired: false,
+  }),
+
+  getOrganizationViaApi: (searchParams) => cy
+    .okapiRequest({
+      path: 'organizations/organizations',
+      searchParams,
+    })
+    .then((response) => {
+      return response.body.organizations[0];
     }),
 
-  getOrganizationViaApi: (searchParams) =>
-    cy
-      .okapiRequest({
-        path: 'organizations/organizations',
-        searchParams,
-      })
-      .then((response) => {
-        return response.body.organizations[0];
-      }),
-
-  createOrganizationViaApi: (organization) =>
-    cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'organizations/organizations',
-        body: organization,
-        isDefaultSearchParamsRequired: false,
-      })
-      .then((response) => response.body.id),
+  createOrganizationViaApi: (organization) => cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'organizations/organizations',
+      body: organization,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => response.body.id),
 
   editOrganization: () => {
     cy.expect(Spinner().absent());

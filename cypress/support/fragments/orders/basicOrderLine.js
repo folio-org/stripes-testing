@@ -58,26 +58,26 @@ const getDefaultOrderLine = ({
     isPackage: false,
     locations: specialLocationId
       ? [
-          {
-            locationId: specialLocationId,
-            quantity,
-            quantityPhysical: quantity,
-          },
-        ]
+        {
+          locationId: specialLocationId,
+          quantity,
+          quantityPhysical: quantity,
+        },
+      ]
       : [],
     orderFormat: orderFormat || specialLocationId ? 'Physical Resource' : 'Other',
     paymentStatus,
     physical: specialLocationId
       ? {
-          createInventory,
-          materialType: specialMaterialTypeId,
-          materialSupplier: null,
-          volumes: [],
-        }
+        createInventory,
+        materialType: specialMaterialTypeId,
+        materialSupplier: null,
+        volumes: [],
+      }
       : {
-          createInventory: 'None',
-          materialSupplier: 'c2b9b8a0-3d87-42d4-aa26-03fd90b22ebd',
-        },
+        createInventory: 'None',
+        materialSupplier: 'c2b9b8a0-3d87-42d4-aa26-03fd90b22ebd',
+      },
     eresource: {
       activated: false,
       createInventory: 'None',

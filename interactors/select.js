@@ -38,12 +38,10 @@ export default HTML.extend('select')
     disabled: (el) => el.querySelector('select').disabled,
     focused: (el) => el.querySelector('select').contains(el.ownerDocument.activeElement),
     checkedOptionText: (el) => el.querySelector('select option:checked').textContent,
-    optionsText: (el) =>
-      [...el.querySelectorAll('option:not([disabled])')].map(({ textContent }) => textContent),
-    allOptionsText: (el) =>
-      [...el.querySelectorAll('option')].map((option) => {
-        return `${option.textContent}${option.disabled ? ' (disabled)' : ''}`;
-      }),
+    optionsText: (el) => [...el.querySelectorAll('option:not([disabled])')].map(({ textContent }) => textContent),
+    allOptionsText: (el) => [...el.querySelectorAll('option')].map((option) => {
+      return `${option.textContent}${option.disabled ? ' (disabled)' : ''}`;
+    }),
   })
   .actions({
     choose,

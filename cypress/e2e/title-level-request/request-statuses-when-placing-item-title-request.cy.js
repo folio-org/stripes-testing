@@ -102,13 +102,11 @@ describe('Title Level Request', () => {
             requestIds.push(request.body.id);
           });
           // Check in items 1 and 2 at the service point that matches the patron's pickup service point
-          instanceData.barcodes.forEach((barcode) =>
-            CheckInActions.checkinItemViaApi({
-              itemBarcode: barcode,
-              servicePointId: testData.servicePoint.id,
-              checkInDate: new Date().toISOString(),
-            }),
-          );
+          instanceData.barcodes.forEach((barcode) => CheckInActions.checkinItemViaApi({
+            itemBarcode: barcode,
+            servicePointId: testData.servicePoint.id,
+            checkInDate: new Date().toISOString(),
+          }));
           // Check out item 2 to patron B
           Checkout.checkoutItemViaApi({
             itemBarcode: instanceData.barcodes[1],

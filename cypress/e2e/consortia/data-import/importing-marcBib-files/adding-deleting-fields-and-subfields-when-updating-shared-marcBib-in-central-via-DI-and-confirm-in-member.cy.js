@@ -1,33 +1,33 @@
-import Permissions from '../../../../support/dictionary/permissions';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import Users from '../../../../support/fragments/users/users';
-import TopMenu from '../../../../support/fragments/topMenu';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import {
-  FOLIO_RECORD_TYPE,
   EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
 } from '../../../../support/constants';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
+import Permissions from '../../../../support/dictionary/permissions';
 import ActionProfiles from '../../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
-import MatchProfiles from '../../../../support/fragments/data_import/match_profiles/matchProfiles';
-import DataImport from '../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
-import FileManager from '../../../../support/utils/fileManager';
-import NewFieldMappingProfile from '../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import NewActionProfile from '../../../../support/fragments/data_import/action_profiles/newActionProfile';
-import NewMatchProfile from '../../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import BrowseSubjects from '../../../../support/fragments/inventory/search/browseSubjects';
-import BrowseContributors from '../../../../support/fragments/inventory/search/browseContributors';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../../support/fragments/data_import/logs/logs';
+import NewFieldMappingProfile from '../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FileManager from '../../../../support/utils/fileManager';
 import FieldMappingProfileView from '../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
+import BrowseContributors from '../../../../support/fragments/inventory/search/browseContributors';
+import BrowseSubjects from '../../../../support/fragments/inventory/search/browseSubjects';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import MatchProfiles from '../../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {

@@ -129,8 +129,7 @@ export default {
     cy.expect(PaneHeader(fileName).exists());
   },
 
-  checkListOfExistingProfilesIsDisplayed: () =>
-    cy.expect(paneResults.find(MultiColumnList({ id: 'job-profiles-list' })).exists()),
+  checkListOfExistingProfilesIsDisplayed: () => cy.expect(paneResults.find(MultiColumnList({ id: 'job-profiles-list' })).exists()),
 
   checkCalloutMessage: (message) => {
     cy.expect(
@@ -141,8 +140,7 @@ export default {
   },
 
   verifyActionMenuAbsent: () => cy.expect(paneResults.find(actionsButton).absent()),
-  verifyJobProfileAbsent: () =>
-    cy.expect(paneResults.find(HTML(including('The list contains no items'))).exists()),
+  verifyJobProfileAbsent: () => cy.expect(paneResults.find(HTML(including('The list contains no items'))).exists()),
   verifySearchFieldIsEmpty: () => cy.expect(searchField.has({ value: '' })),
   verifySearchResult: (profileName) => {
     cy.expect(paneResults.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
@@ -181,9 +179,7 @@ export default {
     cy.get('#pane-upload')
       .contains('div[class^="fileItemHeader-"]', fileName)
       .then((elems) => {
-        const trashButtons = Array.from(elems).map((elem) =>
-          elem.parentElement.querySelector('button[icon="trash"]'),
-        );
+        const trashButtons = Array.from(elems).map((elem) => elem.parentElement.querySelector('button[icon="trash"]'));
         const numberOfTrashButtons = trashButtons.length;
         cy.expect(numberOfTrashButtons).to.equal(quantityOfUploadedFiles);
       });

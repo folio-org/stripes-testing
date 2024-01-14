@@ -54,9 +54,7 @@ describe('bulk-edit', () => {
             instance.defaultLocation = Location.getDefaultLocation(servicePoint.id);
             tempLocation = ServicePoints.getDefaultServicePointWithPickUpLocation();
             tempLocation = Location.getDefaultLocation(tempLocation.id);
-            [instance.defaultLocation, tempLocation].forEach((location) =>
-              Location.createViaApi(location),
-            );
+            [instance.defaultLocation, tempLocation].forEach((location) => Location.createViaApi(location));
           })
           .then(() => {
             // Creating  instance

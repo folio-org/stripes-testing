@@ -35,46 +35,37 @@ export default {
       });
     });
   },
-  waitLoading: () =>
-    cy.expect(commentRequiredForm.find(PaneHeader('Fee/fine: Comment required')).exists()),
+  waitLoading: () => cy.expect(commentRequiredForm.find(PaneHeader('Fee/fine: Comment required')).exists()),
   clickSaveButton() {
     cy.do(saveButton.click());
     cy.wait(1500);
   },
   verifySaveButtonDisabled: () => cy.do(saveButton.has({ disabled: true })),
   requireCommentForPaidFeeChooseOption: (option) => cy.do(requireCommentForPaidFee.choose(option)),
-  verifyRequireCommentForPaidFeeOptions: () =>
-    cy.expect([
-      requireCommentForPaidFee.has({ content: including('Yes') }),
-      requireCommentForPaidFee.has({ content: including('No') }),
-    ]),
-  requireCommentForWaivedFeeChooseOption: (option) =>
-    cy.do(requireCommentForWaivedFee.choose(option)),
-  verifyrequireCommentForWaivedFeeOptions: () =>
-    cy.expect([
-      requireCommentForWaivedFee.has({ content: including('Yes') }),
-      requireCommentForWaivedFee.has({ content: including('No') }),
-    ]),
-  requireCommentForRefundedFeeChooseOption: (option) =>
-    cy.do(requireCommentForRefundedFee.choose(option)),
-  verifyRequireCommentForRefundedFeeOptions: () =>
-    cy.expect([
-      requireCommentForRefundedFee.has({ content: including('Yes') }),
-      requireCommentForRefundedFee.has({ content: including('No') }),
-    ]),
-  requireCommentForTransferredFeeChooseOption: (option) =>
-    cy.do(requireCommentForTransferredFee.choose(option)),
-  verifyRequireCommentForTransferredFeeOptions: () =>
-    cy.expect([
-      requireCommentForTransferredFee.has({ content: including('Yes') }),
-      requireCommentForTransferredFee.has({ content: including('No') }),
-    ]),
-  verifyEditNotAvailable: () =>
-    cy.expect([
-      requireCommentForPaidFee.is({ disabled: true }),
-      requireCommentForWaivedFee.is({ disabled: true }),
-      requireCommentForRefundedFee.is({ disabled: true }),
-      requireCommentForTransferredFee.is({ disabled: true }),
-      saveButton.is({ disabled: true }),
-    ]),
+  verifyRequireCommentForPaidFeeOptions: () => cy.expect([
+    requireCommentForPaidFee.has({ content: including('Yes') }),
+    requireCommentForPaidFee.has({ content: including('No') }),
+  ]),
+  requireCommentForWaivedFeeChooseOption: (option) => cy.do(requireCommentForWaivedFee.choose(option)),
+  verifyrequireCommentForWaivedFeeOptions: () => cy.expect([
+    requireCommentForWaivedFee.has({ content: including('Yes') }),
+    requireCommentForWaivedFee.has({ content: including('No') }),
+  ]),
+  requireCommentForRefundedFeeChooseOption: (option) => cy.do(requireCommentForRefundedFee.choose(option)),
+  verifyRequireCommentForRefundedFeeOptions: () => cy.expect([
+    requireCommentForRefundedFee.has({ content: including('Yes') }),
+    requireCommentForRefundedFee.has({ content: including('No') }),
+  ]),
+  requireCommentForTransferredFeeChooseOption: (option) => cy.do(requireCommentForTransferredFee.choose(option)),
+  verifyRequireCommentForTransferredFeeOptions: () => cy.expect([
+    requireCommentForTransferredFee.has({ content: including('Yes') }),
+    requireCommentForTransferredFee.has({ content: including('No') }),
+  ]),
+  verifyEditNotAvailable: () => cy.expect([
+    requireCommentForPaidFee.is({ disabled: true }),
+    requireCommentForWaivedFee.is({ disabled: true }),
+    requireCommentForRefundedFee.is({ disabled: true }),
+    requireCommentForTransferredFee.is({ disabled: true }),
+    saveButton.is({ disabled: true }),
+  ]),
 };

@@ -42,17 +42,16 @@ const userSearch = TextField('User search');
 let totalRows;
 
 // servicePointIds is array of ids
-const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) =>
-  cy.okapiRequest({
-    method: 'POST',
-    path: 'service-points-users',
-    body: {
-      id: uuidv4(),
-      userId,
-      servicePointsIds: servicePointIds,
-      defaultServicePointId: defaultServicePointId || servicePointIds[0],
-    },
-  });
+const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
+  method: 'POST',
+  path: 'service-points-users',
+  body: {
+    id: uuidv4(),
+    userId,
+    servicePointsIds: servicePointIds,
+    defaultServicePointId: defaultServicePointId || servicePointIds[0],
+  },
+});
 
 export default {
   addServicePointsViaApi,
@@ -164,9 +163,7 @@ export default {
   },
 
   verifyUserInformation: (allContentToCheck) => {
-    return allContentToCheck.forEach((contentToCheck) =>
-      cy.expect(Section({ id: 'editUserInfo' }, including(contentToCheck)).exists()),
-    );
+    return allContentToCheck.forEach((contentToCheck) => cy.expect(Section({ id: 'editUserInfo' }, including(contentToCheck)).exists()));
   },
 
   cancelChanges() {
@@ -183,8 +180,7 @@ export default {
     cy.wait('@updateUser', { timeout: 100000 });
   },
 
-  addServicePointViaApi: (servicePointId, userId, defaultServicePointId) =>
-    addServicePointsViaApi([servicePointId], userId, defaultServicePointId),
+  addServicePointViaApi: (servicePointId, userId, defaultServicePointId) => addServicePointsViaApi([servicePointId], userId, defaultServicePointId),
 
   // we can remove the service point if it is not Preference
   changeServicePointPreference: (userName = defaultUser.defaultUiPatron.body.userName) => {
@@ -201,25 +197,24 @@ export default {
     ]);
   },
 
-  changeServicePointPreferenceViaApi: (userId, servicePointIds, defaultServicePointId = null) =>
-    cy
-      .okapiRequest({
-        method: 'GET',
-        path: `service-points-users?query="userId"="${userId}"`,
+  changeServicePointPreferenceViaApi: (userId, servicePointIds, defaultServicePointId = null) => cy
+    .okapiRequest({
+      method: 'GET',
+      path: `service-points-users?query="userId"="${userId}"`,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((servicePointsUsers) => {
+      cy.okapiRequest({
+        method: 'PUT',
+        path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,
+        body: {
+          userId,
+          servicePointsIds: servicePointIds,
+          defaultServicePointId,
+        },
         isDefaultSearchParamsRequired: false,
-      })
-      .then((servicePointsUsers) => {
-        cy.okapiRequest({
-          method: 'PUT',
-          path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,
-          body: {
-            userId,
-            servicePointsIds: servicePointIds,
-            defaultServicePointId,
-          },
-          isDefaultSearchParamsRequired: false,
-        });
-      }),
+      });
+    }),
 
   updateExternalIdViaApi(user, externalSystemId) {
     cy.updateUser({

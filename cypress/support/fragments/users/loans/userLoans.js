@@ -110,18 +110,17 @@ export default {
       servicePointId,
     } = {},
     loanId,
-  ) =>
-    cy.okapiRequest({
-      method: 'POST',
-      path: `circulation/loans/${loanId}/declare-item-lost`,
-      body: {
-        comment,
-        declaredLostDateTime,
-        id,
-        servicePointId,
-      },
-      isDefaultSearchParamsRequired: false,
-    }),
+  ) => cy.okapiRequest({
+    method: 'POST',
+    path: `circulation/loans/${loanId}/declare-item-lost`,
+    body: {
+      comment,
+      declaredLostDateTime,
+      id,
+      servicePointId,
+    },
+    isDefaultSearchParamsRequired: false,
+  }),
   claimItemReturnedViaApi: (
     {
       comment = 'Reason why the item is claime returned',
@@ -129,31 +128,28 @@ export default {
       id,
     },
     loanId,
-  ) =>
-    cy.okapiRequest({
-      method: 'POST',
-      path: `circulation/loans/${loanId}/claim-item-returned`,
-      body: {
-        comment,
-        itemClaimedReturnedDateTime,
-        id,
-      },
-      isDefaultSearchParamsRequired: false,
-    }),
-  renewItemViaApi: (apiBody) =>
-    cy.okapiRequest({
-      method: 'POST',
-      path: 'circulation/renew-by-barcode',
-      body: apiBody,
-      isDefaultSearchParamsRequired: false,
-    }),
-  changeDueDateViaApi: (apiBody, loanId) =>
-    cy.okapiRequest({
-      method: 'PUT',
-      path: `circulation/loans/${loanId}`,
-      body: apiBody,
-      isDefaultSearchParamsRequired: false,
-    }),
+  ) => cy.okapiRequest({
+    method: 'POST',
+    path: `circulation/loans/${loanId}/claim-item-returned`,
+    body: {
+      comment,
+      itemClaimedReturnedDateTime,
+      id,
+    },
+    isDefaultSearchParamsRequired: false,
+  }),
+  renewItemViaApi: (apiBody) => cy.okapiRequest({
+    method: 'POST',
+    path: 'circulation/renew-by-barcode',
+    body: apiBody,
+    isDefaultSearchParamsRequired: false,
+  }),
+  changeDueDateViaApi: (apiBody, loanId) => cy.okapiRequest({
+    method: 'PUT',
+    path: `circulation/loans/${loanId}`,
+    body: apiBody,
+    isDefaultSearchParamsRequired: false,
+  }),
   changeDueDateForAllOpenPatronLoans(userId, day) {
     this.getUserLoansIdViaApi(userId).then((userLoans) => {
       const loansData = userLoans.loans;
@@ -230,13 +226,11 @@ export default {
     cy.do(renewButton.click());
   },
   checkResultsInTheRowByBarcode: (allContentToCheck, itemBarcode) => {
-    return allContentToCheck.forEach((contentToCheck) =>
-      cy.expect(
-        MultiColumnListRow({ text: matching(itemBarcode), isContainer: false })
-          .find(MultiColumnListCell({ content: including(contentToCheck) }))
-          .exists(),
-      ),
-    );
+    return allContentToCheck.forEach((contentToCheck) => cy.expect(
+      MultiColumnListRow({ text: matching(itemBarcode), isContainer: false })
+        .find(MultiColumnListCell({ content: including(contentToCheck) }))
+        .exists(),
+    ));
   },
   checkColumnContentInTheRowByBarcode: (itemBarcode, column, content) => {
     cy.expect(
@@ -264,23 +258,21 @@ export default {
         .exists(),
     );
   },
-  getUserLoansIdViaApi: (userId, loanStatus = 'open') =>
-    cy
-      .okapiRequest({
-        method: 'GET',
-        path: `circulation/loans?query=(userId==${userId} and status.name==${loanStatus})`,
-        isDefaultSearchParamsRequired: false,
-      })
-      .then(({ body }) => body),
+  getUserLoansIdViaApi: (userId, loanStatus = 'open') => cy
+    .okapiRequest({
+      method: 'GET',
+      path: `circulation/loans?query=(userId==${userId} and status.name==${loanStatus})`,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => body),
 
-  getListTimersForTenant: () =>
-    cy
-      .okapiRequest({
-        method: 'GET',
-        path: '_/proxy/tenants/diku/timers',
-        isDefaultSearchParamsRequired: false,
-      })
-      .then(({ body }) => body),
+  getListTimersForTenant: () => cy
+    .okapiRequest({
+      method: 'GET',
+      path: '_/proxy/tenants/diku/timers',
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => body),
 
   updateTimerForAgedToLost(mode) {
     if (typeof mode !== 'string') {

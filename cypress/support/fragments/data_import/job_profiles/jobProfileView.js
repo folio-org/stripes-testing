@@ -108,8 +108,7 @@ export default {
         .click(),
     );
   },
-  verifyJobProfileName: (profileName) =>
-    cy.expect(viewPane.find(HTML(including(profileName))).exists()),
+  verifyJobProfileName: (profileName) => cy.expect(viewPane.find(HTML(including(profileName))).exists()),
   verifyActionMenuAbsent: () => cy.expect(viewPane.find(actionsButton).absent()),
   getLinkedProfiles: () => {
     waitLoading();

@@ -15,8 +15,7 @@ describe('data-import', () => {
     const filePathToUpload = 'oneMarcBib.mrc';
     const numberOfLogsToDelete = 2;
     const numberOfLogsPerPage = 25;
-    const getCalloutSuccessMessage = (logsCount) =>
-      `${logsCount} data import logs have been successfully deleted.`;
+    const getCalloutSuccessMessage = (logsCount) => `${logsCount} data import logs have been successfully deleted.`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
     before('create test data', () => {

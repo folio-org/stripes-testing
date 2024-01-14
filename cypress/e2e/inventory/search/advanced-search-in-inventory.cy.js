@@ -218,9 +218,7 @@ describe('inventory', () => {
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
         InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
-        testData.expectedSearchResultsC400616.forEach((expectedResult) =>
-          InventorySearchAndFilter.verifySearchResult(expectedResult),
-        );
+        testData.expectedSearchResultsC400616.forEach((expectedResult) => InventorySearchAndFilter.verifySearchResult(expectedResult));
         InventorySearchAndFilter.checkRowsCount(2);
       },
     );

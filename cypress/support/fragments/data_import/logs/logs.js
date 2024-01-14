@@ -29,8 +29,7 @@ const quantityRecordsInInvoice = {
 
 const actionsButtonClick = () => cy.do(actionsButton.click());
 const viewAllLogsButtonClick = () => cy.do(viewAllLogsButton.click());
-const selectAllLogs = () =>
-  cy.do(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).click());
+const selectAllLogs = () => cy.do(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).click());
 const deleteLogsButtonClick = () => cy.do(deleteSelectedLogsButton.click());
 
 export default {
@@ -56,8 +55,7 @@ export default {
     cy.expect(MultiColumnListCell(jobProfileName).exists());
   },
 
-  checkStatusOfJobProfile: (status = 'Completed', rowNumber = 0) =>
-    cy.do(MultiColumnListCell({ row: rowNumber, content: status }).exists()),
+  checkStatusOfJobProfile: (status = 'Completed', rowNumber = 0) => cy.do(MultiColumnListCell({ row: rowNumber, content: status }).exists()),
 
   checkJobStatus: (fileName, status) => {
     cy.do(
@@ -81,8 +79,7 @@ export default {
     // TODO need to wait until page is uploaded
     cy.wait(3500);
   },
-  checkQuantityRecordsInFile: (quantityRecords) =>
-    cy.do(MultiColumnListCell({ row: 0, content: quantityRecords }).exists()),
+  checkQuantityRecordsInFile: (quantityRecords) => cy.do(MultiColumnListCell({ row: 0, content: quantityRecords }).exists()),
 
   clickOnHotLink: (row = 0, columnIndex = 3, status = 'Created') => {
     cy.do(
@@ -113,18 +110,13 @@ export default {
     });
   },
 
-  getCreatedItemsID: (rowIndex = 0) =>
-    cy.then(() =>
-      searchResultList
-        .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
-        .find(Link('Created'))
-        .href(),
-    ),
+  getCreatedItemsID: (rowIndex = 0) => cy.then(() => searchResultList
+    .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+    .find(Link('Created'))
+    .href()),
 
-  checkFileIsRunning: (fileName) =>
-    cy.expect(runningAccordion.find(HTML(including(fileName))).exists()),
-  verifyCheckboxForMarkingLogsAbsent: () =>
-    cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),
+  checkFileIsRunning: (fileName) => cy.expect(runningAccordion.find(HTML(including(fileName))).exists()),
+  verifyCheckboxForMarkingLogsAbsent: () => cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),
   verifyDeleteSelectedLogsButtonAbsent: () => cy.expect(deleteSelectedLogsButton.absent()),
   closePane: () => {
     cy.do(times.click());

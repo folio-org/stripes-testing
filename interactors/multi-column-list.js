@@ -34,10 +34,9 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
   .locator(content)
   .filters({
     content,
-    row: (el) =>
-      +el.parentElement.getAttribute('data-row-inner')
-        ? +el.parentElement.getAttribute('data-row-inner')
-        : +el.parentElement.getAttribute('aria-rowindex'),
+    row: (el) => (+el.parentElement.getAttribute('data-row-inner')
+      ? +el.parentElement.getAttribute('data-row-inner')
+      : +el.parentElement.getAttribute('aria-rowindex')),
     column: (el) => {
       const headers = el
         .closest('[class^=mclContainer]')
@@ -84,21 +83,19 @@ export const MultiColumnList = HTML.extend('multi column list')
     height: (el) => el.offsetHeight,
     width: (el) => el.offsetWidth,
     scrollTop: (el) => el.querySelector('div[class^=mclScrollable-]').scrollTop,
-    headerInteractivity: (el) =>
-      [...el.querySelectorAll('div[class*=mclHeader-]')].map(
-        (d) => !!d.querySelector('[data-test-clickable-header]'),
-      ),
+    headerInteractivity: (el) => [...el.querySelectorAll('div[class*=mclHeader-]')].map(
+      (d) => !!d.querySelector('[data-test-clickable-header]'),
+    ),
     visible: (el) => isVisible(el),
     ariaRowCount: (el) => el.querySelector('[role=grid]').getAttribute('aria-rowcount'),
   })
   .actions({
     clickHeader: (interactor, header) => interactor.find(MultiColumnListHeader(header)).click(),
-    scrollBy: (interactor, { direction, value }) =>
-      interactor.perform(async (el) => {
-        const scrollable = el.querySelector('div[class^=mclScrollable-]');
-        const fired = scrollable.dispatchEvent(new CustomEvent('scroll'));
-        if (fired) await scrollable.scrollBy({ [direction]: value });
-      }),
+    scrollBy: (interactor, { direction, value }) => interactor.perform(async (el) => {
+      const scrollable = el.querySelector('div[class^=mclScrollable-]');
+      const fired = scrollable.dispatchEvent(new CustomEvent('scroll'));
+      if (fired) await scrollable.scrollBy({ [direction]: value });
+    }),
     click: (interactor, { row = 0, column }) => {
       const contentSearch = !column ? { columnIndex: 0 } : { content: column };
       return interactor.find(MultiColumnListCell({ row, ...contentSearch })).click();

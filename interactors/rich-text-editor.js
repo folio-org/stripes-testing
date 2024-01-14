@@ -12,12 +12,11 @@ export default HTML.extend('rich text editor')
     id: (el) => el.id,
   })
   .actions({
-    fillIn: ({ perform }, value) =>
-      perform((element) => {
-        const editor = element.querySelector('.ql-editor');
-        if (editor) {
-          editor.textContent = '';
-          editor.textContent = value;
-        }
-      }),
+    fillIn: ({ perform }, value) => perform((element) => {
+      const editor = element.querySelector('.ql-editor');
+      if (editor) {
+        editor.textContent = '';
+        editor.textContent = value;
+      }
+    }),
   });

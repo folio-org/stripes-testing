@@ -120,9 +120,7 @@ describe('inventory', () => {
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
         InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
-        testData.searchResults.forEach((expectedResult) =>
-          InventorySearchAndFilter.verifySearchResult(expectedResult),
-        );
+        testData.searchResults.forEach((expectedResult) => InventorySearchAndFilter.verifySearchResult(expectedResult));
         InventorySearchAndFilter.checkRowsCount(testData.rowsCount);
 
         InventoryInstances.clickAdvSearchButton();

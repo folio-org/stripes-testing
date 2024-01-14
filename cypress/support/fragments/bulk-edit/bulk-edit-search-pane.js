@@ -1067,6 +1067,7 @@ export default {
     cy.expect(
       Accordion(accordion)
         .find(Button({ icon: 'times-circle-solid' }))
+        // eslint-disable-next-line no-unexpected-multiline
         [verification](),
     );
   },

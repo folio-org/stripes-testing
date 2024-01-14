@@ -68,8 +68,7 @@ describe('MARC -> plug-in MARC authority | Browse', () => {
   after('Deleting created user', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
-    if (testData.createdRecordIDs[0])
-      InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
+    if (testData.createdRecordIDs[0]) InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
     testData.createdRecordIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
     });

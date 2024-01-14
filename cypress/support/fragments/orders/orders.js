@@ -682,12 +682,11 @@ export default {
         return body;
       });
   },
-  deleteOrderViaApi: (orderId) =>
-    cy.okapiRequest({
-      method: 'DELETE',
-      path: `orders/composite-orders/${orderId}`,
-      isDefaultSearchParamsRequired: false,
-    }),
+  deleteOrderViaApi: (orderId) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `orders/composite-orders/${orderId}`,
+    isDefaultSearchParamsRequired: false,
+  }),
 
   deleteOrderByOrderNumberViaApi(orderNumber) {
     this.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((order) => {

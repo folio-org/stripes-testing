@@ -159,12 +159,10 @@ Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] })
     },
   }).then(() => {
     cy.wrap(holdings)
-      .each((holding, i) =>
-        cy.createHolding({
-          holding: { ...holding, instanceId },
-          items: items[i],
-        }),
-      )
+      .each((holding, i) => cy.createHolding({
+        holding: { ...holding, instanceId },
+        items: items[i],
+      }))
       .then((holdingId) => {
         holdingIds.push(holdingId);
       });
@@ -202,11 +200,9 @@ Cypress.Commands.add('createHolding', ({ holding, items = [] }) => {
     },
   })
     .then(() => {
-      cy.wrap(items).each((item) =>
-        cy
-          .createItem({ ...item, holdingsRecordId: holdingId })
-          .then((itemId) => itemIds.push(itemId)),
-      );
+      cy.wrap(items).each((item) => cy
+        .createItem({ ...item, holdingsRecordId: holdingId })
+        .then((itemId) => itemIds.push(itemId)));
     })
     .then(() => {
       cy.wrap(holding).then((holdingsId) => holdingsIds.push(holdingsId));

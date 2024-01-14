@@ -27,11 +27,10 @@ export default {
     );
   },
   verifyRefundSuccess: (successMsg) => cy.expect(Callout(including(successMsg)).exists()),
-  refundFeeFineViaApi: (apiBody, feeFineId) =>
-    cy.okapiRequest({
-      method: 'POST',
-      path: `accounts/${feeFineId}/refund`,
-      body: apiBody,
-      isDefaultSearchParamsRequired: false,
-    }),
+  refundFeeFineViaApi: (apiBody, feeFineId) => cy.okapiRequest({
+    method: 'POST',
+    path: `accounts/${feeFineId}/refund`,
+    body: apiBody,
+    isDefaultSearchParamsRequired: false,
+  }),
 };

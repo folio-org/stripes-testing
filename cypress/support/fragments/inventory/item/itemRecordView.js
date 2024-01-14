@@ -280,12 +280,11 @@ export default {
     cy.do([TextField({ id: 'additem_barcode' }).fillIn(barcode), saveAndCloseBtn.click()]);
   },
 
-  verifyStatisticalCode: (code) =>
-    cy.expect(
-      MultiColumnList({ id: 'item-list-statistical-codes' })
-        .find(MultiColumnListCell({ content: code }))
-        .exists(),
-    ),
+  verifyStatisticalCode: (code) => cy.expect(
+    MultiColumnList({ id: 'item-list-statistical-codes' })
+      .find(MultiColumnListCell({ content: code }))
+      .exists(),
+  ),
 
   verifyLoanAndAvailabilitySection: (data) => {
     verifyPermanentLoanType(data.permanentLoanType);
@@ -301,10 +300,8 @@ export default {
     ]);
   },
 
-  verifyFormerIdentifiers: (identifier) =>
-    cy.expect(KeyValue('Former identifier').has({ value: identifier })),
-  verifyShelvingOrder: (orderValue) =>
-    cy.expect(KeyValue('Shelving order').has({ value: orderValue })),
+  verifyFormerIdentifiers: (identifier) => cy.expect(KeyValue('Former identifier').has({ value: identifier })),
+  verifyShelvingOrder: (orderValue) => cy.expect(KeyValue('Shelving order').has({ value: orderValue })),
   verifyCallNumber: (callNumber) => cy.expect(KeyValue('Call number').has({ value: callNumber })),
   verifyItemPermanentLocation: (value) => {
     cy.get('div[data-testid="item-permanent-location"]')
