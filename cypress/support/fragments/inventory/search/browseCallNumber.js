@@ -2,15 +2,18 @@ import {
   Button,
   including,
   MultiColumnList,
-  MultiColumnListRow,
   MultiColumnListCell,
   MultiColumnListHeader,
   Section,
 } from '../../../../../interactors';
+import InventorySearchAndFilter from '../inventorySearchAndFilter';
 
 const browseButton = Button({ id: 'mode-navigation-browse' });
 const instanceDetailsPane = Section({ id: 'pane-instancedetails' });
 const resultList = MultiColumnList({ id: 'browse-results-list-callNumbers' });
+const nextButton = Button({ id: including('-next-paging-button') });
+const previousButton = Button({ id: including('-prev-paging-button') });
+const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
 
 export default {
   clickOnResult(searchQuery) {
@@ -94,11 +97,39 @@ export default {
     );
   },
 
+  verifyCallNumbersNotFound(callNumberArray) {
+    InventorySearchAndFilter.checkSearchButtonEnabled();
+    callNumberArray.forEach((callNumber) => {
+      cy.expect(MultiColumnListCell(callNumber).absent());
+    });
+  },
+
   checkValueInRowAndColumnName(indexRow, columnName, value) {
     cy.expect(
       resultList
         .find(MultiColumnListCell({ row: indexRow, column: columnName }))
         .has({ content: value }),
     );
+  },
+
+  checkValuePresentInResults(value, isPresent = true) {
+    if (isPresent) cy.expect(resultList.find(MultiColumnListCell(value)).exists());
+    else cy.expect(resultList.find(MultiColumnListCell(value)).absent());
+  },
+
+  clickNextPaginationButton() {
+    cy.do(inventorySearchResultsPane.find(nextButton).click());
+  },
+
+  clickPreviousPaginationButton() {
+    cy.do(inventorySearchResultsPane.find(previousButton).click());
+  },
+
+  checkNextPaginationButtonActive(isActive = true) {
+    cy.expect(nextButton.has({ disabled: !isActive }));
+  },
+
+  checkPreviousPaginationButtonActive(isActive = true) {
+    cy.expect(previousButton.has({ disabled: !isActive }));
   },
 };

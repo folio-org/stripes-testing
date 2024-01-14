@@ -21,6 +21,8 @@ const claimReturnedButton = Button('Claim returned');
 const changeDueDateButton = Button('Change due date');
 const resolveClaimButton = Dropdown('Resolve claim');
 const LoanDateKeyValue = KeyValue('Loan date');
+const renewButton = Button('Renew');
+const declaredLostButton = Button(DECLARE_LOST_ACTION_NAME);
 
 export default {
   waitLoading: () => {
@@ -48,6 +50,13 @@ export default {
   },
   verifyChangeDueDateButtonIsActive() {
     cy.expect(changeDueDateButton.is({ disabled: false }));
+  },
+  verifyButtonsForDeclaredLostLoan() {
+    cy.expect([
+      changeDueDateButton.is({ disabled: true }),
+      declaredLostButton.absent(),
+      renewButton.is({ disabled: false }),
+    ]);
   },
   claimReturnedAndConfirm(reasonWhyItemChangesStatus) {
     this.claimReturned();
@@ -79,7 +88,7 @@ export default {
     return ConfirmItemStatusModal;
   },
   renewLoan() {
-    cy.do([Button({ icon: 'ellipsis' }).click(), Button('Renew').click()]);
+    cy.do([Button({ icon: 'ellipsis' }).click(), renewButton.click()]);
   },
   renewalMessageCheck(message) {
     this.renewLoan();
@@ -118,11 +127,13 @@ export default {
     expectedArray.forEach((expectedItem) => expect(actual).to.include(expectedItem));
   },
   verifyResultsInTheRow: (allContentToCheck, rowIndex = 0) => {
-    return allContentToCheck.forEach((contentToCheck) => cy.expect(
-      MultiColumnListRow({ indexRow: `row-${rowIndex}` })
-        .find(MultiColumnListCell({ content: including(contentToCheck) }))
-        .exists(),
-    ));
+    return allContentToCheck.forEach((contentToCheck) =>
+      cy.expect(
+        MultiColumnListRow({ indexRow: `row-${rowIndex}` })
+          .find(MultiColumnListCell({ content: including(contentToCheck) }))
+          .exists(),
+      ),
+    );
   },
   checkLoanDate(date) {
     cy.expect(LoanDateKeyValue.has({ value: including(date) }));

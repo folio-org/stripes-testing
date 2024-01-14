@@ -126,12 +126,6 @@ export default {
     ]);
   },
 
-  checkCreatedOrganization: (organization) => {
-    OrganizationDetails.waitLoading();
-    cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
-    cy.expect(summarySection.find(KeyValue({ value: organization.code })).exists());
-  },
-
   organizationTagDetails: () => {
     cy.do([tagButton.click()]);
   },
@@ -323,7 +317,7 @@ export default {
     cy.get('#organizations-list').should('have.css', 'background-color', blueColor);
   },
 
-  checkOpenOrganizationInfo: (organization) => {
+  checkOrganizationInfo: (organization) => {
     OrganizationDetails.waitLoading();
     cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
     cy.expect(summarySection.find(KeyValue({ value: organization.code })).exists());
@@ -397,29 +391,32 @@ export default {
     ]);
   },
 
-  deleteOrganizationViaApi: (organizationId) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `organizations/organizations/${organizationId}`,
-    isDefaultSearchParamsRequired: false,
-  }),
-
-  getOrganizationViaApi: (searchParams) => cy
-    .okapiRequest({
-      path: 'organizations/organizations',
-      searchParams,
-    })
-    .then((response) => {
-      return response.body.organizations[0];
+  deleteOrganizationViaApi: (organizationId) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `organizations/organizations/${organizationId}`,
+      isDefaultSearchParamsRequired: false,
     }),
 
-  createOrganizationViaApi: (organization) => cy
-    .okapiRequest({
-      method: 'POST',
-      path: 'organizations/organizations',
-      body: organization,
-      isDefaultSearchParamsRequired: false,
-    })
-    .then((response) => response.body.id),
+  getOrganizationViaApi: (searchParams) =>
+    cy
+      .okapiRequest({
+        path: 'organizations/organizations',
+        searchParams,
+      })
+      .then((response) => {
+        return response.body.organizations[0];
+      }),
+
+  createOrganizationViaApi: (organization) =>
+    cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'organizations/organizations',
+        body: organization,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body.id),
 
   editOrganization: () => {
     cy.expect(Spinner().absent());
@@ -656,14 +653,18 @@ export default {
     );
   },
 
-  deleteOrganization: () => {
+  deleteOrganization: (confirm = true) => {
     cy.do([
       PaneHeader({ id: 'paneHeaderpane-organization-details' }).find(actionsButton).click(),
       Button('Delete').click(),
-      Button({
-        id: 'clickable-delete-organization-confirmation-confirm',
-      }).click(),
     ]);
+    if (confirm) {
+      cy.do(
+        Button({
+          id: 'clickable-delete-organization-confirmation-confirm',
+        }).click(),
+      );
+    }
   },
 
   selectOrganization: (organizationName) => {

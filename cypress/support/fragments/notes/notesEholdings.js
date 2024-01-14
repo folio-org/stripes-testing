@@ -11,7 +11,7 @@ import {
 const notesSection = Section({ id: 'providerShowNotes' });
 const createButton = Button({ id: 'note-create-button' });
 const titleField = TextField('Note title*');
-const detailsField = RichEditor('Details');
+const detailsField = RichEditor({ id: 'note-details-field' });
 const submitButton = Button({ type: 'submit' });
 const actionsButton = Button('Actions');
 const deleteButton = Button('Delete');
@@ -29,14 +29,17 @@ export default {
       submitButton.click(),
     ]);
   },
-  verifyNoteCreation: (title, details) => cy.expect(MultiColumnListCell({ content: `Title: ${title}Details: ${details}Edit` }).exists()),
+  verifyNoteCreation: (title, details) =>
+    cy.expect(MultiColumnListCell({ content: `Title: ${title}Details: ${details}Edit` }).exists()),
   verifyNoteTitle: (title) => cy.expect(notesSection.find(HTML(including(title))).exists()),
   openNoteView: (title) => cy.do(MultiColumnListCell(including(title)).click()),
   deleteNote: () => {
     cy.do([actionsButton.click(), deleteButton.click(), deleteButtonInConfirmation.click()]);
   },
-  verifyNoteDeletion: (title, details) => cy.expect(MultiColumnListCell({ content: `Title: ${title}Details: ${details}Edit` }).absent()),
-  verifyNoteVisibilityWithViewPermission: (title, details) => cy.expect(MultiColumnListCell({ content: `Title: ${title}Details: ${details}` }).exists()),
+  verifyNoteDeletion: (title, details) =>
+    cy.expect(MultiColumnListCell({ content: `Title: ${title}Details: ${details}Edit` }).absent()),
+  verifyNoteVisibilityWithViewPermission: (title, details) =>
+    cy.expect(MultiColumnListCell({ content: `Title: ${title}Details: ${details}` }).exists()),
   verifyActionButtonVisibilityWithViewPermission: () => {
     cy.expect(actionsButton.absent());
   },

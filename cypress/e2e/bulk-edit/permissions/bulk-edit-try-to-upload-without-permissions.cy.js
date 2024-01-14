@@ -1,8 +1,6 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../support/dictionary/devTeams';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
@@ -23,7 +21,7 @@ for (let i = 0; i < 5; i++) {
 }
 
 describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+  describe('permissions', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
@@ -54,7 +52,9 @@ describe('bulk-edit', () => {
 
     after('delete test data', () => {
       cy.getAdminToken();
-      items.forEach((item) => InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode));
+      items.forEach((item) =>
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode),
+      );
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
       FileManager.deleteFileFromDownloadsByMask(changedRecordsFileName);
@@ -62,7 +62,7 @@ describe('bulk-edit', () => {
 
     it(
       'C388491 Verify that User with "Bulk Edit: Local View" and "Bulk Edit: In app - Edit inventory" permissions CAN\'T edit user records (firebird)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyItemIdentifiersDefaultState();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

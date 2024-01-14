@@ -1,16 +1,14 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Users', () => {
   const patronGroup = {
@@ -81,15 +79,11 @@ describe('Users', () => {
     PatronGroups.deleteViaApi(patronGroup.id);
   });
 
-  it(
-    'C389464 Search by middle name (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
-    () => {
-      UsersSearchPane.searchByKeywords(userData.middleName);
-      Users.verifyMiddleNameOnUserDetailsPane(userData.middleName);
-      cy.visit(TopMenu.checkOutPath);
-      Checkout.waitLoading();
-      CheckOutActions.addPatron(userData.middleName);
-    },
-  );
+  it('C389464 Search by middle name (volaris)', { tags: ['criticalPath', 'volaris'] }, () => {
+    UsersSearchPane.searchByKeywords(userData.middleName);
+    Users.verifyMiddleNameOnUserDetailsPane(userData.middleName);
+    cy.visit(TopMenu.checkOutPath);
+    Checkout.waitLoading();
+    CheckOutActions.addPatron(userData.middleName);
+  });
 });

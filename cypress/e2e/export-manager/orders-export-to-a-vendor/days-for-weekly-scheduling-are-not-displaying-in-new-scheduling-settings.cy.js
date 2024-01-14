@@ -1,14 +1,12 @@
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import TopMenu from '../../../support/fragments/topMenu';
-import TestTypes from '../../../support/dictionary/testTypes';
-import Users from '../../../support/fragments/users/users';
-import Organizations from '../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import Organizations from '../../../support/fragments/organizations/organizations';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
@@ -95,7 +93,7 @@ describe('Export Manager', () => {
 
     it(
       'C359200: Days previously chosen for weekly scheduling are NOT displaying in new current scheduling settings (thunderjet) (TaaS)',
-      { tags: [TestTypes.smoke, devTeams.thunderjet] },
+      { tags: ['smoke', 'thunderjet'] },
       () => {
         Organizations.searchByParameters('Name', organization.name);
         Organizations.checkSearchResults(organization);

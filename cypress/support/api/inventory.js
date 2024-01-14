@@ -106,6 +106,32 @@ Cypress.Commands.add('createInstanceType', (specialInstanceType) => {
   });
 });
 
+Cypress.Commands.add('deleteInstanceType', (id) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: `instance-types/${id}`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('createModesOfIssuans', (specialMode) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'modes-of-issuance',
+    body: specialMode,
+  }).then(({ body }) => {
+    return body;
+  });
+});
+
+Cypress.Commands.add('deleteModesOfIssuans', (id) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: `modes-of-issuance/${id}`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
 Cypress.Commands.add('getInstanceIdentifierTypes', (searchParams) => {
   cy.okapiRequest({
     path: 'identifier-types',
@@ -133,10 +159,12 @@ Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] })
     },
   }).then(() => {
     cy.wrap(holdings)
-      .each((holding, i) => cy.createHolding({
-        holding: { ...holding, instanceId },
-        items: items[i],
-      }))
+      .each((holding, i) =>
+        cy.createHolding({
+          holding: { ...holding, instanceId },
+          items: items[i],
+        }),
+      )
       .then((holdingId) => {
         holdingIds.push(holdingId);
       });
@@ -154,7 +182,6 @@ Cypress.Commands.add('updateInstance', (requestData) => {
   }).then(({ body }) => {
     return body;
   });
-  return cy.get('@instanceId');
 });
 
 // Depricated, use createFolioInstanceViaApi instead
@@ -175,9 +202,11 @@ Cypress.Commands.add('createHolding', ({ holding, items = [] }) => {
     },
   })
     .then(() => {
-      cy.wrap(items).each((item) => cy
-        .createItem({ ...item, holdingsRecordId: holdingId })
-        .then((itemId) => itemIds.push(itemId)));
+      cy.wrap(items).each((item) =>
+        cy
+          .createItem({ ...item, holdingsRecordId: holdingId })
+          .then((itemId) => itemIds.push(itemId)),
+      );
     })
     .then(() => {
       cy.wrap(holding).then((holdingsId) => holdingsIds.push(holdingsId));
@@ -203,6 +232,9 @@ Cypress.Commands.add('deleteHoldingRecordViaApi', (holdingsRecordId) => {
 });
 
 Cypress.Commands.add('updateHoldingRecord', (holdingsRecordId, newParams) => {
+  delete newParams.holdingsItems;
+  delete newParams.bareHoldingsItems;
+  delete newParams.holdingsTypeId;
   cy.okapiRequest({
     method: 'PUT',
     path: `holdings-storage/holdings/${holdingsRecordId}`,

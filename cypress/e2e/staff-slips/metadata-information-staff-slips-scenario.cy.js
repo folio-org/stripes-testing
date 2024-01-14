@@ -1,13 +1,11 @@
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import TestTypes from '../../support/dictionary/testTypes';
-import Users from '../../support/fragments/users/users';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import EditStaffClips from '../../support/fragments/circulation/editStaffClips';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Staff slips', () => {
   let userData;
@@ -43,7 +41,7 @@ describe('Staff slips', () => {
 
   it(
     'C387437 Add metadata information to view of Staff Slips scenario 1,4,5 (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.circulationStaffSlipsPath);
       EditStaffClips.chooseStaffClip('Hold');

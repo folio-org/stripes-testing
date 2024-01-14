@@ -12,6 +12,7 @@ import {
 
 const rootModal = Modal({ id: 'new-modal' });
 const feeFineTypeSelect = rootModal.find(Select({ id: 'feeFineType' }));
+const ownerTypeSelect = rootModal.find(Select({ id: 'ownerId' }));
 const amountTextField = rootModal.find(TextField({ name: 'amount' }));
 
 const getChargeFeeFine = ({ amount, userId, feeFineType, id, dateAction, createdAt, source }) => ({
@@ -54,24 +55,26 @@ const getNewFeeFineAccount = (values) => {
   }
 };
 
-const createFeeFineAccountViaApi = (feeFineAccount) => cy
-  .okapiRequest({
-    method: 'POST',
-    path: 'accounts',
-    body: feeFineAccount,
-    isDefaultSearchParamsRequired: false,
-  })
-  .then((res) => res.body.id);
+const createFeeFineAccountViaApi = (feeFineAccount) =>
+  cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'accounts',
+      body: feeFineAccount,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((res) => res.body.id);
 
-const chargeAmountFeeFineActionsViaApi = (chargeFeeFineAction) => cy
-  .okapiRequest({
-    method: 'POST',
-    path: 'feefineactions',
-    body: chargeFeeFineAction,
-    searchParams: { limit: 1000, query: `(userId==${chargeFeeFineAction.userId})` },
-    isDefaultSearchParamsRequired: false,
-  })
-  .then((res) => res.body.accountId);
+const chargeAmountFeeFineActionsViaApi = (chargeFeeFineAction) =>
+  cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'feefineactions',
+      body: chargeFeeFineAction,
+      searchParams: { limit: 1000, query: `(userId==${chargeFeeFineAction.userId})` },
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((res) => res.body.accountId);
 
 export default {
   waitLoading: () => {
@@ -120,6 +123,14 @@ export default {
     cy.get('div[id=new-modal] select[name=ownerId]').select(ownerName);
   },
 
+  checkFeeFineOwnerExist: (ownerName, isExist = true) => {
+    if (isExist) {
+      cy.expect(ownerTypeSelect.find(Option(ownerName)).exists());
+    } else {
+      cy.expect(ownerTypeSelect.find(Option(ownerName)).absent());
+    }
+  },
+
   checkFilteredFeeFineType: (feefineTypeName) => {
     cy.expect(feeFineTypeSelect.find(Option(feefineTypeName)).exists());
   },
@@ -142,17 +153,19 @@ export default {
 
   createViaApi: (feeFineAccount) => {
     return createFeeFineAccountViaApi(getNewFeeFineAccount(feeFineAccount)).then(
-      (feeFineAccountId) => chargeAmountFeeFineActionsViaApi(
-        getChargeFeeFine({ ...feeFineAccount, id: feeFineAccountId }),
-      ),
+      (feeFineAccountId) =>
+        chargeAmountFeeFineActionsViaApi(
+          getChargeFeeFine({ ...feeFineAccount, id: feeFineAccountId }),
+        ),
     );
   },
 
-  deleteFeeFineAccountViaApi: (feeFineAccountId) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `accounts/${feeFineAccountId}`,
-    isDefaultSearchParamsRequired: false,
-  }),
+  deleteFeeFineAccountViaApi: (feeFineAccountId) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `accounts/${feeFineAccountId}`,
+      isDefaultSearchParamsRequired: false,
+    }),
 
   keepEditing() {
     cy.do(Button({ id: 'clickable-cancel-editing-confirmation-confirm' }).click());

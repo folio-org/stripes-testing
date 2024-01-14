@@ -4,6 +4,7 @@ import {
   TextInput,
   Heading,
   PaneHeader,
+  Pane,
   Button,
   Option,
   Section,
@@ -48,7 +49,6 @@ const defaultInstanceZWithContributor = {
 
 const paneIntanceDetails = PaneContent({ id: 'browse-inventory-results-pane-content' });
 const resulstPaneDetails = PaneContent({ id: 'pane-instancedetails-content' });
-const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
 const recordSelect = Select({ id: 'input-record-search-qindex' });
 const instanceRecordSelect = Select({ id: 'input-inventory-search-qindex' });
 const recordSearch = TextInput({ id: 'input-record-search' });
@@ -58,13 +58,15 @@ const browseButton = Button({ id: 'mode-navigation-browse' });
 const searchButton = Button({ type: 'submit' });
 const resetAllButton = Button('Reset all');
 const resultsPaneHeaderBrowse = PaneHeader({ id: 'paneHeaderbrowse-inventory-results-pane' });
+const browseContributorsResultsList = Pane({ id: 'browse-inventory-results-pane' });
 
 const typeSelect = Section({ id: 'nameType' });
 const nameTypeButton = typeSelect.find(Button('Name type'));
 const nameTypeSearch = typeSelect.find(MultiSelect());
 const nameTypeClear = typeSelect.find(Button({ icon: 'times-circle-solid' }));
 const actionsButton = Button('Actions');
-const rowContributorName = (ContributorName, contributorNameType) => MultiColumnListRow(`${ContributorName}${contributorNameType}1`);
+const rowContributorName = (ContributorName, contributorNameType) =>
+  MultiColumnListRow(`${ContributorName}${contributorNameType}1`);
 
 export default {
   defaultInstanceAWithContributor,
@@ -248,10 +250,6 @@ export default {
     cy.expect(actionsButton[state]());
   },
 
-  checkSearchResultCount(text) {
-    cy.expect(resultsPaneHeader.find(HTML(including(text))).exists());
-  },
-
   checkAuthorityIconAndValueDisplayed(value) {
     cy.expect([
       MultiColumnListCell({ row: 5, columnIndex: 0 }).has({
@@ -366,5 +364,9 @@ export default {
           .exists(),
       );
     });
+  },
+
+  checkBrowseContributorsResulstListVisible(isVisible) {
+    cy.expect(browseContributorsResultsList.has({ visible: isVisible }));
   },
 };

@@ -20,21 +20,25 @@ export const SelectionList = HTML.extend('selection list')
   .filters({
     id: (el) => el.id,
     optionCount: (el) => [...el.querySelectorAll('li')].length,
+    optionList: (el) => [...el.querySelectorAll('li')].map(({ textContent }) => textContent),
+    placeholder: (el) => el.querySelector('input').placeholder,
   })
   .actions({
-    filter: ({ find }, value) => find(TextField()).perform((el) => {
-      el.focus();
-      const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
-      property.set.call(el, value);
-      el.dispatchEvent(
-        new InputEvent('input', {
-          inputType: 'insertFromPaste',
-          bubbles: true,
-          cancelable: false,
-        }),
-      );
-    }),
-    focusFilter: ({ perform }) => perform((el) => el.querySelector('[class^=selectionFilter]').focus()),
+    filter: ({ find }, value) =>
+      find(TextField()).perform((el) => {
+        el.focus();
+        const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
+        property.set.call(el, value);
+        el.dispatchEvent(
+          new InputEvent('input', {
+            inputType: 'insertFromPaste',
+            bubbles: true,
+            cancelable: false,
+          }),
+        );
+      }),
+    focusFilter: ({ perform }) =>
+      perform((el) => el.querySelector('[class^=selectionFilter]').focus()),
     select: async (interactor, value) => {
       await interactor.find(SelectionOption(value)).click();
     },
@@ -52,6 +56,7 @@ export default HTML.extend('selection')
     singleValue: (el) => el.querySelector('button [class^=singleValue-]').textContent,
     error: (el) => el.querySelector('[class^=feedbackError]').textContent,
     warning: (el) => el.querySelector('[class^=feedbackWarning]').textContent,
+    name: (el) => el.querySelector('button').name,
     open: (el) => {
       if (el.querySelector('button').getAttribute('aria-expanded') === 'true') {
         return !!document.querySelector('[class^=selectionListRoot]');

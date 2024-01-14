@@ -9,6 +9,7 @@ import {
   including,
   MultiColumnListRow,
   MultiColumnListCell,
+  MultiSelect,
 } from '../../../../interactors';
 
 const searchOptions = {
@@ -32,6 +33,10 @@ const enabledSearchButton = Button({ id: 'submit-authorities-search', disabled: 
 const searchInput = SearchField({ id: 'textarea-authorities-search' });
 const mainFilter = SearchField({ id: 'textarea-authorities-search-qindex' });
 const browseSearchAndFilterInput = Select('Search field index');
+const resetButton = Button('Reset all');
+const sourceFieldAccordion = Section({ id: 'sourceFileId' });
+const referencesFilterAccordion = Section({ id: 'references' });
+const headingTypeAccordion = Section({ id: 'headingType' });
 // TODO: initially first line has data-row-index = 52. Currently it's 0, clarify the reason in case if start index will changed once again
 const getFirstLineIndexRow = (zeroIndex) => `row-${zeroIndex + 0}`;
 
@@ -50,7 +55,10 @@ export default {
     cy.expect(rootSection.find(MultiColumnListRow({ indexRow: getFirstLineIndexRow(0) })).exists());
   },
 
-  checkPresentedColumns: () => presentedColumns.forEach((columnName) => cy.expect(rootSection.find(MultiColumnListHeader(columnName)).exists())),
+  checkPresentedColumns: () =>
+    presentedColumns.forEach((columnName) =>
+      cy.expect(rootSection.find(MultiColumnListHeader(columnName)).exists()),
+    ),
   // TODO: add checing of ""Type of heading" accordion button."
   checkFiltersInitialState: () => {
     cy.expect(mainFilter.has({ selectedFilter: defaultMainFilterValue.htmlValue }));
@@ -110,7 +118,8 @@ export default {
     cy.expect(mainFilter.has({ selectedFilter: searchOption.value }));
   },
 
-  getNotExistingHeadingReferenceValue: (requestedHeadingReference) => `${requestedHeadingReference}\xa0would be here`,
+  getNotExistingHeadingReferenceValue: (requestedHeadingReference) =>
+    `${requestedHeadingReference}\xa0would be here`,
   checkHeadingReferenceInRow(rowNumber, headingReferenceValue, isRef) {
     const specialCell = rootSection
       .find(MultiColumnListRow({ rowIndexInParent: `row-${rowNumber}` }))
@@ -166,6 +175,19 @@ export default {
       rootSection
         .find(MultiColumnListRow({ rowIndexInParent: 'row-1' }))
         .find(MultiColumnListCell({ content: headingReference })),
+    ]);
+  },
+
+  verifyBrowseAuthorityPane(searchOption, inputValue) {
+    cy.expect([
+      browseSearchAndFilterInput.has({ checkedOptionText: searchOption }),
+      searchInput.has({ value: inputValue }),
+      resetButton.exists(),
+      searchButton.exists(),
+      sourceFieldAccordion.find(MultiSelect({ label: including('Authority source') })).exists(),
+      sourceFieldAccordion.find(MultiSelect({ selectedCount: 0 })).exists(),
+      referencesFilterAccordion.has({ expanded: false }),
+      headingTypeAccordion.has({ expanded: false }),
     ]);
   },
 };

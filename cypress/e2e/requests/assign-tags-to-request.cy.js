@@ -1,10 +1,7 @@
-import testType from '../../support/dictionary/testTypes';
-import parallelization from '../../support/dictionary/parallelization';
-import TopMenu from '../../support/fragments/topMenu';
-import Requests from '../../support/fragments/requests/requests';
-import Users from '../../support/fragments/users/users';
-import DevTeams from '../../support/dictionary/devTeams';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import Requests from '../../support/fragments/requests/requests';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 
 describe('ui-requests: Assign Tags to Request', () => {
   let userId;
@@ -41,7 +38,7 @@ describe('ui-requests: Assign Tags to Request', () => {
 
   it(
     'C747 Assign Tags to Request (vega)',
-    { tags: [testType.smoke, DevTeams.vega, parallelization.nonParallel] },
+    { tags: ['smoke', 'vega', 'system', 'nonParallel'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();

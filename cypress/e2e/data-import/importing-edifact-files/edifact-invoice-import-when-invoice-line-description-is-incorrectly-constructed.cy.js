@@ -1,25 +1,30 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import {
+  ACCEPTED_DATA_TYPE_NAMES,
+  BATCH_GROUP,
   FOLIO_RECORD_TYPE,
   PAYMENT_METHOD,
-  BATCH_GROUP,
-  ACCEPTED_DATA_TYPE_NAMES,
   VENDOR_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import Users from '../../../support/fragments/users/users';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import InvoiceView from '../../../support/fragments/invoices/invoiceView';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing EDIFACT files', () => {
@@ -69,11 +74,13 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
-        ActionProfiles.deleteActionProfile(actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         invoiceNumbers.forEach((number) => {
-          cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${number}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
+          cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${number}"` }).then((id) =>
+            cy.deleteInvoiceFromStorageViaApi(id),
+          );
         });
         Users.deleteViaApi(user.userId);
       });
@@ -81,7 +88,7 @@ describe('data-import', () => {
 
     it(
       'C347926 Check EDIFACT invoice import when Invoice line description is incorrectly constructed (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['extendedPath', 'folijet', 'nonParallel'] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.waitLoading();
@@ -109,15 +116,15 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileName);
+        Logs.waitFileIsImported(fileName);
         Logs.checkImportFile(jobProfile.profileName);
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(fileName);
-        FileDetails.verifyEachInvoiceStatusInColunm('Created');
+        FileDetails.verifyEachInvoiceStatusInColunm(RECORD_STATUSES.CREATED);
         cy.wait(2000);
         FileDetails.verifyEachInvoiceTitleInColunm();
         FileDetails.clickNextPaginationButton();
-        FileDetails.verifyEachInvoiceStatusInColunm('Created');
+        FileDetails.verifyEachInvoiceStatusInColunm(RECORD_STATUSES.CREATED);
         cy.wait(2000);
         FileDetails.verifyEachInvoiceTitleInColunm();
         Logs.checkQuantityRecordsInFile(quantityOfInvoices);

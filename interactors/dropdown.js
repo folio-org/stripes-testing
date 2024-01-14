@@ -5,9 +5,11 @@ import ButtonInteractor from './button';
 
 const DropdownTrigger = HTML.extend('dropdown trigger').selector('[aria-haspopup]');
 
-export const DropdownMenu = HTML.extend('dropdown menu').selector(
-  'div[class*=overlay] div[class*=DropdownMenu]',
-);
+export const DropdownMenu = HTML.extend('dropdown menu')
+  .selector('div[class*=overlay] div[class*=DropdownMenu]')
+  .filters({
+    buttons: (el) => el.querySelectorAll('button'),
+  });
 
 const label = (el) => {
   const node = el.querySelector('[aria-haspopup]');
@@ -19,7 +21,8 @@ const open = (el) => el.querySelector('[aria-haspopup]').getAttribute('aria-expa
 const visible = (el) => [el, el.querySelector(['[aria-haspopup]'])].every(isVisible);
 
 const control =
-  ({ shouldOpen = true } = {}) => async (interactor) => {
+  ({ shouldOpen = true } = {}) =>
+  async (interactor) => {
     let isOpen;
     await interactor.perform((el) => {
       isOpen = open(el);

@@ -407,8 +407,10 @@ export default {
     cy.expect(logsPane.has({ subtitle }));
   },
 
-  verifyLogsPaneSubtitleAbsent: () => cy.expect(logsPane.find(HTML(including('selected'))).absent()),
-  verifyChooseFileButtonState: ({ isDisabled }) => cy.expect(orChooseFilesButton.has({ disabled: isDisabled })),
+  verifyLogsPaneSubtitleAbsent: () =>
+    cy.expect(logsPane.find(HTML(including('selected'))).absent()),
+  verifyChooseFileButtonState: ({ isDisabled }) =>
+    cy.expect(orChooseFilesButton.has({ disabled: isDisabled })),
 
   verifyDeleteLogsButtonDisabled: () => {
     cy.do(actionsButton.click());
@@ -449,6 +451,10 @@ export default {
       });
   },
 
+  verifyTrashIconInvisibleForUser: () => {
+    cy.get('div[class^="listContainer-"] button[icon="trash').should('have.length', 0);
+  },
+
   verifyCancelImportJobModal: () => {
     const headerModalContent = 'Are you sure that you want to cancel this import job?';
     const modalContent =
@@ -473,7 +479,7 @@ export default {
 
   waitFileIsUploaded: () => {
     // TODO need to wait until big file is uploaded
-    cy.wait(10000);
+    cy.wait(20000);
   },
 
   uploadFileAndRetry(filePathName, fileName, maxRetries = 10) {

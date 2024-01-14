@@ -162,12 +162,14 @@ const checkItemsQuantityInSummaryTable = (rowNumber, quantity) => {
 };
 
 const checkStatusInColumn = (specialStatus, specialColumnName, rowIndex = 0) => {
-  cy.then(() => specialColumnName.index()).then((index) => cy.expect(
-    resultsList
-      .find(MultiColumnListRow({ index: rowIndex }))
-      .find(MultiColumnListCell({ columnIndex: index }))
-      .has({ content: including(specialStatus) }),
-  ));
+  cy.then(() => specialColumnName.index()).then((index) =>
+    cy.expect(
+      resultsList
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(MultiColumnListCell({ columnIndex: index }))
+        .has({ content: including(specialStatus) }),
+    ),
+  );
 };
 
 function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
@@ -296,6 +298,16 @@ export default {
     );
   },
 
+  openErrorInSummaryTable: (row) => {
+    cy.do(
+      jobSummaryTable
+        .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+        .find(MultiColumnListCell({ columnIndex: 8 }))
+        .find(Link())
+        .click(),
+    );
+  },
+
   openOrder: (itemStatus, rowNumber = 0) => {
     cy.do(
       resultsList
@@ -320,26 +332,39 @@ export default {
     );
   },
 
+  openInvoiceLine: (itemStatus, rowNumber = 0) => {
+    cy.do(
+      resultsList
+        .find(MultiColumnListCell({ row: rowNumber, columnIndex: 8 }))
+        .find(Link(itemStatus))
+        .click(),
+    );
+  },
+
+  openAuthority: (itemStatus, rowNumber = 0) => {
+    cy.do(
+      resultsList
+        .find(MultiColumnListCell({ row: rowNumber, columnIndex: 6 }))
+        .find(Link(itemStatus))
+        .click(),
+    );
+  },
+
   openJsonScreen: (title) => {
-    cy.get('#search-results-list').find('*[class^="mclCell"]').contains(title).focus();
-    cy.get('#search-results-list')
-      .find('*[class^="mclCell"]')
-      .contains(title)
-      .invoke('removeAttr', 'target')
-      .click();
+    cy.get('#search-results-list').find('a').contains(title).invoke('removeAttr', 'target').click();
     cy.wait(2000);
   },
 
-  openJsonScreenByStatus: (importStatus, title) => {
+  openJsonScreenByStatus: (importStatus, title, columnNumber = 2) => {
     cy.do(
       resultsList
-        .find(MultiColumnListCell({ content: importStatus, columnIndex: 2 }))
+        .find(MultiColumnListCell({ content: importStatus, columnIndex: columnNumber }))
         .perform((element) => {
           const rowNumber = element.parentElement.getAttribute('data-row-inner');
 
           cy.get('#search-results-list')
-            .eq(rowNumber)
-            .find('*[class^="mclCell"]')
+            .find(`div[data-row-inner="${rowNumber}"]`)
+            .find('a')
             .contains(title)
             .invoke('removeAttr', 'target')
             .click();
@@ -399,7 +424,9 @@ export default {
         .perform((element) => {
           const extractedMatches = [];
           // get text contains e.g. 'Created (it00000000123)' and put it to an array
-          Array.from(element.querySelectorAll('[class*="baselineCell-"]')).map((el) => extractedMatches.push(el.innerText.match(/(Created \(it\d+\)|No action|-)/g)));
+          Array.from(element.querySelectorAll('[class*="baselineCell-"]')).map((el) =>
+            extractedMatches.push(el.innerText.match(/(Created \(it\d+\)|No action|-)/g)),
+          );
           // get the first element from an array
           const currentArray = Array.from(extractedMatches[0]);
 
@@ -417,7 +444,9 @@ export default {
           const extractedMatches = [];
 
           // get text contains e.g. 'Error' and put it to an array
-          Array.from(element.querySelectorAll('[class*="baselineCell-"]')).map((el) => extractedMatches.push(el.innerText.match(/(Error)/g)));
+          Array.from(element.querySelectorAll('[class*="baselineCell-"]')).map((el) =>
+            extractedMatches.push(el.innerText.match(/(Error)/g)),
+          );
           // get the first element from an array
           const currentArray = Array.from(extractedMatches[0]);
 
@@ -466,12 +495,14 @@ export default {
   },
 
   verifyTitle: (title, specialColumnName, rowIndex = 0) => {
-    cy.then(() => specialColumnName.index()).then((index) => cy.expect(
-      resultsList
-        .find(MultiColumnListRow({ index: rowIndex }))
-        .find(MultiColumnListCell({ columnIndex: index }))
-        .has({ content: title }),
-    ));
+    cy.then(() => specialColumnName.index()).then((index) =>
+      cy.expect(
+        resultsList
+          .find(MultiColumnListRow({ index: rowIndex }))
+          .find(MultiColumnListCell({ columnIndex: index }))
+          .has({ content: title }),
+      ),
+    );
   },
 
   verifyRecordsSortingOrder() {

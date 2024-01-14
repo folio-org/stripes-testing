@@ -2,7 +2,6 @@ import moment from 'moment';
 import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -10,7 +9,6 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import getRandomPostfix from '../../support/utils/stringTools';
 import Users from '../../support/fragments/users/users';
 import Checkout from '../../support/fragments/checkout/checkout';
-import devTeams from '../../support/dictionary/devTeams';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 import { getNewItem } from '../../support/fragments/inventory/item';
@@ -166,7 +164,7 @@ describe('Check In - Actions ', () => {
 
   it(
     'C398022 Check sessionId does not change when switching to other applications in scope of one check-in session (vega)',
-    { tags: [TestTypes.extendedPath, devTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.login(userData[0].username, userData[0].password);
       cy.visit(TopMenu.checkInPath);
@@ -190,7 +188,7 @@ describe('Check In - Actions ', () => {
 
   it(
     'C398005 Check sessionId field while check-in (vega)',
-    { tags: [TestTypes.extendedPath, devTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.login(userData[1].username, userData[1].password);
       cy.visit(TopMenu.checkInPath);

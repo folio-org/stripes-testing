@@ -1,25 +1,23 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import TestTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
+import uuid from 'uuid';
+import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 import permissions from '../../../../support/dictionary/permissions';
-import UserEdit from '../../../../support/fragments/users/userEdit';
-import TopMenu from '../../../../support/fragments/topMenu';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import generateUniqueItemBarcodeWithShift from '../../../../support/utils/generateUniqueItemBarcodeWithShift';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
-import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../../../support/fragments/users/users';
 import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../../../support/fragments/checkout/checkout';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Conditions from '../../../../support/fragments/settings/users/conditions';
 import Limits from '../../../../support/fragments/settings/users/limits';
+import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import TopMenu from '../../../../support/fragments/topMenu';
+import UserEdit from '../../../../support/fragments/users/userEdit';
+import Users from '../../../../support/fragments/users/users';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
-import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import generateUniqueItemBarcodeWithShift from '../../../../support/utils/generateUniqueItemBarcodeWithShift';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Patron Block: Maximum number of items charged out', () => {
   const checkedOutBlockMessage = `You have reached the maximum number of items you can check out as set by patron group${getRandomPostfix()}`;
@@ -168,7 +166,7 @@ describe('Patron Block: Maximum number of items charged out', () => {
 
   it(
     'C350647 Verify automated patron block "Maximum number of items charged out" removed after charged item returned (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.visit(SettingsMenu.conditionsPath);
       Conditions.waitLoading();

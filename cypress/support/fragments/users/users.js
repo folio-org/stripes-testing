@@ -18,7 +18,6 @@ import getRandomPostfix from '../../utils/stringTools';
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const contactInformationAccordion = Accordion('Contact information');
 const defaultUserName = `AutotestUser_${getRandomPostfix()}`;
-const editButton = Button('Edit');
 const deleteUser = Button({ id: 'clickable-checkdeleteuser' });
 const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
 const deleteYesButton = Button({ id: 'delete-user-button' });
@@ -45,27 +44,29 @@ const defaultUser = {
 
 export default {
   defaultUser,
-  createViaApi: (user) => cy
-    .okapiRequest({
-      method: 'POST',
-      path: 'users',
-      body: user,
-      isDefaultSearchParamsRequired: false,
-    })
-    .then((response) => ({
-      id: response.body.id,
-      username: response.body.username,
-      barcode: response.body.barcode,
-      lastName: response.body.personal.lastName,
-      firstName: response.body.personal.firstName,
-      middleName: response.body.personal.middleName,
-    })),
+  createViaApi: (user) =>
+    cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'users',
+        body: user,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => ({
+        id: response.body.id,
+        username: response.body.username,
+        barcode: response.body.barcode,
+        lastName: response.body.personal.lastName,
+        firstName: response.body.personal.firstName,
+        middleName: response.body.personal.middleName,
+      })),
 
-  deleteViaApi: (userId) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `bl-users/by-id/${userId}`,
-    isDefaultSearchParamsRequired: false,
-  }),
+  deleteViaApi: (userId) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `bl-users/by-id/${userId}`,
+      isDefaultSearchParamsRequired: false,
+    }),
 
   getUsers: (searchParams) => {
     return cy
@@ -241,15 +242,6 @@ export default {
     cy.wait('@createUser', { timeout: 100000 });
   },
 
-  editButton: () => {
-    cy.do([
-      Section({ id: 'pane-userdetails' })
-        .find(PaneHeader({ id: 'paneHeaderpane-userdetails' }))
-        .find(Button('Actions'))
-        .click(),
-      editButton.click(),
-    ]);
-  },
   checkZeroSearchResultsHeader: () => {
     cy.xpath(numberOfSearchResultsHeader)
       .should('be.visible')
@@ -260,9 +252,10 @@ export default {
     cy.expect(userDetailsPane.exists());
   },
 
-  getUserAddressTypesApi: (addressTypeId) => cy
-    .okapiRequest({
-      path: `addresstypes/${addressTypeId}`,
-    })
-    .then(({ body }) => body),
+  getUserAddressTypesApi: (addressTypeId) =>
+    cy
+      .okapiRequest({
+        path: `addresstypes/${addressTypeId}`,
+      })
+      .then(({ body }) => body),
 };

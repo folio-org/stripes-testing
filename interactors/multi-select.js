@@ -4,7 +4,8 @@ import Button from './button';
 const open = (el) => el.getAttribute('aria-expanded') === 'true';
 
 const control =
-  ({ shouldOpen = true } = {}) => async (interactor) => {
+  ({ shouldOpen = true } = {}) =>
+  async (interactor) => {
     let isOpen;
     await interactor.perform((el) => {
       isOpen = open(el);
@@ -36,6 +37,10 @@ export const MultiSelectOption = HTML.extend('multi select option')
     index: (el) => [...el.parentNode.children].indexOf(el),
     selected: (el) => el.className.includes('selected'),
     innerHTML: (el) => el.innerHTML,
+    totalRecords: (el) => {
+      const records = el.querySelector('[class^=totalRecords]').textContent || '';
+      return parseInt(records.replace(/[^0-9]/g, ''), 10);
+    },
   });
 
 export const ValueChipRoot = HTML.extend('value chip root')
@@ -82,28 +87,32 @@ export default createInteractor('multi select')
     selectedCount: (el) => el.querySelectorAll('[class^=valueChipValue-]').length,
     filterValue: (el) => el.querySelector('input').value,
     focused: (el) => Boolean(el.querySelector(':focus')),
-    focusedValue: (el) => el.querySelector('ul').querySelector('button:focus').parentNode.textContent,
+    focusedValue: (el) =>
+      el.querySelector('ul').querySelector('button:focus').parentNode.textContent,
     error: (el) => el.querySelector('[class^=feedbackError]').textContent,
     ariaLabelledby: (el) => el.getAttribute('aria-labelledby'),
     span: (el) => el.querySelector('span').textContent,
   })
   .actions({
-    toggle: ({ find }) => find(Button({ className: including('multiSelectToggleButton-') })).click(),
+    toggle: ({ find }) =>
+      find(Button({ className: including('multiSelectToggleButton-') })).click(),
     open: control(),
     close: control({ shouldOpen: false }),
-    fillIn: ({ find }, value) => find(TextField({ className: including('multiSelectFilterField-') })).fillIn(value),
-    filter: ({ find }, value) => find(TextField({ className: including('multiSelectFilterField-') })).perform((el) => {
-      el.focus();
-      const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
-      property.set.call(el, value);
-      el.dispatchEvent(
-        new InputEvent('input', {
-          inputType: 'insertFromPaste',
-          bubbles: true,
-          cancelable: false,
-        }),
-      );
-    }),
+    fillIn: ({ find }, value) =>
+      find(TextField({ className: including('multiSelectFilterField-') })).fillIn(value),
+    filter: ({ find }, value) =>
+      find(TextField({ className: including('multiSelectFilterField-') })).perform((el) => {
+        el.focus();
+        const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
+        property.set.call(el, value);
+        el.dispatchEvent(
+          new InputEvent('input', {
+            inputType: 'insertFromPaste',
+            bubbles: true,
+            cancelable: false,
+          }),
+        );
+      }),
     select,
     choose: select,
     focus: ({ perform }) => perform((el) => el.querySelector('input').focus()),

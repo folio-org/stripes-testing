@@ -23,28 +23,6 @@ const openNewActionProfileForm = () => {
 };
 const close = (profileName) => cy.do(Pane({ title: profileName }).find(iconButton).click());
 
-const deleteActionProfile = (profileName) => {
-  // get all action profiles
-  cy.okapiRequest({
-    path: 'data-import-profiles/actionProfiles',
-    searchParams: {
-      query: '(cql.allRecords=1) sortby name',
-      limit: 1000,
-    },
-  }).then(({ body: { actionProfiles } }) => {
-    // find profile to delete
-    const profileToDelete = actionProfiles.find((profile) => profile.name === profileName);
-
-    // delete profile with its id
-    cy.okapiRequest({
-      method: 'DELETE',
-      path: `data-import-profiles/actionProfiles/${profileToDelete.id}`,
-    }).then(({ status }) => {
-      if (status === 204) cy.log('###DELETED ACTION PROFILE###');
-    });
-  });
-};
-
 const search = (profileName) => {
   // TODO: clarify with developers what should be waited
   cy.wait(1500);
@@ -56,7 +34,7 @@ const search = (profileName) => {
 };
 
 export default {
-  deleteActionProfile,
+  openNewActionProfileForm,
   close,
   search,
   clearSearchField: () => {
@@ -105,7 +83,8 @@ export default {
     );
   },
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
-  verifyActionProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
+  verifyActionProfileAbsent: () =>
+    cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
   verifySearchFieldIsEmpty: () => cy.expect(searchField.has({ value: '' })),
   verifySearchResult: (profileName) => {
     cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());

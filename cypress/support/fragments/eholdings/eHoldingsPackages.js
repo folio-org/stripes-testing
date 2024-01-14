@@ -15,18 +15,20 @@ import {
   Accordion,
   RadioButton,
 } from '../../../../interactors';
+import { FILTER_STATUSES } from './eholdingsConstants';
 import getRandomPostfix from '../../utils/stringTools';
 import eHoldingsNewCustomPackage from './eHoldingsNewCustomPackage';
 import eHoldingsPackage from './eHoldingsPackage';
 
 const resultSection = Section({ id: 'search-results' });
+const searchResultsList = resultSection.find(List({ testId: 'scroll-view-list' }));
 const selectedText = "#packageShowHoldingStatus div[class^='headline']";
 const actionButton = Button('Actions');
 const deletePackageButton = Button('Delete package');
 const confirmModal = Modal('Delete custom package');
 const addNewPackageButton = Button({ href: '/eholdings/packages/new' });
 const searchButton = Button('Search');
-const packageList = Section({ id: 'packageShowTitles' });
+
 const searchIcon = Button({ icon: 'search' });
 const searchField = TextField({ id: 'eholdings-search' });
 const chooseParameterField = Select('Select a field to search');
@@ -81,7 +83,34 @@ export default {
   verifyListOfExistingPackagesIsDisplayed: () => {
     cy.expect(resultSection.find(List()).exists());
   },
+  sortPackagesByTitlesCount({ minTitlesCount = 100 } = {}) {
+    cy.then(() => searchResultsList.links()).then((links) => {
+      const prefix = 'data-test-eholdings-package-list-item';
+      const sortedPackages = (links?.length ? [...links] : [])
+        .map((link) => {
+          const countTotalTitles = link.querySelector(`[${prefix}-num-titles="true"]`).innerText;
+          const countSelected = link.querySelector(
+            '[data-test-eholdings-provider-list-item-num-packages-selected="true"]',
+          ).innerText;
 
+          return {
+            id: link.getAttribute('href').replace('/eholdings/packages/', ''),
+            name: link.querySelector(`[${prefix}-name="true"]`).innerText,
+            countTotalTitles: parseFloat(countTotalTitles.replace(/,/g, '')),
+            countSelected: parseFloat(countSelected.replace(/,/g, '')),
+          };
+        })
+        .filter((item) => item.countTotalTitles >= minTitlesCount)
+        .sort((a, b) => a.countTotalTitles - b.countTotalTitles);
+
+      cy.wrap(sortedPackages).as('selectedPackages');
+    });
+
+    return cy.get('@selectedPackages');
+  },
+  openPackageWithExpectedName(packageName) {
+    cy.do(resultSection.find(Link({ text: including(packageName) })).click());
+  },
   openPackageWithExpectedTitels: (totalTitlesNumber) => {
     cy.do(
       resultSection
@@ -109,7 +138,8 @@ export default {
   getCustomPackageViaApi: () => {
     cy.okapiRequest({
       path: 'eholdings/packages',
-      searchParams: { 'filter[custom]': true, count: 10, pageSize: 10 },
+      // count: 10, pageSize: 10 parameters were removed since empty list is returned with such values
+      searchParams: { 'filter[custom]': true },
       isDefaultSearchParamsRequired: false,
     }).then(({ body }) => {
       const initialPackageNames = body.data
@@ -129,7 +159,8 @@ export default {
     }).then(({ body }) => {
       const initialPackageIds = body.data
         .filter(
-          (specialPackage) => !specialPackage?.attributes?.isCustom &&
+          (specialPackage) =>
+            !specialPackage?.attributes?.isCustom &&
             specialPackage?.attributes?.name &&
             // TODO: can't see not complete package in response now
             // && specialPackage.attributes?.packageType !== 'Complete'
@@ -150,7 +181,8 @@ export default {
     }).then(({ body }) => {
       const initialPackageIds = body.data
         .filter(
-          (specialPackage) => !specialPackage?.attributes?.isCustom &&
+          (specialPackage) =>
+            !specialPackage?.attributes?.isCustom &&
             specialPackage?.attributes?.name &&
             specialPackage.attributes?.packageType !== 'Complete' &&
             // TODO: potencial issue with this package
@@ -245,22 +277,9 @@ export default {
 
   verifyOnlySelectedPackagesInResults() {
     cy.expect([
-      resultSection
-        .find(ListItem({ text: including(eHoldingsPackage.filterStatuses.selected) }))
-        .exists(),
-      resultSection
-        .find(ListItem({ text: including(eHoldingsPackage.filterStatuses.notSelected) }))
-        .absent(),
+      resultSection.find(ListItem({ text: including(FILTER_STATUSES.SELECTED) })).exists(),
+      resultSection.find(ListItem({ text: including(FILTER_STATUSES.NOT_SELECTED) })).absent(),
     ]);
-  },
-
-  clickSearchTitles: (rowNumber = 0) => {
-    cy.do(
-      packageList
-        .find(ListItem({ className: including('list-item-'), index: rowNumber }))
-        .find(Button())
-        .click(),
-    );
   },
 
   subjectsAssertion() {
@@ -309,7 +328,8 @@ export default {
       });
   },
 
-  verifyPackageRecordProxy: (proxyName) => cy.expect(KeyValue('Proxy', { value: proxyName }).exists()),
+  verifyPackageRecordProxy: (proxyName) =>
+    cy.expect(KeyValue('Proxy', { value: proxyName }).exists()),
 
   verifyDetailsPaneAbsent: (packageName) => {
     cy.expect(Pane(including(packageName)).absent());

@@ -1,10 +1,8 @@
-import Funds from '../../../support/fragments/finance/funds/funds';
-import DateTools from '../../../support/utils/dateTools';
-import TestType from '../../../support/dictionary/testTypes';
-import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import NewFund from '../../../support/fragments/finance/funds/newFund';
 import Transaction from '../../../support/fragments/finance/fabrics/newTransaction';
-import devTeams from '../../../support/dictionary/devTeams';
+import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import Funds from '../../../support/fragments/finance/funds/funds';
+import NewFund from '../../../support/fragments/finance/funds/newFund';
+import DateTools from '../../../support/utils/dateTools';
 
 describe('ui-finance: Funds', () => {
   const currentBudgetSectionId = 'currentBudget';
@@ -16,7 +14,7 @@ describe('ui-finance: Funds', () => {
     cy.deleteLedgerApi(createdLedgerId);
   });
 
-  it('C343211 Delete Budget (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
+  it('C343211 Delete Budget (thunderjet)', { tags: ['smoke', 'thunderjet'] }, () => {
     const quantityArray = [0, 100];
     const transactionFactory = new Transaction();
     Funds.createFundViaUI(fund).then((createdLedger) => {

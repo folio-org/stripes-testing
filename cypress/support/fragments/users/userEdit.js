@@ -1,29 +1,28 @@
-import { v4 as uuidv4 } from 'uuid';
 import { HTML, including } from '@interactors/html';
+import { v4 as uuidv4 } from 'uuid';
 import {
-  Pane,
-  Button,
   Accordion,
-  TextField,
-  MultiColumnListRow,
+  Button,
   Checkbox,
   Modal,
   MultiColumnList,
-  Select,
-  Section,
-  MultiSelect,
-  TextArea,
-  RadioButtonGroup,
-  RadioButton,
-  SearchField,
   MultiColumnListCell,
+  MultiColumnListRow,
+  MultiSelect,
+  Pane,
+  RadioButton,
+  RadioButtonGroup,
+  SearchField,
+  Section,
+  Select,
+  TextArea,
+  TextField,
 } from '../../../../interactors';
+import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
-import SelectUser from '../check-out-actions/selectUser';
 
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
-const userSearch = TextField('User search');
 const saveAndCloseBtn = Button('Save & close');
 const actionsButton = Button('Actions');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
@@ -34,24 +33,26 @@ const customFieldsAccordion = Accordion('Custom fields');
 const selectPermissionsModal = Modal('Select Permissions');
 const permissionsAccordion = Accordion({ id: 'permissions' });
 const addPermissionsButton = Button({ id: 'clickable-add-permission' });
-const permissionsSearch = SearchField();
+const permissionsSearch = selectPermissionsModal.find(SearchField());
 const searchButton = Button('Search');
 const resetAllButton = Button('Reset all');
 const selectRequestType = Select({ id: 'type' });
 const cancelButton = Button('Cancel');
+const userSearch = TextField('User search');
 let totalRows;
 
 // servicePointIds is array of ids
-const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
-  method: 'POST',
-  path: 'service-points-users',
-  body: {
-    id: uuidv4(),
-    userId,
-    servicePointsIds: servicePointIds,
-    defaultServicePointId: defaultServicePointId || servicePointIds[0],
-  },
-});
+const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) =>
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'service-points-users',
+    body: {
+      id: uuidv4(),
+      userId,
+      servicePointsIds: servicePointIds,
+      defaultServicePointId: defaultServicePointId || servicePointIds[0],
+    },
+  });
 
 export default {
   addServicePointsViaApi,
@@ -72,11 +73,45 @@ export default {
     cy.do(Select({ id: 'type' }).choose(type));
   },
 
+  searchForPermission(permission) {
+    cy.do(permissionsSearch.fillIn(permission));
+    cy.expect(permissionsSearch.is({ value: permission }));
+    cy.do(searchButton.click());
+  },
+
+  selectFirsPermissionInSearch() {
+    cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
+  },
+
+  savePermissionsInModal() {
+    cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
+  },
+
+  saveUserEditForm() {
+    cy.do(Button({ id: 'clickable-save' }).click());
+  },
+
+  openSelectPermissionsModal() {
+    cy.do(permissionsAccordion.clickHeader());
+    cy.do(addPermissionsButton.click());
+    cy.expect(selectPermissionsModal.exists());
+  },
+
   addPermissions(permissions) {
+    this.openEdit();
+    this.openSelectPermissionsModal();
+    cy.wrap(permissions).each((permission) => {
+      this.searchForPermission(permission);
+      cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
+      cy.wait(2000);
+    });
+    cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
+  },
+
+  addPermissions1(permissions) {
     cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
     cy.wait(5000);
     cy.do([permissionsAccordion.clickHeader(), addPermissionsButton.click()]);
-
     permissions.forEach((permission) => {
       cy.do(userSearch.fillIn(permission));
       cy.expect(userSearch.is({ value: permission }));
@@ -89,14 +124,13 @@ export default {
     cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
   },
 
-  verifyPermissionDoesNotExist(permission) {
-    cy.do([addPermissionsButton.click(), userSearch.fillIn(permission)]);
-    cy.expect(userSearch.is({ value: permission }));
-    // wait is needed to avoid so fast robot clicks
-    cy.wait(1000);
-    cy.do(Button('Search').click());
+  verifyPermissionDoesNotExistInSelectPermissions(permission) {
+    this.searchForPermission(permission);
     cy.expect(selectPermissionsModal.find(HTML('The list contains no items')).exists());
-    cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
+  },
+
+  cancelSelectPermissionsModal() {
+    cy.do(selectPermissionsModal.find(cancelButton).click());
   },
 
   addServicePoints(...points) {
@@ -130,7 +164,9 @@ export default {
   },
 
   verifyUserInformation: (allContentToCheck) => {
-    return allContentToCheck.forEach((contentToCheck) => cy.expect(Section({ id: 'editUserInfo' }, including(contentToCheck)).exists()));
+    return allContentToCheck.forEach((contentToCheck) =>
+      cy.expect(Section({ id: 'editUserInfo' }, including(contentToCheck)).exists()),
+    );
   },
 
   cancelChanges() {
@@ -147,7 +183,8 @@ export default {
     cy.wait('@updateUser', { timeout: 100000 });
   },
 
-  addServicePointViaApi: (servicePointId, userId, defaultServicePointId) => addServicePointsViaApi([servicePointId], userId, defaultServicePointId),
+  addServicePointViaApi: (servicePointId, userId, defaultServicePointId) =>
+    addServicePointsViaApi([servicePointId], userId, defaultServicePointId),
 
   // we can remove the service point if it is not Preference
   changeServicePointPreference: (userName = defaultUser.defaultUiPatron.body.userName) => {
@@ -164,24 +201,25 @@ export default {
     ]);
   },
 
-  changeServicePointPreferenceViaApi: (userId, servicePointIds, defaultServicePointId = null) => cy
-    .okapiRequest({
-      method: 'GET',
-      path: `service-points-users?query="userId"="${userId}"`,
-      isDefaultSearchParamsRequired: false,
-    })
-    .then((servicePointsUsers) => {
-      cy.okapiRequest({
-        method: 'PUT',
-        path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,
-        body: {
-          userId,
-          servicePointsIds: servicePointIds,
-          defaultServicePointId,
-        },
+  changeServicePointPreferenceViaApi: (userId, servicePointIds, defaultServicePointId = null) =>
+    cy
+      .okapiRequest({
+        method: 'GET',
+        path: `service-points-users?query="userId"="${userId}"`,
         isDefaultSearchParamsRequired: false,
-      });
-    }),
+      })
+      .then((servicePointsUsers) => {
+        cy.okapiRequest({
+          method: 'PUT',
+          path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,
+          body: {
+            userId,
+            servicePointsIds: servicePointIds,
+            defaultServicePointId,
+          },
+          isDefaultSearchParamsRequired: false,
+        });
+      }),
 
   updateExternalIdViaApi(user, externalSystemId) {
     cy.updateUser({
@@ -332,26 +370,6 @@ export default {
     permissions.forEach((permission) => {
       cy.expect(permissionsAccordion.find(HTML(including(permission))).absent());
     });
-  },
-
-  permissionsCount() {
-    permissionsList.perform((el) => {
-      el.invoke('attr', 'aria-rowcount').then((rowCount) => {
-        totalRows = rowCount;
-      });
-    });
-  },
-
-  openSelectPermissions() {
-    cy.do(permissionsAccordion.clickHeader());
-    cy.do(addPermissionsButton.click());
-    cy.expect(selectPermissionsModal.exists());
-    this.permissionsCount();
-  },
-
-  searchForPermission(permission) {
-    cy.do(permissionsSearch.fillIn(permission));
-    cy.do(searchButton.click());
   },
 
   verifyPermissionsFiltered(permission) {

@@ -34,9 +34,10 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
   .locator(content)
   .filters({
     content,
-    row: (el) => (+el.parentElement.getAttribute('data-row-inner')
-      ? +el.parentElement.getAttribute('data-row-inner')
-      : +el.parentElement.getAttribute('aria-rowindex')),
+    row: (el) =>
+      +el.parentElement.getAttribute('data-row-inner')
+        ? +el.parentElement.getAttribute('data-row-inner')
+        : +el.parentElement.getAttribute('aria-rowindex'),
     column: (el) => {
       const headers = el
         .closest('[class^=mclContainer]')
@@ -48,10 +49,12 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
     selected: (el) => !!el.parentElement.className.match(/mclSelected/),
     measured: (el) => el.style && el.style.width !== '',
     visible: (el) => isVisible(el),
+    clickable: (el) => !!el.querySelector('a')?.href,
     inputTextFieldNames: (el) => [...el.querySelectorAll('input')].map((input) => input.name),
     liValues: (el) => [...el.querySelectorAll('li')].map((li) => li.textContent),
     innerHTML: (el) => el.innerHTML,
     innerText: (el) => el.innerText,
+    boldText: (el) => el.querySelector('b')?.innerText,
   })
   .actions({ hrefClick: ({ perform }) => perform((el) => el.querySelector('a').click()) });
 
@@ -62,6 +65,7 @@ export const MultiColumnListHeader = HTML.extend('multi column list header')
     content,
     index: childIndex,
     id: (el) => el.getAttribute('id'),
+    sort: (el) => el.getAttribute('aria-sort'),
   })
   .actions({
     click: ({ perform }) => perform((el) => el.querySelector('[role=button]').click()),
@@ -80,19 +84,21 @@ export const MultiColumnList = HTML.extend('multi column list')
     height: (el) => el.offsetHeight,
     width: (el) => el.offsetWidth,
     scrollTop: (el) => el.querySelector('div[class^=mclScrollable-]').scrollTop,
-    headerInteractivity: (el) => [...el.querySelectorAll('div[class*=mclHeader-]')].map(
-      (d) => !!d.querySelector('[data-test-clickable-header]'),
-    ),
+    headerInteractivity: (el) =>
+      [...el.querySelectorAll('div[class*=mclHeader-]')].map(
+        (d) => !!d.querySelector('[data-test-clickable-header]'),
+      ),
     visible: (el) => isVisible(el),
     ariaRowCount: (el) => el.querySelector('[role=grid]').getAttribute('aria-rowcount'),
   })
   .actions({
     clickHeader: (interactor, header) => interactor.find(MultiColumnListHeader(header)).click(),
-    scrollBy: (interactor, { direction, value }) => interactor.perform(async (el) => {
-      const scrollable = el.querySelector('div[class^=mclScrollable-]');
-      const fired = scrollable.dispatchEvent(new CustomEvent('scroll'));
-      if (fired) await scrollable.scrollBy({ [direction]: value });
-    }),
+    scrollBy: (interactor, { direction, value }) =>
+      interactor.perform(async (el) => {
+        const scrollable = el.querySelector('div[class^=mclScrollable-]');
+        const fired = scrollable.dispatchEvent(new CustomEvent('scroll'));
+        if (fired) await scrollable.scrollBy({ [direction]: value });
+      }),
     click: (interactor, { row = 0, column }) => {
       const contentSearch = !column ? { columnIndex: 0 } : { content: column };
       return interactor.find(MultiColumnListCell({ row, ...contentSearch })).click();

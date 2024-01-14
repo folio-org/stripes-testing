@@ -205,7 +205,7 @@ export default {
     cy.expect(configurationPane.find(MultiColumnListCell({ content: date })).exists());
   },
 
-  editConfiguration(name, configuration) {
+  editConfiguration(name, configuration, save = true) {
     // configuration keys must equals configurationFields keys
     // example { nameInput: 'test', urlInput: 'test', timingInput: '1' }
     this.opentEditConfigurationForm(name);
@@ -221,7 +221,7 @@ export default {
         cy.do(configurationFields[param].fillIn(configuration[param]));
       }
     }
-    cy.do(saveAndCloseBtn.click());
+    if (save) cy.do(saveAndCloseBtn.click());
   },
 
   verifyEditedConfiguration(name, configuration) {
@@ -283,7 +283,8 @@ export default {
       cy.do([
         generalInformationAccordion.find(Select()).choose(including(configurations[key].title)),
       ]);
-      if (configurations[key].title === 'Dematic StagingDirector') this.verifyDataSynchronizationSettingsAccordion(true);
+      if (configurations[key].title === 'Dematic StagingDirector')
+        this.verifyDataSynchronizationSettingsAccordion(true);
       else this.verifyDataSynchronizationSettingsAccordion(false);
     });
     this.closeCreateConfigurationWithoutSaving();

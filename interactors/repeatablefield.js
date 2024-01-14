@@ -28,7 +28,8 @@ export const RepeatableField = HTML.extend('repeatable field')
       },
       default: false,
     },
-    removeDisabled: (el) => el.querySelector('[data-test-repeatable-field-remove-item-button]').disabled,
+    removeDisabled: (el) =>
+      el.querySelector('[data-test-repeatable-field-remove-item-button]').disabled,
     itemCount: (el) => el.querySelectorAll('[class^=repeatableFieldItem-]').length,
   })
   .actions({
@@ -47,6 +48,7 @@ export const RepeatableField = HTML.extend('repeatable field')
 export const RepeatableFieldItem = HTML.extend('repeatable field item')
   .selector('[class^=repeatableFieldItem-]')
   .filters({
+    content: (el) => el.textContent,
     index: (el) => [...el.parentElement.children].indexOf(el),
     singleValue: (el) => el.querySelector('button [class^=singleValue-]').textContent,
   });

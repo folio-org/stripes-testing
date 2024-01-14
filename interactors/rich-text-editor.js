@@ -5,17 +5,19 @@ function label(el) {
 }
 
 export default HTML.extend('rich text editor')
-  .selector('[class^=inputGroup],[class^="quill editor"]')
+  .selector('[class^="quill"][class*="editor"]')
   .locator(label)
   .filters({
     value: (element) => element.querySelector('.ql-editor').textContent,
+    id: (el) => el.id,
   })
   .actions({
-    fillIn: ({ perform }, value) => perform((element) => {
-      const editor = element.querySelector('.ql-editor');
-      if (editor) {
-        editor.textContent = '';
-        editor.textContent = value;
-      }
-    }),
+    fillIn: ({ perform }, value) =>
+      perform((element) => {
+        const editor = element.querySelector('.ql-editor');
+        if (editor) {
+          editor.textContent = '';
+          editor.textContent = value;
+        }
+      }),
   });

@@ -13,6 +13,7 @@ import {
   KeyValue,
   TextField,
   Form,
+  RadioButton,
 } from '../../../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -105,6 +106,13 @@ export default {
             }).choose(patronNoticePolicy.sendEvery.interval),
           ]);
         }
+      } else if (patronNoticePolicy.send === 'Upon/At' && patronNoticePolicy.realTimeOption) {
+        cy.do(
+          RadioButton({
+            name: `${patronNoticePolicy.noticeId}Notices[${index}].realTime`,
+            label: patronNoticePolicy.realTimeOption,
+          }).click(),
+        );
       }
     }
   },
@@ -122,10 +130,14 @@ export default {
       descriptionField.has({ value: '' }),
       activeCheckbox.has({ checked: false }),
     ]);
-    Object.values(sections).forEach((specialSection) => cy.expect(specialSection.find(addNoticeButton).has({ disabled: false, visible: true })));
+    Object.values(sections).forEach((specialSection) =>
+      cy.expect(specialSection.find(addNoticeButton).has({ disabled: false, visible: true })),
+    );
   },
   checkAfterSaving: (patronNoticePolicy) => {
-    Object.values(patronNoticePolicy).forEach((prop) => cy.expect(PaneSet().find(KeyValue({ value: prop }))));
+    Object.values(patronNoticePolicy).forEach((prop) =>
+      cy.expect(PaneSet().find(KeyValue({ value: prop }))),
+    );
   },
 
   checkNoticeActions(patronNoticePolicy) {

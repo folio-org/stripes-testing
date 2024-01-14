@@ -8,6 +8,7 @@ import {
   SelectionList,
   PaneHeader,
   Checkbox,
+  Modal,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import DateTools from '../../utils/dateTools';
@@ -95,6 +96,16 @@ export default {
     );
   },
 
+  canNotDeleteBatchGroup: (batchGroup) => {
+    cy.do([
+      MultiColumnListCell({ content: batchGroup.name }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do([getEditableListRow(rowNumber).find(trashIconButton).click(), deleteButton.click()]);
+      }),
+      Modal('Cannot delete batch group').find(Button('Okay')).click(),
+    ]);
+  },
+
   checkNotDeletingGroup: (batchGroupName) => {
     cy.do(
       MultiColumnListCell({ content: batchGroupName }).perform((element) => {
@@ -112,11 +123,12 @@ export default {
     ]);
   },
 
-  setConfigurationBatchGroup: (body) => cy.okapiRequest({
-    method: 'POST',
-    path: 'batch-voucher/export-configurations',
-    body,
-  }),
+  setConfigurationBatchGroup: (body) =>
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'batch-voucher/export-configurations',
+      body,
+    }),
 
   waitApprovalsLoading: () => {
     cy.expect(PaneHeader('Approvals').exists());
