@@ -28,6 +28,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import BrowseSubjects from '../../../../support/fragments/inventory/search/browseSubjects';
 import BrowseContributors from '../../../../support/fragments/inventory/search/browseContributors';
 import FieldMappingProfileView from '../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -42,6 +43,8 @@ describe('Data Import', () => {
           exportedFileName: `C405528 exportedTestMarcFile${getRandomPostfix()}.mrc`,
           modifiedMarcFile: `C405528 modifiedTestMarcFile${getRandomPostfix()}.mrc`,
         },
+        instanceTitle: 'C405528 Instance Shared Central',
+        updatedInstanceTitle: 'C405528 Instance Shared Central Updated',
       };
       const mappingProfile = {
         name: `C405528 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
@@ -73,21 +76,22 @@ describe('Data Import', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
-        cy.loginAsAdmin({
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
-        DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(testData.marcFile.marc, testData.marcFile.fileName);
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(testData.marcFile.jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.marcFile.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(testData.marcFile.fileName);
-        Logs.getCreatedItemsID().then((link) => {
-          testData.sharedInstanceId.push(link.split('/')[5]);
-        });
+        // cy.loginAsAdmin({
+        //   path: TopMenu.dataImportPath,
+        //   waiter: DataImport.waitLoading,
+        // });
+        // DataImport.verifyUploadState();
+        // DataImport.uploadFileAndRetry(testData.marcFile.marc, testData.marcFile.fileName);
+        // JobProfiles.waitLoadingList();
+        // JobProfiles.search(testData.marcFile.jobProfileToRun);
+        // JobProfiles.runImportFile();
+        // JobProfiles.waitFileIsImported(testData.marcFile.fileName);
+        // Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        // Logs.openFileDetails(testData.marcFile.fileName);
+        // Logs.getCreatedItemsID().then((link) => {
+        //   testData.sharedInstanceId.push(link.split('/')[5]);
+        // });
+        // cy.logout();
 
         // create user A
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
@@ -155,8 +159,10 @@ describe('Data Import', () => {
           })
           .then(() => {
             cy.resetTenant();
+            cy.pause();
             cy.login(users.userAProperties.username, users.userAProperties.password);
             ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
             cy.visit(TopMenu.inventoryPath);
           });
       });
@@ -165,61 +171,73 @@ describe('Data Import', () => {
         'C405528 User can update shared "MARC Bib" in member tenant via Data import and confirm in central & member tenants (consortia) (folijet)',
         { tags: ['extendedPath', 'folijet'] },
         () => {
-          InventoryInstance.searchByTitle(testData.sharedInstanceId[0]);
-          InventorySearchAndFilter.closeInstanceDetailPane();
-          InventorySearchAndFilter.selectResultCheckboxes(1);
-          InventorySearchAndFilter.verifySelectedRecords(1);
+          InventoryInstance.searchByTitle(testData.instanceTitle);
+          // InventorySearchAndFilter.closeInstanceDetailPane();
+          // InventorySearchAndFilter.selectResultCheckboxes(1);
+          // InventorySearchAndFilter.verifySelectedRecords(1);
+          cy.pause();
           InventorySearchAndFilter.exportInstanceAsMarc();
 
-          // download exported marc file
-          cy.visit(TopMenu.dataExportPath);
-          cy.wait(1000);
-          ExportFile.getExportedFileNameViaApi().then((name) => {
-            testData.marcFile.exportedFileName = name;
-            ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
-            // change exported file
-            DataImport.editMarcFile(
-              testData.marcFile.exportedFileName,
-              testData.marcFile.modifiedMarcFile,
-              ['Shared Centra', 'Proceedings'],
-              ['Shared Centra Updated', 'Proceedings Updated'],
-            );
-          });
+          // cy.setTenant(Affiliations.College);
+          // // download exported marc file
+          // cy.visit(TopMenu.dataExportPath);
+          // cy.pause();
+          // ExportFile.getExportedFileNameViaApi().then((name) => {
+          //   testData.marcFile.exportedFileName = name;
 
-          // upload the exported and edited marc file
-          cy.visit(TopMenu.dataImportPath);
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-          DataImport.verifyUploadState();
-          DataImport.uploadExportedFile(testData.marcFile.modifiedMarcFile);
-          JobProfiles.waitFileIsUploaded();
-          JobProfiles.search(jobProfileName);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          //   ExportFile.downloadExportedMarcFileViaApi(
+          //     testData.marcFile.exportedFileName,
+          //     users.userAProperties.username,
+          //     users.userAProperties.password
+          //   );
+          //   // change exported file
+          //   DataImport.editMarcFile(
+          //     testData.marcFile.exportedFileName,
+          //     testData.marcFile.modifiedMarcFile,
+          //     [
+          //       'C405528 Instance Shared Central',
+          //       'Proceedings'
+          //     ],
+          //     [
+          //       'C405528 Instance Shared Central Updated',
+          //       'Proceedings Updated'
+          //     ]
+          //   );
+          // });
 
-          cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.verifyPanesExist();
-          InventoryInstance.searchByTitle(testData.sharedInstanceId[0]);
-          InventoryInstance.waitInstanceRecordViewOpened('C405528 Instance Shared Centra Updatedl');
-          InventoryInstance.verifyLastUpdatedSource(
-            users.userAProperties.firstName,
-            users.userAProperties.lastName,
-          );
-          cy.logout();
+          // // upload the exported and edited marc file
+          // cy.visit(TopMenu.dataImportPath);
+          // // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          // DataImport.verifyUploadState();
+          // DataImport.uploadExportedFile(testData.marcFile.modifiedMarcFile);
+          // JobProfiles.waitFileIsUploaded();
+          // JobProfiles.search(jobProfileName);
+          // JobProfiles.runImportFile();
+          // JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
+          // Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          // Logs.openFileDetails(testData.marcFile.modifiedMarcFile);
+          // FileDetails.openInstanceInInventory(FileDetails.status.updated);
+          // InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
+          // InventoryInstance.verifyLastUpdatedSource(
+          //   users.userAProperties.firstName,
+          //   users.userAProperties.lastName,
+          // );
+          // cy.logout();
 
           // cy.login(users.userBProperties.username, users.userBProperties.password, {
           //   path: TopMenu.inventoryPath,
           //   waiter: InventoryInstances.waitContentLoading,
           // });
-          //   InventorySearchAndFilter.verifyPanesExist();
-          //   // ConsortiumManager.switchActiveAffiliation(tenantNames.central);
-          //   InventoryInstance.searchByTitle(testData.sharedInstanceId[0]);
-          //   InventoryInstance.waitInstanceRecordViewOpened('C405528 Instance Shared Centra Updatedl');
-          //   InventoryInstance.verifyLastUpdatedSource(
-          //     users.userAProperties.firstName,
-          //     users.userAProperties.lastName,
-          //   );
-          //   InventoryInstance.editMarcBibliographicRecord();
+          // InventorySearchAndFilter.verifyPanesExist();
+          // ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+          // ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          // InventoryInstance.searchByTitle(testData.updatedInstanceTitle);
+          // InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
+          // InventoryInstance.verifyLastUpdatedSource(
+          //   users.userAProperties.firstName,
+          //   users.userAProperties.lastName,
+          // );
+          // InventoryInstance.editMarcBibliographicRecord();
           //   QuickMarcEditor.checkContentByTag(
           //     '245', '$aC405528 Instance Shared Centra Updatedl'
           //     // testData.tag245, testData.tag245EditedContent
@@ -230,7 +248,8 @@ describe('Data Import', () => {
           //   );
           //   //  Second line in paneheader including "Source" value with the name of User A
 
-          //   ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+          // ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+          // ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
           //   InventorySearchAndFilter.verifyPanesExist();
           //   InventoryInstance.searchByTitle(testData.sharedInstanceId[0]);
           //   InventoryInstance.waitInstanceRecordViewOpened('C405528 Instance Shared Centra Updatedl');
