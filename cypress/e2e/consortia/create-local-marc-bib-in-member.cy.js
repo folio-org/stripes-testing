@@ -68,7 +68,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Consortia', () =>
 
   it(
     'C422124 Create new Local MARC bib in Member tenant (consortia) (spitfire)',
-    { tags: ['criticalPath', 'spitfire'] },
+    { tags: ['criticalPathECS', 'spitfire'] },
     () => {
       cy.resetTenant();
       cy.login(users.userBProperties.username, users.userBProperties.password, {

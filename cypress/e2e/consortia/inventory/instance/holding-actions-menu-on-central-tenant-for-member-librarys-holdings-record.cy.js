@@ -71,7 +71,7 @@ describe('Inventory -> Instance -> Consortia', () => {
 
   it(
     'C411384 (CONSORTIA) Check Holdings "Actions" menu on Central tenant for a member librarys holdings record',
-    { tags: ['criticalPath', 'folijet'] },
+    { tags: ['criticalPathECS', 'folijet'] },
     () => {
       InventoryInstance.searchByTitle(testData.instance.instanceTitle);
       InventoryInstances.selectInstance();

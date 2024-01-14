@@ -28,7 +28,7 @@ describe('Users -> Consortia', () => {
 
   it(
     'C405520: Affiliation in central tenant is automatically added after creating user in the member tenant (consortia)(thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smokeECS', 'thunderjet'] },
     () => {
       ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
     },

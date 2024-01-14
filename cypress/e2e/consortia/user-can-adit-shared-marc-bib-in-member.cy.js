@@ -101,7 +101,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Consortia', () => {
 
   it(
     'C405507 User can edit shared "MARC Bib" in member tenant (consortia) (spitfire)',
-    { tags: ['criticalPath', 'spitfire'] },
+    { tags: ['criticalPathECS', 'spitfire'] },
     () => {
       cy.login(users.userAProperties.username, users.userAProperties.password, {
         path: TopMenu.inventoryPath,
