@@ -1,11 +1,11 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../support/fragments/orders';
+import { ORDER_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import Organizations from '../../support/fragments/organizations/organizations';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { ORDER_STATUSES } from '../../support/constants';
 
 describe('Orders', () => {
   const instanceTitle =
@@ -62,7 +62,7 @@ describe('Orders', () => {
 
   it(
     'C380409 Search for order title with special characters (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Enter full title name from Preconditions item #2 in "Search" field on "Search & filter" pane
       // Click "Search" button

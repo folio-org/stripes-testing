@@ -40,7 +40,7 @@ describe('Users -> Consortia', () => {
 
   it(
     'C380515: Edit address (tenant) name in "Consortium manager" settings (consortia)(thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smokeECS', 'thunderjet'] },
     () => {
       ConsortiumManager.selectMembership();
       ConsortiumManager.editTenant(tenantNames.professional);

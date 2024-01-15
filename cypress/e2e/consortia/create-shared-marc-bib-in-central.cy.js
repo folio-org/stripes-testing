@@ -1,15 +1,13 @@
-import Permissions from '../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../support/dictionary/affiliations';
-import Users from '../../support/fragments/users/users';
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
+import Permissions from '../../support/dictionary/permissions';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
+import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
-import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 
 describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Consortia', () => {
   const testData = {
@@ -78,7 +76,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Consortia', () =>
 
   it(
     'C405547 Create new Shared MARC bib in Central tenant (consortia) (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPathECS', 'spitfire'] },
     () => {
       InventoryInstance.newMarcBibRecord();
       QuickMarcEditor.updateExistingField(

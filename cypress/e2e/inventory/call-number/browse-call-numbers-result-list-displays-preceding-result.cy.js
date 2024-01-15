@@ -1,13 +1,13 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
-import TopMenu from '../../../support/fragments/topMenu';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import Users from '../../../support/fragments/users/users';
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
-import { getTestEntityValue, randomFourDigitNumber } from '../../../support/utils/stringTools';
-import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
+import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
+import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import { getTestEntityValue, randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Call Number Browse', () => {
@@ -92,7 +92,7 @@ describe('inventory', () => {
 
     it(
       'C399095 Verify that "Browse call numbers" result list correctly displays preceding results before the one being searched (all "Items" in different "Instances") (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         // Fill in the input field at "Search & filter" pane with the "Call number" value which is alphabetically the first one out of all 25 (see Preconditions)
         // (For example, "E 3184 S75 1231")

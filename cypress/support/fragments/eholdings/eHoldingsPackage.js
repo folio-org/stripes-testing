@@ -17,6 +17,7 @@ import {
   TextArea,
   PaneHeader,
 } from '../../../../interactors';
+import { FILTER_STATUSES } from './eholdingsConstants';
 import { getLongDelay } from '../../utils/cypressTools';
 import getRandomPostfix, { randomTwoDigitNumber } from '../../utils/stringTools';
 
@@ -27,11 +28,6 @@ const actionsButton = Button('Actions');
 const editButton = Button('Edit');
 const removeFromHoldingsButton = Button('Remove from holdings');
 const confirmButton = Button('Yes, remove');
-const filterStatuses = {
-  all: 'All',
-  selected: 'Selected',
-  notSelected: 'Not selected',
-};
 const packageHoldingStatusSection = Section({ id: 'packageShowHoldingStatus' });
 const titlesSection = Section({ id: 'packageShowTitles' });
 const confirmationModal = Modal({ id: 'eholdings-confirmation-modal' });
@@ -52,13 +48,12 @@ const providerTokenField = TextArea({ name: 'providerTokenValue' });
 const providerTokenValue = KeyValue('Provider token');
 
 export default {
-  filterStatuses,
   waitLoading: (specialPackage) => {
     cy.expect(Section({ id: getElementIdByName(specialPackage) }).exists());
     cy.expect(tagsSection.find(MultiSelect()).exists());
   },
 
-  filterTitles: (selectionStatus = filterStatuses.notSelected) => {
+  filterTitles: (selectionStatus = FILTER_STATUSES.NOT_SELECTED) => {
     cy.do(titlesSection.find(Button({ icon: 'search' })).click());
     cy.expect(titlesFilterModal.exists());
     const selectionStatusAccordion = titlesFilterModal.find(
@@ -76,7 +71,7 @@ export default {
     });
   },
 
-  verifyHoldingStatus: (expectedStatus = filterStatuses.selected) => {
+  verifyHoldingStatus: (expectedStatus = FILTER_STATUSES.SELECTED) => {
     cy.expect(packageHoldingStatusSection.find(HTML(including(expectedStatus))).exists());
     // TODO: request dynamic loading of titles
     // need to load changed state of titles

@@ -1,21 +1,19 @@
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import getRandomPostfix from '../../support/utils/stringTools';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import Orders from '../../support/fragments/orders/orders';
-import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Users from '../../support/fragments/users/users';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Funds from '../../support/fragments/finance/funds/funds';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
-import Invoices from '../../support/fragments/invoices/invoices';
-import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../support/fragments/finance/funds/funds';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import Invoices from '../../support/fragments/invoices/invoices';
+import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import VendorAddress from '../../support/fragments/invoices/vendorAddress';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import Orders from '../../support/fragments/orders/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('orders: Unopen order', () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder, approved: true, reEncumber: true };
@@ -141,7 +139,7 @@ describe('orders: Unopen order', () => {
 
   it(
     'C375106 Unopen order with changed Fund distribution when related paid invoice exists (thunderjet)',
-    { tags: [testType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
@@ -158,7 +156,14 @@ describe('orders: Unopen order', () => {
       Funds.selectFund(secondFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.checkOrderInTransactionList(`${secondFund.code}`, '$0.00');
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransaction(
+        defaultFiscalYear.code,
+        '$0.00',
+        `${orderNumber}-1`,
+        'Encumbrance',
+        `${secondFund.name} (${secondFund.code})`,
+      );
       cy.visit(TopMenu.invoicesPath);
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
@@ -168,8 +173,8 @@ describe('orders: Unopen order', () => {
       Funds.selectFund(firstFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.checkTransactionDetails(
-        1,
+      Funds.selectTransactionInList('Payment');
+      Funds.varifyDetailsInTransaction(
         defaultFiscalYear.code,
         '($20.00)',
         invoice.invoiceNumber,

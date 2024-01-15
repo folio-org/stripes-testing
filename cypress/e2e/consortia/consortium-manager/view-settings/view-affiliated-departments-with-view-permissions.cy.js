@@ -57,8 +57,8 @@ describe('Consortium manager', () => {
             } else if (i === 5) {
               cy.setTenant(Affiliations.University);
             }
-            cy.createTempUser([]).then((usrProperties) => {
-              testUsers.push(usrProperties);
+            cy.createTempUser([]).then((testUserProperties) => {
+              testUsers.push(testUserProperties);
             });
           }
         }).then(() => {
@@ -124,6 +124,9 @@ describe('Consortium manager', () => {
         cy.getUniversityAdminToken();
         Users.deleteViaApi(testUsers[5].userId);
         Departments.deleteViaApi(testData.universityLocalDepartment.id);
+
+        cy.resetTenant();
+        cy.getAdminToken();
 
         cy.setTenant(Affiliations.College);
         cy.getCollegeAdminToken();

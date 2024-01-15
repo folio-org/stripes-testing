@@ -11,6 +11,7 @@ export default {
     isDefaultConfig,
     scheduleTime,
   } = {}) {
+    const integrationName = `autotest_config_name_${getRandomPostfix()}`;
     return {
       id: uuid(),
       schedulePeriod: 'NONE',
@@ -38,7 +39,7 @@ export default {
             ftpPort: ediFtp.ftpPort || '22',
             orderDirectory: ediFtp.orderDirectory || '/files',
           },
-          configName: `autotest_config_name_${getRandomPostfix()}`,
+          configName: integrationName,
           configDescription: `autotest_config_description_${getRandomPostfix()}`,
           ediSchedule: ediSchedule || {
             enableScheduledExport: true,
@@ -51,6 +52,7 @@ export default {
           isDefaultConfig,
         },
       },
+      integrationName,
     };
   },
   createIntegrationViaApi(config) {

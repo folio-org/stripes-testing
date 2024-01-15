@@ -1,14 +1,14 @@
 import uuid from 'uuid';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
+import Campuses from '../../../support/fragments/settings/tenant/location-setup/campuses';
+import Institutions from '../../../support/fragments/settings/tenant/location-setup/institutions';
+import Libraries from '../../../support/fragments/settings/tenant/location-setup/libraries';
+import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import Campuses from '../../../support/fragments/settings/tenant/location-setup/campuses';
-import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
-import Libraries from '../../../support/fragments/settings/tenant/location-setup/libraries';
-import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Institutions from '../../../support/fragments/settings/tenant/location-setup/institutions';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Settings: Tenant', () => {
@@ -102,7 +102,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C399083 Verify that selected settings remain for "Locations" (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
       cy.visit(SettingsMenu.tenantLocationsPath);

@@ -1,13 +1,11 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import Permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../support/dictionary/devTeams';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FileManager from '../../../support/utils/fileManager';
-import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const item = {
@@ -45,8 +43,9 @@ describe('bulk-edit', () => {
 
     it(
       'C356778 Verify narrow down options dropdown choices on Items in-app bulk edit form (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
+        // TODO: improve how the options are checked
         const options = [
           'Administrative note',
           'Check in note',
@@ -126,7 +125,6 @@ describe('bulk-edit', () => {
         BulkEditActions.clearTemporaryLocation('item', 14);
         removeItem(options);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.afterAllSelectedActions();
         removeItem(options);
         BulkEditActions.verifyTheOptionsAfterSelectedAllOptions('Suppress from discovery', 15);
         // Click "Select option" dropdown on the added row

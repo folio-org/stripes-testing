@@ -61,4 +61,11 @@ export default {
     requireCommentForTransferredFee.has({ content: including('Yes') }),
     requireCommentForTransferredFee.has({ content: including('No') }),
   ]),
+  verifyEditNotAvailable: () => cy.expect([
+    requireCommentForPaidFee.is({ disabled: true }),
+    requireCommentForWaivedFee.is({ disabled: true }),
+    requireCommentForRefundedFee.is({ disabled: true }),
+    requireCommentForTransferredFee.is({ disabled: true }),
+    saveButton.is({ disabled: true }),
+  ]),
 };

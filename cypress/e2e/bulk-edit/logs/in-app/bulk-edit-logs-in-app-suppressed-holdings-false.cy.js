@@ -1,5 +1,3 @@
-import testTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
@@ -87,7 +85,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C399063 Verify generated Logs files for Holdings suppressed from discovery (Set false) (firebird) (TaaS)',
-    { tags: [testTypes.extendedPath, devTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       BulkEditSearchPane.verifyDragNDropHoldingsItemBarcodesArea();
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);

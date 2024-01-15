@@ -26,6 +26,10 @@ const selectAllCheckbox = Checkbox({ name: 'selected-all' });
 const nextButton = Button({ id: 'list-data-import-next-paging-button' });
 const previousButton = Button({ id: 'list-data-import-prev-paging-button' });
 const logsResultPane = PaneContent({ id: 'pane-results-content' });
+const collapseButton = Button({ icon: 'caret-left' });
+const expandButton = Button({ icon: 'caret-right' });
+const searchFilterPane = Pane('Search & filter');
+const visitedLinkColor = 'rgb(47, 96, 159)';
 
 function getCheckboxByRow(row) {
   return MultiColumnList()
@@ -169,13 +173,14 @@ export default {
 
   singleRecordImportsStatuses: ['Yes', 'No'],
 
-  resetAllFilters() {
+  resetAllFilters(clickEndedRunningColumn = true) {
     cy.do(Button('Reset all').click());
-
-    // After resetting all filters, we need to sort MultiColumnList
-    // Otherwise, server cannot parse request params and returns error with 422 status
-    // In this case, sort by completed date in ascending order
-    cy.do(MultiColumnListHeader('Ended running').click());
+    if (clickEndedRunningColumn) {
+      // After resetting all filters, we need to sort MultiColumnList
+      // Otherwise, server cannot parse request params and returns error with 422 status
+      // In this case, sort by completed date in ascending order
+      cy.do(MultiColumnListHeader('Ended running').click());
+    }
     waitUIToBeFiltered();
   },
 
@@ -279,6 +284,11 @@ export default {
     });
   },
 
+  checkJobProfileNameByRow(rowIndex, jobProfileName) {
+    waitUIToBeFiltered();
+    cy.expect(MultiColumnListCell({ content: jobProfileName, row: rowIndex }).exists());
+  },
+
   checkByJobProfileName(jobProfileName) {
     waitUIToBeFiltered();
     return cy.get('#list-data-import').then((element) => {
@@ -306,8 +316,8 @@ export default {
           cy.expect(
             MultiColumnListCell({
               content: or(
-                'Inventory Single Record - Default Create Instance',
-                'Inventory Single Record - Default Update Instance',
+                including('Inventory Single Record - Default Create Instance'),
+                including('Inventory Single Record - Default Update Instance'),
               ),
               row: i,
             }).exists(),
@@ -316,12 +326,30 @@ export default {
           cy.expect(
             MultiColumnListCell({
               content: or(
-                'Inventory Single Record - Default Create Instance',
-                'Inventory Single Record - Default Update Instance',
+                including('Inventory Single Record - Default Create Instance'),
+                including('Inventory Single Record - Default Update Instance'),
               ),
               row: i,
             }).absent(),
           );
+        }
+      }
+    });
+  },
+
+  checkByInventorySingleRecordFileName(filter) {
+    // need to wait until selected data will be displayed
+    cy.wait(2000);
+    return cy.get('#list-data-import').then((element) => {
+      // only 100 records shows on every page
+      const resultCount =
+        element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
+      // verify every string in result table
+      for (let i = 0; i < resultCount; i++) {
+        if (filter === 'Yes') {
+          cy.expect(MultiColumnListCell({ content: 'No file name', row: i }).exists());
+        } else {
+          cy.expect(MultiColumnListCell({ content: 'No file name', row: i }).absent());
         }
       }
     });
@@ -376,7 +404,7 @@ export default {
   },
 
   viewAllIsOpened: () => {
-    cy.expect(Pane('Search & filter').exists());
+    cy.expect(searchFilterPane.exists());
     cy.expect(
       Pane('Logs')
         .find(MultiColumnList({ id: 'list-data-import' }))
@@ -478,7 +506,56 @@ export default {
       .should('include', '200');
   },
 
+  verifyUserNameIsAbsntInFilter(userName) {
+    cy.do(
+      Accordion({ id: 'userId' })
+        .find(Selection({ singleValue: 'Choose user' }))
+        .open(),
+    );
+    cy.get(userName).should('not.exist');
+  },
+
+  verifyJobProfileIsAbsntInFilter(jobProfile) {
+    cy.do(
+      Accordion({ id: 'profileIdAny' })
+        .find(Selection({ singleValue: 'Choose job profile' }))
+        .open(),
+    );
+    cy.get(jobProfile).should('not.exist');
+  },
+
   noLogResultsFound: () => {
     cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
+  },
+
+  collapseButtonClick: () => cy.do(collapseButton.click()),
+
+  expandButtonClick: () => cy.do(expandButton.click()),
+
+  checkSearchPaneCollapsed: () => cy.expect(searchFilterPane.absent()),
+
+  verifyFirstFileNameCellUnderlined: () => {
+    cy.get('#pane-results [class*="mclCell-"]:nth-child(1) a')
+      .eq(0)
+      .should('have.css', 'text-decoration')
+      .and('include', 'underline');
+  },
+
+  verifyVisitedLinkColor: () => {
+    cy.get('#pane-results [class*="mclCell-"]:nth-child(1) a')
+      .eq(0)
+      .should('have.css', 'color', visitedLinkColor);
+  },
+
+  clickFirstFileNameCell: () => {
+    cy.do(dataImportList.find(MultiColumnListCell({ row: 0, columnIndex: 0 })).hrefClick());
+  },
+
+  verifyFilterInactive(filter) {
+    cy.expect(
+      singleRecordImportsAccordion
+        .find(Checkbox({ name: filter.toLowerCase() }))
+        .has({ checked: false }),
+    );
   },
 };

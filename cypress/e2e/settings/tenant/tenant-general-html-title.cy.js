@@ -1,12 +1,12 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { ServicePoints } from '../../../support/fragments/settings/tenant';
-import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
-import Users from '../../../support/fragments/users/users';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Addresses from '../../../support/fragments/settings/tenant/general/addresses';
 import Localication from '../../../support/fragments/settings/tenant/general/localication';
 import SSOSettings from '../../../support/fragments/settings/tenant/general/ssoSettings';
+import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Tenant', () => {
   describe('Settings', () => {
@@ -46,7 +46,7 @@ describe('Tenant', () => {
 
     it(
       'C410826 Verify "Tenant -> General" settings HTML page title format (firebird) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         // Verify opened page title format: HTML page title is "Settings - FOLIO"
         TenantPane.verifyPageTitle('Settings - FOLIO');

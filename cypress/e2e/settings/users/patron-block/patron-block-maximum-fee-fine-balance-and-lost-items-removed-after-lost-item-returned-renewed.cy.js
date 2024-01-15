@@ -1,37 +1,34 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import TestTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
-import parallelization from '../../../../support/dictionary/parallelization';
+import uuid from 'uuid';
+import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 import permissions from '../../../../support/dictionary/permissions';
-import UserEdit from '../../../../support/fragments/users/userEdit';
-import TopMenu from '../../../../support/fragments/topMenu';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import generateUniqueItemBarcodeWithShift from '../../../../support/utils/generateUniqueItemBarcodeWithShift';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
-import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../../../support/fragments/users/users';
-import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
 import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../../../support/fragments/checkout/checkout';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import UsersOwners from '../../../../support/fragments/settings/users/usersOwners';
-import PaymentMethods from '../../../../support/fragments/settings/users/paymentMethods';
+import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
 import LoanPolicy from '../../../../support/fragments/circulation/loan-policy';
+import LostItemFeePolicy from '../../../../support/fragments/circulation/lost-item-fee-policy';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import Renewals from '../../../../support/fragments/loans/renewals';
+import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Conditions from '../../../../support/fragments/settings/users/conditions';
 import Limits from '../../../../support/fragments/settings/users/limits';
-import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
-import UserLoans from '../../../../support/fragments/users/loans/userLoans';
-import LostItemFeePolicy from '../../../../support/fragments/circulation/lost-item-fee-policy';
-import UsersCard from '../../../../support/fragments/users/usersCard';
-import NewFeeFine from '../../../../support/fragments/users/newFeeFine';
-import Renewals from '../../../../support/fragments/loans/renewals';
+import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
+import PaymentMethods from '../../../../support/fragments/settings/users/paymentMethods';
+import UsersOwners from '../../../../support/fragments/settings/users/usersOwners';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import TopMenu from '../../../../support/fragments/topMenu';
 import OverrideAndRenewModal from '../../../../support/fragments/users/loans/overrideAndRenewModal';
 import RenewConfirmationModal from '../../../../support/fragments/users/loans/renewConfirmationModal';
-import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import UserLoans from '../../../../support/fragments/users/loans/userLoans';
+import NewFeeFine from '../../../../support/fragments/users/newFeeFine';
+import UserEdit from '../../../../support/fragments/users/userEdit';
+import Users from '../../../../support/fragments/users/users';
+import UsersCard from '../../../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
+import generateUniqueItemBarcodeWithShift from '../../../../support/utils/generateUniqueItemBarcodeWithShift';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Patron Block: Lost items', () => {
   const renewComment = `AutotestText${getRandomPostfix()}`;
@@ -330,7 +327,7 @@ describe('Patron Block: Lost items', () => {
 
   it(
     'C350655 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item renewed (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
+    { tags: ['criticalPath', 'vega', 'nonParallel'] },
     () => {
       const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum outstanding fee/fine balance', '624');
@@ -354,7 +351,7 @@ describe('Patron Block: Lost items', () => {
 
   it(
     'C350651 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item returned (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
+    { tags: ['criticalPath', 'vega', 'nonParallel'] },
     () => {
       const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum outstanding fee/fine balance', '624');
@@ -375,7 +372,7 @@ describe('Patron Block: Lost items', () => {
 
   it(
     'C350653 Verify automated patron block "Maximum number of lost items" removed after lost item renewed (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
+    { tags: ['criticalPath', 'vega', 'nonParallel'] },
     () => {
       const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum number of lost items', '4');
@@ -399,7 +396,7 @@ describe('Patron Block: Lost items', () => {
 
   it(
     'C350648 Verify automated patron block "Maximum number of lost items" removed after lost item returned (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
+    { tags: ['criticalPath', 'vega', 'nonParallel'] },
     () => {
       const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum number of lost items', '4');

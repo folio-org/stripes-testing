@@ -40,7 +40,7 @@ describe('Inventory -> Instance -> Consortia', () => {
 
   it(
     'C407746 (CONSORTIA) Verify the permission for editing shared instance on Central tenant (consortia) (folijet)',
-    { tags: ['smoke', 'folijet'] },
+    { tags: ['smokeECS', 'folijet'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
       InstanceRecordView.verifyInstanceRecordViewOpened();

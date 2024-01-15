@@ -72,6 +72,14 @@ export default {
       });
   },
 
+  updateItemStatusViaAPI(itemId, status) {
+    cy.okapiRequest({
+      method: 'POST',
+      path: `inventory/items/${itemId}/${status}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   markAsWithdrawn: () => {
     openActions();
     cy.do([
@@ -80,11 +88,12 @@ export default {
     ]);
   },
 
-  markAsInProcess: () => {
+  markAsInProcess: (param = true) => {
+    const buttonName = param ? 'In process (non-requestable)' : 'In process';
     openActions();
     cy.do([
-      Button('In process (non-requestable)').click(),
-      Modal('Confirm item status: In process (non-requestable)').find(Button('Confirm')).click(),
+      Button(buttonName).click(),
+      Modal(`Confirm item status: ${buttonName}`).find(Button('Confirm')).click(),
     ]);
   },
 

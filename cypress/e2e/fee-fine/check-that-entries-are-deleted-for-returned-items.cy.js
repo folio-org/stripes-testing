@@ -1,23 +1,23 @@
 import uuid from 'uuid';
 
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
-import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import LostItemsRequiringActualCostPage from '../../support/fragments/users/lostItemsRequiringActualCostPage';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
-import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
-import UsersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
-import UserEdit from '../../support/fragments/users/userEdit';
-import Checkout from '../../support/fragments/checkout/checkout';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import Checkout from '../../support/fragments/checkout/checkout';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import TopMenu from '../../support/fragments/topMenu';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import LostItemsRequiringActualCostPage from '../../support/fragments/users/lostItemsRequiringActualCostPage';
+import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import UsersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Lost items requiring actual cost', () => {
   const testData = {
@@ -157,7 +157,7 @@ describe('Lost items requiring actual cost', () => {
 
   it(
     'C375279 Check that entries are deleted for returned items (Declared lost items) (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.visit(TopMenu.usersPath);
       // Click on "Actions" drop-down => Click "Lost items requiring actual cost" action

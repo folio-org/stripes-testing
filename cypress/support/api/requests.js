@@ -28,3 +28,21 @@ Cypress.Commands.add('getCancellationReasonsApi', (searchParams) => {
     return body.cancellationReasons;
   });
 });
+
+Cypress.Commands.add('addCancellationReasonApi', (data) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'cancellation-reason-storage/cancellation-reasons',
+    body: data,
+  }).then(({ body }) => {
+    Cypress.env('request', body);
+    return body;
+  });
+});
+
+Cypress.Commands.add('deleteCancellationReasonApi', (id) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: `cancellation-reason-storage/cancellation-reasons/${id}`,
+  });
+});
