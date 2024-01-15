@@ -79,7 +79,7 @@ Cypress.Commands.add(
   (permissions = [], patronGroupName = 'staff', userType = 'staff') => {
     const userProperties = {
       username: `cypressTestUser${getRandomPostfix()}`,
-      password: `Password${getRandomPostfix()}`,
+      password: 'password',
     };
 
     // cy.getAdminToken();

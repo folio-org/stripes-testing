@@ -129,7 +129,7 @@ describe('MARC Bibliographic -> Manual linking -> Consortia', () => {
 
   it(
     'C397343 Link Shared MARC bib with Shared MARC authority from Member tenant (consortia)(spitfire)',
-    { tags: ['criticalPath', 'spitfire'] },
+    { tags: ['criticalPathECS', 'spitfire'] },
     () => {
       InventoryInstance.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();

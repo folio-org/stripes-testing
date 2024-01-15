@@ -1,19 +1,19 @@
-import uuid from 'uuid';
 import moment from 'moment/moment';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import UserEdit from '../../support/fragments/users/userEdit';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import uuid from 'uuid';
+import { Permissions } from '../../support/dictionary';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import { Locations } from '../../support/fragments/settings/tenant/location-setup';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import TopMenu from '../../support/fragments/topMenu';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import Checkout from '../../support/fragments/checkout/checkout';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 
 describe('Manual Fees/Fines', () => {
   const testData = {
@@ -89,7 +89,7 @@ describe('Manual Fees/Fines', () => {
 
   it(
     'C451 Verify behavior when "New fee/fine" ellipsis option selected within Open/Closed Loans (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       // Find active user in FOLIO
       UsersSearchPane.searchByKeywords(userData.username);

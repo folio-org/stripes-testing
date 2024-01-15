@@ -1,20 +1,17 @@
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import testType from '../../../support/dictionary/testTypes';
-import NewOrder from '../../../support/fragments/orders/newOrder';
+import Helper from '../../../support/fragments/finance/financeHelper';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../../support/fragments/orders/newOrder';
+import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
+import OrdersHelper from '../../../support/fragments/orders/ordersHelper';
+import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import Organizations from '../../../support/fragments/organizations/organizations';
 import Receiving from '../../../support/fragments/receiving/receiving';
 import TopMenu from '../../../support/fragments/topMenu';
-import Helper from '../../../support/fragments/finance/financeHelper';
-import InteractorsTools from '../../../support/utils/interactorsTools';
-import OrdersHelper from '../../../support/fragments/orders/ordersHelper';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import OrderLines from '../../../support/fragments/orders/orderLines';
 import Users from '../../../support/fragments/users/users';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('Orders: Receiving and Check-in', () => {
   const order = {
@@ -88,7 +85,7 @@ describe('Orders: Receiving and Check-in', () => {
 
   it(
     'C343213 Receive pieces for package order (thunderjet)',
-    { tags: [testType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
@@ -103,6 +100,7 @@ describe('Orders: Receiving and Check-in', () => {
         firstPiece.chronology,
       );
       Receiving.selectPiece(firstPiece.caption);
+      Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePiece(firstPiece.enumeration);
       Receiving.addPiece(
         secondPiece.caption,
@@ -111,6 +109,7 @@ describe('Orders: Receiving and Check-in', () => {
         secondPiece.chronology,
       );
       Receiving.selectPiece(secondPiece.caption);
+      Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePiece(secondPiece.enumeration);
       Receiving.addPiece(
         thirdPiece.caption,
@@ -119,6 +118,7 @@ describe('Orders: Receiving and Check-in', () => {
         thirdPiece.chronology,
       );
       Receiving.selectPiece(thirdPiece.caption);
+      Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePiece(thirdPiece.enumeration);
       Receiving.addPiece(
         fourthPiece.caption,
@@ -127,6 +127,7 @@ describe('Orders: Receiving and Check-in', () => {
         fourthPiece.chronology,
       );
       Receiving.selectPiece(fourthPiece.caption);
+      Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePiece(fourthPiece.enumeration);
       Receiving.selectInstanceInReceive(orderLineTitle);
       // inventory part

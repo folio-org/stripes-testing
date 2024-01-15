@@ -1,21 +1,21 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import uuid from 'uuid';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
-import UserEdit from '../../../support/fragments/users/userEdit';
 import ConfirmItemInModal from '../../../support/fragments/check-in-actions/confirmItemInModal';
 import Checkout from '../../../support/fragments/checkout/checkout';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import Users from '../../../support/fragments/users/users';
 import FilterItems from '../../../support/fragments/inventory/filterItems';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SwitchServicePoint from '../../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
+import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Item', () => {
@@ -119,7 +119,7 @@ describe('inventory', () => {
 
     it(
       'C399075 Incorrect service point displayed in Inventory Circulation history for checked in loan (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.switchToItem();

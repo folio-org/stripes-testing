@@ -1,10 +1,8 @@
-import DevTeams from '../../support/dictionary/devTeams';
-import TestTypes from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Users', () => {
   const createUserData = () => ({
@@ -41,7 +39,7 @@ describe('Users', () => {
 
   it(
     'C421 Create: new user; required: contact info, email, phone, external system ID, address (volaris)',
-    { tags: [TestTypes.criticalPath, DevTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       Users.createViaUi(user).then((id) => {
         user.id = id;

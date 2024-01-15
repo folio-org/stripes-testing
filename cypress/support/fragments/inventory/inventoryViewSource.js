@@ -1,10 +1,12 @@
 import { HTML, including } from '@interactors/html';
 import { Button, Section, TableRow } from '../../../../interactors';
+import DateTools from '../../utils/dateTools';
 
 const instanceTitle = 'MARC bibliographic record';
 const holdingTitle = 'Holdings record';
 const closeButton = Button({ icon: 'times' });
 const rootSection = Section({ id: 'marc-view-pane' });
+const linkedToMarcAuthorityIcon = Button({ href: including('/marc-authorities/authorities/') });
 
 const close = () => cy.do(closeButton.click());
 const contains = (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists());
@@ -48,6 +50,12 @@ export default {
     cy.expect(rootSection.find(HTML(including(expectedText))).absent());
   },
 
+  verifyAbsenceOfValueInRow(expectedText, rowIndex) {
+    cy.expect(
+      rootSection.find(TableRow({ index: rowIndex, innerText: including(expectedText) })).absent(),
+    );
+  },
+
   verifyRecordNotContainsDuplicatedContent: (value) => {
     cy.get(`td:contains("${value}")`).then((elements) => elements.length === 1);
   },
@@ -70,5 +78,44 @@ export default {
           expect(text).to.match(regExp);
         });
     }
+  },
+
+  verifyLinkedToAuthorityIcon(rowIndex, isPresent = true) {
+    if (isPresent) {
+      cy.expect(
+        rootSection
+          .find(TableRow({ index: rowIndex }))
+          .find(linkedToMarcAuthorityIcon)
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        rootSection
+          .find(TableRow({ index: rowIndex }))
+          .find(linkedToMarcAuthorityIcon)
+          .absent(),
+      );
+    }
+  },
+
+  verifyFieldContent: (rowIndex, updatedDate) => {
+    cy.get('table')
+      .find('tr')
+      .eq(rowIndex)
+      .find('td')
+      .then((elems) => {
+        const dateFromField = DateTools.convertMachineReadableDateToHuman(elems.eq(2).text());
+        const convertedUpdatedDate = new Date(updatedDate).getTime();
+        const convertedDateFromField = new Date(dateFromField).getTime();
+        const timeDifference = (convertedDateFromField - convertedUpdatedDate) / 1000;
+
+        // check that difference in time is less than 2 minute
+        expect(timeDifference).to.be.lessThan(120000);
+      });
+  },
+
+  clickViewMarcAuthorityIcon() {
+    cy.get('#marc-view-pane').find('a').invoke('removeAttr', 'target').click();
+    cy.wait(2000);
   },
 };

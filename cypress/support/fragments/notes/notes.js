@@ -53,7 +53,15 @@ export default {
   defaultUnassignedNote,
   defaultTwoAssignedNote,
 
-  createViaApi: (note) => {
+  getNotesForEHoldingViaApi(eHoldingId) {
+    return cy
+      .okapiRequest({
+        path: `note-links/domain/eholdings/type/package/id/${eHoldingId}?status=assigned`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body);
+  },
+  createViaApi(note) {
     return cy
       .okapiRequest({
         method: REQUEST_METHOD.POST,
@@ -63,12 +71,29 @@ export default {
       })
       .then((response) => response.body);
   },
-
-  deleteViaApi: (noteId) => {
+  deleteViaApi(noteId) {
     return cy.okapiRequest({
       method: REQUEST_METHOD.DELETE,
       path: `notes/${noteId}`,
       isDefaultSearchParamsRequired: false,
+    });
+  },
+  deleteNotesForEHoldingViaApi(eHoldingId) {
+    this.getNotesForEHoldingViaApi(eHoldingId).then(({ notes }) => {
+      notes.forEach(({ id: noteId }) => this.deleteViaApi(noteId));
+    });
+  },
+  getNotesForCoursesViaApi(coursesId) {
+    return cy
+      .okapiRequest({
+        path: `note-links/domain/courses/type/course/id/${coursesId}?limit=100000&order=desc&orderBy=updatedDate&status=assigned`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body);
+  },
+  deleteNotesForCoursesViaApi(coursesId) {
+    this.getNotesForCoursesViaApi(coursesId).then(({ notes }) => {
+      notes.forEach(({ id: noteId }) => this.deleteViaApi(noteId));
     });
   },
 };

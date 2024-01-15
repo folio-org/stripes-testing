@@ -1,5 +1,6 @@
 import { matching } from 'bigtest';
-import { MultiColumnListCell } from '../../../../interactors';
+import { HTML, including } from '@interactors/html';
+import { MultiColumnListCell, MultiColumnListRow } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 export default {
@@ -79,6 +80,34 @@ export default {
   },
 
   checkResultsInTheRow(allContentToCheck, rowNumber = 0) {
-    allContentToCheck.forEach((contentToCheck) => cy.expect(MultiColumnListCell({ row: rowNumber, content: contentToCheck }).exists()));
+    allContentToCheck.forEach((contentToCheck) => cy.expect(
+      MultiColumnListCell({
+        row: rowNumber,
+        content: contentToCheck,
+      }).exists(),
+    ));
+  },
+
+  checkItemIsNotCheckedIn(itemBarcode) {
+    cy.expect([
+      MultiColumnListRow(including(itemBarcode)).absent(),
+      HTML(including('No items have been entered yet')),
+    ]);
+  },
+
+  checkInHouseUseIcon(exists = true, rowNumber = 0) {
+    if (exists) {
+      cy.expect(
+        MultiColumnListCell({ row: rowNumber, column: 'In-house use' })
+          .find(HTML({ className: including('icon-') }))
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        MultiColumnListCell({ row: rowNumber, column: 'In-house use' })
+          .find(HTML({ className: including('icon-') }))
+          .absent(),
+      );
+    }
   },
 };

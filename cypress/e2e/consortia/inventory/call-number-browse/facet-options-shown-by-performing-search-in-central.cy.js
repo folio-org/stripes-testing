@@ -46,7 +46,7 @@ describe('Inventory -> Call Number Browse -> Consortia', () => {
 
   it(
     'C414980 Facet options shown after clicking "Reset all" in Browse and performing search in Central tenant (consortia) (spitfire)',
-    { tags: ['criticalPath', 'spitfire'] },
+    { tags: ['criticalPathECS', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifyBrowseOptions();
