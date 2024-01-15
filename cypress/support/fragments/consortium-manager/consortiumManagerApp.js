@@ -11,7 +11,7 @@ import {
   Warning,
   ListRow,
   Spinner
-} from "../../../../interactors"
+} from '../../../../interactors';
 
 const selectMembersButton = Button('Select members');
 const selectMembersModal = Modal('Select members');
@@ -19,7 +19,7 @@ const searchAndFilterPane = Pane('Search & filter');
 const membersPane = Pane('Members');
 const searchButton = Button('Search');
 const resetAll = Button('Reset all');
-const saveAndClose = Button('Save & close')
+const saveAndClose = Button('Save & close');
 
 export const settingsItems = {
   users: 'Users'
