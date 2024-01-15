@@ -31,6 +31,7 @@ export default {
   edit: () => {
     waitLoading();
     cy.do(viewPane.find(actionsButton).click());
+    waitLoading();
     cy.do(Button('Edit').click());
   },
   duplicate: () => {
@@ -85,7 +86,7 @@ export default {
     cy.expect(
       resultsPane
         .find(jobProfilesList)
-        .find(MultiColumnListCell({ row: 0, columnIndex: 2, content: including(tag) }))
+        .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: including(tag) }))
         .exists(),
     );
   },
@@ -146,6 +147,31 @@ export default {
         }
         expect(numberOfProfiles).to.equal(profileNames.length);
       });
+  },
+
+  verifyLinkedProfilesNonMatches(arrayOfProfileNames, numberOfProfiles) {
+    waitLoading();
+    const profileNames = [];
+
+    cy.get('[id*="branch-ROOT-NON_MATCH"]')
+      .each(($element) => {
+        cy.wrap($element)
+          .invoke('text')
+          .then((name) => {
+            profileNames.push(name);
+          });
+      })
+      .then(() => {
+        // Iterate through each element in profileNames
+        for (let i = 0; i < profileNames.length; i++) {
+          expect(profileNames[i]).to.include(arrayOfProfileNames[i]);
+        }
+        expect(numberOfProfiles).to.equal(profileNames.length);
+      });
+  },
+
+  verifyNoLinkedProfiles() {
+    cy.get('[data-test-profile-link]').should('not.exist');
   },
 
   verifyJobsUsingThisProfileSection(fileName) {

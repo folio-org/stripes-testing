@@ -12,6 +12,7 @@ import './api';
 import './login';
 import './checkin';
 import './checkout';
+import './clipboard';
 import './eholdings';
 import './inventory';
 import './users';
@@ -21,7 +22,7 @@ import './data-import';
 import './commands';
 
 registerCypressGrep();
-setInteractorTimeout(100_000);
+setInteractorTimeout(50_000);
 
 require('cypress-xpath');
 require('@shelex/cypress-allure-plugin');

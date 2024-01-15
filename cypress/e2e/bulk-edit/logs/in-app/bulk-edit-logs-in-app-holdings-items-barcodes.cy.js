@@ -1,8 +1,6 @@
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import permissions from '../../../../support/dictionary/permissions';
 import TopMenu from '../../../../support/fragments/topMenu';
-import devTeams from '../../../../support/dictionary/devTeams';
-import testTypes from '../../../../support/dictionary/testTypes';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
@@ -185,7 +183,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C375300 Verify generated Logs files for Holdings In app -- only valid Item barcodes (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       BulkEditSearchPane.verifyDragNDropHoldingsItemBarcodesArea();
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);

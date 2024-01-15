@@ -1,14 +1,22 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 
-const getDefaultOrganization = ({ id = uuid(), accounts = 0 } = {}) => {
+const getDefaultOrganization = ({
+  id = uuid(),
+  isDonor = false,
+  isVendor = true,
+  accounts = 0,
+  claimingInterval,
+} = {}) => {
   const defaultUiOrganizations = {
     id,
     name: `autotest_name_${getRandomPostfix()}`,
     status: 'Active',
     code: `autotest_code_${getRandomPostfix()}`,
     erpCode: getRandomPostfix(),
-    isVendor: true,
+    isDonor,
+    isVendor,
+    claimingInterval,
     accounts: [...Array(accounts).keys()].map((index) => ({
       accountNo: getRandomPostfix(),
       accountStatus: 'Active',

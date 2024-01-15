@@ -1,4 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
 import organizations from '../../../support/fragments/organizations/organizations';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -27,17 +26,13 @@ describe.skip('ui-organizations: Organizations creation', () => {
     organizations.checkZeroSearchResultsHeader();
   });
 
-  it(
-    'C730 Make existing organization a Vendor (thunderjet)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      organizations.selectNoInIsVendor();
-      organizations.selectOrganization(newOrganization.name);
-      organizations.editOrganization();
-      organizations.selectVendor();
-      organizations.verifyVendorExists();
-      organizations.closeDetailsPane();
-      organizations.resetFilters();
-    },
-  );
+  it('C730 Make existing organization a Vendor (thunderjet)', { tags: ['ideaLabsTests'] }, () => {
+    organizations.selectNoInIsVendor();
+    organizations.selectOrganization(newOrganization.name);
+    organizations.editOrganization();
+    organizations.selectVendor();
+    organizations.verifyVendorExists();
+    organizations.closeDetailsPane();
+    organizations.resetFilters();
+  });
 });

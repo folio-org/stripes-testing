@@ -1,17 +1,15 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../support/dictionary/devTeams';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FileManager from '../../../support/utils/fileManager';
-import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const notes = {
@@ -67,7 +65,7 @@ describe('bulk-edit', () => {
 
     it(
       'C405535 Verify Bulk Edit actions for Items notes - duplicate check out note to check in note (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
@@ -76,7 +74,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckbox('Circulation Notes');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Check out notes', 'Check in notes');
         BulkEditActions.openInAppStartBulkEditFrom();
 
         BulkEditActions.verifyItemOptions();
@@ -84,24 +82,27 @@ describe('bulk-edit', () => {
         BulkEditActions.duplicateCheckInNote('out');
 
         BulkEditActions.confirmChanges();
-        const changes = [
-          `Check in;${notes.checkInNote};true`,
-          `Check in;${notes.checkInNote};false`,
-          `Check out;${notes.checkOutNote};true`,
-          `Check out;${notes.checkOutNote};false`,
-          `Check in;${notes.checkOutNote};true`,
-          `Check in;${notes.checkOutNote};false`,
+        const checkIn = [
+          `${notes.checkInNote} (staff only)`,
+          notes.checkInNote,
+          `${notes.checkOutNote} (staff only)`,
+          notes.checkOutNote,
         ];
-        BulkEditActions.verifyChangesInAreYouSureForm('Circulation Notes', changes);
+        const checkOut = [`${notes.checkOutNote} (staff only)`, notes.checkOutNote];
+        BulkEditActions.verifyChangesInAreYouSureForm('Check out notes', checkOut);
+        BulkEditActions.verifyChangesInAreYouSureForm('Check in notes', checkIn);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyChangedResults(item.barcode);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, changes);
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [...checkIn, ...checkOut]);
 
-        changes.forEach((value) => {
-          BulkEditSearchPane.verifyChangesUnderColumns('Circulation Notes', value);
+        checkOut.forEach((value) => {
+          BulkEditSearchPane.verifyChangesUnderColumns('Check out notes', value);
+        });
+        checkIn.forEach((value) => {
+          BulkEditSearchPane.verifyChangesUnderColumns('Check in notes', value);
         });
 
         TopMenuNavigation.navigateToApp('Inventory');

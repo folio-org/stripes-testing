@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import { Locations } from '../../support/fragments/settings/tenant/location-setup';
@@ -21,12 +21,12 @@ describe('Check in', () => {
 
       cy.getAdminToken();
       InventoryInstances.getMaterialTypes({ limit: 1 })
-        .then((materialTypeRes) => {
-          materialType = materialTypeRes;
+        .then((materialTypes) => {
+          materialType = materialTypes[0];
 
           testData = {
             folioInstances: InventoryInstances.generateFolioInstances({
-              properties: materialType.map(({ id, name }) => ({ materialType: { id, name } })),
+              itemsProperties: { materialType: { id: materialType.id } },
             }),
             servicePointA: ServicePoints.getDefaultServicePointWithPickUpLocation(),
             servicePointB: ServicePoints.getDefaultServicePointWithPickUpLocation(),
@@ -82,7 +82,7 @@ describe('Check in', () => {
 
   it(
     'C589 Check in items at service points for effective location (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       // In FOLIO UI, set user's service point to service point A.
       // Service point displays in upper right corner of screen with service point A display name.
@@ -95,7 +95,7 @@ describe('Check in', () => {
       CheckInPane.checkResultsInTheRow([
         ITEM_BARCODE,
         'Available',
-        `${testData.folioInstances[0].instanceTitle} (${testData.folioInstances[0].properties.materialType.name})`,
+        `${testData.folioInstances[0].instanceTitle} (${materialType.name})`,
       ]);
       // In  FOLIO UI, change logged in user's service point to service point B
       SwitchServicePoint.switchServicePoint(testData.servicePointB.name);
@@ -108,7 +108,7 @@ describe('Check in', () => {
         [
           ITEM_BARCODE,
           'Available',
-          `${testData.folioInstances[0].instanceTitle} (${testData.folioInstances[0].properties.materialType.name})`,
+          `${testData.folioInstances[0].instanceTitle} (${materialType.name})`,
         ],
         1,
       );

@@ -36,6 +36,10 @@ export const MultiSelectOption = HTML.extend('multi select option')
     index: (el) => [...el.parentNode.children].indexOf(el),
     selected: (el) => el.className.includes('selected'),
     innerHTML: (el) => el.innerHTML,
+    totalRecords: (el) => {
+      const records = el.querySelector('[class^=totalRecords]').textContent || '';
+      return parseInt(records.replace(/[^0-9]/g, ''), 10);
+    },
   });
 
 export const ValueChipRoot = HTML.extend('value chip root')

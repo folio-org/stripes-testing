@@ -1,5 +1,3 @@
-import devTeams from '../../../../support/dictionary/devTeams';
-import TestType from '../../../../support/dictionary/testTypes';
 import NewNoticePolicy from '../../../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 // TO DO: update test with duplicate and edit methods, after PO will review test case.
@@ -12,7 +10,7 @@ describe('ui-circulation-settings: create patron notice policies', () => {
     });
   });
 
-  it('C6530 Create notice policy (vega)', { tags: [TestType.smoke, devTeams.vega] }, () => {
+  it('C6530 Create notice policy (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
     NewNoticePolicy.waitLoading();
     NewNoticePolicy.startAdding();
     NewNoticePolicy.checkInitialState();

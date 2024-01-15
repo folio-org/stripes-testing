@@ -18,7 +18,6 @@ import getRandomPostfix from '../../utils/stringTools';
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const contactInformationAccordion = Accordion('Contact information');
 const defaultUserName = `AutotestUser_${getRandomPostfix()}`;
-const editButton = Button('Edit');
 const deleteUser = Button({ id: 'clickable-checkdeleteuser' });
 const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
 const deleteYesButton = Button({ id: 'delete-user-button' });
@@ -241,15 +240,6 @@ export default {
     cy.wait('@createUser', { timeout: 100000 });
   },
 
-  editButton: () => {
-    cy.do([
-      Section({ id: 'pane-userdetails' })
-        .find(PaneHeader({ id: 'paneHeaderpane-userdetails' }))
-        .find(Button('Actions'))
-        .click(),
-      editButton.click(),
-    ]);
-  },
   checkZeroSearchResultsHeader: () => {
     cy.xpath(numberOfSearchResultsHeader)
       .should('be.visible')

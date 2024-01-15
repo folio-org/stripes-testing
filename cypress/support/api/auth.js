@@ -36,6 +36,10 @@ Cypress.Commands.add('getAdminToken', () => {
   cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 });
 
+Cypress.Commands.add('getCollegeAdminToken', () => {
+  cy.getToken('ECS0001Admin', Cypress.env('diku_password'));
+});
+
 Cypress.Commands.add('getUserToken', (username, password) => {
   let pathToSet = 'bl-users/login-with-expiry';
   if (!Cypress.env('rtrAuth')) {

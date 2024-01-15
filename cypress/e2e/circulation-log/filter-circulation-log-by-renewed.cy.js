@@ -1,19 +1,19 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import UserEdit from '../../support/fragments/users/userEdit';
-import Checkout from '../../support/fragments/checkout/checkout';
-import TopMenu from '../../support/fragments/topMenu';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
-import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
-import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import Users from '../../support/fragments/users/users';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import Checkout from '../../support/fragments/checkout/checkout';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 
 const testData = {
   folioInstances: InventoryInstances.generateFolioInstances(),
@@ -86,7 +86,7 @@ describe('Circulation log', () => {
 
   it(
     'C17005 Filter circulation log by renewed (firebird) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       const searchResultsData = {
         userBarcode: userData.barcode,
