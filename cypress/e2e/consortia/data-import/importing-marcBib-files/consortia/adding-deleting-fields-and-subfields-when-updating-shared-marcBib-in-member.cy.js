@@ -1,32 +1,32 @@
-import Permissions from '../../../../../support/dictionary/permissions';
-import getRandomPostfix from '../../../../../support/utils/stringTools';
-import Users from '../../../../../support/fragments/users/users';
-import TopMenu from '../../../../../support/fragments/topMenu';
-import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
-import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
-import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import {
-  FOLIO_RECORD_TYPE,
   EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
 } from '../../../../../support/constants';
-import ActionProfiles from '../../../../../support/fragments/data_import/action_profiles/actionProfiles';
+import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
+import Permissions from '../../../../../support/dictionary/permissions';
+// import ActionProfiles from '../../../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../../../support/fragments/data_import/job_profiles/newJobProfile';
-import MatchProfiles from '../../../../../support/fragments/data_import/match_profiles/matchProfiles';
-import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
+import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import TopMenu from '../../../../../support/fragments/topMenu';
+// import Users from '../../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../../support/utils/stringTools';
 import ExportFile from '../../../../../support/fragments/data-export/exportFile';
-import FileManager from '../../../../../support/utils/fileManager';
-import NewFieldMappingProfile from '../../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import NewActionProfile from '../../../../../support/fragments/data_import/action_profiles/newActionProfile';
-import NewMatchProfile from '../../../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
-import BrowseSubjects from '../../../../../support/fragments/inventory/search/browseSubjects';
-import BrowseContributors from '../../../../../support/fragments/inventory/search/browseContributors';
-import FieldMappingProfileView from '../../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import DataImport from '../../../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../../../support/fragments/data_import/logs/logs';
+import NewFieldMappingProfile from '../../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+// import FileManager from '../../../../../support/utils/fileManager';
+// import FieldMappingProfileView from '../../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+// import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
+// import BrowseContributors from '../../../../../support/fragments/inventory/search/browseContributors';
+// import BrowseSubjects from '../../../../../support/fragments/inventory/search/browseSubjects';
+// import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
+// import MatchProfiles from '../../../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -98,21 +98,21 @@ describe('Data Import', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
-        // cy.loginAsAdmin({
-        //   path: TopMenu.dataImportPath,
-        //   waiter: DataImport.waitLoading,
-        // });
-        // DataImport.verifyUploadState();
-        // DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
-        // JobProfiles.waitFileIsUploaded();
-        // JobProfiles.search(testData.marcFile.jobProfileToRun);
-        // JobProfiles.runImportFile();
-        // JobProfiles.waitFileIsImported(testData.marcFile.fileName);
-        // Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        // Logs.openFileDetails(testData.marcFile.fileName);
-        // Logs.getCreatedItemsID().then((link) => {
-        //   testData.sharedInstanceId.push(link.split('/')[5]);
-        // });
+        cy.loginAsAdmin({
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.search(testData.marcFile.jobProfileToRun);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(testData.marcFile.fileName);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(testData.marcFile.fileName);
+        Logs.getCreatedItemsID().then((link) => {
+          testData.sharedInstanceId.push(link.split('/')[5]);
+        });
 
         cy.createTempUser([
           Permissions.moduleDataImportEnabled.gui,
@@ -124,6 +124,7 @@ describe('Data Import', () => {
             testData.user = userProperties;
           })
           .then(() => {
+            cy.resetTenant();
             cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
             cy.setTenant(Affiliations.College);
             cy.assignPermissionsToExistingUser(testData.user.userId, [
@@ -132,25 +133,7 @@ describe('Data Import', () => {
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
               Permissions.dataExportEnableApp.gui,
             ]);
-
-            // NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
-            //   (mappingProfileResponse) => {
-            //     NewActionProfile.createActionProfileViaApiMarc(
-            //       actionProfile,
-            //       mappingProfileResponse.body.id,
-            //     ).then((actionProfileResponse) => {
-            //       NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
-            //         matchProfile,
-            //       ).then((matchProfileResponse) => {
-            //         NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
-            //           jobProfileName,
-            //           matchProfileResponse.body.id,
-            //           actionProfileResponse.body.id,
-            //         );
-            //       });
-            //     });
-            //   },
-            // );
+            cy.resetTenant();
 
             cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
             cy.setTenant(Affiliations.University);
@@ -160,9 +143,28 @@ describe('Data Import', () => {
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
               Permissions.dataExportEnableApp.gui,
             ]);
+            cy.resetTenant();
           })
           .then(() => {
-            cy.resetTenant();
+            cy.setTenant(Affiliations.College);
+            NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
+              (mappingProfileResponse) => {
+                NewActionProfile.createActionProfileViaApiMarc(
+                  actionProfile,
+                  mappingProfileResponse.body.id,
+                ).then((actionProfileResponse) => {
+                  NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
+                    matchProfile,
+                  ).then((matchProfileResponse) => {
+                    NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+                      jobProfileName,
+                      matchProfileResponse.body.id,
+                      actionProfileResponse.body.id,
+                    );
+                  });
+                });
+              },
+            );
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -188,9 +190,9 @@ describe('Data Import', () => {
 
       it(
         'C405532 Adding/deleting fields and subfields when updating shared "MARC Bib" in member tenant (consortia) (folijet)',
-        { tags: ['extendedPath', 'folijet'] },
+        { tags: ['extendedPathECS', 'folijet'] },
         () => {
-          InventoryInstance.searchByTitle(testData.instanceTitle);
+          InventoryInstances.searchByTitle(testData.instanceTitle);
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);
           InventorySearchAndFilter.verifySelectedRecords(1);
