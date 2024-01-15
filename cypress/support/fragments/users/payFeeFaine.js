@@ -23,6 +23,7 @@ export default {
   },
   submitAndConfirm: () => {
     cy.do(rootModal.find(Button({ id: 'submit-button' })).click());
+    cy.expect(confirmationModal.exists());
     cy.do(
       confirmationModal
         .find(Button({ id: matching('clickable-confirmation-[0-9]+-confirm') }))

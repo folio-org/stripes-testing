@@ -1,10 +1,8 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import UsersCard from '../../../support/fragments/users/usersCard';
-import devTeams from '../../../support/dictionary/devTeams';
 import users from '../../../support/fragments/users/users';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
@@ -21,6 +19,10 @@ describe('bulk-edit', () => {
         permissions.uiUsersPermissions.gui,
       ]).then((userProperties) => {
         userWthViewEditPermissions = userProperties;
+        cy.login(userWthViewEditPermissions.username, userWthViewEditPermissions.password, {
+          path: TopMenu.usersPath,
+          waiter: UsersSearchPane.waitLoading,
+        });
       });
     });
 
@@ -31,7 +33,7 @@ describe('bulk-edit', () => {
 
     it(
       'C350765 Verify BULK EDIT permissions list (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         const permissionsToVerify = [
           permissions.bulkEditCsvView.gui,
@@ -42,13 +44,12 @@ describe('bulk-edit', () => {
         ];
         const csvDeletePermission = permissions.bulkEditCsvDelete.gui;
 
-        cy.login(userWthViewEditPermissions.username, userWthViewEditPermissions.password);
-        cy.visit(TopMenu.usersPath);
-
         UsersSearchPane.searchByKeywords(userWthViewEditPermissions.barcode);
         UsersSearchPane.openUser(userWthViewEditPermissions.userId);
         UserEdit.addPermissions(permissionsToVerify);
-        UserEdit.verifyPermissionDoesNotExist(csvDeletePermission);
+        UserEdit.openSelectPermissionsModal();
+        UserEdit.verifyPermissionDoesNotExistInSelectPermissions(csvDeletePermission);
+        UserEdit.cancelSelectPermissionsModal();
         UserEdit.saveAndClose();
         UsersCard.verifyPermissions(permissionsToVerify);
       },

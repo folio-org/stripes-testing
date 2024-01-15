@@ -5,6 +5,7 @@ import {
   NavListItem,
   EditableListRow,
   MultiColumnListCell,
+  Modal,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 import DateTools from '../../../utils/dateTools';
@@ -131,6 +132,32 @@ export default {
     InteractorsTools.checkCalloutMessage(
       `The expense class ${expenseClass.name} was successfully deleted`,
     );
+  },
+
+  deleteFundType: (fundType) => {
+    cy.do(
+      MultiColumnListCell({ content: fundType.name }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do([getEditableListRow(rowNumber).find(trashIconButton).click(), deleteButton.click()]);
+      }),
+    );
+    InteractorsTools.checkCalloutMessage(`The fund type ${fundType.name} was successfully deleted`);
+  },
+
+  canNotDeleteFundType: (fundType) => {
+    cy.do(
+      MultiColumnListCell({ content: fundType.name }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do([getEditableListRow(rowNumber).find(trashIconButton).click(), deleteButton.click()]);
+      }),
+    );
+    cy.expect(
+      Modal('Cannot delete fund type').has({
+        content:
+          'Cannot delete fund typeThis fund type cannot be deleted, as it is in use by one or more records.Okay',
+      }),
+    );
+    cy.do(Modal('Cannot delete fund type').find(Button('Okay')).click());
   },
 
   deleteViaApi: (id) => {

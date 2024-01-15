@@ -13,6 +13,9 @@ export default {
   getHoldingsFolioSource: () => getHoldingSources().then(
     (holdingsSources) => holdingsSources.filter((specialSource) => specialSource.name === 'FOLIO')[0],
   ),
+  getHoldingsMarcSource: () => getHoldingSources().then(
+    (holdingsSources) => holdingsSources.filter((specialSource) => specialSource.name === 'MARC')[0],
+  ),
   createHoldingRecordViaApi(holdingsRecord) {
     return cy
       .okapiRequest({

@@ -124,17 +124,11 @@ export default {
 
   verifyMetadataObjectIsVisible: (creator = 'Unknown user') => {
     cy.expect([
-      patronNoticeTemplatePaneContent.find(Accordion({ label: 'General information' })).exists(),
-      patronNoticeTemplatePaneContent
-        .find(Button('General information'))
-        .has({ ariaExpanded: 'true' }),
+      Accordion({ label: 'General information' }).exists(),
+      Button('General information').has({ ariaExpanded: 'true' }),
     ]);
-    cy.do(patronNoticeTemplatePaneContent.find(Button(including('Record last updated'))).click());
-    cy.expect(
-      patronNoticeTemplatePaneContent
-        .find(MetaSection({ updatedByText: including(creator) }))
-        .exists(),
-    );
+    cy.do(Button(including('Record last updated')).click());
+    cy.expect(MetaSection({ updatedByText: including(creator) }).exists());
   },
 
   verifyGeneralInformationForDuplicate: (template) => {
@@ -156,13 +150,14 @@ export default {
   addToken(noticePolicyTemplateToken) {
     cy.do(tokenButton.click());
     cy.expect(Heading(titles.addToken).exists());
-    cy.do([
-      Checkbox(`${noticePolicyTemplateToken}`).click(),
-      // waiting for the html body input to be available for adding symbols
-      cy.wait(1000),
-      addTokenButton.click(),
+    cy.do(Checkbox(`${noticePolicyTemplateToken}`).click());
+    // waiting for the html body input to be available for adding symbols
+    cy.wait(2000);
+    cy.do(addTokenButton.click());
+    cy.expect([
+      Heading(titles.addToken).absent(),
+      bodyField.has({ value: `{{${noticePolicyTemplateToken}}}` }),
     ]);
-    cy.expect(bodyField.has({ value: `{{${noticePolicyTemplateToken}}}` }));
     return cy.wrap(noticePolicyTemplateToken);
   },
 

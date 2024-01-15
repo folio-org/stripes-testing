@@ -1,9 +1,9 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import Invoices from '../../support/fragments/invoices/invoices';
+import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
-import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../support/fragments/orders';
-import Organizations from '../../support/fragments/organizations/organizations';
+import Invoices from '../../support/fragments/invoices/invoices';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
@@ -80,7 +80,7 @@ describe('Invoices', () => {
 
   it(
     'C359171: Vendor code displays rather than Vendor name in the invoice UI (thunderjet)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);

@@ -1,12 +1,12 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import TopMenu from '../../../support/fragments/topMenu';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import InteractorsTools from '../../../support/utils/interactorsTools';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -37,7 +37,7 @@ describe('data-import', () => {
 
     it(
       'C378883 Verify the ability to import additional files without hanging after stopping a running job and deleting it (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
@@ -48,7 +48,7 @@ describe('data-import', () => {
         JobProfiles.runImportFile();
         Logs.checkFileIsRunning(bigFileName);
         // TODO wait until at least 1% of the file will be processed
-        cy.wait(5000);
+        cy.wait(15000);
         DataImport.deleteImportJob(bigFileName);
         DataImport.verifyCancelImportJobModal();
         DataImport.confirmDeleteImportJob();
@@ -67,7 +67,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(smallFileName);
+        Logs.waitFileIsImported(smallFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       },
     );

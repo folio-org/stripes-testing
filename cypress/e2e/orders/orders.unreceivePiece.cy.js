@@ -1,18 +1,15 @@
-import NewOrder from '../../support/fragments/orders/newOrder';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import TestType from '../../support/dictionary/testTypes';
-import Orders from '../../support/fragments/orders/orders';
-import Receiving from '../../support/fragments/receiving/receiving';
-import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import InteractorsTools from '../../support/utils/interactorsTools';
-import OrdersHelper from '../../support/fragments/orders/ordersHelper';
-import Organizations from '../../support/fragments/organizations/organizations';
-import DevTeams from '../../support/dictionary/devTeams';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
-import Parallelization from '../../support/dictionary/parallelization';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import Orders from '../../support/fragments/orders/orders';
+import OrdersHelper from '../../support/fragments/orders/ordersHelper';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import Receiving from '../../support/fragments/receiving/receiving';
+import TopMenu from '../../support/fragments/topMenu';
+import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('orders: Unreceive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -33,7 +30,7 @@ describe('orders: Unreceive piece from Order', () => {
     cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
       orderLine.physical.materialType = materialType.id;
     });
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
   });
 
   after(() => {
@@ -43,8 +40,8 @@ describe('orders: Unreceive piece from Order', () => {
   });
 
   it(
-    'C10925 Unreceive piece (thunderjet)',
-    { tags: [TestType.smoke, DevTeams.thunderjet, Parallelization.nonParallel] },
+    'C10925 Unreceive piece using "Actions" button (thunderjet)',
+    { tags: ['smoke', 'thunderjet', 'nonParallel'] },
     () => {
       const barcode = Helper.getRandomBarcode();
       const caption = 'autotestCaption';
@@ -63,7 +60,7 @@ describe('orders: Unreceive piece from Order', () => {
         Receiving.checkReceivedPiece(0, caption, barcode);
         // Unreceive piece
         Receiving.unreceivePiece();
-        Receiving.checkUnreceivedPiece(1, caption);
+        Receiving.checkUnreceivedPiece(0, caption);
         // inventory part
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToItem();

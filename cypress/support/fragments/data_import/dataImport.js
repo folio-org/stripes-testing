@@ -424,10 +424,10 @@ export default {
         if (isDeleteFilesButtonExists) {
           cy.do(Button('Delete files').click());
           cy.expect(Button('or choose files').exists());
-          cy.allure().endStep();
         }
       },
     );
+    cy.allure().endStep();
   },
 
   clickResumeButton: () => {
@@ -447,6 +447,10 @@ export default {
 
         cy.get('div[class^="listContainer-"] button[icon="trash"]').should('not.be.visible');
       });
+  },
+
+  verifyTrashIconInvisibleForUser: () => {
+    cy.get('div[class^="listContainer-"] button[icon="trash').should('have.length', 0);
   },
 
   verifyCancelImportJobModal: () => {
@@ -473,7 +477,7 @@ export default {
 
   waitFileIsUploaded: () => {
     // TODO need to wait until big file is uploaded
-    cy.wait(10000);
+    cy.wait(20000);
   },
 
   uploadFileAndRetry(filePathName, fileName, maxRetries = 10) {

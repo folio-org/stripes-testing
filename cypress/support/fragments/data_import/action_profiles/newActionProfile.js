@@ -1,6 +1,14 @@
 import { including } from '@interactors/html';
-import { TextField, Button, Select, Section, Pane, Callout } from '../../../../../interactors';
-import SelectMappingProfile from './modals/selectMappingProfile';
+import {
+  TextField,
+  Button,
+  Select,
+  Section,
+  Pane,
+  Callout,
+  Option,
+} from '../../../../../interactors';
+import SelectMappingProfile from '../../settings/dataImport/modals/selectProfileModal';
 import { FOLIO_RECORD_TYPE, PROFILE_TYPE_NAMES } from '../../../constants';
 
 const action = 'Create (all record types except MARC Authority or MARC Holdings)';
@@ -10,6 +18,8 @@ const actionSelect = Select({ name: 'profile.action' });
 const recordTypeselect = Select({ name: 'profile.folioRecord' });
 const profileLinkSection = Section({ id: 'actionProfileFormAssociatedMappingProfileAccordion' });
 const profileLinkButton = Button('Link Profile');
+const newActionProfile = Pane('New action profile');
+const closeButton = Button('Close');
 
 const defaultActionProfile = {
   name: 'autotest action profile',
@@ -95,8 +105,8 @@ export default {
 
   linkMappingProfile: (specialMappingProfileName) => {
     cy.do(profileLinkButton.click());
-    SelectMappingProfile.searchMappingProfileByName(specialMappingProfileName);
-    SelectMappingProfile.selectMappingProfile(specialMappingProfileName);
+    SelectMappingProfile.searchProfile(specialMappingProfileName);
+    SelectMappingProfile.selectProfile(specialMappingProfileName);
     cy.expect(profileLinkSection.find(profileLinkButton).has({ disabled: true }));
     cy.do(Button('Save as profile & Close').click());
     cy.expect(Pane('Action profiles').find(Button('Actions')).exists());
@@ -179,4 +189,14 @@ export default {
       }).exists(),
     );
   },
+
+  verifyNewActionProfileExists: () => {
+    cy.expect(newActionProfile.exists());
+  },
+
+  verifyFOLIORecordTypeOptionExists(type) {
+    cy.expect(recordTypeselect.find(Option(type)).exists());
+  },
+
+  clickClose: () => cy.do(closeButton.click()),
 };

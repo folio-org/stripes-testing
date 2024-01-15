@@ -148,7 +148,7 @@ describe('MARC -> MARC Authority -> Edit linked Authority record -> Consortia', 
 
   it(
     'C407654 Update local linked "MARC Authority" record in member tenant (consortia) (spitfire)',
-    { tags: ['criticalPath', 'spitfire'] },
+    { tags: ['criticalPathECS', 'spitfire'] },
     () => {
       cy.visit(TopMenu.marcAuthorities);
       MarcAuthorities.searchBy(testData.authoritySearchOption, testData.authorityTitle);
