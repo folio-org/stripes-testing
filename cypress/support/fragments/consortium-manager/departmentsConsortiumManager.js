@@ -1,6 +1,11 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../constants';
-import { Button, MultiColumnListCell, MultiColumnListRow, including } from '../../../../interactors';
+import {
+  Button,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  including,
+} from '../../../../interactors';
 
 const id = uuid();
 
@@ -16,12 +21,12 @@ export default {
           payload: {
             name: department.payload.name,
             code: department.payload.code,
-            id
-          }
-        }
+            id,
+          },
+        },
       }).then(() => {
-        department.url = '/departments',
-        department.settingId = id,
+        department.url = '/departments';
+        department.settingId = id;
         department.id = id;
         return department;
       });
@@ -33,7 +38,7 @@ export default {
       cy.okapiRequest({
         method: REQUEST_METHOD.DELETE,
         path: `consortia/${consortiaId}/sharing/settings/${department.settingId}`,
-        body: department
+        body: department,
       });
     });
   },
@@ -50,9 +55,7 @@ export default {
       row.find(MultiColumnListCell({ columnIndex: 5, content: '' })).exists();
     } else {
       actions.forEach((action) => {
-        cy.expect([
-          row.find(Button({ icon: action })).exists(),
-        ]);
+        cy.expect([row.find(Button({ icon: action })).exists()]);
       });
     }
   },
