@@ -1,14 +1,14 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
-import Users from '../../../support/fragments/users/users';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
+import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -89,7 +89,7 @@ describe('ui-inventory: location', () => {
 
   it(
     'C163923 Change a location to remote storage (firebird)',
-    { tags: [TestTypes.smoke, DevTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       const toBeEditedLocationName = Cypress.env('locations')[0].name;
       const editedLocationName = Cypress.env('locations')[1].name;
@@ -124,7 +124,7 @@ describe('ui-inventory: location', () => {
 
   it(
     'C163924 Change a remote storage location to standard location (firebird)',
-    { tags: [TestTypes.smoke, DevTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       const toBeEditedLocationName = Cypress.env('locations')[1].name;
       const editedLocationName = Cypress.env('locations')[0].name;

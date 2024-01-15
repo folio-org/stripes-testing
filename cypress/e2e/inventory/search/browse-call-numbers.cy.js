@@ -1,9 +1,7 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import TestTypes from '../../../support/dictionary/testTypes';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
-import devTeams from '../../../support/dictionary/devTeams';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('ui-inventory: browse call numbers', () => {
   beforeEach('navigate to inventory', () => {
@@ -12,7 +10,7 @@ describe('ui-inventory: browse call numbers', () => {
 
   it(
     'C347902 Verify "Browse call numbers" option on the Instances tab (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifyKeywordsAsDefault();
@@ -25,7 +23,7 @@ describe('ui-inventory: browse call numbers', () => {
 
   it(
     'C347903 Verify "Browse call numbers" option on Holdings tab (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       InventorySearchAndFilter.switchToHoldings();
       InventorySearchAndFilter.browseCallNumberIsAbsent();
@@ -36,7 +34,7 @@ describe('ui-inventory: browse call numbers', () => {
 
   it(
     'C347923 Verify "Browse call numbers" option on Item tab (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       InventorySearchAndFilter.instanceTabIsDefault();
       InventorySearchAndFilter.switchToItem();
@@ -46,7 +44,7 @@ describe('ui-inventory: browse call numbers', () => {
 
   it(
     'C350377 Verify the "Browse subjects" search option on the Instances tab (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       InventorySearchAndFilter.instanceTabIsDefault();
       InventorySearchAndFilter.switchToBrowseTab();
@@ -64,7 +62,7 @@ describe('ui-inventory: browse call numbers', () => {
 
   it(
     'C350378 Verify the "Browse subjects" search option on the Holdings tab (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       InventorySearchAndFilter.instanceTabIsDefault();
       InventorySearchAndFilter.switchToHoldings();
@@ -76,7 +74,7 @@ describe('ui-inventory: browse call numbers', () => {
 
   it(
     'C350379 Verify the "Browse subjects" search option on the Item tab (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       InventorySearchAndFilter.instanceTabIsDefault();
       InventorySearchAndFilter.switchToItem();

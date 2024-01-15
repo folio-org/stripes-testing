@@ -110,6 +110,10 @@ export default {
     });
   },
 
+  verifySearchValue(value) {
+    cy.expect(recordSearch.has({ value }));
+  },
+
   searchBrowseSubjects(searchString) {
     InventorySearchAndFilter.selectBrowseSubjects();
     this.verifySearchTextFieldEmpty();
@@ -178,6 +182,17 @@ export default {
         columnIndex: 0,
         content: 'Linked to MARC authority' + value,
       }).exists(),
+    );
+  },
+
+  selectInstanceWithAuthorityIcon(value) {
+    cy.do(
+      MultiColumnListCell({
+        columnIndex: 0,
+        content: 'Linked to MARC authority' + value,
+      })
+        .find(Button(value))
+        .click(),
     );
   },
 

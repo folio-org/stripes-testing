@@ -1,20 +1,17 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import permissions from '../../../support/dictionary/permissions';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../../support/fragments/topMenu';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import Users from '../../../support/fragments/users/users';
-import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import InteractorsTools from '../../../support/utils/interactorsTools';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Orders from '../../../support/fragments/orders/orders';
+import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../../support/fragments/finance/funds/funds';
+import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import OrderLines from '../../../support/fragments/orders/orderLines';
-import Parallelization from '../../../support/dictionary/parallelization';
+import Orders from '../../../support/fragments/orders/orders';
+import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import Organizations from '../../../support/fragments/organizations/organizations';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('ui-finance: Transactions', () => {
   const defaultFund = { ...Funds.defaultUiFund };
@@ -93,7 +90,7 @@ describe('ui-finance: Transactions', () => {
 
   it(
     'C6705 Create encumbrance from Order  (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'thunderjet', 'nonParallel'] },
     () => {
       Orders.createPOLineViaActions();
       OrderLines.fillInPOLineInfoWithFund(defaultFund);

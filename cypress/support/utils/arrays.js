@@ -31,20 +31,20 @@ export default {
     return true;
   },
 
-  checkIsSortedAlphabetically({ array = [], direction = 'ascending' } = {}) {
-    const nonWordCharRegExp = new RegExp(/\W/);
-    const result = [];
+  checkIsSortedAlphabetically({ array = [], accuracy = 1 } = {}) {
+    const result = array.reduce((acc, it) => {
+      if (acc.length) {
+        const prev = acc[acc.length - 1].value;
+        const current = it.toLowerCase();
 
-    for (let i = 1; i < array.length; i++) {
-      const prev = array[i - 1].replace(/\s+/gi, '').toLowerCase();
-      const current = array[i].replace(/\s+/gi, '').toLowerCase();
-
-      if (!nonWordCharRegExp.test(current)) {
-        result.push(prev.localeCompare(current));
+        return [...acc, { value: current, order: prev.localeCompare(current) }];
+      } else {
+        return [{ value: it.toLowerCase(), order: 0 }];
       }
-    }
+    }, []);
 
-    return direction === 'ascending' ? result.every((n) => n <= 0) : result.every((n) => n >= 0);
+    const invalidOrder = result.filter(({ order }) => order > 0);
+    return (invalidOrder.length * 100) / array.length < accuracy;
   },
 };
 

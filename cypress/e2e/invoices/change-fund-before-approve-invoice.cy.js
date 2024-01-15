@@ -1,23 +1,21 @@
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import getRandomPostfix from '../../support/utils/stringTools';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import Orders from '../../support/fragments/orders/orders';
-import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Users from '../../support/fragments/users/users';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Funds from '../../support/fragments/finance/funds/funds';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
-import Invoices from '../../support/fragments/invoices/invoices';
-import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../support/fragments/finance/funds/funds';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import Invoices from '../../support/fragments/invoices/invoices';
+import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import VendorAddress from '../../support/fragments/invoices/vendorAddress';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import Orders from '../../support/fragments/orders/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
 import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
 import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Invoices', () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder, approved: false, reEncumber: true };
@@ -120,7 +118,7 @@ describe('Invoices', () => {
 
   it(
     'C353596 Invoice payment is successful if order line fund distribution is changed before invoice approval (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       cy.createOrderApi(order).then((response) => {
         orderNumber = response.body.poNumber;

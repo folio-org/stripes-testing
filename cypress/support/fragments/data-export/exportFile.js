@@ -199,7 +199,7 @@ export default {
       });
   },
 
-  verifyFileIncludes(fileName, content) {
+  verifyFileIncludes(fileName, content, include = true) {
     // Wait until file has been downloaded
     recurse(
       () => FileManager.findDownloadedFilesByMask(fileName),
@@ -209,7 +209,17 @@ export default {
 
       FileManager.readFile(lastDownloadedFilename).then((actualContent) => {
         content.forEach((element) => {
-          expect(actualContent).to.include(element);
+          if (include) {
+            if (Array.isArray(element)) {
+              // Check for nested array
+              element.forEach((nestedElement) => {
+                expect(actualContent).to.include(nestedElement);
+              });
+            } else {
+              // Check for regular element
+              expect(actualContent).to.include(element);
+            }
+          } else expect(actualContent).to.not.include(element);
         });
       });
     });

@@ -1,12 +1,12 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
-import { NewOrder, BasicOrderLine, Orders } from '../../support/fragments/orders';
+import { ORDER_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import Organizations from '../../support/fragments/organizations/organizations';
+import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { ORDER_STATUSES } from '../../support/constants';
 
 describe('Orders', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -93,7 +93,7 @@ describe('Orders', () => {
 
   it(
     'C354281 “Electronic” format specific fields are cleared when changing order format from "P/E Mix" to "Physical Resource" (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       // Click on the Order record from preconditions
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -102,7 +102,7 @@ describe('Orders', () => {
       // Click on the PO line record in "PO lines" accordion
       const OrderLineDetails = OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
       OrderLineDetails.checkOrderLineDetails({
-        purchaseOrderLineInformation: [{ key: 'Order format', value: 'P/E Mix' }],
+        poLineInformation: [{ key: 'Order format', value: 'P/E Mix' }],
       });
 
       // Click "Actions" button, Select "Edit" option
@@ -131,7 +131,7 @@ describe('Orders', () => {
       });
       OrderLineEditForm.clickSaveButton();
       OrderLineDetails.checkOrderLineDetails({
-        purchaseOrderLineInformation: [{ key: 'Order format', value: 'Physical Resource' }],
+        poLineInformation: [{ key: 'Order format', value: 'Physical Resource' }],
       });
 
       // #7 Click "Back to PO" arrow on the top of "PO Line details" pane
@@ -145,7 +145,7 @@ describe('Orders', () => {
       // Click on the PO line record in "PO lines" accordion
       OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
       OrderLineDetails.checkOrderLineDetails({
-        purchaseOrderLineInformation: [{ key: 'Order format', value: 'Physical Resource' }],
+        poLineInformation: [{ key: 'Order format', value: 'Physical Resource' }],
       });
 
       // Click "Actions" button, Select "Edit" option
@@ -157,7 +157,7 @@ describe('Orders', () => {
       });
       OrderLineEditForm.clickSaveButton();
       OrderLineDetails.checkOrderLineDetails({
-        purchaseOrderLineInformation: [{ key: 'Order format', value: 'Physical Resource' }],
+        poLineInformation: [{ key: 'Order format', value: 'Physical Resource' }],
         costDetails: [
           { key: 'Quantity physical', value: '1' },
           { key: 'Quantity electronic', value: '-' },

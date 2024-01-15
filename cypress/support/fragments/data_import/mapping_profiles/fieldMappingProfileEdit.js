@@ -1,6 +1,8 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { including } from '@interactors/html';
-import { Button, Form, TextField, Accordion } from '../../../../../interactors';
+import { Button, Form, TextField, Accordion, Option, Select } from '../../../../../interactors';
+
+const recordTypeselect = Select({ name: 'profile.existingRecordType' });
 
 export default {
   save: () => {
@@ -10,7 +12,8 @@ export default {
 
   markFieldForProtection: (field) => {
     cy.get('div[class^="mclRow--"]')
-      .contains('div[class^="mclCell-"]', field)
+      .find('div[class^="mclCell-"]')
+      .contains(field)
       .then((elem) => {
         elem.parent()[0].querySelector('input[type="checkbox"]').click();
       });
@@ -42,4 +45,16 @@ export default {
   },
 
   verifyScreenName: (profileName) => cy.expect(Form(including(`Edit ${profileName}`)).exists()),
+
+  verifyFOLIORecordTypeOptionExists(type) {
+    cy.expect(recordTypeselect.find(Option(type)).exists());
+  },
+
+  verifyValueBySection: (sectionName, value, isRequired) => {
+    if (isRequired) {
+      cy.expect(TextField(`${sectionName}*`).has({ value: `"${value}"` }));
+    } else {
+      cy.expect(TextField(sectionName).has({ value: `"${value}"` }));
+    }
+  },
 };

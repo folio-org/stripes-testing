@@ -1,5 +1,6 @@
 import { including } from '@interactors/html';
 import {
+  HTML,
   Accordion,
   Button,
   Checkbox,
@@ -9,12 +10,34 @@ import {
 } from '../../../../interactors';
 
 const rootPane = Pane('Lost items requiring actual cost');
+const lossTypeFilterAccordion = Accordion({ id: 'lossTypeFilterAccordion' });
+const ellipsisButton = Button({ icon: 'ellipsis' });
+const resetButton = Button({ id: 'lostItemsResetAllButton' });
+const searchButton = Button({ id: 'lostItemsSearchButton' });
 
 export default {
   waitLoading: () => cy.expect(rootPane.exists()),
 
+  verifyFilters: () => {
+    cy.expect([
+      searchButton.has({ disabled: true }),
+      resetButton.exists(),
+      lossTypeFilterAccordion.find(Checkbox('Aged to lost')).exists(),
+      lossTypeFilterAccordion.find(Checkbox('Declared lost')).exists(),
+    ]);
+  },
+
+  verifyUserNotHavePermmissionToAccess() {
+    cy.expect(
+      HTML(
+        'User does not have permission to access "Lost items needing actual cost" processing page',
+      ).exists(),
+    );
+  },
+
   searchByLossType(type) {
-    cy.do(Accordion({ id: 'lossTypeFilterAccordion' }).find(Checkbox(type)).click());
+    cy.do(lossTypeFilterAccordion.find(Checkbox(type)).click());
+    cy.expect(lossTypeFilterAccordion.find(Checkbox(type)).has({ checked: true }));
   },
 
   filterByStatus(status) {
@@ -29,15 +52,29 @@ export default {
     );
   },
 
+  checkResultsPatronColumn(instanceTitle, patron) {
+    cy.expect(
+      ListRow(including(instanceTitle))
+        .find(MultiColumnListCell({ column: 'Patron' }))
+        .has({ content: including(patron) }),
+    );
+  },
+
+  checkResultsColumn(instanceTitle, column, content) {
+    cy.expect(
+      ListRow(including(instanceTitle))
+        .find(MultiColumnListCell({ column }))
+        .has({ content: including(content) }),
+    );
+  },
+
   checkResultNotDisplayed(instanceTitle) {
     cy.expect(ListRow(including(instanceTitle)).absent());
   },
 
   openLoanDetails(instanceTitle) {
     cy.do([
-      ListRow(including(instanceTitle))
-        .find(Button({ icon: 'ellipsis' }))
-        .click(),
+      ListRow(including(instanceTitle)).find(ellipsisButton).click(),
       Button('Loan details').click(),
     ]);
     cy.expect(Pane(including('Loan details')).exists());
@@ -45,21 +82,23 @@ export default {
 
   openDoNotBill(instanceTitle) {
     cy.do([
-      ListRow(including(instanceTitle))
-        .find(Button({ icon: 'ellipsis' }))
-        .click(),
+      ListRow(including(instanceTitle)).find(ellipsisButton).click(),
       Button('Do not bill').click(),
     ]);
   },
 
-  checkDropdownOptionsDisabled(instanceTitle, options) {
-    cy.do(
-      ListRow(including(instanceTitle))
-        .find(Button({ icon: 'ellipsis' }))
-        .click(),
-    );
+  openBillActualCost(instanceTitle) {
+    cy.do([
+      ListRow(including(instanceTitle)).find(ellipsisButton).click(),
+      Button('Bill actual cost').click(),
+    ]);
+  },
+
+  checkDropdownOptions(instanceTitle, options, disabled = false) {
+    cy.do(ListRow(including(instanceTitle)).find(ellipsisButton).click());
     options.forEach((option) => {
-      cy.expect(Button(option).has({ disabled: true }));
+      cy.expect(Button(option).has({ disabled }));
     });
+    cy.do(ListRow(including(instanceTitle)).find(ellipsisButton).click());
   },
 };

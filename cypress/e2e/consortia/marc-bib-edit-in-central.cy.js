@@ -1,19 +1,17 @@
-import Permissions from '../../support/dictionary/permissions';
-import Affiliations, { tenantNames } from '../../support/dictionary/affiliations';
-import Users from '../../support/fragments/users/users';
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
-import getRandomPostfix from '../../support/utils/stringTools';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
-import DataImport from '../../support/fragments/data_import/dataImport';
 import { JOB_STATUS_NAMES } from '../../support/constants';
+import Affiliations, { tenantNames } from '../../support/dictionary/affiliations';
+import Permissions from '../../support/dictionary/permissions';
+import DataImport from '../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('MARC Bibliographic -> Edit MARC bib -> Consortia', () => {
   const testData = {
@@ -94,7 +92,7 @@ describe('MARC Bibliographic -> Edit MARC bib -> Consortia', () => {
 
   it(
     'C405520 User can edit shared "MARC Bib" in Central tenant (consortia)(spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPathECS', 'spitfire'] },
     () => {
       InventoryInstance.searchByTitle(createdInstanceID);
       InventoryInstances.selectInstance();
