@@ -43,6 +43,7 @@ describe('MARC', () => {
         const createdInstanceIDs = [];
 
         before('Create user, data', () => {
+          cy.resetTenant();
           cy.getAdminToken();
           cy.createTempUser([
             Permissions.uiInventoryViewInstances.gui,
