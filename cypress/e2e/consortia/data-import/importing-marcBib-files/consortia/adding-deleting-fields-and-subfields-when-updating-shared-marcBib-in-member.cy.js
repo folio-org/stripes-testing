@@ -1,48 +1,41 @@
-// import {
-//   EXISTING_RECORDS_NAMES,
-//   FOLIO_RECORD_TYPE,
-//   JOB_STATUS_NAMES,
-// } from '../../../../../support/constants';
+import {
+  EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  JOB_STATUS_NAMES,
+} from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
-// import ActionProfiles from '../../../../../support/fragments/data_import/action_profiles/actionProfiles';
-// import NewJobProfile from '../../../../../support/fragments/data_import/job_profiles/newJobProfile';
+import NewJobProfile from '../../../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../../support/fragments/topMenu';
-// import Users from '../../../../../support/fragments/users/users';
+import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import ExportFile from '../../../../../support/fragments/data-export/exportFile';
-// import NewActionProfile from '../../../../../support/fragments/data_import/action_profiles/newActionProfile';
-// import DataImport from '../../../../../support/fragments/data_import/dataImport';
-// import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-// import Logs from '../../../../../support/fragments/data_import/logs/logs';
-// import NewFieldMappingProfile from '../../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-// import FileManager from '../../../../../support/utils/fileManager';
-// import FieldMappingProfileView from '../../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-// import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
-// import BrowseContributors from '../../../../../support/fragments/inventory/search/browseContributors';
-// import BrowseSubjects from '../../../../../support/fragments/inventory/search/browseSubjects';
-// import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
-// import MatchProfiles from '../../../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
-// import NewMatchProfile from '../../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import ServicePoints from '../../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../../../../support/fragments/users/userEdit';
+import NewActionProfile from '../../../../../support/fragments/data_import/action_profiles/newActionProfile';
+import DataImport from '../../../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../../../support/fragments/data_import/logs/logs';
+import NewFieldMappingProfile from '../../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FileManager from '../../../../../support/utils/fileManager';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../../../support/fragments/settings/dataImport';
+import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
+import BrowseContributors from '../../../../../support/fragments/inventory/search/browseContributors';
+import BrowseSubjects from '../../../../../support/fragments/inventory/search/browseSubjects';
+import NewMatchProfile from '../../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     describe('Consortia', () => {
       const testData = {
         sharedInstanceId: [],
-        memberTenant1: {
-          code: Affiliations.College,
-          name: tenantNames.college,
-        },
-        memberTenant2: {
-          code: Affiliations.University,
-          name: tenantNames.university,
-        },
         marcFile: {
           marc: 'marcBibFileForC405532.mrc',
           fileName: `C405532 testMarcFile${getRandomPostfix()}.mrc`,
@@ -55,9 +48,9 @@ describe('Data Import', () => {
         contributorType: 'Producer',
         absentContributorName: 'Stelfreeze, Brian (to be removed)',
         subjects: [
-          { row: 0, column: 0, name: 'New Subject C405532' },
-          { row: 1, column: 0, name: 'Superfighters (C405532)' },
-          { row: 2, column: 0, name: 'Black Panther (Fictitious character) C405532' },
+          { row: 0, column: 0, name: 'Black Panther (Fictitious character) C405532' },
+          { row: 1, column: 0, name: 'New Subject C405532' },
+          { row: 2, column: 0, name: 'Superfighters (C405532)' },
         ],
         instanceTitle: 'C405532 Instance Shared Central',
         tag100: {
@@ -70,58 +63,58 @@ describe('Data Import', () => {
         },
         tag650: {
           tag: '650',
-          content: '$a Superfighters (C405532)"',
+          content: '$a Superfighters (C405532) ',
         },
         tag700: {
           tag: '700',
         },
       };
-      // const mappingProfile = {
-      //   name: `C405532 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
-      //   typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-      // };
-      // const actionProfile = {
-      //   typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-      //   name: `C405532 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
-      //   action: 'UPDATE',
-      //   folioRecordType: 'MARC_BIBLIOGRAPHIC',
-      // };
-      // const matchProfile = {
-      //   profileName: `C405532 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
-      //   incomingRecordFields: {
-      //     field: '999',
-      //     in1: 'f',
-      //     in2: 'f',
-      //     subfield: 's',
-      //   },
-      //   existingRecordFields: {
-      //     field: '999',
-      //     in1: 'f',
-      //     in2: 'f',
-      //     subfield: 's',
-      //   },
-      //   recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
-      // };
-      // const jobProfileName = `C405532 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
+      const mappingProfile = {
+        name: `C405532 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
+        typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+      };
+      const actionProfile = {
+        typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+        name: `C405532 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
+        action: 'UPDATE',
+        folioRecordType: 'MARC_BIBLIOGRAPHIC',
+      };
+      const matchProfile = {
+        profileName: `C405532 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
+        incomingRecordFields: {
+          field: '999',
+          in1: 'f',
+          in2: 'f',
+          subfield: 's',
+        },
+        existingRecordFields: {
+          field: '999',
+          in1: 'f',
+          in2: 'f',
+          subfield: 's',
+        },
+        recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      };
+      const jobProfileName = `C405532 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
 
       before('Create test data', () => {
         cy.getAdminToken();
-        // cy.loginAsAdmin({
-        //   path: TopMenu.dataImportPath,
-        //   waiter: DataImport.waitLoading,
-        // });
-        // DataImport.verifyUploadState();
-        // DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
-        // JobProfiles.waitFileIsUploaded();
-        // JobProfiles.search(testData.marcFile.jobProfileToRun);
-        // JobProfiles.runImportFile();
-        // JobProfiles.waitFileIsImported(testData.marcFile.fileName);
-        // Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        // Logs.openFileDetails(testData.marcFile.fileName);
-        // Logs.getCreatedItemsID().then((link) => {
-        //   testData.sharedInstanceId.push(link.split('/')[5]);
-        // });
-        // cy.logout();
+        cy.loginAsAdmin({
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.search(testData.marcFile.jobProfileToRun);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(testData.marcFile.fileName);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(testData.marcFile.fileName);
+        Logs.getCreatedItemsID().then((link) => {
+          testData.sharedInstanceId.push(link.split('/')[5]);
+        });
+        cy.logout();
 
         cy.createTempUser([
           Permissions.moduleDataImportEnabled.gui,
@@ -133,25 +126,18 @@ describe('Data Import', () => {
             testData.user = userProperties;
           })
           .then(() => {
-            cy.assignAffiliationToUser(testData.memberTenant1.code, testData.user.userId);
-            cy.setTenant(testData.memberTenant1.code);
+            cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+            cy.setTenant(Affiliations.College);
             cy.assignPermissionsToExistingUser(testData.user.userId, [
               Permissions.moduleDataImportEnabled.gui,
               Permissions.inventoryAll.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
               Permissions.dataExportEnableApp.gui,
             ]);
-            ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => {
-              UserEdit.addServicePointViaApi(
-                servicePoints[0].id,
-                testData.user.userId,
-                servicePoints[0].id,
-              );
-            });
 
             cy.resetTenant();
-            cy.assignAffiliationToUser(testData.memberTenant2.code, testData.user.userId);
-            cy.setTenant(testData.memberTenant2.code);
+            cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
+            cy.setTenant(Affiliations.University);
             cy.assignPermissionsToExistingUser(testData.user.userId, [
               Permissions.moduleDataImportEnabled.gui,
               Permissions.inventoryAll.gui,
@@ -161,46 +147,46 @@ describe('Data Import', () => {
             cy.resetTenant();
           })
           .then(() => {
-            // cy.setTenant(testData.memberTenant1.code);
-            // NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
-            //   (mappingProfileResponse) => {
-            //     NewActionProfile.createActionProfileViaApiMarc(
-            //       actionProfile,
-            //       mappingProfileResponse.body.id,
-            //     ).then((actionProfileResponse) => {
-            //       NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
-            //         matchProfile,
-            //       ).then((matchProfileResponse) => {
-            //         NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
-            //           jobProfileName,
-            //           matchProfileResponse.body.id,
-            //           actionProfileResponse.body.id,
-            //         );
-            //       });
-            //     });
-            //   },
-            // );
+            cy.setTenant(Affiliations.College);
+            NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
+              (mappingProfileResponse) => {
+                NewActionProfile.createActionProfileViaApiMarc(
+                  actionProfile,
+                  mappingProfileResponse.body.id,
+                ).then((actionProfileResponse) => {
+                  NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
+                    matchProfile,
+                  ).then((matchProfileResponse) => {
+                    NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+                      jobProfileName,
+                      matchProfileResponse.body.id,
+                      actionProfileResponse.body.id,
+                    );
+                  });
+                });
+              },
+            );
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            ConsortiumManager.switchActiveAffiliation(testData.memberTenant1.name);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.college);
           });
       });
 
-      // after('Delete test data', () => {
-      //   cy.resetTenant();
-      //   cy.getAdminToken();
-      //   Users.deleteViaApi(testData.user.userId);
-      //   InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId[0]);
-      //   JobProfiles.deleteJobProfile(jobProfileName);
-      //   MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      //   ActionProfiles.deleteActionProfile(actionProfile.name);
-      //   FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      //   // delete created files in fixtures
-      //   FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.exportedFileName}`);
-      //   FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
-      // });
+      after('Delete test data', () => {
+        cy.resetTenant();
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.user.userId);
+        InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId[0]);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
+        // delete created files in fixtures
+        FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.exportedFileName}`);
+        FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
+      });
 
       it(
         'C405532 Adding/deleting fields and subfields when updating shared "MARC Bib" in member tenant (consortia) (folijet)',
@@ -213,82 +199,80 @@ describe('Data Import', () => {
           InventorySearchAndFilter.exportInstanceAsMarc();
 
           // download exported marc file
-          cy.setTenant(testData.memberTenant1.code).then(() => {
+          cy.setTenant(Affiliations.College).then(() => {
             // use cy.getToken function to get toket for tenant
             cy.getCollegeAdminToken();
             cy.visit(TopMenu.dataExportPath);
             cy.wait(2000);
             ExportFile.getExportedFileNameViaApi().then((name) => {
               testData.marcFile.exportedFileName = name;
-              cy.log(name);
-              cy.log(testData.marcFile.exportedFileName);
+
               ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
-              // cy.getAdminToken();
-              // // change exported file
-              // DataImport.replace999SubfieldsInPreupdatedFile(
-              //   testData.marcFile.exportedFileName,
-              //   testData.marcFile.marcFileForModify,
-              //   testData.marcFile.modifiedMarcFile,
-              // );
+              // change exported file
+              DataImport.replace999SubfieldsInPreupdatedFile(
+                testData.marcFile.exportedFileName,
+                testData.marcFile.marcFileForModify,
+                testData.marcFile.modifiedMarcFile,
+              );
             });
           });
 
-          // // upload the exported marc file
-          // cy.visit(TopMenu.dataImportPath);
-          // // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-          // DataImport.verifyUploadState();
-          // DataImport.uploadExportedFile(testData.marcFile.modifiedMarcFile);
-          // JobProfiles.waitFileIsUploaded();
-          // JobProfiles.search(jobProfileName);
-          // JobProfiles.runImportFile();
-          // JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
-          // Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          // upload the exported marc file
+          cy.visit(TopMenu.dataImportPath);
+          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.verifyUploadState();
+          DataImport.uploadExportedFile(testData.marcFile.modifiedMarcFile);
+          JobProfiles.waitFileIsUploaded();
+          JobProfiles.search(jobProfileName);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
-          // ConsortiumManager.switchActiveAffiliation(tenantNames.central);
-          // cy.visit(TopMenu.inventoryPath);
-          // InventorySearchAndFilter.verifyPanesExist();
-          // InventoryInstance.searchByTitle(testData.sharedInstanceId[0]);
-          // // InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
-          // InventoryInstance.checkContributor(testData.contributorName, testData.contributorType);
-          // InventoryInstance.verifyContributorAbsent(testData.absentContributorName);
-          // testData.subjects.forEach((subject) => {
-          //   InventoryInstance.verifyInstanceSubject(subject.row, subject.column, subject.name);
-          // });
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.verifyPanesExist();
+          InventoryInstances.searchByTitle(testData.sharedInstanceId[0]);
+          InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
+          InventoryInstance.checkContributor(testData.contributorName, testData.contributorType);
+          InventoryInstance.verifyContributorAbsent(testData.absentContributorName);
+          testData.subjects.forEach((subject) => {
+            InventoryInstance.verifyInstanceSubject(subject.row, subject.column, subject.name);
+          });
 
-          // InventoryInstance.viewSource();
-          // InventoryViewSource.contains(`${testData.tag100.tag}\t1  \t${testData.tag100.content}`);
-          // InventoryViewSource.contains(`${testData.tag610.tag}\t   \t${testData.tag610.content}`);
-          // InventoryViewSource.contains(`${testData.tag650.tag}\t  0\t${testData.tag650.content}`);
-          // InventoryViewSource.notContains(`${testData.tag700.tag}\t`);
-          // InventoryViewSource.close();
-          // InventorySearchAndFilter.switchToBrowseTab();
-          // BrowseSubjects.searchBrowseSubjects(testData.subjects[1].name);
-          // BrowseSubjects.checkSearchResultRecord(testData.subjects[1].name);
-          // BrowseSubjects.searchBrowseSubjects(testData.subjects[0].name);
-          // BrowseSubjects.checkSearchResultRecord(testData.subjects[0].name);
+          InventoryInstance.viewSource();
+          InventoryViewSource.contains(`${testData.tag100.tag}\t1  \t${testData.tag100.content}`);
+          InventoryViewSource.contains(`${testData.tag610.tag}\t   \t${testData.tag610.content}`);
+          InventoryViewSource.contains(`${testData.tag650.tag}\t  0\t${testData.tag650.content}`);
+          InventoryViewSource.notContains(`${testData.tag700.tag}\t`);
+          InventoryViewSource.close();
+          InventorySearchAndFilter.switchToBrowseTab();
+          BrowseSubjects.searchBrowseSubjects(testData.subjects[1].name);
+          BrowseSubjects.checkSearchResultRecord(testData.subjects[1].name);
+          BrowseSubjects.searchBrowseSubjects(testData.subjects[0].name);
+          BrowseSubjects.checkSearchResultRecord(testData.subjects[0].name);
 
-          // ConsortiumManager.switchActiveAffiliation(testData.memberTenant2.token);
-          // cy.visit(TopMenu.inventoryPath);
-          // InventorySearchAndFilter.verifyPanesExist();
-          // InventoryInstance.searchByTitle(testData.sharedInstanceId[0]);
-          // // InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
-          // InventoryInstance.checkContributor(testData.contributorName, testData.contributorType);
-          // InventoryInstance.verifyContributorAbsent(testData.absentContributorName);
-          // testData.subjects.forEach((subject) => {
-          //   InventoryInstance.verifyInstanceSubject(subject.row, subject.column, subject.name);
-          // });
-          // InventoryInstance.viewSource();
-          // InventoryViewSource.contains(`${testData.tag100.tag}\t1  \t${testData.tag100.content}`);
-          // InventoryViewSource.contains(`${testData.tag610.tag}\t   \t${testData.tag610.content}`);
-          // InventoryViewSource.contains(`${testData.tag650.tag}\t  0\t${testData.tag650.content}`);
-          // InventoryViewSource.notContains(`${testData.tag700.tag}\t`);
-          // InventoryViewSource.close();
-          // InventorySearchAndFilter.switchToBrowseTab();
-          // BrowseContributors.select();
-          // BrowseContributors.browse(testData.contributorName);
-          // BrowseContributors.checkSearchResultRecord(testData.contributorName);
-          // BrowseContributors.browse(testData.absentContributorName);
-          // BrowseContributors.checkMissedMatchSearchResultRecord(testData.absentContributorName);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.verifyPanesExist();
+          InventoryInstances.searchByTitle(testData.instanceTitle);
+          InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
+          InventoryInstance.checkContributor(testData.contributorName, testData.contributorType);
+          InventoryInstance.verifyContributorAbsent(testData.absentContributorName);
+          testData.subjects.forEach((subject) => {
+            InventoryInstance.verifyInstanceSubject(subject.row, subject.column, subject.name);
+          });
+          InventoryInstance.viewSource();
+          InventoryViewSource.contains(`${testData.tag100.tag}\t1  \t${testData.tag100.content}`);
+          InventoryViewSource.contains(`${testData.tag610.tag}\t   \t${testData.tag610.content}`);
+          InventoryViewSource.contains(`${testData.tag650.tag}\t  0\t${testData.tag650.content}`);
+          InventoryViewSource.notContains(`${testData.tag700.tag}\t`);
+          InventoryViewSource.close();
+          InventorySearchAndFilter.switchToBrowseTab();
+          BrowseContributors.select();
+          BrowseContributors.browse(testData.contributorName);
+          BrowseContributors.checkSearchResultRecord(testData.contributorName);
+          BrowseContributors.browse(testData.absentContributorName);
+          BrowseContributors.checkMissedMatchSearchResultRecord(testData.absentContributorName);
         },
       );
     });
