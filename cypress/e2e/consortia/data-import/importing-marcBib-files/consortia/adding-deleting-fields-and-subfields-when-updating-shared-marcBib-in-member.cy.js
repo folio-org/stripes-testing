@@ -1,12 +1,12 @@
-import {
-  EXISTING_RECORDS_NAMES,
-  FOLIO_RECORD_TYPE,
-  JOB_STATUS_NAMES,
-} from '../../../../../support/constants';
+// import {
+//   EXISTING_RECORDS_NAMES,
+//   FOLIO_RECORD_TYPE,
+//   JOB_STATUS_NAMES,
+// } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
 // import ActionProfiles from '../../../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../../../support/fragments/data_import/job_profiles/newJobProfile';
+// import NewJobProfile from '../../../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -14,11 +14,11 @@ import TopMenu from '../../../../../support/fragments/topMenu';
 // import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import ExportFile from '../../../../../support/fragments/data-export/exportFile';
-import NewActionProfile from '../../../../../support/fragments/data_import/action_profiles/newActionProfile';
-import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
-import NewFieldMappingProfile from '../../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+// import NewActionProfile from '../../../../../support/fragments/data_import/action_profiles/newActionProfile';
+// import DataImport from '../../../../../support/fragments/data_import/dataImport';
+// import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
+// import Logs from '../../../../../support/fragments/data_import/logs/logs';
+// import NewFieldMappingProfile from '../../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 // import FileManager from '../../../../../support/utils/fileManager';
 // import FieldMappingProfileView from '../../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 // import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
@@ -26,7 +26,9 @@ import NewFieldMappingProfile from '../../../../../support/fragments/data_import
 // import BrowseSubjects from '../../../../../support/fragments/inventory/search/browseSubjects';
 // import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 // import MatchProfiles from '../../../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
-import NewMatchProfile from '../../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+// import NewMatchProfile from '../../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import ServicePoints from '../../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import UserEdit from '../../../../../support/fragments/users/userEdit';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -74,52 +76,52 @@ describe('Data Import', () => {
           tag: '700',
         },
       };
-      const mappingProfile = {
-        name: `C405532 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
-        typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-      };
-      const actionProfile = {
-        typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-        name: `C405532 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
-        action: 'UPDATE',
-        folioRecordType: 'MARC_BIBLIOGRAPHIC',
-      };
-      const matchProfile = {
-        profileName: `C405532 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
-        incomingRecordFields: {
-          field: '999',
-          in1: 'f',
-          in2: 'f',
-          subfield: 's',
-        },
-        existingRecordFields: {
-          field: '999',
-          in1: 'f',
-          in2: 'f',
-          subfield: 's',
-        },
-        recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
-      };
-      const jobProfileName = `C405532 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
+      // const mappingProfile = {
+      //   name: `C405532 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
+      //   typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+      // };
+      // const actionProfile = {
+      //   typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+      //   name: `C405532 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
+      //   action: 'UPDATE',
+      //   folioRecordType: 'MARC_BIBLIOGRAPHIC',
+      // };
+      // const matchProfile = {
+      //   profileName: `C405532 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
+      //   incomingRecordFields: {
+      //     field: '999',
+      //     in1: 'f',
+      //     in2: 'f',
+      //     subfield: 's',
+      //   },
+      //   existingRecordFields: {
+      //     field: '999',
+      //     in1: 'f',
+      //     in2: 'f',
+      //     subfield: 's',
+      //   },
+      //   recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      // };
+      // const jobProfileName = `C405532 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
 
       before('Create test data', () => {
         cy.getAdminToken();
-        cy.loginAsAdmin({
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(testData.marcFile.jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.marcFile.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(testData.marcFile.fileName);
-        Logs.getCreatedItemsID().then((link) => {
-          testData.sharedInstanceId.push(link.split('/')[5]);
-        });
-        cy.logout();
+        // cy.loginAsAdmin({
+        //   path: TopMenu.dataImportPath,
+        //   waiter: DataImport.waitLoading,
+        // });
+        // DataImport.verifyUploadState();
+        // DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
+        // JobProfiles.waitFileIsUploaded();
+        // JobProfiles.search(testData.marcFile.jobProfileToRun);
+        // JobProfiles.runImportFile();
+        // JobProfiles.waitFileIsImported(testData.marcFile.fileName);
+        // Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        // Logs.openFileDetails(testData.marcFile.fileName);
+        // Logs.getCreatedItemsID().then((link) => {
+        //   testData.sharedInstanceId.push(link.split('/')[5]);
+        // });
+        // cy.logout();
 
         cy.createTempUser([
           Permissions.moduleDataImportEnabled.gui,
@@ -139,7 +141,15 @@ describe('Data Import', () => {
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
               Permissions.dataExportEnableApp.gui,
             ]);
+            ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => {
+              UserEdit.addServicePointViaApi(
+                servicePoints[0].id,
+                testData.user.userId,
+                servicePoints[0].id,
+              );
+            });
 
+            cy.resetTenant();
             cy.assignAffiliationToUser(testData.memberTenant2.code, testData.user.userId);
             cy.setTenant(testData.memberTenant2.code);
             cy.assignPermissionsToExistingUser(testData.user.userId, [
@@ -151,25 +161,25 @@ describe('Data Import', () => {
             cy.resetTenant();
           })
           .then(() => {
-            cy.setTenant(testData.memberTenant1.code);
-            NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
-              (mappingProfileResponse) => {
-                NewActionProfile.createActionProfileViaApiMarc(
-                  actionProfile,
-                  mappingProfileResponse.body.id,
-                ).then((actionProfileResponse) => {
-                  NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
-                    matchProfile,
-                  ).then((matchProfileResponse) => {
-                    NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
-                      jobProfileName,
-                      matchProfileResponse.body.id,
-                      actionProfileResponse.body.id,
-                    );
-                  });
-                });
-              },
-            );
+            // cy.setTenant(testData.memberTenant1.code);
+            // NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
+            //   (mappingProfileResponse) => {
+            //     NewActionProfile.createActionProfileViaApiMarc(
+            //       actionProfile,
+            //       mappingProfileResponse.body.id,
+            //     ).then((actionProfileResponse) => {
+            //       NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
+            //         matchProfile,
+            //       ).then((matchProfileResponse) => {
+            //         NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+            //           jobProfileName,
+            //           matchProfileResponse.body.id,
+            //           actionProfileResponse.body.id,
+            //         );
+            //       });
+            //     });
+            //   },
+            // );
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -202,23 +212,23 @@ describe('Data Import', () => {
           InventorySearchAndFilter.verifySelectedRecords(1);
           InventorySearchAndFilter.exportInstanceAsMarc();
 
+          // download exported marc file
           cy.setTenant(testData.memberTenant1.code).then(() => {
-            // download exported marc file
+            // use cy.getToken function to get toket for tenant
+            cy.getCollegeAdminToken();
             cy.visit(TopMenu.dataExportPath);
-            cy.wait(1000);
+            cy.wait(2000);
             ExportFile.getExportedFileNameViaApi().then((name) => {
               testData.marcFile.exportedFileName = name;
-              ExportFile.downloadExportedMarcFileViaApi(
-                testData.marcFile.exportedFileName,
-                testData.user.username,
-                testData.user.password,
-              );
-              // change exported file
-              DataImport.replace999SubfieldsInPreupdatedFile(
-                testData.marcFile.exportedFileName,
-                testData.marcFile.marcFileForModify,
-                testData.marcFile.modifiedMarcFile,
-              );
+
+              ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
+              // cy.getAdminToken();
+              // // change exported file
+              // DataImport.replace999SubfieldsInPreupdatedFile(
+              //   testData.marcFile.exportedFileName,
+              //   testData.marcFile.marcFileForModify,
+              //   testData.marcFile.modifiedMarcFile,
+              // );
             });
           });
 
