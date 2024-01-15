@@ -2076,11 +2076,4 @@ export default {
       cy.visit(link);
     });
   },
-
-  openLinkingAuthorityByIndex(rowIndex) {
-    cy.wrap(QuickMarcEditorRow({ index: rowIndex }).find(Link()).href()).as('link');
-    cy.get('@link').then((link) => {
-      cy.visit(link);
-    });
-  },
 };
