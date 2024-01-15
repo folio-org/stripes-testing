@@ -144,8 +144,7 @@ describe('Consortium manager', () => {
       });
 
       it(
-        'C404390 User with "Consortium manager: Can view existing settings" permission is able to view \
-        the list of departments of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
+        'C404390 User with "Consortium manager: Can view existing settings" permission is able to view the list of departments of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPath', 'thunderjet'] },
         () => {
           ConsortiumManagerApp.selectAllMembers();
