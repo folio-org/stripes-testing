@@ -1,11 +1,8 @@
 import uuid from 'uuid';
-import TestType from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import PaymentMethods from '../../../support/fragments/settings/users/paymentMethods';
+import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import features from '../../../support/dictionary/features';
 
 describe('ui-users-settings: payments methods in Fee/fine', () => {
   let specialOwnerId;
@@ -24,7 +21,7 @@ describe('ui-users-settings: payments methods in Fee/fine', () => {
 
   it(
     'C445 Verify that you can create/edit/delete payment methods for a fee/fine owner (volaris)',
-    { tags: [TestType.smoke, features.paymentMethod, DevTeams.volaris] },
+    { tags: ['smoke', 'volaris'] },
     () => {
       // create
       const initialPaymentMethod = { ...PaymentMethods.defaultPaymentMethod };

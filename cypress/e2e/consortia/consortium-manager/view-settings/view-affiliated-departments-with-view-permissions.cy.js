@@ -8,7 +8,7 @@ import Departments from '../../../../support/fragments/settings/users/department
 import ConsortiumManagerApp, { settingsItems, usersItems } from '../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import DepartmentsConsortiumManager from '../../../../support/fragments/consortium-manager/departmentsConsortiumManager';
 
-let testData = {
+const testData = {
   centralSharedDepartment: {
     payload: {
       code: getTestEntityValue('centralSharedDepartment_name'),
@@ -31,7 +31,7 @@ let testData = {
     name: getTestEntityValue('universityLocalDepartment_name'),
   }
 };
-const testUsers = []
+const testUsers = [];
 
 describe('Consortium manager', () => {
   describe('View settings', () => {
@@ -40,7 +40,7 @@ describe('Consortium manager', () => {
         cy.getAdminToken();
         DepartmentsConsortiumManager.createViaApi(testData.centralSharedDepartment)
           .then((newDepartment) => {
-            testData.centralSharedDepartment = newDepartment
+            testData.centralSharedDepartment = newDepartment;
           });
         Departments.createViaApi(testData.centralLocalDepartment);
 
@@ -52,13 +52,13 @@ describe('Consortium manager', () => {
 
           for (let i = 0; i < 6; i++) {
             cy.resetTenant();
-            if (i == 3 || i == 4) {
+            if (i === 3 || i === 4) {
               cy.setTenant(Affiliations.College);
-            } else if (i == 5) {
+            } else if (i === 5) {
               cy.setTenant(Affiliations.University);
             }
-            cy.createTempUser([]).then((userProperties) => {
-              testUsers.push(userProperties);
+            cy.createTempUser([]).then((testUserProperties) => {
+              testUsers.push(testUserProperties);
             });
           }
         }).then(() => {
@@ -125,6 +125,9 @@ describe('Consortium manager', () => {
         Users.deleteViaApi(testUsers[5].userId);
         Departments.deleteViaApi(testData.universityLocalDepartment.id);
 
+        cy.resetTenant();
+        cy.getAdminToken();
+
         cy.setTenant(Affiliations.College);
         cy.getCollegeAdminToken();
         Users.deleteViaApi(testUsers[3].userId);
@@ -163,7 +166,8 @@ describe('Consortium manager', () => {
 
           DepartmentsConsortiumManager.verifyDepartmentInTheList(testData.collegeLocalDepartment.name, testData.collegeLocalDepartment.code, '2', 'College', 'edit');
           DepartmentsConsortiumManager.verifyDepartmentInTheList(testData.universityLocalDepartment.name, testData.universityLocalDepartment.code, 'No value set-', 'University', 'edit', 'trash');
-        });
+        }
+      );
     });
   });
 });

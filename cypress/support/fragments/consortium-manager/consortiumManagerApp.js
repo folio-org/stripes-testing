@@ -11,7 +11,7 @@ import {
   Warning,
   ListRow,
   Spinner
-} from "../../../../interactors"
+} from '../../../../interactors'
 
 const selectMembersButton = Button('Select members');
 const selectMembersModal = Modal('Select members');

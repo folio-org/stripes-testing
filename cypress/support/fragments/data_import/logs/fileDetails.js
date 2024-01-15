@@ -296,6 +296,16 @@ export default {
     );
   },
 
+  openErrorInSummaryTable: (row) => {
+    cy.do(
+      jobSummaryTable
+        .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+        .find(MultiColumnListCell({ columnIndex: 8 }))
+        .find(Link())
+        .click(),
+    );
+  },
+
   openOrder: (itemStatus, rowNumber = 0) => {
     cy.do(
       resultsList
@@ -320,26 +330,40 @@ export default {
     );
   },
 
+  openInvoiceLine: (itemStatus, rowNumber = 0) => {
+    cy.do(
+      resultsList
+        .find(MultiColumnListCell({ row: rowNumber, columnIndex: 8 }))
+        .find(Link(itemStatus))
+        .click(),
+    );
+  },
+
+  openAuthority: (itemStatus, rowNumber = 0) => {
+    cy.do(
+      resultsList
+        .find(MultiColumnListCell({ row: rowNumber, columnIndex: 6 }))
+        .find(Link(itemStatus))
+        .click(),
+    );
+  },
+
   openJsonScreen: (title) => {
-    cy.get('#search-results-list').find('*[class^="mclCell"]').contains(title).focus();
-    cy.get('#search-results-list')
-      .find('*[class^="mclCell"]')
-      .contains(title)
-      .invoke('removeAttr', 'target')
+    cy.get('#search-results-list').find('a').contains(title).invoke('removeAttr', 'target')
       .click();
     cy.wait(2000);
   },
 
-  openJsonScreenByStatus: (importStatus, title) => {
+  openJsonScreenByStatus: (importStatus, title, columnNumber = 2) => {
     cy.do(
       resultsList
-        .find(MultiColumnListCell({ content: importStatus, columnIndex: 2 }))
+        .find(MultiColumnListCell({ content: importStatus, columnIndex: columnNumber }))
         .perform((element) => {
           const rowNumber = element.parentElement.getAttribute('data-row-inner');
 
           cy.get('#search-results-list')
-            .eq(rowNumber)
-            .find('*[class^="mclCell"]')
+            .find(`div[data-row-inner="${rowNumber}"]`)
+            .find('a')
             .contains(title)
             .invoke('removeAttr', 'target')
             .click();

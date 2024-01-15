@@ -33,8 +33,15 @@ export default HTML.extend('select')
       const feedbackWarning = el.querySelector('[class^=feedbackWarning]');
       return feedbackWarning ? feedbackWarning.textContent : undefined;
     },
+    required: (el) => el.querySelector('select').getAttribute('aria-required') === 'true',
     valid: (el) => el.querySelector('select').getAttribute('aria-invalid') !== 'true',
     disabled: (el) => el.querySelector('select').disabled,
+    focused: (el) => el.querySelector('select').contains(el.ownerDocument.activeElement),
+    checkedOptionText: (el) => el.querySelector('select option:checked').textContent,
+    optionsText: (el) => [...el.querySelectorAll('option:not([disabled])')].map(({ textContent }) => textContent),
+    allOptionsText: (el) => [...el.querySelectorAll('option')].map((option) => {
+      return `${option.textContent}${option.disabled ? ' (disabled)' : ''}`;
+    }),
   })
   .actions({
     choose,

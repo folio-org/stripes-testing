@@ -1,9 +1,8 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import Configurations from '../../../support/fragments/settings/remote-storage/configurations';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import permissions from '../../../support/dictionary/permissions';
+import Configurations from '../../../support/fragments/settings/remote-storage/configurations';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 
@@ -28,34 +27,33 @@ describe('remote-storage-configuration', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it(
-    'C163919 Configure remote storage (firebird)',
-    { tags: [TestTypes.smoke, DevTeams.firebird] },
-    () => {
-      // parametrized providers
-      [
-        Configurations.configurations.CaiaSoft,
-        Configurations.configurations.DematicEMS,
-        Configurations.configurations.DematicStagingDirector,
-      ].forEach((configuration) => {
-        const name = `AutotestConfigurationName${getRandomPostfix()}`;
-
-        configuration.create(name);
-        Configurations.verifyCreatedConfiguration(name, configuration);
-        const newName = 'newAutotestConfigurationName';
-        Configurations.editConfiguration(name, { nameInput: newName });
-        Configurations.confirmCreateRemoteStorage();
-        Configurations.verifyCreatedConfiguration(name, configuration);
-        Configurations.editConfiguration(name, { nameInput: 'newAutotestConfigurationName2' });
-        Configurations.cancelConfirmation();
-        Configurations.deleteRemoteStorage(newName);
-      });
-    },
-  );
+  it('C163919 Configure remote storage (firebird)', { tags: ['smoke', 'firebird'] }, () => {
+    // parametrized providers
+    [
+      Configurations.configurations.CaiaSoft,
+      Configurations.configurations.DematicEMS,
+      Configurations.configurations.DematicStagingDirector,
+    ].forEach((configuration) => {
+      const name = `AutotestConfigurationName${getRandomPostfix()}`;
+      configuration.create(name);
+      Configurations.verifyCreatedConfiguration(name, configuration);
+      const newName = `newAutotestConfigurationName${getRandomPostfix()}`;
+      Configurations.editConfiguration(name, { nameInput: newName });
+      Configurations.confirmCreateRemoteStorage();
+      Configurations.verifyCreatedConfiguration(name, configuration);
+      Configurations.editConfiguration(
+        name,
+        { nameInput: `shouldnotbesaved${getRandomPostfix()}` },
+        false,
+      );
+      Configurations.closeEditConfiguration();
+      Configurations.deleteRemoteStorage(newName);
+    });
+  });
 
   it(
     'C163920 Edit remote storage configuration  (firebird)',
-    { tags: [TestTypes.smoke, DevTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
       const configuration = Configurations.configurations.DematicStagingDirector;

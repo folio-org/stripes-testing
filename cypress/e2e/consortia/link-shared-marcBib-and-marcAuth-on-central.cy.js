@@ -119,7 +119,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking ->
 
   it(
     'C422141 Link Shared MARC bib with Shared MARC auth on Central tenant in Create screen (consortia) (spitfire)',
-    { tags: ['criticalPath', 'spitfire'] },
+    { tags: ['criticalPathECS', 'spitfire'] },
     () => {
       cy.visit(TopMenu.inventoryPath);
       InventoryInstance.newMarcBibRecord();

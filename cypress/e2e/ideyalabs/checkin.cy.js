@@ -1,8 +1,7 @@
-import checkInItems from '../../support/ideyaLabs/checkinitems';
-import serviceShift from '../../support/ideyaLabs/serviceshift';
-import testTypes from '../../support/dictionary/testTypes';
 import checkInActions from '../../support/fragments/check-in-actions/checkInActions';
 import topMenu from '../../support/fragments/topMenu';
+import checkInItems from '../../support/ideyaLabs/checkinitems';
+import serviceShift from '../../support/ideyaLabs/serviceshift';
 
 const testData = {
   itemA: '14367843',
@@ -21,7 +20,7 @@ describe.skip('servicepoints shift', () => {
 
   it(
     'C589 Check in items at service points for effective location (vega)',
-    { tags: [testTypes.ideaLabsTests] },
+    { tags: ['ideaLabsTests'] },
     () => {
       serviceShift.servicePointsOne();
       cy.visit(topMenu.inventoryPath);
@@ -35,16 +34,12 @@ describe.skip('servicepoints shift', () => {
     },
   );
 
-  it(
-    'C9194 Check in: confirm check in for item status (vega)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.circulationLogPath);
-      checkInItems.declaredItem();
-      cy.visit(topMenu.inventoryPath);
-      checkInItems.withdrawn();
-      cy.visit(topMenu.inventoryPath);
-      checkInItems.lostAndPaid();
-    },
-  );
+  it('C9194 Check in: confirm check in for item status (vega)', { tags: ['ideaLabsTests'] }, () => {
+    cy.visit(topMenu.circulationLogPath);
+    checkInItems.declaredItem();
+    cy.visit(topMenu.inventoryPath);
+    checkInItems.withdrawn();
+    cy.visit(topMenu.inventoryPath);
+    checkInItems.lostAndPaid();
+  });
 });

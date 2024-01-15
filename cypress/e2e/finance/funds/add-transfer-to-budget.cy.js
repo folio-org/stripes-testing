@@ -1,17 +1,15 @@
 // TO DO: Now we do not have the ability to delete data, becouse deleting transactions is now impossible.
 // In the future they want to change this.
 // For this reason I have already written a method for cleaning the data and I think it should be kept.
-import Users from '../../../support/fragments/users/users';
 import permissions from '../../../support/dictionary/permissions';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../../support/fragments/topMenu';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../../support/fragments/finance/funds/funds';
+import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('ui-finance: Transactions', () => {
   const firstFund = { ...Funds.defaultUiFund };
@@ -70,7 +68,7 @@ describe('ui-finance: Transactions', () => {
 
   it(
     'C6650 Add transfer to a budget by creating a transfer transaction (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);

@@ -34,6 +34,7 @@ const notesPath = '/settings/notes/general';
 const permissionSetPath = '/settings/users/perms?layer=add';
 const lostItemsRequiringActualCost = '/users/lost-items';
 const listsPath = '/lists';
+const coursesPath = '/cr/courses';
 const consortiumManagerPath = 'consortia-settings';
 
 export default {
@@ -74,6 +75,7 @@ export default {
   lostItemsRequiringActualCost,
   listsPath,
   consortiumManagerPath,
+  coursesPath,
 
   openCheckInApp: () => {
     cy.do(Link({ href: including('/checkin') }).click());

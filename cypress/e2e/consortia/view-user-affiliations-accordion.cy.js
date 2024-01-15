@@ -1,10 +1,8 @@
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import TestType from '../../support/dictionary/testTypes';
-import Users from '../../support/fragments/users/users';
 import TopMenu from '../../support/fragments/topMenu';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 
 describe('Consortia', () => {
   let firstUser;
@@ -40,7 +38,7 @@ describe('Consortia', () => {
 
   it(
     'C380505: View a users affiliations accordion in the third details pane (thunderjet)',
-    { tags: [TestType.smoke, devTeams.thunderjet] },
+    { tags: ['smokeECS', 'thunderjet'] },
     () => {
       UsersSearchPane.searchByUsername(firstUser.username);
       UsersSearchPane.selectUserFromList(firstUser.username);

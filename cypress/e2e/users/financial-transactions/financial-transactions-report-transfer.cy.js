@@ -1,21 +1,19 @@
-import uuid from 'uuid';
 import moment from 'moment';
+import uuid from 'uuid';
 import Permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TopMenu from '../../../support/fragments/topMenu';
-import UsersSearchResultsPane from '../../../support/fragments/users/usersSearchResultsPane';
-import FinancialTransactionDetailReportModal from '../../../support/fragments/users/financialTransactionDetailReportModal';
-import TestTypes from '../../../support/dictionary/testTypes';
-import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import ManualCharges from '../../../support/fragments/settings/users/manualCharges';
-import WaiveReasons from '../../../support/fragments/settings/users/waiveReasons';
 import PaymentMethods from '../../../support/fragments/settings/users/paymentMethods';
 import RefundReasons from '../../../support/fragments/settings/users/refundReasons';
 import TransferAccounts from '../../../support/fragments/settings/users/transferAccounts';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Users from '../../../support/fragments/users/users';
+import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
+import WaiveReasons from '../../../support/fragments/settings/users/waiveReasons';
+import TopMenu from '../../../support/fragments/topMenu';
+import FinancialTransactionDetailReportModal from '../../../support/fragments/users/financialTransactionDetailReportModal';
 import NewFeeFine from '../../../support/fragments/users/newFeeFine';
 import TransferFeeFine from '../../../support/fragments/users/transferFeeFine';
+import Users from '../../../support/fragments/users/users';
+import UsersSearchResultsPane from '../../../support/fragments/users/usersSearchResultsPane';
 
 describe('Financial Transactions Detail Report', () => {
   const reportName = 'Financial-Transactions-Detail-Report.csv';
@@ -129,7 +127,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343330 Check that the user can create "Financial Transactions Detail Report" for transfer',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.fillInRequiredFields({

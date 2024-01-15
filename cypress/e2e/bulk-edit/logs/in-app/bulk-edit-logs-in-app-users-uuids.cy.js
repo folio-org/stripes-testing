@@ -3,8 +3,6 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import TopMenu from '../../../../support/fragments/topMenu';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import FileManager from '../../../../support/utils/fileManager';
-import testTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import Users from '../../../../support/fragments/users/users';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
@@ -61,7 +59,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C375245 Verify genetated Logs files for Users In app -- valid and invalid records (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
       BulkEditSearchPane.uploadFile(invalidAndValidUserUUIDsFileName);

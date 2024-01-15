@@ -1,16 +1,14 @@
 import uuid from 'uuid';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import { getTestEntityValue } from '../../../support/utils/stringTools';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TestTypes from '../../../support/dictionary/testTypes';
-import Users from '../../../support/fragments/users/users';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
-import ManualCharges from '../../../support/fragments/settings/users/manualCharges';
-import UsersSettingsGeneral from '../../../support/fragments/settings/users/usersSettingsGeneral';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import ManualCharges from '../../../support/fragments/settings/users/manualCharges';
+import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
+import UsersSettingsGeneral from '../../../support/fragments/settings/users/usersSettingsGeneral';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Settings Users', () => {
   let userData;
@@ -78,7 +76,7 @@ describe('Settings Users', () => {
 
   it(
     'C407703 User with "Settings (Users): View all settings" permission only can view "Manual Charges" page on "Users > Settings" - when system has at leaset 2 Fee/Fine owners (only one owner has configured "Fee/Fine Manual Charge") (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       ManualCharges.selectOwner(ownerOne);
       ManualCharges.checkDefaultEditButtonIsDisabled();

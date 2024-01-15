@@ -37,6 +37,10 @@ export default {
   materialTypePath: '/settings/inventory/materialtypes',
   targetProfilesPath: 'settings/inventory/targetProfiles',
   urlRelationshipPath: 'settings/inventory/URLrelationship',
+  instanceStatusTypesPath: 'settings/inventory/instanceStatusTypes',
+  statisticalCodesPath: 'settings/inventory/StatisticalCodeSettings',
+  hridHandlingPath: 'settings/inventory/hridHandling',
+  loantypesPath: 'settings/inventory/loantypes',
   // Invoice
   invoiceApprovalsPath: 'settings/invoice/approvals',
   invoiceAdjustmentsPath: 'settings/invoice/adjustments',
@@ -61,6 +65,7 @@ export default {
   tenantLibrariesPath: 'settings/tenant-settings/location-libraries',
   tenantLocationsPath: 'settings/tenant-settings/location-locations',
   tenantCampusesPath: 'settings/tenant-settings/location-campuses',
+  tenantInstitutionsPath: 'settings/tenant-settings/location-institutions',
   // Orders
   approvalsPath: 'settings/orders/approvals',
   acquisitionMethodsPath: 'settings/orders/acquisition-methods',
