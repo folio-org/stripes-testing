@@ -220,7 +220,8 @@ describe('Data Import', () => {
             cy.wait(2000);
             ExportFile.getExportedFileNameViaApi().then((name) => {
               testData.marcFile.exportedFileName = name;
-
+              cy.log(name);
+              cy.log(testData.marcFile.exportedFileName);
               ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
               // cy.getAdminToken();
               // // change exported file

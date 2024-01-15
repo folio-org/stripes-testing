@@ -37,31 +37,21 @@ const downloadExportedMarcFile = (fileName) => {
   // get file id and job id
   cy.okapiRequest({
     method: 'GET',
-    url: `${Cypress.env('OKAPI_HOST')}/data-export/job-executions?${queryString}`,
+    path: `data-export/job-executions?${queryString}`,
+    isDefaultSearchParamsRequired: false,
   })
-    .then(({ body }) => {
-      const j = body;
-      // const id = j[0].id;
-      // const fileId = j[0].exportedFiles[0].fileId;
-      // cy.log(jobExecutions[0]);
-      // const {
-      //   id,
-      //   exportedFiles: [{ fileId }],
-      // } = jobExecutions[0];
-      // cy.log(id);
-      // cy.log(fileId);
-      cy.log(j);
-      cy.pause();
-      // const downloadUrl = `${Cypress.env(
-      //   'OKAPI_HOST',
-      // )}/data-export/job-executions/${id}/download/${fileId}`;
-      // cy.log(downloadUrl);
-      // cy.pause();
-      // // get the link to download exported file
-      // return cy.okapiRequest({
-      //   method: 'GET',
-      //   url: downloadUrl,
-      // });
+    .then(({ body: { jobExecutions } }) => {
+      const {
+        id,
+        exportedFiles: [{ fileId }],
+      } = jobExecutions[0];
+
+      // get the link to download exported file
+      return cy.okapiRequest({
+        method: 'GET',
+        path: `data-export/job-executions/${id}/download/${fileId}`,
+        isDefaultSearchParamsRequired: false,
+      });
     })
     .then(({ body: { link } }) => {
       // download exported file
@@ -140,8 +130,8 @@ export default {
             '(status==("COMPLETED" OR "COMPLETED_WITH_ERRORS" OR "FAIL")) sortBy completedDate/sort.descending',
         },
       })
-      .then((name) => {
-        return name.body.jobExecutions[0].exportedFiles[0].fileName;
+      .then((response) => {
+        return response.body.jobExecutions[0].exportedFiles[0].fileName;
       });
   },
 
