@@ -34,6 +34,7 @@ Cypress.Commands.add(
         userId: targetUserId,
         permissions: permissionsToSet,
       },
+      isDefaultSearchParamsRequired: false,
     });
   },
 );

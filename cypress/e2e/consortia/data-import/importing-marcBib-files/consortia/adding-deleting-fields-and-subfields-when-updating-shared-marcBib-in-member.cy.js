@@ -33,8 +33,14 @@ describe('Data Import', () => {
     describe('Consortia', () => {
       const testData = {
         sharedInstanceId: [],
-        memberTenant1: Affiliations.College,
-        memberTenant2: Affiliations.University,
+        memberTenant1: {
+          code: Affiliations.College,
+          name: tenantNames.college,
+        },
+        memberTenant2: {
+          code: Affiliations.University,
+          name: tenantNames.university,
+        },
         marcFile: {
           marc: 'marcBibFileForC405532.mrc',
           fileName: `C405532 testMarcFile${getRandomPostfix()}.mrc`,
@@ -113,6 +119,7 @@ describe('Data Import', () => {
         Logs.getCreatedItemsID().then((link) => {
           testData.sharedInstanceId.push(link.split('/')[5]);
         });
+        cy.logout();
 
         cy.createTempUser([
           Permissions.moduleDataImportEnabled.gui,
@@ -124,19 +131,17 @@ describe('Data Import', () => {
             testData.user = userProperties;
           })
           .then(() => {
-            cy.resetTenant();
-            cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
-            cy.setTenant(Affiliations.College);
+            cy.assignAffiliationToUser(testData.memberTenant1.code, testData.user.userId);
+            cy.setTenant(testData.memberTenant1.code);
             cy.assignPermissionsToExistingUser(testData.user.userId, [
               Permissions.moduleDataImportEnabled.gui,
               Permissions.inventoryAll.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
               Permissions.dataExportEnableApp.gui,
             ]);
-            cy.resetTenant();
 
-            cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
-            cy.setTenant(Affiliations.University);
+            cy.assignAffiliationToUser(testData.memberTenant2.code, testData.user.userId);
+            cy.setTenant(testData.memberTenant2.code);
             cy.assignPermissionsToExistingUser(testData.user.userId, [
               Permissions.moduleDataImportEnabled.gui,
               Permissions.inventoryAll.gui,
@@ -146,7 +151,7 @@ describe('Data Import', () => {
             cy.resetTenant();
           })
           .then(() => {
-            cy.setTenant(Affiliations.College);
+            cy.setTenant(testData.memberTenant1.code);
             NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
               (mappingProfileResponse) => {
                 NewActionProfile.createActionProfileViaApiMarc(
@@ -169,8 +174,7 @@ describe('Data Import', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            ConsortiumManager.switchActiveAffiliation(tenantNames.college);
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+            ConsortiumManager.switchActiveAffiliation(testData.memberTenant1.name);
           });
       });
 
@@ -198,23 +202,24 @@ describe('Data Import', () => {
           InventorySearchAndFilter.verifySelectedRecords(1);
           InventorySearchAndFilter.exportInstanceAsMarc();
 
-          cy.setTenant(Affiliations.College);
-          // download exported marc file
-          cy.visit(TopMenu.dataExportPath);
-          cy.wait(1000);
-          ExportFile.getExportedFileNameViaApi().then((name) => {
-            testData.marcFile.exportedFileName = name;
-            ExportFile.downloadExportedMarcFileViaApi(
-              testData.marcFile.exportedFileName,
-              testData.user.username,
-              testData.user.password,
-            );
-            // change exported file
-            DataImport.replace999SubfieldsInPreupdatedFile(
-              testData.marcFile.exportedFileName,
-              testData.marcFile.marcFileForModify,
-              testData.marcFile.modifiedMarcFile,
-            );
+          cy.setTenant(testData.memberTenant1.code).then(() => {
+            // download exported marc file
+            cy.visit(TopMenu.dataExportPath);
+            cy.wait(1000);
+            ExportFile.getExportedFileNameViaApi().then((name) => {
+              testData.marcFile.exportedFileName = name;
+              ExportFile.downloadExportedMarcFileViaApi(
+                testData.marcFile.exportedFileName,
+                testData.user.username,
+                testData.user.password,
+              );
+              // change exported file
+              DataImport.replace999SubfieldsInPreupdatedFile(
+                testData.marcFile.exportedFileName,
+                testData.marcFile.marcFileForModify,
+                testData.marcFile.modifiedMarcFile,
+              );
+            });
           });
 
           // // upload the exported marc file
@@ -251,7 +256,7 @@ describe('Data Import', () => {
           // BrowseSubjects.searchBrowseSubjects(testData.subjects[0].name);
           // BrowseSubjects.checkSearchResultRecord(testData.subjects[0].name);
 
-          // ConsortiumManager.switchActiveAffiliation(Affiliations.University);
+          // ConsortiumManager.switchActiveAffiliation(testData.memberTenant2.token);
           // cy.visit(TopMenu.inventoryPath);
           // InventorySearchAndFilter.verifyPanesExist();
           // InventoryInstance.searchByTitle(testData.sharedInstanceId[0]);
