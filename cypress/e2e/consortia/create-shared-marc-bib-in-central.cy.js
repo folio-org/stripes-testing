@@ -75,7 +75,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Consortia', () =>
   });
 
   it(
-    'C405547 Create new Shared MARC bib in Central tenant (consortia) (spitfire)',
+    'C422123 Create new Shared MARC bib in Central tenant (consortia) (spitfire)',
     { tags: ['criticalPathECS', 'spitfire'] },
     () => {
       InventoryInstance.newMarcBibRecord();
