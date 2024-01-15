@@ -74,7 +74,7 @@ describe('marc', () => {
         );
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(marcFiles[1].editedFileName, marcFiles[1].fileName);
+        DataImport.uploadFile(marcFiles[1].editedFileName, marcFiles[1].fileName);
         JobProfiles.waitLoadingList();
         JobProfiles.search(marcFiles[1].jobProfileToRun);
         JobProfiles.runImportFile();

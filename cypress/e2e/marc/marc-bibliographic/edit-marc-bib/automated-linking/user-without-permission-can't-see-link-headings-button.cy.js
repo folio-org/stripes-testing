@@ -38,11 +38,11 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         marcFiles.forEach((marcFile) => {
           cy.visit(TopMenu.dataImportPath);
           DataImport.verifyUploadState();
-          DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.waitFileIsImported(marcFile.fileName);
           Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(marcFile.fileName);
           Logs.getCreatedItemsID().then((link) => {

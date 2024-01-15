@@ -199,7 +199,7 @@ describe('data-import', () => {
       JobProfiles.search(jobProfileForCreate.profileName);
       JobProfiles.runImportFile();
       Logs.waitFileIsImported(marcFileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileName);
       FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
@@ -283,7 +283,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(marcFileNameForUpdate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(marcFileNameForUpdate, JOB_STATUS_NAMES.COMPLETED);
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);

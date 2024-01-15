@@ -35,7 +35,7 @@ describe('data-import', () => {
       JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileNameForCreateInstance);
+      Logs.waitFileIsImported(fileNameForCreateInstance);
       Logs.openFileDetails(fileNameForCreateInstance);
       FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
@@ -76,8 +76,11 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search('Default - Create SRS MARC Authority');
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForImportForMarcAuthority);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.waitFileIsImported(fileNameForImportForMarcAuthority);
+        Logs.checkJobStatus(
+          fileNameForImportForMarcAuthority,
+          JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS,
+        );
         Logs.openFileDetails(fileNameForImportForMarcAuthority);
         FileDetails.verifyLogDetailsPageIsOpened();
         FileDetails.checkStatusInColumn(
@@ -99,8 +102,8 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(editedMarcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.waitFileIsImported(editedMarcFileName);
+        Logs.checkJobStatus(editedMarcFileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(editedMarcFileName);
         FileDetails.verifyLogDetailsPageIsOpened();
         FileDetails.checkStatusInColumn(

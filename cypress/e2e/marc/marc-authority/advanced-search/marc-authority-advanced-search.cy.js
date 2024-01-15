@@ -47,11 +47,11 @@ describe('marc', () => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
             DataImport.verifyUploadState();
-            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(jobProfileToRun);
             JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(marcFile.fileName);
+            Logs.waitFileIsImported(marcFile.fileName);
             Logs.checkStatusOfJobProfile('Completed');
             Logs.openFileDetails(marcFile.fileName);
             for (let i = 0; i < 3; i++) {

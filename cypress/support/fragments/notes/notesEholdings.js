@@ -11,7 +11,7 @@ import {
 const notesSection = Section({ id: 'providerShowNotes' });
 const createButton = Button({ id: 'note-create-button' });
 const titleField = TextField('Note title*');
-const detailsField = RichEditor('Details');
+const detailsField = RichEditor({ id: 'note-details-field' });
 const submitButton = Button({ type: 'submit' });
 const actionsButton = Button('Actions');
 const deleteButton = Button('Delete');

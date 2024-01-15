@@ -6,7 +6,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Inventory -> Filter Result List And Uncheck Instances', () => {
+describe('inventory', () => {
   let userId;
   const testData = {};
   beforeEach('create tests data', () => {

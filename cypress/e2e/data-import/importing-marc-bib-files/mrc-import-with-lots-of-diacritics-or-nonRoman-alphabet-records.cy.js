@@ -76,7 +76,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(nameMarcFileForCreate);
+        Logs.waitFileIsImported(nameMarcFileForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForCreate);
         rowNumbers.forEach((rowNumber) => {

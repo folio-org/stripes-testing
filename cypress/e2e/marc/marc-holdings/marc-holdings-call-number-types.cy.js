@@ -86,7 +86,7 @@ describe('marc', { retries: 2 }, () => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
             DataImport.verifyUploadState();
-            DataImport.uploadFileAndRetry(instanceFile.marc, instanceFile.fileName);
+            DataImport.uploadFile(instanceFile.marc, instanceFile.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(instanceFile.jobProfileToRun);
             JobProfiles.runImportFile();
@@ -112,7 +112,7 @@ describe('marc', { retries: 2 }, () => {
                 cy.visit(TopMenu.dataImportPath);
                 DataImport.waitLoading();
                 DataImport.verifyUploadState();
-                DataImport.uploadFileAndRetry(
+                DataImport.uploadFile(
                   testData.editedHoldingsFileName,
                   holdingsFile.fileName,
                 );

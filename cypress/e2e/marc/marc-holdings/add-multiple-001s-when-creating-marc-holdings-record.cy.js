@@ -51,11 +51,11 @@ describe('marc', () => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
             DataImport.verifyUploadState();
-            DataImport.uploadFileAndRetry(testData.marc, testData.fileName);
+            DataImport.uploadFile(testData.marc, testData.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(testData.jobProfileToRun);
             JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(testData.fileName);
+            Logs.waitFileIsImported(testData.fileName);
             Logs.checkStatusOfJobProfile('Completed');
             Logs.openFileDetails(testData.fileName);
             Logs.getCreatedItemsID().then((link) => {

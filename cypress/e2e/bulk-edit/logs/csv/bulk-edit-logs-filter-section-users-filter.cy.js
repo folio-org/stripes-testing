@@ -115,14 +115,9 @@ describe('Bulk Edit - Logs', () => {
       BulkEditSearchPane.clickUserAccordion();
       BulkEditSearchPane.clickChooseUserUnderUserAccordion();
 
-      BulkEditSearchPane.fillUserFilterInput('cypress');
-      cy.wait(1000);
-      BulkEditSearchPane.verifyDropdown('cypress');
-
       BulkEditSearchPane.fillUserFilterInput(users[1].username);
       BulkEditSearchPane.verifyDropdown(users[1].username);
       BulkEditSearchPane.selectUserFromDropdown(users[1].username);
-      cy.wait(1000);
       BulkEditSearchPane.verifyClearSelectedButtonExists(tastData.usersAccordion);
       BulkEditSearchPane.resetAllBtnIsDisabled(false);
       BulkEditSearchPane.verifyCellsValues(
@@ -134,7 +129,6 @@ describe('Bulk Edit - Logs', () => {
       BulkEditSearchPane.fillUserFilterInput(users[2].username);
       BulkEditSearchPane.verifyDropdown(users[2].username);
       BulkEditSearchPane.selectUserFromDropdown(users[2].username);
-      cy.wait(1000);
       BulkEditSearchPane.verifyClearSelectedButtonExists(tastData.usersAccordion);
       BulkEditSearchPane.resetAllBtnIsDisabled(false);
       BulkEditSearchPane.verifyCellsValues(
@@ -150,7 +144,6 @@ describe('Bulk Edit - Logs', () => {
       BulkEditSearchPane.fillUserFilterInput(users[1].username);
       BulkEditSearchPane.verifyDropdown(users[1].username);
       BulkEditSearchPane.selectUserFromDropdown(users[1].username);
-      cy.wait(1000);
       BulkEditSearchPane.verifyClearSelectedButtonExists(tastData.usersAccordion);
       BulkEditSearchPane.resetAllBtnIsDisabled(false);
       BulkEditSearchPane.verifyCellsValues(

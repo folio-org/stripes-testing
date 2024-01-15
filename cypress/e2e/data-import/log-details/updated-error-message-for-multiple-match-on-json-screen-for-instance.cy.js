@@ -56,12 +56,6 @@ describe('data-import', () => {
       {
         fileName: `C389590 testMarcFile${getRandomPostfix()}.mrc`,
       },
-      {
-        fileName: `C389590 testMarcFile${getRandomPostfix()}.mrc`,
-      },
-      {
-        fileName: `C389590 testMarcFile${getRandomPostfix()}.mrc`,
-      },
     ];
     const matchProfile = {
       profileName: `C389589/C389590 Updating SRS by 035 to OCLC number${getRandomPostfix()}`,
@@ -125,8 +119,8 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(testData.jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(name.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.waitFileIsImported(name.fileName);
+        Logs.checkJobStatus(name.fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(name.fileName);
         Logs.getCreatedItemsID().then((link) => {
           testData.createdRecordIDs.push(link.split('/')[5]);
@@ -235,8 +229,8 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.waitFileIsImported(fileName);
+        Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(fileName);
         FileDetails.openJsonScreen(testData.title);
         JsonScreenView.verifyJsonScreenIsOpened();
@@ -258,8 +252,8 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.waitFileIsImported(fileName);
+        Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(fileName);
         FileDetails.openJsonScreen(testData.title);
         JsonScreenView.verifyJsonScreenIsOpened();

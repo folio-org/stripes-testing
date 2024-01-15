@@ -30,7 +30,7 @@ describe('inventory', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileName);
+        Logs.waitFileIsImported(fileName);
         Logs.openFileDetails(fileName);
 
         // open Instance for getting hrid

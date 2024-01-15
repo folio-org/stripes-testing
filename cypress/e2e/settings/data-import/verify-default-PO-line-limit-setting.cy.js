@@ -19,7 +19,7 @@ describe('data-import', () => {
   describe('Settings', () => {
     const testData = {};
     const mappingProfile = {
-      name: `C367955testMappingProfile.${getRandomPostfix()}`,
+      name: `C374181 testMappingProfile.${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,
       orderStatus: ORDER_STATUSES.OPEN,
       vendor: VENDOR_NAMES.GOBI,

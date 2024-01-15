@@ -144,7 +144,7 @@ describe('data-import', () => {
 
     it(
       'C358138 Matching on newly-created 035 does not work (regression) (folijet)',
-      { tags: ['criticalPath', 'folijet', 'parallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
@@ -153,7 +153,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileForCreateFirstName);
+        Logs.waitFileIsImported(fileForCreateFirstName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileForCreateFirstName);
         [
@@ -215,7 +215,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileForUpdateFirstName);
+        Logs.waitFileIsImported(fileForUpdateFirstName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileForUpdateFirstName);
         [
@@ -243,7 +243,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileForCreateSecondName);
+        Logs.waitFileIsImported(fileForCreateSecondName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileForCreateSecondName);
         [
@@ -277,7 +277,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileForUpdateSecondName);
+        Logs.waitFileIsImported(fileForUpdateSecondName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileForUpdateSecondName);
         [

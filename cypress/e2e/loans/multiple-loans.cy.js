@@ -110,46 +110,49 @@ describe('Multiple loans', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('C572: Multiple loans: Test change due date (vega) (TaaS)', () => {
-    const itemBarcode = testData.folioInstances[0].barcodes[0];
-    const item2Barcode = testData.folioInstances[1].barcodes[0];
-    let loanDetails;
-
-    // Navigate to a user's open loans page.
-    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-    // Check off one open loan for an item with the item status Checked out.
-    LoansPage.checkOneLoan();
-    // Change due date button becomes active.
-    LoansPage.verifyChangeDueDateButtonIsActive();
-    // Check off multiple loans for items with the item status Checked out.
-    LoansPage.checkAll();
-    // Click change due date.
-    LoansPage.openChangeDueDate();
-    // Enter date in the date field
-    ChangeDueDateForm.fillDate('12/12/2030');
-    // Click 'Save & close' button
-    ChangeDueDateForm.saveAndClose();
-    // Navigate to a loan for which the due date was just changed.
-    UserLoans.openLoanDetails(itemBarcode);
-    Loans.getApi(userData.userId).then(([returnedByPatron]) => {
-      cy.getLoanHistory(returnedByPatron.id)
-        .then(([loanHistoryFirstAction]) => {
-          loanDetails = {
-            action: 'Due date changed',
-            dueDate: loanHistoryFirstAction.loan.dueDate,
-            status: 'Checked out',
-            source: userData.username,
-            comment: '-',
-          };
-        })
-        .then(() => {
-          // Check details for item 1
-          LoanDetails.checkLoanDetails(loanDetails);
-          cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-          UserLoans.openLoanDetails(item2Barcode);
-          // Check details for item 2
-          LoanDetails.checkLoanDetails(loanDetails);
-        });
-    });
-  });
+  it(
+    'C572: Multiple loans: Test change due date (vega) (TaaS)',
+    { tags: ['criticalPath', 'vega'] },
+    () => {
+      const itemBarcode = testData.folioInstances[0].barcodes[0];
+      const item2Barcode = testData.folioInstances[1].barcodes[0];
+      let loanDetails;
+      // Navigate to a user's open loans page.
+      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      // Check off one open loan for an item with the item status Checked out.
+      LoansPage.checkOneLoan();
+      // Change due date button becomes active.
+      LoansPage.verifyChangeDueDateButtonIsActive();
+      // Check off multiple loans for items with the item status Checked out.
+      LoansPage.checkAll();
+      // Click change due date.
+      LoansPage.openChangeDueDate();
+      // Enter date in the date field
+      ChangeDueDateForm.fillDate('12/12/2030');
+      // Click 'Save & close' button
+      ChangeDueDateForm.saveAndClose();
+      // Navigate to a loan for which the due date was just changed.
+      UserLoans.openLoanDetails(itemBarcode);
+      Loans.getApi(userData.userId).then(([returnedByPatron]) => {
+        cy.getLoanHistory(returnedByPatron.id)
+          .then(([loanHistoryFirstAction]) => {
+            loanDetails = {
+              action: 'Due date changed',
+              dueDate: loanHistoryFirstAction.loan.dueDate,
+              status: 'Checked out',
+              source: userData.username,
+              comment: '-',
+            };
+          })
+          .then(() => {
+            // Check details for item 1
+            LoanDetails.checkLoanDetails(loanDetails);
+            cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+            UserLoans.openLoanDetails(item2Barcode);
+            // Check details for item 2
+            LoanDetails.checkLoanDetails(loanDetails);
+          });
+      });
+    },
+  );
 });

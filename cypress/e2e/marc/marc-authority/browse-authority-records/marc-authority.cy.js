@@ -66,7 +66,7 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.verifyUploadState();
-      DataImport.uploadFileAndRetry('oneMarcAuthority.mrc', fileName);
+      DataImport.uploadFile('oneMarcAuthority.mrc', fileName);
       JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);

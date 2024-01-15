@@ -70,11 +70,11 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
             DataImport.verifyUploadState();
-            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(marcFile.fileName);
+            Logs.waitFileIsImported(marcFile.fileName);
             Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
             Logs.openFileDetails(marcFile.fileName);
             Logs.getCreatedItemsID().then((link) => {

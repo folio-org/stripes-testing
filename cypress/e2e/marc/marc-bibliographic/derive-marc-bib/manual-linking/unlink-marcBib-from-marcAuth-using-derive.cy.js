@@ -11,7 +11,7 @@ import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
-describe('Manual Unlinking Bib field from Authority 1XX', () => {
+describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () => {
   const testData = {};
 
   const marcFiles = [
@@ -59,11 +59,11 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
             DataImport.verifyUploadState();
-            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(marcFile.fileName);
+            Logs.waitFileIsImported(marcFile.fileName);
             Logs.checkStatusOfJobProfile('Completed');
             Logs.openFileDetails(marcFile.fileName);
             for (let i = 0; i < marcFile.numOfRecords; i++) {

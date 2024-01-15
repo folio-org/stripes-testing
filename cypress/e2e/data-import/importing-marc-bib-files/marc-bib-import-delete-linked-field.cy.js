@@ -3,6 +3,7 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import {
@@ -107,7 +108,7 @@ describe('data-import', () => {
           cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
             () => {
               DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
@@ -227,6 +228,7 @@ describe('data-import', () => {
         Logs.waitFileIsImported(nameForUpdatedMarcBibFile);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(nameForUpdatedMarcBibFile);
+        Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.searchByTitle(marcFiles[0].instanceTitle);

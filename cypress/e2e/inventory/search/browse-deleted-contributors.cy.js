@@ -39,7 +39,7 @@ describe('inventory', () => {
             JobProfiles.waitLoadingList();
             JobProfiles.search(jobProfileToRun);
             JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(fileName);
+            Logs.waitFileIsImported(fileName);
             Logs.checkStatusOfJobProfile('Completed');
             Logs.openFileDetails(fileName);
             Logs.getCreatedItemsID(0).then((link) => {

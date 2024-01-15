@@ -66,7 +66,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileName);
+        Logs.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
         [
@@ -105,7 +105,7 @@ describe('data-import', () => {
 
     it(
       'C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (folijet)',
-      { tags: ['criticalPath', 'folijet', 'parallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();

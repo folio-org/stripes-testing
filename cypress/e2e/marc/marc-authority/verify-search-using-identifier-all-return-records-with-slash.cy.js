@@ -51,7 +51,7 @@ describe('marc', () => {
 
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(testData.marcFile.marc, testData.marcFile.fileName);
+        DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(testData.marcFile.jobProfileToRun);

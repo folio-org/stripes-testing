@@ -5,4 +5,6 @@ export default {
     'The field mapping profile "(?:\\S+)" was successfully created',
   fieldMappingProfileUpdateSuccessfully:
     'The field mapping profile "(?:\\S+)" was successfully updated',
+  matchProfileUpdateSuccessfully: 'The match profile "(?:\\S+)" was successfully updated',
+  matchProfileCreateSuccessfully: 'The match profile "(?:\\S+)" was successfully created',
 };

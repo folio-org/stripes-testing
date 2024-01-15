@@ -180,6 +180,7 @@ describe('Loans', () => {
             itemBarcode: secondItemBarcode,
             column: 'Alert details',
             alertDetails: 'Item is Claimed returned',
+            status: ITEM_STATUS_NAMES.CLAIMED_RETURNED,
           },
         ]);
         // #7 Enter required information in Change due date modal. Click save and close.
@@ -191,11 +192,13 @@ describe('Loans', () => {
             itemBarcode: secondItemBarcode,
             column: 'Alert details',
             alertDetails: 'Due date change failed: item is Claimed returned',
+            status: ITEM_STATUS_NAMES.CLAIMED_RETURNED,
           },
           {
             itemBarcode: firstItemBarcode,
             column: 'Alert details',
             alertDetails: 'Due date & time has successfully been changed',
+            status: ITEM_STATUS_NAMES.CHECKED_OUT,
           },
         ]);
       },

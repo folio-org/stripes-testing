@@ -157,7 +157,7 @@ describe('data-import', () => {
 
     it(
       'C17017 Check that field protection settings work properly during data import (folijet)',
-      { tags: ['criticalPath', 'folijet', 'parallel'] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         // create mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -257,7 +257,7 @@ describe('data-import', () => {
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InstanceRecordView.waitLoading();
         InstanceRecordView.viewSource();
-
+        cy.wait(1500);
         InstanceRecordView.verifySrsMarcRecord();
         InventoryViewSource.verifyFieldInMARCBibSource('500', dataForField500);
         InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[0], dataForField507);

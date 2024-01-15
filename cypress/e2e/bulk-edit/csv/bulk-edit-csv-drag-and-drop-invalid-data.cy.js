@@ -13,7 +13,7 @@ const values = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'];
 const csvContent = values.join('\n');
 
 describe('bulk-edit', () => {
-  describe('csv-approach', () => {
+  describe('csv approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         Permissions.bulkEditView.gui,

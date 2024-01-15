@@ -147,7 +147,7 @@ describe('data-import', () => {
 
     it(
       'C11109 Update an instance based on an OCLC number match (folijet)',
-      { tags: ['criticalPath', 'folijet', 'parallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profile for creating instance
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -195,7 +195,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(collectionOfJobProfiles[0].jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(nameMarcFileForCreate);
+        Logs.waitFileIsImported(nameMarcFileForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForCreate);
         [
@@ -269,7 +269,7 @@ describe('data-import', () => {
           JobProfiles.waitFileIsUploaded();
           JobProfiles.search(collectionOfJobProfiles[1].jobProfile.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
+          Logs.waitFileIsImported(nameMarcFileForUpdate);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(nameMarcFileForUpdate);
           [
