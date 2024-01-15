@@ -1,18 +1,16 @@
-import Permissions from '../../support/dictionary/permissions';
+import { JOB_STATUS_NAMES } from '../../support/constants';
 import Affiliations, { tenantNames } from '../../support/dictionary/affiliations';
-import Users from '../../support/fragments/users/users';
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
+import Permissions from '../../support/dictionary/permissions';
+import DataImport from '../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
-import DataImport from '../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES } from '../../support/constants';
-import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../support/fragments/data_import/logs/logs';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Consortia', () => {
@@ -92,7 +90,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Consortia', () => {
 
   it(
     'C402767 Derive new Shared MARC bib record from Shared Instance in Central tenant (consortia) (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPathECS', 'spitfire'] },
     () => {
       cy.visit(`${TopMenu.inventoryPath}/view/${createdInstanceIDs[0]}`);
       InventoryInstance.waitLoading();

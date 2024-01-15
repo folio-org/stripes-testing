@@ -1,4 +1,4 @@
-import { CheckBox } from '@interactors/html';
+import { CheckBox, including } from '@interactors/html';
 
 import {
   Button,
@@ -8,6 +8,7 @@ import {
   MultiColumnList,
   MultiColumnListRow,
   MultiColumnListHeader,
+  MultiColumnListCell,
 } from '../../../../interactors';
 import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 import PaymentMethods from '../settings/users/paymentMethods';
@@ -56,12 +57,14 @@ export default {
     });
   },
   goToOpenFeeFines: () => cy.do(Button({ id: 'open-accounts' }).click()),
+  goToClosedFeesFines: () => cy.do(Button({ id: 'closed-accounts' }).click()),
   goToAllFeeFines: () => cy.do(Button({ id: 'all-accounts' }).click()),
   createFeeFine: () => {
     cy.do(Button('Actions').click());
     cy.do(Button({ id: 'open-closed-all-charge-button' }).click());
   },
   waitLoading: () => cy.expect(HTML('All fees/fines for ').exists()),
+  verifyPageHeader: (username) => cy.expect(HTML(including(`Fees/fines - ${username}`)).exists()),
   checkRowsAreChecked: (areRowsChecked) => {
     const beChecked = areRowsChecked ? 'be.checked' : 'not.be.checked';
 
@@ -108,6 +111,15 @@ export default {
   waiveSelectedFeeFines: () => {
     cy.do(Dropdown('Actions').choose('Waive'));
   },
+  refundSelectedFeeFines: () => cy.do(Dropdown('Actions').choose('Refund')),
+  cancelSelectedFeeFines: (rowIndex) => {
+    cy.do(
+      feeFinesList
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(Dropdown())
+        .choose('Error'),
+    );
+  },
   clickPayEllipsis: (rowIndex) => {
     cy.do(
       feeFinesList
@@ -120,4 +132,16 @@ export default {
   verifyPayModalIsOpen: () => {
     cy.expect(Modal('Pay fee/fine').exists());
   },
+  verifyPaymentStatus: (rowIndex, status) => {
+    cy.expect(
+      feeFinesList
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(MultiColumnListCell({ column: 'Payment status' }))
+        .has({ content: status }),
+    );
+  },
+  verifyFeeFineCount: (rowCount) => {
+    cy.expect(feeFinesList.has({ rowCount }));
+  },
+  closeFeesFinesDetails: () => cy.do(Button({ icon: 'times' }).click()),
 };

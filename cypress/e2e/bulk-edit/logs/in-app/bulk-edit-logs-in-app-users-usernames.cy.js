@@ -1,5 +1,3 @@
-import testTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
 import TopMenu from '../../../../support/fragments/topMenu';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -39,7 +37,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C375246 Verify generated Logs files for Users In app -- only invalid records (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       BulkEditSearchPane.verifyDragNDropUsernamesArea();
       BulkEditSearchPane.uploadFile(invalidUsernamesFilename);

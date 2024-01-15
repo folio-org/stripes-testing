@@ -5,9 +5,11 @@ import ButtonInteractor from './button';
 
 const DropdownTrigger = HTML.extend('dropdown trigger').selector('[aria-haspopup]');
 
-export const DropdownMenu = HTML.extend('dropdown menu').selector(
-  'div[class*=overlay] div[class*=DropdownMenu]',
-);
+export const DropdownMenu = HTML.extend('dropdown menu')
+  .selector('div[class*=overlay] div[class*=DropdownMenu]')
+  .filters({
+    buttons: (el) => el.querySelectorAll('button'),
+  });
 
 const label = (el) => {
   const node = el.querySelector('[aria-haspopup]');

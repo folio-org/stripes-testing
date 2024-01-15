@@ -1,14 +1,16 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 const abcProfile = {
   createJobProfile: `abc createJobProfile.${getRandomPostfix()}`,
@@ -115,22 +117,27 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach((profile) => {
-        JobProfiles.deleteJobProfile(profile.createJobProfile);
-        JobProfiles.deleteJobProfile(profile.updateJobProfile);
-        ActionProfiles.deleteActionProfile(profile.createActionProfile);
-        ActionProfiles.deleteActionProfile(profile.updateActionProfile);
-        FieldMappingProfileView.deleteViaApi(profile.createMappingProfile);
-        FieldMappingProfileView.deleteViaApi(profile.updateMappingProfile);
+      cy.getAdminToken().then(() => {
+        [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach((profile) => {
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(profile.createJobProfile);
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(profile.updateJobProfile);
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.createActionProfile);
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.updateActionProfile);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.createMappingProfile,
+          );
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.updateMappingProfile,
+          );
+        });
+        Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
+        Users.deleteViaApi(user.userId);
       });
-      Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
-      Users.deleteViaApi(user.userId);
     });
 
     it(
       'C374176 Verify the view mode of ISRI profiles (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.verifyTargetProfileFormOpened();

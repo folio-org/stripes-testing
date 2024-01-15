@@ -1,25 +1,25 @@
 import uuid from 'uuid';
 
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
-import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import LostItemsRequiringActualCostPage from '../../support/fragments/users/lostItemsRequiringActualCostPage';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
-import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
-import UsersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
-import UserEdit from '../../support/fragments/users/userEdit';
+import { Permissions } from '../../support/dictionary';
 import Checkout from '../../support/fragments/checkout/checkout';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
-import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import RenewConfirmationModal from '../../support/fragments/users/loans/renewConfirmationModal';
+import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
+import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import TopMenu from '../../support/fragments/topMenu';
 import OverrideAndRenewModal from '../../support/fragments/users/loans/overrideAndRenewModal';
+import RenewConfirmationModal from '../../support/fragments/users/loans/renewConfirmationModal';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import LostItemsRequiringActualCostPage from '../../support/fragments/users/lostItemsRequiringActualCostPage';
+import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import UsersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Lost items requiring actual cost', () => {
   const testData = {
@@ -164,7 +164,7 @@ describe('Lost items requiring actual cost', () => {
 
   it(
     'C375276 Check that entries are NOT deleted for renewed items (Declared lost items) when item is renewed after "No fees/fines shall be refunded if a lost item is returned more than" parameter (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.visit(TopMenu.usersPath);
       // Click on "Actions" drop-down => Click "Lost items requiring actual cost" action

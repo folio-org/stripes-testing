@@ -1,10 +1,10 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import { Permissions } from '../../../support/dictionary';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
 describe('inventory', () => {
@@ -31,20 +31,21 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      cy.getInstance({
-        limit: 1,
-        expandAll: true,
-        query: `"title"=="${testData.instance.instanceTitle}"`,
-      }).then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"title"=="${testData.instance.instanceTitle}"`,
+        }).then((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
       });
     });
 
     it(
       'C9214 In Accordion Descriptive Data --> Test assigning Nature of content (folijet) (TaaS)',
-      { tags: [TestTypes.extended, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();

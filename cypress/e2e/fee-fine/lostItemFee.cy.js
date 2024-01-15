@@ -1,7 +1,5 @@
 import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 
 describe('Fee/fine management', () => {
   const name = 'A_very_specific_name';
@@ -22,7 +20,7 @@ describe('Fee/fine management', () => {
 
   it(
     'C5558 Verify that you can create/edit/delete lost item fee policies (vega)',
-    { tags: [TestTypes.smoke, DevTeams.vega] },
+    { tags: ['smoke', 'vega', 'system'] },
     () => {
       // creating
       LostItemFeePolicy.startAdding();

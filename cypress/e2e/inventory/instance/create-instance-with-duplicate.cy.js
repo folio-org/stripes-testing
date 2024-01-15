@@ -1,13 +1,13 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import InventoryNewInstance from '../../../support/fragments/inventory/inventoryNewInstance';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryNewInstance from '../../../support/fragments/inventory/inventoryNewInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Instance', () => {
@@ -52,7 +52,7 @@ describe('inventory', () => {
 
     it(
       'C380582 Create new instance with "Duplicate" (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();

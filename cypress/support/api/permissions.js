@@ -1,5 +1,3 @@
-import uuid from 'uuid';
-
 Cypress.Commands.add('getPermissionsApi', (searchParams) => {
   return cy.okapiRequest({
     path: 'perms/permissions',

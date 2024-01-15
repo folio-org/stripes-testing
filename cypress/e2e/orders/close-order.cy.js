@@ -1,12 +1,10 @@
-import NewOrder from '../../support/fragments/orders/newOrder';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import TestType from '../../support/dictionary/testTypes';
+import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
-import TopMenu from '../../support/fragments/topMenu';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
-import Organizations from '../../support/fragments/organizations/organizations';
-import devTeams from '../../support/dictionary/devTeams';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('orders: Close Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -27,7 +25,7 @@ describe('orders: Close Order', () => {
     cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
       orderLine.physical.materialType = materialType.id;
     });
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
   });
 
   after(() => {
@@ -36,21 +34,17 @@ describe('orders: Close Order', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  it(
-    'C667 Close an existing order (thunderjet)',
-    { tags: [TestType.smoke, devTeams.thunderjet] },
-    () => {
-      Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
-        cy.visit(TopMenu.ordersPath);
-        Orders.searchByParameter('PO number', poNumber);
-        Orders.selectFromResultsList(poNumber);
-        Orders.openOrder();
-        Orders.closeOrder('Cancelled');
-        Orders.closeThirdPane();
-        Orders.resetFilters();
-        Orders.selectStatusInSearch('Closed');
-        Orders.checkSearchResultsWithClosedOrder(poNumber);
-      });
-    },
-  );
+  it('C667 Close an existing order (thunderjet)', { tags: ['smoke', 'thunderjet'] }, () => {
+    Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
+      cy.visit(TopMenu.ordersPath);
+      Orders.searchByParameter('PO number', poNumber);
+      Orders.selectFromResultsList(poNumber);
+      Orders.openOrder();
+      Orders.closeOrder('Cancelled');
+      Orders.closeThirdPane();
+      Orders.resetFilters();
+      Orders.selectStatusInSearch('Closed');
+      Orders.checkSearchResultsWithClosedOrder(poNumber);
+    });
+  });
 });

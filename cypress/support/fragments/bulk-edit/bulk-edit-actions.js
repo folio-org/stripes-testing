@@ -13,6 +13,9 @@ import {
   Select,
   TextArea,
   Selection,
+  Option,
+  OptionGroup,
+  Keyboard,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -32,11 +35,14 @@ const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
-
-function getEmailField() {
-  // 2 the same selects without class, id or someone different attr
-  return cy.get('[class^=textField]');
-}
+const confirmChangesButton = Button('Confirm changes');
+const downloadChnagedRecordsButton = Button('Download changed records (CSV)');
+const bulkEditFirstRow = RepeatableFieldItem({ index: 0 });
+const bulkEditSecondRow = RepeatableFieldItem({ index: 1 });
+const commitChanges = Button('Commit changes');
+const locationSelection = Selection({ name: 'locationId' });
+const oldEmail = TextField({ testid: 'input-email-0' });
+const newEmail = TextField({ testid: 'input-email-1' });
 
 const bulkPageSelections = {
   valueType: Select({ content: including('Select option') }),
@@ -59,6 +65,13 @@ export default {
   startBulkEditAbsent() {
     cy.expect(startBulkEditButton.absent());
   },
+  startBulkEditLocalAbsent() {
+    cy.expect(startBulkEditLocalButton.absent());
+  },
+  closeBulkEditInAppForm() {
+    cy.do(cancelBtn.click());
+    cy.wait(1000);
+  },
   selectOption(optionName, rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -71,6 +84,9 @@ export default {
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose(actionName),
     );
   },
+  isSelectActionAbsent(rowIndex = 0) {
+    cy.expect(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).absent());
+  },
   verifyBulkEditForm(rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
@@ -81,11 +97,28 @@ export default {
     cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: true }).exists()]);
   },
 
+  verifyOptionsDropdown(isExist = true) {
+    if (isExist) {
+      cy.expect(bulkPageSelections.valueType.exists());
+    } else {
+      cy.expect(bulkPageSelections.valueType.absent());
+    }
+  },
+
+  verifySearchSectionClosed() {
+    cy.expect(locationSelection.has({ open: false }));
+  },
+
+  verifyLocationValue(value) {
+    cy.expect(Selection({ singleValue: value }).visible());
+  },
+
   isDisabledRowIcons(isDisabled) {
     cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: isDisabled }).exists()]);
+    BulkEditSearchPane.isConfirmButtonDisabled(true);
   },
-  afterAllSelectedActions() {
-    cy.expect([plusBtn.absent(), Button({ icon: 'trash', disabled: false }).exists()]);
+  deleteRow(rowIndex = 0) {
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click());
   },
   verifyAreYouSureForm(count, cellContent) {
     cy.expect([
@@ -162,10 +195,7 @@ export default {
   },
   verifyActionAfterChangingRecords() {
     cy.do(actionsBtn.click());
-    cy.expect([
-      Button('Download changed records (CSV)').exists(),
-      Button('Download errors (CSV)').exists(),
-    ]);
+    cy.expect([downloadChnagedRecordsButton.exists(), Button('Download errors (CSV)').exists()]);
   },
 
   verifySuccessBanner(validRecordsCount) {
@@ -180,22 +210,34 @@ export default {
     cy.do(Button('Cancel').click());
   },
 
-  replaceWithIsDisabled() {
-    cy.xpath(
-      '(//div[contains(@class, "select--")]//select[contains(@class, "selectControl--")])[3]',
-    ).should('be.disabled');
+  replaceWithIsDisabled(rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ content: 'Replace with' }))
+        .has({ disabled: true }),
+    ]);
+  },
+
+  enterOldEmail(oldEmailDomain) {
+    cy.do([oldEmail.clear(), oldEmail.fillIn(oldEmailDomain)]);
+  },
+
+  enterNewEmail(newEmailDomain) {
+    cy.do([newEmail.clear(), newEmail.fillIn(newEmailDomain)]);
   },
 
   replaceEmail(oldEmailDomain, newEmailDomain, rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
     );
-    getEmailField().first().type(oldEmailDomain);
-    getEmailField().eq(2).type(newEmailDomain);
+    BulkEditSearchPane.isConfirmButtonDisabled(true);
+    cy.do(oldEmail.fillIn(oldEmailDomain));
+    BulkEditSearchPane.isConfirmButtonDisabled(true);
+    cy.do(newEmail.fillIn(newEmailDomain));
   },
 
-  clickLocationLookup() {
-    cy.do(Button('Location look-up').click());
+  clickLocationLookup(rowIndex = 0) {
+    cy.do([RepeatableFieldItem({ index: rowIndex }).find(Button('Location look-up')).click()]);
   },
 
   locationLookupExists() {
@@ -217,7 +259,9 @@ export default {
   locationLookupModalCancel() {
     cy.do(locationLookupModal.find(cancelButton).click());
   },
-
+  locationLookupModalSaveAndClose() {
+    cy.do(locationLookupModal.find(Button('Save and close')).click());
+  },
   replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -239,7 +283,16 @@ export default {
       SelectionOption(including(location)).click(),
     ]);
   },
-
+  selectLocation(location, rowIndex) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.action)
+        .choose('Replace with'),
+      Button('Select control\nSelect location').click(),
+      SelectionOption(including(location)).click(),
+    ]);
+    BulkEditSearchPane.isConfirmButtonDisabled(false);
+  },
   replacePermanentLocation(location, type = 'item', rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -258,7 +311,13 @@ export default {
       SelectionOption(including(location)).click(),
     ]);
   },
-
+  clickSelectedLocation(currentLocation, newLocation) {
+    cy.do([
+      Button(including(`Select control\n${currentLocation}`)).click(),
+      cy.wait(500),
+      SelectionOption(including(newLocation)).click(),
+    ]);
+  },
   clearPermanentLocation(type = 'item', rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -314,6 +373,16 @@ export default {
   addNewBulkEditFilterString() {
     cy.do(plusBtn.click());
     cy.wait(1000);
+  },
+
+  verifyNewBulkEditRow() {
+    cy.expect([
+      bulkEditFirstRow.find(plusBtn).absent(),
+      bulkEditFirstRow.find(deleteBtn).has({ disabled: false }),
+      bulkEditSecondRow.find(plusBtn).exists(),
+      bulkEditSecondRow.find(deleteBtn).exists(),
+      confirmChangesButton.has({ disabled: true }),
+    ]);
   },
 
   fillPatronGroup(group = 'staff (Staff Member)', rowIndex = 0) {
@@ -607,9 +676,13 @@ export default {
   verifyMatchingOptionsForLocationFilter(location) {
     cy.expect(HTML(including(location)).exists());
   },
+  isCommitButtonDisabled(isDisabled) {
+    cy.expect(commitChanges.has({ disabled: isDisabled }));
+  },
 
   confirmChanges() {
-    cy.do(Button('Confirm changes').click());
+    cy.do(confirmChangesButton.click());
+    this.isCommitButtonDisabled(true);
     cy.expect(Modal().find(MultiColumnListCell()).exists());
   },
 
@@ -774,11 +847,15 @@ export default {
   },
 
   verifyActionsDownloadChangedCSV() {
-    cy.expect(DropdownMenu().find(Button('Download changed records (CSV)')).exists());
+    cy.expect(DropdownMenu().find(downloadChnagedRecordsButton).exists());
+  },
+
+  verifyDownloadChangedRecordsAbsent() {
+    cy.expect(DropdownMenu().find(downloadChnagedRecordsButton).absent());
   },
 
   downloadChangedCSV() {
-    cy.do(Button('Download changed records (CSV)').click());
+    cy.do(downloadChnagedRecordsButton.click());
     BulkEditSearchPane.waitingFileDownload();
   },
 
@@ -788,27 +865,105 @@ export default {
     });
   },
 
-  verifyItemOptions(rowIndex = 0) {
-    const options = [
-      'Administrative note',
-      'Check in note',
-      'Check out note',
-      'Action note',
-      'Binding',
-      'Copy note',
-      'Electronic bookplate',
-      'Note',
-      'Provenance',
-      'Reproduction',
-      'Item status',
-      'Permanent loan type',
-      'Temporary loan type',
-      'Permanent item location',
-      'Temporary item location',
-      'Suppress from discovery',
-    ];
+  verifyHoldingsOptions() {
+    cy.expect([
+      Option({ value: 'ADMINISTRATIVE_NOTE' }).exists(),
+      OptionGroup('Electronic access')
+        .find(Option({ value: 'ELECTRONIC_ACCESS_URI' }))
+        .exists(),
+      OptionGroup('Electronic access')
+        .find(Option({ value: 'ELECTRONIC_ACCESS_URL_RELATIONSHIP' }))
+        .exists(),
+      OptionGroup('Electronic access')
+        .find(Option({ value: 'ELECTRONIC_ACCESS_LINK_TEXT' }))
+        .exists(),
+      OptionGroup('Electronic access')
+        .find(Option({ value: 'ELECTRONIC_ACCESS_MATERIALS_SPECIFIED' }))
+        .exists(),
+      OptionGroup('Electronic access')
+        .find(Option({ value: 'ELECTRONIC_ACCESS_URL_PUBLIC_NOTE' }))
+        .exists(),
+      OptionGroup('Holdings location')
+        .find(Option({ value: 'PERMANENT_HOLDINGS_LOCATION' }))
+        .exists(),
+      OptionGroup('Holdings location')
+        .find(Option({ value: 'TEMPORARY_HOLDINGS_LOCATION' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Action note' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Binding' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Copy note' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Electronic bookplate' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Note' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Provenance' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Reproduction' }))
+        .exists(),
+      Option({ value: 'SUPPRESS_FROM_DISCOVERY' }).exists(),
+    ]);
+  },
 
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).click());
-    this.verifyPossibleActions(options);
+  fillLocation(location) {
+    cy.do([
+      locationSelection.open(),
+      locationSelection.filterOptions(location),
+      // need to wait until value will be applied
+      cy.wait(1000),
+      Keyboard.enter(),
+    ]);
+  },
+
+  verifyItemOptions() {
+    cy.expect([
+      Option({ value: 'ADMINISTRATIVE_NOTE' }).exists(),
+      Option({ value: 'CHECK_IN_NOTE' }).exists(),
+      Option({ value: 'CHECK_OUT_NOTE' }).exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Action note' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Binding' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Copy note' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Electronic bookplate' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Note' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Provenance' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Reproduction' }))
+        .exists(),
+      Option({ value: 'STATUS' }).exists(),
+      OptionGroup('Loan type')
+        .find(Option({ value: 'PERMANENT_LOAN_TYPE' }))
+        .exists(),
+      OptionGroup('Loan type')
+        .find(Option({ value: 'TEMPORARY_LOAN_TYPE' }))
+        .exists(),
+      OptionGroup('Location')
+        .find(Option({ value: 'TEMPORARY_LOCATION' }))
+        .exists(),
+      OptionGroup('Location')
+        .find(Option({ value: 'TEMPORARY_LOCATION' }))
+        .exists(),
+      Option({ value: 'SUPPRESS_FROM_DISCOVERY' }).exists(),
+    ]);
   },
 };

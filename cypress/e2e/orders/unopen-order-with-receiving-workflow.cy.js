@@ -1,18 +1,18 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import TopMenu from '../../support/fragments/topMenu';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import Orders from '../../support/fragments/orders/orders';
-import OrderLines from '../../support/fragments/orders/orderLines';
+import { ORDER_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import BasicOrderLine, { RECEIVING_WORKFLOWS } from '../../support/fragments/orders/basicOrderLine';
 import UnopenConfirmationModal from '../../support/fragments/orders/modals/unopenConfirmationModal';
-import Organizations from '../../support/fragments/organizations/organizations';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import Organizations from '../../support/fragments/organizations/organizations';
 import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { ORDER_STATUSES } from '../../support/constants';
 
 describe('Orders', () => {
   const testData = {
@@ -104,7 +104,7 @@ describe('Orders', () => {
 
     it(
       'C377037 Select "Delete Holdings and items" option when unopening an order with receiving workflow of "Synchronized order and receipt quantity" (thunderjet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -130,7 +130,7 @@ describe('Orders', () => {
 
     it(
       'C377040 Select "Delete items" option when unopening an order with receiving workflow of "Synchronized order and receipt quantity" (thunderjet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -200,7 +200,7 @@ describe('Orders', () => {
 
     it(
       'C377041 Select "Keep Holdings" option when unopening an order with receiving workflow of "Independent order and receipt quantity" (thunderjet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -236,7 +236,7 @@ describe('Orders', () => {
 
     it(
       'C377042 Select "Delete Holdings" option when unopening an order with receiving workflow of "Independent order and receipt quantity" (thunderjet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

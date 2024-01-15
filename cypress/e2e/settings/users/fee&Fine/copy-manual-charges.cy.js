@@ -1,9 +1,8 @@
-import { DevTeams, TestTypes } from '../../../../support/dictionary';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import ManualCharges from '../../../../support/fragments/settings/users/manualCharges';
-import UsersOwners from '../../../../support/fragments/settings/users/usersOwners';
 import { NOTICE_CATEGORIES } from '../../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import NoticeTemplates from '../../../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import ManualCharges from '../../../../support/fragments/settings/users/manualCharges';
+import UsersOwners from '../../../../support/fragments/settings/users/usersOwners';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
 
 describe('Users: Copy Manual charges', () => {
   const owners = [UsersOwners.getDefaultNewOwner(), UsersOwners.getDefaultNewOwner()];
@@ -39,7 +38,7 @@ describe('Users: Copy Manual charges', () => {
 
   it(
     'C444 Verify that you can copy manual charges of another fee/fine owner (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       // add manual charges to first owner
       ManualCharges.selectOwner(owners[0]);

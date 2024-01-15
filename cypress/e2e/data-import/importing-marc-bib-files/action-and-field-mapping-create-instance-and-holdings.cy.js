@@ -1,5 +1,4 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import {
   LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
@@ -7,6 +6,11 @@ import {
   INSTANCE_STATUS_TERM_NAMES,
   CALL_NUMBER_TYPE_NAMES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -89,23 +93,26 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     it(
       'C11105 Action and field mapping: Create an instance and holdings (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -221,7 +228,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileName);
+        Logs.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
         FileDetails.openJsonScreen(title);

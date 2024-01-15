@@ -1,18 +1,18 @@
-import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Requests from '../../support/fragments/requests/requests';
-import Users from '../../support/fragments/users/users';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import RequestsSearchResultsPane from '../../support/fragments/requests/requestsSearchResultsPane';
-import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import NewRequest from '../../support/fragments/requests/newRequest';
+import Requests from '../../support/fragments/requests/requests';
+import RequestsSearchResultsPane from '../../support/fragments/requests/requestsSearchResultsPane';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 
 describe('Circulation log', () => {
   let userData = {};
@@ -79,7 +79,7 @@ describe('Circulation log', () => {
 
   it(
     'C360553 Verify that user barcodes shown in request actions (Volaris) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       // Create new request with item barcode anf requester barcode
       NewRequest.openNewRequestPane();
@@ -88,7 +88,7 @@ describe('Circulation log', () => {
       NewRequest.enterRequesterBarcode(userData.barcode);
       NewRequest.verifyRequesterInformation(userData.username, userData.barcode);
       NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
-      NewRequest.choosepickupServicePoint(testData.servicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.servicePoint.name);
       NewRequest.saveRequestAndClose();
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       cy.wait('@createRequest').then((intercept) => {

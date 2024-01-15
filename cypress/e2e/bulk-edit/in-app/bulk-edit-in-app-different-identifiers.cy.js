@@ -1,14 +1,12 @@
 import permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import Users from '../../../support/fragments/users/users';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 let holdingsHRID;
@@ -71,7 +69,7 @@ describe('bulk-edit', () => {
     // has to pass after UIBULKED-321
     it(
       'C360119 Verify that different Holdings identifiers are supported for Bulk edit (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');

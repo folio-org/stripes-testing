@@ -1,5 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -74,7 +72,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353972 Verify that user can view data in Export Manager(Local and In-app approach) (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         ExportManagerSearchPane.waitLoading();
         ExportManagerSearchPane.searchByBulkEdit();

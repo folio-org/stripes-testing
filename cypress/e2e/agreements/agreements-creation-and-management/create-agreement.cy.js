@@ -1,12 +1,10 @@
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TopMenu from '../../../support/fragments/topMenu';
+import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import Agreements from '../../../support/fragments/agreements/agreements';
 import NewAgreement from '../../../support/fragments/agreements/newAgreement';
+import TopMenu from '../../../support/fragments/topMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 
-describe('Agreements', () => {
+describe('agreements', () => {
   describe('Agreements Creation and Management', () => {
     const defaultAgreement = { ...NewAgreement.getdefaultAgreement() };
     const calloutMessage = `Agreement created: ${defaultAgreement.name}`;
@@ -27,7 +25,7 @@ describe('Agreements', () => {
       );
     });
 
-    it('C757 Create an Agreement (erm)', { tags: [TestTypes.smoke, DevTeams.erm] }, () => {
+    it('C757 Create an Agreement (erm)', { tags: ['smoke', 'erm'] }, () => {
       Agreements.create(defaultAgreement);
       InteractorsTools.checkCalloutMessage(calloutMessage);
       Agreements.checkAgreementPresented(defaultAgreement.name);

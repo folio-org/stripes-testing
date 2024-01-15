@@ -1,16 +1,14 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../support/dictionary/devTeams';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FileManager from '../../../support/utils/fileManager';
-import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const item = {
@@ -48,7 +46,7 @@ describe('bulk-edit', () => {
 
     it(
       'C367922 Verify that User can update item status with "Intellectual item" (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
@@ -63,12 +61,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        BulkEditFiles.verifyMatchedResultFileContent(
-          changedRecordsFileName,
-          ['Intellectual item'],
-          'itemStatus',
-          true,
-        );
+        ExportFile.verifyFileIncludes(changedRecordsFileName, ['Intellectual item']);
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToItem();

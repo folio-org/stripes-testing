@@ -13,6 +13,7 @@ import {
   KeyValue,
   TextField,
   Form,
+  RadioButton,
 } from '../../../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -105,6 +106,13 @@ export default {
             }).choose(patronNoticePolicy.sendEvery.interval),
           ]);
         }
+      } else if (patronNoticePolicy.send === 'Upon/At' && patronNoticePolicy.realTimeOption) {
+        cy.do(
+          RadioButton({
+            name: `${patronNoticePolicy.noticeId}Notices[${index}].realTime`,
+            label: patronNoticePolicy.realTimeOption,
+          }).click(),
+        );
       }
     }
   },

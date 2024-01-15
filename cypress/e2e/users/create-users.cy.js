@@ -7,7 +7,7 @@ describe('Creating user', () => {
   const lastName = 'Test123' + generateItemBarcode();
 
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.getAdminToken();
   });
 

@@ -58,11 +58,12 @@ export default {
         return response.body;
       });
   },
-  deleteViaApi(budgetId) {
+  deleteViaApi(budgetId, failOnStatusCode) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `finance/budgets/${budgetId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     });
   },
   createBudgetWithFundLedgerAndFYViaApi({
