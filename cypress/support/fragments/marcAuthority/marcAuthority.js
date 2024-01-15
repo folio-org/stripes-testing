@@ -6,10 +6,10 @@ import {
   Modal,
   MultiColumnListHeader,
   PaneHeader,
+  TableRow,
   QuickMarcEditorRow,
   Section,
   TableCell,
-  TableRow,
   TextArea,
   TextField,
   including,
@@ -311,6 +311,14 @@ export default {
 
   verifySharedAuthorityDetailsHeading(heading) {
     cy.expect(detailsPaneHeader.has({ title: `Shared • ${heading}` }));
+  },
+
+  verifyFieldPositionInView(index, tag, content) {
+    cy.expect(
+      rootSection
+        .find(TableRow({ index, innerText: including(content) }))
+        .has({ innerText: including(`${tag}  `) }),
+    );
   },
 
   createAuthoritySource: (body) => {
