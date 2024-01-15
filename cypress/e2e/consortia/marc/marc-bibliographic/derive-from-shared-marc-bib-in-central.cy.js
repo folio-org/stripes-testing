@@ -1,35 +1,34 @@
-import Permissions from '../../support/dictionary/permissions';
-import Affiliations, { tenantNames } from '../../support/dictionary/affiliations';
-import Users from '../../support/fragments/users/users';
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
-import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
-import DataImport from '../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES } from '../../support/constants';
-import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../support/fragments/data_import/logs/logs';
-import getRandomPostfix from '../../support/utils/stringTools';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
+import Permissions from '../../../../support/dictionary/permissions';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Consortia', () => {
   const testData = {
     tag245: '245',
-    tag245DerivedContent: '$a C402769 The Riviera house (derived record) / $c Natasha Lester.',
+    tag245DerivedContent: '$a C402767 Variations (derived record) / $c Ludwig Van Beethoven.',
     tag245EditedContent:
-      '$a C402769 The Riviera house (derived and edited record) / $c Natasha Lester.',
-    instanceTitle: 'C402769 The Riviera house / Natasha Lester.',
-    instanceDerivedTitle: 'C402769 The Riviera house (derived record) / Natasha Lester.',
-    instanceEditedTitle: 'C402769 The Riviera house (derived and edited record) / Natasha Lester.',
-    deriveLocalPaneheaderText: 'Derive a new local MARC bib record',
-    sourceViewLocalText: 'Local MARC bibliographic record',
+      '$a C402767 Variations (derived and edited record) / $c Ludwig Van Beethoven.',
+    instanceTitle: 'C402767 Variations / Ludwig Van Beethoven.',
+    instanceDerivedTitle: 'C402767 Variations (derived record) / Ludwig Van Beethoven.',
+    instanceEditedTitle: 'C402767 Variations (derived and edited record) / Ludwig Van Beethoven.',
+    deriveSharedPaneheaderText: 'Derive a new shared MARC bib record',
+    sourceViewSharedText: 'Shared MARC bibliographic record',
   };
 
   const marcFile = {
-    marc: 'marcBibFileC402769.mrc',
-    fileNameImported: `testMarcFileC402769.${getRandomPostfix()}.mrc`,
+    marc: 'marcBibFileC402767.mrc',
+    fileNameImported: `testMarcFileC402767.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
   };
 
@@ -42,26 +41,16 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Consortia', () => {
     cy.createTempUser([
       Permissions.uiInventoryViewInstances.gui,
       Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
+      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
     ])
       .then((userProperties) => {
         users.userProperties = userProperties;
-      })
-      .then(() => {
+
         cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
-        cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
         cy.setTenant(Affiliations.College);
         cy.assignPermissionsToExistingUser(users.userProperties.userId, [
           Permissions.uiInventoryViewInstances.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
-        ]);
-      })
-      .then(() => {
-        cy.setTenant(Affiliations.University);
-        cy.assignPermissionsToExistingUser(users.userProperties.userId, [
-          Permissions.uiInventoryViewInstances.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
         ]);
       })
       .then(() => {
@@ -85,9 +74,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Consortia', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         }).then(() => {
-          ConsortiumManager.switchActiveAffiliation(tenantNames.university);
-          InventoryInstances.waitContentLoading();
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         });
       });
   });
@@ -102,22 +89,31 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Consortia', () => {
   });
 
   it(
-    'C402769 Derive new Local MARC bib record from Shared Instance in Member tenant (consortia) (spitfire)',
-    { tags: ['criticalPath', 'spitfire'] },
+    'C402767 Derive new Shared MARC bib record from Shared Instance in Central tenant (consortia) (spitfire)',
+    { tags: ['criticalPathECS', 'spitfire'] },
     () => {
       cy.visit(`${TopMenu.inventoryPath}/view/${createdInstanceIDs[0]}`);
       InventoryInstance.waitLoading();
       InventoryInstance.checkPresentedText(testData.instanceTitle);
 
       InventoryInstance.deriveNewMarcBib();
-      QuickMarcEditor.checkPaneheaderContains(testData.deriveLocalPaneheaderText);
+      QuickMarcEditor.checkPaneheaderContains(testData.deriveSharedPaneheaderText);
       QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245DerivedContent);
       QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndCloseDerive();
-      InventoryInstance.checkSharedTextInDetailView(false);
+      InventoryInstance.checkSharedTextInDetailView();
       InventoryInstance.checkExpectedMARCSource();
       InventoryInstance.checkPresentedText(testData.instanceDerivedTitle);
+      InventoryInstance.verifyLastUpdatedSource(
+        users.userProperties.firstName,
+        users.userProperties.lastName,
+      );
+      InventoryInstance.verifyLastUpdatedDate();
+      InventoryInstance.verifyRecordCreatedSource(
+        users.userProperties.firstName,
+        users.userProperties.lastName,
+      );
       InventoryInstance.getId().then((id) => {
         createdInstanceIDs.push(id);
 
@@ -127,27 +123,31 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Consortia', () => {
         QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245EditedContent);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
-        InventoryInstance.checkSharedTextInDetailView(false);
+        InventoryInstance.checkSharedTextInDetailView();
         InventoryInstance.checkExpectedMARCSource();
         InventoryInstance.checkPresentedText(testData.instanceEditedTitle);
-
-        InventoryInstance.viewSource();
-        InventoryViewSource.contains(testData.tag245EditedContent);
-        InventoryViewSource.contains(testData.sourceViewLocalText);
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.college);
         InventoryInstances.waitContentLoading();
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 
         InventoryInstance.searchByTitle(createdInstanceIDs[1]);
-        InventorySearchAndFilter.verifyNoRecordsFound();
+        InventoryInstances.selectInstance();
+        InventoryInstance.checkPresentedText(testData.instanceEditedTitle);
+        InventoryInstance.checkExpectedMARCSource();
+        InventoryInstance.verifyLastUpdatedSource(
+          users.userProperties.firstName,
+          users.userProperties.lastName,
+        );
+        InventoryInstance.verifyLastUpdatedDate();
+        InventoryInstance.verifyRecordCreatedSource(
+          users.userProperties.firstName,
+          users.userProperties.lastName,
+        );
 
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central);
-        InventoryInstances.waitContentLoading();
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-
-        InventoryInstance.searchByTitle(createdInstanceIDs[1]);
-        InventorySearchAndFilter.verifyNoRecordsFound();
+        InventoryInstance.viewSource();
+        InventoryViewSource.contains(testData.tag245EditedContent);
+        InventoryViewSource.contains(testData.sourceViewSharedText);
       });
     },
   );
