@@ -7,6 +7,7 @@ import {
   Modal,
   MultiColumnList,
   MultiColumnListCell,
+  SelectionOption,
   MultiColumnListRow,
   MultiSelect,
   Pane,
@@ -123,6 +124,36 @@ export default {
     cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
   },
 
+  assignAllPermissionsToTenant(tenant, permission) {
+    cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
+    cy.wait(5000);
+    cy.do([
+      permissionsAccordion.clickHeader(),
+      Button({ id: 'user-assigned-affiliations-select' }).click(),
+      SelectionOption(tenant).click(),
+      addPermissionsButton.click(),
+    ]);
+
+    cy.do(userSearch.fillIn(permission));
+    cy.expect(userSearch.is({ value: permission }));
+    // wait is needed to avoid so fast robot clicks
+    cy.wait(1000);
+    cy.do(Button('Search').click());
+    cy.do(
+      Modal({ id: 'permissions-modal' })
+        .find(Checkbox({ name: 'selected-selectAll' }))
+        .click(),
+    );
+    cy.wait(2000);
+    cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
+  },
+
+  verifyPermissionDoesNotExist(permission) {
+    cy.do([addPermissionsButton.click(), userSearch.fillIn(permission)]);
+    cy.expect(userSearch.is({ value: permission }));
+    // wait is needed to avoid so fast robot clicks
+    cy.wait(1000);
+    cy.do(Button('Search').click());
   verifyPermissionDoesNotExistInSelectPermissions(permission) {
     this.searchForPermission(permission);
     cy.expect(selectPermissionsModal.find(HTML('The list contains no items')).exists());
