@@ -2076,4 +2076,12 @@ export default {
       cy.visit(link);
     });
   },
+
+  checkSourceValue(firstName, lastName) {
+    cy.expect(
+      PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' })
+        .find(HTML(including(`Source: ${lastName}, ${firstName}`)))
+        .exists(),
+    );
+  },
 };
