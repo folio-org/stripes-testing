@@ -14,7 +14,7 @@ Cypress.Commands.add(
     body,
     isDefaultSearchParamsRequired = true,
     contentTypeHeader = 'application/json',
-    failOnStatusCode = false,
+    failOnStatusCode = true,
   }) => {
     const initialParams = new URLSearchParams({ ...searchParams });
     const cypressEnvPath = `${Cypress.env('OKAPI_HOST')}/${path}`;

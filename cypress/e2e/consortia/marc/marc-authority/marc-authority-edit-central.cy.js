@@ -1,16 +1,16 @@
-import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
-import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
-import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
-import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
+import { Permissions } from '../../../../support/dictionary';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../../support/fragments/data_import/logs/logs';
+import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
