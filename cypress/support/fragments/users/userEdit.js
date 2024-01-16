@@ -17,6 +17,7 @@ import {
   RadioButton,
   SearchField,
   MultiColumnListCell,
+  SelectionOption,
 } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
@@ -86,6 +87,30 @@ export default {
       cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
       cy.wait(2000);
     });
+    cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
+  },
+
+  assignAllPermissionsToTenant(tenant, permission) {
+    cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
+    cy.wait(5000);
+    cy.do([
+      permissionsAccordion.clickHeader(),
+      Button({ id: 'user-assigned-affiliations-select' }).click(),
+      SelectionOption(tenant).click(),
+      addPermissionsButton.click(),
+    ]);
+
+    cy.do(userSearch.fillIn(permission));
+    cy.expect(userSearch.is({ value: permission }));
+    // wait is needed to avoid so fast robot clicks
+    cy.wait(1000);
+    cy.do(Button('Search').click());
+    cy.do(
+      Modal({ id: 'permissions-modal' })
+        .find(Checkbox({ name: 'selected-selectAll' }))
+        .click(),
+    );
+    cy.wait(2000);
     cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
   },
 

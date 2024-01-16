@@ -3,6 +3,9 @@ import Affiliations, { tenantNames } from '../../../support/dictionary/affiliati
 import Users from '../../../support/fragments/users/users';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('Consortia -> Consortium manager', () => {
   let user;
@@ -16,6 +19,10 @@ describe('Consortia -> Consortium manager', () => {
       })
       .then(() => {
         cy.assignAffiliationToUser(Affiliations.College, user.userId);
+        cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+        UsersSearchPane.searchByUsername(user.username);
+        UsersSearchPane.openUser(user.username);
+        UserEdit.assignAllPermissionsToTenant(tenantNames.college, 'Settings');
         cy.setTenant(Affiliations.College);
         cy.assignPermissionsToExistingUser(user.userId, [
           Permissions.consortiaSettingsSettingsMembershipEdit.gui,
@@ -35,7 +42,7 @@ describe('Consortia -> Consortium manager', () => {
   });
 
   it(
-    'C386869: "Consortium manager" option is displayed in "Settings" only for Central Tenant (consortia)(thunderjet)',
+    'C386869: "Consortium manager" option is displayed in "Settings" only for Central Tenant (consortia) (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       ConsortiumManager.varifyConsortiumManagerOnPage();
