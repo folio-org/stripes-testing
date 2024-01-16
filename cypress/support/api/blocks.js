@@ -19,6 +19,7 @@ Cypress.Commands.add('getBlockApi', (userId) => {
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
     Cypress.env('blockIds', body.manualblocks);
+    return body.manualblocks;
   });
 });
 

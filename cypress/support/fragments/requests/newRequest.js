@@ -22,6 +22,8 @@ import dateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import SelectUser from './selectUser';
 
+const rootSection = Pane({ title: 'New request' });
+const itemInformationAccordion = Accordion('Item information');
 const actionsButton = Button('Actions');
 const newRequestButton = Button('New');
 const itemBarcodeInput = TextField({ name: 'item.barcode' });
@@ -30,11 +32,13 @@ const requesterBarcodeInput = TextField({ name: 'requester.barcode' });
 const enterItemBarcodeButton = Button({ id: 'clickable-select-item' });
 const enterRequesterBarcodeButton = Button({ id: 'clickable-select-requester' });
 const saveAndCloseButton = Button('Save & close');
+const cancelButton = Button('Cancel');
 const selectServicePoint = Select({ name: 'pickupServicePointId' });
 const selectRequestType = Select({ name: 'requestType' });
 const titleLevelRequest = Checkbox({ name: 'createTitleLevelRequest' });
 const selectItemPane = Pane({ id: 'items-dialog-instance-items-list' });
 const requestInfoSection = Section({ id: 'new-requester-info' });
+const itemInfoSection = Section({ id: 'new-item-info' });
 const title = 'Title';
 const tlRequest = 'Title level requests';
 const contributors = 'Contributor';
@@ -70,7 +74,7 @@ export default {
       cy.do(titleLevelRequest.click());
       cy.do(instanceHridInput.fillIn(newRequest.instanceHRID));
       cy.intercept('/inventory/instances?*').as('getLoans');
-      cy.do(Section({ id: 'new-item-info' }).find(Button('Enter')).click());
+      cy.do(itemInfoSection.find(Button('Enter')).click());
     } else {
       cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
       cy.intercept('/circulation/loans?*').as('getLoans');
@@ -85,7 +89,7 @@ export default {
     cy.do(selectRequestType.choose(newRequest.requestType));
   },
 
-  choosepickupServicePoint(pickupServicePoint) {
+  choosePickupServicePoint(pickupServicePoint) {
     cy.do(selectServicePoint.choose(pickupServicePoint));
     cy.expect(HTML(including(pickupServicePoint)).exists());
   },
@@ -96,7 +100,7 @@ export default {
   createNewRequest(newRequest) {
     openNewRequestPane();
     this.fillRequiredFields(newRequest);
-    this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    this.choosePickupServicePoint(newRequest.pickupServicePoint);
     this.saveRequestAndClose();
     this.waitLoading();
   },
@@ -122,7 +126,7 @@ export default {
     cy.wait('@getLoans');
     // need to wait until instanceId is uploaded
     cy.wait(2500);
-    this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    this.choosePickupServicePoint(newRequest.pickupServicePoint);
     // need to wait for loading dropdown options
     cy.wait(1000);
     this.chooseRequestType(REQUEST_TYPES.PAGE);
@@ -137,17 +141,17 @@ export default {
   },
 
   waitLoadingNewRequestPage(TLR = false) {
-    cy.expect(Pane({ title: 'New request' }).exists());
+    cy.expect(rootSection.exists());
     if (TLR) cy.expect(titleLevelRequest.exists());
     cy.expect([
-      Accordion('Item information').exists(),
+      itemInformationAccordion.exists(),
       Accordion('Request information').exists(),
       Accordion('Requester information').exists(),
     ]);
   },
 
   waitLoadingNewTitleRequestPage(TLR = false) {
-    cy.expect(Pane({ title: 'New request' }).exists());
+    cy.expect(rootSection.exists());
     if (TLR) cy.expect(titleLevelRequest.exists());
     cy.expect([
       Accordion('Title information').exists(),
@@ -163,7 +167,7 @@ export default {
   enterHridInfo(hrid) {
     cy.do(titleLevelRequest.click());
     cy.do(instanceHridInput.fillIn(hrid));
-    cy.do(Section({ id: 'new-item-info' }).find(Button('Enter')).click());
+    cy.do(itemInfoSection.find(Button('Enter')).click());
   },
 
   verifyErrorMessage(message) {
@@ -172,9 +176,11 @@ export default {
 
   verifyTitleLevelRequestsCheckbox(isChecked = false) {
     cy.expect(titleLevelRequest.exists());
-    if (isChecked) {
-      cy.expect(titleLevelRequest.has({ checked: true }));
-    } else cy.expect(titleLevelRequest.has({ checked: false }));
+    cy.expect(titleLevelRequest.has({ checked: isChecked }));
+  },
+
+  verifyErrorMessageForRequestTypeField: (errorMessage) => {
+    cy.expect(selectRequestType.has({ error: errorMessage }));
   },
 
   verifyItemInformation: (allContentToCheck) => {
@@ -247,7 +253,7 @@ export default {
     cy.do(enterRequesterBarcodeButton.click());
     cy.expect(selectServicePoint.exists());
     cy.wait('@getUsers');
-    this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    this.choosePickupServicePoint(newRequest.pickupServicePoint);
   },
 
   enterRequesterBarcode: (requesterBarcode) => {
@@ -281,13 +287,22 @@ export default {
     this.chooseRequestType(requestType);
     cy.expect(selectServicePoint.exists());
     cy.wait('@getUsers');
-    this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    this.choosePickupServicePoint(newRequest.pickupServicePoint);
   },
-
+  checkPatronblockedModal(reason) {
+    cy.expect(
+      Modal(' Patron blocked from requesting').has({
+        message: including(reason),
+      }),
+    );
+  },
+  openBlockDetails() {
+    cy.do(Button('View block details').click());
+  },
   checkRequestIsNotAllowedModal() {
     cy.expect(
       Modal('Request not allowed').has({
-        message: 'Not allowed to move title level page request to the same item',
+        message: 'This requester already has an open request for this item',
       }),
     );
   },
@@ -316,5 +331,30 @@ export default {
       KeyValue('Effective location').has({ value: location }),
       KeyValue('Item status').has({ value: itemStatus }),
     ]);
+  },
+  checkTitleInformationSection(data) {
+    InteractorsTools.checkKeyValue(itemInfoSection, 'Title', data.instanceTitle);
+    InteractorsTools.checkKeyValue(itemInfoSection, 'Title level requests', data.titleLevelRequest);
+  },
+  checkTLRRequestsFields(instanceHrid) {
+    cy.expect([
+      rootSection.exists(),
+      TextField({ name: 'instance.hrid' }).has({ value: instanceHrid }),
+      itemInformationAccordion.absent(),
+      cancelButton.has({ disabled: false, visible: true }),
+      saveAndCloseButton.has({ disabled: false, visible: true }),
+    ]);
+  },
+  checkRequestsFields() {
+    cy.expect([
+      rootSection.exists(),
+      itemInformationAccordion.exists(),
+      cancelButton.has({ disabled: false, visible: true }),
+      saveAndCloseButton.has({ disabled: true, visible: true }),
+    ]);
+  },
+
+  openTitleLookUp() {
+    cy.do(rootSection.find(Button({ id: 'find-instance-trigger' })).click());
   },
 };

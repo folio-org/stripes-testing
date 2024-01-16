@@ -1,12 +1,11 @@
 import uuid from 'uuid';
-import TopMenu from '../../support/fragments/topMenu';
-import Requests from '../../support/fragments/requests/requests';
-import getRandomPostfix from '../../support/utils/stringTools';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import editRequest from '../../support/fragments/requests/edit-request';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import editRequest from '../../support/fragments/requests/edit-request';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
-import { TestTypes, DevTeams } from '../../support/dictionary';
+import Requests from '../../support/fragments/requests/requests';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('ui-requests: Filter requests by pickup service point', () => {
   let requestData;
@@ -49,7 +48,7 @@ describe('ui-requests: Filter requests by pickup service point', () => {
 
   it(
     'C15178 Filter requests by pickup service point (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.filterRequestsByServicePoints(servicePointName);

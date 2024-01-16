@@ -1,11 +1,11 @@
-import uuid from 'uuid';
 import moment from 'moment';
+import uuid from 'uuid';
 
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import { INSTANCE_SOURCE_NAMES, LOCATION_NAMES } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
 describe('inventory', () => {
@@ -38,7 +38,7 @@ describe('inventory', () => {
 
     it(
       'C3505 Create instance, holdings, and item records for a print resource which has not been acquired through Orders (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // Click on "New" in the "Actions" menu
         const InventoryNewInstance = InventoryInstances.addNewInventory();

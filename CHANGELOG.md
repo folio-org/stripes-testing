@@ -4,6 +4,7 @@
 
 - Updated `<AdvancedSearch>` interactor for search match support. Updated e2e tests. Refs UITEST-111.
 - Added support for `shiftKey` in keyboard presses. Refs UITEST-116.
+- Added support for clear icon in `<TextArea>` interactor. Refs UITEST-118.
 
 ## [4.6.0](https://github.com/folio-org/stripes-testing/tree/v4.6.0) (2023-10-11)
 

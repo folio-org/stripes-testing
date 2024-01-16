@@ -1,7 +1,7 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import Users from '../../support/fragments/users/users';
-import SettingsMenu from '../../support/fragments/settingsMenu';
+import { Permissions } from '../../support/dictionary';
 import OaiPmh, { SECTIONS } from '../../support/fragments/oai-pmh/oaipmhPane';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import Users from '../../support/fragments/users/users';
 
 describe('OAI-PMH', () => {
   const testData = {
@@ -25,7 +25,7 @@ describe('OAI-PMH', () => {
 
   it(
     'C410816 Settings (OAI-PMH): HTML page title format (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       // Open "Settings" -> "OAI-PMH"
       OaiPmh.checkSectionListItems({ canViewLogs: true });
