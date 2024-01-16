@@ -20,6 +20,7 @@ const membersPane = Pane('Members');
 const searchButton = Button('Search');
 const resetAll = Button('Reset all');
 const saveAndClose = Button('Save & close');
+const selectAllMembersCheckbox = Checkbox({ ariaLabel: 'Select all members' });
 
 export const settingsItems = {
   users: 'Users',
@@ -62,7 +63,7 @@ export default {
       selectMembersModal.find(saveAndClose).has({ disabled: false }),
     ]);
 
-    if (allMembersSelected) cy.expect(membersPane.find(Checkbox({ ariaLabel: 'Select all members' })).has({ checked: true }));
+    if (allMembersSelected) cy.expect(membersPane.find(selectAllMembersCheckbox).has({ checked: true }));
   },
 
   selectAllMembers() {
@@ -72,7 +73,8 @@ export default {
       .invoke('is', ':checked')
       .then((checked) => {
         if (!checked) {
-          cy.do(selectMembersModal.find(Checkbox({ ariaLabel: 'Select all members' })).click());
+          cy.do(selectMembersModal.find(selectAllMembersCheckbox).click());
+          cy.expect(selectMembersModal.find(selectAllMembersCheckbox).has({ checked: true }));
         }
       });
     cy.wait(2000);
