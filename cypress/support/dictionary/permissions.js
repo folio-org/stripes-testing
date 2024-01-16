@@ -1003,10 +1003,10 @@ export default {
   // Departments
   createEditViewDepartments: {
     internal: 'ui-users.settings.departments.create.edit.view',
-    gui: 'Settings (Users): Can create, edit, and view departments'
+    gui: 'Settings (Users): Can create, edit, and view departments',
   },
   departmentsAll: {
     internal: 'ui-users.settings.departments.all',
-    gui: 'Settings (Users): Can create, edit, view, and delete departments'
+    gui: 'Settings (Users): Can create, edit, view, and delete departments',
   },
 };

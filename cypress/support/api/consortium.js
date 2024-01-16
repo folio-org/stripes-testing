@@ -22,6 +22,7 @@ Cypress.Commands.add('assignAffiliationToUser', (affiliationTenantId, targetUser
         tenantId: affiliationTenantId,
         userId: targetUserId,
       },
+      isDefaultSearchParamsRequired: false,
     });
   });
 });

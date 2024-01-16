@@ -20,6 +20,18 @@ export default {
     cy.expect(Section({ id: 'app-settings-nav-pane' }).exists());
   },
 
+  varifyConsortiumManagerOnPage() {
+    cy.expect(
+      Section({ id: 'settings-nav-pane' }).find(NavListItem('Consortium manager')).exists(),
+    );
+  },
+
+  varifyConsortiumManagerIsAbsent() {
+    cy.expect(
+      Section({ id: 'settings-nav-pane' }).find(NavListItem('Consortium manager')).absent(),
+    );
+  },
+
   selectMembership() {
     cy.do(NavListItem('Membership').click());
   },
@@ -72,6 +84,7 @@ export default {
       Button({ id: 'save-active-affiliation' }).click(),
     ]);
     cy.wait(8000);
+    cy.expect(myProfileButton.find(HTML({ text: including(tenantName) })).exists());
   },
 
   switchActiveAffiliationIsAbsent() {
