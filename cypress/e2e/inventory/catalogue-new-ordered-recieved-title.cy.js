@@ -1,27 +1,27 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
 import Helper from '../../support/fragments/finance/financeHelper';
-import Orders from '../../support/fragments/orders/orders';
-import InventoryInteractionsDefaults from '../../support/fragments/settings/orders/inventoryInteractionsDefaults';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import InteractorsTools from '../../support/utils/interactorsTools';
-import Receiving from '../../support/fragments/receiving/receiving';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
-import ItemRecordEdit from '../../support/fragments/inventory/item/itemRecordEdit';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
-import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
-import Users from '../../support/fragments/users/users';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryItems from '../../support/fragments/inventory/item/inventoryItems';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import ItemRecordEdit from '../../support/fragments/inventory/item/itemRecordEdit';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import Orders from '../../support/fragments/orders/orders';
+import Receiving from '../../support/fragments/receiving/receiving';
+import InventoryInteractionsDefaults from '../../support/fragments/settings/orders/inventoryInteractionsDefaults';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
+import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('inventory', () => {
   describe('Cataloging -> Creating new records', () => {
@@ -130,30 +130,31 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((res) => {
-        Orders.deleteOrderViaApi(res[0].id);
+      cy.getAdminToken().then(() => {
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((res) => {
+          Orders.deleteOrderViaApi(res[0].id);
+        });
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcode);
+        UserEdit.changeServicePointPreferenceViaApi(userId, [
+          firstServicePoint.id,
+          secondServicePoint.id,
+        ]).then(() => {
+          ServicePoints.deleteViaApi(firstServicePoint.id);
+          ServicePoints.deleteViaApi(secondServicePoint.id);
+          Users.deleteViaApi(userId);
+        });
+        NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+          effectiveLocation.institutionId,
+          effectiveLocation.campusId,
+          effectiveLocation.libraryId,
+          effectiveLocation.id,
+        );
       });
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcode);
-      UserEdit.changeServicePointPreferenceViaApi(userId, [
-        firstServicePoint.id,
-        secondServicePoint.id,
-      ]).then(() => {
-        ServicePoints.deleteViaApi(firstServicePoint.id);
-        ServicePoints.deleteViaApi(secondServicePoint.id);
-        Users.deleteViaApi(userId);
-      });
-      NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-        effectiveLocation.institutionId,
-        effectiveLocation.campusId,
-        effectiveLocation.libraryId,
-        effectiveLocation.id,
-      );
     });
 
     it(
       'C3506 Catalog a new title which has been ordered and received in Orders (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         InventoryInstances.selectInstance();
         InventoryInstances.verifyInstanceDetailsView();

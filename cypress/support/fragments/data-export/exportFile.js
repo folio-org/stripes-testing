@@ -35,31 +35,22 @@ const downloadExportedMarcFile = (fileName) => {
   const queryString = new URLSearchParams({ limit, query });
 
   // get file id and job id
-  cy.request({
+  cy.okapiRequest({
     method: 'GET',
-    url: `${Cypress.env('OKAPI_HOST')}/data-export/job-executions?${queryString}`,
-    headers: {
-      'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
-      'x-okapi-token': Cypress.env('token'),
-    },
+    path: `data-export/job-executions?${queryString}`,
+    isDefaultSearchParamsRequired: false,
   })
     .then(({ body: { jobExecutions } }) => {
       const {
         id,
         exportedFiles: [{ fileId }],
       } = jobExecutions[0];
-      const downloadUrl = `${Cypress.env(
-        'OKAPI_HOST',
-      )}/data-export/job-executions/${id}/download/${fileId}`;
 
       // get the link to download exported file
-      return cy.request({
+      return cy.okapiRequest({
         method: 'GET',
-        url: downloadUrl,
-        headers: {
-          'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
-          'x-okapi-token': Cypress.env('token'),
-        },
+        path: `data-export/job-executions/${id}/download/${fileId}`,
+        isDefaultSearchParamsRequired: false,
       });
     })
     .then(({ body: { link } }) => {
@@ -139,12 +130,12 @@ export default {
             '(status==("COMPLETED" OR "COMPLETED_WITH_ERRORS" OR "FAIL")) sortBy completedDate/sort.descending',
         },
       })
-      .then((name) => {
-        return name.body.jobExecutions[0].exportedFiles[0].fileName;
+      .then((response) => {
+        return response.body.jobExecutions[0].exportedFiles[0].fileName;
       });
   },
 
-  verifyFileIncludes(fileName, content) {
+  verifyFileIncludes(fileName, content, include = true) {
     // Wait until file has been downloaded
     recurse(
       () => FileManager.findDownloadedFilesByMask(fileName),
@@ -154,7 +145,17 @@ export default {
 
       FileManager.readFile(lastDownloadedFilename).then((actualContent) => {
         content.forEach((element) => {
-          expect(actualContent).to.include(element);
+          if (include) {
+            if (Array.isArray(element)) {
+              // Check for nested array
+              element.forEach((nestedElement) => {
+                expect(actualContent).to.include(nestedElement);
+              });
+            } else {
+              // Check for regular element
+              expect(actualContent).to.include(element);
+            }
+          } else expect(actualContent).to.not.include(element);
         });
       });
     });

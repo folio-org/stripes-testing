@@ -1,9 +1,7 @@
-import Users from '../../../support/fragments/users/users';
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import testTypes from '../../../support/dictionary/testTypes';
 import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 let user;
@@ -45,7 +43,7 @@ describe('Users (Consortia)', () => {
 
   it(
     'C418647 Creating new patron user with empty "Username" field (thunderjet) (consortia)',
-    { tags: [testTypes.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPathECS', 'thunderjet'] },
     () => {
       Users.createViaUiIncomplete(testUser).then((id) => {
         testUser.id = id;

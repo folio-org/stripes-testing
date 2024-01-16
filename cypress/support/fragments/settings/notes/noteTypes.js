@@ -14,13 +14,14 @@ import getRandomPostfix from '../../../utils/stringTools';
 
 const noteTypeRootPane = Pane({ id: 'controlled-vocab-pane' });
 const newNoteTypeButton = Button({ id: 'clickable-add-noteTypes', disabled: false });
-const cancelNoteTypeCreationButton = Button({ id: 'clickable-cancel-noteTypes-0' });
-const saveNoteTypeButton = Button({ id: 'clickable-save-noteTypes-0' });
+const cancelNoteTypeCreationButton = Button({ id: including('clickable-cancel-noteTypes-') });
+const saveNoteTypeButton = Button({ id: including('clickable-save-noteTypes-') });
 const editIcon = Button({ id: including('clickable-edit-noteTypes-') });
 const deleteIcon = Button({ id: including('clickable-delete-noteTypes-') });
 const noteTypeInput = TextField();
 const noteTypePane = PaneSet({ id: 'noteTypes' });
 const rowWithText = (noteType) => MultiColumnListRow({ content: including(noteType) });
+const newButton = Button({ id: 'clickable-add-noteTypes' });
 
 export default {
   createNoteTypeViaApi({
@@ -91,14 +92,14 @@ export default {
   },
 
   fillInNoteType: (noteTypeName) => {
-    cy.do(noteTypeInput.fillIn(noteTypeName));
+    cy.do([noteTypeInput.focus(), noteTypeInput.fillIn(noteTypeName)]);
     cy.expect(saveNoteTypeButton.has({ disabled: false }));
   },
 
   saveNoteType(noteType) {
     cy.do(saveNoteTypeButton.click());
     // need to wait for note type to appear after creation
-    cy.wait(2000);
+    cy.wait(3000);
     this.checkNoteTypeIsDisplayed(noteType);
   },
 
@@ -110,7 +111,10 @@ export default {
     ConfirmDelete.confirmDelete();
   },
 
-  clickEditNoteType: (noteType) => cy.do(rowWithText(noteType).find(editIcon).click()),
+  clickEditNoteType: (noteType) => {
+    cy.expect(rowWithText(noteType).exists());
+    cy.do(rowWithText(noteType).find(editIcon).click());
+  },
 
   clickDeleteNoteType: (noteType) => cy.do(rowWithText(noteType).find(deleteIcon).click()),
 
@@ -131,5 +135,19 @@ export default {
       rowWithText(noteType).find(editIcon).exists(),
       rowWithText(noteType).find(deleteIcon).absent(),
     ]);
+  },
+
+  checkNewButtonState(isEnabled = true) {
+    cy.expect(newButton.has({ disabled: !isEnabled }));
+  },
+
+  getNoteTypeIdViaAPI(noteTypeName) {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.GET,
+        path: `note-types?query=(name="${noteTypeName}")`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.noteTypes[0].id);
   },
 };

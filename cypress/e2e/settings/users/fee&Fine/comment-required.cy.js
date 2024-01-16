@@ -1,6 +1,5 @@
-import { DevTeams, TestTypes } from '../../../../support/dictionary';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import CommentRequired from '../../../../support/fragments/settings/users/comment-required';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import InteractorsTools from '../../../../support/utils/interactorsTools';
 
 describe('Settings Users', () => {
@@ -21,7 +20,7 @@ describe('Settings Users', () => {
 
   it(
     'C448 Verify that you can turn on/turn off comment required flags (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       CommentRequired.verifySaveButtonDisabled();
       CommentRequired.verifyRequireCommentForPaidFeeOptions();

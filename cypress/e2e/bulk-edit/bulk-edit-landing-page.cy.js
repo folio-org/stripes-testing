@@ -1,8 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
-import testTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../support/dictionary/devTeams';
 import Users from '../../support/fragments/users/users';
 
 let user;
@@ -40,13 +38,13 @@ describe('bulk-edit', () => {
 
   it(
     'C350929 Verify Bulk Edit app - landing page (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
-      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs');
+      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs', 'Query');
       BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
-      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query');
 
       // verify panes
+      BulkEditSearchPane.verifyRecordTypesSortedAlphabetically(false);
       BulkEditSearchPane.verifyPanesBeforeImport();
       BulkEditSearchPane.verifyBulkEditPaneItems();
       BulkEditSearchPane.verifySetCriteriaPaneItems();
@@ -70,6 +68,9 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyDragNDropItemAccessionNumberArea();
       BulkEditSearchPane.verifyDragNDropItemHoldingsUUIDsArea();
 
+      BulkEditSearchPane.verifyInstanceIdentifiers();
+      ['Instance UUIDs', 'Instance HRIDs', 'ISBN', 'ISSN'].forEach((identifier) => BulkEditSearchPane.verifyDragNDropInstanceIdentifierArea(identifier));
+
       BulkEditSearchPane.verifyHoldingIdentifiers();
       BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
       BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
@@ -78,7 +79,10 @@ describe('bulk-edit', () => {
 
       // verify logs items
       BulkEditSearchPane.openLogsSearch();
+      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs', 'Query');
+      BulkEditSearchPane.verifySpecificTabHighlighted('Logs');
       BulkEditSearchPane.verifyLogsPane();
+      BulkEditSearchPane.verifyRecordTypesSortedAlphabetically();
     },
   );
 });

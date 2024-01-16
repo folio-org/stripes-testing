@@ -1,33 +1,31 @@
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
 import AppPaths from '../../support/fragments/app-paths';
-import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
-import LoansPage from '../../support/fragments/loans/loansPage';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicyApi from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
-import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
+import LoansPage from '../../support/fragments/loans/loansPage';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 import NewNoticePolicyTemplate, {
   createNoticeTemplate,
 } from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import Checkout from '../../support/fragments/checkout/checkout';
+import NoticePolicyApi from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
-import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Triggers: Check Out, Loan due date change, Check in', () => {
   const noticeTemplates = [
@@ -238,7 +236,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
 
   it(
     'C347862 Check out + Loan due date change + Check in triggers (volaris)',
-    { tags: [TestTypes.smoke, devTeams.volaris] },
+    { tags: ['smoke', 'volaris'] },
     () => {
       noticeTemplates.forEach((template) => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(template);

@@ -1,22 +1,26 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
+import { calloutTypes } from '../../../../interactors';
+import { TARGET_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { TARGET_PROFILE_NAMES } from '../../../support/constants';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 
-describe('data-import', () => {
+describe('data-import', { retries: 3 }, () => {
   describe('Importing MARC Bib files', () => {
-    let user = {};
+    let user;
     const OCLCAuthentication = '100481406/PAOLF';
-    const fileName = `C356824autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C356824autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const oclcForImport = '912958093';
     const oclcForUpdating = '698820890';
@@ -51,15 +55,15 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
-      Users.deleteViaApi(user.userId);
-      // TODO delete all instances
+      cy.getAdminToken().then(() => {
+        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+        Users.deleteViaApi(user.userId);
+      });
     });
 
     it(
       'C356824 Inventory single record import is not delayed when large data import jobs are running (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();
@@ -74,7 +78,7 @@ describe('data-import', () => {
         DataImport.checkIsLandingPageOpened();
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile('oneThousandMarcBib.mrc', fileName);
+        DataImport.uploadFile('marcBibFileForC356824.mrc', fileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
@@ -82,22 +86,35 @@ describe('data-import', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.importWithOclc(oclcForImport);
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openViewAllLogs();
+        LogsViewAll.openUserIdAccordion();
+        LogsViewAll.filterJobsByUser(`${user.firstName} ${user.lastName}`);
+        LogsViewAll.openFileDetails('No file name');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
+        InventoryInstance.waitLoading();
         InventoryInstance.startOverlaySourceBibRecord();
         InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
-        InventoryInstance.importWithOclc(oclcForUpdating);
-        InventoryInstance.checkCalloutMessage(
+        InventoryInstance.overlayWithOclc(oclcForUpdating);
+        InteractorsTools.checkCalloutMessage(
           `Record ${oclcForUpdating} updated. Results may take a few moments to become visible in Inventory`,
+          calloutTypes.success,
         );
 
+        cy.reload();
         // check instance is updated
         InventoryInstance.verifyInstanceTitle(updatedInstanceData.title);
         InventoryInstance.verifyInstanceLanguage(updatedInstanceData.language);
-        InventoryInstance.verifyInstancePublisher(0, 0, updatedInstanceData.publisher);
-        InventoryInstance.verifyInstancePublisher(0, 2, updatedInstanceData.placeOfPublication);
-        InventoryInstance.verifyInstancePublisher(0, 3, updatedInstanceData.publicationDate);
+        InventoryInstance.verifyInstancePublisher({
+          publisher: updatedInstanceData.publisher,
+          place: updatedInstanceData.placeOfPublication,
+          date: updatedInstanceData.publicationDate,
+        });
         InventoryInstance.verifyInstancePhysicalcyDescription(
           updatedInstanceData.physicalDescription,
         );
+        InventoryInstance.openSubjectAccordion();
         InventoryInstance.verifyInstanceSubject(0, 0, updatedInstanceData.subject);
         InventoryInstance.checkInstanceNotes(
           updatedInstanceData.notes.noteType,

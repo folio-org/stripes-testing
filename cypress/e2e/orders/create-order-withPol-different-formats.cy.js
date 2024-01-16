@@ -1,19 +1,17 @@
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../support/fragments/topMenu';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Users from '../../support/fragments/users/users';
-import Funds from '../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
-import InteractorsTools from '../../support/utils/interactorsTools';
-import Orders from '../../support/fragments/orders/orders';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import Organizations from '../../support/fragments/organizations/organizations';
-import OrderLines from '../../support/fragments/orders/orderLines';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../support/fragments/finance/funds/funds';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('ui-orders: Orders and Order lines', () => {
   const defaultFund = { ...Funds.defaultUiFund };
@@ -81,7 +79,7 @@ describe('ui-orders: Orders and Order lines', () => {
 
   it(
     'C658 Create an order and at least one order line for format = electronic resource  (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.createOrder(order).then((orderId) => {
         order.id = orderId;
@@ -96,7 +94,7 @@ describe('ui-orders: Orders and Order lines', () => {
 
   it(
     'C659 Create an order and at least one order line for format = physical resource with multiple copies  (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.createOrder(order).then((orderId) => {
         order.id = orderId;
@@ -111,7 +109,7 @@ describe('ui-orders: Orders and Order lines', () => {
 
   it(
     'C661 Create an order and at least one order line for format = other  (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.createOrder(order).then((orderId) => {
         order.id = orderId;

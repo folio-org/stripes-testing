@@ -53,7 +53,6 @@
     "@interactors/with-cypress": "^1.0.0-rc1.3",
     "@shelex/cypress-allure-plugin": "^2.40.0",
     "bigtest": "^0.14.0",
-    "convert-csv-to-json": "^2.0.0",
     "cypress-downloadfile": "^1.2.1",
     "cypress-file-upload": "^5.0.8",
     "cypress-plugin-tab": "^1.0.5",
@@ -66,17 +65,22 @@
     "globby": "^11.1.0",
     "husky": "^8.0.3",
     "lint-staged": "^14.0.1",
+    "json-2-csv": "^5.0.1",
     "localforage": "^1.9.0",
     "prettier": "^3.0.2",
     "uuid": "^3.4.0"
   },
   "resolutions": {
     "cypress": "12.0.0",
-    "chromedriver": "107.0.0"
+    "chromedriver": "107.0.0",
+    "sharp": "0.32.6"
   },
   "overrides": {
     "bigtest": {
       "chromedriver": "107.0.0"
+    },
+    "@folio/eslint-config-stripes": {
+      "sharp": "0.32.6"
     }
   }
 }
