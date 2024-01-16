@@ -154,6 +154,8 @@ export default {
     // wait is needed to avoid so fast robot clicks
     cy.wait(1000);
     cy.do(Button('Search').click());
+  },
+
   verifyPermissionDoesNotExistInSelectPermissions(permission) {
     this.searchForPermission(permission);
     cy.expect(selectPermissionsModal.find(HTML('The list contains no items')).exists());
