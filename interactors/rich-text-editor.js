@@ -9,6 +9,7 @@ export default HTML.extend('rich text editor')
   .locator(label)
   .filters({
     value: (element) => element.querySelector('.ql-editor').textContent,
+    id: (el) => el.id,
   })
   .actions({
     fillIn: ({ perform }, value) => perform((element) => {

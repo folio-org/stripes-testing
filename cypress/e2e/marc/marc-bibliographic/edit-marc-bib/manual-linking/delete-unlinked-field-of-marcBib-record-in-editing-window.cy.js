@@ -73,7 +73,7 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
     marcFiles.forEach((marcFile) => {
       cy.visit(TopMenu.dataImportPath);
       DataImport.verifyUploadState();
-      DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+      DataImport.uploadFile(marcFile.marc, marcFile.fileName);
       JobProfiles.waitLoadingList();
       JobProfiles.search(marcFile.jobProfileToRun);
       JobProfiles.runImportFile();

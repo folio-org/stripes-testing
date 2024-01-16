@@ -13,7 +13,7 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 
-describe('MARC', () => {
+describe('marc', () => {
   describe('plug-in MARC authority', () => {
     describe('plug-in MARC authority | Browse', () => {
       const testData = {
@@ -75,7 +75,7 @@ describe('MARC', () => {
           .then(() => {
             testData.marcFiles.forEach((marcFile) => {
               DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
               Logs.waitFileIsImported(marcFile.fileName);

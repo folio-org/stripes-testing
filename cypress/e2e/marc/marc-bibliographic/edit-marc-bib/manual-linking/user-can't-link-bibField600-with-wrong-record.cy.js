@@ -106,7 +106,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
         marcFiles.forEach((marcFile) => {
           cy.visit(TopMenu.dataImportPath);
           DataImport.verifyUploadState();
-          DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();

@@ -24,7 +24,7 @@ describe('data-import', () => {
       locationQuantityElectronic: { accordion: 'Location', fieldName: 'Quantity electronic' },
     };
     const mappingProfile = {
-      name: `C367955testMappingProfile.${getRandomPostfix()}`,
+      name: `C380542 testMappingProfile.${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,
       pendingOrderStatus: ORDER_STATUSES.PENDING,
       openOrderStatus: ORDER_STATUSES.OPEN,

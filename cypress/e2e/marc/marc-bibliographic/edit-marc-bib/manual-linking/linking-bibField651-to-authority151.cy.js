@@ -14,51 +14,51 @@ import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => {
   const testData = {
-    tag800: '800',
-    authorityMarkedValue: 'C375084 Robinson, Peter,',
-    seriesStatementValue: 'C375084 Robinson, Peter, 1950-2022 Inspector Banks series ; 24.',
+    tag651: '651',
+    authorityMarkedValue: 'C375071 Clear Creek (Tex.)',
+    subjectValue: 'C375071 Clear Creek (Tex.)--Place in Texas--Form',
     authorityIconText: 'Linked to MARC authority',
-    accordion: 'Title data',
+    accordion: 'Subject',
   };
 
   const marcFiles = [
     {
-      marc: 'marcBibFileForC375084.mrc',
+      marc: 'marcBibFileForC375071.mrc',
       fileName: `testMarcBibFileC375071.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     },
     {
-      marc: 'marcAuthFileForC375084.mrc',
+      marc: 'marcAuthFileForC375071.mrc',
       fileName: `testMarcAuthFileC375071.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
-      authorityHeading: 'C375084 Robinson, Peter, 1950-2022 Inspector Banks series ;',
+      authorityHeading: 'C375071 Clear Creek (Tex.) Place in Texas',
     },
   ];
 
   const createdRecordIDs = [];
-  const bib800InitialFieldValues = [
-    35,
-    testData.tag800,
-    '1',
+  const bib651InitialFieldValues = [
+    20,
+    testData.tag651,
     '\\',
-    '$a C375084 Robinson, P, $d 1950- $t Inspector Banks series ; $v 24. $y 2023 $8 800',
+    '0',
+    '$a C375071 Creek (Texas) $g Lake $v Form $3 papers',
   ];
-  const bib800UnlinkedFieldValues = [
-    35,
-    testData.tag800,
-    '1',
+  const bib651UnlinkedFieldValues = [
+    20,
+    testData.tag651,
     '\\',
-    '$a C375084 Robinson, Peter, $d 1950-2022 $c Inspector Banks series ; $v 24. $y 2023 $0 3052044 $8 800',
+    '0',
+    '$a C375071 Clear Creek (Tex.) $g Place in Texas $v Form $0 id.loc.gov/authorities/names/n79041362 $3 papers',
   ];
-  const bib800LinkedFieldValues = [
-    35,
-    testData.tag800,
-    '1',
+  const bib651LinkedFieldValues = [
+    20,
+    testData.tag651,
     '\\',
-    '$a C375084 Robinson, Peter, $d 1950-2022 $c Inspector Banks series ;',
-    '$v 24. $y 2023',
-    '$0 3052044',
-    '$8 800',
+    '0',
+    '$a C375071 Clear Creek (Tex.) $g Place in Texas',
+    '$v Form',
+    '$0 id.loc.gov/authorities/names/n79041362',
+    '$3 papers',
   ];
 
   before('Creating user', () => {
@@ -74,7 +74,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
         marcFiles.forEach((marcFile) => {
           cy.visit(TopMenu.dataImportPath);
           DataImport.verifyUploadState();
-          DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
@@ -104,25 +104,26 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
   });
 
   it(
-    'C375084 Link the "800" of "MARC Bib" field with "100" field of "MARC Authority" record. (spitfire) (TaaS)',
+    'C375071 Link the "651" of "MARC Bib" field with "151" field of "MARC Authority" record. (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventoryInstances.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
-      QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib800InitialFieldValues);
-      InventoryInstance.verifyAndClickLinkIcon(testData.tag800);
+      QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib651InitialFieldValues);
+      InventoryInstance.verifyAndClickLinkIcon(testData.tag651);
       MarcAuthorities.switchToSearch();
       InventoryInstance.verifySelectMarcAuthorityModal();
       InventoryInstance.searchResults(marcFiles[1].authorityHeading);
       MarcAuthorities.clickLinkButton();
-      QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag800);
-      QuickMarcEditor.verifyTagFieldAfterLinking(...bib800LinkedFieldValues);
+      QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag651);
+      QuickMarcEditor.verifyTagFieldAfterLinking(...bib651LinkedFieldValues);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
-      InventoryInstance.verifySeriesStatement(
+      InventoryInstance.verifyInstanceSubject(
+        2,
         0,
-        `${testData.authorityIconText}${testData.seriesStatementValue}`,
+        `${testData.authorityIconText}${testData.subjectValue}`,
       );
       InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.accordion);
       InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(testData.accordion);
@@ -142,11 +143,11 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       InventoryViewSource.close();
       InventoryInstance.waitLoading();
       InventoryInstance.editMarcBibliographicRecord();
-      QuickMarcEditor.verifyTagFieldAfterLinking(...bib800LinkedFieldValues);
-      QuickMarcEditor.clickUnlinkIconInTagField(bib800UnlinkedFieldValues[0]);
+      QuickMarcEditor.verifyTagFieldAfterLinking(...bib651LinkedFieldValues);
+      QuickMarcEditor.clickUnlinkIconInTagField(bib651UnlinkedFieldValues[0]);
       QuickMarcEditor.confirmUnlinkingField();
-      QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib800UnlinkedFieldValues);
-      QuickMarcEditor.verifyIconsAfterUnlinking(bib800UnlinkedFieldValues[0]);
+      QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib651UnlinkedFieldValues);
+      QuickMarcEditor.verifyIconsAfterUnlinking(bib651UnlinkedFieldValues[0]);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
       InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);

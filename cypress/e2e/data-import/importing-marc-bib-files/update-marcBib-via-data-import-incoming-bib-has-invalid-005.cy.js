@@ -94,7 +94,13 @@ describe('data-import', () => {
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         Users.deleteViaApi(testData.user.userId);
-        InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"hrid"=="${testData.instanceHrid}"`,
+        }).then((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
       });
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${testData.editedFileName}`);
@@ -111,8 +117,8 @@ describe('data-import', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(testData.jobProfileToRun);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(testData.fileNameForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        JobProfiles.waitFileIsUploaded();
+        Logs.checkJobStatus(testData.fileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(testData.fileNameForCreate);
         [
           FileDetails.columnNameInResultList.srsMarc,
@@ -158,23 +164,20 @@ describe('data-import', () => {
           cy.visit(TopMenu.dataImportPath);
           DataImport.verifyUploadState();
           DataImport.uploadFileAndRetry(testData.editedFileName, testData.fileNameForUpdate);
-          JobProfiles.waitLoadingList();
+          JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
           cy.wait('@splitStatus', getLongDelay()).then(() => {
             // set date after updating record
             const updatedDate = new Date();
             Logs.waitFileIsImported(testData.fileNameForUpdate);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+            Logs.checkJobStatus(testData.fileNameForUpdate, JOB_STATUS_NAMES.COMPLETED);
             Logs.openFileDetails(testData.fileNameForUpdate);
             [
               FileDetails.columnNameInResultList.srsMarc,
               FileDetails.columnNameInResultList.instance,
             ].forEach((columnName) => {
               FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
-            });
-            Logs.getCreatedItemsID(1).then((link) => {
-              testData.createdRecordIDs.push(link.split('/')[5]);
             });
             FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
             InventoryInstance.viewSource();

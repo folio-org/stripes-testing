@@ -132,13 +132,20 @@ export default {
     cy.wait(300);
     cy.expect(matchProfileForm.absent());
   },
-  clickSaveAndCloseButton({ profileCreated = true } = {}) {
+  clickSaveAndCloseButton({ profileCreated = true, profileUpdated = false } = {}) {
     cy.expect(saveAndCloseButton.has({ disabled: false }));
     cy.do(saveAndCloseButton.click());
 
     if (profileCreated) {
       InteractorsTools.checkCalloutMessage(
-        matching(new RegExp(Notifications.actionProfileCreatedSuccessfully)),
+        matching(including(new RegExp(Notifications.matchProfileCreateSuccessfully))),
+      );
+      cy.expect(matchProfileForm.absent());
+    }
+
+    if (profileUpdated) {
+      InteractorsTools.checkCalloutMessage(
+        matching(including(new RegExp(Notifications.matchProfileUpdateSuccessfully))),
       );
       cy.expect(matchProfileForm.absent());
     }

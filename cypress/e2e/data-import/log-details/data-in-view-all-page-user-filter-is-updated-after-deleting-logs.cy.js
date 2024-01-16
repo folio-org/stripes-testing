@@ -37,7 +37,7 @@ describe('data-import', () => {
       'C358546 Data Import log: Check that data in the "View all" page User filter is updated after deleting the logs for particular users. (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const filesNames = ['marcBibFileForC358546file1.mrc', 'marcBibFileForC358546file2.MRC'];
+        const filesNames = ['marcBibFileForC358546_1.mrc', 'marcBibFileForC358546_2.MRC'];
         const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
