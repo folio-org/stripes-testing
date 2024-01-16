@@ -122,6 +122,7 @@ export default {
   },
 
   openOrder() {
+    cy.wait(4000);
     expandActionsDropdown();
     cy.do([Button('Open').click(), submitButton.click()]);
     // Need to wait,while order's data will be loaded
