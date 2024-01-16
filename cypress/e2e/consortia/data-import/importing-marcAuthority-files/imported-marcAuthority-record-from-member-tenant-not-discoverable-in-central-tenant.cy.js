@@ -15,17 +15,17 @@ import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/Mar
 describe('Data import', () => {
   describe('Importing MARC Authority files', () => {
     const marcFile = {
-      marc: 'marcAuthFileForC405119.mrc',
-      fileName: `C405119 testMarcFile${getRandomPostfix()}.mrc`,
+      marc: 'marcAuthFileForC405519.mrc',
+      fileName: `C405519 testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 1,
     };
     let createdAuthorityID;
-    const searchRecordName = 'C405119 Dante Alighieri, 1265-1321';
+    const searchRecordName = 'C405519 Gabaldon, Diana. Outlander novel.';
+    const users = {};
     const type = 'Authorized';
     const headingType = 'Personal Name';
-    const browseOption = 'Personal name';
-    const users = {};
+    const browseOption = 'Name-title';
 
     before('Create users, data', () => {
       cy.getAdminToken();
@@ -39,6 +39,7 @@ describe('Data import', () => {
           cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
           cy.setTenant(Affiliations.University);
           cy.assignPermissionsToExistingUser(users.userProperties.userId, [
+            Permissions.moduleDataImportEnabled.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           ]);
         })
@@ -48,6 +49,8 @@ describe('Data import', () => {
             waiter: DataImport.waitLoading,
           }).then(() => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
           });
         });
     });
@@ -56,12 +59,13 @@ describe('Data import', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(users.userProperties.userId);
+      cy.setTenant(Affiliations.University);
       MarcAuthority.deleteViaAPI(createdAuthorityID);
     });
 
     it(
-      'C405119 Imported "MARC authority" record from Central tenant is discoverable in Central and Member tenants (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire'] },
+      'C405519 Imported "MARC authority" record from Member tenant is not discoverable in Central tenant (consortia) (spitfire)',
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
@@ -79,24 +83,27 @@ describe('Data import', () => {
         MarcAuthorities.searchBy('Keyword', searchRecordName);
         MarcAuthorities.verifyResultsRowContent(searchRecordName, type, headingType);
         MarcAuthorities.checkRowsCount(1);
+        MarcAuthorities.selectFirstRecord();
+        MarcAuthorities.checkMarcViewSectionIsVisible(true);
 
         MarcAuthorities.switchToBrowse();
         MarcAuthorityBrowse.searchBy(browseOption, searchRecordName);
         MarcAuthorities.verifyResultsRowContent(searchRecordName, type, headingType);
 
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        ConsortiumManager.switchActiveAffiliation(tenantNames.university);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
 
         MarcAuthorities.switchToBrowse();
         MarcAuthorityBrowse.searchBy(browseOption, searchRecordName);
-        MarcAuthorities.verifyResultsRowContent(searchRecordName, type, headingType);
+        MarcAuthorityBrowse.checkResultWithNoValue(searchRecordName);
 
         MarcAuthorities.switchToSearch();
         MarcAuthorities.checkDefaultSearchOptions(searchRecordName);
         MarcAuthorities.searchBeats(searchRecordName);
-        MarcAuthorities.checkRowsCount(1);
-        MarcAuthorities.verifyResultsRowContent(searchRecordName, type, headingType);
+        MarcAuthorities.checkNoResultsMessage(
+          `No results found for "${searchRecordName}". Please check your spelling and filters.`,
+        );
       },
     );
   });

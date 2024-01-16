@@ -35,6 +35,7 @@ const permissionSetPath = '/settings/users/perms?layer=add';
 const lostItemsRequiringActualCost = '/users/lost-items';
 const listsPath = '/lists';
 const coursesPath = '/cr/courses';
+const consortiumManagerPath = 'consortia-settings';
 
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
@@ -73,6 +74,7 @@ export default {
   settingsUserPath,
   lostItemsRequiringActualCost,
   listsPath,
+  consortiumManagerPath,
   coursesPath,
 
   openCheckInApp: () => {
