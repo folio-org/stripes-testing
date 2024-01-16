@@ -12,7 +12,7 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 
-describe('Data import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     const marcFile = {
       marc: 'marcAuthFileForC405119.mrc',

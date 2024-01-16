@@ -72,6 +72,7 @@ export default {
       Button({ id: 'save-active-affiliation' }).click(),
     ]);
     cy.wait(8000);
+    cy.expect(myProfileButton.find(HTML({ text: including(tenantName) })).exists());
   },
 
   switchActiveAffiliationIsAbsent() {
