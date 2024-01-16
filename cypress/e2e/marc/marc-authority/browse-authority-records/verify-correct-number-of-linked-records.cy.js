@@ -143,8 +143,8 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
       });
 
       cy.loginAsAdmin().then(() => {
-        cy.visit(TopMenu.dataImportPath);
         marcFiles.forEach((marcFile) => {
+          cy.visit(TopMenu.dataImportPath);
           DataImport.verifyUploadState();
           DataImport.uploadFile(marcFile.marc, marcFile.fileName);
           JobProfiles.waitLoadingList();
@@ -160,7 +160,6 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
               authorityIDs.push(link.split('/')[5]);
             }
           });
-          JobProfiles.closeJobProfile(marcFile.fileName);
         });
       });
       cy.visit(TopMenu.inventoryPath).then(() => {
