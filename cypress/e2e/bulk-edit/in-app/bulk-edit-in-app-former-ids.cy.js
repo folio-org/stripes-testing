@@ -1,15 +1,13 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../support/dictionary/devTeams';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FileManager from '../../../support/utils/fileManager';
-import Users from '../../../support/fragments/users/users';
-import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import generateItemBarcode from '../../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const item = {
@@ -51,7 +49,7 @@ describe('bulk-edit', () => {
 
     it(
       'C356808 Verify uploading file with Item former identifiers (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item former identifier');

@@ -115,4 +115,12 @@ export default {
   checkTextFieldError: (fieldName, error) => {
     cy.expect(TextField(fieldName).has({ error }));
   },
+  setTextFieldValue({ textField, fieldValue, clearField = false }) {
+    if (fieldValue) {
+      cy.do([textField.focus(), textField.fillIn(fieldValue)]);
+      cy.expect(textField.has({ value: fieldValue }));
+    } else if (fieldValue !== undefined && clearField) {
+      cy.do(textField.clear());
+    }
+  },
 };

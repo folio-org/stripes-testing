@@ -1,8 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import AcquisitionUnits from '../../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 
 describe('Acquisition Units: Settings (ACQ Units)', () => {
@@ -42,7 +40,7 @@ describe('Acquisition Units: Settings (ACQ Units)', () => {
 
   it(
     'C6729 Update existing acquisition unit (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       AcquisitionUnits.edit(defaultAcquisitionUnit.name);
       AcquisitionUnits.fillInAUInfo(`${defaultAcquisitionUnit.name}-edited`);

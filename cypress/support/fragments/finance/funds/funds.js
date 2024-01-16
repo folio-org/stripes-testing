@@ -23,6 +23,8 @@ import {
   PaneHeader,
   Select,
 } from '../../../../../interactors';
+import FundDetails from './fundDetails';
+import FundEditForm from './fundEditForm';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
@@ -116,6 +118,13 @@ export default {
     cy.do(fundDetailsPane.visible());
   },
 
+  clickCreateNewFundButton() {
+    cy.do(newButton.click());
+    FundEditForm.waitLoading();
+    FundEditForm.verifyFormView();
+
+    return FundEditForm;
+  },
   createFund(fund) {
     cy.do([
       newButton.click(),
@@ -167,6 +176,7 @@ export default {
       MultiSelect({ label: 'Group' }).select([group]),
       saveAndCloseButton.click(),
     ]);
+    cy.wait(4000);
   },
 
   addTransferTo: (fund) => {
@@ -272,6 +282,19 @@ export default {
     cy.do([Button('Save').click()]);
   },
 
+  addPlannedBudgetWithoutFY: (allocatedQuantity) => {
+    cy.do(Accordion('Planned budget').find(newButton).click());
+    cy.expect(Modal('Planned budget').exists());
+    cy.do([
+      Modal('Planned budget')
+        .find(TextField({ name: 'allocated' }))
+        .fillIn(allocatedQuantity.toString()),
+    ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(4000);
+    cy.do([Button('Save').click()]);
+  },
+
   viewTransactions: () => {
     cy.do(Link('View transactions').click());
   },
@@ -324,6 +347,24 @@ export default {
 
   checkStatusInTransactionDetails: (status) => {
     cy.expect(transactionDetailSection.find(KeyValue('Status')).has({ value: status }));
+  },
+
+  checkExpendedInTransactionDetails: (expended) => {
+    cy.expect(transactionDetailSection.find(KeyValue('Expended')).has({ value: expended }));
+  },
+
+  checkInitialEncumbranceDetails: (initialEncumbrance) => {
+    cy.expect(
+      transactionDetailSection
+        .find(KeyValue('Initial encumbrance'))
+        .has({ value: initialEncumbrance }),
+    );
+  },
+
+  checkAwaitingPaymentDetails: (awaitingPayment) => {
+    cy.expect(
+      transactionDetailSection.find(KeyValue('Awaiting payment')).has({ value: awaitingPayment }),
+    );
   },
 
   checkOrderInTransactionList: (fundCode, amount) => {
@@ -604,6 +645,14 @@ export default {
     cy.expect(resetButton.is({ disabled: true }));
   },
 
+  closeFundDetails: () => {
+    cy.do(
+      Section({ id: 'pane-fund-details' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
   selectStatusInSearch: (fundStatus) => {
     cy.do(Accordion({ id: 'fundStatus' }).clickHeader());
     switch (fundStatus) {
@@ -676,7 +725,7 @@ export default {
           ...ledger,
         });
         fund.ledgerName = ledger.name;
-        cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+        cy.loginAsAdmin();
         cy.visit(TopMenu.fundPath);
         this.createFund(fund);
         this.checkCreatedFund(fund.name);
@@ -805,6 +854,15 @@ export default {
     cy.wait(2000);
   },
 
+  changeStatusOfExpClass: (rowNumber, statusName) => {
+    cy.do(Select({ name: `statusExpenseClasses[${rowNumber}].status` }).choose(statusName));
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+    cy.do(saveAndCloseButton.click());
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+  },
+
   deleteExpensesClass: () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
@@ -816,11 +874,21 @@ export default {
     ]);
   },
 
-  createViaApi: (fundProperties) => {
+  getFundsViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'finance/funds',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body);
+  },
+  createViaApi: (fundProperties, groupIds) => {
     return cy
       .okapiRequest({
         path: 'finance/funds',
-        body: { fund: fundProperties },
+        body: { fund: fundProperties, groupIds },
         method: 'POST',
         isDefaultSearchParamsRequired: false,
       })
@@ -829,11 +897,17 @@ export default {
       });
   },
 
-  deleteFundViaApi: (fundId) => cy.okapiRequest({
+  deleteFundViaApi: (fundId, failOnStatusCode) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/funds/${fundId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   }),
+  deleteFundsByLedgerIdViaApi(ledgerId, failOnStatusCode) {
+    this.getFundsViaApi({ query: `ledgerId=="${ledgerId}"` }).then(({ funds }) => {
+      funds.forEach((fund) => this.deleteFundViaApi(fund.id, failOnStatusCode));
+    });
+  },
   createFundWithAU(fund, ledger, AUName) {
     cy.do([
       newButton.click(),
@@ -892,7 +966,10 @@ export default {
   selectFund: (FundName) => {
     cy.wait(4000);
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
-    cy.expect(fundDetailsPane.visible());
+    cy.wait(4000);
+    FundDetails.waitLoading();
+
+    return FundDetails;
   },
 
   closeMenu: () => {
@@ -946,5 +1023,13 @@ export default {
       transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
       transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
     );
+  },
+
+  varifyCanNotCreatePlannedBudget: () => {
+    cy.expect(cy.expect(Section({ id: 'plannedBudget' }).find(Button('New')).absent()));
+  },
+
+  verifyFundLinkNameExists: (FundName) => {
+    cy.expect(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).exists());
   },
 };

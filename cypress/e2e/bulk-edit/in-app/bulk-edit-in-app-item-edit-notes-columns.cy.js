@@ -1,17 +1,15 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../support/dictionary/devTeams';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FileManager from '../../../support/utils/fileManager';
-import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const notes = {
@@ -89,7 +87,7 @@ describe('bulk-edit', () => {
 
     it(
       'C411639 Verify separating notes in different columns - edit notes (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
@@ -100,17 +98,20 @@ describe('bulk-edit', () => {
 
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
-          'Binding',
+          'Binding note',
           'Note',
           'Copy note',
-          'Electronic bookplate',
-          'Provenance',
+          'Electronic bookplate note',
+          'Provenance note',
         );
-        BulkEditSearchPane.verifyResultsUnderColumns('Binding', `${notes.bindingNote}(staff only)`);
-        BulkEditSearchPane.verifyResultsUnderColumns('Note', `${notes.noteNote}(staff only)`);
+        BulkEditSearchPane.verifyResultsUnderColumns(
+          'Binding note',
+          `${notes.bindingNote} (staff only)`,
+        );
+        BulkEditSearchPane.verifyResultsUnderColumns('Note', `${notes.noteNote} (staff only)`);
         BulkEditSearchPane.verifyResultsUnderColumns('Copy note', notes.copyNote);
         BulkEditSearchPane.verifyResultsUnderColumns(
-          'Electronic bookplate',
+          'Electronic bookplate note',
           notes.electronicBookplateNote,
         );
         BulkEditActions.openInAppStartBulkEditFrom();
@@ -129,23 +130,29 @@ describe('bulk-edit', () => {
         );
 
         BulkEditActions.confirmChanges();
-        BulkEditSearchPane.verifyChangesUnderColumns('Binding', notes.bindingNote);
+        BulkEditSearchPane.verifyChangesUnderColumns('Binding note', notes.bindingNote);
         BulkEditSearchPane.verifyChangesUnderColumns('Note', '');
-        BulkEditSearchPane.verifyChangesUnderColumns('Provenance', `${notes.noteNote}(staff only)`);
-        BulkEditSearchPane.verifyChangesUnderColumns('Copy note', `${notes.copyNote}(staff only)`);
         BulkEditSearchPane.verifyChangesUnderColumns(
-          'Electronic bookplate',
+          'Provenance note',
+          `${notes.noteNote} (staff only)`,
+        );
+        BulkEditSearchPane.verifyChangesUnderColumns('Copy note', `${notes.copyNote} (staff only)`);
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          'Electronic bookplate note',
           notes.newElectronicBookplateNote,
         );
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
-        BulkEditSearchPane.verifyChangesUnderColumns('Binding', notes.bindingNote);
+        BulkEditSearchPane.verifyChangesUnderColumns('Binding note', notes.bindingNote);
         BulkEditSearchPane.verifyChangesUnderColumns('Note', '');
-        BulkEditSearchPane.verifyChangesUnderColumns('Provenance', `${notes.noteNote}(staff only)`);
-        BulkEditSearchPane.verifyChangesUnderColumns('Copy note', `${notes.copyNote}(staff only)`);
         BulkEditSearchPane.verifyChangesUnderColumns(
-          'Electronic bookplate',
+          'Provenance note',
+          `${notes.noteNote} (staff only)`,
+        );
+        BulkEditSearchPane.verifyChangesUnderColumns('Copy note', `${notes.copyNote} (staff only)`);
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          'Electronic bookplate note',
           notes.newElectronicBookplateNote,
         );
         BulkEditActions.downloadChangedCSV();

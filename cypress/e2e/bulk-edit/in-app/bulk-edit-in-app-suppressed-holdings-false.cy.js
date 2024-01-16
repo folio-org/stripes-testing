@@ -1,18 +1,16 @@
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import Users from '../../../support/fragments/users/users';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const holdingHRIDsFileName = `holdingHRIDs_${getRandomPostfix()}.csv`;
@@ -67,7 +65,7 @@ describe('bulk-edit', () => {
 
     it(
       'C399061 Verify "Suppress from discovery" (Set false) option in Bulk Editing Holdings (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');

@@ -1,12 +1,11 @@
+import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import Helper from '../../../support/fragments/finance/financeHelper';
+import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
-import Helper from '../../../support/fragments/finance/financeHelper';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
-import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 
 describe('inventory', () => {
   describe('Instance', () => {
@@ -47,23 +46,24 @@ describe('inventory', () => {
     });
 
     after(() => {
-      cy.getAdminToken();
-      cy.getInstanceById(instanceIds[0])
-        .then((body) => {
-          const requestBody = body;
-          requestBody.precedingTitles = [];
+      cy.getAdminToken().then(() => {
+        cy.getInstanceById(instanceIds[0])
+          .then((body) => {
+            const requestBody = body;
+            requestBody.precedingTitles = [];
 
-          // reset precedingTitles to get rid of tables dependencies and be able to delete the instances
-          cy.updateInstance(requestBody);
-        })
-        .then(() => {
-          instanceIds.forEach((instanceId) => InventoryInstance.deleteInstanceViaApi(instanceId));
-        });
+            // reset precedingTitles to get rid of tables dependencies and be able to delete the instances
+            cy.updateInstance(requestBody);
+          })
+          .then(() => {
+            instanceIds.forEach((instanceId) => InventoryInstance.deleteInstanceViaApi(instanceId));
+          });
+      });
     });
 
     it(
       'C9215 In Accordion Title --> Test assigning a Preceding title (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
         InventoryInstances.selectInstance();

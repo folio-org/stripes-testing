@@ -1,30 +1,29 @@
-import { v4 as uuidv4 } from 'uuid';
 import { HTML, including } from '@interactors/html';
+import { v4 as uuidv4 } from 'uuid';
 import {
-  Pane,
-  Button,
   Accordion,
-  TextField,
-  MultiColumnListRow,
+  Button,
   Checkbox,
   Modal,
   MultiColumnList,
-  Select,
-  Section,
-  MultiSelect,
-  TextArea,
-  RadioButtonGroup,
-  RadioButton,
-  SearchField,
   MultiColumnListCell,
   SelectionOption,
+  MultiColumnListRow,
+  MultiSelect,
+  Pane,
+  RadioButton,
+  RadioButtonGroup,
+  SearchField,
+  Section,
+  Select,
+  TextArea,
+  TextField,
 } from '../../../../interactors';
+import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
-import SelectUser from '../check-out-actions/selectUser';
 
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
-const userSearch = TextField('User search');
 const saveAndCloseBtn = Button('Save & close');
 const actionsButton = Button('Actions');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
@@ -35,11 +34,12 @@ const customFieldsAccordion = Accordion('Custom fields');
 const selectPermissionsModal = Modal('Select Permissions');
 const permissionsAccordion = Accordion({ id: 'permissions' });
 const addPermissionsButton = Button({ id: 'clickable-add-permission' });
-const permissionsSearch = SearchField();
+const permissionsSearch = selectPermissionsModal.find(SearchField());
 const searchButton = Button('Search');
 const resetAllButton = Button('Reset all');
 const selectRequestType = Select({ id: 'type' });
 const cancelButton = Button('Cancel');
+const userSearch = TextField('User search');
 let totalRows;
 
 // servicePointIds is array of ids
@@ -73,11 +73,45 @@ export default {
     cy.do(Select({ id: 'type' }).choose(type));
   },
 
+  searchForPermission(permission) {
+    cy.do(permissionsSearch.fillIn(permission));
+    cy.expect(permissionsSearch.is({ value: permission }));
+    cy.do(searchButton.click());
+  },
+
+  selectFirsPermissionInSearch() {
+    cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
+  },
+
+  savePermissionsInModal() {
+    cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
+  },
+
+  saveUserEditForm() {
+    cy.do(Button({ id: 'clickable-save' }).click());
+  },
+
+  openSelectPermissionsModal() {
+    cy.do(permissionsAccordion.clickHeader());
+    cy.do(addPermissionsButton.click());
+    cy.expect(selectPermissionsModal.exists());
+  },
+
   addPermissions(permissions) {
+    this.openEdit();
+    this.openSelectPermissionsModal();
+    cy.wrap(permissions).each((permission) => {
+      this.searchForPermission(permission);
+      cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
+      cy.wait(2000);
+    });
+    cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
+  },
+
+  addPermissions1(permissions) {
     cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
     cy.wait(5000);
     cy.do([permissionsAccordion.clickHeader(), addPermissionsButton.click()]);
-
     permissions.forEach((permission) => {
       cy.do(userSearch.fillIn(permission));
       cy.expect(userSearch.is({ value: permission }));
@@ -120,8 +154,13 @@ export default {
     // wait is needed to avoid so fast robot clicks
     cy.wait(1000);
     cy.do(Button('Search').click());
+  verifyPermissionDoesNotExistInSelectPermissions(permission) {
+    this.searchForPermission(permission);
     cy.expect(selectPermissionsModal.find(HTML('The list contains no items')).exists());
-    cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
+  },
+
+  cancelSelectPermissionsModal() {
+    cy.do(selectPermissionsModal.find(cancelButton).click());
   },
 
   addServicePoints(...points) {
@@ -357,26 +396,6 @@ export default {
     permissions.forEach((permission) => {
       cy.expect(permissionsAccordion.find(HTML(including(permission))).absent());
     });
-  },
-
-  permissionsCount() {
-    permissionsList.perform((el) => {
-      el.invoke('attr', 'aria-rowcount').then((rowCount) => {
-        totalRows = rowCount;
-      });
-    });
-  },
-
-  openSelectPermissions() {
-    cy.do(permissionsAccordion.clickHeader());
-    cy.do(addPermissionsButton.click());
-    cy.expect(selectPermissionsModal.exists());
-    this.permissionsCount();
-  },
-
-  searchForPermission(permission) {
-    cy.do(permissionsSearch.fillIn(permission));
-    cy.do(searchButton.click());
   },
 
   verifyPermissionsFiltered(permission) {

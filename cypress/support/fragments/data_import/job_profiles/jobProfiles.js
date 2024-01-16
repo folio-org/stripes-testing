@@ -11,7 +11,6 @@ import {
   Pane,
   MultiColumnListRow,
   Callout,
-  PaneContent,
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
@@ -21,8 +20,6 @@ const runButton = Button('Run');
 const waitSelector = Pane({ id: 'view-job-profile-pane' });
 const closeButton = Button({ icon: 'times' });
 const paneResults = Pane({ id: 'pane-results' });
-const paneContent = PaneContent({ id: 'pane-upload-content' });
-const deleteFileButton = Button({ icon: 'trash' });
 const searchButton = Button('Search');
 const searchField = TextField({ id: 'input-search-job-profiles-field' });
 const deleteUploadedFileModal = Modal('Delete uploaded file?');
@@ -42,32 +39,6 @@ const waitLoadingList = () => {
   cy.get('[id="job-profiles-list"]', getLongDelay()).should('be.visible');
 };
 const waitLoading = (selector) => cy.expect(selector.exists());
-const deleteJobProfile = (profileName) => {
-  // get all job profiles
-  cy.okapiRequest({
-    path: 'data-import-profiles/jobProfiles',
-    searchParams: {
-      query: 'cql.allRecords=1   ',
-      limit: 1000,
-    },
-    isDefaultSearchParamsRequired: false,
-  }).then(({ body: { jobProfiles } }) => {
-    // find profile to delete
-    const profileToDelete = jobProfiles.find((profile) => profile.name === profileName);
-
-    // delete profile with its id
-    cy.okapiRequest({
-      method: 'DELETE',
-      path: `data-import-profiles/jobProfiles/${profileToDelete.id}`,
-      searchParams: {
-        query: 'cql.allRecords=1   sortBy name',
-      },
-      isDefaultSearchParamsRequired: false,
-    }).then(({ status }) => {
-      if (status === 204) cy.log('###DELETED JOB PROFILE###');
-    });
-  });
-};
 
 const createJobProfile = (jobProfile) => {
   openNewJobProfileForm();
@@ -93,7 +64,6 @@ export default {
   waitLoadingList,
   waitLoading,
   search,
-  deleteJobProfile,
   createJobProfile,
   closeJobProfile,
   clearSearchField: () => {

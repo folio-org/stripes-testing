@@ -96,7 +96,7 @@ export default {
   },
 
   clearCreatedEvents(servicePointName) {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     this.openCalendarEvents(servicePointName);
     this.deleteCalendarEvent();
   },

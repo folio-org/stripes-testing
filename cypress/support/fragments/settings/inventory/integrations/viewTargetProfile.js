@@ -1,6 +1,8 @@
-import { KeyValue } from '../../../../../../interactors';
+import { KeyValue, Button } from '../../../../../../interactors';
 
 export default {
+  edit: () => cy.do(Button('Edit').click()),
+  getAuthentication: () => cy.then(() => KeyValue('Authentication').value()),
   verifyTargetProfileForm(name, url, authentification, externalId, internalId) {
     cy.expect([
       KeyValue('Name').has({ value: name }),
