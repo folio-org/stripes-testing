@@ -200,7 +200,7 @@ describe('Data Import', () => {
 
           // download exported marc file
           cy.setTenant(Affiliations.College).then(() => {
-            // use cy.getToken function to get toket for tenant
+            // use cy.getToken function to get toket for current tenant
             cy.getCollegeAdminToken();
             cy.visit(TopMenu.dataExportPath);
             cy.wait(2000);
