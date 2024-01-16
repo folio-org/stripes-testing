@@ -1417,4 +1417,7 @@ export default {
       }
     });
   },
+  checkInstanceHrId: (expectedInstanceHrId) => cy.expect(
+    instanceDetailsSection.find(KeyValue('Instance HRID')).has({ value: expectedInstanceHrId }),
+  ),
 };
