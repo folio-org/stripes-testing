@@ -1,16 +1,16 @@
-import Permissions from '../../../../../support/dictionary/permissions';
-import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
-import Users from '../../../../../support/fragments/users/users';
-import TopMenu from '../../../../../support/fragments/topMenu';
-import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
-import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import getRandomPostfix from '../../../../../support/utils/stringTools';
-import InventoryHoldings from '../../../../../support/fragments/inventory/holdings/inventoryHoldings';
-import ServicePoints from '../../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Locations from '../../../../../support/fragments/settings/tenant/location-setup/locations';
-import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
-import BrowseSubjects from '../../../../../support/fragments/inventory/search/browseSubjects';
+import Permissions from '../../../../support/dictionary/permissions';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
+import Users from '../../../../support/fragments/users/users';
+import TopMenu from '../../../../support/fragments/topMenu';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import getRandomPostfix from '../../../../support/utils/stringTools';
+import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import BrowseSubjects from '../../../../support/fragments/inventory/search/browseSubjects';
 
 describe('Inventory', () => {
   describe('Subject Browse', () => {
