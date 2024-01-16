@@ -41,21 +41,22 @@ export default {
     cy.do(selectMembersButton.click());
   },
 
-  verifySelectMembersModal(count) {
+  verifySelectMembersModal(found, selected, allMembersSelected = false) {
     cy.expect([
       selectMembersModal.find(searchAndFilterPane).exists(),
       selectMembersModal.find(membersPane).exists(),
       searchAndFilterPane.find(searchButton).has({ disabled: true }),
       searchAndFilterPane.find(resetAll).has({ disabled: true }),
-      membersPane.find(HTML(`${count} members found`)).exists(),
+      membersPane.find(HTML(`${found} members found`)).exists(),
       membersPane.find(Warning('Settings for the following selected members can be modified at the same time.')).exists(),
-      membersPane.find(Checkbox({ ariaLabel: 'Select all members' })).has({ checked: true }),
       membersPane.find(HTML('End of list')).exists(),
-      selectMembersModal.find(HTML(`Total selected: ${count}`)).exists(),
+      selectMembersModal.find(HTML(`Total selected: ${selected}`)).exists(),
       selectMembersModal.find(Button({ icon: 'times' })).has({ disabled: false }),
       selectMembersModal.find(Button('Cancel')).has({ disabled: false }),
       selectMembersModal.find(saveAndClose).has({ disabled: false })
     ]);
+
+    if (allMembersSelected) cy.expect(membersPane.find(Checkbox({ ariaLabel: 'Select all members' })).has({ checked: true }));
   },
 
   selectAllMembers() {
@@ -89,10 +90,10 @@ export default {
       expect(sortedArray).to.eql(textArray);
     });
     this.waitLoading();
+    const memberText = `${memberCount} ${memberCount === 1 ? 'member' : 'members'} selected`;
     cy.expect([
-      HTML(`${memberCount} members selected`).exists(),
+      HTML(memberText).exists(),
       selectMembersButton.has({ disabled: false }),
-      HTML('Choose settings').exists()
     ]);
   },
 
@@ -110,15 +111,17 @@ export default {
       Pane(item).exists(),
       HTML(including(item, { class: 'headline' })).exists(),
     ]);
-    [
-      'Name',
-      'Code',
-      'Last updated',
-      '# of Users',
-      'Member libraries',
-      'Actions'
-    ].forEach((header) => {
-      cy.expect(MultiColumnListHeader(header).exists());
-    });
+    if (item === usersItems.departments) {
+      [
+        'Name',
+        'Code',
+        'Last updated',
+        '# of Users',
+        'Member libraries',
+        'Actions'
+      ].forEach((header) => {
+        cy.expect(MultiColumnListHeader(header).exists());
+      });
+    };
   },
 };

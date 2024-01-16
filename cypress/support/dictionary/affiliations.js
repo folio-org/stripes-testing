@@ -26,3 +26,8 @@ export const tenantErrors = {
   code: 'The code must not be longer than 5 characters alphanumeric.',
   name: 'Tenant name must not be longer than 150 characters.',
 };
+
+export const adminUsernames = {
+  college: 'ECS0001Admin',
+  university: 'ECS0005Admin'
+};
