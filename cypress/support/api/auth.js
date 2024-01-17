@@ -1,4 +1,5 @@
 import Tenant from '../tenant';
+import { adminUsernames } from '../dictionary/affiliations';
 
 Cypress.Commands.add('getToken', (username, password) => {
   let pathToSet = 'bl-users/login-with-expiry';
@@ -37,11 +38,11 @@ Cypress.Commands.add('getAdminToken', () => {
 });
 
 Cypress.Commands.add('getCollegeAdminToken', () => {
-  cy.getToken('ECS0001Admin', Cypress.env('diku_password'));
+  cy.getToken(adminUsernames.college, Cypress.env('diku_password'));
 });
 
 Cypress.Commands.add('getUniversityAdminToken', () => {
-  cy.getToken('ECS0005Admin', Cypress.env('diku_password'));
+  cy.getToken(adminUsernames.university, Cypress.env('diku_password'));
 });
 
 Cypress.Commands.add('getUserToken', (username, password) => {

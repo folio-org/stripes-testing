@@ -1,13 +1,8 @@
-import Tenant from '../tenant';
-
 Cypress.Commands.add('getConsortiaId', () => {
   cy.okapiRequest({
     method: 'GET',
     path: 'consortia',
     isDefaultSearchParamsRequired: false,
-    headers: {
-      'x-okapi-tenant': Tenant.get(),
-    },
   }).then(({ body }) => {
     return body.consortia[0].id;
   });
