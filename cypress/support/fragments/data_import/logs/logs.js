@@ -115,6 +115,22 @@ export default {
     .find(Link('Created'))
     .href()),
 
+  getCreatedItemID(rowIndex = 0) {
+    return cy.then(() => {
+      searchResultList
+        .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+        .find(Link('Created'))
+        .href()
+        .then((link) => {
+          const r = link.substring(link.indexOf('/inventory/view/') + '/inventory/view/'.length);
+          cy.log(r);
+          return cy.wrap(
+            link.substring(link.indexOf('/inventory/view/') + '/inventory/view/'.length),
+          );
+        });
+    });
+  },
+
   checkFileIsRunning: (fileName) => cy.expect(runningAccordion.find(HTML(including(fileName))).exists()),
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),
   verifyDeleteSelectedLogsButtonAbsent: () => cy.expect(deleteSelectedLogsButton.absent()),
