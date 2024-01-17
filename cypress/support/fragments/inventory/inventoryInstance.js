@@ -1045,9 +1045,9 @@ export default {
       () => this.getInstanceViaApi(instanceIdentifier, consortiaId, sourceTenantId),
       (response) => response.body.sharingInstances[0].status === 'COMPLETE',
       {
-        limit: 10,
-        timeout: 30000,
-        delay: 3000,
+        limit: 12,
+        timeout: 60000,
+        delay: 5000,
       },
     );
   },
