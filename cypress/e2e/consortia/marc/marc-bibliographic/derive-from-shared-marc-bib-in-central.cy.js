@@ -1,17 +1,17 @@
-import { JOB_STATUS_NAMES } from '../../support/constants';
-import Affiliations, { tenantNames } from '../../support/dictionary/affiliations';
-import Permissions from '../../support/dictionary/permissions';
-import DataImport from '../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../support/fragments/data_import/logs/logs';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
-import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import getRandomPostfix from '../../support/utils/stringTools';
+import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
+import Permissions from '../../../../support/dictionary/permissions';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Consortia', () => {
   const testData = {

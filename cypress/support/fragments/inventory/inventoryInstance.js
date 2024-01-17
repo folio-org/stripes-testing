@@ -1,3 +1,4 @@
+import { recurse } from 'cypress-recurse';
 import uuid from 'uuid';
 import {
   Accordion,
@@ -31,6 +32,7 @@ import {
   or,
 } from '../../../../interactors';
 import Badge from '../../../../interactors/badge';
+import { REQUEST_METHOD } from '../../constants';
 import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -1020,8 +1022,44 @@ export default {
   },
   deleteInstanceViaApi: (id) => {
     cy.okapiRequest({
-      method: 'DELETE',
+      method: REQUEST_METHOD.DELETE,
       path: `instance-storage/instances/${id}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  shareInstanceViaApi(instanceIdentifier, consortiaId, sourceTenantId, targetTenantId) {
+    cy.okapiRequest({
+      method: REQUEST_METHOD.POST,
+      path: `consortia/${consortiaId}/sharing/instances`,
+      body: {
+        id: uuid(),
+        instanceIdentifier,
+        sourceTenantId,
+        targetTenantId,
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+
+    recurse(
+      () => this.getInstanceViaApi(instanceIdentifier, consortiaId, sourceTenantId),
+      (response) => response.body.sharingInstances[0].status === 'COMPLETE',
+      {
+        limit: 10,
+        timeout: 30000,
+        delay: 3000,
+      },
+    );
+  },
+
+  getInstanceViaApi: (instanceIdentifier, consortiaId, sourceTenantId) => {
+    const queryString = new URLSearchParams({
+      instanceIdentifier,
+      sourceTenantId,
+    });
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.GET,
+      path: `consortia/${consortiaId}/sharing/instances?${queryString}`,
       isDefaultSearchParamsRequired: false,
     });
   },
@@ -1163,6 +1201,11 @@ export default {
     cy.do(actionsButton.click());
     cy.expect([Button({ id: 'edit-instance' }).exists(), Button({ id: 'copy-instance' }).exists()]);
     cy.do(Button('New request').click());
+  },
+
+  checkShareLocalInstanceButtonIsAbsent() {
+    cy.do(actionsButton.click());
+    cy.expect([Button({ id: 'share-local-instance' }).absent()]);
   },
 
   openCreateNewOrderModal() {
@@ -1417,4 +1460,7 @@ export default {
       }
     });
   },
+  checkInstanceHrId: (expectedInstanceHrId) => cy.expect(
+    instanceDetailsSection.find(KeyValue('Instance HRID')).has({ value: expectedInstanceHrId }),
+  ),
 };
