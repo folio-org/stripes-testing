@@ -122,8 +122,6 @@ export default {
         .find(Link('Created'))
         .href()
         .then((link) => {
-          const r = link.substring(link.indexOf('/inventory/view/') + '/inventory/view/'.length);
-          cy.log(r);
           return cy.wrap(
             link.substring(link.indexOf('/inventory/view/') + '/inventory/view/'.length),
           );
