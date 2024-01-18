@@ -36,6 +36,7 @@ const defaultOneTimeOrder = {
   id: uuid(),
   vendor: '',
   orderType: 'One-Time',
+  approved: true,
 };
 const defaultOneTimeOrderAPI = {
   id: uuid(),

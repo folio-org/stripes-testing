@@ -20,7 +20,7 @@ describe('lists', () => {
     });
 
     it(
-      'C411709 Verify that the button "Cancel", cancels new list creation process.',
+      'C411709 Verify that the button "Cancel", cancels new list creation process. (corsair)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
         cy.login(userData.username, userData.password);

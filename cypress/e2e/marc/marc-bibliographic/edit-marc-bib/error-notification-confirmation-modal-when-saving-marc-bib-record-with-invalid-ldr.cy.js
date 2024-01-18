@@ -32,7 +32,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
 
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(testData.marc, testData.fileName);
+        DataImport.uploadFile(testData.marc, testData.fileName);
         JobProfiles.waitLoadingList();
         JobProfiles.search(testData.jobProfileToRun);
         JobProfiles.runImportFile();

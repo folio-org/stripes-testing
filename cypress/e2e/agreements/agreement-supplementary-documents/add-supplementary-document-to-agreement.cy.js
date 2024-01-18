@@ -7,6 +7,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import { Permissions } from '../../../support/dictionary';
 
 const testData = {
   user: {},

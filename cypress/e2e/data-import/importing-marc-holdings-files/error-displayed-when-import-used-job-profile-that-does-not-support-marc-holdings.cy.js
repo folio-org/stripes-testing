@@ -77,7 +77,10 @@ describe('data-import', () => {
         JobProfiles.search('Default - Create SRS MARC Authority');
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForImportForMarcAuthority);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.checkJobStatus(
+          fileNameForImportForMarcAuthority,
+          JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS,
+        );
         Logs.openFileDetails(fileNameForImportForMarcAuthority);
         FileDetails.verifyLogDetailsPageIsOpened();
         FileDetails.checkStatusInColumn(
@@ -100,7 +103,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(editedMarcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.checkJobStatus(editedMarcFileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(editedMarcFileName);
         FileDetails.verifyLogDetailsPageIsOpened();
         FileDetails.checkStatusInColumn(

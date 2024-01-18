@@ -65,7 +65,7 @@ describe('inventory', () => {
       });
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(testData.marcFile.marc, testData.marcFile.fileName);
+        DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
         JobProfiles.search(testData.marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(testData.marcFile.fileName);

@@ -71,7 +71,7 @@ describe('marc', () => {
         });
         marcFiles.forEach((marcFile) => {
           DataImport.verifyUploadState();
-          DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
@@ -143,6 +143,9 @@ describe('marc', () => {
       () => {
         // Step 1: Input query in search input field that will return imported "MARC authority" record → Click "Search"
         MarcAuthorities.searchBy('Keyword', testData.marcValue);
+        MarcAuthoritiesSearch.selectExcludeReferencesFilter(
+          REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM_ALSO,
+        );
         MarcAuthorities.checkAfterSearch(testData.authorizedTypes.AUTHORIZED, testData.marcValue);
         MarcAuthorities.verifyNumberOfTitles(5, '1');
 

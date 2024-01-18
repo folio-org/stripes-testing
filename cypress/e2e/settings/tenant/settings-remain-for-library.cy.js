@@ -81,6 +81,7 @@ describe('Settings: Tenant', () => {
       cy.login(testData.user.username, testData.user.password);
       cy.wait(2000);
       TopMenuNavigation.navigateToApp('Settings');
+      TenantPane.goToTenantTab();
     });
   });
 
@@ -100,7 +101,6 @@ describe('Settings: Tenant', () => {
     'C399077 Verify that selected settings remain for "Libraries" (firebird) (TaaS)',
     { tags: ['extendedPath', 'firebird'] },
     () => {
-      TenantPane.goToTenantTab();
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
       // Select "Institution AB" in "Institution" dropdown on "Libraries" pane
       let pane = TenantPane.selectTenant(TENANTS.LIBRARIES);

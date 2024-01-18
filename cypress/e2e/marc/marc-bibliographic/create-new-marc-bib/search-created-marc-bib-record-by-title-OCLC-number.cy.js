@@ -19,60 +19,64 @@ const testData = {
 };
 const createdInstanceIDs = [];
 
-describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
-  before(() => {
-    cy.createTempUser([
-      Permissions.inventoryAll.gui,
-      Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
-    ]).then((userProperties) => {
-      userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
+describe('marc', () => {
+  describe('MARC Bibliographic', () => {
+    describe('Create new MARC bib', () => {
+      before(() => {
+        cy.createTempUser([
+          Permissions.inventoryAll.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
+        ]).then((userProperties) => {
+          userId = userProperties.userId;
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+        });
       });
+      after('Delete test data', () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(userId);
+        InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[0]);
+      });
+
+      it(
+        'C422121 Search created "MARC bib" record by Title, OCLC number(spitfire) (TaaS)',
+        { tags: ['criticalPath', 'spitfire'] },
+        () => {
+          InventoryInstance.newMarcBibRecord();
+          QuickMarcEditor.waitLoading();
+          QuickMarcEditor.checkSubfieldsAbsenceInTag008();
+          QuickMarcEditor.updateExistingField('LDR', testData.updateLDRText);
+          QuickMarcEditor.check008FieldContent();
+          QuickMarcEditor.updateExistingField('245', testData.instanceTitle);
+          QuickMarcEditor.addNewField('035', '$a (OCoLC)ocn607TST001', 4);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveAndClose();
+          InventoryInstance.getId().then((id) => {
+            createdInstanceIDs.push(id);
+          });
+          InventorySearchAndFilter.selectSearchOptions(
+            testData.firstSearchOption,
+            testData.searchText1,
+          );
+          InventorySearchAndFilter.clickSearch();
+          InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle, true);
+          InventorySearchAndFilter.selectSearchOptions(
+            testData.secondSearchOption,
+            testData.searchText1,
+          );
+          InventorySearchAndFilter.clickSearch();
+          InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle, true);
+          InventorySearchAndFilter.selectSearchOptions(
+            testData.firstSearchOption,
+            testData.searchText2,
+          );
+          InventorySearchAndFilter.clickSearch();
+          InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle, true);
+          InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
+        },
+      );
     });
   });
-  after('Delete test data', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(userId);
-    InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[0]);
-  });
-
-  it(
-    'C422121 Search created "MARC bib" record by Title, OCLC number(spitfire) (TaaS)',
-    { tags: ['criticalPath', 'spitfire'] },
-    () => {
-      InventoryInstance.newMarcBibRecord();
-      QuickMarcEditor.waitLoading();
-      QuickMarcEditor.checkSubfieldsAbsenceInTag008();
-      QuickMarcEditor.updateExistingField('LDR', testData.updateLDRText);
-      QuickMarcEditor.check008FieldContent();
-      QuickMarcEditor.updateExistingField('245', testData.instanceTitle);
-      QuickMarcEditor.addNewField('035', '$a (OCoLC)ocn607TST001', 4);
-      QuickMarcEditor.pressSaveAndClose();
-      QuickMarcEditor.checkAfterSaveAndClose();
-      InventoryInstance.getId().then((id) => {
-        createdInstanceIDs.push(id);
-      });
-      InventorySearchAndFilter.selectSearchOptions(
-        testData.firstSearchOption,
-        testData.searchText1,
-      );
-      InventorySearchAndFilter.clickSearch();
-      InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle, true);
-      InventorySearchAndFilter.selectSearchOptions(
-        testData.secondSearchOption,
-        testData.searchText1,
-      );
-      InventorySearchAndFilter.clickSearch();
-      InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle, true);
-      InventorySearchAndFilter.selectSearchOptions(
-        testData.firstSearchOption,
-        testData.searchText2,
-      );
-      InventorySearchAndFilter.clickSearch();
-      InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle, true);
-      InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
-    },
-  );
 });

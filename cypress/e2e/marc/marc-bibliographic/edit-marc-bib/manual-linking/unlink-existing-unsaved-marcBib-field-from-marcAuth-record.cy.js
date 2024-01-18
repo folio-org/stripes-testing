@@ -126,12 +126,13 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
       );
       marcFiles.forEach((marcFile) => {
         cy.visit(TopMenu.dataImportPath);
+        DataImport.verifyUploadState();
         DataImport.uploadFile(marcFile.marc, marcFile.fileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFile.fileName);
+        Logs.waitFileIsImported(marcFile.fileName);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(marcFile.fileName);
         for (let i = 0; i < marcFile.numOfRecords; i++) {

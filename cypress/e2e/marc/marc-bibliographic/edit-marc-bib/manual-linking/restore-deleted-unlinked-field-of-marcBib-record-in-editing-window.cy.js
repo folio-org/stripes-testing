@@ -12,7 +12,7 @@ import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
-describe('Manual Unlinking Bib field from Authority 1XX', () => {
+describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => {
   const testData = {
     tag100: {
       tag: '100',
@@ -77,11 +77,11 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
     marcFiles.forEach((marcFile) => {
       cy.visit(TopMenu.dataImportPath);
       DataImport.verifyUploadState();
-      DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+      DataImport.uploadFile(marcFile.marc, marcFile.fileName);
       JobProfiles.waitLoadingList();
       JobProfiles.search(marcFile.jobProfileToRun);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(marcFile.fileName);
+      Logs.waitFileIsImported(marcFile.fileName);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(marcFile.fileName);
       for (let i = 0; i < marcFile.numOfRecords; i++) {

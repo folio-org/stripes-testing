@@ -28,7 +28,7 @@ describe('marc', () => {
               path: TopMenu.dataImportPath,
               waiter: DataImport.waitLoading,
             });
-            DataImport.uploadFileAndRetry(testData.marcFile.marc, testData.marcFile.fileName);
+            DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(testData.marcFile.jobProfileToRun);
             JobProfiles.runImportFile();

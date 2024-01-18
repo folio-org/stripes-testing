@@ -31,7 +31,7 @@ describe('data-import', () => {
 
     it(
       'C353589 For the Data Import View all page, change from Load more to Paginated (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'nonParallel'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
