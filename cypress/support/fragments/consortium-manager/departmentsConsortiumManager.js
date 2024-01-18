@@ -11,7 +11,7 @@ const id = uuid();
 
 export const departmentsActions = {
   edit: 'edit',
-  trash: 'trash'
+  trash: 'trash',
 };
 
 export default {

@@ -7,7 +7,7 @@ import getRandomPostfix, { getTestEntityValue } from '../../support/utils/string
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 
-describe('Users -> Consortia', () => {
+describe('Consortia', () => {
   const createUserData = () => ({
     username: getTestEntityValue('username'),
     barcode: getRandomPostfix(),

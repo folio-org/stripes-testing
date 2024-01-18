@@ -20,7 +20,7 @@ const testUser = {
 };
 const newUsername = getTestEntityValue('username');
 
-describe('Users (Consortia)', () => {
+describe('Users', () => {
   before('create test data', () => {
     cy.getAdminToken();
     cy.createTempUser([

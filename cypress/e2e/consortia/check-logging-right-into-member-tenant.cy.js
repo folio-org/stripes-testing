@@ -4,7 +4,7 @@ import Users from '../../support/fragments/users/users';
 import TopMenu from '../../support/fragments/topMenu';
 import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
 
-describe('Users -> Consortia', () => {
+describe('Consortia', () => {
   let user;
 
   before('Create users, data', () => {

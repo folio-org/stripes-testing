@@ -7,7 +7,7 @@ import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import TopMenu from '../../../support/fragments/topMenu';
 
-describe('Consortia -> Consortium manager', () => {
+describe('Consortium manager', () => {
   let user;
 
   before('Create users, data', () => {
@@ -43,7 +43,7 @@ describe('Consortia -> Consortium manager', () => {
 
   it(
     'C386869: "Consortium manager" option is displayed in "Settings" only for Central Tenant (consortia) (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPathECS', 'thunderjet'] },
     () => {
       ConsortiumManager.varifyConsortiumManagerOnPage();
       ConsortiumManager.switchActiveAffiliationExists();
