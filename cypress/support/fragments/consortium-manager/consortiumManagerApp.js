@@ -1,28 +1,22 @@
 import {
   PaneHeader,
   Button,
-  Modal,
-  Checkbox,
   HTML,
   NavListItem,
   Pane,
   MultiColumnListHeader,
   including,
-  Warning,
-  ListRow,
   Spinner,
+  Section,
 } from '../../../../interactors';
 
 const selectMembersButton = Button('Select members');
-const selectMembersModal = Modal('Select members');
-const searchAndFilterPane = Pane('Search & filter');
-const membersPane = Pane('Members');
-const searchButton = Button('Search');
-const resetAll = Button('Reset all');
-const saveAndClose = Button('Save & close');
-const selectAllMembersCheckbox = Checkbox({ ariaLabel: 'Select all members' });
 
 export const settingsItems = {
+  circulation: 'Circulation',
+  dataExport: 'Data export',
+  dataImport: 'Data import',
+  inventory: 'Inventory',
   users: 'Users',
 };
 
@@ -32,78 +26,73 @@ export const usersItems = {
 
 export default {
   waitLoading() {
-    cy.expect([
+    cy.expect(
       PaneHeader({
         title: 'Settings for selected members can be modified at the same time',
       }).exists(),
-    ]);
+    );
+  },
+
+  verifySetingPaneIsDisplayed() {
+    cy.expect(Section({ id: 'settings-nav-pane' }).exists());
+  },
+
+  verifyChooseSettingsIsDisplayed() {
+    cy.expect(HTML({ text: 'Choose settings' }).exists());
+  },
+
+  verifyMembersSelected(count) {
+    cy.expect(
+      HTML(
+        including(
+          `${
+            count === undefined ? '' : count === 1 ? `${count} member` : `${count} members`
+          } selected`,
+        ),
+      ).exists(),
+    );
+  },
+
+  verifySelectMembersButton() {
+    cy.expect(selectMembersButton.exists());
+  },
+
+  verifyPaneIncludesSettings(settingsList) {
+    cy.get('#settings-nav-pane-content a').then(($elements) => {
+      const availableSettings = [];
+      cy.wrap($elements).each(($el) => {
+        availableSettings.push($el.text());
+      });
+      if (settingsList) {
+        cy.wrap(availableSettings).should('deep.equal', settingsList);
+      } else {
+        // if there is no settingsList then we check the alphabetical order
+        cy.wrap(availableSettings).should('deep.equal', availableSettings.sort());
+      }
+    });
+  },
+
+  verifySelectedSettingIsDisplayed(settingName) {
+    cy.expect(Pane(settingName).exists());
+  },
+
+  chooseSettingsItem(settingName) {
+    cy.do(Section({ id: 'settings-nav-pane' }).find(NavListItem(settingName)).click());
+    this.verifySelectedSettingIsDisplayed();
+  },
+
+  verifyStatusOfConsortiumManager(members) {
+    this.waitLoading();
+    this.verifySetingPaneIsDisplayed();
+    this.verifyPaneIncludesSettings();
+    this.verifyMembersSelected(members);
+    this.verifySelectMembersButton();
+    this.verifyChooseSettingsIsDisplayed();
   },
 
   clickSelectMembers() {
     cy.expect(Spinner().absent());
     cy.do(selectMembersButton.click());
-  },
-
-  verifySelectMembersModal(found, selected, allMembersSelected = false) {
-    cy.expect([
-      selectMembersModal.find(searchAndFilterPane).exists(),
-      selectMembersModal.find(membersPane).exists(),
-      searchAndFilterPane.find(searchButton).has({ disabled: true }),
-      searchAndFilterPane.find(resetAll).has({ disabled: true }),
-      membersPane.find(HTML(`${found} members found`)).exists(),
-      membersPane
-        .find(
-          Warning('Settings for the following selected members can be modified at the same time.'),
-        )
-        .exists(),
-      membersPane.find(HTML('End of list')).exists(),
-      selectMembersModal.find(HTML(`Total selected: ${selected}`)).exists(),
-      selectMembersModal.find(Button({ icon: 'times' })).has({ disabled: false }),
-      selectMembersModal.find(Button('Cancel')).has({ disabled: false }),
-      selectMembersModal.find(saveAndClose).has({ disabled: false }),
-    ]);
-
-    if (allMembersSelected) cy.expect(membersPane.find(selectAllMembersCheckbox).has({ checked: true }));
-  },
-
-  selectAllMembers() {
-    this.clickSelectMembers();
-    cy.wait(2000);
-    cy.get('[aria-label="Select all members"]')
-      .invoke('is', ':checked')
-      .then((checked) => {
-        if (!checked) {
-          cy.do(selectMembersModal.find(selectAllMembersCheckbox).click());
-          cy.expect(selectMembersModal.find(selectAllMembersCheckbox).has({ checked: true }));
-        }
-      });
-    cy.wait(2000);
-    cy.do(saveAndClose.click());
-  },
-
-  selectMembers(...members) {
-    members.forEach((member) => {
-      cy.do([
-        selectMembersModal.find(ListRow(member)).find(Checkbox()).click(),
-      ]);
-    });
-    cy.do(saveAndClose.click());
-  },
-
-  verifyPageAfterSelectingMembers(memberCount) {
-    cy.expect(Modal().absent());
-    cy.get('[class^="NavListItem"]').then((items) => {
-      const textArray = items.get().map((el) => el.innerText);
-      const sortedArray = [...textArray].sort((a, b) => a - b);
-      expect(sortedArray).to.eql(textArray);
-    });
-    this.waitLoading();
-    const memberText = `${memberCount} ${memberCount === 1 ? 'member' : 'members'} selected`;
-    cy.expect([HTML(memberText).exists(), selectMembersButton.has({ disabled: false })]);
-  },
-
-  chooseSettingsItem(item) {
-    cy.do([NavListItem(item).click(), HTML('Choose settings').absent(), Pane(item).exists()]);
   },
 
   chooseUsersItem(item) {
