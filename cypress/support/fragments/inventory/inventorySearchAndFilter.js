@@ -564,7 +564,7 @@ export default {
 
   checkContributorsColumResult(cellContent) {
     cy.expect(
-      MultiColumnList({ id: 'browse-inventory-results-pane-content' })
+      MultiColumnList({ id: 'list-inventory' })
         .find(MultiColumnListCell(including(cellContent)))
         .exists(),
     );

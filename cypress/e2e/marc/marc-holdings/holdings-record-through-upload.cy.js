@@ -32,6 +32,7 @@ describe('marc', () => {
           HoldingsRecordEdit.waitLoading();
           HoldingsRecordEdit.checkReadOnlyFields();
           HoldingsRecordEdit.closeWithoutSave();
+          InventoryInstance.openHoldingView();
           HoldingsRecordView.checkReadOnlyFields();
           HoldingsRecordView.tryToDelete();
           HoldingsRecordView.duplicate();
