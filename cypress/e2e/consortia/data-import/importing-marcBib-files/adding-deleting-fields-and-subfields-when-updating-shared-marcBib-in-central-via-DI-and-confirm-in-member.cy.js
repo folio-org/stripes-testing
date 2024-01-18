@@ -32,7 +32,7 @@ import NewMatchProfile from '../../../../support/fragments/settings/dataImport/m
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {
-      sharedInstanceId: [],
+      instanceIds: [],
       marcFile: {
         marc: 'marcBibFileForC405531.mrc',
         fileName: `C405531 testMarcFile${getRandomPostfix()}.mrc`,
@@ -127,7 +127,7 @@ describe('Data Import', () => {
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(testData.marcFile.fileName);
       Logs.getCreatedItemsID().then((link) => {
-        testData.sharedInstanceId.push(link.split('/')[5]);
+        testData.instanceIds.push(link.split('/')[5]);
       });
 
       cy.createTempUser([
@@ -161,7 +161,7 @@ describe('Data Import', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId[0]);
+      InventoryInstance.deleteInstanceViaApi(testData.instanceIds[0]);
       JobProfiles.deleteJobProfile(jobProfileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
@@ -175,7 +175,7 @@ describe('Data Import', () => {
       'C405531 Check adding/deleting fields and subfields when updating shared "MARC Bib" in Central tenant via Data import and confirm in member tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
-        InventoryInstance.searchByTitle(testData.sharedInstanceId[0]);
+        InventoryInstance.searchByTitle(testData.instanceIds[0]);
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.verifySelectedRecords(1);
@@ -207,7 +207,7 @@ describe('Data Import', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.verifyPanesExist();
-        InventoryInstance.searchByTitle(testData.sharedInstanceId[0]);
+        InventoryInstance.searchByTitle(testData.instanceIds[0]);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName);
         InventoryInstance.verifyContributorAbsent(testData.absentContributorName);
@@ -228,7 +228,7 @@ describe('Data Import', () => {
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.college);
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstance.searchByTitle(testData.sharedInstanceId[0]);
+        InventoryInstance.searchByTitle(testData.instanceIds[0]);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName);
         InventoryInstance.verifyContributorAbsent(testData.absentContributorName);

@@ -34,7 +34,7 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {
-      sharedInstanceId: [],
+      instanceIds: [],
       marcFile: {
         marc: 'marcBibFileForC405532.mrc',
         fileName: `C405532 testMarcFile${getRandomPostfix()}.mrc`,
@@ -111,7 +111,7 @@ describe('Data Import', () => {
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(testData.marcFile.fileName);
       Logs.getCreatedItemsID().then((link) => {
-        testData.sharedInstanceId.push(link.split('/')[5]);
+        testData.instanceIds.push(link.split('/')[5]);
       });
       cy.logout();
 
@@ -177,7 +177,7 @@ describe('Data Import', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId[0]);
+      InventoryInstance.deleteInstanceViaApi(testData.instanceIds[0]);
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -230,7 +230,7 @@ describe('Data Import', () => {
         ConsortiumManager.switchActiveAffiliation(tenantNames.central);
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.verifyPanesExist();
-        InventoryInstances.searchByTitle(testData.sharedInstanceId[0]);
+        InventoryInstances.searchByTitle(testData.instanceIds[0]);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName, testData.contributorType);
         InventoryInstance.verifyContributorAbsent(testData.absentContributorName);
