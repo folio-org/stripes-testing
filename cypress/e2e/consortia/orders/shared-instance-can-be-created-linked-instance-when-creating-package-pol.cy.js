@@ -16,11 +16,11 @@ describe('Orders -> Consortium (Orders)', () => {
   describe('Orders', () => {
     describe('Consortia', () => {
       const randomPostfix = getRandomPostfix();
-      const firtstInstancePrefix = `C411683-A Instance ${randomPostfix}`;
-      const firstSubjectPrefix = `C411683-A Subject ${randomPostfix}`;
-      const secondInstancePrefix = `C411683-B Instance ${randomPostfix}`;
-      const secondSubjectPrefix = `C411683-B Subject ${randomPostfix}`;
-      const packageNameForPol = `C411683 Pol Package ${randomPostfix}`;
+      const firtstInstancePrefix = `C411690-A Instance ${randomPostfix}`;
+      const firstSubjectPrefix = `C411690-A Subject ${randomPostfix}`;
+      const secondInstancePrefix = `C411690-B Instance ${randomPostfix}`;
+      const secondSubjectPrefix = `C411690-B Subject ${randomPostfix}`;
+      const packageNameForPol = `C411690 Pol Package ${randomPostfix}`;
       const testData = {
         collegeHoldings: [],
         universityHoldings: [],
