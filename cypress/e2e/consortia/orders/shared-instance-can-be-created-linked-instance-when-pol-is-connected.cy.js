@@ -16,8 +16,8 @@ describe('Orders -> Consortium (Orders)', () => {
   describe('Orders', () => {
     describe('Consortia', () => {
       const randomPostfix = getRandomPostfix();
-      const instancePrefix = `C422238 Instance ${randomPostfix}`;
-      const subjectPrefix = `C422238 Subject ${randomPostfix}`;
+      const instancePrefix = `C411665 Instance ${randomPostfix}`;
+      const subjectPrefix = `C411665 Subject ${randomPostfix}`;
       const testData = {
         collegeHoldings: [],
         universityHoldings: [],

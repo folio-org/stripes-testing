@@ -97,10 +97,7 @@ export default {
     });
     this.waitLoading();
     const memberText = `${memberCount} ${memberCount === 1 ? 'member' : 'members'} selected`;
-    cy.expect([
-      HTML(memberText).exists(),
-      selectMembersButton.has({ disabled: false }),
-    ]);
+    cy.expect([HTML(memberText).exists(), selectMembersButton.has({ disabled: false })]);
   },
 
   chooseSettingsItem(item) {

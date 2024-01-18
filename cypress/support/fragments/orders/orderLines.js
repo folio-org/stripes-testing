@@ -1547,6 +1547,14 @@ export default {
     cy.wait(4000);
   },
 
+  changeInstanceConnectionInActions: () => {
+    cy.do([
+      orderLineDetailsPane.find(paneHeaderOrderLinesDetailes.find(actionsButton)).click(),
+      Button('Change instance connection').click(),
+    ]);
+    cy.wait(4000);
+  },
+
   fillPOLineDetails({ receiptStatus }) {
     if (receiptStatus) {
       cy.do(poLineDetails.receiptStatus.focus());
@@ -1694,6 +1702,40 @@ export default {
     cy.wait(4000);
     cy.do([
       Button({ id: 'find-instance-trigger' }).click(),
+      selectInstanceModal.find(TextField({ name: 'query' })).fillIn(instanceName),
+      selectInstanceModal.find(searchButton).click(),
+      selectInstanceModal.find(MultiColumnListRow({ index: rowNumber })).click(),
+    ]);
+    // Need to wait,while entering data loading on page
+    cy.wait(2000);
+  },
+
+  submitMoveInChangeTitleModal: () => {
+    cy.wait(4000);
+    cy.do([
+      Modal('Change title').find(Select('How to update Holdings*')).choose('Move'),
+      Button('Submit').click(),
+    ]);
+    // Need to wait,while entering data loading on page
+    cy.wait(2000);
+    InteractorsTools.checkCalloutMessage('Order instance connection has been successfully updated');
+  },
+
+  submitCreateNewInChangeTitleModal: (holdingsButton) => {
+    cy.wait(4000);
+    cy.do([
+      Modal('Change title').find(Select('How to update Holdings*')).choose('Create new'),
+      Button('Submit').click(),
+      Modal('Delete Holdings').find(Button(holdingsButton)).click(),
+    ]);
+    // Need to wait,while entering data loading on page
+    cy.wait(2000);
+    InteractorsTools.checkCalloutMessage('Order instance connection has been successfully updated');
+  },
+
+  selectInstanceInSelectInstanceModal: (instanceName, rowNumber = 0) => {
+    cy.wait(4000);
+    cy.do([
       selectInstanceModal.find(TextField({ name: 'query' })).fillIn(instanceName),
       selectInstanceModal.find(searchButton).click(),
       selectInstanceModal.find(MultiColumnListRow({ index: rowNumber })).click(),
