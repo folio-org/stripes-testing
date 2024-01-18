@@ -148,6 +148,10 @@ export default {
     internal: 'ui-inventory.instance.view',
     gui: 'Inventory: View instances, holdings, and items',
   },
+  uiInventoryViewCreateInstances: {
+    internal: 'ui-inventory.instance.create',
+    gui: 'Inventory: View, create instances',
+  },
   uiInventoryStorageModule: {
     internal: 'inventory-storage.all',
     gui: 'inventory storage module - all permissions',
