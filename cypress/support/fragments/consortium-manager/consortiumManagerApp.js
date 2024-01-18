@@ -81,11 +81,13 @@ export default {
     cy.do(saveAndClose.click());
   },
 
-  selectMembers(member) {
-    cy.do([
-      selectMembersModal.find(ListRow(member)).find(Checkbox()).click(),
-      saveAndClose.click(),
-    ]);
+  selectMembers(...members) {
+    members.forEach((member) => {
+      cy.do([
+        selectMembersModal.find(ListRow(member)).find(Checkbox()).click(),
+      ]);
+    });
+    cy.do(saveAndClose.click());
   },
 
   verifyPageAfterSelectingMembers(memberCount) {

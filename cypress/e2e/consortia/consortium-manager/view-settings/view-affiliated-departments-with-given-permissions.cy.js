@@ -10,6 +10,7 @@ import ConsortiumManagerApp, {
   usersItems,
 } from '../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import DepartmentsConsortiumManager from '../../../../support/fragments/consortium-manager/departmentsConsortiumManager';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 
 const testData = {
   centralSharedDepartment: {
@@ -47,14 +48,6 @@ describe('Consortium manager', () => {
           },
         );
         Departments.createViaApi(testData.centralLocalDepartment);
-
-        cy.createTempUser([
-          permissions.consortiaSettingsConsortiumManagerEdit.gui,
-          permissions.createEditViewDepartments.gui,
-        ]).then((userProperties) => {
-          // User for test C404400
-          testData.user400 = userProperties;
-        });
         cy.createTempUser([
           permissions.consortiaSettingsConsortiumManagerView.gui,
           permissions.createEditViewDepartments.gui,
@@ -78,62 +71,89 @@ describe('Consortium manager', () => {
           .then(() => {
             cy.resetTenant();
             cy.assignAffiliationToUser(Affiliations.College, testData.user390.userId);
-            cy.assignAffiliationToUser(Affiliations.College, testData.user400.userId);
             cy.setTenant(Affiliations.College);
+            // cy.getAdminToken();
             cy.assignPermissionsToExistingUser(testData.user390.userId, [
               permissions.createEditViewDepartments.gui,
             ]);
-            cy.assignPermissionsToExistingUser(testData.user400.userId, [
+            cy.createTempUser([
               permissions.departmentsAll.gui,
-            ]);
-            Departments.createViaApi(testData.collegeLocalDepartment);
+            ]).then((userProperties) => {
+              // User for test C404400
+              testData.user400 = userProperties;
+            }).then(() => {
+              cy.createTempUser([
+                permissions.departmentsAll.gui,
+              ]).then((userProperties) => {
+                // User for test C407747
+                testData.user747 = userProperties;
+              }).then(() => {
+                Departments.createViaApi(testData.collegeLocalDepartment);
 
-            cy.resetTenant();
-            cy.assignAffiliationToUser(Affiliations.University, testData.user390.userId);
-            cy.assignAffiliationToUser(Affiliations.University, testData.user400.userId);
-            cy.setTenant(Affiliations.University);
-            cy.assignPermissionsToExistingUser(testData.user390.userId, [
-              permissions.departmentsAll.gui,
-            ]);
-            cy.assignPermissionsToExistingUser(testData.user400.userId, [
-              permissions.createEditViewDepartments.gui,
-            ]);
-            Departments.createViaApi(testData.universityLocalDepartment);
-            cy.resetTenant();
-            [testUsers[0], testUsers[1], testUsers[2]].forEach((element) => {
-              cy.getUsers({ limit: 1, query: `"username"="${element.username}"` }).then((users) => {
-                cy.updateUser({
-                  ...users[0],
-                  departments: [
-                    testData.centralSharedDepartment.id,
-                    testData.centralLocalDepartment.id,
-                  ],
+                cy.resetTenant();
+                cy.getAdminToken();
+                cy.assignPermissionsToExistingUser(testData.user400.userId, [
+                  permissions.consortiaSettingsConsortiumManagerEdit.gui,
+                  permissions.createEditViewDepartments.gui,
+                ]);
+                cy.assignPermissionsToExistingUser(testData.user747.userId, [
+                  permissions.consortiaSettingsConsortiumManagerShare.gui,
+                  permissions.departmentsAll.gui,
+                ]);
+
+                cy.resetTenant();
+                cy.getAdminToken();
+                cy.assignAffiliationToUser(Affiliations.University, testData.user390.userId);
+                cy.assignAffiliationToUser(Affiliations.University, testData.user400.userId);
+                cy.assignAffiliationToUser(Affiliations.University, testData.user747.userId);
+                cy.setTenant(Affiliations.University);
+                cy.assignPermissionsToExistingUser(testData.user390.userId, [
+                  permissions.departmentsAll.gui,
+                ]);
+                cy.assignPermissionsToExistingUser(testData.user400.userId, [
+                  permissions.createEditViewDepartments.gui,
+                ]);
+                cy.assignPermissionsToExistingUser(testData.user747.userId, [
+                  permissions.createEditViewDepartments.gui,
+                ]);
+                Departments.createViaApi(testData.universityLocalDepartment);
+                cy.resetTenant();
+                [testUsers[0], testUsers[1], testUsers[2]].forEach((element) => {
+                  cy.getUsers({ limit: 1, query: `"username"="${element.username}"` }).then((users) => {
+                    cy.updateUser({
+                      ...users[0],
+                      departments: [
+                        testData.centralSharedDepartment.id,
+                        testData.centralLocalDepartment.id,
+                      ],
+                    });
+                  });
                 });
+                cy.setTenant(Affiliations.College);
+                [testUsers[3], testUsers[4]].forEach((element) => {
+                  cy.getUsers({ limit: 1, query: `"username"=$"${element.username}"` }).then(
+                    (result) => {
+                      cy.updateUser({
+                        ...result[0],
+                        departments: [
+                          testData.centralSharedDepartment.id,
+                          testData.collegeLocalDepartment.id,
+                        ],
+                      });
+                    },
+                  );
+                });
+                cy.setTenant(Affiliations.University);
+                cy.getUsers({ limit: 1, query: `"username"="${testUsers[5].username}"` }).then(
+                  (result) => {
+                    cy.updateUser({
+                      ...result[0],
+                      departments: [testData.centralSharedDepartment.id],
+                    });
+                  },
+                );
               });
             });
-            cy.setTenant(Affiliations.College);
-            [testUsers[3], testUsers[4]].forEach((element) => {
-              cy.getUsers({ limit: 1, query: `"username"=$"${element.username}"` }).then(
-                (result) => {
-                  cy.updateUser({
-                    ...result[0],
-                    departments: [
-                      testData.centralSharedDepartment.id,
-                      testData.collegeLocalDepartment.id,
-                    ],
-                  });
-                },
-              );
-            });
-            cy.setTenant(Affiliations.University);
-            cy.getUsers({ limit: 1, query: `"username"="${testUsers[5].username}"` }).then(
-              (result) => {
-                cy.updateUser({
-                  ...result[0],
-                  departments: [testData.centralSharedDepartment.id],
-                });
-              },
-            );
           });
       });
 
@@ -162,6 +182,7 @@ describe('Consortium manager', () => {
 
         Users.deleteViaApi(testData.user390.userId);
         Users.deleteViaApi(testData.user400.userId);
+        Users.deleteViaApi(testData.user747.userId);
       });
 
       it(
@@ -243,10 +264,9 @@ describe('Consortium manager', () => {
         { tags: ['criticalPath', 'thunderjet'] },
         () => {
           cy.resetTenant();
-          cy.login(testData.user400.username, testData.user400.password, {
-            path: TopMenu.consortiumManagerPath,
-            waiter: ConsortiumManagerApp.waitLoading,
-          });
+          cy.login(testData.user400.username, testData.user400.password);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+          cy.visit(TopMenu.consortiumManagerPath);
           ConsortiumManagerApp.selectAllMembers();
           ConsortiumManagerApp.verifyPageAfterSelectingMembers(3);
           ConsortiumManagerApp.clickSelectMembers();
@@ -289,6 +309,76 @@ describe('Consortium manager', () => {
             testData.centralSharedDepartment.payload.code,
             '3',
             'All',
+          );
+          DepartmentsConsortiumManager.verifyDepartmentInTheList(
+            testData.centralLocalDepartment.name,
+            testData.centralLocalDepartment.code,
+            '3',
+            'Central Office',
+            'edit',
+          );
+
+          DepartmentsConsortiumManager.verifyNoDepartmentInTheList(
+            testData.collegeLocalDepartment.name,
+          );
+          DepartmentsConsortiumManager.verifyNoDepartmentInTheList(
+            testData.universityLocalDepartment.name,
+          );
+        },
+      );
+
+      it(
+        'C407747 User with "Consortium manager: Can share settings to all members" permission is able to view the list of departments of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
+        { tags: ['criticalPath', 'thunderjet'] },
+        () => {
+          cy.resetTenant();
+          cy.login(testData.user747.username, testData.user747.password);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+          cy.visit(TopMenu.consortiumManagerPath);
+          ConsortiumManagerApp.selectAllMembers();
+          ConsortiumManagerApp.chooseSettingsItem(settingsItems.users);
+          ConsortiumManagerApp.chooseUsersItem(usersItems.departments);
+
+          DepartmentsConsortiumManager.verifyDepartmentInTheList(
+            testData.centralSharedDepartment.payload.name,
+            testData.centralSharedDepartment.payload.code,
+            '6',
+            'All',
+            'edit'
+          );
+          DepartmentsConsortiumManager.verifyDepartmentInTheList(
+            testData.centralLocalDepartment.name,
+            testData.centralLocalDepartment.code,
+            '3',
+            'Central Office',
+            'edit',
+          );
+
+          DepartmentsConsortiumManager.verifyDepartmentInTheList(
+            testData.collegeLocalDepartment.name,
+            testData.collegeLocalDepartment.code,
+            '2',
+            'College',
+            'edit',
+          );
+          DepartmentsConsortiumManager.verifyDepartmentInTheList(
+            testData.universityLocalDepartment.name,
+            testData.universityLocalDepartment.code,
+            'No value set-',
+            'University',
+            'edit',
+          );
+
+          ConsortiumManagerApp.clickSelectMembers();
+          ConsortiumManagerApp.verifySelectMembersModal(3, 3, true);
+          ConsortiumManagerApp.selectMembers(tenantNames.college, tenantNames.university);
+
+          DepartmentsConsortiumManager.verifyDepartmentInTheList(
+            testData.centralSharedDepartment.payload.name,
+            testData.centralSharedDepartment.payload.code,
+            '3',
+            'All',
+            'edit'
           );
           DepartmentsConsortiumManager.verifyDepartmentInTheList(
             testData.centralLocalDepartment.name,
