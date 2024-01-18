@@ -12,7 +12,7 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 
-describe('Data import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     const marcFile = {
       marc: 'marcAuthFileForC405519.mrc',
@@ -65,7 +65,7 @@ describe('Data import', () => {
 
     it(
       'C405519 Imported "MARC authority" record from Member tenant is not discoverable in Central tenant (consortia) (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathECS', 'spitfire'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
