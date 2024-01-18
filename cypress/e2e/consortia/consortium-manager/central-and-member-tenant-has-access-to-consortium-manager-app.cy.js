@@ -47,7 +47,6 @@ describe('Consortia', () => {
         SelectMembers.changeSelectAllCheckbox('check');
         verifyFoundMembersAndTotalSelected(2, 2, [tenantNames.central, tenantNames.college]);
         SelectMembers.searchTenant(tenantNames.central);
-        // cy.wait(10000);
         verifyFoundMembersAndTotalSelected(1, 2, [tenantNames.central]);
 
         SelectMembers.selectMembers(tenantNames.central);
