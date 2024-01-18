@@ -88,7 +88,6 @@ describe('Consortium manager', () => {
                 // User for test C407747
                 testData.user747 = userProperties;
               }).then(() => {
-
                 Departments.createViaApi(testData.collegeLocalDepartment);
 
                 cy.resetTenant();
