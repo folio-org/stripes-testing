@@ -870,7 +870,7 @@ export default {
     InteractorsTools.checkCalloutMessage(messages.itemMovedSuccessfully);
   },
 
-  moveItemToAnotherInstance({ fromHolding, toInstance, shouldOpen = true}) {
+  moveItemToAnotherInstance({ fromHolding, toInstance, shouldOpen = true }) {
     cy.do([
       actionsButton.click(),
       moveHoldingsToAnotherInstanceButton.click()
@@ -1389,15 +1389,5 @@ export default {
         );
       }
     });
-  },
-
-  clickMoveHoldingsToAnotherInstance(title) {
-    cy.do([
-      actionsButton.click(),
-      moveHoldingsToAnotherInstanceButton.click()
-    ]);
-    InventoryInstanceSelectInstanceModal.waitLoading();
-    InventoryInstanceSelectInstanceModal.searchByTitle(title);
-    InventoryInstanceSelectInstanceModal.selectInstance();
   },
 };
