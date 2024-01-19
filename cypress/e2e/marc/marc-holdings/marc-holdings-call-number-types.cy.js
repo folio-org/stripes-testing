@@ -83,6 +83,18 @@ describe('marc', { retries: 2 }, () => {
       ]).then((createdUserProperties) => {
         testData.createdUserProperties = createdUserProperties;
 
+        cy.getHridHandlingSettingsViaApi().then((settings) => {
+          const newSettings = { instances: {}, holdings: {}, items: {} };
+          newSettings.instances.prefix = settings.instances.prefix;
+          newSettings.holdings.prefix = settings.holdings.prefix;
+          newSettings.items.prefix = settings.items.prefix;
+          newSettings.instances.startNumber = settings.instances.currentNumber + 10;
+          newSettings.holdings.startNumber = settings.holdings.currentNumber + 10;
+          newSettings.items.startNumber = settings.items.currentNumber + 10;
+          newSettings.commonRetainLeadingZeroes = true;
+          cy.updateHridHandlingSettingsViaApi(newSettings);
+        });
+
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
             DataImport.verifyUploadState();
@@ -112,10 +124,7 @@ describe('marc', { retries: 2 }, () => {
                 cy.visit(TopMenu.dataImportPath);
                 DataImport.waitLoading();
                 DataImport.verifyUploadState();
-                DataImport.uploadFile(
-                  testData.editedHoldingsFileName,
-                  holdingsFile.fileName,
-                );
+                DataImport.uploadFile(testData.editedHoldingsFileName, holdingsFile.fileName);
                 JobProfiles.waitLoadingList();
                 JobProfiles.search(holdingsFile.jobProfileToRun);
                 JobProfiles.runImportFile();
