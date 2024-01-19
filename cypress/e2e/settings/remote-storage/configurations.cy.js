@@ -27,7 +27,7 @@ describe('remote-storage-configuration', () => {
   });
 
   it(
-    'C343219 Check “Accession tables” page without configurations with CaiaSoft provider (firebird)',
+    'C343288 Data synchronization settings section must be present only for Dematic StagingDirector provider (firebird)',
     { tags: ['criticalPath', 'firebird'] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
