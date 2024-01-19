@@ -13,7 +13,8 @@ describe('data-import', () => {
   describe('Settings', () => {
     const testData = {};
     const defaultJobProfileName = 'Default - Create SRS MARC Authority';
-    const defaultActionProfileName = 'Default - Create MARC Authority';
+    const newJobProfileName = `C422235 autoTestJobProf.${getRandomPostfix()}`;
+    const defaultActionProfileName = 'Default - Create instance';
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C422235 autoTestJobProf.${getRandomPostfix()}`,
@@ -29,21 +30,20 @@ describe('data-import', () => {
           path: SettingsMenu.jobProfilePath,
           waiter: JobProfiles.waitLoadingList,
         });
+        JobProfiles.search(defaultJobProfileName);
+        JobProfileView.duplicate();
+        cy.wait(1500);
+        NewJobProfile.fillProfileName(newJobProfileName);
+        cy.wait(1500);
+        NewJobProfile.saveAndClose();
       });
     });
 
     after('Delete test data', () => {
-      SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
-      // Returning Default job profile to its original properties
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.search(defaultJobProfileName);
-      JobProfiles.select(defaultJobProfileName);
-      JobProfileView.edit();
-      JobProfileEdit.verifyScreenName(defaultJobProfileName);
-      NewJobProfile.linkActionProfileByName(defaultActionProfileName);
-      JobProfileEdit.saveAndClose();
-      JobProfileView.verifyLinkedProfiles([defaultActionProfileName], 1);
-      Users.deleteViaApi(testData.user.userId);
+      cy.getAdminToken(() => {
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        Users.deleteViaApi(testData.user.userId);
+      });
     });
 
     it(
@@ -51,8 +51,7 @@ describe('data-import', () => {
       { tags: ['criticalPath', 'folijet'] },
       () => {
         // #2 Find and select "Default - Create SRS MARC Authority" job profile ->
-        JobProfiles.search(defaultJobProfileName);
-        JobProfiles.select(defaultJobProfileName);
+        JobProfiles.search(newJobProfileName);
         JobProfileView.edit();
         JobProfileEdit.unlinkActionsProfile(0);
         JobProfileEdit.saveAndClose();

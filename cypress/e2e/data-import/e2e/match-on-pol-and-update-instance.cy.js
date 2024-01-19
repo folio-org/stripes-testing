@@ -33,7 +33,6 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import OrderLines from '../../../support/fragments/orders/orderLines';
@@ -48,6 +47,7 @@ describe('data-import', () => {
   describe('End to end scenarios', () => {
     let user = null;
     let orderNumber;
+    let instanceHrid;
     const itemBarcode = uuid();
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const instanceTitle =
@@ -153,7 +153,13 @@ describe('data-import', () => {
         Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
           Orders.deleteOrderViaApi(orderId[0].id);
         });
-        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (initialInstance) => {
+            cy.deleteItemViaApi(initialInstance.items[0].id);
+            cy.deleteHoldingRecordViaApi(initialInstance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(initialInstance.id);
+          },
+        );
         cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
           (instance) => {
             if (instance) {
@@ -276,8 +282,6 @@ describe('data-import', () => {
           Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((res) => {
             orderNumber = res[0].poNumber;
 
-            cy.wait(4000);
-            Orders.checkIsOrderCreated(orderNumber);
             OrderLines.addPolToOrder({
               title: pol.title,
               method: pol.acquisitionMethod,
@@ -324,6 +328,9 @@ describe('data-import', () => {
         ]);
 
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+          instanceHrid = initialInstanceHrId;
+        });
         InventoryInstance.checkIsInstanceUpdated();
         InventoryInstance.checkIsHoldingsCreated([`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`]);
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
