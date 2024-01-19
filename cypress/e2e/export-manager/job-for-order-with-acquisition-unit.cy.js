@@ -104,7 +104,7 @@ describe('orders: export', () => {
 
   it(
     'C380640: Schedule export job for order with Acquisition unit (thunderjet) (TaaS)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       cy.login(user.username, user.password, {
         path: TopMenu.exportManagerOrganizationsPath,
