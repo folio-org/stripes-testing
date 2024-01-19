@@ -92,8 +92,15 @@ export default {
   },
 
   setFilterOptionFromAccordion(accordion, checkboxOption) {
-    // accordion = 'loan', 'notice', 'fee', 'request'
-    cy.do([Accordion({ id: accordion }).clickHeader(), Checkbox(checkboxOption).click()]);
+    // Check if it is already open
+    cy.get(`#${accordion}`).then(($accordion) => {
+      if (!$accordion.find('[class^="content-region"]').is(':visible')) {
+        cy.get(`#${accordion}`).click();
+      }
+    });
+    // Need to avoid robotic clicks
+    cy.wait(5000);
+    cy.do(Checkbox(checkboxOption).click());
   },
 
   resetFilters() {

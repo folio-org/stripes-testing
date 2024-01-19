@@ -60,6 +60,7 @@ describe('data-export', () => {
           'authority',
         );
       });
+      cy.getUserToken(user.username, user.password);
       ExportFileHelper.uploadFile(uuidsInInvalidFormat);
       ExportFileHelper.exportWithDefaultJobProfile(
         uuidsInInvalidFormat,
@@ -81,6 +82,7 @@ describe('data-export', () => {
           'authority',
         );
       });
+      cy.getUserToken(user.username, user.password);
       ExportFileHelper.uploadFile(notFoundUUIDsInValidFormat);
       ExportFileHelper.exportWithDefaultJobProfile(
         notFoundUUIDsInValidFormat,
