@@ -10,6 +10,7 @@ describe.skip('Create a custom package', () => {
     cy.visit(topMenu.eholdingsPath);
   });
   after('Deleting created Package', () => {
+    cy.getAdminToken();
     eHolding.deletePackage();
   });
   // test below is implemented in scope of FAT-1303 in:

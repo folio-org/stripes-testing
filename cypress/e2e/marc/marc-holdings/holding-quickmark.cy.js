@@ -41,7 +41,7 @@ describe('marc', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkJobStatus(fileName, 'Completed');
         Logs.openFileDetails(fileName);
         Logs.getCreatedItemsID(0).then((link) => {
           instanceID = link.split('/')[5];
@@ -65,6 +65,7 @@ describe('marc', () => {
     });
 
     after(() => {
+      cy.getAdminToken();
       cy.loginAsAdmin({
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,

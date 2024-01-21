@@ -24,6 +24,7 @@ describe('marc', () => {
       });
 
       after('Delete test data', () => {
+        cy.getAdminToken();
         Users.deleteViaApi(userId);
       });
 

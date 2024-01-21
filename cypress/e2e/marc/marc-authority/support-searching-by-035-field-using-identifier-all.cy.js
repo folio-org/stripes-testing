@@ -82,7 +82,7 @@ describe('marc', () => {
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
             Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+            Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
             Logs.openFileDetails(marcFile.fileName);
             for (let i = 0; i < marcFile.numberOfRecords; i++) {
               Logs.getCreatedItemsID(i).then((link) => {
@@ -102,6 +102,7 @@ describe('marc', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       testData.authorityIDs.forEach((id) => {
         MarcAuthority.deleteViaAPI(id);
