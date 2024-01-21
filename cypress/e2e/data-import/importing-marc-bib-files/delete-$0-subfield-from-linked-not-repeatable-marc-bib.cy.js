@@ -159,7 +159,7 @@ describe('data-import', () => {
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
               Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkStatusOfJobProfile('Completed');
+              Logs.checkJobStatus(nameForUpdatedMarcFile, 'Completed');
               Logs.openFileDetails(marcFile.fileName);
               for (let i = 0; i < marcFile.numOfRecords; i++) {
                 Logs.getCreatedItemsID(i).then((link) => {
@@ -273,7 +273,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameForUpdatedMarcFile);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkJobStatus(nameForUpdatedMarcFile, 'Completed');
         Logs.openFileDetails(nameForUpdatedMarcFile);
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
