@@ -156,7 +156,7 @@ const validOCLC = {
   lastRowNumber: 30,
   // it should be presented in marc bib one time to correct work(applicable in update of record)
   existingTag: '100',
-  ldrValue: '01677cam\\a22003974a\\4500',
+  ldrValue: '01799cam\\a22004094a\\4500',
   tag008BytesProperties: {
     srce: { interactor: TextField('Srce'), defaultValue: '\\' },
     lang: { interactor: TextField('Lang'), defaultValue: 'rus' },
@@ -849,6 +849,36 @@ export default {
     if (itemMoved) {
       InteractorsTools.checkCalloutMessage(messages.itemMovedSuccessfully);
     }
+  },
+
+  moveItemBackToInstance(fromHolding, toInstance, shouldOpen = true) {
+    cy.wait(5000);
+    if (shouldOpen) {
+      openHoldings(fromHolding);
+    }
+    cy.wait(5000);
+    cy.do([
+      Accordion({ label: including(`Holdings: ${fromHolding}`) })
+        .find(MultiColumnListRow({ indexRow: 'row-0' }))
+        .find(Checkbox())
+        .click(),
+      Accordion({ label: including(`Holdings: ${fromHolding}`) })
+        .find(Dropdown({ label: 'Move to' }))
+        .choose(including(toInstance)),
+    ]);
+    this.confirmOrCancel('Continue');
+    InteractorsTools.checkCalloutMessage(messages.itemMovedSuccessfully);
+  },
+
+  moveItemToAnotherInstance({ fromHolding, toInstance, shouldOpen = true }) {
+    cy.do([
+      actionsButton.click(),
+      moveHoldingsToAnotherInstanceButton.click()
+    ]);
+    InventoryInstanceSelectInstanceModal.waitLoading();
+    InventoryInstanceSelectInstanceModal.searchByTitle(toInstance);
+    InventoryInstanceSelectInstanceModal.selectInstance();
+    this.moveItemBackToInstance(fromHolding, toInstance, shouldOpen);
   },
 
   confirmOrCancel(action) {

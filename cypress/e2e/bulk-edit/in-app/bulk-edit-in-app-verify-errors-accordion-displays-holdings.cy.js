@@ -31,8 +31,12 @@ describe('bulk-edit', () => {
           limit: 1,
           query: `"instanceId"="${item.instanceId}"`,
         }).then((holdings) => {
+          cy.updateHoldingRecord(holdings[0].id, {
+            ...holdings[0],
+            // Online
+            temporaryLocationId: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5',
+          });
           item.holdingUUID = holdings[0].id;
-          item.holdingHRID = holdings[0].hrid;
           FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, item.holdingUUID);
         });
 
@@ -44,6 +48,7 @@ describe('bulk-edit', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${holdingUUIDsFileName}`);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
@@ -65,15 +70,13 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyRowIcons();
         // Modify the record by selecting the **same value** that at least **one** Holdings record has (For example,"TEMPORARY HOLDINGS LOCATION" is "Annex" => Select "Annex" location by clicking on the value from  "Select location" dropdown list )
         const newLocation = 'Online';
-        BulkEditActions.selectOption('Permanent holdings location');
-        BulkEditActions.clickSelectedLocation('Select location', newLocation);
+        BulkEditActions.replaceTemporaryLocation(newLocation, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(1, newLocation);
         // Click the "Commit changes" button
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditActions.verifySuccessBanner(1);
-        BulkEditSearchPane.verifyChangedResults(item.holdingHRID);
+        BulkEditSearchPane.verifyNonMatchedResults(item.holdingUUID);
       },
     );
   });
