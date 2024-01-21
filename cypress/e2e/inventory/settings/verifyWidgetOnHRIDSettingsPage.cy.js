@@ -19,12 +19,13 @@ describe('inventory', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
     });
 
     it(
       'C369055 Verify created/updated by widget on HRID Settings page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'nonParallel'] },
       () => {
         cy.visit(SettingsMenu.hridHandlingPath);
         HridHandling.waitloading();
@@ -36,11 +37,13 @@ describe('inventory', () => {
         // uncheck first, since this checkbox can be checked by default
         HridHandling.uncheckRemoveLeadingZeroesIfCheckedAndSave();
         HridHandling.checkRemoveLeadingZeroesAndSave();
-        let date = DateTools.getFormattedDateWithTime().replace(',', '');
+        let date = DateTools.getFormattedDateWithTime(new Date(), { withSpace: true });
+        // wait, because next steps can be failed without it
+        cy.wait(2000);
         HridHandling.verifyValueInRecordDetailsSection(testData.user.username);
         HridHandling.verifyValueInRecordDetailsSection(date);
         HridHandling.uncheckRemoveLeadingZeroesAndSave();
-        date = DateTools.getFormattedDateWithTime().replace(',', '');
+        date = DateTools.getFormattedDateWithTime(new Date(), { withSpace: true });
         HridHandling.verifyValueInRecordDetailsSection(testData.user.username);
         HridHandling.verifyValueInRecordDetailsSection(date);
       },

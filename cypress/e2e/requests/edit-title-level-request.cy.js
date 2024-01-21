@@ -183,7 +183,7 @@ describe('Title Level Request', () => {
         type: requestData.requestType,
         status: EditRequest.requestStatuses.NOT_YET_FILLED,
         level: requestData.requestLevel,
-        requestExpirationDate: DateTools.getFormattedDate({ date: currentDate }, 'MM/DD/YYYY'),
+        requestExpirationDate: DateTools.getFormattedDate({ date: currentDate }, 'M/D/YYYY'),
         comments: requestData.patronComments,
       });
       RequestDetail.checkRequesterInformation({

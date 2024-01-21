@@ -81,8 +81,9 @@ describe('data-import', () => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-        Invoices.deleteInvoiceViaActions();
-        Invoices.confirmInvoiceDeletion();
+        cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => {
+          cy.deleteInvoiceFromStorageViaApi(id);
+        });
         cy.loginAsAdmin();
         cy.visit(SettingsMenu.acquisitionUnitsPath);
         AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);

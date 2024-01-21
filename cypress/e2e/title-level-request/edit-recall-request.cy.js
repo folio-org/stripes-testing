@@ -91,6 +91,7 @@ describe('Title Level Request', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     testData.folioInstances.forEach((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcodes[0],

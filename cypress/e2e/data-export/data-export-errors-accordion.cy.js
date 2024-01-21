@@ -17,8 +17,7 @@ const validFile = `autoTestValidFile${getRandomPostfix()}.csv`;
 const invalidFile = `autoTestInvalidFile${getRandomPostfix()}.csv`;
 const partiallyValidFile = `autoTestInvalidFile${getRandomPostfix()}.csv`;
 
-describe.skip('data-export', () => {
-  // skipped because of a bug (MDEXP-600)
+describe('data-export', () => {
   before('Create test data', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
