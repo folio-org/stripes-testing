@@ -65,6 +65,7 @@ describe('marc', () => {
     });
 
     after(() => {
+      cy.getAdminToken();
       cy.loginAsAdmin({
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,
