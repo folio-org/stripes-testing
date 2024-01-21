@@ -53,7 +53,7 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
       JobProfiles.search('Default - Create SRS MARC Authority');
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(testData.fileName);
-      Logs.checkJobStatus(marcFile.fileName, 'Completed');
+      Logs.checkJobStatus(testData.fileName, 'Completed');
 
       cy.visit(TopMenu.marcAuthorities);
       MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.record);
