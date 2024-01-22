@@ -87,7 +87,7 @@ describe('marc', () => {
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
             Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
+            Logs.checkJobStatus(marcFile.fileName, 'Completed');
             Logs.openFileDetails(marcFile.fileName);
             for (let i = 0; i < marcFile.numOfRecords; i++) {
               Logs.getCreatedItemsID(i).then((link) => {

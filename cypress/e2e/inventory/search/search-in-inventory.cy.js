@@ -64,7 +64,7 @@ describe('inventory', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForC360548);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForC360548, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForC360548);
         for (let i = 0; i < 5; i++) {
           Logs.getCreatedItemsID(i).then((link) => {
