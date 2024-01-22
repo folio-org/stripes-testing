@@ -106,7 +106,7 @@ describe('MARC', () => {
             waiter: InventoryInstances.waitContentLoading,
           });
           ConsortiumManager.switchActiveAffiliation(tenantNames.college);
-          InventoryInstance.searchByTitle(testData.fieldContents.tag245Content);
+          InventoryInstances.searchByTitle(testData.fieldContents.tag245Content);
           InventoryInstances.selectInstance();
           InventoryInstance.verifySharedIcon();
           InventoryInstance.checkPresentedText(testData.fieldContents.tag245Content);

@@ -96,7 +96,7 @@ describe('MARC', () => {
         'C405520 User can edit shared "MARC Bib" in Central tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire'] },
         () => {
-          InventoryInstance.searchByTitle(createdInstanceID);
+          InventoryInstances.searchByTitle(createdInstanceID);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.checkPaneheaderContains(testData.sharedPaneheaderText);
@@ -116,7 +116,7 @@ describe('MARC', () => {
             waiter: InventoryInstances.waitContentLoading,
           });
           ConsortiumManager.switchActiveAffiliation(tenantNames.college);
-          InventoryInstance.searchByTitle(createdInstanceID);
+          InventoryInstances.searchByTitle(createdInstanceID);
           InventoryInstances.selectInstance();
           InventoryInstance.checkInstanceTitle(testData.updatedTitle);
           // TO DO: fix this check failure - 'Unknown user' is shown, possibly due to the way users are created in test
