@@ -134,7 +134,7 @@ describe('MARC', () => {
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 
-            InventoryInstance.searchByTitle(createdInstanceIDs[1]);
+            InventoryInstances.searchByTitle(createdInstanceIDs[1]);
             InventoryInstances.selectInstance();
             InventoryInstance.checkPresentedText(testData.instanceEditedTitle);
             InventoryInstance.checkExpectedMARCSource();
