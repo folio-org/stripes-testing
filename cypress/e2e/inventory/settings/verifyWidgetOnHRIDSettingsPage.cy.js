@@ -19,8 +19,9 @@ describe('inventory', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(testData.user.userId);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(testData.user.userId);
+      });
     });
 
     it(

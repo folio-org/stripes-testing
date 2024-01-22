@@ -104,7 +104,6 @@ describe('data-import', () => {
       FileManager.deleteFile(`cypress/fixtures/${testData.editedFileName}`);
     });
 
-    // https://issues.folio.org/browse/MODSOURMAN-1106
     it(
       'C415266 Update MARC Bib via Data Import/incoming bib does not have an 005 (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
