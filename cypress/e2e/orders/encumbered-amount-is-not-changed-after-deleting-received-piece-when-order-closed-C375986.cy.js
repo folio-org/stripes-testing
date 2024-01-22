@@ -141,9 +141,14 @@ describe('Orders', () => {
   });
 
   it(
-    'C375985: Encumbered amount is not changed after deleting received piece when related approved invoice exists and order is closed (thunderjet) (TaaS)',
+    'C375986: Encumbered amount is not changed after deleting received piece when related paid invoice exists and order is closed (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
+      Invoices.changeInvoiceStatusViaApi({
+        invoice: testData.invoice,
+        status: INVOICE_STATUSES.PAID,
+      });
+
       // Click on the Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
       OrderDetails.checkOrderDetails({
@@ -199,8 +204,8 @@ describe('Orders', () => {
           { key: 'Type', value: 'Encumbrance' },
           { key: 'From', value: testData.fund.name },
           { key: 'Initial encumbrance', value: '$0.00' },
-          { key: 'Awaiting payment', value: '$25.00' },
-          { key: 'Expended', value: '$0.00' },
+          { key: 'Awaiting payment', value: '$0.00' },
+          { key: 'Expended', value: '$25.00' },
           { key: 'Status', value: 'Released' },
         ],
       });

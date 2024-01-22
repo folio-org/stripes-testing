@@ -7,12 +7,11 @@ import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import Invoices from '../../support/fragments/invoices/invoices';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
-import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import Organizations from '../../support/fragments/organizations/organizations';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import { Approvals } from '../../support/fragments/settings/invoices';
 
 describe('ui-invoices: Approve invoice', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -23,15 +22,11 @@ describe('ui-invoices: Approve invoice', () => {
   const defaultFund = { ...Funds.defaultUiFund };
   const subtotalValue = 100;
   const allocatedQuantity = '100';
+  const isApprovePayEnabled = false;
   let user;
 
   before(() => {
     cy.getAdminToken();
-    cy.loginAsAdmin({
-      path: SettingsMenu.invoiceApprovalsPath,
-      waiter: SettingsInvoices.waitApprovalsLoading,
-    });
-    SettingsInvoices.checkApproveAndPayCheckboxIsDisabled();
 
     Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` }).then(
       (organization) => {
@@ -57,6 +52,7 @@ describe('ui-invoices: Approve invoice', () => {
                 Funds.selectFund(defaultFund.name);
                 Funds.addBudget(allocatedQuantity);
                 invoiceLine.subTotal = -subtotalValue;
+                Approvals.setApprovePayValue(isApprovePayEnabled);
                 cy.visit(TopMenu.invoicesPath);
                 Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
                 Invoices.createInvoiceLine(invoiceLine);
