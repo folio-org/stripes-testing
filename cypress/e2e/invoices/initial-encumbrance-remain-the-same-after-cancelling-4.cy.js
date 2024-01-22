@@ -25,62 +25,61 @@ describe('Invoices', () => {
   };
 
   before('Create test data', () => {
-    cy.getAdminToken().then(() => {
-      const { fiscalYear, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
-        ledger: { restrictEncumbrance: true, restrictExpenditures: true },
-        budget: { allocated: 100, allowableEncumbrance: 110 },
+    cy.getAdminToken();
+    const { fiscalYear, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
+      ledger: { restrictEncumbrance: true, restrictExpenditures: true },
+      budget: { allocated: 100, allowableEncumbrance: 110 },
+    });
+
+    testData.fiscalYear = fiscalYear;
+    testData.fund = fund;
+    testData.budget = budget;
+
+    testData.organization = NewOrganization.getDefaultOrganization();
+
+    Organizations.createOrganizationViaApi(testData.organization).then(() => {
+      testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
+      testData.orderLine = BasicOrderLine.getDefaultOrderLine({
+        listUnitPrice: 110,
+        fundDistribution: [{ code: fund.code, fundId: fund.id, value: 100 }],
       });
 
-      testData.fiscalYear = fiscalYear;
-      testData.fund = fund;
-      testData.budget = budget;
+      Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then((order) => {
+        testData.order = order;
 
-      testData.organization = NewOrganization.getDefaultOrganization();
+        Orders.updateOrderViaApi({ ...testData.order, workflowStatus: 'Open' });
 
-      Organizations.createOrganizationViaApi(testData.organization).then(() => {
-        testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
-        testData.orderLine = BasicOrderLine.getDefaultOrderLine({
-          listUnitPrice: 110,
-          fundDistribution: [{ code: fund.code, fundId: fund.id, value: 100 }],
-        });
+        OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${order.poNumber}*"` }).then(
+          (orderLines) => {
+            testData.orderLine = orderLines[0];
+            testData.invoices = [];
 
-        Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then((order) => {
-          testData.order = order;
+            const invoiceData = {
+              vendorId: testData.organization.id,
+              fiscalYearId: testData.fiscalYear.id,
+              poLineId: testData.orderLine.id,
+              fundDistributions: testData.orderLine.fundDistribution,
+              accountingCode: testData.organization.erpCode,
+              releaseEncumbrance: false,
+            };
 
-          Orders.updateOrderViaApi({ ...testData.order, workflowStatus: 'Open' });
+            Invoices.createInvoiceWithInvoiceLineViaApi({
+              ...invoiceData,
+              subTotal: 10,
+            }).then((invoice) => {
+              testData.invoices.push(invoice);
 
-          OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${order.poNumber}*"` }).then(
-            (orderLines) => {
-              testData.orderLine = orderLines[0];
-              testData.invoices = [];
+              Invoices.changeInvoiceStatusViaApi({ invoice, status: INVOICE_STATUSES.PAID });
+            });
 
-              const invoiceData = {
-                vendorId: testData.organization.id,
-                fiscalYearId: testData.fiscalYear.id,
-                poLineId: testData.orderLine.id,
-                fundDistributions: testData.orderLine.fundDistribution,
-                accountingCode: testData.organization.erpCode,
-                releaseEncumbrance: false,
-              };
-
-              Invoices.createInvoiceWithInvoiceLineViaApi({
-                ...invoiceData,
-                subTotal: 10,
-              }).then((invoice) => {
-                testData.invoices.push(invoice);
-
-                Invoices.changeInvoiceStatusViaApi({ invoice, status: INVOICE_STATUSES.PAID });
-              });
-
-              Invoices.createInvoiceWithInvoiceLineViaApi({
-                ...invoiceData,
-                subTotal: 30,
-              }).then((invoice) => {
-                testData.invoices.push(invoice);
-              });
-            },
-          );
-        });
+            Invoices.createInvoiceWithInvoiceLineViaApi({
+              ...invoiceData,
+              subTotal: 30,
+            }).then((invoice) => {
+              testData.invoices.push(invoice);
+            });
+          },
+        );
       });
     });
 
@@ -94,10 +93,9 @@ describe('Invoices', () => {
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken().then(() => {
-      Organizations.deleteOrganizationViaApi(testData.organization.id);
-      Users.deleteViaApi(testData.user.userId);
-    });
+    cy.getAdminToken();
+    Organizations.deleteOrganizationViaApi(testData.organization.id);
+    Users.deleteViaApi(testData.user.userId);
   });
 
   it(
