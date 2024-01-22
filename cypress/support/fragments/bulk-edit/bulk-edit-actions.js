@@ -490,7 +490,7 @@ export default {
         .find(Select({ content: including('Set') }))
         .choose(`Set ${value}`),
     ]);
-    if (holdings) cy.expect(Checkbox('Apply to items records').has({ checked: value }));
+    if (holdings) cy.expect(Checkbox('Apply to all items records').has({ checked: value }));
   },
 
   verifyItemAdminstrativeNoteActions(rowIndex = 0) {
@@ -541,13 +541,12 @@ export default {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(noteType),
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Find'),
-      RepeatableFieldItem({ index: rowIndex }).find(TextArea()).fillIn(oldNote),
+      RepeatableFieldItem({ index: rowIndex }).find(TextArea({ dataTestID: 'input-textarea-0' })).fillIn(oldNote),
       RepeatableFieldItem({ index: rowIndex })
         .find(Select({ value: '' }))
         .choose('Replace with'),
+      RepeatableFieldItem({ index: rowIndex }).find(TextArea({ dataTestID: 'input-textarea-1' })).fillIn(newNote),
     ]);
-    // TODO: redesign with interactors
-    cy.xpath(`//*[@data-testid="row-${rowIndex}"]/div[5]//textarea`).type(newNote);
   },
 
   noteRemove(noteType, note, rowIndex = 0) {
@@ -642,7 +641,7 @@ export default {
   },
 
   checkApplyToItemsRecordsCheckbox() {
-    cy.do(Checkbox('Apply to items records').click());
+    cy.do(Checkbox('Apply to all items records').click());
   },
 
   verifyNoMatchingOptionsForLocationFilter() {

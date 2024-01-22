@@ -31,11 +31,11 @@ describe('Export Manager', () => {
     cy.createTempUser([permissions.bulkEditView.gui, permissions.exportManagerView.gui]).then(
       (userProperties) => {
         user = userProperties;
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
         cy.login(userWithPermissions.username, userWithPermissions.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
         FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.itemBarcode);
       },
     );

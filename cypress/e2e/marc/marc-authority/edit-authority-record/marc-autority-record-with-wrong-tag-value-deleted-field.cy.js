@@ -63,6 +63,7 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     createdAuthorityIDs.forEach((id) => {
       MarcAuthority.deleteViaAPI(id);
     });
