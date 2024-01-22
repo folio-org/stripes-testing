@@ -93,7 +93,7 @@ describe('MARC', () => {
       });
 
       it(
-        'C405520 User can edit shared "MARC Bib" in Central tenant (consortia)(spitfire)',
+        'C405520 User can edit shared "MARC Bib" in Central tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire'] },
         () => {
           InventoryInstance.searchByTitle(createdInstanceID);

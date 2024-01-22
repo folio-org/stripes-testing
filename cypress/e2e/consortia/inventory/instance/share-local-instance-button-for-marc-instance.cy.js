@@ -99,7 +99,7 @@ describe('Inventory -> Instance -> Consortia', () => {
   });
 
   it(
-    'C411344 (CONSORTIA) Check the "Share local instance" button on a source = MARC Instance on Central tenant',
+    'C411344 (CONSORTIA) Check the "Share local instance" button on a source = MARC Instance on Central tenant (consortia) (folijet)',
     { tags: ['extendedPathECS', 'folijet'] },
     () => {
       cy.login(testData.user1.username, testData.user1.password, {

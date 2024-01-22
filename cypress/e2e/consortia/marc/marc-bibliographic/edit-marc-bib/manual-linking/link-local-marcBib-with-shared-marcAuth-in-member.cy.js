@@ -173,7 +173,7 @@ describe('MARC', () => {
 
         it(
           'C405559 Link Local MARC bib with Shared MARC Authority in Member tenant (consortia) (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPathECS', 'spitfire'] },
           () => {
             InventoryInstance.searchByTitle(createdRecordIDs[2]);
             InventoryInstances.selectInstance();

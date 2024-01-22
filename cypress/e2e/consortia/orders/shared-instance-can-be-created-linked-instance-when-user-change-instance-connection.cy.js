@@ -127,7 +127,7 @@ describe('Orders -> Consortium (Orders)', () => {
       });
 
       it(
-        'C411683: Shared instance can be created for linked instance record when user executes "Change instance connection"  (member tenant) (consortia) (thunderjet)',
+        'C411683 Shared instance can be created for linked instance record when user executes "Change instance connection"  (member tenant) (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
           Orders.searchByParameter('PO number', testData.order.poNumber);

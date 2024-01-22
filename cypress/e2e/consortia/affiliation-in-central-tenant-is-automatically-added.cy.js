@@ -64,7 +64,7 @@ describe('Consortia', () => {
   });
 
   it(
-    'C387512: Affiliation in central tenant is automatically added after creating user in the member tenant (consortia)(thunderjet)',
+    'C387512 Affiliation in central tenant is automatically added after creating user in the member tenant (consortia) (thunderjet)',
     { tags: ['smokeECS', 'thunderjet'] },
     () => {
       Users.createViaUi(testUser).then((id) => {
