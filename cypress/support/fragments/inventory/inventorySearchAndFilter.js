@@ -31,6 +31,7 @@ const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
 const sourceAccordion = Accordion('Source');
+const sharedAccordion = Accordion({ id: 'shared' });
 const languageInput = Accordion({ id: 'language' });
 const resourceTypeAccordion = Accordion({ id: 'resource' });
 const formatAccordion = Accordion({ id: 'format' });
@@ -239,6 +240,16 @@ export default {
   bySource(source) {
     cy.do([sourceAccordion.clickHeader(), sourceAccordion.find(Checkbox(source)).click()]);
     cy.expect(MultiColumnListRow().exists());
+  },
+
+  byShared(condititon) {
+    cy.wait(1000);
+    cy.do(sharedAccordion.clickHeader());
+    if (condititon === 'Yes') {
+      cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-true' })).click());
+    } else {
+      cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-false' })).click());
+    }
   },
 
   byKeywords(kw = '*') {
