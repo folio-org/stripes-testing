@@ -14,7 +14,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
   const testData = {
     tagLDR: 'LDR',
-    tagLdrValue: '01338cas\\a2200409\\\\\\4500',
+    tagLdrValue: '01331cas\\a2200409\\\\\\4500',
     tag022: '022',
     tag222: '222',
     tag300: '300',
