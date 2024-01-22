@@ -40,7 +40,7 @@ describe('marc', () => {
             JobProfiles.search(testData.marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
             JobProfiles.waitFileIsImported(testData.marcFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
+            Logs.checkJobStatus(testData.marcFile.fileName, 'Completed');
             Logs.openFileDetails(testData.marcFile.fileName);
             Logs.getCreatedItemsID().then((link) => {
               createdAuthorityIDs.push(link.split('/')[5]);

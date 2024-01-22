@@ -307,3 +307,29 @@ Cypress.Commands.add('getInstanceHRID', (instanceUUID) => {
       return body.hrid;
     });
 });
+
+Cypress.Commands.add('updateHridHandlingSettingsViaApi', (settingsObject) => {
+  return cy
+    .okapiRequest({
+      method: 'PUT',
+      path: 'hrid-settings-storage/hrid-settings',
+      body: settingsObject,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ status }) => {
+      expect(status).to.eq(204);
+      return status;
+    });
+});
+
+Cypress.Commands.add('getHridHandlingSettingsViaApi', () => {
+  return cy
+    .okapiRequest({
+      method: 'GET',
+      path: 'hrid-settings-storage/hrid-settings',
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => {
+      return body;
+    });
+});

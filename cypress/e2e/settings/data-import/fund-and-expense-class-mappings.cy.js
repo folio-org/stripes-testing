@@ -177,7 +177,9 @@ describe('data-import', () => {
           orderNumbers.push(orderNumber);
         });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
-        cy.go('back');
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(firstMarcFileName);
         // check Fund and Expense class populated in the second POL
         FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
         OrderLines.waitLoading();
@@ -258,7 +260,9 @@ describe('data-import', () => {
           orderNumbers.push(orderNumber);
         });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
-        cy.go('back');
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(thirdMarcFileName);
         // check Fund and Expense class populated in the second POL
         FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
         OrderLines.waitLoading();
@@ -303,7 +307,9 @@ describe('data-import', () => {
           orderNumbers.push(orderNumber);
         });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
-        cy.go('back');
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(forthMarcFileName);
         // check Fund and Expense class populated in the second POL
         FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
         OrderLines.waitLoading();

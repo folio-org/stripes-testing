@@ -435,6 +435,7 @@ export default {
     cy.do(actionsButton.click());
     cy.wait(2000);
     cy.do(viewSourceButton.click());
+    cy.wait(1000);
     InventoryViewSource.waitLoading();
   },
 
@@ -849,6 +850,36 @@ export default {
     if (itemMoved) {
       InteractorsTools.checkCalloutMessage(messages.itemMovedSuccessfully);
     }
+  },
+
+  moveItemBackToInstance(fromHolding, toInstance, shouldOpen = true) {
+    cy.wait(5000);
+    if (shouldOpen) {
+      openHoldings(fromHolding);
+    }
+    cy.wait(5000);
+    cy.do([
+      Accordion({ label: including(`Holdings: ${fromHolding}`) })
+        .find(MultiColumnListRow({ indexRow: 'row-0' }))
+        .find(Checkbox())
+        .click(),
+      Accordion({ label: including(`Holdings: ${fromHolding}`) })
+        .find(Dropdown({ label: 'Move to' }))
+        .choose(including(toInstance)),
+    ]);
+    this.confirmOrCancel('Continue');
+    InteractorsTools.checkCalloutMessage(messages.itemMovedSuccessfully);
+  },
+
+  moveItemToAnotherInstance({ fromHolding, toInstance, shouldOpen = true }) {
+    cy.do([
+      actionsButton.click(),
+      moveHoldingsToAnotherInstanceButton.click()
+    ]);
+    InventoryInstanceSelectInstanceModal.waitLoading();
+    InventoryInstanceSelectInstanceModal.searchByTitle(toInstance);
+    InventoryInstanceSelectInstanceModal.selectInstance();
+    this.moveItemBackToInstance(fromHolding, toInstance, shouldOpen);
   },
 
   confirmOrCancel(action) {

@@ -13,7 +13,7 @@ const editedFileName = `edited-records-${userBarcodesFileName}.csv`;
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('Create test data', () => {
-      cy.createTempUser([Permissions.bulkEditUpdateRecords.gui, Permissions.uiUserEdit.gui]).then(
+      cy.createTempUser([Permissions.bulkEditUpdateRecords.gui, Permissions.uiUserEdit.gui], 'staff').then(
         (userProperties) => {
           user = userProperties;
           cy.login(user.username, user.password, {
@@ -30,6 +30,7 @@ describe('bulk-edit', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
       Users.deleteViaApi(user.userId);

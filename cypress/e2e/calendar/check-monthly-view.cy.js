@@ -13,50 +13,52 @@ const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
 const monthlyCalendarViewExpectedUIValues = calendarFixtures.expectedUIValues.monthlyCalendarView;
 
-describe('Checking the view of calendar on "Monthly calendar view" tab', () => {
-  let testCalendarResponse;
+describe('Calendar', () => {
+  describe('Calendar New', () => {
+    let testCalendarResponse;
 
-  before(() => {
-    // login and open calendar settings
-    cy.loginAsAdmin();
+    before(() => {
+      // login and open calendar settings
+      cy.loginAsAdmin();
 
-    // get admin token to use in okapiRequest to retrieve service points
-    if (!Cypress.env('token')) {
-      cy.getAdminToken();
-    }
+      // get admin token to use in okapiRequest to retrieve service points
+      if (!Cypress.env('token')) {
+        cy.getAdminToken();
+      }
 
-    // reset db state
-    deleteServicePoint(testServicePoint.id, false);
+      // reset db state
+      deleteServicePoint(testServicePoint.id, false);
 
-    // create test service point and calendar
-    createServicePoint(testServicePoint, (response) => {
-      testCalendar.assignments = [response.body.id];
+      // create test service point and calendar
+      createServicePoint(testServicePoint, (response) => {
+        testCalendar.assignments = [response.body.id];
 
-      createCalendar(testCalendar, (calResponse) => {
-        testCalendarResponse = calResponse.body;
+        createCalendar(testCalendar, (calResponse) => {
+          testCalendarResponse = calResponse.body;
+        });
+        openCalendarSettings();
+        PaneActions.monthlyCalendarView.selectCalendarByServicePoint(testServicePoint.name);
       });
-      openCalendarSettings();
-      PaneActions.monthlyCalendarView.selectCalendarByServicePoint(testServicePoint.name);
     });
+
+    after(() => {
+      // delete test calendar
+      deleteCalendar(testCalendarResponse.id);
+    });
+
+    it(
+      'C360944 Checking the view of calendar on "Monthly calendar view" tab (bama)',
+      { tags: ['smoke', 'bama'] },
+      () => {
+        PaneActions.monthlyCalendarView.checkPrevAndNextButtons({
+          servicePointName: testServicePoint.name,
+        });
+
+        PaneActions.monthlyCalendarView.checkCalendarCells({
+          calendar: testCalendar,
+          monthlyCalendarViewExpectedUIValues,
+        });
+      },
+    );
   });
-
-  after(() => {
-    // delete test calendar
-    deleteCalendar(testCalendarResponse.id);
-  });
-
-  it(
-    'C360944 Checking the view of calendar on "Monthly calendar view" tab (bama)',
-    { tags: ['smoke', 'bama'] },
-    () => {
-      PaneActions.monthlyCalendarView.checkPrevAndNextButtons({
-        servicePointName: testServicePoint.name,
-      });
-
-      PaneActions.monthlyCalendarView.checkCalendarCells({
-        calendar: testCalendar,
-        monthlyCalendarViewExpectedUIValues,
-      });
-    },
-  );
 });
