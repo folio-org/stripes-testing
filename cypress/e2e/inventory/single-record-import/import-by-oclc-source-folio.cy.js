@@ -56,7 +56,6 @@ describe('inventory', () => {
       cy.getAdminToken().then(() => {
         InventoryInstance.deleteInstanceViaApi(instanceRecord.instanceId);
         Users.deleteViaApi(user.userId);
-        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
       });
     });
 

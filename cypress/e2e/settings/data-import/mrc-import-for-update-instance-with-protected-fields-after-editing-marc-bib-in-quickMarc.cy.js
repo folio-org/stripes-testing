@@ -42,6 +42,7 @@ describe('data-import', () => {
   describe('Settings', () => {
     let user = null;
     let instanceHrid;
+    const instanceTitle = 'Conversational Cajun French 1 / Randall P. Whatley and Harry Jannise.';
     const OCLCAuthentication = '100481406/PAOLF';
     const firstProtectedFieldsData = {
       indicator1: '*',
@@ -185,6 +186,7 @@ describe('data-import', () => {
         InventoryEditMarcRecord.addField('920', 'This should be a protected field', 28);
         InventoryEditMarcRecord.saveAndClose();
         InventoryEditMarcRecord.confirmDeletingField();
+        InventoryInstance.waitInstanceRecordViewOpened(instanceTitle);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 

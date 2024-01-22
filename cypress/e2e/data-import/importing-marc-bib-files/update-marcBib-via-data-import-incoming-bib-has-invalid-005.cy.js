@@ -107,7 +107,6 @@ describe('data-import', () => {
       FileManager.deleteFile(`cypress/fixtures/${testData.fileNameForCreate}`);
     });
 
-    // https://issues.folio.org/browse/MODSOURMAN-1106
     it(
       'C415267 Update MARC Bib via Data Import/incoming bib has invalid 005 (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },

@@ -56,7 +56,6 @@ describe('data-import', { retries: 3 }, () => {
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
         Users.deleteViaApi(user.userId);
       });
     });
