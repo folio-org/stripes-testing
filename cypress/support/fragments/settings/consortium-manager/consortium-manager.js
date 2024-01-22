@@ -7,9 +7,10 @@ import {
   TextField,
   including,
   HTML,
+  Dropdown,
 } from '../../../../../interactors';
 
-const myProfileButton = Button({ ariaLabel: 'My profile' });
+const myProfileButton = Dropdown({ id: 'profileDropdown' });
 const switchActiveAffiliationButton = Button('Switch active affiliation');
 
 export default {
