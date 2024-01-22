@@ -67,7 +67,7 @@ describe('MARC Bibliographic', () => {
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+        Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       ])
         .then((userProperties) => {
           users.userProperties = userProperties;
@@ -80,7 +80,7 @@ describe('MARC Bibliographic', () => {
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-            Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+            Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           ]);
         })
         .then(() => {
@@ -132,7 +132,7 @@ describe('MARC Bibliographic', () => {
       'C397343 Link Shared MARC bib with Shared MARC authority from Member tenant (consortia)(spitfire)',
       { tags: ['criticalPathECS', 'spitfire'] },
       () => {
-        InventoryInstance.searchByTitle(createdRecordIDs[0]);
+        InventoryInstances.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkPaneheaderContains(testData.sharedPaneheaderText);

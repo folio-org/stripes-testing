@@ -114,7 +114,7 @@ describe('MARC', () => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           });
 
-          InventoryInstance.searchByTitle(createdRecordIDs[0]);
+          InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
@@ -132,7 +132,7 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          InventoryInstance.searchByTitle(createdRecordIDs[0]);
+          InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.checkInstanceTitle(testData.tag245Content);
           InventoryInstance.verifyLastUpdatedSource(
@@ -145,7 +145,7 @@ describe('MARC', () => {
           InventoryViewSource.verifyFieldInMARCBibSource(testData.tag500, testData.tag500Content);
           InventoryViewSource.close();
           ConsortiumManager.switchActiveAffiliation(tenantNames.university);
-          InventoryInstance.searchByTitle(createdRecordIDs[0]);
+          InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.checkInstanceTitle(testData.tag245Content);
           // TO DO: fix this check failure - 'Unknown user' is shown, possibly due to the way users are created in test
