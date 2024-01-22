@@ -175,7 +175,7 @@ describe('Data Import', () => {
       'C405531 Check adding/deleting fields and subfields when updating shared "MARC Bib" in Central tenant via Data import and confirm in member tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
-        InventoryInstance.searchByTitle(testData.sharedInstanceId[0]);
+        InventoryInstances.searchByTitle(testData.sharedInstanceId[0]);
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.verifySelectedRecords(1);
