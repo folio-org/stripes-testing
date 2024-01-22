@@ -43,7 +43,7 @@ describe('Consortia', () => {
     });
 
     it(
-      'C386869: "Consortium manager" option is displayed in "Settings" only for Central Tenant (consortia) (thunderjet)',
+      'C386869 "Consortium manager" option is displayed in "Settings" only for Central Tenant (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet'] },
       () => {
         ConsortiumManager.varifyConsortiumManagerOnPage();
