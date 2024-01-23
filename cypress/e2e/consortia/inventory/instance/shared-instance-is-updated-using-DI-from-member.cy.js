@@ -86,7 +86,7 @@ describe('Inventory', () => {
         })
         .then(() => {
           cy.loginAsAdmin();
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(TopMenu.inventoryPath);
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventorySearchAndFilter.closeInstanceDetailPane();
@@ -124,7 +124,7 @@ describe('Inventory', () => {
 
           cy.login(testData.user.username, testData.user.password);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         });
     });
 
