@@ -972,6 +972,11 @@ export default {
   selectOrderline: (POlinenumber) => {
     cy.do(searchResultsPane.find(Link(POlinenumber)).click());
   },
+
+  varifyOrderlineInResultsList: (POlinenumber) => {
+    cy.expect(searchResultsPane.find(Link(POlinenumber)).exists());
+  },
+
   selectOrderLineByIndex(rowIndex = 0) {
     cy.do(
       searchResultsPane

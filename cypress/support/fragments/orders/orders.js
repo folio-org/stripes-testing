@@ -642,9 +642,11 @@ export default {
       buttonFVendorFilter.click(),
       Button({ id: 'purchaseOrder.vendor-button' }).click(),
       Modal('Select Organization').find(searchField).fillIn(invoice.vendorName),
-      searchButton.click(),
+      Modal('Select Organization').find(searchButton).click(),
+      Modal('Select Organization')
+        .find(MultiColumnListRow({ index: 0 }))
+        .click(),
     ]);
-    SearchHelper.selectFromResultsList();
     cy.do(buttonFVendorFilter.click());
   },
   selectFilterNoInRushPOL: () => {
