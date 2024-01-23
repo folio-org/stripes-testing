@@ -26,6 +26,10 @@ describe('Export canned lists', () => {
     Lists.waitLoading();
     Lists.expiredPatronLoan();
     Lists.actionButton();
+    Lists.refreshList();
+    cy.wait(7000);
+    cy.contains('View updated list').click();
+    Lists.actionButton();
     Lists.exportList();
     cy.contains(
       'Export of Inactive patrons with open loans is being generated. This may take some time for larger lists.',

@@ -27,6 +27,10 @@ describe('lists', () => {
       Lists.waitLoading();
       Lists.expiredPatronLoan();
       Lists.actionButton();
+      Lists.refreshList();
+      cy.wait(7000);
+      cy.contains('View updated list').click();
+      Lists.actionButton();
       Lists.getViaApi().then((response) => {
         const filteredItem = response.body.content.find(
           (item) => item.name === 'Inactive patrons with open loans',
