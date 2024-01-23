@@ -7,7 +7,6 @@ import {
   MultiSelectOption,
   RadioButton,
   including,
-  matching,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 import OrderStates from '../orderStates';
@@ -78,9 +77,7 @@ export default {
     cy.expect(exportSettingsModal.absent());
 
     if (exportStarted) {
-      InteractorsTools.checkCalloutMessage(
-        matching(new RegExp(OrderStates.exportJobStartedSuccessfully)),
-      );
+      InteractorsTools.checkCalloutMessage(OrderStates.exportJobStartedSuccessfully);
     }
   },
 };

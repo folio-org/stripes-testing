@@ -72,7 +72,7 @@ describe('ui-invoices: Cancelling approved invoices', () => {
     secondOrder.vendor = organization.name;
     firstOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(secondOrder).then((firstOrderResponse) => {
+    Orders.createApprovedOrderForRollover(secondOrder, true).then((firstOrderResponse) => {
       secondOrder.id = firstOrderResponse.id;
       firstOrderNumber = firstOrderResponse.poNumber;
       Orders.checkCreatedOrder(secondOrder);
