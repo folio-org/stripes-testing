@@ -123,7 +123,7 @@ describe('Invoices', () => {
   });
 
   it(
-    'C397985 Organization "Account number" is NOT specified in voucher export details when using default Accounting code (thunderjet) (TaaS)',
+    'C397985: Organization "Account number" is NOT specified in voucher export details when using default Accounting code (thunderjet) (TaaS)',
     { tags: ['criticalPath', 'thunderjet', 'nonParallel'] },
     () => {
       // Search invoice in the table

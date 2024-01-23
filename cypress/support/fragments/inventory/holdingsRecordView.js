@@ -9,8 +9,6 @@ import {
   MultiColumnList,
   Pane,
   PaneHeader,
-  Select,
-  TextArea,
   Link,
 } from '../../../../interactors';
 import HoldingsRecordEdit from './holdingsRecordEdit';
@@ -29,9 +27,6 @@ const holdingHrIdKeyValue = KeyValue('Holdings HRID');
 const closeButton = Button({ icon: 'times' });
 const electronicAccessAccordion = Accordion('Electronic access');
 const acquisitionAccordion = Accordion('Acquisition');
-const addElectronicAccessButton = Button('Add electronic access');
-const relationshipSelectDropdown = Select('Relationship');
-const uriTextarea = TextArea({ ariaLabel: 'URI' });
 const holdingsViewPane = Pane({ id: 'ui-inventory.holdingsRecordView' });
 
 function waitLoading() {
@@ -203,14 +198,8 @@ export default {
     cy.expect(acquisitionAccordion.find(MultiColumnListCell({ row: 0, content: number })).exists());
     cy.expect(acquisitionAccordion.find(Link({ href: including('/orders/lines/view') })).exists());
   },
-  addElectronicAccess: (type) => {
-    cy.expect(electronicAccessAccordion.exists());
-    cy.do([
-      addElectronicAccessButton.click(),
-      relationshipSelectDropdown.choose(type),
-      uriTextarea.fillIn(type),
-      Button('Save & close').click(),
-    ]);
+  verifyElectronicAccess: (uri) => {
+    cy.expect(electronicAccessAccordion.find(HTML(uri)).exists());
   },
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
   getRecordLastUpdatedDate: () => cy.then(() => {
