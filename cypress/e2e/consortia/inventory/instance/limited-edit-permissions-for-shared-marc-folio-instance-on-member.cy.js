@@ -14,9 +14,10 @@ import { JOB_STATUS_NAMES } from '../../../../support/constants';
 
 describe('Inventory', () => {
   describe('Instance', () => {
+    let user;
     const C402335testData = {
       filePath: 'oneMarcBib.mrc',
-      marcFileName: `C402335 autotestFileName ${getRandomPostfix()}`,
+      marcFileName: `C402335 autotestFileName${getRandomPostfix()}`,
       instanceIds: [],
       instanceSource: 'MARC',
     };
@@ -42,19 +43,19 @@ describe('Inventory', () => {
 
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
         .then((userProperties) => {
-          C402335testData.user = userProperties;
+          user = userProperties;
         })
         .then(() => {
-          cy.assignAffiliationToUser(Affiliations.College, C402335testData.user.userId);
+          cy.assignAffiliationToUser(Affiliations.College, user.userId);
           cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(C402335testData.user.userId, [
+          cy.assignPermissionsToExistingUser(user.userId, [
             Permissions.uiInventoryViewCreateEditInstances.gui,
           ]);
         });
     });
 
     beforeEach('Login', () => {
-      cy.login(C402335testData.user.username, C402335testData.user.password, {
+      cy.login(user.username, user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
@@ -67,7 +68,7 @@ describe('Inventory', () => {
       cy.getAdminToken();
       InventoryInstance.deleteInstanceViaApi(C402335testData.instanceIds[0]);
       InventoryInstance.deleteInstanceViaApi(C402376testData.instance.instanceId);
-      Users.deleteViaApi(C402335testData.user.userId);
+      Users.deleteViaApi(user.userId);
     });
 
     it(
