@@ -21,6 +21,9 @@ describe('Inventory', () => {
       instanceIds: [],
       instanceSource: 'MARC',
     };
+    const C402761testData = {
+      instanceSource: 'FOLIO',
+    };
 
     before('Create test data', () => {
       cy.getAdminToken();
@@ -45,6 +48,9 @@ describe('Inventory', () => {
           Logs.openFileDetails(C402760testData.marcFileName);
           Logs.getCreatedItemsID().then((link) => {
             C402760testData.instanceIds.push(link.split('/')[5]);
+          });
+          InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+            C402761testData.instance = instanceData;
           });
           cy.resetTenant();
         });
@@ -77,6 +83,20 @@ describe('Inventory', () => {
         InventorySearchAndFilter.searchInstanceByTitle(C402760testData.instanceIds[0]);
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InstanceRecordView.verifyInstanceSource(C402760testData.instanceSource);
+        InstanceRecordView.verifyEditInstanceButtonIsEnabled();
+      },
+    );
+
+    it(
+      'C402761 (CONSORTIA) Verify the Source of a FOLIO, local Instance on Member tenant (consortia) (folijet)',
+      { tags: ['criticalPathECS', 'folijet'] },
+      () => {
+        InventorySearchAndFilter.verifySearchAndFilterPane();
+        InventorySearchAndFilter.bySource(C402761testData.instanceSource);
+        InventorySearchAndFilter.byShared('No');
+        InventorySearchAndFilter.searchInstanceByTitle(C402761testData.instance.instanceId);
+        InventorySearchAndFilter.verifyInstanceDetailsView();
+        InstanceRecordView.verifyInstanceSource(C402761testData.instanceSource);
         InstanceRecordView.verifyEditInstanceButtonIsEnabled();
       },
     );
