@@ -13,3 +13,26 @@ Cypress.Commands.add('getAuthorityHeadingsUpdatesViaAPI', (startDate, endDate, l
     return body.stats;
   });
 });
+
+Cypress.Commands.add('getAuthoritySourceFileIdViaAPI', (authorityFileName) => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'authority-source-files',
+    searchParams: {
+      query: `name="${authorityFileName}"`,
+    },
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body.authoritySourceFiles[0].id;
+  });
+});
+
+Cypress.Commands.add('deleteAuthoritySourceFileViaAPI', (id) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: `authority-source-files/${id}`,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ status }) => {
+    return status;
+  });
+});
