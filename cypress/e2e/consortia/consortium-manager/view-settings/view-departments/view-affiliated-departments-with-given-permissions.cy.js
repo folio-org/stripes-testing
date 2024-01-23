@@ -1,17 +1,17 @@
 import uuid from 'uuid';
-import permissions from '../../../../support/dictionary/permissions';
-import Users from '../../../../support/fragments/users/users';
-import TopMenu from '../../../../support/fragments/topMenu';
-import { getTestEntityValue } from '../../../../support/utils/stringTools';
-import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import Departments from '../../../../support/fragments/settings/users/departments';
+import permissions from '../../../../../support/dictionary/permissions';
+import Users from '../../../../../support/fragments/users/users';
+import TopMenu from '../../../../../support/fragments/topMenu';
+import { getTestEntityValue } from '../../../../../support/utils/stringTools';
+import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
+import Departments from '../../../../../support/fragments/settings/users/departments';
 import ConsortiumManagerApp, {
   settingsItems,
   usersItems,
-} from '../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import DepartmentsConsortiumManager from '../../../../support/fragments/consortium-manager/departmentsConsortiumManager';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
+} from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
+import DepartmentsConsortiumManager from '../../../../../support/fragments/consortium-manager/departmentsConsortiumManager';
+import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
 
 const testData = {
   centralSharedDepartment: {

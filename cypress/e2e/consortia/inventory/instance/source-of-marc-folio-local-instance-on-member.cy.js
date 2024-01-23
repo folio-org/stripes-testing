@@ -15,33 +15,19 @@ import { JOB_STATUS_NAMES } from '../../../../support/constants';
 describe('Inventory', () => {
   describe('Instance', () => {
     let user;
-    const C402335testData = {
+    const C402760testData = {
       filePath: 'oneMarcBib.mrc',
-      marcFileName: `C402335 autotestFileName${getRandomPostfix()}`,
+      marcFileName: `C402760 autotestFileName ${getRandomPostfix()}`,
       instanceIds: [],
       instanceSource: 'MARC',
     };
-    const C402376testData = {
+    const C402761testData = {
       instanceSource: 'FOLIO',
     };
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
-      });
-      DataImport.uploadFileViaApi(C402335testData.filePath, C402335testData.marcFileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(C402335testData.marcFileName);
-      Logs.getCreatedItemsID().then((link) => {
-        C402335testData.instanceIds.push(link.split('/')[5]);
-      });
-      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-        C402376testData.instance = instanceData;
-      });
-
-      cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
+      cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui])
         .then((userProperties) => {
           user = userProperties;
         })
@@ -51,6 +37,22 @@ describe('Inventory', () => {
           cy.assignPermissionsToExistingUser(user.userId, [
             Permissions.uiInventoryViewCreateEditInstances.gui,
           ]);
+          cy.loginAsAdmin({
+            path: TopMenu.dataImportPath,
+            waiter: DataImport.waitLoading,
+          });
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          DataImport.uploadFileViaApi(C402760testData.filePath, C402760testData.marcFileName);
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.openFileDetails(C402760testData.marcFileName);
+          Logs.getCreatedItemsID().then((link) => {
+            C402760testData.instanceIds.push(link.split('/')[5]);
+          });
+          InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+            C402761testData.instance = instanceData;
+          });
+          cy.resetTenant();
         });
     });
 
@@ -66,36 +68,36 @@ describe('Inventory', () => {
     after('Delete test data', () => {
       cy.resetTenant();
       cy.getAdminToken();
-      InventoryInstance.deleteInstanceViaApi(C402335testData.instanceIds[0]);
-      InventoryInstance.deleteInstanceViaApi(C402376testData.instance.instanceId);
       Users.deleteViaApi(user.userId);
+      cy.setTenant(Affiliations.College);
+      InventoryInstance.deleteInstanceViaApi(C402760testData.instanceIds[0]);
     });
 
     it(
-      'C402335 (CONSORTIA) Verify limited Edit permissions for Shared MARC instance on Member tenant (consortia) (folijet)',
+      'C402760 (CONSORTIA) Verify the Source of a MARC, Local Instance on Member tenant (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet'] },
       () => {
         InventorySearchAndFilter.verifySearchAndFilterPane();
-        InventorySearchAndFilter.bySource(C402335testData.instanceSource);
-        InventorySearchAndFilter.byShared('Yes');
-        InventorySearchAndFilter.searchInstanceByTitle(C402335testData.instanceIds[0]);
+        InventorySearchAndFilter.bySource(C402760testData.instanceSource);
+        InventorySearchAndFilter.byShared('No');
+        InventorySearchAndFilter.searchInstanceByTitle(C402760testData.instanceIds[0]);
         InventorySearchAndFilter.verifyInstanceDetailsView();
-        InstanceRecordView.verifyInstanceSource(C402335testData.instanceSource);
-        InstanceRecordView.verifyEditInstanceButtonAbsent();
+        InstanceRecordView.verifyInstanceSource(C402760testData.instanceSource);
+        InstanceRecordView.verifyEditInstanceButtonIsEnabled();
       },
     );
 
     it(
-      'C402376 (CONSORTIA) Verify limited Edit permissions for Shared FOLIO instance on Member tenant (consortia) (folijet)',
+      'C402761 (CONSORTIA) Verify the Source of a FOLIO, local Instance on Member tenant (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet'] },
       () => {
         InventorySearchAndFilter.verifySearchAndFilterPane();
-        InventorySearchAndFilter.bySource(C402376testData.instanceSource);
-        InventorySearchAndFilter.byShared('Yes');
-        InventorySearchAndFilter.searchInstanceByTitle(C402376testData.instance.instanceId);
+        InventorySearchAndFilter.bySource(C402761testData.instanceSource);
+        InventorySearchAndFilter.byShared('No');
+        InventorySearchAndFilter.searchInstanceByTitle(C402761testData.instance.instanceId);
         InventorySearchAndFilter.verifyInstanceDetailsView();
-        InstanceRecordView.verifyInstanceSource(C402376testData.instanceSource);
-        InstanceRecordView.verifyEditInstanceButtonAbsent();
+        InstanceRecordView.verifyInstanceSource(C402761testData.instanceSource);
+        InstanceRecordView.verifyEditInstanceButtonIsEnabled();
       },
     );
   });

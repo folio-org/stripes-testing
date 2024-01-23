@@ -92,7 +92,7 @@ describe('MARC', () => {
       });
 
       it(
-        'C405142 "MARC authority" record edited on Central tenant is updated in Member tenant (consortia)(spitfire)',
+        'C405142 "MARC authority" record edited on Central tenant is updated in Member tenant (consortia) (spitfire)',
         { tags: ['extendedPathECS', 'spitfire'] },
         () => {
           MarcAuthorities.searchBeats(testData.title);

@@ -176,7 +176,7 @@ describe('Data Import', () => {
       () => {
         cy.login(users.userAProperties.username, users.userAProperties.password);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventorySearchAndFilter.closeInstanceDetailPane();
@@ -247,7 +247,7 @@ describe('Data Import', () => {
               waiter: InventoryInstances.waitContentLoading,
             });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
             InventorySearchAndFilter.verifyPanesExist();
             InventoryInstances.searchByTitle(testData.updatedInstanceTitle);
             InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
