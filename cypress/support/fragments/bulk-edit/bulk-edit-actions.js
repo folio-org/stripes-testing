@@ -79,9 +79,14 @@ export default {
         .choose(optionName),
     );
   },
-  selectAction(actionName, rowIndex) {
+  selectAction(actionName, rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose(actionName),
+    );
+  },
+  selectSecondAction(actionName, rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex }).find(Select({ dataTestID: 'select-actions-1' })).choose(actionName),
     );
   },
   isSelectActionAbsent(rowIndex = 0) {
@@ -375,6 +380,10 @@ export default {
     cy.wait(1000);
   },
 
+  verifyOptionAbsentInNewRow(option, rowIndex = 1) {
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(HTML(option)).absent());
+  },
+
   verifyNewBulkEditRow() {
     cy.expect([
       bulkEditFirstRow.find(plusBtn).absent(),
@@ -537,16 +546,23 @@ export default {
     ]);
     this.verifyPossibleActions(options);
   },
+
+  fillInFirstTextArea(oldItem, rowIndex = 0) {
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(TextArea({ dataTestID: 'input-textarea-0' })).fillIn(oldItem));
+  },
+
+  fillInSecondTextArea(newItem, rowIndex = 0) {
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(TextArea({ dataTestID: 'input-textarea-1' })).fillIn(newItem));
+  },
+
   noteReplaceWith(noteType, oldNote, newNote, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(noteType),
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Find'),
-      RepeatableFieldItem({ index: rowIndex }).find(TextArea({ dataTestID: 'input-textarea-0' })).fillIn(oldNote),
-      RepeatableFieldItem({ index: rowIndex })
-        .find(Select({ value: '' }))
-        .choose('Replace with'),
-      RepeatableFieldItem({ index: rowIndex }).find(TextArea({ dataTestID: 'input-textarea-1' })).fillIn(newNote),
     ]);
+    this.fillInFirstTextArea(oldNote, rowIndex);
+    this.selectSecondAction('Replace with', rowIndex);
+    this.fillInSecondTextArea(newNote, rowIndex);
   },
 
   noteRemove(noteType, note, rowIndex = 0) {
