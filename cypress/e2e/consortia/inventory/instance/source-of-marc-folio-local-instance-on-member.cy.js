@@ -39,7 +39,7 @@ describe('Inventory', () => {
             waiter: DataImport.waitLoading,
           });
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           DataImport.uploadFileViaApi(C402760testData.filePath, C402760testData.marcFileName);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(C402760testData.marcFileName);
@@ -56,7 +56,7 @@ describe('Inventory', () => {
         waiter: InventoryInstances.waitContentLoading,
       });
       ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-      ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+      ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
     });
 
     after('Delete test data', () => {
