@@ -59,7 +59,7 @@ describe('Inventory', () => {
         waiter: InventoryInstances.waitContentLoading,
       });
       ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-      ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+      ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
     });
 
     after('Delete test data', () => {
