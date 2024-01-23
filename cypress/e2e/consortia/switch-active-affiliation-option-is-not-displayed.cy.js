@@ -18,7 +18,7 @@ describe('Consortia', () => {
   });
 
   it(
-    'C388499: "Switch active affiliation" option is NOT displayed when a user has only one assigned affiliation (consortia)(thunderjet)',
+    'C388499 "Switch active affiliation" option is NOT displayed when a user has only one assigned affiliation (consortia) (thunderjet)',
     { tags: ['criticalPathECS', 'thunderjet'] },
     () => {
       cy.createTempUser([

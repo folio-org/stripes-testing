@@ -111,7 +111,7 @@ describe('MARC', () => {
 
       it(
         'C402770 Derive new Local MARC bib record from Local Instance in Member tenant (consortia) (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPathECS', 'spitfire'] },
         () => {
           cy.visit(`${TopMenu.inventoryPath}/view/${createdInstanceIDs[0]}`);
           InventoryInstance.waitLoading();
