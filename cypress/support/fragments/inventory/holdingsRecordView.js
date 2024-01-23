@@ -9,8 +9,6 @@ import {
   MultiColumnList,
   Pane,
   PaneHeader,
-  Select,
-  TextArea,
   Link,
 } from '../../../../interactors';
 import HoldingsRecordEdit from './holdingsRecordEdit';
