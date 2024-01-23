@@ -220,7 +220,7 @@ describe('Data Import', () => {
         });
         InventorySearchAndFilter.verifyPanesExist();
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         InventoryInstances.searchByTitle(testData.updatedInstanceTitle);
         InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
         InventoryInstance.verifyLastUpdatedSource(
