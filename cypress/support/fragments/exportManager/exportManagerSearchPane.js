@@ -99,6 +99,9 @@ export default {
       HTML('Choose a filter or enter a search query to show results.').exists(),
     ]);
   },
+  waitForJobs() {
+    cy.expect(MultiColumnList().exists());
+  },
   checkDefaultView() {
     this.checkTabHighlighted({ tabName: 'All' });
     this.checkNoResultsMessage();
@@ -121,20 +124,17 @@ export default {
     cy.expect(MultiColumnListCell(including(content)).exists());
     cy.do(MultiColumnListRow({ index: 0 }).click());
   },
-  selectJobByIndex(content, index) {
-    cy.get('div[class*=mclRow-]')
-      .contains(content)
-      .then((element) => {
-        element.prevObject[index].click();
-      });
-  },
 
-  verifyJobAmount(text, amount) {
-    cy.get('div[class*=mclRow-]')
-      .contains(text)
-      .then((element) => {
-        expect(element.prevObject.length).to.eq(amount);
-      });
+  getElementByTextAndVerify(content, amount, index) {
+    const matchingElements = [];
+    cy.get('div[class*=mclRow-]').each((element) => {
+      if (Cypress.$(element).text().includes(content)) {
+        matchingElements.push(element);
+      }
+    }).then(() => {
+      cy.get(matchingElements[index]).click();
+      cy.expect(matchingElements.length).to.eq(amount);
+    });
   },
 
   searchById(id) {
