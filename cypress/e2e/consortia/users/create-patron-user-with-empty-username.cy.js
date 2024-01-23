@@ -42,7 +42,7 @@ describe('Users', () => {
   });
 
   it(
-    'C418647 Creating new patron user with empty "Username" field (thunderjet) (consortia)',
+    'C418647 Creating new patron user with empty "Username" field (consortia) (thunderjet)',
     { tags: ['criticalPathECS', 'thunderjet'] },
     () => {
       Users.createViaUiIncomplete(testUser).then((id) => {

@@ -169,7 +169,7 @@ describe('Data Import', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         });
     });
 
@@ -227,7 +227,7 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.central);
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.verifyPanesExist();
         InventoryInstances.searchByTitle(testData.instanceIds[0]);
@@ -250,7 +250,7 @@ describe('Data Import', () => {
         BrowseSubjects.searchBrowseSubjects(testData.subjects[0].name);
         BrowseSubjects.checkSearchResultRecord(testData.subjects[0].name);
 
-        ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.verifyPanesExist();
         InventoryInstances.searchByTitle(testData.instanceTitle);

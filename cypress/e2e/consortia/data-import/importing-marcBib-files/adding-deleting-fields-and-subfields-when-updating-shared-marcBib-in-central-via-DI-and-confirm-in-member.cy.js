@@ -3,9 +3,14 @@ import {
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
 } from '../../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../../support/fragments/settings/dataImport';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-import ActionProfiles from '../../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -21,12 +26,10 @@ import JobProfiles from '../../../../support/fragments/data_import/job_profiles/
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import NewFieldMappingProfile from '../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FileManager from '../../../../support/utils/fileManager';
-import FieldMappingProfileView from '../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 import BrowseContributors from '../../../../support/fragments/inventory/search/browseContributors';
 import BrowseSubjects from '../../../../support/fragments/inventory/search/browseSubjects';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import MatchProfiles from '../../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 
 describe('Data Import', () => {
@@ -161,11 +164,11 @@ describe('Data Import', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.instanceIds[0]);
-      JobProfiles.deleteJobProfile(jobProfileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId[0]);
+      SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
+      SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.exportedFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
@@ -175,7 +178,7 @@ describe('Data Import', () => {
       'C405531 Check adding/deleting fields and subfields when updating shared "MARC Bib" in Central tenant via Data import and confirm in member tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
-        InventoryInstance.searchByTitle(testData.instanceIds[0]);
+        InventoryInstances.searchByTitle(testData.sharedInstanceId[0]);
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.verifySelectedRecords(1);
@@ -207,7 +210,7 @@ describe('Data Import', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.verifyPanesExist();
-        InventoryInstance.searchByTitle(testData.instanceIds[0]);
+        InventoryInstances.searchByTitle(testData.sharedInstanceId[0]);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName);
         InventoryInstance.verifyContributorAbsent(testData.absentContributorName);
@@ -226,9 +229,9 @@ describe('Data Import', () => {
         BrowseSubjects.searchBrowseSubjects(testData.subjects[1].name);
         BrowseSubjects.checkSearchResultRecord(testData.subjects[1].name);
 
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstance.searchByTitle(testData.instanceIds[0]);
+        InventoryInstances.searchByTitle(testData.sharedInstanceId[0]);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName);
         InventoryInstance.verifyContributorAbsent(testData.absentContributorName);

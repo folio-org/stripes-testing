@@ -39,7 +39,7 @@ describe('Consortia', () => {
   });
 
   it(
-    'C380515: Edit address (tenant) name in "Consortium manager" settings (consortia)(thunderjet)',
+    'C380515 Edit address (tenant) name in "Consortium manager" settings (consortia) (thunderjet)',
     { tags: ['smokeECS', 'thunderjet'] },
     () => {
       ConsortiumManager.selectMembership();

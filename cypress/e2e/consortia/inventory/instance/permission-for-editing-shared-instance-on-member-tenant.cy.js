@@ -51,7 +51,7 @@ describe('Inventory', () => {
     });
 
     it(
-      'C407751 (CONSORTIA) Verify the permission for editing shared instance on Member tenant (folijet)',
+      'C407751 (CONSORTIA) Verify the permission for editing shared instance on Member tenant (consortia) (folijet)',
       { tags: ['smokeECS', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);

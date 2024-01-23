@@ -19,20 +19,22 @@ describe('MARC', () => {
     describe('Derive MARC bib', () => {
       const testData = {
         tag245: '245',
-        tag245DerivedContent: '$a C402769 The Riviera house (derived record) / $c Natasha Lester.',
+        tag245DerivedContent:
+          '$a C402770 The other side of paradise (derived record): $b a memoir / $c Staceyann Chin.',
         tag245EditedContent:
-          '$a C402769 The Riviera house (derived and edited record) / $c Natasha Lester.',
-        instanceTitle: 'C402769 The Riviera house / Natasha Lester.',
-        instanceDerivedTitle: 'C402769 The Riviera house (derived record) / Natasha Lester.',
+          '$a C402770 The other side of paradise (derived and edited record): $b a memoir / $c Staceyann Chin.',
+        instanceTitle: 'C402770 The other side of paradise : a memoir / Staceyann Chin.',
+        instanceDerivedTitle:
+          'C402770 The other side of paradise (derived record): a memoir / Staceyann Chin.',
         instanceEditedTitle:
-          'C402769 The Riviera house (derived and edited record) / Natasha Lester.',
+          'C402770 The other side of paradise (derived and edited record): a memoir / Staceyann Chin.',
         deriveLocalPaneheaderText: 'Derive a new local MARC bib record',
         sourceViewLocalText: 'Local MARC bibliographic record',
       };
 
       const marcFile = {
-        marc: 'marcBibFileC402769.mrc',
-        fileNameImported: `testMarcFileC402769.${getRandomPostfix()}.mrc`,
+        marc: 'marcBibFileC402770.mrc',
+        fileNameImported: `testMarcFileC402770.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       };
 
@@ -69,9 +71,9 @@ describe('MARC', () => {
             ]);
           })
           .then(() => {
-            cy.resetTenant();
-            cy.loginAsAdmin().then(() => {
+            cy.loginAsCollegeAdmin().then(() => {
               cy.visit(TopMenu.dataImportPath);
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
               DataImport.verifyUploadState();
               DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileNameImported);
               JobProfiles.waitLoadingList();
@@ -89,9 +91,10 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
-              ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+              ConsortiumManager.switchActiveAffiliation(tenantNames.college);
               InventoryInstances.waitContentLoading();
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
             });
           });
       });
@@ -100,18 +103,20 @@ describe('MARC', () => {
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
+        cy.setTenant(Affiliations.College);
         createdInstanceIDs.forEach((instanceID) => {
           InventoryInstance.deleteInstanceViaApi(instanceID);
         });
       });
 
       it(
-        'C402769 Derive new Local MARC bib record from Shared Instance in Member tenant (consortia) (spitfire)',
+        'C402770 Derive new Local MARC bib record from Local Instance in Member tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire'] },
         () => {
           cy.visit(`${TopMenu.inventoryPath}/view/${createdInstanceIDs[0]}`);
           InventoryInstance.waitLoading();
           InventoryInstance.checkPresentedText(testData.instanceTitle);
+          InventoryInstance.checkSharedTextInDetailView(false);
 
           InventoryInstance.deriveNewMarcBib();
           QuickMarcEditor.checkPaneheaderContains(testData.deriveLocalPaneheaderText);
@@ -139,9 +144,9 @@ describe('MARC', () => {
             InventoryViewSource.contains(testData.tag245EditedContent);
             InventoryViewSource.contains(testData.sourceViewLocalText);
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.university);
             InventoryInstances.waitContentLoading();
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
 
             InventoryInstances.searchByTitle(createdInstanceIDs[1], false);
             InventorySearchAndFilter.verifyNoRecordsFound();
