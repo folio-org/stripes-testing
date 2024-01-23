@@ -431,7 +431,7 @@ describe('Circulation log', () => {
   );
 
   it(
-    'C17065 Filter circulation log by cancelled as errorror (volaris)',
+    'C17065 Filter circulation log by cancelled as error (volaris)',
     { tags: ['criticalPath', 'volaris'] },
     () => {
       filterByAction('Cancelled as error', `Amount: ${fullAmount}. Cancellation reason`);

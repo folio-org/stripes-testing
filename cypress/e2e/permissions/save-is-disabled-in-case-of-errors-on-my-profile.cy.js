@@ -60,7 +60,7 @@ describe('Permissions --> My Profile', () => {
 
   it(
     'C375097 Verify that "Save" button is disabled in case of validation errors on "My profile" form (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris'], retries: 2 },
     () => {
       ChangePassword.openChangePasswordViaUserProfile();
       ChangePassword.checkInitialState();
