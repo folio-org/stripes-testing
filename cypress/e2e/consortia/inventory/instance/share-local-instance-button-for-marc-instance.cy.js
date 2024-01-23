@@ -100,7 +100,7 @@ describe('Inventory', () => {
     });
 
     it(
-      'C411344 (CONSORTIA) Check the "Share local instance" button on a source = MARC Instance on Central tenant',
+      'C411344 (CONSORTIA) Check the "Share local instance" button on a source = MARC Instance on Central tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
         cy.login(testData.user1.username, testData.user1.password, {
@@ -116,7 +116,7 @@ describe('Inventory', () => {
     );
 
     it(
-      'C411333 (CONSORTIA) Check the "Share local instance" button on a shared Source = MARC Instance on Member tenant',
+      'C411333 (CONSORTIA) Check the "Share local instance" button on a shared Source = MARC Instance on Member tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
         cy.login(testData.user2.username, testData.user2.password, {
@@ -135,7 +135,7 @@ describe('Inventory', () => {
     );
 
     it(
-      'C411382 (CONSORTIA) Check the "Share local instance" button without permission on a shared Source = MARC Instance on Central tenant',
+      'C411382 (CONSORTIA) Check the "Share local instance" button without permission on a shared Source = MARC Instance on Central tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
         cy.login(testData.user3.username, testData.user3.password, {
@@ -151,7 +151,7 @@ describe('Inventory', () => {
     );
 
     it(
-      'C411342 (CONSORTIA) Check the "Share local instance" button without permission on a local Source = MARC Instance on Member tenant',
+      'C411342 (CONSORTIA) Check the "Share local instance" button without permission on a local Source = MARC Instance on Member tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
         cy.login(testData.user4.username, testData.user4.password, {

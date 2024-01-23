@@ -130,7 +130,7 @@ describe('MARC', () => {
       });
 
       it(
-        'C397343 Link Shared MARC bib with Shared MARC authority from Member tenant (consortia)(spitfire)',
+        'C397343 Link Shared MARC bib with Shared MARC authority from Member tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
