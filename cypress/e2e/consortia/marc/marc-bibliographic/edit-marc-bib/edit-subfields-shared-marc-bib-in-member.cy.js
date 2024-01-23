@@ -4,7 +4,7 @@ import Affiliations, { tenantNames } from '../../../../../support/dictionary/aff
 import Users from '../../../../../support/fragments/users/users';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../../../../support/utils/stringTools';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
@@ -18,13 +18,20 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       describe('Consortia', () => {
+        const randomDigits = randomFourDigitNumber();
         const testData = {
           sharedBibSourcePaheheaderText: 'Shared MARC bibliographic record',
           tag245: '245',
-          tag500: '500',
+          tag710: '710',
           tag504: '504',
-          tag245Content: 'C405507 Instance Shared Central Updated',
-          tag500Content: 'Proceedings. Updated',
+          tag650: '650',
+          tag600: '600',
+          tag100: '100',
+          title: 'C405513 Auto Instance Shared Central',
+          editSharedRecordText: 'Edit shared MARC record',
+          tag100UpdatedContent: '$a C405513 Auto Coates, Ta-Nehisi,',
+          tag600UpdatedContent: `$a C405513 Auto Black Panther $c (Fictitious character) $v Comic books, strips, etc. ${randomDigits}`,
+          tag710Content: `$a New Contrib C405513 ${randomDigits}`,
         };
 
         const users = {};
@@ -88,6 +95,8 @@ describe('MARC', () => {
               }).then(() => {
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
                 InventoryInstances.waitContentLoading();
+                ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+                InventoryInstances.waitContentLoading();
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
               });
             });
@@ -104,9 +113,37 @@ describe('MARC', () => {
           'C405513 Adding/deleting fields and subfields when editing shared "MARC Bib" in member tenant (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire'] },
           () => {
-            InventoryInstance.searchByTitle(createdRecordIDs[0]);
+            InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
+            InventoryInstance.checkInstanceTitle(testData.title);
+
             InventoryInstance.editMarcBibliographicRecord();
+            QuickMarcEditor.checkPaneheaderContains(testData.editSharedRecordText);
+            QuickMarcEditor.addEmptyFields(4);
+            QuickMarcEditor.checkEmptyFieldAdded(5);
+            QuickMarcEditor.updateExistingTagValue(5, testData.tag710);
+            QuickMarcEditor.updateExistingField(testData.tag710, testData.tag710Content);
+            QuickMarcEditor.checkContentByTag(testData.tag710, testData.tag710Content);
+            // wait for fileds list to update
+            cy.wait(1000);
+            QuickMarcEditor.deleteFieldByTagAndCheck(testData.tag650);
+            QuickMarcEditor.afterDeleteNotification(testData.tag650);
+            QuickMarcEditor.updateExistingField(testData.tag600, testData.tag600UpdatedContent);
+            QuickMarcEditor.checkContentByTag(testData.tag600, testData.tag600UpdatedContent);
+            QuickMarcEditor.updateExistingField(testData.tag100, testData.tag100UpdatedContent);
+            QuickMarcEditor.checkContentByTag(testData.tag100, testData.tag100UpdatedContent);
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            QuickMarcEditor.confirmDeletingFields();
+            QuickMarcEditor.checkAfterSaveAndKeepEditing();
+            QuickMarcEditor.checkContentByTag(testData.tag100, testData.tag100UpdatedContent);
+            QuickMarcEditor.checkContentByTag(testData.tag600, testData.tag600UpdatedContent);
+            QuickMarcEditor.checkTagAbsent(testData.tag650);
+            QuickMarcEditor.checkContentByTag(testData.tag710, testData.tag710Content);
+            QuickMarcEditor.closeUsingCrossButton();
+
+            InventoryInstance.waitLoading();
+            InventoryInstance.checkInstanceTitle(testData.title);
+
             // QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
             // QuickMarcEditor.updateExistingField(testData.tag500, `$a ${testData.tag500Content}`);
             // QuickMarcEditor.moveFieldUp(17);
