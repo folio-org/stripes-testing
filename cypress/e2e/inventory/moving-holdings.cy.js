@@ -37,10 +37,7 @@ describe('inventory', () => {
       });
 
       [item, secondItem].forEach((el) => {
-        el.instanceId = InventoryInstances.createInstanceViaApi(
-          el.instanceName,
-          el.barcode,
-        );
+        el.instanceId = InventoryInstances.createInstanceViaApi(el.instanceName, el.barcode);
         cy.getHoldings({
           limit: 1,
           query: `"instanceId"="${el.instanceId}"`,

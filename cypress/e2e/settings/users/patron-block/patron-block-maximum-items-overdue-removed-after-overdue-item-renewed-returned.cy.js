@@ -245,7 +245,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
   });
   it(
     'C350654 Verify automated patron block "Maximum number of overdue items" removed after overdue item renewed (vega)',
-    { tags: ['criticalPath', 'vega', 'nonParallel'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       findPatron();
       UsersCard.waitLoading();
@@ -264,7 +264,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
 
   it(
     'C350649 Verify automated patron block "Maximum number of overdue items" removed after overdue item returned (vega)',
-    { tags: ['criticalPath', 'vega', 'nonParallel'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       findPatron();
       UsersCard.waitLoading();

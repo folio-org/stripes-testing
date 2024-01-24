@@ -14,7 +14,11 @@ export default {
   openErrorModal: () => cy.do(Button('Error').click()),
   openNewStaffInfo: () => cy.do(HTML({ text: 'New staff info', id: 'button' }).click()),
   checkNewStaffInfo: (info) => cy.expect(HTML('STAFF : ' + info).exists()),
-  openActions: () => cy.do(Button('Actions').click()),
+  openActions: () => {
+    cy.wait(500);
+    cy.do(Button('Actions').click());
+    cy.wait(500);
+  },
   confirmFeeFineCancellation: (comment) => {
     cy.do([TextArea({ name: 'comment' }).fillIn(comment), Button({ type: 'submit' }).click()]);
   },

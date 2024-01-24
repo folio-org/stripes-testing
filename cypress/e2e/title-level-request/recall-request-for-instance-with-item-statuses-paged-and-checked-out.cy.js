@@ -133,7 +133,7 @@ describe('Create Item or Title level request', () => {
       .then(() => {
         RequestPolicy.createViaApi(requestPolicyBody);
         CirculationRules.addRuleViaApi(
-          { t: testData.loanTypeId },
+          { t: instanceData.loanTypeId },
           { r: requestPolicyBody.id },
         ).then((newRule) => {
           testData.addedRule = newRule;
