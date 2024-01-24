@@ -10,7 +10,7 @@ import {
   Dropdown,
 } from '../../../../../interactors';
 
-const myProfileButton = Dropdown({ id: 'profileDropdown' });
+const myProfileButton = Dropdown({ id: 'profileDropdown' }).find(Button());
 const switchActiveAffiliationButton = Button('Switch active affiliation');
 
 export default {

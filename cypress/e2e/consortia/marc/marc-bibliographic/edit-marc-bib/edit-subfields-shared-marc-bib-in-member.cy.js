@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import Permissions from '../../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Users from '../../../../../support/fragments/users/users';
@@ -13,6 +12,9 @@ import JobProfiles from '../../../../../support/fragments/data_import/job_profil
 import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
+import BrowseSubjects from '../../../../../support/fragments/inventory/search/browseSubjects';
+import BrowseContributors from '../../../../../support/fragments/inventory/search/browseContributors';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -21,9 +23,7 @@ describe('MARC', () => {
         const randomDigits = randomFourDigitNumber();
         const testData = {
           sharedBibSourcePaheheaderText: 'Shared MARC bibliographic record',
-          tag245: '245',
           tag710: '710',
-          tag504: '504',
           tag650: '650',
           tag600: '600',
           tag100: '100',
@@ -32,6 +32,14 @@ describe('MARC', () => {
           tag100UpdatedContent: '$a C405513 Auto Coates, Ta-Nehisi,',
           tag600UpdatedContent: `$a C405513 Auto Black Panther $c (Fictitious character) $v Comic books, strips, etc. ${randomDigits}`,
           tag710Content: `$a New Contrib C405513 ${randomDigits}`,
+          expectedContributorNames: [
+            'C405513 Auto Coates, Ta-Nehisi',
+            'Stelfreeze, Brian',
+            `New Contrib C405513 ${randomDigits}`,
+          ],
+          notExpectedContributorName: 'Testauthor.',
+          expectedSubjectName: `C405513 Auto Black Panther (Fictitious character)--Comic books, strips, etc. ${randomDigits}`,
+          notExpectedSubjectName: 'C405513 Auto Superheroes--Comic books, strips, etc.',
         };
 
         const users = {};
@@ -94,7 +102,6 @@ describe('MARC', () => {
                 waiter: InventoryInstances.waitContentLoading,
               }).then(() => {
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-                InventoryInstances.waitContentLoading();
                 ConsortiumManager.switchActiveAffiliation(tenantNames.college);
                 InventoryInstances.waitContentLoading();
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -143,44 +150,107 @@ describe('MARC', () => {
 
             InventoryInstance.waitLoading();
             InventoryInstance.checkInstanceTitle(testData.title);
+            testData.expectedContributorNames.forEach((contributorName) => {
+              InventoryInstance.checkContributor(contributorName);
+            });
+            InventoryInstance.checkPresentedText(testData.notExpectedContributorName, false);
+            InventoryInstance.verifySubjectHeading(testData.expectedSubjectName);
+            InventoryInstance.checkPresentedText(testData.notExpectedSubjectName, false);
+            InventoryInstance.viewSource();
+            InventoryViewSource.contains(testData.sharedBibSourcePaheheaderText);
+            InventoryViewSource.verifyFieldInMARCBibSource(
+              testData.tag100,
+              testData.tag100UpdatedContent,
+            );
+            InventoryViewSource.verifyFieldInMARCBibSource(
+              testData.tag600,
+              testData.tag600UpdatedContent,
+            );
+            InventoryViewSource.verifyFieldInMARCBibSource(testData.tag710, testData.tag710Content);
+            InventoryViewSource.verifyAbsenceOfValue(`${testData.tag650}\t`);
 
-            // QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
-            // QuickMarcEditor.updateExistingField(testData.tag500, `$a ${testData.tag500Content}`);
-            // QuickMarcEditor.moveFieldUp(17);
-            // QuickMarcEditor.pressSaveAndClose();
-            // QuickMarcEditor.checkAfterSaveAndClose();
-            // InventoryInstance.checkInstanceTitle(testData.tag245Content);
-            // InventoryInstance.verifyLastUpdatedSource(
-            //   users.userAProperties.firstName,
-            //   users.userAProperties.lastName,
-            // );
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+            InventoryInstances.waitContentLoading();
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
 
-            // cy.login(users.userBProperties.username, users.userBProperties.password, {
-            //   path: TopMenu.inventoryPath,
-            //   waiter: InventoryInstances.waitContentLoading,
-            // });
-            // InventoryInstance.searchByTitle(createdRecordIDs[0]);
-            // InventoryInstances.selectInstance();
-            // InventoryInstance.checkInstanceTitle(testData.tag245Content);
-            // InventoryInstance.verifyLastUpdatedSource(
-            //   users.userAProperties.firstName,
-            //   users.userAProperties.lastName,
-            // );
-            // InventoryInstance.viewSource();
-            // InventoryViewSource.contains(testData.sharedBibSourcePaheheaderText);
-            // InventoryViewSource.verifyFieldInMARCBibSource(testData.tag245, testData.tag245Content);
-            // InventoryViewSource.verifyFieldInMARCBibSource(testData.tag500, testData.tag500Content);
-            // InventoryViewSource.close();
-            // ConsortiumManager.switchActiveAffiliation(tenantNames.university);
-            // InventoryInstance.searchByTitle(createdRecordIDs[0]);
-            // InventoryInstances.selectInstance();
-            // InventoryInstance.checkInstanceTitle(testData.tag245Content);
-            // // TO DO: fix this check failure - 'Unknown user' is shown, possibly due to the way users are created in test
-            // // InventoryInstance.verifyLastUpdatedSource(users.userAProperties.firstName, users.userAProperties.lastName);
-            // InventoryInstance.viewSource();
-            // InventoryViewSource.contains(testData.sharedBibSourcePaheheaderText);
-            // InventoryViewSource.verifyFieldInMARCBibSource(testData.tag245, testData.tag245Content);
-            // InventoryViewSource.verifyFieldInMARCBibSource(testData.tag500, testData.tag500Content);
+            InventoryInstances.searchByTitle(createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.checkInstanceTitle(testData.title);
+            testData.expectedContributorNames.forEach((contributorName) => {
+              InventoryInstance.checkContributor(contributorName);
+            });
+            InventoryInstance.checkPresentedText(testData.notExpectedContributorName, false);
+            InventoryInstance.verifySubjectHeading(testData.expectedSubjectName);
+            InventoryInstance.checkPresentedText(testData.notExpectedSubjectName, false);
+
+            InventoryInstance.viewSource();
+            InventoryViewSource.contains(testData.sharedBibSourcePaheheaderText);
+            InventoryViewSource.verifyFieldInMARCBibSource(
+              testData.tag100,
+              testData.tag100UpdatedContent,
+            );
+            InventoryViewSource.verifyFieldInMARCBibSource(
+              testData.tag600,
+              testData.tag600UpdatedContent,
+            );
+            InventoryViewSource.verifyFieldInMARCBibSource(testData.tag710, testData.tag710Content);
+            InventoryViewSource.verifyAbsenceOfValue(`${testData.tag650}\t`);
+            InventoryViewSource.close();
+            InventoryInstance.waitLoading();
+
+            InventoryInstance.editMarcBibliographicRecord();
+            QuickMarcEditor.checkPaneheaderContains(testData.editSharedRecordText);
+            QuickMarcEditor.checkContentByTag(testData.tag100, testData.tag100UpdatedContent);
+            QuickMarcEditor.checkContentByTag(testData.tag600, testData.tag600UpdatedContent);
+            QuickMarcEditor.checkTagAbsent(testData.tag650);
+            QuickMarcEditor.checkContentByTag(testData.tag710, testData.tag710Content);
+            QuickMarcEditor.closeUsingCrossButton();
+            InventoryInstance.waitLoading();
+
+            InventorySearchAndFilter.switchToBrowseTab();
+            InventorySearchAndFilter.verifyKeywordsAsDefault();
+            BrowseSubjects.select();
+            BrowseSubjects.browse(testData.expectedSubjectName);
+            BrowseSubjects.checkValueIsBold(testData.expectedSubjectName);
+            BrowseSubjects.browse(testData.notExpectedSubjectName);
+            BrowseSubjects.verifyNonExistentSearchResult(testData.notExpectedSubjectName);
+
+            ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+            InventoryInstances.waitContentLoading();
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+
+            InventoryInstances.searchByTitle(createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.checkInstanceTitle(testData.title);
+            testData.expectedContributorNames.forEach((contributorName) => {
+              InventoryInstance.checkContributor(contributorName);
+            });
+            InventoryInstance.checkPresentedText(testData.notExpectedContributorName, false);
+            InventoryInstance.verifySubjectHeading(testData.expectedSubjectName);
+            InventoryInstance.checkPresentedText(testData.notExpectedSubjectName, false);
+
+            InventoryInstance.viewSource();
+            InventoryViewSource.contains(testData.sharedBibSourcePaheheaderText);
+            InventoryViewSource.verifyFieldInMARCBibSource(
+              testData.tag100,
+              testData.tag100UpdatedContent,
+            );
+            InventoryViewSource.verifyFieldInMARCBibSource(
+              testData.tag600,
+              testData.tag600UpdatedContent,
+            );
+            InventoryViewSource.verifyFieldInMARCBibSource(testData.tag710, testData.tag710Content);
+            InventoryViewSource.verifyAbsenceOfValue(`${testData.tag650}\t`);
+            InventoryViewSource.close();
+            InventoryInstance.waitLoading();
+
+            InventorySearchAndFilter.switchToBrowseTab();
+            InventorySearchAndFilter.verifyKeywordsAsDefault();
+            BrowseContributors.select();
+            BrowseContributors.browse(testData.expectedContributorNames[0]);
+            BrowseSubjects.checkValueIsBold(testData.expectedContributorNames[0]);
+            BrowseContributors.browse(testData.expectedContributorNames[2]);
+            BrowseSubjects.checkValueIsBold(testData.expectedContributorNames[2]);
           },
         );
       });

@@ -737,7 +737,10 @@ export default {
 
   getAssignedHRID: () => cy.then(() => KeyValue(instanceHRID).value()),
   checkUpdatedHRID: (oldHRID) => cy.expect(KeyValue(instanceHRID, { value: oldHRID }).absent()),
-  checkPresentedText: (expectedText) => cy.expect(instanceDetailsSection.find(HTML(including(expectedText))).exists()),
+  checkPresentedText: (expectedText, isPresent = true) => {
+    if (isPresent) cy.expect(instanceDetailsSection.find(HTML(including(expectedText))).exists());
+    else cy.expect(instanceDetailsSection.find(HTML(including(expectedText))).absent());
+  },
 
   goToMarcHoldingRecordAdding: () => {
     cy.do(actionsButton.click());
