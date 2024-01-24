@@ -474,7 +474,7 @@ export default {
     cy.expect(
       feesFinesAccordion
         .find(ListItem(including('open')))
-        .has({ text: including(`${count.toString()} open` && `Total: ${totalAmount.toString()}`) }),
+        .has({ text: including(`${count.toString()} open` && `Total: $${totalAmount.toString()}`) }),
     );
   },
 

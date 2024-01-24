@@ -163,6 +163,7 @@ describe('Title Level Request. Request Detail', () => {
   });
 
   afterEach('deleting request', () => {
+    cy.getAdminToken();
     Requests.deleteRequestViaApi(requestId);
   });
 

@@ -71,10 +71,6 @@ describe('Lost items requiring actual cost', () => {
             userBarcode: testData.user.barcode,
             servicePointId: testData.userServicePoint.id,
           });
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.usersPath,
-            waiter: UsersSearchResultsPane.waitLoading,
-          });
         });
         UserLoans.getUserLoansIdViaApi(user.userId).then((userLoans) => {
           UserLoans.declareLoanLostViaApi(
@@ -84,6 +80,11 @@ describe('Lost items requiring actual cost', () => {
             },
             userLoans.loans[0].id,
           );
+        }).then(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.usersPath,
+            waiter: UsersSearchResultsPane.waitLoading,
+          });
         });
       },
     );

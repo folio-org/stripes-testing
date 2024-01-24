@@ -64,6 +64,7 @@ export default {
     method: 'DELETE',
     path: `bl-users/by-id/${userId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   }),
 
   getUsers: (searchParams) => {
