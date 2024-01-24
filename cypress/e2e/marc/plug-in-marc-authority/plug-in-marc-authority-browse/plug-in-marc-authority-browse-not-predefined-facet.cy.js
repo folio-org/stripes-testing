@@ -129,7 +129,7 @@ describe('marc', () => {
       });
 
       it(
-        'C365110 MARC Authority plug-in | Apply "Authority source" facet not from pre-defined list to the browse result list (spitfire) (TaaS)',
+        'C422170 MARC Authority plug-in | Apply "Authority source" facet not from pre-defined list to the browse result list (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire'] },
         () => {
           // #1 Create autority source

@@ -87,7 +87,7 @@ describe('inventory', () => {
     });
 
     it(
-      'C400613 Search Instances using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
+      'C422016 Search Instances using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
       { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
       () => {
         InventoryInstances.clickAdvSearchButton();

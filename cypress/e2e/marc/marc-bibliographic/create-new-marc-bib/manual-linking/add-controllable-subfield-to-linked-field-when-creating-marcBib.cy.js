@@ -123,7 +123,7 @@ describe('marc', () => {
         });
 
         it(
-          'C380745 Add controllable subfields to a linked field when creating "MARC Bibliographic" record (spitfire) (TaaS)',
+          'C422132 Add controllable subfields to a linked field when creating "MARC Bibliographic" record (spitfire) (TaaS)',
           { tags: ['criticalPath', 'spitfire'] },
           () => {
             InventoryInstance.newMarcBibRecord();
