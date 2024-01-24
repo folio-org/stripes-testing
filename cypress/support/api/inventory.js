@@ -182,19 +182,6 @@ Cypress.Commands.add('updateInstance', (requestData) => {
   });
 });
 
-// Cypress.Commands.add('shareInstanceInMemberTenantViaApi', (requestData) => {
-//   cy.getConsortiaId().then((consortiaId) => {
-//     cy.okapiRequest({
-//       method: 'POST',
-//       path: `consortia/${consortiaId}/sharing/instances`,
-//       body: requestData,
-//       isDefaultSearchParamsRequired: false,
-//     }).then(({ body }) => {
-//       return body;
-//     });
-//   });
-// });
-
 // Depricated, use createFolioInstanceViaApi instead
 // TODO: move preparing of IDs from createFolioInstanceViaApi into createHolding
 Cypress.Commands.add('createHolding', ({ holding, items = [] }) => {
