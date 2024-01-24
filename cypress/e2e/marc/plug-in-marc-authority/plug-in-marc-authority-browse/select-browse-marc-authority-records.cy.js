@@ -120,7 +120,7 @@ describe('marc', () => {
       });
 
       it(
-        'C380548 MARC Authority plug-in | Select "Browse" MARC authority records (spitfire) (TaaS)',
+        'C422103 MARC Authority plug-in | Select "Browse" MARC authority records (spitfire) (TaaS)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           MarcAuthorities.switchToBrowse();

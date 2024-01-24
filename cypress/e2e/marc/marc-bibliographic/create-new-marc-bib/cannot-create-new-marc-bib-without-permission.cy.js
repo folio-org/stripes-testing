@@ -26,7 +26,7 @@ describe('marc', () => {
       });
 
       it(
-        'C380428 User cannot create new "MARC bib" record without "quickMARC: Create a new MARC bibliographic record" permission (spitfire) (TaaS)',
+        'C422105 User cannot create new "MARC bib" record without "quickMARC: Create a new MARC bibliographic record" permission (spitfire) (TaaS)',
         {
           tags: ['criticalPath', 'spitfire'],
         },

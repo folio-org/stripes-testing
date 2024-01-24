@@ -104,7 +104,7 @@ describe('marc', () => {
         });
 
         it(
-          'C380730 "$t" validation when linking "MARC Bibliographic" record\'s fields upon record creation (spitfire) (TaaS)',
+          'C422130 "$t" validation when linking "MARC Bibliographic" record\'s fields upon record creation (spitfire) (TaaS)',
           { tags: ['criticalPath', 'spitfire'] },
           () => {
             InventoryInstance.newMarcBibRecord();

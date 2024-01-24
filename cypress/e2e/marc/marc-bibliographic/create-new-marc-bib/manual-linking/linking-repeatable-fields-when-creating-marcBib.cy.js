@@ -132,7 +132,7 @@ describe('marc', () => {
         });
 
         it(
-          'C380738 Linking repeatable fields when creating a new "MARC bib" record (spitfire) (TaaS)',
+          'C422131 Linking repeatable fields when creating a new "MARC bib" record (spitfire) (TaaS)',
           { tags: ['criticalPath', 'spitfire'] },
           () => {
             InventoryInstance.newMarcBibRecord();

@@ -156,7 +156,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
   });
 
   it(
-    'C388565 Link certain fields manually and then use auto-linking when creating new "MARC Bib" record (spitfire)',
+    'C422149 Link certain fields manually and then use auto-linking when creating new "MARC Bib" record (spitfire)',
     { tags: ['smoke', 'spitfire'] },
     () => {
       InventoryInstance.newMarcBibRecord();
@@ -271,7 +271,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
   );
 
   it(
-    'C388562 "Link headings" button disabling/enabling when creating new "MARC Bib" record (spitfire)',
+    'C422145 "Link headings" button disabling/enabling when creating new "MARC Bib" record (spitfire)',
     { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.newMarcBibRecord();

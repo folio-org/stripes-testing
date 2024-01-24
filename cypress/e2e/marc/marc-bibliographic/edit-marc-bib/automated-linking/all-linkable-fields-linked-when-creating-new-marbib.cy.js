@@ -222,7 +222,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
   });
 
   it(
-    'C389483 All linkable fields are linked after clicking on the "Link headings" button when create "MARC bib" (spitfire) (TaaS)',
+    'C422147 All linkable fields are linked after clicking on the "Link headings" button when create "MARC bib" (spitfire) (TaaS)',
     { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(userData.username, userData.password, {
