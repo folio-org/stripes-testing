@@ -223,10 +223,10 @@ describe('Data Import', () => {
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         InventoryInstances.searchByTitle(testData.updatedInstanceTitle);
         InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
-        // InventoryInstance.verifyLastUpdatedSource(
-        //   users.userAProperties.firstName,
-        //   users.userAProperties.lastName,
-        // );
+        InventoryInstance.verifyLastUpdatedSource(
+          users.userAProperties.firstName,
+          users.userAProperties.lastName,
+        );
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkContentByTag(testData.field245.tag, testData.field245.content);
         QuickMarcEditor.checkContentByTag(testData.field500.tag, testData.field500.content);

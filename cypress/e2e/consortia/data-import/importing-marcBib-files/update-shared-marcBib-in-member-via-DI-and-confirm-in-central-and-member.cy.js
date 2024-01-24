@@ -251,10 +251,10 @@ describe('Data Import', () => {
             InventorySearchAndFilter.verifyPanesExist();
             InventoryInstances.searchByTitle(testData.updatedInstanceTitle);
             InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
-            // InventoryInstance.verifyLastUpdatedSource(
-            //   users.userAProperties.firstName,
-            //   users.userAProperties.lastName,
-            // );
+            InventoryInstance.verifyLastUpdatedSource(
+              users.userAProperties.firstName,
+              users.userAProperties.lastName,
+            );
             InventoryInstance.viewSource();
             InventoryViewSource.contains(testData.field245.content);
             InventoryViewSource.contains(testData.field500.content);
