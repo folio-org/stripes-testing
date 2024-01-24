@@ -123,7 +123,7 @@ describe('Orders', () => {
     });
 
     it(
-      'C411690: Shared instance can be created for linked instance record when creating package POL (member tenant) (consortia) (thunderjet)',
+      'C411690 Shared instance can be created for linked instance record when creating package POL (member tenant) (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet'] },
       () => {
         Orders.searchByParameter('PO number', testData.order.poNumber);
