@@ -114,7 +114,7 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
-              ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
             });
@@ -156,7 +156,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.instanceTitle);
 
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           InventoryInstances.waitContentLoading();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           cy.visit(TopMenu.marcAuthorities);
@@ -178,7 +178,7 @@ describe('MARC', () => {
           InventoryViewSource.contains(linkingTagAndValues.authorityHeading);
           InventoryViewSource.contains(testData.sharedBibSourcePaheheaderText);
 
-          ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
           InventoryInstances.waitContentLoading();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
           InventorySearchAndFilter.switchToBrowseTab();

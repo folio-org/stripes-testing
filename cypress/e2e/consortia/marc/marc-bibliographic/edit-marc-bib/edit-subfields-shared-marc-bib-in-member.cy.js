@@ -102,7 +102,7 @@ describe('MARC', () => {
                 waiter: InventoryInstances.waitContentLoading,
               }).then(() => {
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-                ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
                 InventoryInstances.waitContentLoading();
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
               });
@@ -131,7 +131,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingTagValue(5, testData.tag710);
             QuickMarcEditor.updateExistingField(testData.tag710, testData.tag710Content);
             QuickMarcEditor.checkContentByTag(testData.tag710, testData.tag710Content);
-            // wait for fileds list to update
+            // wait for fields list to update
             cy.wait(1000);
             QuickMarcEditor.deleteFieldByTagAndCheck(testData.tag650);
             QuickMarcEditor.afterDeleteNotification(testData.tag650);
@@ -169,7 +169,7 @@ describe('MARC', () => {
             InventoryViewSource.verifyFieldInMARCBibSource(testData.tag710, testData.tag710Content);
             InventoryViewSource.verifyAbsenceOfValue(`${testData.tag650}\t`);
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
 
@@ -215,7 +215,7 @@ describe('MARC', () => {
             BrowseSubjects.browse(testData.notExpectedSubjectName);
             BrowseSubjects.verifyNonExistentSearchResult(testData.notExpectedSubjectName);
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
 
