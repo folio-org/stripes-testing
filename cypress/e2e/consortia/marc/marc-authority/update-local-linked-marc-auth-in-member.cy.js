@@ -80,7 +80,7 @@ describe('MARC', () => {
               Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
               Permissions.moduleDataImportEnabled.gui,
-              Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+              Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
             ]);
           })
           .then(() => {
@@ -120,7 +120,7 @@ describe('MARC', () => {
 
             cy.visit(TopMenu.inventoryPath).then(() => {
               InventoryInstances.waitContentLoading();
-              InventoryInstance.searchByTitle(createdRecordIDs[0]);
+              InventoryInstances.searchByTitle(createdRecordIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
               QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
@@ -165,7 +165,7 @@ describe('MARC', () => {
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(1);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
           cy.visit(TopMenu.inventoryPath);
-          InventoryInstance.searchByTitle(createdRecordIDs[0]);
+          InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.verifyTagFieldAfterLinking(

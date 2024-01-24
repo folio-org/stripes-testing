@@ -129,7 +129,7 @@ describe('MARC', () => {
 
         it(
           'C405560 Link Local MARC bib with Local MARC Authority in Member tenant (consortia) (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPathECS', 'spitfire'] },
           () => {
             InventorySearchAndFilter.searchByParameter(
               testData.instanceSearchOption,

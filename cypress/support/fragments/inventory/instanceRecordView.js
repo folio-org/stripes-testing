@@ -518,4 +518,14 @@ export default {
     cy.do([rootSection.find(actionsButton).click(), Button({ id: 'edit-instance-marc' }).click()]);
     InventoryEditMarcRecord.checkEditableQuickMarcFormIsOpened();
   },
+
+  verifyEditInstanceButtonAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'edit-instance' }).absent());
+  },
+
+  verifyEditInstanceButtonIsEnabled() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'edit-instance' }).has({ disabled: false }));
+  },
 };

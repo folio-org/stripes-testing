@@ -69,7 +69,7 @@ describe('MARC', () => {
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-            Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+            Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           ])
             .then((userProperties) => {
               users.userProperties = userProperties;
@@ -82,7 +82,7 @@ describe('MARC', () => {
                 Permissions.inventoryAll.gui,
                 Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
                 Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-                Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+                Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
               ]);
             })
             .then(() => {
@@ -90,7 +90,7 @@ describe('MARC', () => {
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.inventoryAll.gui,
                 Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-                Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+                Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
               ]);
             })
             .then(() => {
@@ -114,7 +114,7 @@ describe('MARC', () => {
 
               cy.visit(TopMenu.inventoryPath).then(() => {
                 InventoryInstances.waitContentLoading();
-                InventoryInstance.searchByTitle(createdRecordIDs[0]);
+                InventoryInstances.searchByTitle(createdRecordIDs[0]);
                 InventoryInstances.selectInstance();
                 InventoryInstance.editMarcBibliographicRecord();
                 QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
@@ -173,9 +173,9 @@ describe('MARC', () => {
 
         it(
           'C405559 Link Local MARC bib with Shared MARC Authority in Member tenant (consortia) (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPathECS', 'spitfire'] },
           () => {
-            InventoryInstance.searchByTitle(createdRecordIDs[2]);
+            InventoryInstances.searchByTitle(createdRecordIDs[2]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
