@@ -68,20 +68,22 @@ describe('Check in', () => {
         limit: 1,
         expandAll: true,
         query: `"barcode"=="${testData.folioInstances[0].barcodes[0]}"`,
-      }).then((res) => {
-        const itemData = res;
-        note2.date = DateTools.getFormattedDateWithTime(new Date(), { withoutComma: true });
-        itemData.circulationNotes = [
-          ...itemData.circulationNotes,
-          { noteType: 'Check in', note: note2.title, staffOnly: true },
-        ];
-        cy.updateItemViaApi(itemData);
-      }).then(() => {
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.checkInPath,
-          waiter: CheckInActions.waitLoading,
+      })
+        .then((res) => {
+          const itemData = res;
+          note2.date = DateTools.getFormattedDateWithTime(new Date(), { withoutComma: true });
+          itemData.circulationNotes = [
+            ...itemData.circulationNotes,
+            { noteType: 'Check in', note: note2.title, staffOnly: true },
+          ];
+          cy.updateItemViaApi(itemData);
+        })
+        .then(() => {
+          cy.login(userData.username, userData.password, {
+            path: TopMenu.checkInPath,
+            waiter: CheckInActions.waitLoading,
+          });
         });
-      });
     });
   });
 

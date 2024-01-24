@@ -316,7 +316,7 @@ export default {
   checkRequestIsOpenForOneOfTheInstancesItems() {
     cy.expect(
       Modal('Request not allowed').has({
-        message: 'This requester already has an open request for one of the instance\'s items',
+        message: "This requester already has an open request for one of the instance's items",
       }),
     );
   },

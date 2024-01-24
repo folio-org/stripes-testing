@@ -72,20 +72,22 @@ describe('Lost items requiring actual cost', () => {
             servicePointId: testData.userServicePoint.id,
           });
         });
-        UserLoans.getUserLoansIdViaApi(user.userId).then((userLoans) => {
-          UserLoans.declareLoanLostViaApi(
-            {
-              servicePointId: testData.userServicePoint.id,
-              declaredLostDateTime: moment.utc().format(),
-            },
-            userLoans.loans[0].id,
-          );
-        }).then(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.usersPath,
-            waiter: UsersSearchResultsPane.waitLoading,
+        UserLoans.getUserLoansIdViaApi(user.userId)
+          .then((userLoans) => {
+            UserLoans.declareLoanLostViaApi(
+              {
+                servicePointId: testData.userServicePoint.id,
+                declaredLostDateTime: moment.utc().format(),
+              },
+              userLoans.loans[0].id,
+            );
+          })
+          .then(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.usersPath,
+              waiter: UsersSearchResultsPane.waitLoading,
+            });
           });
-        });
       },
     );
   });
