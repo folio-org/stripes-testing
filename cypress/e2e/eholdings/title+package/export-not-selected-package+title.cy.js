@@ -22,7 +22,7 @@ describe('eHoldings', () => {
       fileName: `C356770autoTestFile${getRandomPostfix()}.csv`,
       fileMask: '*_resource.csv',
     };
-    
+
     const dataToVerifyInCSVFile = [
       'Provider level token',
       'Provider Name',
