@@ -287,7 +287,7 @@ export default {
   },
 
   addNewInventory() {
-    cy.do([actionsButton.click(), Button('New').click()]);
+    cy.do([actionsButton.click(), Button({ id: 'clickable-newinventory' }).click()]);
 
     InventoryNewInstance.waitLoading();
 
