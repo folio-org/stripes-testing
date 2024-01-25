@@ -34,7 +34,7 @@ describe('Calendar', () => {
 
     it(
       'C360953 Copy -> Duplicate an existing calendar to make a new one (bama)',
-      { tags: ['smoke', 'bama'] },
+      { tags: ['smokeBama', 'bama'] },
       () => {
         PaneActions.allCalendarsPane.openAllCalendarsPane();
         PaneActions.allCalendarsPane.selectCalendar(testCalendarResponse.name);

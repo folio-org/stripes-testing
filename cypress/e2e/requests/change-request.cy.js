@@ -13,7 +13,6 @@ import Requests from '../../support/fragments/requests/requests';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -35,14 +34,9 @@ describe('Title Level Request', () => {
   };
 
   before('Preconditions:', () => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
-    TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
-    cy.logout();
     cy.getAdminToken()
       .then(() => {
+        TitleLevelRequests.enableTLRViaApi();
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);
@@ -174,7 +168,8 @@ describe('Title Level Request', () => {
         itemStatus: ITEM_STATUS_NAMES.PAGED,
         requestsOnItem: '1',
       });
-      RequestDetail.openItemByBarcode();
+      cy.wait(3000);
+      RequestDetail.openItemByBarcode(instanceData.itemBarcode);
       ItemRecordView.verifyLoanAndAvailabilitySection({
         permanentLoanType: testData.loanType.name,
         temporaryLoanType: '-',
@@ -201,7 +196,8 @@ describe('Title Level Request', () => {
         itemStatus: ITEM_STATUS_NAMES.PAGED,
         requestsOnItem: '1',
       });
-      RequestDetail.openItemByBarcode();
+      cy.wait(3000);
+      RequestDetail.openItemByBarcode(instanceData.itemBarcode);
       ItemRecordView.verifyLoanAndAvailabilitySection({
         permanentLoanType: testData.loanType.name,
         temporaryLoanType: '-',

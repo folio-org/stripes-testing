@@ -47,7 +47,7 @@ describe('Calendar', () => {
 
     it(
       'C360955 Create -> Create calendars that are 24/7 (never close) (bama)',
-      { tags: ['smoke', 'bama'] },
+      { tags: ['smokeBama', 'bama'] },
       () => {
         PaneActions.allCalendarsPane.clickNewButton();
 
