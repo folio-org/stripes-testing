@@ -11,24 +11,19 @@ import { NewOrder, Orders } from '../../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import Receiving from '../../../support/fragments/receiving/receiving';
 
 describe('Orders', () => {
   describe('Consortium (Orders)', () => {
     const randomPostfix = getRandomPostfix();
-    const firtstInstancePrefix = `C411683-A Instance ${randomPostfix}`;
-    const firstSubjectPrefix = `C411683-A Subject ${randomPostfix}`;
-    const secondInstancePrefix = `C411683-B Instance ${randomPostfix}`;
-    const secondSubjectPrefix = `C411683-B Subject ${randomPostfix}`;
+    const instancePrefix = `C411683-B Instance ${randomPostfix}`;
+    const subjectPrefix = `C411683-B Subject ${randomPostfix}`;
     const testData = {
       collegeHoldings: [],
       universityHoldings: [],
-      firstSharedInstance: {
-        title: `${firtstInstancePrefix} Shared`,
-        subjects: [{ value: `${firstSubjectPrefix} 1` }, { value: `${firstSubjectPrefix} 2` }],
-      },
-      secondSharedInstance: {
-        title: `${secondInstancePrefix} Shared`,
-        subjects: [{ value: `${secondSubjectPrefix} 1` }, { value: `${secondSubjectPrefix} 2` }],
+      sharedInstance: {
+        title: `${instancePrefix} Shared`,
+        subjects: [{ value: `${subjectPrefix} 1` }, { value: `${subjectPrefix} 2` }],
       },
       sharedAccordionName: 'Shared',
       subjectBrowseoption: 'Subjects',
@@ -43,14 +38,9 @@ describe('Orders', () => {
     before('Create user, data', () => {
       cy.getAdminToken();
       InventoryInstance.createInstanceViaApi({
-        instanceTitle: testData.firstSharedInstance.title,
+        instanceTitle: testData.sharedInstance.title,
       }).then((instanceData) => {
-        testData.firstSharedInstance.id = instanceData.instanceData.instanceId;
-      });
-      InventoryInstance.createInstanceViaApi({
-        instanceTitle: testData.secondSharedInstance.title,
-      }).then((instanceData) => {
-        testData.secondSharedInstance.id = instanceData.instanceData.instanceId;
+        testData.sharedInstance.id = instanceData.instanceData.instanceId;
         cy.getInstanceHRID(instanceData.instanceData.instanceId).then(
           (secondInstanceHRIDResponse) => {
             secondInstanceHRID = secondInstanceHRIDResponse;
@@ -88,7 +78,7 @@ describe('Orders', () => {
               Orders.searchByParameter('PO number', testData.order.poNumber);
               Orders.selectFromResultsList(testData.order.poNumber);
               OrderLines.addPOLine();
-              OrderLines.selectRandomInstanceInTitleLookUP(testData.firstSharedInstance.title, 0);
+              OrderLines.selectRandomInstanceInTitleLookUP(testData.sharedInstance.title, 0);
               OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
               OrderLines.backToEditingOrder();
               Orders.openOrder();
@@ -100,7 +90,7 @@ describe('Orders', () => {
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
               cy.visit(TopMenu.ordersPath);
@@ -118,9 +108,8 @@ describe('Orders', () => {
       Orders.deleteOrderViaApi(testData.order.id);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
       cy.resetTenant();
-      InventoryInstance.deleteInstanceViaApi(testData.firstSharedInstance.id);
-
-      InventoryInstance.deleteInstanceViaApi(testData.secondSharedInstance.id);
+      cy.getAdminToken();
+      InventoryInstance.deleteInstanceViaApi(testData.sharedInstance.id);
     });
 
     it(
@@ -130,11 +119,11 @@ describe('Orders', () => {
         Orders.searchByParameter('PO number', testData.order.poNumber);
         Orders.selectFromResultsList(testData.order.poNumber);
         Orders.receiveOrderViaActions();
-        OrderLines.changeInstanceConnectionInActions();
-        OrderLines.selectInstanceInSelectInstanceModal(testData.secondSharedInstance.title, 0);
-        OrderLines.submitCreateNewInChangeTitleModal('Keep Holdings');
-        OrderLines.openInstanceInPOL(testData.secondSharedInstance.title);
-        InventoryInstance.checkInstanceTitle(testData.secondSharedInstance.title);
+        Receiving.selectFromResultsList(testData.sharedInstance.title);
+        Receiving.selectPieceByIndexInExpected();
+        Receiving.quickReceiveInEditPieceModal();
+        Receiving.selectInstanceInReceive(testData.sharedInstance.title);
+        InventoryInstance.checkInstanceTitle(testData.sharedInstance.title);
         InventoryInstance.checkInstanceHrId(secondInstanceHRID);
       },
     );
