@@ -281,6 +281,7 @@ describe('data-import', () => {
 
           FileDetails.openJsonScreen(title);
           JsonScreenView.verifyJsonScreenIsOpened();
+          JsonScreenView.openMarcSrsTab();
           // get Instance hrid for deleting
           JsonScreenView.getInstanceHrid().then((hrid) => {
             instanceHrid = hrid;
@@ -412,6 +413,7 @@ describe('data-import', () => {
 
           FileDetails.openJsonScreen(title);
           JsonScreenView.verifyJsonScreenIsOpened();
+          JsonScreenView.openMarcSrsTab();
           // get Instance hrid for deleting
           JsonScreenView.getInstanceHrid().then((hrid) => {
             instanceHrid = hrid;
