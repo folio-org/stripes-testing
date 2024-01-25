@@ -122,7 +122,7 @@ describe('marc', () => {
         });
 
         it(
-          'C380727 Link "Alternative title" fields when creating "MARC Bibliographic" record (spitfire) (TaaS)',
+          'C422127 Link "Alternative title" fields when creating "MARC Bibliographic" record (spitfire) (TaaS)',
           { tags: ['criticalPath', 'spitfire'] },
           () => {
             InventoryInstance.newMarcBibRecord();

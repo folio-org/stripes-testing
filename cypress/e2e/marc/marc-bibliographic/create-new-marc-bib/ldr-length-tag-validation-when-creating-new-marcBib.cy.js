@@ -58,7 +58,7 @@ describe('marc', () => {
       });
 
       it(
-        'C380715 LDR length, tag validation when when creating a new "MARC bib" record (spitfire)',
+        'C422118 LDR length, tag validation when when creating a new "MARC bib" record (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstance.newMarcBibRecord();

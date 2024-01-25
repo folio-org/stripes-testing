@@ -724,7 +724,8 @@ export default {
   verifyErrorLabel(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(
       HTML(
-        `${fileName}: ${validRecordCount + invalidRecordCount
+        `${fileName}: ${
+          validRecordCount + invalidRecordCount
         } entries * ${validRecordCount} records matched * ${invalidRecordCount} errors`,
       ).exists(),
     );
@@ -1065,7 +1066,9 @@ export default {
   verifyClearSelectedFiltersButton(accordion, verification = 'exists') {
     cy.expect(
       Accordion(accordion)
-        .find(Button({ icon: 'times-circle-solid' }))[verification]()
+        .find(Button({ icon: 'times-circle-solid' }))
+        // eslint-disable-next-line no-unexpected-multiline
+        [verification](),
     );
   },
 
@@ -1084,7 +1087,9 @@ export default {
   verifyDropdown(userName) {
     cy.get('[id*="option-stripes-selection-"]').should('exist');
     cy.then(() => usersSelectionList.optionList()).then((options) => {
-      cy.wrap(options).then(opts => expect(opts.some(opt => opt.includes(userName))).to.be.true);
+      cy.wrap(options).then(
+        (opts) => expect(opts.some((opt) => opt.includes(userName))).to.be.true,
+      );
     });
   },
 
