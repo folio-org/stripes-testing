@@ -327,7 +327,7 @@ describe('Patron Block: Lost items', () => {
 
   it(
     'C350655 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item renewed (vega)',
-    { tags: ['criticalPath', 'vega', 'nonParallel'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum outstanding fee/fine balance', '624');
@@ -351,7 +351,7 @@ describe('Patron Block: Lost items', () => {
 
   it(
     'C350651 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item returned (vega)',
-    { tags: ['criticalPath', 'vega', 'nonParallel'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum outstanding fee/fine balance', '624');
@@ -372,7 +372,7 @@ describe('Patron Block: Lost items', () => {
 
   it(
     'C350653 Verify automated patron block "Maximum number of lost items" removed after lost item renewed (vega)',
-    { tags: ['criticalPath', 'vega', 'nonParallel'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum number of lost items', '4');
@@ -396,7 +396,7 @@ describe('Patron Block: Lost items', () => {
 
   it(
     'C350648 Verify automated patron block "Maximum number of lost items" removed after lost item returned (vega)',
-    { tags: ['criticalPath', 'vega', 'nonParallel'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum number of lost items', '4');

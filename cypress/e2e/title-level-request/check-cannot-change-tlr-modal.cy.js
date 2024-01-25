@@ -45,10 +45,6 @@ describe('Title Level Request', () => {
         userData.userId,
         testData.servicePoint.id,
       );
-      cy.login(userData.username, userData.password, {
-        path: SettingsMenu.circulationTitleLevelRequestsPath,
-        waiter: TitleLevelRequests.waitLoading,
-      });
       Requests.createNewRequestViaApi({
         fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         instanceId: testData.folioInstances[0].instanceId,
@@ -59,6 +55,10 @@ describe('Title Level Request', () => {
         requesterId: userData.userId,
       }).then((createdRequest) => {
         requestId = createdRequest.body.id;
+        cy.login(userData.username, userData.password, {
+          path: SettingsMenu.circulationTitleLevelRequestsPath,
+          waiter: TitleLevelRequests.waitLoading,
+        });
       });
     });
   });
@@ -89,7 +89,7 @@ describe('Title Level Request', () => {
     'C1285 Check that "Cannot change "Allow title level requests"" modal appears (volaris) (TaaS)',
     { tags: ['extendedPath', 'volaris'] },
     () => {
-      TitleLevelRequests.clickOnTLRCheckbox();
+      TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
       TitleLevelRequests.checkCannotChangeTLRModal();
     },
   );

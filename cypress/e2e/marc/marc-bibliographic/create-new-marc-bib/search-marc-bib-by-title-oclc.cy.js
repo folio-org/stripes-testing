@@ -44,7 +44,7 @@ describe('marc', () => {
       });
 
       it(
-        'C380736 Search created "MARC bib" record by Title, OCLC number (spitfire) (TaaS)',
+        'C422121 Search created "MARC bib" record by Title, OCLC number (spitfire) (TaaS)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstance.newMarcBibRecord();

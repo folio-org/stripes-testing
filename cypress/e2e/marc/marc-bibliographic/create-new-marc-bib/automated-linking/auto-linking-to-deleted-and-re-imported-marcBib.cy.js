@@ -113,7 +113,7 @@ describe('marc', () => {
         });
 
         it(
-          'C410883 Auto-linking to deleted and re-imported "MARC authority" record when creating new "MARC Bib" record (spitfire) (TaaS)',
+          'C422144 Auto-linking to deleted and re-imported "MARC authority" record when creating new "MARC Bib" record (spitfire) (TaaS)',
           { tags: ['criticalPath', 'spitfire'] },
           () => {
             cy.visit(TopMenu.marcAuthorities);

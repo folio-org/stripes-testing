@@ -19,16 +19,17 @@ export default {
   },
 
   switchServicePoint: (servicePoint) => {
-    cy.wait(5000);
-    cy.do([Dropdown('My profile').open(), Button('Switch service point').click()]);
+    cy.wait(2000);
+    cy.do([Dropdown({ id: 'profileDropdown' }).open(), Button('Switch service point').click()]);
+    cy.wait(2000);
     SelectServicePointModal.selectServicePoint(servicePoint);
     // wait for data to be loaded
-    cy.wait(5000);
+    cy.wait(3000);
   },
 
   checkIsServicePointSwitched: (name) => {
     cy.expect(
-      Dropdown('My profile')
+      Dropdown({ id: 'profileDropdown' })
         .find(Button(including(name)))
         .exists(),
     );

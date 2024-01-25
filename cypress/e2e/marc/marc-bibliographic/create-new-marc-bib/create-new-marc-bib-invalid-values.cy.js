@@ -110,7 +110,7 @@ describe('marc', () => {
       });
 
       it(
-        'C380706 Creating a new "MARC bib" record with invalid LDR 05, 06, 07, 08, 17, 18, 19 values (spitfire) (TaaS)',
+        'C422112 Creating a new "MARC bib" record with invalid LDR 05, 06, 07, 08, 17, 18, 19 values (spitfire) (TaaS)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstance.newMarcBibRecord();
@@ -127,7 +127,7 @@ describe('marc', () => {
       );
 
       it(
-        'C380712 "008" field updated when invalid LDR 06, 07 values entered upon creation of "MARC bib" record (spitfire) (TaaS)',
+        'C422115 "008" field updated when invalid LDR 06, 07 values entered upon creation of "MARC bib" record (spitfire) (TaaS)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstance.newMarcBibRecord();
@@ -154,7 +154,7 @@ describe('marc', () => {
       );
 
       it(
-        'C380714 "245" field presence validation when creating a new "MARC bib" record (spitfire) (TaaS)',
+        'C422117 "245" field presence validation when creating a new "MARC bib" record (spitfire) (TaaS)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstance.newMarcBibRecord();

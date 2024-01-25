@@ -95,7 +95,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
   });
 
   it(
-    'C417050 Create | Verify that created MARC bib with linked field by user without "Edit" permissions can be opened (spitfire)',
+    'C422140 Create | Verify that created MARC bib with linked field by user without "Edit" permissions can be opened (spitfire)',
     { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(testData.userAData.username, testData.userAData.password, {

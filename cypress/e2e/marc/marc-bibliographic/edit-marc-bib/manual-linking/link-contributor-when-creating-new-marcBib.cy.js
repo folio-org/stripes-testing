@@ -99,7 +99,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
   });
 
   it(
-    'C380726 Link "Contributor" fields when creating "MARC Bibliographic" record (spitfire)',
+    'C422126 Link "Contributor" fields when creating "MARC Bibliographic" record (spitfire)',
     { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(userData.username, userData.password, {

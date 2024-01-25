@@ -127,14 +127,16 @@ export default {
 
   getElementByTextAndVerify(content, amount, index) {
     const matchingElements = [];
-    cy.get('div[class*=mclRow-]').each((element) => {
-      if (Cypress.$(element).text().includes(content)) {
-        matchingElements.push(element);
-      }
-    }).then(() => {
-      cy.get(matchingElements[index]).click();
-      cy.expect(matchingElements.length).to.eq(amount);
-    });
+    cy.get('div[class*=mclRow-]')
+      .each((element) => {
+        if (Cypress.$(element).text().includes(content)) {
+          matchingElements.push(element);
+        }
+      })
+      .then(() => {
+        cy.get(matchingElements[index]).click();
+        cy.expect(matchingElements.length).to.eq(amount);
+      });
   },
 
   searchById(id) {

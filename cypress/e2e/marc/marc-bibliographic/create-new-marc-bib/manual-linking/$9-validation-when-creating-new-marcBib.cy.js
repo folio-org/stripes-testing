@@ -91,7 +91,7 @@ describe('marc', () => {
         });
 
         it(
-          'C380733 "$9" validation when creating a new "MARC bib" record (spitfire)',
+          'C422134 "$9" validation when creating a new "MARC bib" record (spitfire)',
           { tags: ['criticalPath', 'spitfire'] },
           () => {
             InventoryInstance.newMarcBibRecord();

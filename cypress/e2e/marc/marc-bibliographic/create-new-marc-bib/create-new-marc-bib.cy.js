@@ -63,7 +63,7 @@ describe('marc', () => {
       });
 
       it(
-        'C380701 User can create a new "MARC bib" record using "Save & close" button. (spitfire)',
+        'C422107 User can create a new "MARC bib" record using "Save & close" button. (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstance.newMarcBibRecord();
