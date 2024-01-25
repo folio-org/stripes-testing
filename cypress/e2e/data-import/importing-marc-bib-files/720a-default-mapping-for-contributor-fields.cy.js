@@ -1,4 +1,4 @@
-import { RECORD_STATUSES } from '../../../support/constants';
+import { RECORD_STATUSES, JOB_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -54,7 +54,7 @@ describe('data-import', () => {
         JobProfiles.search(testData.jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(testData.marcFileName);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkJobStatus(testData.marcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(testData.marcFileName);
         Logs.getCreatedItemsID().then((link) => {
           testData.createdRecordIDs.push(link.split('/')[5]);

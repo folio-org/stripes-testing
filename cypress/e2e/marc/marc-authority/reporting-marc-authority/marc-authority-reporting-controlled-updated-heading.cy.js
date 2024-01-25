@@ -47,7 +47,7 @@ const marcFiles = [
 
 const createdRecordIDs = [];
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Reporting MARC authority', () => {
       before('Creating user and uploading files', () => {
