@@ -12,7 +12,7 @@ const digits = '0123456789';
 const specialChars = "$&+,:;=?@#|'<>.-^* ()%!";
 const createdInstanceIDs = [];
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {

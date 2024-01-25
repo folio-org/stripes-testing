@@ -34,6 +34,10 @@ export default {
       });
   },
 
+  openMarcSrsTab: () => {
+    cy.do(Button(including('SRS MARC')).click());
+  },
+
   openInstanceTab: () => {
     cy.do(Button(including('Instance')).click());
   },

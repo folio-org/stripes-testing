@@ -12,7 +12,7 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import getRandomStringCode from '../../../../support/utils/genereteTextCode';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('plug-in MARC authority', () => {
     describe('plug-in MARC authority | Browse', () => {
       const randomCode = getRandomStringCode(4);
