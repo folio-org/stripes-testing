@@ -109,7 +109,7 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           }).then(() => {
-            ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           });
@@ -144,7 +144,7 @@ describe('MARC', () => {
           InventoryViewSource.verifyFieldInMARCBibSource(testData.tag245, testData.tag245Content);
           InventoryViewSource.verifyFieldInMARCBibSource(testData.tag500, testData.tag500Content);
           InventoryViewSource.close();
-          ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.checkInstanceTitle(testData.tag245Content);

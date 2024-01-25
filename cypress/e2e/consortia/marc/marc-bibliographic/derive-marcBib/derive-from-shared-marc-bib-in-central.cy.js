@@ -130,7 +130,7 @@ describe('MARC', () => {
             InventoryInstance.checkExpectedMARCSource();
             InventoryInstance.checkPresentedText(testData.instanceEditedTitle);
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 

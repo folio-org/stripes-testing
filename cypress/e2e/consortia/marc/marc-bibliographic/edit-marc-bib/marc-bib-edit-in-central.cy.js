@@ -115,7 +115,7 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstances.searchByTitle(createdInstanceID);
           InventoryInstances.selectInstance();
           InventoryInstance.checkInstanceTitle(testData.updatedTitle);
