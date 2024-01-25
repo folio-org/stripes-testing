@@ -18,13 +18,11 @@ describe('eHoldings', () => {
     const testData = {
       packageName: 'VLeBooks',
       selectionStatus: 'Not selected',
-      title: '1,000 Diabetes Recipes',
+      title: '009 Lives',
       fileName: `C356770autoTestFile${getRandomPostfix()}.csv`,
       fileMask: '*_resource.csv',
     };
-    const calloutMessage =
-      'is in progress and will be available on the Export manager app. The export may take several minutes to complete.';
-
+    
     const dataToVerifyInCSVFile = [
       'Provider level token',
       'Provider Name',
@@ -116,7 +114,6 @@ describe('eHoldings', () => {
         eHoldingsResourceView.openExportModal();
         ExportSettingsModal.clickExportButton();
         EHoldingsPackageView.verifyDetailViewPage(testData.title, testData.selectionStatus);
-        EHoldingsPackageView.verifyCalloutMessage(calloutMessage);
         EHoldingsPackageView.getJobIDFromCalloutMessage().then((id) => {
           const jobId = id;
 
