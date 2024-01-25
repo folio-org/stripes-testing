@@ -19,7 +19,7 @@ const testData = {
 };
 const createdInstanceIDs = [];
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       before(() => {

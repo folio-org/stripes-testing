@@ -12,7 +12,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       marcValue: 'C350932 Beethoven, Ludwig van, 1770-1827. 14 variations sur un thème original',
