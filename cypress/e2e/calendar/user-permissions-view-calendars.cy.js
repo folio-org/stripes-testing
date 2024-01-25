@@ -56,7 +56,7 @@ describe('Calendar', () => {
 
     it(
       'C361625 Permissions -> User with Settings (Calendar): Can view existing calendars (bama)',
-      { tags: ['smoke', 'bama'] },
+      { tags: ['smokeBama', 'bama'] },
       () => {
         PaneActions.allCalendarsPane.openAllCalendarsPane();
         PaneActions.allCalendarsPane.checkActionMenuAbsent();

@@ -275,6 +275,7 @@ describe('Patron Block: Lost items', () => {
   });
 
   afterEach('Returning items to original state', () => {
+    cy.getAdminToken();
     cy.get('@items').each((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,

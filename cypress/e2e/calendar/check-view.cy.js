@@ -56,7 +56,7 @@ describe('Calendar', () => {
 
     it(
       'C360940 Checking the view of calendar on "All Calendars" tab (bama)',
-      { tags: ['smoke', 'bama'] },
+      { tags: ['smokeBama', 'bama'] },
       () => {
         PaneActions.allCalendarsPane.checkNewAndPurgeMenuItemsExist();
 

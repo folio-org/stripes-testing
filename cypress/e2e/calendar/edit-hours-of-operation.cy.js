@@ -57,7 +57,7 @@ describe('Calendar', () => {
 
     it(
       'C2305 Edit -> Edit existing hours of operation for service point (bama)',
-      { tags: ['smoke', 'bama'] },
+      { tags: ['smokeBama', 'bama'] },
       () => {
         PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
         PaneActions.currentCalendarAssignmentsPane.selectCalendarByServicePoint(

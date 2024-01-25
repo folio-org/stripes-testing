@@ -45,7 +45,7 @@ describe('Calendar', () => {
 
     it(
       'C360946 Delete -> Purge old calendars with a selectable date (bama)',
-      { tags: ['smoke', 'bama'] },
+      { tags: ['smokeBama', 'bama'] },
       () => {
         PaneActions.allCalendarsPane.openAllCalendarsPane();
         PaneActions.allCalendarsPane.checkCalendarExists(testCalendar.name);
