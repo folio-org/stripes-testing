@@ -45,6 +45,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+        JobProfiles.waitLoadingList();
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFile.fileName);
@@ -56,12 +57,13 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.waitLoading();
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(marcFile.marc, `${marcFile.fileName}_copy`);
+        DataImport.uploadFileAndRetry(marcFile.marc, `copy_${marcFile.fileName}`);
+        JobProfiles.waitLoadingList();
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(`${marcFile.fileName}_copy`);
+        JobProfiles.waitFileIsImported(`copy_${marcFile.fileName}`);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(`${marcFile.fileName}_copy`);
+        Logs.openFileDetails(`copy_${marcFile.fileName}`);
         Logs.getCreatedItemsID().then((link) => {
           createdInstanceIDs.push(link.split('/')[5]);
         });
@@ -69,6 +71,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         DataImport.waitLoading();
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(marcFileC359239.marc, marcFileC359239.fileName);
+        JobProfiles.waitLoadingList();
         JobProfiles.search(marcFileC359239.jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileC359239.fileName);
@@ -84,8 +87,9 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
   after('Deleting created users, Instances', () => {
     cy.getAdminToken().then(() => {
       Users.deleteViaApi(testData.userProperties.userId);
-      InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[0]);
-      InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[1]);
+      createdInstanceIDs.forEach((id) => {
+        InventoryInstance.deleteInstanceViaApi(id);
+      });
     });
   });
 

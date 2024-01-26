@@ -35,7 +35,7 @@ describe('MARC -> MARC Holdings', () => {
     tag001ValueInSourceMask: /[a-z]+\d+/,
     tag004ValueInSourceMask: /[a-z]+\d+/,
     tag005ValueInSourceMask: /\d+.\d+/,
-    tag999ValueInSourceMask: /f\sf\$s\s.+\s\$i\s.+\S/,
+    tag999ValueInSourceMask: /f\sf‡s\s.+\s‡i\s.+\S/,
     default008BoxesValues: [
       '0',
       'u',
