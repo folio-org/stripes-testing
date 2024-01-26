@@ -4,7 +4,6 @@ import {
   HTML,
   NavListItem,
   Pane,
-  MultiColumnListHeader,
   including,
   Spinner,
   Section,
@@ -18,10 +17,6 @@ export const settingsItems = {
   dataImport: 'Data import',
   inventory: 'Inventory',
   users: 'Users',
-};
-
-export const usersItems = {
-  departments: 'Departments',
 };
 
 export default {
@@ -78,7 +73,7 @@ export default {
 
   chooseSettingsItem(settingName) {
     cy.do(Section({ id: 'settings-nav-pane' }).find(NavListItem(settingName)).click());
-    this.verifySelectedSettingIsDisplayed();
+    this.verifySelectedSettingIsDisplayed(settingName);
   },
 
   verifyStatusOfConsortiumManager(members) {
@@ -95,18 +90,11 @@ export default {
     cy.do(selectMembersButton.click());
   },
 
-  chooseUsersItem(item) {
+  chooseSecondMenuItem(item) {
     cy.do([
       NavListItem(item).click(),
       Pane(item).exists(),
       HTML(including(item, { class: 'headline' })).exists(),
     ]);
-    if (item === usersItems.departments) {
-      ['Name', 'Code', 'Last updated', '# of Users', 'Member libraries', 'Actions'].forEach(
-        (header) => {
-          cy.expect(MultiColumnListHeader(header).exists());
-        },
-      );
-    }
   },
 };
