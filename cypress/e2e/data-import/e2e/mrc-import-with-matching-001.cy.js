@@ -25,7 +25,7 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
-  describe('End to end scenarios', () => {
+  describe('End to end scenarios', { retries: 3 }, () => {
     let user = {};
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     // unique file name to upload

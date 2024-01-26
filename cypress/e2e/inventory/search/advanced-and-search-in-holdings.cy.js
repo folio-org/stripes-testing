@@ -128,14 +128,14 @@ describe('Inventory -> Advanced search', () => {
       InventoryInstances.fillAdvSearchRow(
         1,
         testData.instances[1].holdingsHRID,
-        'Contains any',
+        'Contains all',
         'Holdings HRID',
         'AND',
       );
       InventoryInstances.checkAdvSearchModalValues(
         1,
         testData.instances[1].holdingsHRID,
-        'Contains any',
+        'Contains all',
         'Holdings HRID',
         'AND',
       );

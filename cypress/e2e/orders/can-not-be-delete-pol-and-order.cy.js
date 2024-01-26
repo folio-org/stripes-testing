@@ -81,6 +81,7 @@ describe('Orders', () => {
         cy.visit(TopMenu.ordersPath);
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
+          Orders.resetFilters();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.createPOLineViaActions();
@@ -123,6 +124,7 @@ describe('Orders', () => {
     'C375962 Order (line) linked to Invoice can not be deleted (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.deleteOrderViaActions();

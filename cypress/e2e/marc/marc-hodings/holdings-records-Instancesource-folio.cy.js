@@ -7,7 +7,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 
 describe('MARC -> MARC Holdings', { retries: 2 }, () => {
   beforeEach(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.visit(TopMenu.inventoryPath);
     const InventoryNewInstance = InventoryInstances.addNewInventory();
     InventoryNewInstance.fillRequiredValues();
@@ -25,6 +25,7 @@ describe('MARC -> MARC Holdings', { retries: 2 }, () => {
       HoldingsRecordEdit.waitLoading();
       HoldingsRecordEdit.checkReadOnlyFields();
       HoldingsRecordEdit.closeWithoutSave();
+      InventoryInstance.openHoldingView();
       HoldingsRecordView.tryToDelete();
       HoldingsRecordView.duplicate();
       InventoryNewHoldings.checkSource();

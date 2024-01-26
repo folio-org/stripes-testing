@@ -183,6 +183,7 @@ describe('ui-acquisition units: Acquisition Units', () => {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
       });
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);

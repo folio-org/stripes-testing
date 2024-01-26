@@ -60,7 +60,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
           cy.visit(TopMenu.dataImportPath);
           DataImport.verifyUploadState();
           DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitLoadingList();
+          JobProfiles.waitFileIsUploaded();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(marcFile.fileName);

@@ -96,6 +96,7 @@ describe('Orders', () => {
       path: TopMenu.ordersPath,
       waiter: Orders.waitLoading,
     });
+    Orders.resetFilters();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
@@ -124,6 +125,7 @@ describe('Orders', () => {
     'C374118: Instance reference is removed when user confirms changing that will remove the instance UUID from the POL when editing PO line (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder();
@@ -131,6 +133,7 @@ describe('Orders', () => {
       OrderLines.openPageConnectedInstance();
       InventorySearchAndFilter.varifyInstanceKeyDetails(instance);
       cy.visit(TopMenu.ordersPath);
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder();

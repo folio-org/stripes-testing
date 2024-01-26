@@ -229,6 +229,7 @@ export default {
     // upload a marc file for export
     cy.visit(TopMenu.dataImportPath);
     uploadFile('oneMarcBib.mrc', nameForMarcFileWithBib);
+    JobProfiles.waitFileIsUploaded();
     JobProfiles.search(JobProfiles.defaultInstanceAndSRSMarcBib);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameForMarcFileWithBib);

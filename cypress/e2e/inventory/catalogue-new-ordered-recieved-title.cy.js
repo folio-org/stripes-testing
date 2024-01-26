@@ -113,7 +113,7 @@ describe('inventory', () => {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
         });
-
+        Orders.resetFilters();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();

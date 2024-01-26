@@ -45,6 +45,7 @@ describe('orders: Receive piece from Order', () => {
     cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
       orderID = response.body.id;
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.addPOLine();
@@ -88,6 +89,7 @@ describe('orders: Receive piece from Order', () => {
     { tags: ['smoke', 'thunderjet'] },
     () => {
       const caption = 'autotestCaption';
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       // Receiving part

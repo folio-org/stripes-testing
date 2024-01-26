@@ -36,7 +36,6 @@ describe('MARC -> MARC Holdings', () => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
       DataImport.uploadFile('oneMarcBib.mrc', fileName);
       JobProfiles.waitFileIsUploaded();
-      JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
@@ -46,6 +45,7 @@ describe('MARC -> MARC Holdings', () => {
         instanceID = link.split('/')[5];
       });
       Logs.goToTitleLink(RECORD_STATUSES.CREATED);
+      cy.wait(2000);
       InventorySteps.addMarcHoldingRecord();
     });
   });
@@ -55,6 +55,7 @@ describe('MARC -> MARC Holdings', () => {
       path: TopMenu.inventoryPath,
       waiter: InventorySearchAndFilter.waitLoading,
     });
+    cy.wait(4000);
     InventorySearchAndFilter.searchInstanceByTitle(instanceID);
     InventorySearchAndFilter.selectViewHoldings();
     // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
@@ -135,8 +136,6 @@ describe('MARC -> MARC Holdings', () => {
         );
         QuickMarcEditor.closeWithoutSavingAfterChange();
         // TODO: Delete below four lines of code after Actions -> View source of Holding's view works as expected.
-        HoldingsRecordView.close();
-        HoldingsRecordView.waitLoading();
         HoldingsRecordView.close();
         InventoryInstance.openHoldingView();
         HoldingsRecordView.viewSource();

@@ -72,6 +72,7 @@ describe('Orders', () => {
       { tags: ['extendedPath', 'thunderjet'] },
       () => {
         // Search for the order from Preconditions
+        Orders.resetFilters();
         Orders.searchByParameter('PO number', testData.order.poNumber);
 
         // Click "Actions" button on "Orders" pane and select "Export results (CSV)" option
@@ -91,6 +92,7 @@ describe('Orders', () => {
         });
 
         // Search for the order from Preconditions
+        Orders.resetFilters();
         Orders.searchByParameter('PO number', testData.order.poNumber);
 
         // Click "Actions" button on "Orders" pane and select "Export results (CSV)" option

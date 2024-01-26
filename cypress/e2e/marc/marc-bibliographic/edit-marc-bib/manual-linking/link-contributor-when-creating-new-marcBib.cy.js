@@ -176,10 +176,10 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
       InventoryInstance.viewSource();
       InventoryViewSource.contains(
-        'Linked to MARC authority\n\t100\t   \t$a C380726 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052044 $9',
+        'Linked to MARC authority\n\t100\t   \t‡a C380726 Jackson, Peter, ‡c Inspector Banks series ; ‡d 1950-2022 ‡0 3052044 ‡9',
       );
       InventoryViewSource.contains(
-        'Linked to MARC authority\n\t700\t   \t$a C380726 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052044 $9',
+        'Linked to MARC authority\n\t700\t   \t‡a C380726 Jackson, Peter, ‡c Inspector Banks series ; ‡d 1950-2022 ‡0 3052044 ‡9',
       );
       QuickMarcEditor.closeEditorPane();
 

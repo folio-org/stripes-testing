@@ -6,7 +6,7 @@ describe('ui-organizations: Creating organization', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
 
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.getAdminToken();
     cy.visit(TopMenu.organizationsPath);
   });

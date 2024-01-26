@@ -244,7 +244,7 @@ describe('data-import', () => {
         Logs.openFileDetails(nameForUpdatedMarcBibFile);
 
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstances.searchByTitle(marcFiles[0].instanceTitle);
+        InventoryInstances.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.checkValueAbsenceInDetailView(
           testData.contributorAccordion,

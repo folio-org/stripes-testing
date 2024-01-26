@@ -109,6 +109,7 @@ describe('Export Manager', () => {
         // Need to wait while first job will be runing
         cy.wait(70000);
         cy.visit(TopMenu.ordersPath);
+        Orders.resetFilters();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.createPOLineViaActions();
@@ -150,6 +151,7 @@ describe('Export Manager', () => {
 
     after(() => {
       cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.unOpenOrder();

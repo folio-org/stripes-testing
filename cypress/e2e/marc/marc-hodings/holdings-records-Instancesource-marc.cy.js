@@ -18,7 +18,7 @@ describe('MARC -> MARC Holdings', { retries: 2 }, () => {
   });
 
   beforeEach(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.visit(TopMenu.inventoryPath);
     InventoryActions.import();
     // TODO: redesign to api step

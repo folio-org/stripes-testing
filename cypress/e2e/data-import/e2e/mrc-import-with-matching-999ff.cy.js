@@ -23,8 +23,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', { retries: 3 }, () => {
-  describe('End to end scenarios', () => {
+describe('data-import', () => {
+  describe('End to end scenarios', { retries: 3 }, () => {
     // unique file name to upload
     const nameForMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
     const nameForExportedMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;

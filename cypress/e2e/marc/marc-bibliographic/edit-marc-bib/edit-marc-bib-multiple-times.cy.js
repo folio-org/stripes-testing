@@ -12,7 +12,7 @@ import InventoryViewSource from '../../../../support/fragments/inventory/invento
 
 describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
   const testData = {
-    initialSource: { name: 'Diku_admin' },
+    initialSource: { name: 'folio-aqa, folio-aqa' },
     authority: {
       source: 'MARC',
       searchInput: 'C350697 On the Road',
@@ -30,7 +30,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
   };
   const marcFile = {
     marc: 'marcBibFileForC350697.mrc',
-    fileName: `testMarcFileC350697.${getRandomPostfix()}.mrc`,
+    fileName: `testMarcFileC350697${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
   };
   let instanceId;

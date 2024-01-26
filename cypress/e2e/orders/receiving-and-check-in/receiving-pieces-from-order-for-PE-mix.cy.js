@@ -64,6 +64,7 @@ describe('Orders: Receiving and Check-in', () => {
         cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
+          Orders.resetFilters();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.createPOLineViaActions();
@@ -94,10 +95,12 @@ describe('Orders: Receiving and Check-in', () => {
 
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.receivingPath, waiter: Receiving.waitLoading });
+    Orders.resetFilters();
     Orders.searchByParameter('PO number', orderNumber);
     Receiving.selectLinkFromResultsList();
     Receiving.unreceiveFromReceivedSection();
     cy.visit(TopMenu.ordersPath);
+    Orders.resetFilters();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
@@ -113,6 +116,7 @@ describe('Orders: Receiving and Check-in', () => {
     'C738 Receiving pieces from an order for P/E MIx that is set to create Items in inventory (items for receiving includes "Order closed" statuses) (thunderjet)',
     { tags: ['smoke', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.openOrder();

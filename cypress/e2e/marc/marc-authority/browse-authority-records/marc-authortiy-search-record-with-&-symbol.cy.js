@@ -12,7 +12,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 describe('MARC -> MARC Authority -> Browse - Authority records', () => {
   let user;
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
-  const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
+  const fileName = `testMarcFile${getRandomPostfix()}.mrc`;
   let createdAuthorityID;
 
   before('Creating data', () => {

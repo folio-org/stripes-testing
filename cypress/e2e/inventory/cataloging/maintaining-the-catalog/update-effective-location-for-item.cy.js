@@ -111,8 +111,6 @@ describe('inventory', () => {
         HoldingsRecordView.edit();
         HoldingsRecordEdit.changePermanentLocation(anotherPermanentLocation);
         HoldingsRecordEdit.saveAndClose();
-        HoldingsRecordView.close();
-        cy.wait(1000);
         InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', itemData.itemBarcode);

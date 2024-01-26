@@ -66,6 +66,7 @@ describe('ui-invoices: Cancelling approved invoices', () => {
       cy.createOrderApi(order).then((responseOrder) => {
         orderNumber = responseOrder.body.poNumber;
         cy.visit(TopMenu.ordersPath);
+        Orders.resetFilters();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.createPOLineViaActions();

@@ -57,7 +57,7 @@ const advSearchModifierSelect = Select({ label: 'Match option*' });
 const advSearchOptionSelect = Select({ label: 'Search options*' });
 
 const advSearchOperators = ['AND', 'OR', 'NOT'];
-const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with', 'Contains any'];
+const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with'];
 const advSearchItemModifiers = ['Exact phrase', 'Contains all', 'Starts with'];
 const advSearchModifiersValues = ['exactPhrase', 'containsAll', 'startsWith', 'containsAny'];
 const searchInstancesOptions = [
@@ -305,7 +305,7 @@ export default {
     let alternativeTitleTypeId = '';
     let holdingSourceId = '';
     const instanceId = uuid();
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
+    cy.getAdminToken()
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
         cy.getMaterialTypes({ limit: 1 });

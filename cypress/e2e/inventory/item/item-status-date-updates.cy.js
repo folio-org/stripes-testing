@@ -123,6 +123,7 @@ describe.skip('inventory', () => {
     };
 
     const selectOrderWithNumber = (numberOrder) => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', numberOrder);
       Orders.selectFromResultsList(numberOrder);
     };

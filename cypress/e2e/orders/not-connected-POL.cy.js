@@ -62,6 +62,7 @@ describe('orders: Test POL', () => {
 
   // FAT-3998 Tags was deleted because requirements was changed. The test should be changed.
   it('C6648 "Not connected" message appears after changing item details [except tags] (thunderjet)', () => {
+    Orders.resetFilters();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     OrderLines.addPOLine();

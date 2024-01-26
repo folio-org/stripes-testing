@@ -123,6 +123,7 @@ describe('Invoices', () => {
       cy.createOrderApi(order).then((response) => {
         orderNumber = response.body.poNumber;
         cy.visit(TopMenu.ordersPath);
+        Orders.resetFilters();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         OrderLines.addPOLine();
@@ -134,6 +135,7 @@ describe('Invoices', () => {
         Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
         Invoices.createInvoiceLinePOLLookUp(orderNumber);
         cy.visit(TopMenu.ordersPath);
+        Orders.resetFilters();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         OrderLines.selectPOLInOrder(0);

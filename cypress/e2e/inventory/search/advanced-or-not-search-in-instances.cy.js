@@ -145,11 +145,11 @@ describe('Inventory -> Advanced search', () => {
           'Starts with',
           'Title (all)',
         );
-        InventoryInstances.fillAdvSearchRow(1, instanceHrid, 'Contains any', 'Instance HRID', 'OR');
+        InventoryInstances.fillAdvSearchRow(1, instanceHrid, 'Contains all', 'Instance HRID', 'OR');
         InventoryInstances.checkAdvSearchModalValues(
           1,
           instanceHrid,
-          'Contains any',
+          'Contains all',
           'Instance HRID',
           'OR',
         );
@@ -170,7 +170,7 @@ describe('Inventory -> Advanced search', () => {
         InventoryInstances.checkAdvSearchModalValues(
           1,
           instanceHrid,
-          'Contains any',
+          'Contains all',
           'Instance HRID',
           'OR',
         );

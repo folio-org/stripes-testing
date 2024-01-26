@@ -92,7 +92,7 @@ describe('Fee fine amout link in checkout', () => {
   });
 
   after('UserOwner is removed', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.visit(TopMenu.checkOutPath);
     Checkout.waitLoading();
     // without this waiter, the user will not be found by username

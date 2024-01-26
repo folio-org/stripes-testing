@@ -33,6 +33,7 @@ describe('orders: Receive piece from Order', () => {
     cy.createOrderApi(order).then((orderResponse) => {
       orderNumber = orderResponse.body.poNumber;
       cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.addPOLine();
@@ -66,6 +67,7 @@ describe('orders: Receive piece from Order', () => {
     () => {
       const barcode = Helper.getRandomBarcode();
       const caption = 'autotestCaption';
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.openOrder();
