@@ -111,7 +111,7 @@ describe('Inventory', () => {
             waiter: InventoryInstances.waitContentLoading,
           }).then(() => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
           });

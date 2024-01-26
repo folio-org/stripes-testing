@@ -92,7 +92,7 @@ describe('MARC', () => {
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
             });
@@ -144,14 +144,14 @@ describe('MARC', () => {
             InventoryViewSource.contains(testData.tag245EditedContent);
             InventoryViewSource.contains(testData.sourceViewLocalText);
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
 
             InventoryInstances.searchByTitle(createdInstanceIDs[1], false);
             InventorySearchAndFilter.verifyNoRecordsFound();
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.central);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
 

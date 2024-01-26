@@ -130,7 +130,7 @@ describe('MARC', () => {
           MarcAuthority.notContains(testData.tag377Value);
           MarcAuthority.verifyFieldPositionInView(5, testData.tag010, testData.tag010Value);
 
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           MarcAuthorities.waitLoading();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           MarcAuthorities.searchBeats(testData.updatedTitle);

@@ -139,7 +139,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.instanceTitle);
 
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstances.waitContentLoading();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           cy.visit(TopMenu.marcAuthorities);

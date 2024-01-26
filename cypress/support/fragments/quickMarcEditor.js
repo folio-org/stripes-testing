@@ -2084,4 +2084,9 @@ export default {
         .exists(),
     );
   },
+
+  checkAfterSaveAndKeepEditing() {
+    cy.expect(calloutAfterSaveAndClose.exists());
+    cy.expect(rootSection.exists());
+  },
 };
