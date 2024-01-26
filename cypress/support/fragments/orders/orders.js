@@ -56,7 +56,7 @@ const ordersResultsPane = Pane({ id: 'orders-results-pane' });
 const buttonAcquisitionMethodFilter = Button({ id: 'accordion-toggle-button-acquisitionMethod' });
 const purchaseOrderSection = Section({ id: 'purchaseOrder' });
 const purchaseOrderLineLimitReachedModal = Modal({ id: 'data-test-lines-limit-modal' });
-const resetButton = Button('Reset all');
+const resetButton = Button({ dataTestID: 'reset-button' });
 const submitButton = Button('Submit');
 const expandActionsDropdown = () => {
   cy.do(
@@ -422,15 +422,19 @@ export default {
   },
 
   resetFilters: () => {
-    if (cy.expect(resetButton.is({ disabled: false }))) {
-      cy.do(resetButton.click());
-    } else {
-      cy.expect(resetButton.is({ disabled: true }));
-    }
+    cy.get('[data-testid="reset-button"]')
+      .invoke('attr', 'disabled')
+      .then((disabledAttribute) => {
+        if (disabledAttribute === 'disabled') {
+          cy.get('[data-testid="reset-button"]').invoke('attr', 'disabled');
+        } else {
+          cy.do(resetButton.click());
+        }
+      });
   },
 
   selectStatusInSearch: (orderStatus) => {
-    cy.do(Accordion({ id: 'workflowStatus' }).clickHeader());
+    cy.do(Section({ id: 'workflowStatus' }).click());
     switch (orderStatus) {
       case 'Closed':
         cy.do(Checkbox({ id: 'clickable-filter-workflowStatus-closed' }).click());
