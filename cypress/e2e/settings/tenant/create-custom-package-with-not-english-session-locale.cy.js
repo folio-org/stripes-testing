@@ -61,7 +61,7 @@ describe('eHoldings', () => {
       TemporarySessionLocale.selectCountry(testData.dataForFirstPackage.buttonLanguage);
       TemporarySessionLocale.verifyTitleOfPaneHeader(testData.dataForFirstPackage.paneHeaderTitle);
       TopMenu.openEHoldingsApp();
-      EHoldingsSearch.switchToPackages();
+      EHoldingsSearch.switchToPackages('Paquetes');
       EHoldingsPackages.verifyCustomPackage(
         testData.dataForFirstPackage.packageName,
         'Mixed Content',
@@ -76,7 +76,7 @@ describe('eHoldings', () => {
       TemporarySessionLocale.selectCountry(testData.dataForSecondPackage.buttonLanguage);
       TemporarySessionLocale.verifyTitleOfPaneHeader(testData.dataForSecondPackage.paneHeaderTitle);
       TopMenu.openEHoldingsApp();
-      EHoldingsSearch.switchToPackages();
+      EHoldingsSearch.switchToPackages('Pacchetti');
       EHoldingsPackages.verifyCustomPackage(
         testData.dataForSecondPackage.packageName,
         'Mixed Content',
