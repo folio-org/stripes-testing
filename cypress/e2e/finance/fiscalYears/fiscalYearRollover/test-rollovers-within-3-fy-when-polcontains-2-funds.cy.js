@@ -250,6 +250,7 @@ describe('ui-finance: Fiscal Year Rollover', { retries: 3 }, () => {
           periodEndForSecondFY,
         );
         cy.visit(TopMenu.ordersPath);
+        Orders.resetFilters();
         Orders.searchByParameter('PO number', thirdOrderNumber);
         Orders.selectFromResultsList(thirdOrderNumber);
         Orders.newInvoiceFromOrder();

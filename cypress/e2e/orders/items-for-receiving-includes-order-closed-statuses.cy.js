@@ -66,6 +66,7 @@ describe('orders: Receiving and Check-in', () => {
         cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
+          Orders.resetFilters();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.createPOLineViaActions();
@@ -149,6 +150,7 @@ describe('orders: Receiving and Check-in', () => {
     'C368044 Item statuses set to something other than "Order closed" or "On order" are NOT changed to "In process" upon receiving (items for receiving includes "Order closed" statuses) (thunderjet)',
     { tags: ['smoke', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Receiving.selectLinkFromResultsList();
       Receiving.receiveFromExpectedSectionWithClosePOL();

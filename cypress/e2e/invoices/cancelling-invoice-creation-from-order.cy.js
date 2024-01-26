@@ -101,6 +101,7 @@ describe('Invoices', () => {
 
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+    Orders.resetFilters();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
@@ -115,6 +116,7 @@ describe('Invoices', () => {
     'C357020 Cancelling invoice creation from order (thunderjet)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.cancelCreateNewInvoiceFromOrder();

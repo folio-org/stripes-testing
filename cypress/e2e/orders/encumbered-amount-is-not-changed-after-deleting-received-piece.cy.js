@@ -131,6 +131,7 @@ describe('Orders', () => {
     'C375110: Encumbered amount is not changed after deleting received piece when related approved invoice exists (thunderjet) (TaaS)',
     { tags: ['extended', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.receiveOrderViaActions();

@@ -62,6 +62,7 @@ describe('orders: Export', () => {
     'C350601 Select Acquisition method from controlled vocabulary list [except tags] (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.addPOLine();

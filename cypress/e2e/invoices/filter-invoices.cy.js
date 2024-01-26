@@ -85,6 +85,7 @@ describe('Invoices', () => {
     cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
       cy.visit(TopMenu.ordersPath);
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();

@@ -76,6 +76,7 @@ describe('Orders', () => {
     'C389465 Receiving workflow is automatically set to "Independent order and receipt quantity" if a user selects "Receipt not required" receipt status (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();

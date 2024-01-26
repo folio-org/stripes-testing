@@ -31,6 +31,7 @@ describe('Orders', () => {
     cy.createOrderApi(order).then((orderResponse) => {
       orderNumber = orderResponse.body.poNumber;
       cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.addPOLine();
@@ -71,6 +72,7 @@ describe('Orders', () => {
     'C353627 "Renewal date" and "Renewal interval" are not required for opening, unopening, closing, reopening ongoing order (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.openOrder();

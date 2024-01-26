@@ -130,6 +130,7 @@ describe('ui-orders: Orders', () => {
     'C368486 Editing fund distribution in PO line when related Reviewed invoice exists (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);

@@ -132,6 +132,7 @@ describe('Orders', () => {
     'C368485 Editing fund distribution is blocked when PO line has related approved invoice (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);

@@ -38,6 +38,7 @@ describe('Orders: Receiving and Check-in', () => {
     cy.createOrderApi(order).then((orderResponse) => {
       orderNumber = orderResponse.body.poNumber;
       cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.addPOLine();
@@ -69,6 +70,7 @@ describe('Orders: Receiving and Check-in', () => {
     'C737 Validate when receiving a piece that the item status is updated from "On order" (thunderjet)',
     { tags: ['smoke', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.openOrder();

@@ -105,6 +105,7 @@ describe('Export Manager', () => {
       cy.createOrderApi(order).then((response) => {
         orderNumber = response.body.poNumber;
         cy.visit(TopMenu.ordersPath);
+        Orders.resetFilters();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.createPOLineViaActions();
@@ -167,6 +168,7 @@ describe('Export Manager', () => {
       'C350410: Check if a User is alerted trying to open an Order with 2 POL, having more than 1 unique accounts for export (thunderjet) (TaaS)',
       { tags: ['smoke', 'thunderjet'] },
       () => {
+        Orders.resetFilters();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();

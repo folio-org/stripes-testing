@@ -57,6 +57,7 @@ describe('orders: Receiving and Check-in', () => {
           cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
           cy.createOrderApi(order).then((response) => {
             orderNumber = response.body.poNumber;
+            Orders.resetFilters();
             Orders.searchByParameter('PO number', orderNumber);
             Orders.selectFromResultsList(orderNumber);
             Orders.createPOLineViaActions();
@@ -95,6 +96,7 @@ describe('orders: Receiving and Check-in', () => {
     'C374134: Copy number applies to the item when receiving through "Quick receive" option (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet', 'nonParallel'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.receiveOrderViaActions();
