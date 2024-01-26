@@ -12,7 +12,7 @@ const digits = '0123456789';
 const specialChars = "$&+,:;=?@#|'<>.-^* ()%!";
 const createdInstanceIDs = [];
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {
@@ -67,7 +67,7 @@ describe('marc', () => {
       });
 
       it(
-        'C380705 Creating a new "MARC bib" record with valid LDR 05, 08, 17, 18, 19 values (spitfire) (TaaS)',
+        'C422111 Creating a new "MARC bib" record with valid LDR 05, 08, 17, 18, 19 values (spitfire) (TaaS)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           for (let i = 0; i < testData.LDRValues.validLDR19Values.length; i++) {

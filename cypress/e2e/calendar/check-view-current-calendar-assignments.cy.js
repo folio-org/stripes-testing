@@ -55,7 +55,7 @@ describe('Calendar', () => {
 
     it(
       'C360941 Checking the view of calendar on "Current calendar assignments" tab (bama)',
-      { tags: ['smoke', 'bama'] },
+      { tags: ['smokeBama', 'bama'] },
       () => {
         PaneActions.currentCalendarAssignmentsPane.checkNewButtonExists();
         PaneActions.currentCalendarAssignmentsPane.checkCalendarWithServicePointExists(

@@ -15,8 +15,9 @@ const searchString = `${getRandomPostfix()}`;
 const templateName = `Template name_${searchString}`;
 const testDescription = `test ${searchString} description filter`;
 
-describe('ui-patrons: Verify that library staff can create/edit/delete a manual patron block(C476)', () => {
+describe('ui-patrons: Verify that library staff can create/edit/delete a manual patron block (C476)', () => {
   beforeEach(() => {
+    cy.getAdminToken();
     cy.createTempUser([
       permissions.uiUsersView.gui,
       permissions.uiUsersPatronBlocks.gui,
@@ -41,6 +42,7 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
     PatronBlockTemplates.findPatronTemlate(templateName);
     PatronBlockTemplates.editPatronTemplate();
     PatronBlockTemplates.deletePatronTemplate();
+    cy.getAdminToken();
     Users.deleteViaApi(userId);
   });
 

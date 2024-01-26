@@ -13,20 +13,21 @@ const editedFileName = `edited-records-${userBarcodesFileName}.csv`;
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('Create test data', () => {
-      cy.createTempUser([Permissions.bulkEditUpdateRecords.gui, Permissions.uiUserEdit.gui], 'staff').then(
-        (userProperties) => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
-          });
-          FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
-          BulkEditSearchPane.checkUsersRadio();
-          BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-          BulkEditSearchPane.uploadFile(userBarcodesFileName);
-          BulkEditSearchPane.waitFileUploading();
-        },
-      );
+      cy.createTempUser(
+        [Permissions.bulkEditUpdateRecords.gui, Permissions.uiUserEdit.gui],
+        'staff',
+      ).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
+        FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+        BulkEditSearchPane.checkUsersRadio();
+        BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+        BulkEditSearchPane.uploadFile(userBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
+      });
     });
 
     after('Delete test data', () => {

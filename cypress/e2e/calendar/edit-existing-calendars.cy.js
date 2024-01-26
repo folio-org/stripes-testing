@@ -48,7 +48,7 @@ describe('Calendar', () => {
       deleteCalendar(testCalendarResponse.id);
     });
 
-    it('C360950 Edit -> Edit existing calendars (bama)', { tags: ['smoke', 'bama'] }, () => {
+    it('C360950 Edit -> Edit existing calendars (bama)', { tags: ['smokeBama', 'bama'] }, () => {
       PaneActions.allCalendarsPane.openAllCalendarsPane();
       PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
       PaneActions.individualCalendarPane.selectEditAction({ calendarName: testCalendar.name });

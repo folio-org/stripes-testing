@@ -15,7 +15,7 @@ import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/m
 import ExportManagerSearchPane from '../../../../support/fragments/exportManager/exportManagerSearchPane';
 import FileManager from '../../../../support/utils/fileManager';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Reporting MARC authority', () => {
       const testData = {

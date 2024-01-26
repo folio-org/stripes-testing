@@ -54,7 +54,7 @@ describe('Calendar', () => {
 
     it(
       'C2306 Delete -> Delete existing hours of operation for service point (bama)',
-      { tags: ['smoke', 'bama'] },
+      { tags: ['smokeBama', 'bama'] },
       () => {
         PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
         PaneActions.currentCalendarAssignmentsPane.selectCalendarByServicePoint(

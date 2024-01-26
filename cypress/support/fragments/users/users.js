@@ -64,6 +64,7 @@ export default {
     method: 'DELETE',
     path: `bl-users/by-id/${userId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   }),
 
   getUsers: (searchParams) => {
@@ -91,9 +92,12 @@ export default {
         TextField({ name: 'barcode' }).fillIn(userData.barcode),
         TextField({ id: 'adduser_username' }).fillIn(userData.username),
         TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
-        Button({ id: 'clickable-save' }).click(),
+        Select({ id: 'type' }).choose(userData.userType ? userData.userType : 'Staff'),
       ])
       .then(() => {
+        cy.wait(1000);
+        cy.do(Button({ id: 'clickable-save' }).click());
+      }).then(() => {
         cy.intercept('/users').as('user');
         return cy.wait('@user', { timeout: 80000 }).then((xhr) => xhr.response.body.id);
       });

@@ -12,7 +12,7 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import getRandomStringCode from '../../../../support/utils/genereteTextCode';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('plug-in MARC authority', () => {
     describe('plug-in MARC authority | Browse', () => {
       const randomCode = getRandomStringCode(4);
@@ -129,7 +129,7 @@ describe('marc', () => {
       });
 
       it(
-        'C365110 MARC Authority plug-in | Apply "Authority source" facet not from pre-defined list to the browse result list (spitfire) (TaaS)',
+        'C422170 MARC Authority plug-in | Apply "Authority source" facet not from pre-defined list to the browse result list (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire'] },
         () => {
           // #1 Create autority source

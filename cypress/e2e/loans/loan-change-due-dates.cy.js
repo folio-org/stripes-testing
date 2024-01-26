@@ -30,7 +30,7 @@ describe('Loans', () => {
   describe('Loans: Change due date', () => {
     before('create inventory instance', () => {
       let source;
-
+      cy.getAdminToken();
       cy.createTempUser([Permissions.loansAll.gui, Permissions.checkoutAll.gui]).then(
         (userProperties) => {
           checkOutUser = userProperties;
@@ -63,6 +63,7 @@ describe('Loans', () => {
                 folioInstances[0].barcodes[0],
               );
               CheckOutActions.endCheckOutSession();
+              cy.getAdminToken();
               cy.updateUser({
                 ...Cypress.env('users')[0],
                 expirationDate: DateTools.getFormattedDate({ date: expirationUserDate }),
@@ -72,6 +73,9 @@ describe('Loans', () => {
               cy.getUsers({ limit: 1, query: '"barcode"="" and "active"="true"' }).then((users) => {
                 checkInUser.barcode = users[0].barcode;
               });
+            })
+            .then(() => {
+              cy.login(userProperties.username, userProperties.password);
             });
         },
       );

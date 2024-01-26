@@ -22,11 +22,16 @@ describe('Check in', () => {
     servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     requestsId: '',
   };
-  const note1 = { title: 'Note 1', details: 'This is Note 1', source: 'ADMINISTRATOR, Diku_admin' };
-  const note2 = { title: 'Note 2', details: 'This is Note 2', source: 'ADMINISTRATOR, Diku_admin' };
+  const note1 = { title: 'Note 1', details: 'This is Note 1', source: 'ADMINISTRATOR, DIKU' };
+  const note2 = { title: 'Note 2', details: 'This is Note 2', source: 'ADMINISTRATOR, DIKU' };
   const itemBarcode = testData.folioInstances[0].barcodes[0];
 
   before('Creating test data', () => {
+    cy.getAdminToken();
+    cy.getAdminSourceRecord().then((record) => {
+      note1.source = record;
+      note2.source = record;
+    });
     cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties) => {
       userData = userProperties;
       ServicePoints.createViaApi(testData.servicePoint);
@@ -59,23 +64,26 @@ describe('Check in', () => {
         itemData.circulationNotes = [{ noteType: 'Check in', note: note1.title, staffOnly: true }];
         cy.updateItemViaApi(itemData);
       });
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.checkInPath,
-        waiter: CheckInActions.waitLoading,
-      });
       cy.getItems({
         limit: 1,
         expandAll: true,
         query: `"barcode"=="${testData.folioInstances[0].barcodes[0]}"`,
-      }).then((res) => {
-        const itemData = res;
-        note2.date = DateTools.getFormattedDateWithTime(new Date(), { withoutComma: true });
-        itemData.circulationNotes = [
-          ...itemData.circulationNotes,
-          { noteType: 'Check in', note: note2.title, staffOnly: true },
-        ];
-        cy.updateItemViaApi(itemData);
-      });
+      })
+        .then((res) => {
+          const itemData = res;
+          note2.date = DateTools.getFormattedDateWithTime(new Date(), { withoutComma: true });
+          itemData.circulationNotes = [
+            ...itemData.circulationNotes,
+            { noteType: 'Check in', note: note2.title, staffOnly: true },
+          ];
+          cy.updateItemViaApi(itemData);
+        })
+        .then(() => {
+          cy.login(userData.username, userData.password, {
+            path: TopMenu.checkInPath,
+            waiter: CheckInActions.waitLoading,
+          });
+        });
     });
   });
 
