@@ -112,47 +112,60 @@ describe('MARC', () => {
           MarcAuthority.contains(testData.viewSharedRecordText);
           MarcAuthority.edit();
           QuickMarcEditor.checkPaneheaderContains(testData.editSharedRecordText);
-          // QuickMarcEditor.addEmptyFields(8);
-          // QuickMarcEditor.checkEmptyFieldAdded(9);
-          // QuickMarcEditor.addValuesToExistingField(
-          //   8,
-          //   testData.tag400,
-          //   testData.tag400Value,
-          //   '0',
-          //   '\\',
-          // );
-          // QuickMarcEditor.checkContentByTag(testData.tag400, testData.tag400Value);
-          // QuickMarcEditor.verifyIndicatorValue(testData.tag400, '0', 0);
-          // QuickMarcEditor.verifyIndicatorValue(testData.tag400, '\\', 1);
-          // QuickMarcEditor.deleteFieldByTagAndCheck(testData.tag377);
-          // QuickMarcEditor.afterDeleteNotification(testData.tag377);
-          // QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value);
-          // QuickMarcEditor.checkContentByTag(testData.tag100, testData.updatedTag100Value);
-          // QuickMarcEditor.updateExistingField(testData.tag046, testData.updatedTag046Value);
-          // QuickMarcEditor.checkContentByTag(testData.tag046, testData.updatedTag046Value);
-          // QuickMarcEditor.clickArrowDownButton(4);
-          // QuickMarcEditor.verifyTagValue(5, testData.tag010);
-          // MarcAuthority.clicksaveAndCloseButton();
-          // QuickMarcEditor.checkDeleteModal(1);
-          // MarcAuthority.continueWithSaveAndCheck();
-          // MarcAuthority.contains(testData.updatedTag100Value);
-          // MarcAuthority.contains(testData.updatedTag046Value);
-          // MarcAuthority.contains(testData.tag400Value);
-          // MarcAuthority.notContains(testData.tag377Value);
-          // MarcAuthority.verifyFieldPositionInView(5, testData.tag010, testData.tag010Value);
+          QuickMarcEditor.addEmptyFields(8);
+          QuickMarcEditor.checkEmptyFieldAdded(9);
+          QuickMarcEditor.addValuesToExistingField(
+            8,
+            testData.tag400,
+            testData.tag400Value,
+            '0',
+            '\\',
+          );
+          QuickMarcEditor.checkContentByTag(testData.tag400, testData.tag400Value);
+          QuickMarcEditor.verifyIndicatorValue(testData.tag400, '0', 0);
+          QuickMarcEditor.verifyIndicatorValue(testData.tag400, '\\', 1);
+          QuickMarcEditor.deleteFieldByTagAndCheck(testData.tag377);
+          QuickMarcEditor.afterDeleteNotification(testData.tag377);
+          QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value);
+          QuickMarcEditor.checkContentByTag(testData.tag100, testData.updatedTag100Value);
+          QuickMarcEditor.updateExistingField(testData.tag046, testData.updatedTag046Value);
+          QuickMarcEditor.checkContentByTag(testData.tag046, testData.updatedTag046Value);
+          QuickMarcEditor.clickArrowDownButton(4);
+          QuickMarcEditor.verifyTagValue(5, testData.tag010);
+          MarcAuthority.clicksaveAndCloseButton();
+          QuickMarcEditor.checkDeleteModal(1);
+          MarcAuthority.continueWithSaveAndCheck();
+          MarcAuthority.contains(testData.updatedTag100Value);
+          MarcAuthority.contains(testData.updatedTag046Value);
+          MarcAuthority.contains(testData.tag400Value);
+          MarcAuthority.notContains(testData.tag377Value);
+          MarcAuthority.verifyFieldPositionInView(5, testData.tag010, testData.tag010Value);
 
-          // ConsortiumManager.switchActiveAffiliation(tenantNames.college);
-          // MarcAuthorities.waitLoading();
-          // ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-          // MarcAuthorities.searchBeats(testData.updatedTitle);
-          // MarcAuthorities.select(createdAuthorityID);
-          // MarcAuthority.verifySharedAuthorityDetailsHeading(testData.updatedTitle);
-          // MarcAuthority.contains(testData.viewSharedRecordText);
-          // MarcAuthority.contains(testData.updatedTag100Value);
-          // MarcAuthority.contains(testData.updatedTag046Value);
-          // MarcAuthority.contains(testData.tag400Value);
-          // MarcAuthority.notContains(testData.tag377Value);
-          // MarcAuthority.verifyFieldPositionInView(5, testData.tag010, testData.tag010Value);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+          MarcAuthorities.waitLoading();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          MarcAuthorities.searchBeats(testData.updatedTitle);
+          MarcAuthorities.select(createdAuthorityID);
+          MarcAuthority.verifySharedAuthorityDetailsHeading(testData.updatedTitle);
+          MarcAuthority.contains(testData.viewSharedRecordText);
+          MarcAuthority.contains(testData.updatedTag100Value);
+          MarcAuthority.contains(testData.updatedTag046Value);
+          MarcAuthority.contains(testData.tag400Value);
+          MarcAuthority.notContains(testData.tag377Value);
+          MarcAuthority.verifyFieldPositionInView(5, testData.tag010, testData.tag010Value);
+
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+          MarcAuthorities.waitLoading();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+          MarcAuthorities.searchBeats(testData.updatedTitle);
+          MarcAuthorities.select(createdAuthorityID);
+          MarcAuthority.verifySharedAuthorityDetailsHeading(testData.updatedTitle);
+          MarcAuthority.contains(testData.viewSharedRecordText);
+          MarcAuthority.contains(testData.updatedTag100Value);
+          MarcAuthority.contains(testData.updatedTag046Value);
+          MarcAuthority.contains(testData.tag400Value);
+          MarcAuthority.notContains(testData.tag377Value);
+          MarcAuthority.verifyFieldPositionInView(5, testData.tag010, testData.tag010Value);
         },
       );
     });
