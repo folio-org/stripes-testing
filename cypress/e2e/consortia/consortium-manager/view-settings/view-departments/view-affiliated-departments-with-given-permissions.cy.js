@@ -7,9 +7,8 @@ import Affiliations, { tenantNames } from '../../../../../support/dictionary/aff
 import Departments from '../../../../../support/fragments/settings/users/departments';
 import ConsortiumManagerApp, {
   settingsItems,
-  usersItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import DepartmentsConsortiumManager from '../../../../../support/fragments/consortium-manager/departmentsConsortiumManager';
+import DepartmentsConsortiumManager from '../../../../../support/fragments/consortium-manager/users/departmentsConsortiumManager';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
 
@@ -73,7 +72,6 @@ describe('Consortium manager', () => {
             cy.resetTenant();
             cy.assignAffiliationToUser(Affiliations.College, testData.user390.userId);
             cy.setTenant(Affiliations.College);
-            // cy.getAdminToken();
             cy.assignPermissionsToExistingUser(testData.user390.userId, [
               permissions.createEditViewDepartments.gui,
             ]);
@@ -200,7 +198,7 @@ describe('Consortium manager', () => {
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.users);
-          ConsortiumManagerApp.chooseUsersItem(usersItems.departments);
+          DepartmentsConsortiumManager.choose();
           DepartmentsConsortiumManager.verifyDepartmentInTheList(
             testData.centralSharedDepartment.payload.name,
             testData.centralSharedDepartment.payload.code,
@@ -211,7 +209,7 @@ describe('Consortium manager', () => {
             testData.centralLocalDepartment.name,
             testData.centralLocalDepartment.code,
             '3',
-            'Central Office',
+            tenantNames.central,
             'edit',
           );
 
@@ -219,14 +217,14 @@ describe('Consortium manager', () => {
             testData.collegeLocalDepartment.name,
             testData.collegeLocalDepartment.code,
             '2',
-            'College',
+            tenantNames.college,
             'edit',
           );
           DepartmentsConsortiumManager.verifyDepartmentInTheList(
             testData.universityLocalDepartment.name,
             testData.universityLocalDepartment.code,
             'No value set-',
-            'University',
+            tenantNames.university,
             'edit',
             'trash',
           );
@@ -249,14 +247,14 @@ describe('Consortium manager', () => {
             testData.collegeLocalDepartment.name,
             testData.collegeLocalDepartment.code,
             '2',
-            'College',
+            tenantNames.college,
             'edit',
           );
           DepartmentsConsortiumManager.verifyDepartmentInTheList(
             testData.universityLocalDepartment.name,
             testData.universityLocalDepartment.code,
             'No value set-',
-            'University',
+            tenantNames.university,
             'edit',
             'trash',
           );
@@ -265,11 +263,11 @@ describe('Consortium manager', () => {
 
       it(
         'C404400 User with "Consortium manager: Can create, edit and remove settings" permission is able to view the list of departments of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPath', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
           cy.resetTenant();
           cy.login(testData.user400.username, testData.user400.password);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           cy.visit(TopMenu.consortiumManagerPath);
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
@@ -279,7 +277,7 @@ describe('Consortium manager', () => {
           SelectMembers.saveAndClose();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(2);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.users);
-          ConsortiumManagerApp.chooseUsersItem(usersItems.departments);
+          DepartmentsConsortiumManager.choose();
           DepartmentsConsortiumManager.verifyDepartmentInTheList(
             testData.centralSharedDepartment.payload.name,
             testData.centralSharedDepartment.payload.code,
@@ -290,7 +288,7 @@ describe('Consortium manager', () => {
             testData.centralLocalDepartment.name,
             testData.centralLocalDepartment.code,
             '3',
-            'Central Office',
+            tenantNames.central,
             'edit',
           );
 
@@ -298,7 +296,7 @@ describe('Consortium manager', () => {
             testData.collegeLocalDepartment.name,
             testData.collegeLocalDepartment.code,
             '2',
-            'College',
+            tenantNames.college,
             'edit',
           );
           DepartmentsConsortiumManager.verifyNoDepartmentInTheList(
@@ -320,7 +318,7 @@ describe('Consortium manager', () => {
             testData.centralLocalDepartment.name,
             testData.centralLocalDepartment.code,
             '3',
-            'Central Office',
+            tenantNames.central,
             'edit',
           );
 
@@ -335,15 +333,15 @@ describe('Consortium manager', () => {
 
       it(
         'C407747 User with "Consortium manager: Can share settings to all members" permission is able to view the list of departments of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPath', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
           cy.resetTenant();
           cy.login(testData.user747.username, testData.user747.password);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           cy.visit(TopMenu.consortiumManagerPath);
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.users);
-          ConsortiumManagerApp.chooseUsersItem(usersItems.departments);
+          DepartmentsConsortiumManager.choose();
 
           DepartmentsConsortiumManager.verifyDepartmentInTheList(
             testData.centralSharedDepartment.payload.name,
@@ -356,7 +354,7 @@ describe('Consortium manager', () => {
             testData.centralLocalDepartment.name,
             testData.centralLocalDepartment.code,
             '3',
-            'Central Office',
+            tenantNames.central,
             'edit',
           );
 
@@ -364,14 +362,14 @@ describe('Consortium manager', () => {
             testData.collegeLocalDepartment.name,
             testData.collegeLocalDepartment.code,
             '2',
-            'College',
+            tenantNames.college,
             'edit',
           );
           DepartmentsConsortiumManager.verifyDepartmentInTheList(
             testData.universityLocalDepartment.name,
             testData.universityLocalDepartment.code,
             'No value set-',
-            'University',
+            tenantNames.university,
             'edit',
           );
 
@@ -392,7 +390,7 @@ describe('Consortium manager', () => {
             testData.centralLocalDepartment.name,
             testData.centralLocalDepartment.code,
             '3',
-            'Central Office',
+            tenantNames.central,
             'edit',
           );
 
