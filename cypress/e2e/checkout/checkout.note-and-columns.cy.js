@@ -18,13 +18,16 @@ describe('Check out', () => {
     servicePoint: ServicePoints.getDefaultServicePoint(),
   };
 
-  const note1 = { title: 'Note 1', source: 'ADMINISTRATOR, Diku_admin' };
-  const note2 = { title: 'Note 2', source: 'ADMINISTRATOR, Diku_admin' };
+  const note1 = { title: 'Note 1', source: 'ADMINISTRATOR, DIKU' };
+  const note2 = { title: 'Note 2', source: 'ADMINISTRATOR, DIKU' };
   const itemBarcode = testData.folioInstances[0].barcodes[0];
 
   before('Creating data', () => {
     cy.getAdminToken();
-
+    cy.getAdminSourceRecord().then((record) => {
+      note1.source = record;
+      note2.source = record;
+    });
     ServicePoints.createViaApi(testData.servicePoint);
     testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
     Location.createViaApi(testData.defaultLocation).then((location) => {
@@ -51,10 +54,6 @@ describe('Check out', () => {
         itemData.circulationNotes = [{ noteType: 'Check out', note: note1.title, staffOnly: true }];
         InventoryItems.editItemViaApi(itemData);
       });
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.checkOutPath,
-        waiter: Checkout.waitLoading,
-      });
       cy.getItems({
         limit: 1,
         expandAll: true,
@@ -71,6 +70,10 @@ describe('Check out', () => {
           },
         ];
         InventoryItems.editItemViaApi(itemData);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.checkOutPath,
+          waiter: Checkout.waitLoading,
+        });
       });
     });
   });

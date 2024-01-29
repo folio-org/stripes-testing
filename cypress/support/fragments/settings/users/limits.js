@@ -70,6 +70,16 @@ export default {
     });
   },
 
+  verifyUpdateValidationErrorForBalance(limitType) {
+    this.getLimitIdViaApi(limitType).then((limitId) => {
+      cy.expect(
+        TextField({ name: limitId }).has({
+          error: including('Must be blank or a number from 0.00 to 999,999.99'),
+        }),
+      );
+    });
+  },
+
   verifySaveIsDisabled() {
     cy.expect(saveButton.is({ disabled: true }));
   },

@@ -155,6 +155,7 @@ describe('Title Level Request', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     cy.loginAsAdmin({
       path: SettingsMenu.circulationTitleLevelRequestsPath,
       waiter: TitleLevelRequests.waitLoading,

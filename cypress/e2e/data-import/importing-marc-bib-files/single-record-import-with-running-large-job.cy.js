@@ -16,7 +16,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 
-describe('data-import', { retries: 3 }, () => {
+describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     const OCLCAuthentication = '100481406/PAOLF';

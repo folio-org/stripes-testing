@@ -56,7 +56,7 @@ describe('Calendar', () => {
 
     it(
       'C365117 Permissions -> User with Settings (Calendar): Can delete existing calendars (bama)',
-      { tags: ['smoke', 'bama'] },
+      { tags: ['smokeBama', 'bama'] },
       () => {
         PaneActions.allCalendarsPane.openAllCalendarsPane();
         PaneActions.allCalendarsPane.checkActionMenuPresent();

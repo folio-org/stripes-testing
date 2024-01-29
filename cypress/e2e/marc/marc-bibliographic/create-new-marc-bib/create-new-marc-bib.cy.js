@@ -6,7 +6,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {
@@ -63,7 +63,7 @@ describe('marc', () => {
       });
 
       it(
-        'C380701 User can create a new "MARC bib" record using "Save & close" button. (spitfire)',
+        'C422107 User can create a new "MARC bib" record using "Save & close" button. (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstance.newMarcBibRecord();

@@ -31,11 +31,13 @@ describe('eHoldings', () => {
           });
         })
         .then(() => {
+          cy.getAdminToken();
           EHoldingsPackages.createPackageViaAPI().then((response) => {
             testData.packegeId = response.id;
           });
         })
         .then(() => {
+          cy.getAdminToken();
           Agreements.createViaApi().then((response) => {
             testData.agreementId = response.id;
           });

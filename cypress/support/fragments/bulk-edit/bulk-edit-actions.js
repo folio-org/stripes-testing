@@ -86,7 +86,9 @@ export default {
   },
   selectSecondAction(actionName, rowIndex = 0) {
     cy.do(
-      RepeatableFieldItem({ index: rowIndex }).find(Select({ dataTestID: 'select-actions-1' })).choose(actionName),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ dataTestID: 'select-actions-1' }))
+        .choose(actionName),
     );
   },
   isSelectActionAbsent(rowIndex = 0) {
@@ -548,11 +550,19 @@ export default {
   },
 
   fillInFirstTextArea(oldItem, rowIndex = 0) {
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(TextArea({ dataTestID: 'input-textarea-0' })).fillIn(oldItem));
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(TextArea({ dataTestID: 'input-textarea-0' }))
+        .fillIn(oldItem),
+    );
   },
 
   fillInSecondTextArea(newItem, rowIndex = 0) {
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(TextArea({ dataTestID: 'input-textarea-1' })).fillIn(newItem));
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(TextArea({ dataTestID: 'input-textarea-1' }))
+        .fillIn(newItem),
+    );
   },
 
   noteReplaceWith(noteType, oldNote, newNote, rowIndex = 0) {

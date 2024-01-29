@@ -872,10 +872,7 @@ export default {
   },
 
   moveItemToAnotherInstance({ fromHolding, toInstance, shouldOpen = true }) {
-    cy.do([
-      actionsButton.click(),
-      moveHoldingsToAnotherInstanceButton.click()
-    ]);
+    cy.do([actionsButton.click(), moveHoldingsToAnotherInstanceButton.click()]);
     InventoryInstanceSelectInstanceModal.waitLoading();
     InventoryInstanceSelectInstanceModal.searchByTitle(toInstance);
     InventoryInstanceSelectInstanceModal.selectInstance();

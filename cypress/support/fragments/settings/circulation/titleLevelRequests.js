@@ -91,4 +91,36 @@ export default {
       }),
     );
   },
+
+  enableTLRViaApi() {
+    this.updateTLRSettingViaApi(true);
+  },
+
+  disableTLRViaApi() {
+    this.updateTLRSettingViaApi(false);
+  },
+
+  updateTLRSettingViaApi(allow = true) {
+    cy.getConfigByName('TLR').then(body => {
+      const config = body.configs[0];
+      if (allow) {
+        config.value = config.value.replace('"titleLevelRequestsFeatureEnabled":false,', '"titleLevelRequestsFeatureEnabled":true,');
+      } else {
+        config.value = config.value.replace('"titleLevelRequestsFeatureEnabled":true,', '"titleLevelRequestsFeatureEnabled":false,');
+      }
+      cy.okapiRequest({
+        method: 'PUT',
+        path: `configurations/entries/${config.id}`,
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+        body: {
+          id: config.id,
+          module: config.module,
+          configName: config.configName,
+          enabled: true,
+          value: config.value,
+        },
+      });
+    });
+  },
 };
