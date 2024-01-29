@@ -100,7 +100,7 @@ describe('data-import', () => {
     ];
 
     before('login', () => {
-      cy.loginAsAdmin();
+      cy.getAdminToken();
       InventorySearchAndFilter.getInstancesByIdentifierViaApi(oclcNumber.value).then(
         (instances) => {
           if (instances) {
@@ -131,7 +131,7 @@ describe('data-import', () => {
 
     it(
       'C11109 Update an instance based on an OCLC number match (folijet)',
-      { tags: ['criticalPath', 'folijet', 'parallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profile for creating instance
         cy.visit(SettingsMenu.mappingProfilePath);

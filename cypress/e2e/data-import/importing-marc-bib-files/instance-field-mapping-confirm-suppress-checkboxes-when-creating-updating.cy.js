@@ -95,17 +95,18 @@ describe('data-import', () => {
       'C11087 Instance field mapping: Confirm the "suppress" checkboxes when creating (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const marcFileName = `C11087 autotestFile_${getRandomPostfix()}.mrc`;
+        const marcFileName = `C11087 autotestFile${getRandomPostfix()}.mrc`;
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.waitFileIsImported(marcFileName);
+        Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
         FileDetails.verifyLogDetailsPageIsOpened(marcFileName);
         FileDetails.openJsonScreen(instanceTitle);
@@ -133,9 +134,9 @@ describe('data-import', () => {
       'C11088 Instance field mapping: Confirm the "suppress" checkboxes when updating (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const marcFileName = `C11088 autotestFile_${getRandomPostfix()}.mrc`;
-        const editedFileName = `C11088 editedAutotestFile_${getRandomPostfix()}.mrc`;
-        const fileNameForUpdate = `C11088 autotestFile_${getRandomPostfix()}.mrc`;
+        const marcFileName = `C11088 autotestFile${getRandomPostfix()}.mrc`;
+        const editedFileName = `C11088 editedAutotestFile${getRandomPostfix()}.mrc`;
+        const fileNameForUpdate = `C11088 autotestFile${getRandomPostfix()}.mrc`;
         const mappingProfileUpdate = {
           name: `C11088 autotest update MappingProf${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -170,10 +171,11 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.waitFileIsImported(marcFileName);
+        Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InstanceRecordView.verifyInstancePaneExists();
@@ -223,9 +225,10 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedFileName, fileNameForUpdate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileUpdate.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForUpdate);
+        Logs.waitFileIsImported(fileNameForUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdate);
         FileDetails.openJsonScreen(instanceTitle);

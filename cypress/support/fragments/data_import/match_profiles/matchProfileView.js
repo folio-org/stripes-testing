@@ -95,15 +95,15 @@ export default {
     if (incomingStaticRecordValue === 'Date') {
       cy.contains('Incoming Static value (submatch only) record')
         .parent()
-        .should('include.text', moment(new Date()).format('MM/D/YYYY'));
+        .should('include.text', moment(new Date()).format('M/D/YYYY'));
     }
     if (incomingStaticRecordValue === 'Date range') {
       cy.contains('Incoming Static value (submatch only) record')
         .parent()
         .invoke('text')
         .then((text) => {
-          const startDate = moment(new Date()).format('MM/D/YYYY');
-          const endDate = moment(new Date()).format('MM/D/YYYY');
+          const startDate = moment(new Date()).format('M/D/YYYY');
+          const endDate = moment(new Date()).format('M/D/YYYY');
           const expectedText = `From${startDate}To${endDate}`;
 
           cy.wrap(text).should('include', expectedText);

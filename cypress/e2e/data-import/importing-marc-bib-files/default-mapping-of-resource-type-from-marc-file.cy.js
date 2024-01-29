@@ -68,7 +68,7 @@ describe('data-import', () => {
           InstanceRecordView.verifySrsMarcRecord();
           InventoryViewSource.verifyFieldInMARCBibSource(
             '336',
-            '$a performed music $b prm $2 rdacontent',
+            '‡a performed music ‡b prm ‡2 rdacontent',
           );
         });
       },

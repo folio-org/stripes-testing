@@ -23,6 +23,7 @@ export default {
   delete: () => {
     cy.do(viewPane.find(Button('Actions')).click());
     cy.do(Button('Delete').click());
+    cy.wait(1000);
   },
 
   duplicate: () => {
