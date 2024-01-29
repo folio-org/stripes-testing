@@ -74,6 +74,7 @@ describe('orders: Edifact export', () => {
     cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
       cy.visit(TopMenu.ordersPath);
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
@@ -94,6 +95,7 @@ describe('orders: Edifact export', () => {
 
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+    Orders.resetFilters();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder(orderNumber, true, true);
@@ -113,6 +115,7 @@ describe('orders: Edifact export', () => {
     'C350550: NOT exported order DOES NOT display export details (thunderjet) (TaaS)',
     { tags: ['smoke', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.checkAbsentExportDetails();

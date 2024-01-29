@@ -56,6 +56,7 @@ describe('Orders: Receiving and Check-in', () => {
     cy.createOrderApi(order).then((orderResponse) => {
       orderNumber = orderResponse.body.poNumber;
       cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.addPOLine();
@@ -87,6 +88,7 @@ describe('Orders: Receiving and Check-in', () => {
     'C343213 Receive pieces for package order (thunderjet)',
     { tags: ['smoke', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.openOrder();

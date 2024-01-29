@@ -93,6 +93,7 @@ describe('ui-finance: Orders', () => {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
         });
+        Orders.resetFilters();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.checkZeroSearchResultsHeader();
 
@@ -107,6 +108,7 @@ describe('ui-finance: Orders', () => {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
         });
+        Orders.resetFilters();
         Orders.searchByParameter('PO number', orderNumber);
         FinanceHelp.selectFromResultsList();
       });

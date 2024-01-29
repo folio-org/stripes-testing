@@ -127,6 +127,7 @@ describe('orders: export', () => {
 
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+    Orders.resetFilters();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
@@ -148,6 +149,7 @@ describe('orders: export', () => {
     'C347885: Check view for jobs on Export Manager page (thunderjet)',
     { tags: ['smoke', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();

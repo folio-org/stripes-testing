@@ -67,6 +67,7 @@ describe('orders: Settings', () => {
         cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
+          Orders.resetFilters();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.createPOLineViaActions();
@@ -105,6 +106,7 @@ describe('orders: Settings', () => {
     cy.visit(SettingsMenu.ordersLoanTypePath);
     SettingsOrders.selectLoanType(selectedLoanType);
     cy.visit(TopMenu.ordersPath);
+    Orders.resetFilters();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
@@ -135,6 +137,7 @@ describe('orders: Settings', () => {
       cy.visit(SettingsMenu.ordersLoanTypePath);
       SettingsOrders.selectLoanType(loanType);
       cy.visit(TopMenu.ordersPath);
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.openOrder();

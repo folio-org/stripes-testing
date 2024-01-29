@@ -63,6 +63,7 @@ describe('Orders: orders', () => {
       // Need to wait for the next card in the order history to be created with a difference of a minute.
       cy.wait(40000);
       cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
@@ -98,6 +99,7 @@ describe('Orders: orders', () => {
     'C369046: "Version history" viewing for Order (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.openVersionHistory();

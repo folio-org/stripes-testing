@@ -107,6 +107,7 @@ describe('Invoices', () => {
     'C357056 Creating invoice from purchase order (thunderjet)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.newInvoiceFromOrder();

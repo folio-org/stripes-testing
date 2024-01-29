@@ -50,6 +50,7 @@ describe('Orders', () => {
             cy.createOrderLineApi(orderLine);
           });
           cy.visit(TopMenu.ordersPath);
+          Orders.resetFilters();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.openOrder();

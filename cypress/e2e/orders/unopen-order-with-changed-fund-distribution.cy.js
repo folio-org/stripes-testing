@@ -96,6 +96,7 @@ describe('orders: Unopen order', () => {
     cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
       cy.visit(TopMenu.ordersPath);
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.addPOLine();
@@ -108,6 +109,7 @@ describe('orders: Unopen order', () => {
       Invoices.approveInvoice();
       Invoices.payInvoice();
       cy.visit(TopMenu.ordersPath);
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
@@ -141,6 +143,7 @@ describe('orders: Unopen order', () => {
     'C375106 Unopen order with changed Fund distribution when related paid invoice exists (thunderjet)',
     { tags: ['smoke', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.unOpenOrder();

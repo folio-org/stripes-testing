@@ -171,6 +171,7 @@ describe('Orders', () => {
     'C357540 Encumbrance transaction updates when fund name is changed in Open ongoing order and Open invoice related to POL exists (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
@@ -189,6 +190,7 @@ describe('Orders', () => {
       Funds.checkStatusInTransactionDetails('Unreleased');
 
       cy.visit(TopMenu.ordersPath);
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);

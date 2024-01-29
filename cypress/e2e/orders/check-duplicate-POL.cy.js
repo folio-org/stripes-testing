@@ -59,6 +59,7 @@ describe('Orders', () => {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
       });
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
@@ -84,6 +85,7 @@ describe('Orders', () => {
 
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+    Orders.resetFilters();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
@@ -102,6 +104,7 @@ describe('Orders', () => {
   });
 
   it('C347860: Check duplicate POL (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
+    Orders.resetFilters();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.duplicateOrder();

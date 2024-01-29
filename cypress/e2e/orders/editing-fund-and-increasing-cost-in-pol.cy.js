@@ -133,6 +133,7 @@ describe('ui-orders: Orders', () => {
     'C375290 Editing fund distribution and increasing cost in PO line when related Paid invoice exists (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList();
       OrderLines.selectPOLInOrder(0);

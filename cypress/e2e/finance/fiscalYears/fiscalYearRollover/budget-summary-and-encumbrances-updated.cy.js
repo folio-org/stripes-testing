@@ -179,6 +179,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     'C357580 Budget summary and Encumbrances updated correctly when editing POL with related invoice after rollover of fiscal year (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', secondOrderNumber);
       Orders.selectFromResultsList(secondOrderNumber);
       Orders.cancelOrder();
@@ -227,6 +228,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Funds.selectBudgetDetails();
       Funds.checkFinancialActivityAndOverages('$100.00', '$0.00', '$0.00', '$100.00');
       cy.visit(TopMenu.ordersPath);
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);
       OrderLines.selectPOLInOrder();

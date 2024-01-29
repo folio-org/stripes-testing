@@ -204,6 +204,7 @@ describe('data-import', () => {
           Orders.checkIsOrderCreated(orderNumber);
           cy.wait(2000);
           // open the first PO with POL
+          Orders.resetFilters();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.openOrder();

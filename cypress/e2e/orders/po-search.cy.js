@@ -50,6 +50,7 @@ describe('orders: Test PO search', () => {
         orderNumber,
       );
       // open order to check 'date opened' search
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.openOrder();

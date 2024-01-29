@@ -81,6 +81,7 @@ describe('Orders', () => {
         cy.visit(TopMenu.ordersPath);
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
+          Orders.resetFilters();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.createPOLineViaActions();
@@ -100,6 +101,7 @@ describe('Orders', () => {
           Invoices.approveInvoice();
           Invoices.payInvoice();
           cy.visit(TopMenu.ordersPath);
+          Orders.resetFilters();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.cancelOrder();
@@ -129,6 +131,7 @@ describe('Orders', () => {
     'C358539 Unrelease encumbrances when reopen unreceived ongoing order with related paid invoice (Release encumbrance =true) (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderDetails.reOpenOrder({ orderNumber });

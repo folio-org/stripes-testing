@@ -47,6 +47,7 @@ describe('orders: Unreceive piece from Order', () => {
       const caption = 'autotestCaption';
       Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         cy.visit(TopMenu.ordersPath);
+        Orders.resetFilters();
         Orders.searchByParameter('PO number', poNumber);
         Orders.selectFromResultsList(poNumber);
         Orders.openOrder();

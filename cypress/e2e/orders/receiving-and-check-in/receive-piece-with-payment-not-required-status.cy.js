@@ -78,6 +78,7 @@ describe('Orders: Receiving and Check-in', () => {
         cy.visit(TopMenu.ordersPath);
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
+          Orders.resetFilters();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.createPOLineViaActions();
@@ -111,10 +112,12 @@ describe('Orders: Receiving and Check-in', () => {
 
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.receivingPath, waiter: Receiving.waitLoading });
+    Orders.resetFilters();
     Orders.searchByParameter('PO number', orderNumber);
     Receiving.selectLinkFromResultsList();
     Receiving.unreceiveFromReceivedSection();
     cy.visit(TopMenu.ordersPath);
+    Orders.resetFilters();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     OrderLines.selectPOLInOrder(0);
@@ -129,6 +132,7 @@ describe('Orders: Receiving and Check-in', () => {
     'C378899 Encumbrance releases when receive piece for order with payment status "Payment Not Required" (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.receiveOrderViaActions();
