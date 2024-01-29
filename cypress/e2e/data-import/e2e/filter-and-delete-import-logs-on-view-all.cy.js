@@ -30,17 +30,15 @@ describe('data-import', () => {
       ]).then((userProperties) => {
         firstUser = userProperties;
 
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
-        // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
-        for (let i = 0; i < 25; i++) {
-          const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
-
-          DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
-        }
-
+        const fileName = `C358136 fileName${getRandomPostfix()}.mrc`;
+        cy.login(firstUser.username, firstUser.password);
+        DataImport.verifyUploadState();
+        DataImport.waitLoading();
+        DataImport.uploadFile('oneMarcBib.mrc', fileName);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.search('Default - Create instance and SRS MARC Bib');
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileName);
         cy.logout();
       });
 

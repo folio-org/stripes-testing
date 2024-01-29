@@ -74,6 +74,7 @@ describe('data-import', () => {
         FieldMappingProfileView.delete(notLinkedMappingProfile);
         FieldMappingProfiles.checkSuccessDelitionCallout(notLinkedMappingProfile);
         FieldMappingProfiles.search(notLinkedMappingProfile);
+        cy.wait(2000);
         FieldMappingProfiles.verifyMappingProfileAbsent();
       },
     );

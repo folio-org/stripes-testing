@@ -377,6 +377,7 @@ describe('data-import', () => {
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
 
+        cy.getAdminToken();
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);
         ExportFile.uploadFile(nameForCSVFile);
@@ -413,7 +414,6 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(
           collectionOfProfilesForUpdate[1].mappingProfile,
         );
-        cy.pause();
         NewFieldMappingProfile.fillCallNumberType(
           `"${collectionOfProfilesForUpdate[1].mappingProfile.callNumberType}"`,
         );

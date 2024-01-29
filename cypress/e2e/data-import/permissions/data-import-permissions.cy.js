@@ -8,11 +8,12 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 
 describe('data-import', () => {
   describe('Permissions', () => {
     let user;
-    const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
+    const fileName = `oneMarcBib${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
       cy.createTempUser([
@@ -22,7 +23,14 @@ describe('data-import', () => {
         user = userProperties;
 
         cy.login(user.username, user.password);
-        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
+        DataImport.verifyUploadState();
+        DataImport.waitLoading();
+        DataImport.uploadFile('oneMarcBib.mrc', fileName);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.search('Default - Create instance and SRS MARC Bib');
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileName);
+        // DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
       });
     });
 

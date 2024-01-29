@@ -80,6 +80,7 @@ describe('data-import', () => {
         ConfirmDelete.confirmDeleteActionProfile();
         ActionProfiles.checkCalloutMessage(calloutMessage);
         ActionProfiles.search(actionProfileToDelete.name);
+        cy.wait(2000);
         ActionProfiles.verifyActionProfileAbsent();
       },
     );

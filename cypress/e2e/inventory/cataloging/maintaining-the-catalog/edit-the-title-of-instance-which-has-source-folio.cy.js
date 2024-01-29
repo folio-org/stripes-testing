@@ -38,7 +38,7 @@ describe('inventory', () => {
         cy.getInstance({
           limit: 1,
           expandAll: true,
-          query: `"title"=="${testData.newInstanceTitle}"`,
+          query: `"hrid"=="${instanceHrid}"`,
         }).then((instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
         });
@@ -49,7 +49,7 @@ describe('inventory', () => {
       'C3495 Edit the title of an instance which has source FOLIO (record which do not have an underlying MARC record stored in SRS) (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        InventoryInstance.searchByTitle(testData.instance.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.edit();
         InstanceRecordEdit.waitLoading();

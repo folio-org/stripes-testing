@@ -66,7 +66,7 @@ describe('data-import', () => {
           InstanceRecordView.viewSource();
           InventoryViewSource.verifyFieldInMARCBibSource(
             '650',
-            '$a English literature $y 18th century.',
+            '‡a English literature ‡y 18th century.',
           );
         });
       },

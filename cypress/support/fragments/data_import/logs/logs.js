@@ -39,6 +39,7 @@ export default {
   deleteLogsButtonClick,
 
   openViewAllLogs: () => {
+    cy.wait(1500);
     actionsButtonClick();
     viewAllLogsButtonClick();
   },
@@ -55,6 +56,23 @@ export default {
   },
 
   checkStatusOfJobProfile: (status = 'Completed', rowNumber = 0) => cy.do(MultiColumnListCell({ row: rowNumber, content: status }).exists()),
+
+  checkJobStatus: (fileName, status) => {
+    const newFileName = fileName.toLowerCase().replace('.mrc', '');
+    cy.do(
+      MultiColumnListCell({ content: including(newFileName) }).perform((element) => {
+        const rowNumber = element.parentElement.getAttribute('data-row-inner');
+
+        cy.expect(
+          MultiColumnList({ id: 'job-logs-list' })
+            .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+            .find(MultiColumnListCell({ content: status }))
+            .exists(),
+        );
+      }),
+    );
+  },
+
   openFileDetails: (fileName) => {
     const newFileName = fileName.replace('.mrc', '');
     cy.do(Link(including(newFileName)).click());
@@ -125,6 +143,7 @@ export default {
   },
 
   waitFileIsImported: (fileName) => {
-    cy.expect(runningAccordion.find(HTML(including(fileName))).absent(), getLongDelay());
+    const newFileName = fileName.replace('.mrc', '');
+    cy.expect(runningAccordion.find(HTML(including(newFileName))).absent(), getLongDelay());
   },
 };

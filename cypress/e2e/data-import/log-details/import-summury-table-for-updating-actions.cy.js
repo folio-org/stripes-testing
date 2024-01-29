@@ -385,69 +385,74 @@ describe('data-import', () => {
 
     it(
       'C356802 Check import summary table with "Updated" actions for instance, holding and item (folijet)',
-      { tags: ['criticalPath', 'folijet', 'parallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
-        // create profiles via API
-        testData.jobProfileForCreate = jobProfileForCreate;
+        cy.getAdminToken().then(() => {
+          // create profiles via API
+          testData.jobProfileForCreate = jobProfileForCreate;
 
-        testData.forEach((specialPair) => {
-          cy.createOnePairMappingAndActionProfiles(
-            specialPair.mappingProfile,
-            specialPair.actionProfile,
-          ).then((idActionProfile) => {
-            cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
+          testData.forEach((specialPair) => {
+            cy.createOnePairMappingAndActionProfiles(
+              specialPair.mappingProfile,
+              specialPair.actionProfile,
+            ).then((idActionProfile) => {
+              cy.addJobProfileRelation(
+                testData.jobProfileForCreate.addedRelations,
+                idActionProfile,
+              );
+            });
           });
-        });
-        SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate).then(
-          (bodyWithjobProfile) => {
-            testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
-          },
-        );
-
-        // upload a marc file for creating of the new instance, holding and item
-        cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(testData.jobProfileForCreate.profile.name);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(nameMarcFileForImportCreate);
-
-        // check the instance is created
-        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHrid = initialInstanceHrId;
-
-          InventoryInstance.checkIsInstancePresented(
-            instanceTitle,
-            holdingsPermanentLocation,
-            itemStatus,
+          SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate).then(
+            (bodyWithjobProfile) => {
+              testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
+            },
           );
-          cy.wait(2000);
-          cy.go('back');
 
-          cy.visit(SettingsMenu.exportMappingProfilePath);
-          ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
+          // upload a marc file for creating of the new instance, holding and item
+          cy.visit(TopMenu.dataImportPath);
+          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.verifyUploadState();
+          DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
+          JobProfiles.waitFileIsUploaded();
+          JobProfiles.search(testData.jobProfileForCreate.profile.name);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.openFileDetails(nameMarcFileForImportCreate);
 
-          cy.visit(SettingsMenu.exportJobProfilePath);
-          ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
+          // check the instance is created
+          FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
+          InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+            instanceHrid = initialInstanceHrId;
 
-          // download .csv file
-          cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-          InstanceRecordView.verifyInstancePaneExists();
-          InventorySearchAndFilter.saveUUIDs();
-          ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+            InventoryInstance.checkIsInstancePresented(
+              instanceTitle,
+              holdingsPermanentLocation,
+              itemStatus,
+            );
+            cy.wait(2000);
+            cy.go('back');
+
+            cy.visit(SettingsMenu.exportMappingProfilePath);
+            ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
+
+            cy.visit(SettingsMenu.exportJobProfilePath);
+            ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
+
+            // download .csv file
+            cy.visit(TopMenu.inventoryPath);
+            InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+            InstanceRecordView.verifyInstancePaneExists();
+            InventorySearchAndFilter.saveUUIDs();
+            ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+          });
+
+          // download exported marc file
+          cy.visit(TopMenu.dataExportPath);
+          ExportFile.uploadFile(nameForCSVFile);
+          ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
+          ExportFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
         });
-
-        // download exported marc file
-        cy.visit(TopMenu.dataExportPath);
-        ExportFile.uploadFile(nameForCSVFile);
-        ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
-        ExportFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
 
         // create mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);
