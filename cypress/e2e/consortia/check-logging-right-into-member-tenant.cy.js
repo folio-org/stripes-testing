@@ -4,7 +4,7 @@ import Users from '../../support/fragments/users/users';
 import TopMenu from '../../support/fragments/topMenu';
 import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
 
-describe('Users -> Consortia', () => {
+describe('Consortia', () => {
   let user;
 
   before('Create users, data', () => {
@@ -27,7 +27,7 @@ describe('Users -> Consortia', () => {
   });
 
   it(
-    'C387506: User created in Member tenant is logging right into Member tenant (consortia) (thunderjet)',
+    'C387506 User created in Member tenant is logging right into Member tenant (consortia) (thunderjet)',
     { tags: ['smokeECS', 'thunderjet'] },
     () => {
       ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);

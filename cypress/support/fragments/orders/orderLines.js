@@ -64,7 +64,7 @@ const electronicUnitPriceTextField = TextField({ name: 'cost.listUnitPriceElectr
 const quantityElectronicTextField = TextField({ name: 'cost.quantityElectronic' });
 const searchForm = SearchField({ id: 'input-record-search' });
 const contibutor = 'Autotest,Contributor_name';
-const orderLineTitle = `Autotest Tetle_${getRandomPostfix()}`;
+const orderLineTitle = `Autotest Title_${getRandomPostfix()}`;
 const orderLineTitleField = TextField({ name: 'titleOrPackage' });
 const orderFormatSelect = Select({ name: 'orderFormat' });
 const acquisitionMethodButton = Button({ id: 'acquisition-method' });
@@ -269,6 +269,21 @@ export default {
       polListingAccordion.find(actionsButton).click(),
       Button('Add PO line').click(),
     ]);
+  },
+
+  expandPackageTitles: () => {
+    cy.do(Button({ id: 'accordion-toggle-button-linkedInstances' }).click());
+  },
+
+  addPackageTitle: () => {
+    cy.do(Button({ id: 'find-instance-trigger' }).click());
+  },
+
+  varifyAddingInstanceTPackageTitle: (instanceTitle, polNumber) => {
+    InteractorsTools.checkCalloutMessage(
+      `The title ${instanceTitle} has been successfully added for PO line ${polNumber}-1`,
+    );
+    cy.expect(Section({ id: 'linkedInstances' }).find(Link(instanceTitle)).exists());
   },
 
   backToEditingOrder: () => {
@@ -997,6 +1012,10 @@ export default {
     cy.do(itemDetailsSection.find(Link(instanceTitle)).click());
   },
 
+  selectInstanceInPackageTitles: (instanceTitle) => {
+    cy.do(Section({ id: 'linkedInstances' }).find(Link(instanceTitle)).click());
+  },
+
   addFundToPOL(fund, value) {
     cy.do([
       addFundDistributionButton.click(),
@@ -1547,6 +1566,14 @@ export default {
     cy.wait(4000);
   },
 
+  changeInstanceConnectionInActions: () => {
+    cy.do([
+      orderLineDetailsPane.find(paneHeaderOrderLinesDetailes.find(actionsButton)).click(),
+      Button('Change instance connection').click(),
+    ]);
+    cy.wait(4000);
+  },
+
   fillPOLineDetails({ receiptStatus }) {
     if (receiptStatus) {
       cy.do(poLineDetails.receiptStatus.focus());
@@ -1694,6 +1721,47 @@ export default {
     cy.wait(4000);
     cy.do([
       Button({ id: 'find-instance-trigger' }).click(),
+      selectInstanceModal.find(TextField({ name: 'query' })).fillIn(instanceName),
+      selectInstanceModal.find(searchButton).click(),
+      selectInstanceModal.find(MultiColumnListRow({ index: rowNumber })).click(),
+    ]);
+    // Need to wait,while entering data loading on page
+    cy.wait(2000);
+  },
+
+  preparePOLToPackage: (titleName) => {
+    cy.wait(4000);
+    cy.do([Checkbox({ name: 'isPackage' }).click(), orderLineTitleField.fillIn(titleName)]);
+    // Need to wait,while entering data loading on page
+    cy.wait(2000);
+  },
+
+  submitMoveInChangeTitleModal: () => {
+    cy.wait(4000);
+    cy.do([
+      Modal('Change title').find(Select('How to update Holdings*')).choose('Move'),
+      Button('Submit').click(),
+    ]);
+    // Need to wait,while entering data loading on page
+    cy.wait(2000);
+    InteractorsTools.checkCalloutMessage('Order instance connection has been successfully updated');
+  },
+
+  submitCreateNewInChangeTitleModal: (holdingsButton) => {
+    cy.wait(4000);
+    cy.do([
+      Modal('Change title').find(Select('How to update Holdings*')).choose('Create new'),
+      Button('Submit').click(),
+      Modal('Delete Holdings').find(Button(holdingsButton)).click(),
+    ]);
+    // Need to wait,while entering data loading on page
+    cy.wait(2000);
+    InteractorsTools.checkCalloutMessage('Order instance connection has been successfully updated');
+  },
+
+  selectInstanceInSelectInstanceModal: (instanceName, rowNumber = 0) => {
+    cy.wait(4000);
+    cy.do([
       selectInstanceModal.find(TextField({ name: 'query' })).fillIn(instanceName),
       selectInstanceModal.find(searchButton).click(),
       selectInstanceModal.find(MultiColumnListRow({ index: rowNumber })).click(),

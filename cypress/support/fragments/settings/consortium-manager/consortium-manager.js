@@ -7,9 +7,10 @@ import {
   TextField,
   including,
   HTML,
+  Dropdown,
 } from '../../../../../interactors';
 
-const myProfileButton = Button({ ariaLabel: 'My profile' });
+const myProfileButton = Dropdown({ id: 'profileDropdown' }).find(Button());
 const switchActiveAffiliationButton = Button('Switch active affiliation');
 
 export default {
@@ -72,19 +73,25 @@ export default {
     ]);
   },
 
-  switchActiveAffiliation(tenantName) {
+  switchActiveAffiliation(currentTenantName, newTenantName) {
     cy.wait(8000);
     cy.do([
-      myProfileButton.click(),
+      Dropdown({ id: 'profileDropdown' })
+        .find(Button({ ariaLabel: `${currentTenantName}  profile` }))
+        .click(),
       switchActiveAffiliationButton.click(),
       Modal('Select affiliation')
         .find(Button({ id: 'consortium-affiliations-select' }))
         .click(),
-      SelectionOption(including(tenantName)).click(),
+      SelectionOption(including(newTenantName)).click(),
       Button({ id: 'save-active-affiliation' }).click(),
     ]);
     cy.wait(8000);
-    cy.expect(myProfileButton.find(HTML({ text: including(tenantName) })).exists());
+    cy.expect(
+      Button({ ariaLabel: `${newTenantName}  profile` })
+        .find(HTML({ text: including(newTenantName) }))
+        .exists(),
+    );
   },
 
   switchActiveAffiliationIsAbsent() {
@@ -102,6 +109,10 @@ export default {
   },
 
   checkCurrentTenantInTopMenu(tenantName) {
-    cy.expect(myProfileButton.find(HTML({ text: including(tenantName) })).exists());
+    cy.expect(
+      Dropdown({ id: 'profileDropdown' })
+        .find(Button({ ariaLabel: `${tenantName}  profile` }))
+        .exists(),
+    );
   },
 };

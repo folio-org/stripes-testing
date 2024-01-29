@@ -8,7 +8,7 @@ import Users from '../../support/fragments/users/users';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
 
-describe('Users -> Consortia', () => {
+describe('Consortia', () => {
   const character151 =
     'Beyond the horizon, a world of possibilities awaits. Embrace the journey, learn from challenges, and celebrate every small victory along the way.1234567';
   let user;
@@ -39,7 +39,7 @@ describe('Users -> Consortia', () => {
   });
 
   it(
-    'C380515: Edit address (tenant) name in "Consortium manager" settings (consortia)(thunderjet)',
+    'C380515 Edit address (tenant) name in "Consortium manager" settings (consortia) (thunderjet)',
     { tags: ['smokeECS', 'thunderjet'] },
     () => {
       ConsortiumManager.selectMembership();

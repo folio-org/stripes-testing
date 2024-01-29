@@ -29,5 +29,5 @@ export const tenantErrors = {
 
 export const adminUsernames = {
   college: 'ECS0001Admin',
-  university: 'ECS0005Admin'
+  university: 'ECS0005Admin',
 };
