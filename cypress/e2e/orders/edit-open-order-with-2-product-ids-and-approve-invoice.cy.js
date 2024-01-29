@@ -69,7 +69,7 @@ describe('ui-orders: Orders', () => {
     });
     defaultOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(defaultOrder, true, false).then((orderResponse) => {
+    Orders.createApprovedOrderForRollover(defaultOrder, true, false).then((orderResponse) => {
       defaultOrder.id = orderResponse.id;
       orderNumber = orderResponse.poNumber;
     });

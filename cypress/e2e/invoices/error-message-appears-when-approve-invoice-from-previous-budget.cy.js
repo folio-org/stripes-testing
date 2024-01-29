@@ -93,7 +93,7 @@ describe('Finance', () => {
       });
       defaultOrder.vendor = organization.name;
       cy.visit(TopMenu.ordersPath);
-      Orders.createOrderForRollover(defaultOrder).then((firstOrderResponse) => {
+      Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
         defaultOrder.id = firstOrderResponse.id;
         orderNumber = firstOrderResponse.poNumber;
         Orders.checkCreatedOrder(defaultOrder);

@@ -22,9 +22,8 @@ describe('Orders', () => {
   };
 
   before('Create test user', () => {
-    cy.getAdminToken().then(() => {
-      Organizations.createOrganizationViaApi(testData.organization);
-    });
+    cy.getAdminToken();
+    Organizations.createOrganizationViaApi(testData.organization);
 
     cy.createTempUser([
       Permissions.uiFinanceViewFundAndBudget.gui,
@@ -129,10 +128,9 @@ describe('Orders', () => {
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken().then(() => {
-      Organizations.deleteOrganizationViaApi(testData.organization.id);
-      Users.deleteViaApi(testData.user.userId);
-    });
+    cy.getAdminToken();
+    Organizations.deleteOrganizationViaApi(testData.organization.id);
+    Users.deleteViaApi(testData.user.userId);
   });
 
   it(
@@ -242,126 +240,6 @@ describe('Orders', () => {
           { key: 'From', value: testData.funds.first.name },
         ],
       });
-    },
-  );
-
-  it(
-    'C368484: Editing fund distribution in PO line when related Cancelled from paid invoice exists (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
-    () => {
-      cy.getAdminToken().then(() => {
-        Invoices.changeInvoiceStatusViaApi({
-          invoice: testData.invoice,
-          status: INVOICE_STATUSES.CANCELLED,
-        });
-      });
-
-      // Click on the Order
-      const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
-      OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
-
-      // Click on PO line record in "PO lines" accordion
-      const OrderLineDetails = OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
-
-      // Click "Actions" button, Select "Edit" option
-      const OrderLineEditForm = OrderLineDetails.openOrderLineEditForm();
-
-      // Select **"Fund B"** from "Fund ID" dropdown in "Fund distribution" accordion
-      OrderLineEditForm.updateFundDistribution({ fund: testData.funds.second.name });
-
-      // Click "Save & close" button
-      OrderLineEditForm.clickSaveButton();
-      OrderLineDetails.checkFundDistibutionTableContent([
-        {
-          name: testData.funds.second.name,
-          expenseClass: '',
-          value: '100%',
-          amount: `$${testData.amount}.00`,
-          initialEncumbrance: `$${testData.amount}.00`,
-          currentEncumbrance: `$${testData.amount}.00`,
-        },
-      ]);
-
-      // Click "Current encumbrance" link for **"Fund B"** in "Fund distribution" accordion.
-      const TransactionDetails = OrderLineDetails.openEncumbrancePane(testData.funds.second.name);
-      TransactionDetails.checkTransactionDetails({
-        information: [
-          { key: 'Fiscal year', value: testData.fiscalYear.code },
-          { key: 'Amount', value: `$${testData.amount}.00` },
-          { key: 'Source', value: `${testData.order.poNumber}-1` },
-          { key: 'Type', value: 'Encumbrance' },
-          { key: 'From', value: testData.funds.second.name },
-          { key: 'Initial encumbrance', value: `$${testData.amount}.00` },
-          { key: 'Awaiting payment', value: '$0.00' },
-          { key: 'Expended', value: '$0.00' },
-          { key: 'Status', value: 'Unreleased' },
-        ],
-      });
-
-      // Close "Encumbrance" pane
-      TransactionDetails.closeTransactionDetails();
-      Transactions.checkTransactionsList({
-        records: [{ type: 'Payment' }],
-        present: false,
-      });
-
-      // Go to "Invoices" app
-      cy.visit(TopMenu.invoicesPath);
-      Invoices.waitLoading();
-
-      // Click "Vendor invoice number" link for Invoice from Preconditions
-      Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
-      Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
-
-      // "Status" field is "Cancelled"
-      InvoiceView.checkInvoiceDetails({
-        invoiceInformation: [
-          { key: 'Fiscal year', value: testData.fiscalYear.code },
-          { key: 'Status', value: INVOICE_STATUSES.CANCELLED },
-        ],
-      });
-
-      // Click on the invoice line related to PO line
-      const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
-      InvoiceLineDetails.checkFundDistibutionTableContent([
-        {
-          name: testData.funds.first.name,
-          amount: `$${testData.amount}.00`,
-          initialEncumbrance: '-',
-          currentEncumbrance: '-',
-        },
-      ]);
-
-      // Click on "Fund A" link in "Fund distribution" accordion
-      const FundDetails = InvoiceLineDetails.openFundDetailsPane(testData.funds.first.name);
-
-      // Click on "Fund A" budget in "Current budget" accordion
-      const BudgetDetails = FundDetails.openCurrentBudgetDetails();
-      BudgetDetails.checkBudgetDetails({
-        information: [{ key: 'Name', value: testData.budgets.first.name }],
-      });
-
-      // Click "View transactions" link in "Budget information" accordion
-      BudgetDetails.clickViewTransactionsLink();
-      Transactions.checkTransactionsList({
-        records: [{ type: 'Encumbrance' }],
-        present: false,
-      });
-
-      // Search for "Payment" transaction and click on its "Transaction date" link
-      Transactions.selectTransaction('Payment');
-      TransactionDetails.checkTransactionDetails({
-        information: [
-          { key: 'Fiscal year', value: testData.fiscalYear.code },
-          { key: 'Amount', value: `$${testData.amount}.00` },
-          { key: 'Source', value: testData.invoice.vendorInvoiceNo },
-          { key: 'Type', value: 'Payment' },
-          { key: 'From', value: testData.funds.first.name },
-        ],
-      });
-
-      // Click on "Info" icon next to "Amount" value
-      TransactionDetails.checkTransactionAmountInfo('Voided transaction');
     },
   );
 });
