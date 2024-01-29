@@ -88,7 +88,7 @@ describe('Invoices', () => {
     defaultOrder.vendor = organization.name;
     secondOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(defaultOrder).then((firstOrderResponse) => {
+    Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
       defaultOrder.id = firstOrderResponse.id;
       Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
@@ -106,7 +106,7 @@ describe('Invoices', () => {
       Invoices.createInvoiceFromOrder(firstInvoice, defaultFiscalYear.code);
     });
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(secondOrder).then((secondOrderResponse) => {
+    Orders.createApprovedOrderForRollover(secondOrder, true).then((secondOrderResponse) => {
       secondOrder.id = secondOrderResponse.id;
       Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
