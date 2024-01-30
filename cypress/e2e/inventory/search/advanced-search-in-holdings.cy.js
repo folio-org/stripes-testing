@@ -96,7 +96,7 @@ describe('inventory', () => {
     });
 
     it(
-      'C400617 Search Holdings using advanced search with "AND" operator (spitfire) (TaaS)',
+      'C422017 Search Holdings using advanced search with "AND" operator (spitfire) (TaaS)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
         // #1 Select "Holdings" toggle on "Search & filter" pane

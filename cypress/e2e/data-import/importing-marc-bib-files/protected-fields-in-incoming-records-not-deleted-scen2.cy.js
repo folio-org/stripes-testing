@@ -95,7 +95,6 @@ describe('data-import', () => {
         MarcFieldProtection.getListViaApi({ query: 'data==NcD' }).then((response) => {
           MarcFieldProtection.deleteViaApi(response[0].id);
         });
-        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
         Users.deleteViaApi(user.userId);
       });
     });

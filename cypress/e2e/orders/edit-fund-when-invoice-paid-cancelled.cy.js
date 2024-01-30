@@ -246,7 +246,7 @@ describe('Orders', () => {
   );
 
   it(
-    'C368484 Editing fund distribution in PO line when related Cancelled from paid invoice exists (thunderjet) (TaaS)',
+    'C368484: Editing fund distribution in PO line when related Cancelled from paid invoice exists (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Invoices.changeInvoiceStatusViaApi({

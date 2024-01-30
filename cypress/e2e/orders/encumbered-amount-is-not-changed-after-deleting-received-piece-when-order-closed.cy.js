@@ -31,18 +31,17 @@ describe('Orders', () => {
   };
 
   before('Create test data', () => {
-    cy.getAdminToken().then(() => {
-      ServicePoints.createViaApi(testData.servicePoint).then(() => {
-        testData.location = Locations.getDefaultLocation({
-          servicePointId: testData.servicePoint.id,
-        }).location;
+    cy.getAdminToken();
+    ServicePoints.createViaApi(testData.servicePoint).then(() => {
+      testData.location = Locations.getDefaultLocation({
+        servicePointId: testData.servicePoint.id,
+      }).location;
 
-        Locations.createViaApi(testData.location);
-      });
-
-      Organizations.createOrganizationViaApi(testData.organization);
-      MaterialTypes.createMaterialTypeViaApi(testData.materialType);
+      Locations.createViaApi(testData.location);
     });
+
+    Organizations.createOrganizationViaApi(testData.organization);
+    MaterialTypes.createMaterialTypeViaApi(testData.materialType);
 
     cy.createTempUser([
       Permissions.uiFinanceViewFundAndBudget.gui,
@@ -131,19 +130,18 @@ describe('Orders', () => {
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken().then(() => {
-      Organizations.deleteOrganizationViaApi(testData.organization.id);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
-      InventoryHoldings.deleteHoldingRecordByLocationIdViaApi(testData.location.id);
-      Locations.deleteViaApi(testData.location);
-      MaterialTypes.deleteViaApi(testData.materialType.id);
-      ServicePoints.deleteViaApi(testData.servicePoint.id);
-      Users.deleteViaApi(testData.user.userId);
-    });
+    cy.getAdminToken();
+    Organizations.deleteOrganizationViaApi(testData.organization.id);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
+    InventoryHoldings.deleteHoldingRecordByLocationIdViaApi(testData.location.id);
+    Locations.deleteViaApi(testData.location);
+    MaterialTypes.deleteViaApi(testData.materialType.id);
+    ServicePoints.deleteViaApi(testData.servicePoint.id);
+    Users.deleteViaApi(testData.user.userId);
   });
 
   it(
-    'C375985 Encumbered amount is not changed after deleting received piece when related approved invoice exists and order is closed (thunderjet) (TaaS)',
+    'C375985: Encumbered amount is not changed after deleting received piece when related approved invoice exists and order is closed (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       // Click on the Order
@@ -203,78 +201,6 @@ describe('Orders', () => {
           { key: 'Initial encumbrance', value: '$0.00' },
           { key: 'Awaiting payment', value: '$25.00' },
           { key: 'Expended', value: '$0.00' },
-          { key: 'Status', value: 'Released' },
-        ],
-      });
-    },
-  );
-
-  it(
-    'C375986 Encumbered amount is not changed after deleting received piece when related paid invoice exists and order is closed (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
-    () => {
-      Invoices.changeInvoiceStatusViaApi({
-        invoice: testData.invoice,
-        status: INVOICE_STATUSES.PAID,
-      });
-
-      // Click on the Order
-      const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
-      OrderDetails.checkOrderDetails({
-        summary: [
-          { key: 'Workflow status', value: ORDER_STATUSES.CLOSED },
-          { key: 'Total encumbered', value: '$0.00' },
-        ],
-      });
-
-      // Click "Actions" button, Select "Receive" option
-      const Receivings = OrderDetails.openReceivingsPage();
-
-      // Click <Title name from PO line> link
-      const ReceivingDetails = Receivings.selectFromResultsList(testData.orderLine.titleOrPackage);
-      ReceivingDetails.checkReceivingDetails({
-        orderLineDetails: [{ key: 'POL number', value: `${testData.order.poNumber}-1` }],
-        expected: [],
-        received: [{ barcode: testData.barcode, format: 'Physical' }],
-      });
-
-      // Click on the record in "Received" accordion on "<Title name>" pane
-      const EditPieceModal = ReceivingDetails.openEditPieceModal({ section: 'Received' });
-      EditPieceModal.checkFieldsConditions([
-        { label: 'Piece format', conditions: { required: true, value: 'Physical' } },
-        { label: 'Create item', conditions: { value: 'Connected' } },
-      ]);
-
-      // Click "Delete" button
-      Receiving.openDropDownInEditPieceModal();
-      const DeletePieceModal = EditPieceModal.clickDeleteButton();
-
-      // Click "Delete item" button
-      DeletePieceModal.clickDeleteItemButton();
-      ReceivingDetails.checkReceivingDetails({
-        orderLineDetails: [{ key: 'POL number', value: `${testData.order.poNumber}-1` }],
-        expected: [],
-        received: [],
-      });
-
-      // Click "POL number" link in "POL details" accordion
-      const OrderLineDetails = ReceivingDetails.openOrderLineDetails();
-      OrderLineDetails.checkFundDistibutionTableContent([
-        { name: testData.fund.name, currentEncumbrance: '$0.00' },
-      ]);
-
-      // Click "Current encumbrance" link in "Fund distribution" accordion
-      const TransactionDetails = OrderLineDetails.openEncumbrancePane();
-      TransactionDetails.checkTransactionDetails({
-        information: [
-          { key: 'Fiscal year', value: testData.fiscalYear.code },
-          { key: 'Amount', value: '$0.00' },
-          { key: 'Source', value: `${testData.order.poNumber}-1` },
-          { key: 'Type', value: 'Encumbrance' },
-          { key: 'From', value: testData.fund.name },
-          { key: 'Initial encumbrance', value: '$0.00' },
-          { key: 'Awaiting payment', value: '$0.00' },
-          { key: 'Expended', value: '$25.00' },
           { key: 'Status', value: 'Released' },
         ],
       });

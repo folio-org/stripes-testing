@@ -2,7 +2,6 @@ import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../sup
 import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Requests from '../../support/fragments/requests/requests';
-import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -20,6 +19,10 @@ describe('Title Level Request', () => {
 
   before('Preconditions:', () => {
     cy.getAdminToken();
+    cy.loginAsAdmin({
+      path: SettingsMenu.circulationTitleLevelRequestsPath,
+      waiter: TitleLevelRequests.waitLoading,
+    });
     ServicePoints.createViaApi(testData.servicePoint);
     testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
     Location.createViaApi(testData.defaultLocation).then((location) => {
@@ -28,7 +31,7 @@ describe('Title Level Request', () => {
         location,
       });
     });
-    OtherSettings.setOtherSettingsViaApi({ titleLevelRequestsFeatureEnabled: true });
+    TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
     cy.createTempUser([
       Permissions.uiRequestsCreate.gui,
       Permissions.uiRequestsView.gui,
@@ -42,10 +45,6 @@ describe('Title Level Request', () => {
         userData.userId,
         testData.servicePoint.id,
       );
-      cy.login(userData.username, userData.password, {
-        path: SettingsMenu.circulationTitleLevelRequestsPath,
-        waiter: TitleLevelRequests.waitLoading,
-      });
       Requests.createNewRequestViaApi({
         fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         instanceId: testData.folioInstances[0].instanceId,
@@ -56,12 +55,20 @@ describe('Title Level Request', () => {
         requesterId: userData.userId,
       }).then((createdRequest) => {
         requestId = createdRequest.body.id;
+        cy.login(userData.username, userData.password, {
+          path: SettingsMenu.circulationTitleLevelRequestsPath,
+          waiter: TitleLevelRequests.waitLoading,
+        });
       });
     });
   });
 
   after('Deleting created entities', () => {
     cy.getAdminToken();
+    cy.loginAsAdmin({
+      path: SettingsMenu.circulationTitleLevelRequestsPath,
+      waiter: TitleLevelRequests.waitLoading,
+    });
     Requests.deleteRequestViaApi(requestId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
@@ -75,13 +82,14 @@ describe('Title Level Request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
+    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
 
   it(
-    'C1285 Check that "Cannot change "Allow title level requests"" modal appears (vega) (TaaS)',
+    'C1285 Check that "Cannot change "Allow title level requests"" modal appears (volaris) (TaaS)',
     { tags: ['extendedPath', 'volaris'] },
     () => {
-      TitleLevelRequests.clickOnTLRCheckbox();
+      TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
       TitleLevelRequests.checkCannotChangeTLRModal();
     },
   );

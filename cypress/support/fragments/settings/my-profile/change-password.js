@@ -1,6 +1,6 @@
-import { Pane, Dropdown, Button, TextField } from '../../../../../interactors';
+import { Pane, Dropdown, Button, TextField, including } from '../../../../../interactors';
 
-const myProfile = Dropdown('My profile');
+const myProfile = Dropdown(including('profile'));
 const currentPasswordField = TextField('Current FOLIO password');
 const newPasswordField = TextField('New FOLIO password');
 const confirmPasswordField = TextField('Confirm FOLIO password');

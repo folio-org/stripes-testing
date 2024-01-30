@@ -884,6 +884,10 @@ export default {
     internal: 'ui-inventory.settings.hridHandling',
     gui: 'Settings (Inventory): Create, edit and delete HRID handling',
   },
+  uiSettingsManageAuthorityFiles: {
+    internal: 'ui-marc-authorities.settings.authority-files.all',
+    gui: 'Settings (MARC authority): View, create, edit, delete authority files',
+  },
   // Added the below permissions for custom label creation
 
   uiSettingsEHoldingsViewAccessStatusTypes: {

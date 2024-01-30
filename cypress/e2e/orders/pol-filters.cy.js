@@ -123,7 +123,7 @@ describe('orders: Test Po line filters', () => {
       { tags: ['smoke', 'thunderjet'] },
       () => {
         filter.filterActions();
-        Orders.checkOrderlineSearchResults(orderLineNumber);
+        Orders.checkOrderlineFilterInList(orderLineNumber);
         Orders.resetFilters();
       },
     );
