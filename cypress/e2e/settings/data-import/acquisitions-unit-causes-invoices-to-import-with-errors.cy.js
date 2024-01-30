@@ -77,6 +77,9 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.loginAsAdmin();
+      cy.visit(SettingsMenu.acquisitionUnitsPath);
+      AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -84,12 +87,9 @@ describe('data-import', () => {
         cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => {
           cy.deleteInvoiceFromStorageViaApi(id);
         });
-        cy.loginAsAdmin();
-        cy.visit(SettingsMenu.acquisitionUnitsPath);
-        AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-        AcquisitionUnits.delete(defaultAcquisitionUnit.name);
         Users.deleteViaApi(user.userId);
       });
+      AcquisitionUnits.delete(defaultAcquisitionUnit.name);
     });
 
     it(

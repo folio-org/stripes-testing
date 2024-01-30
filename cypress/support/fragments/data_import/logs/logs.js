@@ -58,8 +58,9 @@ export default {
   checkStatusOfJobProfile: (status = 'Completed', rowNumber = 0) => cy.do(MultiColumnListCell({ row: rowNumber, content: status }).exists()),
 
   checkJobStatus: (fileName, status) => {
+    const newFileName = fileName.replace('/.mrc/i', '');
     cy.do(
-      MultiColumnListCell({ content: fileName }).perform((element) => {
+      MultiColumnListCell({ content: newFileName }).perform((element) => {
         const rowNumber = element.parentElement.getAttribute('data-row-inner');
 
         cy.expect(
@@ -167,12 +168,14 @@ export default {
   },
 
   waitFileIsImported: (fileName) => {
+    const newFileName = fileName.replace('.mrc', '');
+
     // wait until uploaded file is displayed in the list
     cy.wait(60000);
-    cy.expect(runningAccordion.find(HTML(including(fileName))).absent(), getLongDelay());
+    cy.expect(runningAccordion.find(HTML(including(newFileName))).absent(), getLongDelay());
     cy.expect(
       MultiColumnList({ id: 'job-logs-list' })
-        .find(Button(including(fileName)))
+        .find(Button(including(newFileName)))
         .exists(),
     );
   },
