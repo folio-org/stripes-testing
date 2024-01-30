@@ -9,6 +9,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import OrderLines from '../../support/fragments/orders/orderLines';
 
 describe('orders: Test Po line filters', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -122,8 +123,10 @@ describe('orders: Test Po line filters', () => {
       'C6720 Test the POL filters [except tags] (thunderjet)',
       { tags: ['smoke', 'thunderjet'] },
       () => {
+        Orders.searchByParameter('PO line number', orderLineNumber);
+        Orders.resetFilters();
         filter.filterActions();
-        Orders.checkOrderlineFilterInList(orderLineNumber);
+        OrderLines.varifyOrderlineInResultsList(orderLineNumber);
         Orders.resetFilters();
       },
     );

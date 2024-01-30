@@ -18,6 +18,12 @@ describe('Invoices', () => {
     user: {},
   };
 
+  const setApprovePayValue = (isApprovePayEnabled) => {
+    cy.getAdminToken().then(() => {
+      Approvals.setApprovePayValue(isApprovePayEnabled);
+    });
+  };
+
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
       const { fiscalYear, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi();
@@ -88,7 +94,7 @@ describe('Invoices', () => {
     },
   ].forEach(({ description, isApprovePayEnabled }) => {
     it(description, { tags: ['criticalPath', 'thunderjet', 'nonParallel'] }, () => {
-      Approvals.setApprovePayValue(isApprovePayEnabled);
+      setApprovePayValue(isApprovePayEnabled);
 
       // Click on "Vendor invoice number" link
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
