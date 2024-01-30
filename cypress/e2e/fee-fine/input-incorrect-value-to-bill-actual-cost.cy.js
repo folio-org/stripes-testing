@@ -141,6 +141,7 @@ describe('Lost items requiring actual cost', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     NewFeeFine.getUserFeesFines(testData.userData.userId).then((userFeesFines) => {
       const feesFinesData = userFeesFines.accounts;
       feesFinesData.forEach(({ id }) => {

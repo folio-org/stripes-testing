@@ -50,8 +50,8 @@ describe('data-import', () => {
       callNumberSuffix: 'TestSuf',
     };
     const filePathForCreate = 'marcFileForC401727.mrc';
-    const marcFileNameForCreate = `C401727 autotestFileName ${getRandomPostfix()}`;
-    const marcFileNameForUpdate = `C401727 autotestFileName ${getRandomPostfix()}`;
+    const marcFileNameForCreate = `C401727 autotestFileNamForCreate ${getRandomPostfix()}`;
+    const marcFileNameForUpdate = `C401727 autotestFileNameForUpdate ${getRandomPostfix()}`;
     const editedMarcFileName = `C401727 editedAutotestFileName ${getRandomPostfix()}`;
     const holdingsMappingProfile = {
       typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -201,7 +201,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(marcFileNameForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(marcFileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileNameForCreate);
         [
           FileDetails.columnNameInResultList.srsMarc,
@@ -322,7 +322,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(marcFileNameForUpdate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(marcFileNameForUpdate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileNameForUpdate);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.UPDATED,

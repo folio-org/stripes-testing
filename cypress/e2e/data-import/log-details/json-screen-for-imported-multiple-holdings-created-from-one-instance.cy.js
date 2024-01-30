@@ -124,6 +124,7 @@ describe('data-import', () => {
         );
         FileDetails.openJsonScreen(testData.title);
         JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.openMarcSrsTab();
         JsonScreenView.getInstanceHrid().then((hrid) => {
           testData.instanceHrid = hrid;
           JsonScreenView.openHoldingsTab();

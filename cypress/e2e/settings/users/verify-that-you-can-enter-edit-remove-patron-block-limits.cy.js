@@ -29,8 +29,13 @@ describe('Settings Users', () => {
       Limits.selectGroup(patronGroup.name);
       Limits.verifyLimitTypes();
       Limits.verifySaveIsDisabled();
-      Limits.setLimit(randomLimitType, '999999999999');
-      Limits.verifyUpdateValidationError(randomLimitType);
+      Limits.setLimit(randomLimitType, '1000000');
+      cy.log(randomLimitType);
+      if (randomLimitType === 'Maximum outstanding fee/fine balance') {
+        Limits.verifyUpdateValidationErrorForBalance(randomLimitType);
+      } else {
+        Limits.verifyUpdateValidationError(randomLimitType);
+      }
       Limits.setLimit(randomLimitType, '0');
       Limits.verifySuccessfullyUpdated(patronGroup.name);
       Limits.setLimit(randomLimitType, '1');

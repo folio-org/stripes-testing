@@ -36,6 +36,10 @@ const temporaryLocationDropdown = Button({ id: 'additem_temporarylocation' });
 const temporaryLocationList = SelectionList({ id: 'sl-container-additem_temporarylocation' });
 const createAdministrativeNoteButton = Button('Add administrative note');
 const administrativeNoteTextArea = TextArea({ ariaLabel: 'Administrative note' });
+const electronicAccessAccordion = Accordion('Electronic access');
+const addElectronicAccessButton = Button('Add electronic access');
+const relationshipSelectDropdown = Select('Relationship');
+const uriTextarea = TextArea({ ariaLabel: 'URI' });
 
 export default {
   saveAndClose: ({ holdingSaved = false } = {}) => {
@@ -179,5 +183,14 @@ export default {
   verifyTemporaryLocationItemExists: (temporarylocation) => {
     cy.expect(temporaryLocationList.exists());
     cy.expect(temporaryLocationList.find(HTML(including(temporarylocation))).exists());
+  },
+  addElectronicAccess: (type) => {
+    cy.expect(electronicAccessAccordion.exists());
+    cy.do([
+      addElectronicAccessButton.click(),
+      relationshipSelectDropdown.choose(type),
+      uriTextarea.fillIn(type),
+      Button('Save & close').click(),
+    ]);
   },
 };

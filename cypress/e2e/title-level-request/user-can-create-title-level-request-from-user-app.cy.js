@@ -6,7 +6,6 @@ import Requests from '../../support/fragments/requests/requests';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -27,10 +26,6 @@ describe('Create Item or Title level request', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
-        cy.loginAsAdmin({
-          path: SettingsMenu.circulationTitleLevelRequestsPath,
-          waiter: TitleLevelRequests.waitLoading,
-        });
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);
@@ -85,7 +80,6 @@ describe('Create Item or Title level request', () => {
         userData.userId,
         testData.userServicePoint.id,
       );
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
       cy.getInstance({
         limit: 1,
         expandAll: true,
@@ -93,6 +87,7 @@ describe('Create Item or Title level request', () => {
       }).then((instance) => {
         instanceData.instanceHRID = instance.hrid;
       });
+      TitleLevelRequests.enableTLRViaApi();
       cy.login(userData.username, userData.password, {
         path: TopMenu.usersPath,
         waiter: UsersSearchPane.waitLoading,
@@ -101,10 +96,7 @@ describe('Create Item or Title level request', () => {
   });
 
   after('Deleting created entities', () => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
+    cy.getAdminToken();
     Requests.getRequestApi({ query: `(instance.title=="${instanceData.title}")` }).then(
       (requestResponse) => {
         cy.wrap(requestResponse).each((request) => {
@@ -122,7 +114,7 @@ describe('Create Item or Title level request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
+    TitleLevelRequests.disableTLRViaApi();
   });
   it(
     'C347888 Check that user can create Title level request from User app (use Actions) (vega) (Taas)',

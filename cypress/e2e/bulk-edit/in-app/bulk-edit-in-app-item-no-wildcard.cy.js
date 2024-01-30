@@ -82,6 +82,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       itemsToEdit.forEach((item) => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item);
       });

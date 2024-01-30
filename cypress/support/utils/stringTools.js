@@ -13,3 +13,14 @@ export const randomTwoDigitNumber = () => Math.floor(Math.random() * 90 + 10);
 export const escapeRegex = (string) => {
   return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 };
+
+export const getRandomLetters = (count) => {
+  let result = '';
+  const characters = 'abcdefghijklmnopqrstuvwxyz';
+  let counter = 0;
+  while (counter < count) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+    counter += 1;
+  }
+  return result;
+};

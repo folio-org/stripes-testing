@@ -118,7 +118,7 @@ describe('ui-finance: Fiscal Year Rollover', { retries: 3 }, () => {
     secondOrder.vendor = organization.name;
     firstOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
+    Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
       Orders.checkCreatedOrder(firstOrder);
       OrderLines.addPOLine();
@@ -135,7 +135,7 @@ describe('ui-finance: Fiscal Year Rollover', { retries: 3 }, () => {
     });
 
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(secondOrder, true).then((secondOrderResponse) => {
+    Orders.createApprovedOrderForRollover(secondOrder, true).then((secondOrderResponse) => {
       secondOrder.id = secondOrderResponse.id;
       Orders.checkCreatedOrder(secondOrder);
       OrderLines.addPOLine();
@@ -154,7 +154,7 @@ describe('ui-finance: Fiscal Year Rollover', { retries: 3 }, () => {
     cy.visit(TopMenu.ordersPath);
 
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(thirdOrder, true).then((thirdOrderResponse) => {
+    Orders.createApprovedOrderForRollover(thirdOrder, true).then((thirdOrderResponse) => {
       thirdOrder.id = thirdOrderResponse.id;
       Orders.checkCreatedOrder(thirdOrder);
       OrderLines.addPOLine();

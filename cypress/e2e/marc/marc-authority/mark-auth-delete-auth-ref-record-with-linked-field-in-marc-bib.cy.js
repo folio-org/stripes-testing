@@ -15,7 +15,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       searchOption: 'Keyword',

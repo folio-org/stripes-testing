@@ -200,7 +200,7 @@ describe('data-import', () => {
       JobProfiles.search(testData.jobProfileForCreate.profile.name);
       JobProfiles.runImportFile();
       Logs.waitFileIsImported(marcFileNameForCreate);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.checkJobStatus(marcFileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileNameForCreate);
       FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
       HoldingsRecordView.getHoldingsHrId().then((initialHrId) => {
@@ -345,7 +345,7 @@ describe('data-import', () => {
           JobProfiles.search(jobProfileForUpdate.profileName);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(exportedFileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.checkJobStatus(exportedFileName, JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(exportedFileName);
           [
             FileDetails.columnNameInResultList.srsMarc,

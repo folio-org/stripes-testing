@@ -70,7 +70,7 @@ describe('Orders', () => {
       });
       defaultOrder.vendor = organization.name;
       cy.visit(TopMenu.ordersPath);
-      Orders.createOrderForRollover(defaultOrder).then((firstOrderResponse) => {
+      Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
         defaultOrder.id = firstOrderResponse.id;
         firstOrderNumber = firstOrderResponse.poNumber;
         Orders.checkCreatedOrder(defaultOrder);
@@ -115,12 +115,16 @@ describe('Orders', () => {
       'C196751 Export orders based on orders lines search (thunderjet)',
       { tags: ['criticalPath', 'thunderjet'] },
       () => {
+        Orders.searchByParameter('PO line number', firstOrderNumber);
+        cy.wait(5000);
+        OrderLines.resetFilters();
         OrderLines.selectFilterVendorPOL(invoice);
         Orders.exportResultsToCsv();
         OrderLines.checkDownloadedFile();
         OrderLines.resetFilters();
         cy.reload();
         OrderLines.selectFilterOngoingPaymentStatus();
+        cy.pause();
         Orders.exportResultsToCsv();
         OrderLines.checkDownloadedFile();
       },

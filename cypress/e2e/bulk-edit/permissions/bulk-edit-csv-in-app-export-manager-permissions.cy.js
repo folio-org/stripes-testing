@@ -76,8 +76,8 @@ describe('bulk-edit', () => {
       () => {
         ExportManagerSearchPane.waitLoading();
         ExportManagerSearchPane.searchByBulkEdit();
-        ExportManagerSearchPane.verifyJobAmount(user.username, 2);
-        ExportManagerSearchPane.selectJobByIndex(user.username, 0);
+        ExportManagerSearchPane.waitForJobs();
+        ExportManagerSearchPane.getElementByTextAndVerify(user.username, 2, 0);
         ExportManagerSearchPane.clickJobIdInThirdPane();
         BulkEditFiles.verifyMatchedResultFileContent(
           itemMatchedRecordsFileName,
@@ -86,7 +86,7 @@ describe('bulk-edit', () => {
           true,
         );
 
-        ExportManagerSearchPane.selectJobByIndex(user.username, 1);
+        ExportManagerSearchPane.getElementByTextAndVerify(user.username, 2, 1);
         ExportManagerSearchPane.clickJobIdInThirdPane();
         BulkEditFiles.verifyMatchedResultFileContent(
           userMatchedRecordsFileName,

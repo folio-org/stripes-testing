@@ -89,6 +89,7 @@ describe('Receiving', () => {
     ];
 
     before('Create test order', () => {
+      cy.getAdminToken();
       createOrder({ organization: testData.organization, workflowStatus: 'Open' });
 
       cy.login(testData.user.username, testData.user.password, {
@@ -137,6 +138,7 @@ describe('Receiving', () => {
     const pieceFields = ['Caption', 'Copy number'];
 
     before('Create test order', () => {
+      cy.getAdminToken();
       createOrder({ organization: testData.organization, workflowStatus: 'Pending' });
 
       cy.login(testData.user.username, testData.user.password, {
@@ -146,7 +148,7 @@ describe('Receiving', () => {
     });
 
     it(
-      'C353985 Export results (CSV) from Receiving with specified "Title fields" and "Piece fields" (thunderjet) (TaaS)',
+      'C353985: Export results (CSV) from Receiving with specified "Title fields" and "Piece fields" (thunderjet) (TaaS)',
       { tags: ['extendedPath', 'thunderjet'] },
       () => {
         // Click "Actions" button, Select "Export results (CSV)" option

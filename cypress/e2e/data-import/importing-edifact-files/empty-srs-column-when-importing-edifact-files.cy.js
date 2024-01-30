@@ -29,7 +29,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('data-import', () => {
   describe('Importing EDIFACT files', () => {
     let user;
-    const invoiceNumber = '94999';
+    const invoiceNumber = '94994';
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.gobi;
     const filePathForUpload = 'ediFileForC375103.edi';
     const fileName = `C375103autotestFile.${getRandomPostfix()}.edi`;

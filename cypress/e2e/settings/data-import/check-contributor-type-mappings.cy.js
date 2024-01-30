@@ -1,21 +1,21 @@
 import { Permissions } from '../../../support/dictionary';
 import {
   SettingsDataImport,
-  ActionProfiles,
   JobProfiles,
+  ActionProfiles,
   FieldMappingProfiles,
   FieldMappingProfileView,
 } from '../../../support/fragments/settings/dataImport';
 import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import { OrderLines, Orders } from '../../../support/fragments/orders';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import DataImportJobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import TopMenu from '../../../support/fragments/topMenu';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { ORDER_STATUSES, JOB_STATUS_NAMES } from '../../../support/constants';
+import DataImportJobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -172,7 +172,7 @@ describe('data-import', () => {
         DataImportJobProfiles.search(jobProfile);
 
         // Click on the "Actions" button,  Select "Run", Click on the "Run" button
-        JobProfiles.runImportFile();
+        DataImportJobProfiles.runImportFile();
         DataImportJobProfiles.waitFileIsImported(testData.marcFile.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 

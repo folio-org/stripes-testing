@@ -263,9 +263,8 @@ export default {
     this.checkComments(0, '-');
   },
   payFeeFine(amount, paymentMethod) {
-    FeeFinesDetails.openActions().then(() => {
-      FeeFinesDetails.openPayModal();
-    });
+    FeeFinesDetails.openActions();
+    FeeFinesDetails.openPayModal();
     PayFeeFaine.checkAmount(amount);
     PayFeeFaine.setPaymentMethod(paymentMethod);
     PayFeeFaine.setAmount(amount);

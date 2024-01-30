@@ -15,7 +15,6 @@ import TitleLevelRequests from '../../support/fragments/settings/circulation/tit
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
@@ -85,10 +84,6 @@ describe('TLR: Item renew', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
-        cy.loginAsAdmin({
-          path: SettingsMenu.circulationTitleLevelRequestsPath,
-          waiter: TitleLevelRequests.waitLoading,
-        });
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);
@@ -192,7 +187,7 @@ describe('TLR: Item renew', () => {
         );
       })
       .then(() => {
-        TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+        TitleLevelRequests.enableTLRViaApi();
         cy.login(userForRenew.username, userForRenew.password);
       });
   });
@@ -217,10 +212,7 @@ describe('TLR: Item renew', () => {
   });
 
   after('Deleting created entities', () => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
+    cy.getAdminToken();
     cy.wrap(instanceData.itemIds).each((item) => {
       cy.deleteItemViaApi(item);
     });
@@ -247,7 +239,7 @@ describe('TLR: Item renew', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
+    TitleLevelRequests.disableTLRViaApi();
   });
 
   afterEach('Deleting created entities', () => {
@@ -275,7 +267,7 @@ describe('TLR: Item renew', () => {
 
   it(
     'C360533: TLR: Check that Item assigned to hold is renewable/non renewable depends Loan policy (vega)',
-    { tags: ['criticalPath', 'vega', 'nonParallel'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.getToken(userForRenew.username, userForRenew.password);
       cy.visit(TopMenu.requestsPath);
@@ -308,7 +300,7 @@ describe('TLR: Item renew', () => {
 
   it(
     'C360534 TLR: Check that Item assigned to recall is not renewable (vega)',
-    { tags: ['criticalPath', 'vega', 'nonParallel'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.getToken(userForRenew.username, userForRenew.password);
       cy.visit(TopMenu.requestsPath);

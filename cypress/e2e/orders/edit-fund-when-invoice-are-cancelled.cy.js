@@ -87,7 +87,7 @@ describe('ui-orders: Orders', () => {
     });
     defaultOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(defaultOrder, true, false).then((orderResponse) => {
+    Orders.createApprovedOrderForRollover(defaultOrder, true, false).then((orderResponse) => {
       defaultOrder.id = orderResponse.id;
       orderNumber = orderResponse.poNumber;
       Orders.checkCreatedOrder(defaultOrder);
@@ -129,7 +129,7 @@ describe('ui-orders: Orders', () => {
   });
 
   it(
-    'C368478 Editing fund distribution in PO line when related Cancelled from approved invoice exists (thunderjet)',
+    'C368478: Editing fund distribution in PO line when related Cancelled from approved invoice exists (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);

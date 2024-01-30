@@ -18,7 +18,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Holdings', () => {
     const testData = {};
     const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
@@ -41,7 +41,7 @@ describe('marc', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkJobStatus(fileName, 'Completed');
         Logs.openFileDetails(fileName);
         Logs.getCreatedItemsID(0).then((link) => {
           instanceID = link.split('/')[5];
@@ -65,6 +65,7 @@ describe('marc', () => {
     });
 
     after(() => {
+      cy.getAdminToken();
       cy.loginAsAdmin({
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,

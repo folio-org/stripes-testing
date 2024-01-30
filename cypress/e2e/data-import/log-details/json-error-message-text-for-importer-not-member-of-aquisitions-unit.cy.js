@@ -111,7 +111,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(marcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(marcFileName);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.CREATED,

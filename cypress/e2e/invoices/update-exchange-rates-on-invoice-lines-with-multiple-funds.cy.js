@@ -118,7 +118,7 @@ describe('Invoices', () => {
             );
             OrderLines.backToEditingOrder();
             Orders.openOrder();
-
+            cy.wait(4000);
             cy.visit(TopMenu.invoicesPath);
             Invoices.createRolloverInvoice(invoice, organization.name);
             Invoices.createInvoiceLineFromPol(firstOrderNumber);

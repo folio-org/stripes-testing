@@ -85,6 +85,7 @@ describe('bulk-edit', () => {
         cy.wait('@commitChanges', getLongDelay()).then((res) => {
           expect(res.response.body.userId).to.eq(user1.userId);
         });
+        cy.getAdminToken();
         Users.deleteViaApi(user1.userId);
 
         cy.login(user2.username, user2.password, {

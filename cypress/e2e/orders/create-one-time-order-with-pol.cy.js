@@ -107,7 +107,7 @@ describe('Orders: Inventory interaction', () => {
     'C662: Create an order and at least one order line for a one-time order (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
-      Orders.createOrderForRollover(firstOrder).then((firstOrderResponse) => {
+      Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
         firstOrder.id = firstOrderResponse.id;
         Orders.checkCreatedOrder(firstOrder);
         OrderLines.addPOLine();

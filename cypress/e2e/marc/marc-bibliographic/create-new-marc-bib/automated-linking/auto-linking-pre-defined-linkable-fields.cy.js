@@ -15,7 +15,7 @@ import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marc
 import BrowseContributors from '../../../../../support/fragments/inventory/search/browseContributors';
 import BrowseSubjects from '../../../../../support/fragments/inventory/search/browseSubjects';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       describe('Automated linking', () => {

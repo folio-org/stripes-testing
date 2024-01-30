@@ -187,6 +187,7 @@ describe('Request Detail. TLR', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     cy.loginAsAdmin({
       path: SettingsMenu.circulationTitleLevelRequestsPath,
       waiter: TitleLevelRequests.waitLoading,

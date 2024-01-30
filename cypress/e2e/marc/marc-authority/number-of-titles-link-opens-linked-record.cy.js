@@ -41,7 +41,7 @@ const marcFiles = [
     numOfRecords: 1,
   },
 ];
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     before('Creating user', () => {
       cy.getAdminToken();

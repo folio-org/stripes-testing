@@ -24,7 +24,7 @@ describe('Title level Request', () => {
       path: SettingsMenu.circulationTitleLevelRequestsPath,
       waiter: TitleLevelRequests.waitLoading,
     });
-    TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+    TitleLevelRequests.enableTLRViaApi();
     ServicePoints.createViaApi(testData.servicePoint);
     testData.defaultLocation = Locations.getDefaultLocation({
       servicePointId: testData.servicePoint.id,
@@ -66,8 +66,7 @@ describe('Title level Request', () => {
       Requests.cancelRequest();
       Requests.checkRequestStatus('Closed - Cancelled');
 
-      cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);
-      TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
+      TitleLevelRequests.disableTLRViaApi();
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.requestsPath,
         waiter: Requests.waitLoading,

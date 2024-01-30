@@ -300,7 +300,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForCreatingInstance);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForCreatingInstance, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreatingInstance);
         [
           FileDetails.columnNameInResultList.srsMarc,
@@ -337,7 +337,7 @@ describe('data-import', () => {
           JobProfiles.search(jobProfileForUpdate.profileName);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(fileNameForProtect);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.checkJobStatus(fileNameForProtect, JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(fileNameForProtect);
           [
             FileDetails.columnNameInResultList.srsMarc,
@@ -387,7 +387,7 @@ describe('data-import', () => {
           JobProfiles.search(jobProfileForOverride.profileName);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(fileNameForOverride);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.checkJobStatus(fileNameForOverride, JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(fileNameForOverride);
           [
             FileDetails.columnNameInResultList.srsMarc,

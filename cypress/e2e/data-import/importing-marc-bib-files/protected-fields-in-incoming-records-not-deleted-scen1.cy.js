@@ -93,7 +93,6 @@ describe('data-import', () => {
         }).then((list) => {
           list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
         });
-        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
         Users.deleteViaApi(user.userId);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (instance) => {
@@ -105,7 +104,7 @@ describe('data-import', () => {
 
     it(
       'C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();

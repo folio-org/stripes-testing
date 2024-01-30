@@ -141,11 +141,17 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     'C353610 Verify "LDR" validation rules with valid data for positions 06 and 07 when editing record (spitfire)',
     { tags: ['smoke', 'spitfire'] },
     () => {
-      const initialLDRValue = '01677cam\\a22003974c\\4500';
-      const changesIn06 = ['a', 'c', 'd', 'e', 'f', 'g', 'i', 'j', 'k', 'm', 'o', 'p', 'r', 't'];
+      const initialLDRValue = '01799cam\\a22004094a\\4500';
+      const changesIn06 = ['c', 'd', 'e', 'f', 'g', 'i', 'j', 'k', 'm', 'o', 'p', 'r', 't'];
       const changesIn07 = ['a', 'b', 'c', 'd', 'i', 'm', 's'];
 
       InventoryInstance.checkExpectedMARCSource();
+
+      InventoryInstance.goToEditMARCBiblRecord();
+      QuickMarcEditor.waitLoading();
+      QuickMarcEditor.updateExistingField('LDR', replaceByIndex(initialLDRValue, 6, 'b'));
+      QuickMarcEditor.check008FieldsAbsent('DtSt', 'Ctry');
+      QuickMarcEditor.closeWithoutSavingAfterChange();
 
       const checkCorrectUpdate = (subfieldIndex, values) => {
         values.forEach((specialValue) => {

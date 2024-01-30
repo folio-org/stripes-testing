@@ -6,7 +6,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {
@@ -46,7 +46,7 @@ describe('marc', () => {
       });
 
       it(
-        'C380717 Verify focus behavior when using field level action icons upon creation of a new "MARC bib" record (spitfire) (TaaS)',
+        'C422120 Verify focus behavior when using field level action icons upon creation of a new "MARC bib" record (spitfire) (TaaS)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           // Open New Marc Bibliographic record editor

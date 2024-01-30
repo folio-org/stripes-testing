@@ -9,7 +9,7 @@ import JobProfiles from '../../../../support/fragments/data_import/job_profiles/
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       marcValue: 'C422027',

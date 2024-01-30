@@ -7,7 +7,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const createdInstanceIDs = [];
@@ -44,7 +44,7 @@ describe('marc', () => {
       });
 
       it(
-        'C380736 Search created "MARC bib" record by Title, OCLC number (spitfire) (TaaS)',
+        'C422121 Search created "MARC bib" record by Title, OCLC number (spitfire) (TaaS)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstance.newMarcBibRecord();

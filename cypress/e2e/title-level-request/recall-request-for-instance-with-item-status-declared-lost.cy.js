@@ -58,6 +58,7 @@ describe('Title level request for declared lost item', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(

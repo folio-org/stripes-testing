@@ -12,7 +12,7 @@ import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       describe('Manual linking', () => {
@@ -132,7 +132,7 @@ describe('marc', () => {
         });
 
         it(
-          'C380738 Linking repeatable fields when creating a new "MARC bib" record (spitfire) (TaaS)',
+          'C422131 Linking repeatable fields when creating a new "MARC bib" record (spitfire) (TaaS)',
           { tags: ['criticalPath', 'spitfire'] },
           () => {
             InventoryInstance.newMarcBibRecord();

@@ -6,7 +6,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import DateTools from '../../../../support/utils/dateTools';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {

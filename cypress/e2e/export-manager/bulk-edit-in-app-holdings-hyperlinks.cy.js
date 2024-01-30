@@ -31,10 +31,6 @@ describe('Export Manager', () => {
     cy.createTempUser([permissions.bulkEditView.gui, permissions.exportManagerView.gui]).then(
       (userProperties) => {
         user = userProperties;
-        cy.login(userWithPermissions.username, userWithPermissions.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
         item.instanceId = InventoryInstances.createInstanceViaApi(
           item.instanceName,
           item.itemBarcode,
@@ -45,6 +41,10 @@ describe('Export Manager', () => {
         }).then((holdings) => {
           item.holdingHRID = holdings[0].hrid;
           FileManager.createFile(`cypress/fixtures/${holdingHRIDsFileName}`, holdings[0].hrid);
+        });
+        cy.login(userWithPermissions.username, userWithPermissions.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
       },
     );

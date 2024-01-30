@@ -46,6 +46,12 @@ export default {
     }
     cy.do(Select().choose(batchGroup));
   },
+  getVoucherExportStatus({ index = 0 } = {}) {
+    return cy.then(() => voucherExportsTable
+      .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+      .find(MultiColumnListCell({ columnIndex: 1 }))
+      .content());
+  },
   checkTableContent({ records = [] } = {}) {
     records.forEach((record, index) => {
       if (record.status) {

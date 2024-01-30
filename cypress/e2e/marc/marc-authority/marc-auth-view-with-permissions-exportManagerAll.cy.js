@@ -3,7 +3,7 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {};
 

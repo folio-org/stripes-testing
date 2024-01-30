@@ -13,7 +13,7 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('plug-in MARC authority', () => {
     describe('plug-in MARC authority | Browse', () => {
       const testData = {
@@ -120,7 +120,7 @@ describe('marc', () => {
       });
 
       it(
-        'C380548 MARC Authority plug-in | Select "Browse" MARC authority records (spitfire) (TaaS)',
+        'C422103 MARC Authority plug-in | Select "Browse" MARC authority records (spitfire) (TaaS)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           MarcAuthorities.switchToBrowse();

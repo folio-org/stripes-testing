@@ -18,6 +18,12 @@ describe('Invoices', () => {
     user: {},
   };
 
+  const setApprovePayValue = (isApprovePayEnabled) => {
+    cy.getAdminToken().then(() => {
+      Approvals.setApprovePayValue(isApprovePayEnabled);
+    });
+  };
+
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
       const { fiscalYear, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi();
@@ -78,17 +84,17 @@ describe('Invoices', () => {
   [
     {
       description:
-        'C397321 User is not able to approve and pay invoice with linked order in "Pending" status ("Approve and pay in one click" setting is enabled) (thunderjet) (TaaS)',
+        'C397321: User is not able to approve and pay invoice with linked order in "Pending" status ("Approve and pay in one click" setting is enabled) (thunderjet) (TaaS)',
       isApprovePayEnabled: true,
     },
     {
       description:
-        'C397326 User is not able to approve and pay invoice with linked order in "Pending" status ("Approve and pay in one click" setting is disabled) (thunderjet) (TaaS)',
+        'C397326: User is not able to approve and pay invoice with linked order in "Pending" status ("Approve and pay in one click" setting is disabled) (thunderjet) (TaaS)',
       isApprovePayEnabled: false,
     },
   ].forEach(({ description, isApprovePayEnabled }) => {
     it(description, { tags: ['criticalPath', 'thunderjet', 'nonParallel'] }, () => {
-      Approvals.setApprovePayValue(isApprovePayEnabled);
+      setApprovePayValue(isApprovePayEnabled);
 
       // Click on "Vendor invoice number" link
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

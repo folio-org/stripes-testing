@@ -23,10 +23,6 @@ describe('bulk-edit', () => {
         Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
 
         item.instanceId = InventoryInstances.createInstanceViaApi(
           item.instanceName,
@@ -39,14 +35,19 @@ describe('bulk-edit', () => {
           cy.updateHoldingRecord(holdings[0].id, {
             ...holdings[0],
             // Online
-            permanentLocationId: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5',
+            temporaryLocationId: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5',
           });
+        });
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
         FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.itemBarcode);
       });
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
@@ -69,16 +70,14 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyRowIcons();
         // Modify the record by selecting the **same value** that at least **one** Holdings record has (For example,"TEMPORARY HOLDINGS LOCATION" is "Annex" => Select "Annex" location by clicking on the value from  "Select location" dropdown list )
         const newLocation = 'Online';
-        BulkEditActions.selectOption('Permanent holdings location');
-        BulkEditActions.clickSelectedLocation('Select location', newLocation);
+        BulkEditActions.replaceTemporaryLocation(newLocation, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(1, newLocation);
 
         // Click the "Commit changes" button
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditActions.verifySuccessBanner(1);
-        BulkEditSearchPane.verifyChangedResults(newLocation);
+        BulkEditSearchPane.verifyNonMatchedResults(item.itemBarcode);
       },
     );
   });

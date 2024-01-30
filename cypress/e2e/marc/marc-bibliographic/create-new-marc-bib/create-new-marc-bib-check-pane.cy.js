@@ -5,7 +5,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {};
@@ -30,7 +30,7 @@ describe('marc', () => {
       });
 
       it(
-        'C380427 A new "MARC bib" record is opened in QuickMARC UI (spitfire) (TaaS)',
+        'C422104 A new "MARC bib" record is opened in QuickMARC UI (spitfire) (TaaS)',
         {
           tags: ['criticalPath', 'spitfire'],
         },

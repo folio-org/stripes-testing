@@ -162,7 +162,7 @@ describe('Duplicate item level request', () => {
   });
 
   it(
-    'C350560 Check that the user can Duplicate request (Item level request) (vega)',
+    'C350560 C782 Check that the user can Duplicate request (Item level request) (vega)',
     { tags: ['extendedPath', 'vega'] },
     () => {
       cy.visit(TopMenu.requestsPath);

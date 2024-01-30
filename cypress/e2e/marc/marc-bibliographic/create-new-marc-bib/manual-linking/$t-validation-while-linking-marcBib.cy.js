@@ -12,7 +12,7 @@ import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       describe('Manual linking', () => {
@@ -104,7 +104,7 @@ describe('marc', () => {
         });
 
         it(
-          'C380730 "$t" validation when linking "MARC Bibliographic" record\'s fields upon record creation (spitfire) (TaaS)',
+          'C422130 "$t" validation when linking "MARC Bibliographic" record\'s fields upon record creation (spitfire) (TaaS)',
           { tags: ['criticalPath', 'spitfire'] },
           () => {
             InventoryInstance.newMarcBibRecord();

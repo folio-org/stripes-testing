@@ -37,12 +37,12 @@ export default {
     cy.do(Button({ id: 'providers-tab' }).click());
     cy.expect(searchResultsSection.has({ title: 'Providers' }));
   },
-  switchToTitles() {
+  switchToTitles(titleValue = 'Titles') {
     cy.do(Button({ id: 'titles-tab' }).click());
-    cy.expect(searchResultsSection.has({ title: 'Titles' }));
+    cy.expect(searchResultsSection.has({ title: titleValue }));
   },
-  switchToPackages() {
+  switchToPackages(titleValue = 'Packages') {
     cy.do(Button({ id: 'packages-tab' }).click());
-    cy.expect(searchResultsSection.has({ title: 'Packages' }));
+    cy.expect(searchResultsSection.has({ title: titleValue }));
   },
 };

@@ -39,37 +39,41 @@ describe('ui-invoices: Credit Invoice creation', () => {
     cy.visit(TopMenu.invoicesPath);
   });
 
-  it('C343209 Create a credit invoice (thunderjet)', { tags: ['smoke', 'thunderjet'] }, () => {
-    const transactionFactory = new Transaction();
-    Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
-    Invoices.createInvoiceLine(invoiceLine);
-    Invoices.addFundDistributionToLine(invoiceLine, fund);
-    Invoices.approveInvoice();
-    // check transactions after approve
-    cy.visit(TopMenu.fundPath);
-    Helper.searchByName(fund.name);
-    Funds.selectFund(fund.name);
-    Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
-    Funds.openTransactions();
-    const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
-    Funds.checkTransaction(
-      1,
-      transactionFactory.create('pending', valueInTransactionTable, fund.code, '', 'Invoice', ''),
-    );
-    // pay invoice
-    cy.visit(TopMenu.invoicesPath);
-    Invoices.searchByNumber(invoice.invoiceNumber);
-    Invoices.selectInvoice(invoice.invoiceNumber);
-    Invoices.payInvoice();
-    // check transactions after payment
-    cy.visit(TopMenu.fundPath);
-    Helper.searchByName(fund.name);
-    Funds.selectFund(fund.name);
-    Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
-    Funds.openTransactions();
-    Funds.checkTransaction(
-      1,
-      transactionFactory.create('credit', valueInTransactionTable, fund.code, '', 'Invoice', ''),
-    );
-  });
+  it(
+    'C343209: Create, approve and pay a credit invoice (thunderjet)',
+    { tags: ['smoke', 'thunderjet'] },
+    () => {
+      const transactionFactory = new Transaction();
+      Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
+      Invoices.createInvoiceLine(invoiceLine);
+      Invoices.addFundDistributionToLine(invoiceLine, fund);
+      Invoices.approveInvoice();
+      // check transactions after approve
+      cy.visit(TopMenu.fundPath);
+      Helper.searchByName(fund.name);
+      Funds.selectFund(fund.name);
+      Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
+      Funds.openTransactions();
+      const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
+      Funds.checkTransaction(
+        1,
+        transactionFactory.create('pending', valueInTransactionTable, fund.code, '', 'Invoice', ''),
+      );
+      // pay invoice
+      cy.visit(TopMenu.invoicesPath);
+      Invoices.searchByNumber(invoice.invoiceNumber);
+      Invoices.selectInvoice(invoice.invoiceNumber);
+      Invoices.payInvoice();
+      // check transactions after payment
+      cy.visit(TopMenu.fundPath);
+      Helper.searchByName(fund.name);
+      Funds.selectFund(fund.name);
+      Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
+      Funds.openTransactions();
+      Funds.checkTransaction(
+        1,
+        transactionFactory.create('credit', valueInTransactionTable, fund.code, '', 'Invoice', ''),
+      );
+    },
+  );
 });

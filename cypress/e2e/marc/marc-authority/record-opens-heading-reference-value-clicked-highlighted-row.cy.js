@@ -8,7 +8,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {};
     const jobProfileToRun = 'Default - Create SRS MARC Authority';
@@ -33,7 +33,7 @@ describe('marc', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(updatedFileName);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkJobStatus(updatedFileName, 'Completed');
         Logs.openFileDetails(updatedFileName);
         Logs.getCreatedItemsID().then((link) => {
           createdAuthorityID = link.split('/')[5];

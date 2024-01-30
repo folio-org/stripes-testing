@@ -61,7 +61,7 @@ describe('eHoldings', () => {
       TemporarySessionLocale.selectCountry(testData.dataForFirstPackage.buttonLanguage);
       TemporarySessionLocale.verifyTitleOfPaneHeader(testData.dataForFirstPackage.paneHeaderTitle);
       TopMenu.openEHoldingsApp();
-      EHoldingsSearch.switchToTitles();
+      EHoldingsSearch.switchToTitles('Títulos');
       EHoldingsTitles.create(testData.packageName, testData.dataForFirstPackage.titleName);
       EHoldingsResourceView.checkNames(
         testData.packageName,
@@ -74,7 +74,7 @@ describe('eHoldings', () => {
       TemporarySessionLocale.selectCountry(testData.dataForSecondPackage.buttonLanguage);
       TemporarySessionLocale.verifyTitleOfPaneHeader(testData.dataForSecondPackage.paneHeaderTitle);
       TopMenu.openEHoldingsApp();
-      EHoldingsSearch.switchToTitles();
+      EHoldingsSearch.switchToTitles('Titoli');
       EHoldingsTitles.create(testData.packageName, testData.dataForSecondPackage.titleName);
       EHoldingsResourceView.checkNames(
         testData.packageName,

@@ -65,20 +65,23 @@ describe('Fees&Fines', () => {
               userBarcode: testData.user.barcode,
               servicePointId: testData.servicePoint.id,
             });
-            cy.login(testData.user.username, testData.user.password, {
-              path: TopMenu.usersPath,
-              waiter: UsersSearchResultsPane.waitLoading,
+          });
+          UserLoans.getUserLoansIdViaApi(testData.user.userId)
+            .then((userLoans) => {
+              UserLoans.declareLoanLostViaApi(
+                {
+                  servicePointId: testData.servicePoint.id,
+                  declaredLostDateTime: moment.utc().format(),
+                },
+                userLoans.loans[0].id,
+              );
+            })
+            .then(() => {
+              cy.login(testData.user.username, testData.user.password, {
+                path: TopMenu.usersPath,
+                waiter: UsersSearchResultsPane.waitLoading,
+              });
             });
-          });
-          UserLoans.getUserLoansIdViaApi(testData.user.userId).then((userLoans) => {
-            UserLoans.declareLoanLostViaApi(
-              {
-                servicePointId: testData.servicePoint.id,
-                declaredLostDateTime: moment.utc().format(),
-              },
-              userLoans.loans[0].id,
-            );
-          });
         },
       );
     });
@@ -167,7 +170,7 @@ describe('Fees&Fines', () => {
         LostItemsRequiringActualCostPage.checkResultsColumn(
           instanceData.instanceTitle,
           'Status',
-          `Billed: ${secondValue}`,
+          `Billed: $${secondValue}`,
         );
         // #10 Click on "Actions" column includes ellipses
         LostItemsRequiringActualCostPage.checkDropdownOptions(

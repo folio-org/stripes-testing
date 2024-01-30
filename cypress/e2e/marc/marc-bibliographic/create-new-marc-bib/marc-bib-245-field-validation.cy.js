@@ -5,7 +5,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       let userId;
@@ -24,6 +24,7 @@ describe('marc', () => {
       });
 
       after('Delete test data', () => {
+        cy.getAdminToken();
         Users.deleteViaApi(userId);
       });
 

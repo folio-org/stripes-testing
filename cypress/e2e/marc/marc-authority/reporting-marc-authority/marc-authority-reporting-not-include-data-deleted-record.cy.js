@@ -76,7 +76,7 @@ const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
 const todayWithoutPaddingZero = DateTools.clearPaddingZero(today);
 const tomorrow = DateTools.getTomorrowDayDateForFiscalYear();
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Reporting MARC authority', () => {
       before('Creating user and uploading files', () => {

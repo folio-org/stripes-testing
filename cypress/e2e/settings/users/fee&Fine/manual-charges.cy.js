@@ -43,6 +43,7 @@ describe('Users: Manual charges', () => {
     () => {
       ManualCharges.selectOwner(owners[0]);
       ManualCharges.createViaUi(manualCharge);
+      manualCharge.amount = '$10.00';
       ManualCharges.checkResultsTableContent([manualCharge]);
 
       ManualCharges.createViaUi(manualCharge);
@@ -55,6 +56,7 @@ describe('Users: Manual charges', () => {
         amount: '100.00',
       };
       ManualCharges.editViaUi(manualCharge, editedManualCharge);
+      editedManualCharge.amount = '$100.00';
       ManualCharges.checkResultsTableContent([editedManualCharge]);
 
       ManualCharges.deleteViaUi(editedManualCharge);

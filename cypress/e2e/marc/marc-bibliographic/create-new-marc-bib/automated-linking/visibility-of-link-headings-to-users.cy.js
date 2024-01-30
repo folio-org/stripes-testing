@@ -6,7 +6,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       describe('Automated linking', () => {
@@ -41,7 +41,7 @@ describe('marc', () => {
         });
 
         it(
-          'C380703 User without permission "quickMARC: Can Link/unlink authority records to bib records" can\'t see "Link headings" button when create "MARC bib" (spitfire)',
+          'C422142 User without permission "quickMARC: Can Link/unlink authority records to bib records" can\'t see "Link headings" button when create "MARC bib" (spitfire)',
           { tags: ['criticalPath', 'spitfire'] },
           () => {
             cy.login(userData.username, userData.password, {

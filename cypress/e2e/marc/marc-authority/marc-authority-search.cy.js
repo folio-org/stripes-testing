@@ -9,7 +9,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       expectedProperties: [
@@ -89,7 +89,7 @@ describe('marc', () => {
                 JobProfiles.search(marcFile.jobProfileToRun);
                 JobProfiles.runImportFile();
                 Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+                Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
                 Logs.openFileDetails(marcFile.fileName);
                 for (let i = 0; i < marcFile.numberOfRecors; i++) {
                   Logs.getCreatedItemsID(i).then((link) => {

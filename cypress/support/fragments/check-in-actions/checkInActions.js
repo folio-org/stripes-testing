@@ -196,7 +196,11 @@ export default {
   },
 
   openCheckInNotes: (notes) => {
-    cy.do([availableActionsButton.click(), checkInButtonNotes.click()]);
+    cy.wait(500);
+    cy.do(availableActionsButton.click());
+    cy.wait(500);
+    cy.do(checkInButtonNotes.click());
+    cy.wait(500);
     cy.expect(Modal(including('Check in notes')).exists());
     if (notes) {
       CheckInModal.verifyNotesInfo(notes, true);

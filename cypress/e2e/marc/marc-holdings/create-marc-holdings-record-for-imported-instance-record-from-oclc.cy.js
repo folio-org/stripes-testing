@@ -11,7 +11,7 @@ import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/i
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Holdings', () => {
     let user;
     let instanceHrid;

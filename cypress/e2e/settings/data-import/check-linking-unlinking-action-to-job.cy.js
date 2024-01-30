@@ -65,10 +65,12 @@ describe('data-import', () => {
     });
 
     after('Delete test data', () => {
-      Users.deleteViaApi(testData.user.userId);
-      SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
-      actionProfiles.forEach((profile) => {
-        SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.name);
+      cy.getAdminToken(() => {
+        Users.deleteViaApi(testData.user.userId);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        actionProfiles.forEach((profile) => {
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.name);
+        });
       });
     });
 

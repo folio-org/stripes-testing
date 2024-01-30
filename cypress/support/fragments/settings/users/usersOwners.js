@@ -25,13 +25,13 @@ const defaultServicePoints = ['Circ Desk 1', 'Circ Desk 2', 'Online'];
 
 const fillOwner = ({ name, description, servicePoint }, rowIndex = 2) => {
   const index = rowIndex - startRowIndex;
-
+  cy.wait(500);
   cy.do(tableWithOwners.find(TextField({ name: `items[${index}].owner` })).fillIn(name));
-
+  cy.wait(500);
   if (description) {
     cy.do(tableWithOwners.find(TextField({ name: `items[${index}].desc` })).fillIn(description));
   }
-
+  cy.wait(500);
   if (servicePoint) {
     cy.do(
       tableWithOwners
@@ -39,6 +39,7 @@ const fillOwner = ({ name, description, servicePoint }, rowIndex = 2) => {
         .select(servicePoint),
     );
   }
+  cy.wait(500);
 };
 
 function getAddServicePointsToOwnerPayload(owner, servicePoints) {
@@ -129,6 +130,8 @@ export default {
     usedServicePoints.forEach((userServicePoint) => cy.expect(MultiSelectOption(userServicePoint).absent()));
   },
   unselectExistingServicePoint(usedServicePoint) {
+    cy.log(usedServicePoint);
+    cy.wait(500);
     cy.then(() => tableWithOwners.find(MultiColumnListCell(usedServicePoint)).row()).then(
       (rowNumber) => {
         const currentRow = tableWithOwners.find(

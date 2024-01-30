@@ -21,58 +21,57 @@ describe('Orders', () => {
   };
 
   before('Create test data', () => {
-    cy.getAdminToken().then(() => {
-      const { fiscalYear, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
-        ledger: { restrictEncumbrance: true, restrictExpenditures: true },
-        budget: { allocated: 100 },
-      });
+    cy.getAdminToken();
+    const { fiscalYear, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
+      ledger: { restrictEncumbrance: true, restrictExpenditures: true },
+      budget: { allocated: 100 },
+    });
 
-      testData.fiscalYear = fiscalYear;
-      testData.fund = fund;
-      testData.budget = budget;
+    testData.fiscalYear = fiscalYear;
+    testData.fund = fund;
+    testData.budget = budget;
 
-      ServicePoints.createViaApi(testData.servicePoint);
+    ServicePoints.createViaApi(testData.servicePoint);
 
-      testData.location = Locations.getDefaultLocation({
-        servicePointId: testData.servicePoint.id,
-      }).location;
-      Locations.createViaApi(testData.location);
+    testData.location = Locations.getDefaultLocation({
+      servicePointId: testData.servicePoint.id,
+    }).location;
+    Locations.createViaApi(testData.location);
 
-      Organizations.createOrganizationViaApi(testData.organization).then(() => {
-        testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
+    Organizations.createOrganizationViaApi(testData.organization).then(() => {
+      testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
 
-        OrderLinesLimit.setPOLLimit(orderLinesCount);
-        Orders.createOrderViaApi(testData.order).then((order) => {
-          testData.order = order;
+      OrderLinesLimit.setPOLLimit(orderLinesCount);
+      Orders.createOrderViaApi(testData.order).then((order) => {
+        testData.order = order;
 
-          cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then(({ body }) => {
-            const acquisitionMethod = body.acquisitionMethods[0].id;
+        cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then(({ body }) => {
+          const acquisitionMethod = body.acquisitionMethods[0].id;
 
-            cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
-              const materialTypeId = materialType.id;
+          cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+            const materialTypeId = materialType.id;
 
-              [...Array(orderLinesCount).keys()].forEach(() => {
-                const orderLine = BasicOrderLine.getDefaultOrderLine({
-                  acquisitionMethod,
-                  purchaseOrderId: testData.order.id,
-                  createInventory: 'Instance, Holding, Item',
-                  checkinItems: false,
-                  specialLocationId: testData.location.id,
-                  specialMaterialTypeId: materialTypeId,
-                  listUnitPrice: 10,
-                  fundDistribution: [
-                    { code: testData.fund.code, fundId: testData.fund.id, value: 100 },
-                  ],
-                });
-
-                testData.orderLines.push(orderLine);
-                OrderLines.createOrderLineViaApi(orderLine);
+            [...Array(orderLinesCount).keys()].forEach(() => {
+              const orderLine = BasicOrderLine.getDefaultOrderLine({
+                acquisitionMethod,
+                purchaseOrderId: testData.order.id,
+                createInventory: 'Instance, Holding, Item',
+                checkinItems: false,
+                specialLocationId: testData.location.id,
+                specialMaterialTypeId: materialTypeId,
+                listUnitPrice: 10,
+                fundDistribution: [
+                  { code: testData.fund.code, fundId: testData.fund.id, value: 100 },
+                ],
               });
+
+              testData.orderLines.push(orderLine);
+              OrderLines.createOrderLineViaApi(orderLine);
             });
           });
-
-          Orders.updateOrderViaApi({ ...testData.order, workflowStatus: 'Open' });
         });
+
+        Orders.updateOrderViaApi({ ...testData.order, workflowStatus: 'Open' });
       });
     });
 
@@ -92,20 +91,19 @@ describe('Orders', () => {
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken().then(() => {
-      OrderLinesLimit.setPOLLimit(1);
-      Orders.deleteOrderViaApi(testData.order.id);
-      Organizations.deleteOrganizationViaApi(testData.organization.id);
-      InventoryHoldings.deleteHoldingRecordByLocationIdViaApi(testData.location.id);
-      Locations.deleteViaApi(testData.location);
-      ServicePoints.deleteViaApi(testData.servicePoint.id);
-      Users.deleteViaApi(testData.user.userId);
-    });
+    cy.getAdminToken();
+    OrderLinesLimit.setPOLLimit(1);
+    Orders.deleteOrderViaApi(testData.order.id);
+    Organizations.deleteOrganizationViaApi(testData.organization.id);
+    InventoryHoldings.deleteHoldingRecordByLocationIdViaApi(testData.location.id);
+    Locations.deleteViaApi(testData.location);
+    ServicePoints.deleteViaApi(testData.servicePoint.id);
+    Users.deleteViaApi(testData.user.userId);
   });
 
   it(
     'C367963: Linked items status is updated to "Order closed" when cancelling one PO line in the order with multiple PO lines (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'nonParallel'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       // Click on the record with Order name from precondition
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -135,6 +133,9 @@ describe('Orders', () => {
 
       // Go to "Orders" app, Open Order line #1
       cy.visit(TopMenu.orderLinesPath);
+      Orders.searchByParameter('PO line number', testData.order.poNumber);
+      cy.wait(5000);
+      OrderLines.resetFilters();
       OrderLines.selectOrderLineByPolNumber(`${testData.order.poNumber}-1`);
 
       // Click "Current encumbrance" link for **"Fund"** in "Fund distribution" accordion.

@@ -81,6 +81,7 @@ describe('Title level Request', () => {
           name: getTestEntityValue('loanType'),
         }).then((loanType) => {
           instanceData.loanTypeId = loanType.id;
+          testData.loanTypeId = loanType.id;
         });
         cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
           instanceData.materialTypeId = materialTypes.id;

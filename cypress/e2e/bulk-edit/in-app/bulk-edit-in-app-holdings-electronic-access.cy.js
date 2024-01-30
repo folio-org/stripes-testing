@@ -2,6 +2,7 @@ import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -69,7 +70,7 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.searchHoldingsByHRID(holdingsHRID);
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.edit();
-        HoldingsRecordView.addElectronicAccess(newRelationshipName);
+        HoldingsRecordEdit.addElectronicAccess(newRelationshipName);
 
         cy.visit(SettingsMenu.urlRelationshipPath);
         UrlRelationship.deleteUrlRelationship(newRelationshipName);

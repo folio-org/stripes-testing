@@ -27,10 +27,6 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
       'Chin, Staceyann, 1972-',
       'Lee, Stan, 1922-2018',
     ],
-    searchInstanceQueries: [
-      'The Journal of ecclesiastical history.',
-      'Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.',
-    ],
   };
 
   const marcFiles = [
@@ -133,18 +129,6 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
     ]).then((createdUserProperties) => {
       userData = createdUserProperties;
 
-      testData.searchInstanceQueries.forEach((query) => {
-        InventoryInstances.getInstancesViaApi({
-          limit: 100,
-          query: `title="${query}"`,
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
-      });
       testData.searchAuthorityQueries.forEach((query) => {
         MarcAuthorities.getMarcAuthoritiesViaApi({
           limit: 100,
@@ -159,8 +143,8 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
       });
 
       cy.loginAsAdmin().then(() => {
-        cy.visit(TopMenu.dataImportPath);
         marcFiles.forEach((marcFile) => {
+          cy.visit(TopMenu.dataImportPath);
           DataImport.verifyUploadState();
           DataImport.uploadFile(marcFile.marc, marcFile.fileName);
           JobProfiles.waitLoadingList();
@@ -176,7 +160,6 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
               authorityIDs.push(link.split('/')[5]);
             }
           });
-          JobProfiles.closeJobProfile(marcFile.fileName);
         });
       });
       cy.visit(TopMenu.inventoryPath).then(() => {

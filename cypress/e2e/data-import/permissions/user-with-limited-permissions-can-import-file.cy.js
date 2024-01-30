@@ -152,8 +152,8 @@ describe('data-import', () => {
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-
         cy.logout();
+
         cy.login(secondUser.username, secondUser.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,
@@ -181,7 +181,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameMarcFile);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(nameMarcFile, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFile);
         [
           FileDetails.columnNameInResultList.srsMarc,

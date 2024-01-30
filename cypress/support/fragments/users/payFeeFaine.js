@@ -37,7 +37,7 @@ export default {
       .find(Button({ id: matching('clickable-confirmation-[0-9]+-cancel') }))
       .click(),
   ),
-  checkRestOfPay: (rest) => cy.expect(rootModal.find(HTML(including(`Remaining amount:\n${rest.toFixed(2)}`))).exists()),
+  checkRestOfPay: (rest) => cy.expect(rootModal.find(HTML(including(`Remaining amount:\n$${rest.toFixed(2)}`))).exists()),
   checkConfirmModalClosed: () => cy.expect(HTML(including('Pay fee/fine')).absent()),
   payFeeFineViaApi: (apiBody, feeFineId) => cy.okapiRequest({
     method: 'POST',

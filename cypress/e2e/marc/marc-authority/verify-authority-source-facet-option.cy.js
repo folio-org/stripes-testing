@@ -9,7 +9,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       searchOption: 'Personal name',

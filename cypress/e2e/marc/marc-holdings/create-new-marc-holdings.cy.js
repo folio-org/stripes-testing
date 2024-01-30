@@ -16,7 +16,7 @@ import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Holdings', () => {
     const testData = {
       tagLDR: 'LDR',
@@ -104,7 +104,7 @@ describe('marc', () => {
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
               Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkStatusOfJobProfile('Completed');
+              Logs.checkJobStatus(marcFile.fileName, 'Completed');
               Logs.openFileDetails(marcFile.fileName);
               Logs.getCreatedItemsID().then((link) => {
                 recordIDs.push(link.split('/')[5]);

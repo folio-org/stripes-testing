@@ -104,6 +104,12 @@ export default {
       cy.expect(el.find(searchIcon));
     });
   },
+  checkPhysicalResourceDetailsFieldsConditions(fields = []) {
+    this.checkFieldsConditions({ fields, section: orderDetailsViews.pResourceDetails });
+  },
+  checkElectronicResourceDetailsFieldsConditions(fields = []) {
+    this.checkFieldsConditions({ fields, section: orderDetailsViews.eResourceDetails });
+  },
   collapseAll() {
     cy.do(Button('Collapse all').click());
     cy.wrap(['Order information', 'Order line information']).each((accordion) => {

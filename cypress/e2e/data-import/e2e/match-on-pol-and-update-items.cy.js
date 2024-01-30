@@ -273,6 +273,7 @@ describe('data-import', () => {
     });
 
     const openOrder = (number) => {
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', number);
       Orders.selectFromResultsList(number);
       Orders.openOrder();
@@ -313,7 +314,6 @@ describe('data-import', () => {
         ).then((firstOrder) => {
           firstOrderNumber = firstOrder.poNumber;
 
-          Orders.checkIsOrderCreated(firstOrderNumber);
           // open the first PO with POL
           openOrder(firstOrderNumber);
           Orders.selectStatusInSearch(ORDER_STATUSES.OPEN);

@@ -36,6 +36,7 @@ const lostItemsRequiringActualCost = '/users/lost-items';
 const listsPath = '/lists';
 const coursesPath = '/cr/courses';
 const consortiumManagerPath = '/consortia-settings';
+const settingsAuthorityFilesPath = '/settings/marc-authorities/manage-authority-files';
 
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
@@ -76,6 +77,7 @@ export default {
   listsPath,
   consortiumManagerPath,
   coursesPath,
+  settingsAuthorityFilesPath,
 
   openCheckInApp: () => {
     cy.do(Link({ href: including('/checkin') }).click());

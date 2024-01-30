@@ -179,7 +179,7 @@ describe('Check In - Actions', () => {
     );
     cy.deleteLoanType(testData.loanTypeId);
   });
-  it('C347898 Hold slip (vega)', { tags: ['criticalPath', 'vega', 'nonParallel'] }, () => {
+  it('C347898 Hold slip (vega)', { tags: ['criticalPath', 'vega'] }, () => {
     cy.visit(TopMenu.checkOutPath);
     Checkout.waitLoading();
     // without this waiter, the user will not be found

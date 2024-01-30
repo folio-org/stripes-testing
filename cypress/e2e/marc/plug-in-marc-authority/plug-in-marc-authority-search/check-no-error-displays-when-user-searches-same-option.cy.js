@@ -11,7 +11,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('plug-in MARC authority', () => {
     describe('plug-in MARC authority | Search', () => {
       const testData = {

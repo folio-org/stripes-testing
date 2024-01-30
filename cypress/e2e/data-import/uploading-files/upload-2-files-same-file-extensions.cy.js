@@ -37,8 +37,8 @@ describe('data-import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(filesNames[0]);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED, 0);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED, 1);
+        Logs.checkJobStatus(filesNames[0], JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(filesNames[1], JOB_STATUS_NAMES.COMPLETED);
       },
     );
   });

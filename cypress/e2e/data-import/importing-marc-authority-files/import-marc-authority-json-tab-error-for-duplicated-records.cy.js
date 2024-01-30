@@ -180,7 +180,10 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(testData.marcAuthorityUpdate.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.checkJobStatus(
+          testData.marcAuthorityUpdate.fileName,
+          JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS,
+        );
         Logs.openFileDetails(testData.marcAuthorityUpdate.fileName);
         // check updated record
         FileDetails.checkSrsRecordQuantityInSummaryTable(testData.quantityOfItems, 1);

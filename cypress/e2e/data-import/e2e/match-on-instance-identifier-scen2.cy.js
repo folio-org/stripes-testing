@@ -76,6 +76,14 @@ describe('data-import', () => {
     };
 
     beforeEach('create test data', () => {
+      cy.getAdminToken();
+      InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
+        (instances) => {
+          instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
+        },
+      );
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.dataImportDeleteLogs.gui,
@@ -93,13 +101,6 @@ describe('data-import', () => {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
-        InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
-          (instances) => {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          },
-        );
       });
     });
 

@@ -266,6 +266,9 @@ export default {
         date.getMonth() + 1,
       )}/${date.getFullYear()}`;
     }
+    if (type === 'M/D/YYYY') {
+      return moment.utc(date).format('M/D/YYYY');
+    }
     return `${date.getFullYear()}-${padWithZero(date.getMonth() + 1)}-${padWithZero(
       date.getDate(),
     )}`;

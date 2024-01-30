@@ -34,6 +34,7 @@ export default {
     cy.expect(Pane(header).exists());
   },
   clickAddNewBtn() {
+    cy.wait(500);
     cy.do(addButton.click());
   },
   clickSaveBtn({ rowIndex = 2 } = {}) {

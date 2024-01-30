@@ -121,6 +121,7 @@ describe('inventory', () => {
 
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.switchToHoldings();
+      InventorySearchAndFilter.byKeywords(instanceData.title);
       InventorySearchAndFilter.resetAll();
       InventorySearchAndFilter.filterByTag(tagName);
       InventorySearchAndFilter.checkRowsCount(1);

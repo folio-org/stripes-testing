@@ -79,9 +79,16 @@ export default {
         .choose(optionName),
     );
   },
-  selectAction(actionName, rowIndex) {
+  selectAction(actionName, rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose(actionName),
+    );
+  },
+  selectSecondAction(actionName, rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ dataTestID: 'select-actions-1' }))
+        .choose(actionName),
     );
   },
   isSelectActionAbsent(rowIndex = 0) {
@@ -375,6 +382,10 @@ export default {
     cy.wait(1000);
   },
 
+  verifyOptionAbsentInNewRow(option, rowIndex = 1) {
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(HTML(option)).absent());
+  },
+
   verifyNewBulkEditRow() {
     cy.expect([
       bulkEditFirstRow.find(plusBtn).absent(),
@@ -490,7 +501,7 @@ export default {
         .find(Select({ content: including('Set') }))
         .choose(`Set ${value}`),
     ]);
-    if (holdings) cy.expect(Checkbox('Apply to items records').has({ checked: value }));
+    if (holdings) cy.expect(Checkbox('Apply to all items records').has({ checked: value }));
   },
 
   verifyItemAdminstrativeNoteActions(rowIndex = 0) {
@@ -537,17 +548,31 @@ export default {
     ]);
     this.verifyPossibleActions(options);
   },
+
+  fillInFirstTextArea(oldItem, rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(TextArea({ dataTestID: 'input-textarea-0' }))
+        .fillIn(oldItem),
+    );
+  },
+
+  fillInSecondTextArea(newItem, rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(TextArea({ dataTestID: 'input-textarea-1' }))
+        .fillIn(newItem),
+    );
+  },
+
   noteReplaceWith(noteType, oldNote, newNote, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(noteType),
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Find'),
-      RepeatableFieldItem({ index: rowIndex }).find(TextArea()).fillIn(oldNote),
-      RepeatableFieldItem({ index: rowIndex })
-        .find(Select({ value: '' }))
-        .choose('Replace with'),
     ]);
-    // TODO: redesign with interactors
-    cy.xpath(`//*[@data-testid="row-${rowIndex}"]/div[5]//textarea`).type(newNote);
+    this.fillInFirstTextArea(oldNote, rowIndex);
+    this.selectSecondAction('Replace with', rowIndex);
+    this.fillInSecondTextArea(newNote, rowIndex);
   },
 
   noteRemove(noteType, note, rowIndex = 0) {
@@ -642,7 +667,7 @@ export default {
   },
 
   checkApplyToItemsRecordsCheckbox() {
-    cy.do(Checkbox('Apply to items records').click());
+    cy.do(Checkbox('Apply to all items records').click());
   },
 
   verifyNoMatchingOptionsForLocationFilter() {

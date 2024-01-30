@@ -55,30 +55,32 @@ describe('Invoices', () => {
       '[C360544/C360546] Data for test',
     );
 
-    testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
-    testData.orderLine = BasicOrderLine.getDefaultOrderLine({
-      listUnitPrice: 110,
-      fundDistribution: [{ code: testData.fund.code, fundId: testData.fund.id, value: 100 }],
-    });
+    cy.getAdminToken().then(() => {
+      testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
+      testData.orderLine = BasicOrderLine.getDefaultOrderLine({
+        listUnitPrice: 110,
+        fundDistribution: [{ code: testData.fund.code, fundId: testData.fund.id, value: 100 }],
+      });
 
-    Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then((order) => {
-      testData.order = order;
+      Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then((order) => {
+        testData.order = order;
 
-      OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${order.poNumber}*"` }).then(
-        (orderLines) => {
-          testData.orderLine = orderLines[0];
+        OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${order.poNumber}*"` }).then(
+          (orderLines) => {
+            testData.orderLine = orderLines[0];
 
-          Invoices.createInvoiceWithInvoiceLineViaApi({
-            vendorId: testData.organization.id,
-            fiscalYearId: testData.fiscalYear.id,
-            poLineId: testData.orderLine.id,
-            fundDistributions: testData.orderLine.fundDistribution,
-            accountingCode: testData.organization.erpCode,
-          }).then((invoice) => {
-            testData.invoice = invoice;
-          });
-        },
-      );
+            Invoices.createInvoiceWithInvoiceLineViaApi({
+              vendorId: testData.organization.id,
+              fiscalYearId: testData.fiscalYear.id,
+              poLineId: testData.orderLine.id,
+              fundDistributions: testData.orderLine.fundDistribution,
+              accountingCode: testData.organization.erpCode,
+            }).then((invoice) => {
+              testData.invoice = invoice;
+            });
+          },
+        );
+      });
     });
   });
 
@@ -94,7 +96,7 @@ describe('Invoices', () => {
   });
 
   it(
-    'C360544 Attaching file to approved invoice (thunderjet) (TaaS)',
+    'C360544: Attaching file to approved invoice (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       updateInvoiceStatusAndLogin(INVOICE_STATUSES.APPROVED);
@@ -120,7 +122,7 @@ describe('Invoices', () => {
   );
 
   it(
-    'C360546 Attaching files to paid invoice (thunderjet) (TaaS)',
+    'C360546: Attaching files to paid invoice (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       updateInvoiceStatusAndLogin(INVOICE_STATUSES.PAID);

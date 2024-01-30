@@ -90,7 +90,7 @@ export default {
 
   create(noticePolicyTemplate, autoSave = true) {
     // need to wait for validation to complete
-    cy.wait(300);
+    cy.wait(1000);
     cy.do(nameField.fillIn(noticePolicyTemplate.name));
     cy.expect(nameField.has({ value: noticePolicyTemplate.name }));
 
@@ -149,13 +149,13 @@ export default {
 
   addToken(noticePolicyTemplateToken) {
     cy.do(tokenButton.click());
-    cy.expect(Heading(titles.addToken).exists());
+    cy.expect([Modal({ header: 'Add token' }).exists(), Heading(titles.addToken).exists()]);
     cy.do(Checkbox(`${noticePolicyTemplateToken}`).click());
     // waiting for the html body input to be available for adding symbols
-    cy.wait(2000);
+    cy.wait(3000);
     cy.do(addTokenButton.click());
     cy.expect([
-      Heading(titles.addToken).absent(),
+      Modal({ header: 'Add token' }).absent(),
       bodyField.has({ value: `{{${noticePolicyTemplateToken}}}` }),
     ]);
     return cy.wrap(noticePolicyTemplateToken);

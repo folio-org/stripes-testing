@@ -71,7 +71,7 @@ describe('Invoices', () => {
       firstOrder.orderType = 'One-time';
       firstOrder.vendor = organization.name;
       cy.visit(TopMenu.ordersPath);
-      Orders.createOrderForRollover(firstOrder, true).then((secondOrderResponse) => {
+      Orders.createApprovedOrderForRollover(firstOrder, true).then((secondOrderResponse) => {
         firstOrder.id = secondOrderResponse.id;
         firstOrderNumber = secondOrderResponse.poNumber;
         Orders.checkCreatedOrder(firstOrder);
@@ -109,7 +109,7 @@ describe('Invoices', () => {
   });
 
   it(
-    'C15859 Pay an invoice with multiple "Expense classes" assigned to it (thunderjet)',
+    'C15859: Pay an invoice with multiple "Expense classes" assigned to it (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       cy.visit(TopMenu.invoicesPath);

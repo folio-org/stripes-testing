@@ -38,6 +38,7 @@ describe('data-import', () => {
       FileDetails.verifyLogDetailsPageIsOpened();
       FileDetails.openJsonScreen(title);
       JsonScreenView.verifyJsonScreenIsOpened();
+      JsonScreenView.openMarcSrsTab();
       JsonScreenView.getInstanceHrid().then((hrid) => {
         instanceHrid = hrid;
       });

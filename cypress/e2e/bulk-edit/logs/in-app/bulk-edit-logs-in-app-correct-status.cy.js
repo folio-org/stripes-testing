@@ -30,10 +30,6 @@ describe('Bulk Edit - Logs', () => {
       permissions.exportManagerAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
-      });
       InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
       ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
         .then((servicePoints) => {
@@ -48,6 +44,10 @@ describe('Bulk Edit - Logs', () => {
           });
           FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
         });
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
+      });
     });
   });
 

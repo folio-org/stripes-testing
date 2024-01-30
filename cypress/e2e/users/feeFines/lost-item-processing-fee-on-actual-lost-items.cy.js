@@ -202,7 +202,7 @@ describe('ui-users-loans: Loans', () => {
       LoanDetails.startDeclareLost();
       LoanDetails.finishDeclareLost(declareLostComments);
       LoanDetails.checkAction(0, 'Declared lost');
-      LoanDetails.checkKeyValue('Fees/fines incurred', '25.00');
+      LoanDetails.checkKeyValue('Fees/fines incurred', '$25.00');
     },
   );
 });

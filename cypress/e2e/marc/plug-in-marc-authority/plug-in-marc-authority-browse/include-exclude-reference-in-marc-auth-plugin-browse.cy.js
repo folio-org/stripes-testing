@@ -12,7 +12,7 @@ import { JOB_STATUS_NAMES, REFERENCES_FILTER_CHECKBOXES } from '../../../../supp
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('plug-in MARC authority', () => {
     describe('plug-in MARC authority | Search', () => {
       const testData = {

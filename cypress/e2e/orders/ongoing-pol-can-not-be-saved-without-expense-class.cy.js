@@ -83,7 +83,7 @@ describe('Orders', () => {
     'C402774 PO line for "Ongoing" order can not be saved when "Expense class" field is empty (thunderjet) (TaaS)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
-      Orders.createOrderForRollover(order).then((firstOrderResponse) => {
+      Orders.createApprovedOrderForRollover(order, true).then((firstOrderResponse) => {
         order.id = firstOrderResponse.id;
         OrderLines.addPOLine();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 15);

@@ -101,6 +101,7 @@ describe('orders: Receiving and Check-in', () => {
       Receiving.selectLinkFromResultsList();
       Receiving.selectPieceByIndexInExpected();
       Receiving.fillInCopyNumberInAddPieceModal(copyNumber);
+      Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePieceAdd();
       Receiving.selectInstanceInReceive(orderLineTitle);
       InventoryInstance.openHoldingsAccordion(location.name);

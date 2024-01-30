@@ -1,9 +1,15 @@
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('ui-organizations: View organization', () => {
-  const organization = { ...NewOrganization.defaultUiOrganizations };
+  const organization = {
+    name: `1_autotest_name_${getRandomPostfix()}`,
+    status: 'Active',
+    code: `autotest_code_${getRandomPostfix()}`,
+    isVendor: true,
+    erpCode: `ERP-${getRandomPostfix()}`,
+  };
 
   before(() => {
     cy.loginAsAdmin();

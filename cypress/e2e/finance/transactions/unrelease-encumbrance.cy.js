@@ -66,7 +66,7 @@ describe('Finance', () => {
       });
       defaultOrder.vendor = organization.name;
       cy.visit(TopMenu.ordersPath);
-      Orders.createOrderForRollover(defaultOrder).then((firstOrderResponse) => {
+      Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
         defaultOrder.id = firstOrderResponse.id;
         orderNumber = firstOrderResponse.poNumber;
         Orders.checkCreatedOrder(defaultOrder);
@@ -109,8 +109,8 @@ describe('Finance', () => {
     });
 
     it(
-      'C375105 Unrelease encumbrance when cancelling approved invoice related to Ongoing order (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'nonParallel'] },
+      'C375105: Unrelease encumbrance when cancelling approved invoice related to Ongoing order (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         FinanceHelp.searchByName(defaultFund.name);
         Funds.selectFund(defaultFund.name);

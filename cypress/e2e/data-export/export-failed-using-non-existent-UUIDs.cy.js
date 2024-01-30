@@ -47,6 +47,7 @@ describe('data-export', () => {
     });
 
     after(() => {
+      cy.getAdminToken();
       FileManager.deleteFileFromDownloadsByMask('*.csv');
       FileManager.deleteFile(`cypress/fixtures/${downloadedFile}`);
       cy.getAdminToken().then(() => {

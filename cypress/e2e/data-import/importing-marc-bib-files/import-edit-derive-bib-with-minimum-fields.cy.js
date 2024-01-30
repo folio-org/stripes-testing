@@ -61,7 +61,7 @@ describe('data-import', () => {
         JobProfiles.search(testData.marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(testData.marcFile.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(testData.marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(testData.marcFile.fileName);
         Logs.getCreatedItemsID().then((link) => {
           createdRecordIDs.push(link.split('/')[5]);

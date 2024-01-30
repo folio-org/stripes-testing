@@ -15,7 +15,7 @@ describe('inventory', () => {
     const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
     const itemData = {
       barcode: generateItemBarcode(),
-      instanceTitle: `Instance ${getRandomPostfix()}`,
+      instanceTitle: `C715 Instance${getRandomPostfix()}`,
     };
     let defaultLocation;
 

@@ -43,6 +43,7 @@ describe('Users: Copy Manual charges', () => {
       // add manual charges to first owner
       ManualCharges.selectOwner(owners[0]);
       ManualCharges.createViaUi(manualCharge);
+      manualCharge.amount = '$10.00';
       ManualCharges.checkResultsTableContent([manualCharge]);
 
       // validate copy dialog for second owner

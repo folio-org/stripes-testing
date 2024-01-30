@@ -62,7 +62,7 @@ describe('inventory', () => {
         InventoryNewHoldings.saveAndClose();
         InventoryInstance.checkCalloutMessage(including(testData.calloutMessage));
 
-        InventoryInstance.openHoldingView();
+        InventoryInstance.openHoldings(['']);
         HoldingsRecordView.checkSource('FOLIO');
       },
     );
