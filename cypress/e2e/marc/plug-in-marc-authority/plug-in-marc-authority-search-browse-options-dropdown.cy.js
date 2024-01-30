@@ -14,70 +14,72 @@ import {
   JOB_STATUS_NAMES,
 } from '../../../support/constants';
 
-describe('plug-in MARC authority', () => {
-  const user = {};
-  const marcFile = {
-    marc: 'oneMarcBib.mrc',
-    fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-    jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-    numOfRecords: 1,
-  };
-  let createdAuthorityID;
+describe('MARC', () => {
+  describe('plug-in MARC authority', () => {
+    const user = {};
+    const marcFile = {
+      marc: 'oneMarcBib.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      numOfRecords: 1,
+    };
+    let createdAuthorityID;
 
-  before('Creating user and test data', () => {
-    cy.createTempUser([
-      Permissions.inventoryAll.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-      Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-    ])
-      .then((createdUserProperties) => {
-        user.userProperties = createdUserProperties;
-      })
-      .then(() => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      })
-      .then(() => {
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(marcFile.jobProfileToRun);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(marcFile.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFile.fileName);
-        Logs.getCreatedItemsID().then((link) => {
-          createdAuthorityID = link.split('/')[5];
+    before('Creating user and test data', () => {
+      cy.createTempUser([
+        Permissions.inventoryAll.gui,
+        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+      ])
+        .then((createdUserProperties) => {
+          user.userProperties = createdUserProperties;
+        })
+        .then(() => {
+          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+        })
+        .then(() => {
+          DataImport.verifyUploadState();
+          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+          JobProfiles.waitLoadingList();
+          JobProfiles.search(marcFile.jobProfileToRun);
+          JobProfiles.runImportFile();
+          Logs.waitFileIsImported(marcFile.fileName);
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.openFileDetails(marcFile.fileName);
+          Logs.getCreatedItemsID().then((link) => {
+            createdAuthorityID = link.split('/')[5];
+          });
+        })
+        .then(() => {
+          cy.login(user.userProperties.username, user.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          InventoryInstances.searchByTitle(createdAuthorityID);
+          InventoryInstances.selectInstance();
+          InventoryInstance.editMarcBibliographicRecord();
+          InventoryInstance.verifyAndClickLinkIcon('700');
+          MarcAuthorities.switchToSearch();
+          MarcAuthorities.selectSearchOptionInDropdown(MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD);
         });
-      })
-      .then(() => {
-        cy.login(user.userProperties.username, user.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-        InventoryInstances.searchByTitle(createdAuthorityID);
-        InventoryInstances.selectInstance();
-        InventoryInstance.editMarcBibliographicRecord();
-        InventoryInstance.verifyAndClickLinkIcon('700');
-        MarcAuthorities.switchToSearch();
-        MarcAuthorities.selectSearchOptionInDropdown(MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD);
-      });
-  });
+    });
 
-  after('Deleting created user and test data', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(user.userProperties.userId);
-    InventoryInstance.deleteInstanceViaApi(createdAuthorityID);
-  });
+    after('Deleting created user and test data', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userProperties.userId);
+      InventoryInstance.deleteInstanceViaApi(createdAuthorityID);
+    });
 
-  it(
-    'C422043 Search / Browse options dropdowns in "Select MARC authority" plugin modal (spitfire)',
-    { tags: ['extendedPath', 'spitfire'] },
-    () => {
-      MarcAuthorities.checkSearchOptionsInDropdownInOrder();
-      MarcAuthorities.switchToBrowse();
-      MarcAuthorities.checkSelectOptionFieldContent(MARC_AUTHORITY_BROWSE_OPTIONS.PERSONAL_NAME);
-      MarcAuthorities.checkBrowseOptionsInDropdownInOrder();
-    },
-  );
+    it(
+      'C422043 Search / Browse options dropdowns in "Select MARC authority" plugin modal (spitfire)',
+      { tags: ['extendedPath', 'spitfire'] },
+      () => {
+        MarcAuthorities.checkSearchOptionsInDropdownInOrder();
+        MarcAuthorities.switchToBrowse();
+        MarcAuthorities.checkSelectOptionFieldContent(MARC_AUTHORITY_BROWSE_OPTIONS.PERSONAL_NAME);
+        MarcAuthorities.checkBrowseOptionsInDropdownInOrder();
+      },
+    );
+  });
 });

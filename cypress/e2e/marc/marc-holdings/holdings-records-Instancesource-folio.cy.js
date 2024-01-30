@@ -5,7 +5,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
 import TopMenu from '../../../support/fragments/topMenu';
 
-describe('marc', { retries: 2 }, () => {
+describe('MARC', { retries: 2 }, () => {
   describe('MARC Holdings', () => {
     beforeEach(() => {
       cy.loginAsAdmin();

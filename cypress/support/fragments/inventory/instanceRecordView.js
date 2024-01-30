@@ -25,11 +25,10 @@ const sourceKeyValue = KeyValue('Source');
 const instanceStatusTermKeyValue = KeyValue('Instance status term');
 const instanceHridKeyValue = KeyValue('Instance HRID');
 const actionsButton = Button('Actions');
-const viewSourceButton = Button('View source');
+const viewSourceButton = Button({ id: 'clickable-view-source' });
 const instanceAdministrativeNote = MultiColumnList({ id: 'administrative-note-list' });
 const instanceNote = MultiColumnList({ id: 'list-instance-notes-0' });
 const electronicAccessAccordion = Accordion('Electronic access');
-const instanceDetailsPane = Pane({ id: 'pane-instancedetails' });
 const classificationAccordion = Accordion('Classification');
 const listClassifications = MultiColumnList({ id: 'list-classifications' });
 const descriptiveDataAccordion = Accordion('Descriptive data');
@@ -127,7 +126,7 @@ const verifyNatureOfContent = (value) => {
 };
 
 const verifyInstanceRecordViewOpened = () => {
-  cy.expect(instanceDetailsPane.exists());
+  cy.expect(rootSection.exists());
 };
 
 const verifyElectronicAccess = (uriValue, linkText = 'No value set-', rowNumber = 0) => {
@@ -211,12 +210,12 @@ export default {
     cy.expect(Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).exists());
   },
   verifyIsInstanceOpened: (title) => {
-    cy.expect(instanceDetailsPane.exists());
+    cy.expect(rootSection.exists());
     cy.expect(Pane({ titleLabel: including(title) }).exists());
   },
   verifyInstancePaneExists: () => {
     cy.wait(1500);
-    cy.expect(instanceDetailsPane.exists());
+    cy.expect(rootSection.exists());
   },
   verifyCalloutMessage: (message) => {
     cy.expect(

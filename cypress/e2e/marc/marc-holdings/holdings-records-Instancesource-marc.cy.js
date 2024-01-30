@@ -8,7 +8,7 @@ import QuickmarcEditor from '../../../support/fragments/quickMarcEditor';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
 
-describe('marc', { retries: 2 }, () => {
+describe('MARC', { retries: 2 }, () => {
   describe('MARC Holdings', () => {
     const OCLCAuthentication = '100481406/PAOLF';
 
