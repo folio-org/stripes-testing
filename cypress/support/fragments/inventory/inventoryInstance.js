@@ -1389,6 +1389,14 @@ export default {
     );
   },
 
+  verifySharedIconAbsent(row = 0) {
+    cy.expect(
+      paneResultsSection
+        .find(MultiColumnListCell({ row, innerHTML: including('sharedIcon') }))
+        .absent(),
+    );
+  },
+
   verifyLastUpdatedSource: (userFirsttName, userLastName) => {
     cy.do(Accordion('Administrative data').click());
     cy.get('div[data-test-updated-by="true"]')
