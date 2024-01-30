@@ -37,7 +37,7 @@ describe('Calendar', () => {
 
     it(
       'C360952 Delete -> Purge calendars that are not assigned to any service points (bama)',
-      { tags: ['smoke', 'bama'] },
+      { tags: ['smokeBama', 'bama'] },
       () => {
         PaneActions.allCalendarsPane.openAllCalendarsPane();
         PaneActions.allCalendarsPane.checkCalendarExists(testCalendar.name);

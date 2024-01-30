@@ -14,7 +14,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       createdRecordIDs: [],

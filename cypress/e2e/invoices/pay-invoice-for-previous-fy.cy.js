@@ -125,6 +125,7 @@ describe('Invoices', () => {
   });
 
   after('Disable "Approve and pay in one click" option', () => {
+    cy.getAdminToken();
     Approvals.setApprovePayValue(false);
   });
 
@@ -160,8 +161,10 @@ describe('Invoices', () => {
     });
 
     afterEach('Delete test data', () => {
-      Organizations.deleteOrganizationViaApi(testData.organization.id);
-      Users.deleteViaApi(testData.user.userId);
+      cy.getAdminToken().then(() => {
+        Organizations.deleteOrganizationViaApi(testData.organization.id);
+        Users.deleteViaApi(testData.user.userId);
+      });
     });
 
     it(

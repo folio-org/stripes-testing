@@ -7,7 +7,7 @@ import Users from '../../../../support/fragments/users/users';
 import { randomizeArray } from '../../../../support/utils/arrays';
 import getRandomPostfix, { replaceByIndex } from '../../../../support/utils/stringTools';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {

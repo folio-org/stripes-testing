@@ -117,6 +117,7 @@ describe('data-import', () => {
         FileDetails.verifyLogDetailsPageIsOpened();
         FileDetails.openJsonScreen(instanceTitle);
         JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.openMarcSrsTab();
         JsonScreenView.getInstanceHrid().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
           instanceHrids.push(instanceHrid);
@@ -239,6 +240,7 @@ describe('data-import', () => {
         Logs.openFileDetails(fileNameForUpdate);
         FileDetails.openJsonScreen(instanceTitle);
         JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.openMarcSrsTab();
         JsonScreenView.getInstanceHrid().then((instanceHrid) => {
           const hrid = instanceHrid;
 

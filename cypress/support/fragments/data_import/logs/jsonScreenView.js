@@ -34,12 +34,16 @@ export default {
       });
   },
 
+  openMarcSrsTab: () => {
+    cy.do(Button(including('SRS MARC')).click());
+  },
+
   openInstanceTab: () => {
     cy.do(Button(including('Instance')).click());
   },
 
   openHoldingsTab: () => {
-    cy.get('div[class^="buttonGroup-"]').find('[data-test-logs-filter-option="2"]').click();
+    cy.get('div[class^="buttonGroup-"]').find('[data-test-logs-filter-option="3"]').click();
   },
 
   openItemTab: () => {
@@ -47,7 +51,7 @@ export default {
   },
 
   openOrderTab: () => {
-    cy.get('div[class^="buttonGroup-"]').find('button[data-test-logs-filter-option="5"]').click();
+    cy.get('div[class^="buttonGroup-"]').find('button[data-test-logs-filter-option="6"]').click();
   },
 
   verifyContentInTab: (value) => {

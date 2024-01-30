@@ -7,7 +7,7 @@ import InventoryNewHoldings from '../../../support/fragments/inventory/inventory
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Holdings', () => {
     beforeEach(() => {
       cy.loginAsAdmin();

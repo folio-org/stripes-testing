@@ -24,7 +24,7 @@ const testData = {
 
 let instanceId;
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Holdings', () => {
     before('Create test data', () => {
       cy.createTempUser([

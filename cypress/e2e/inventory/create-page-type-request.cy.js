@@ -70,9 +70,6 @@ describe('ui-inventory: Create page type request', () => {
             cy.intercept('GET', '/inventory/items?').as('getItems');
             cy.intercept('GET', '/holdings-types?*').as('getHoldinsgTypes');
             cy.intercept('GET', '/instance-relationship-types?*').as('getInstanceRelTypes');
-          })
-          .then(() => {
-            cy.login(user.username, user.password);
           });
       })
       .then(() => {
