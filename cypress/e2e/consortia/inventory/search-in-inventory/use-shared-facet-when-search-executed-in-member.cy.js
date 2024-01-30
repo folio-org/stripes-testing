@@ -82,7 +82,7 @@ describe('Inventory', () => {
           cy.loginAsAdmin().then(() => {
             marcFiles.forEach((marcFile) => {
               cy.visit(TopMenu.dataImportPath);
-              if (marcFile.tenant == 'College') {
+              if (marcFile.tenant === 'College') {
                 ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
                 DataImport.waitLoading();
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
