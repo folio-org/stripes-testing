@@ -66,7 +66,7 @@ describe('data-import', () => {
           JobProfiles.search('Default - Create SRS MARC Authority');
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(nameMarcFileForCreate);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.checkJobStatus(nameMarcFileForCreate, JOB_STATUS_NAMES.COMPLETED);
         }
       });
     });
