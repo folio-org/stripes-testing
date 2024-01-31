@@ -48,7 +48,7 @@ describe('agreements', () => {
 
     it(
       'C3460 Filter agreements by library staff member assigned (erm) (TaaS)',
-      { tags: ['extendedPath', 'erm'] },
+      { tags: ['extendedPathErm', 'erm'] },
       () => {
         SearchAndFilterAgreements.openInternalContactsFilter();
         SearchAndFilterAgreements.clickSelectInternalContactButton();
