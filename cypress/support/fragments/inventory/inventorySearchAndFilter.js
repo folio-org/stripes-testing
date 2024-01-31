@@ -488,7 +488,11 @@ export default {
     cy.expect(Pane({ id: 'browse-inventory-results-pane' }).find(MultiColumnListHeader()).exists());
   },
 
-  verifySearchResult: (cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).exists()),
+  verifySearchResult: (cellContent, isFound = true) => {
+    if (isFound) cy.expect(MultiColumnListCell({ content: cellContent }).exists());
+    else cy.expect(MultiColumnListCell({ content: cellContent }).absent());
+  },
+
   verifyContentNotExistInSearchResult: (cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).absent()),
 
   getInstancesByIdentifierViaApi(identifier, limit = 100) {
