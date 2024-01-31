@@ -394,7 +394,10 @@ export default {
   },
 
   verifyDefaultFilterState() {
-    cy.expect([fileButton.has({ disabled: true }), HTML('Select record identifier').exists()]);
+    cy.expect([
+      fileButton.has({ disabled: true }),
+      HTML('Select a record type and then a record identifier.').exists(),
+    ]);
     this.verifyBulkEditPaneItems();
   },
 
