@@ -43,14 +43,14 @@ describe('bulk-edit', () => {
       'C353651 - "New bulk edit" button with invalid data (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
         BulkEditSearchPane.uploadFile(invalidIdentifiersFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyErrorLabel(invalidIdentifiersFileName, 0, 11);
         BulkEditSearchPane.actionsIsShown();
         BulkEditActions.verifyNoNewBulkEditButton();
 
-        BulkEditSearchPane.verifyDragNDropItemUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
         BulkEditSearchPane.uploadFile(invalidIdentifiersFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyErrorLabel(invalidIdentifiersFileName, 0, 11);

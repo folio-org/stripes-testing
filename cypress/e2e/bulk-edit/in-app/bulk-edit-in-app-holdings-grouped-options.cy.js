@@ -52,7 +52,7 @@ describe('bulk-edit', () => {
       'C415368 Verify "Select option" dropdown includes grouped options for Holdings (firebird)',
       { tags: ['smoke', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
 

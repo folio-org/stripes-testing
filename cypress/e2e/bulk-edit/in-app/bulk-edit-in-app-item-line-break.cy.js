@@ -81,7 +81,7 @@ describe('bulk-edit', () => {
       'C399086 Verify Previews for the number of Items records if the record has a field with line breaks (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifyDragNDropItemBarcodeArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
 

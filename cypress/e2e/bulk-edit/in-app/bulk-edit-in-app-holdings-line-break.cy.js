@@ -88,7 +88,7 @@ describe('bulk-edit', () => {
       'C399093 Verify Previews for the number of Holdings records if the records have fields with line breaks (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
         BulkEditSearchPane.waitFileUploading();
 
