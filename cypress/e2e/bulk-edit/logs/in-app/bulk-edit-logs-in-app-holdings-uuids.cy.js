@@ -66,7 +66,7 @@ describe('Bulk Edit - Logs', () => {
     'C375289 Verify generated Logs files for Holdings In app -- only valid Holdings UUIDs (firebird)',
     { tags: ['criticalPath', 'firebird'] },
     () => {
-      BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
+      BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
       BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
 

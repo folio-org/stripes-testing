@@ -36,9 +36,7 @@ describe('bulk-edit', () => {
       'C365136 Verify that page does not reload selecting  other Identifier type (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.checkUsersRadio();
-        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
-        BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
 
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.checkForUploading(userUUIDsFileName);

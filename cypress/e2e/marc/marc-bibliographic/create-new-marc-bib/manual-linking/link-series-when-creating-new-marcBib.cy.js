@@ -145,7 +145,7 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
             MarcAuthorities.checkSearchInput(
-              'keyword==testA estD testT or identifiers.value==123 or identifiers.value==971255',
+              'keyword exactPhrase testA estD testT or identifiers.value exactPhrase 123 or identifiers.value exactPhrase 971255',
             );
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthorities.checkRecordDetailPageMarkedValue(newFields[0].markedValue);

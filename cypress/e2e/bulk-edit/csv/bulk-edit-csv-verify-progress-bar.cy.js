@@ -38,13 +38,10 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C353529 Verify progress bar for uploading identifier files(firebird) (TaaS)',
+      'C353529 Verify progress bar for uploading identifier files (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.checkUsersRadio();
-        BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-
-        BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
 
         BulkEditSearchPane.checkForUploading(userBarcodesFileName);

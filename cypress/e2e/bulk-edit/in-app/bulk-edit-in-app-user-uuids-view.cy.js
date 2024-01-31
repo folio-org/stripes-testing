@@ -42,17 +42,11 @@ describe('bulk-edit', () => {
       { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyUsersUpdatePermission();
-        BulkEditSearchPane.verifyRecordIdentifierItems();
-        BulkEditSearchPane.verifyDragNDropUpdateUsersArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
 
-        BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-        BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'External IDs');
 
-        BulkEditSearchPane.selectRecordIdentifier('External IDs');
-        BulkEditSearchPane.verifyDragNDropExternalIDsArea();
-
-        BulkEditSearchPane.selectRecordIdentifier('Usernames');
-        BulkEditSearchPane.verifyDragNDropUsernamesArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'Usernames');
       },
     );
 
@@ -60,7 +54,7 @@ describe('bulk-edit', () => {
       'C359197 Verify that User can change the columns in the "Preview of record matched" (firebird)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(user.username);

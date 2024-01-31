@@ -43,7 +43,7 @@ describe('Bulk Edit - Logs', () => {
     'C375299 Verify generated Logs files for Holdings In app -- only invalid records (firebird)',
     { tags: ['smoke', 'firebird'] },
     () => {
-      BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
+      BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
       BulkEditSearchPane.uploadFile(invalidHoldingHRIDsFileName);
       BulkEditActions.openActions();
       BulkEditActions.downloadErrors();

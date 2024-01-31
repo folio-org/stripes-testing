@@ -59,9 +59,7 @@ describe('bulk-edit', () => {
       { tags: ['extendedPath', 'firebird'] },
       () => {
         // Navigate to the "Bulk edit" app => Select the "Inventory-holdings" radio button on  the "Record types" accordion => Select  "Holdings UUIDs" option from the "Record identifier" dropdon
-        BulkEditSearchPane.checkHoldingsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
-        BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
         // Upload a .csv file  with "Holdings UUIDs" by dragging it on the "Drag & drop" area=> Click "Actions" menu => Select the "Start bulk edit" element
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
