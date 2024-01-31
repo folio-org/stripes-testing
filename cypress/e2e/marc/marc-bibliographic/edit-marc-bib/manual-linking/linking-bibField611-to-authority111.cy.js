@@ -144,7 +144,7 @@ describe('MARC', () => {
             );
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthorities.closeAuthorityLinkingModal();
-            
+
             QuickMarcEditor.updateExistingField(
               testData.tag611,
               '$2 fast $0 http://id.worldcat.org/fast/fst01405122 $1 http://viaf.org/viaf/133636573/ $c San Pietro $t ValueT',
