@@ -26,7 +26,6 @@ describe('MARC', { retries: 2 }, () => {
         HoldingsRecordEdit.waitLoading();
         HoldingsRecordEdit.checkReadOnlyFields();
         HoldingsRecordEdit.closeWithoutSave();
-        InventoryInstance.openHoldingView();
         HoldingsRecordView.tryToDelete();
         HoldingsRecordView.duplicate();
         InventoryNewHoldings.checkSource();
