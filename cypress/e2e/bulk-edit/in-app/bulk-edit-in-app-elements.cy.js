@@ -74,7 +74,7 @@ describe('bulk-edit', () => {
       'C350941 Verify uploading file with identifiers -- In app approach (firebird)',
       { tags: ['smoke', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifyDragNDropItemBarcodeArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
         BulkEditSearchPane.uploadFile(validItemBarcodeFileName);
         BulkEditSearchPane.waitFileUploading();
 
@@ -105,7 +105,7 @@ describe('bulk-edit', () => {
       'C350943 Verify Record identifiers dropdown -- Inventory-Items app (firebird)',
       { tags: ['smoke', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifyItemIdentifiers();
+        BulkEditSearchPane.verifyRecordTypeIdentifiers('Items');
 
         [
           {
