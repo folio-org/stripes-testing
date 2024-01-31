@@ -170,9 +170,7 @@ export default {
   waitFileIsImported: (fileName) => {
     const newFileName = fileName.replace('.mrc', '');
 
-    // wait until uploaded file is displayed in the list
-    cy.wait(60000);
-    cy.expect(runningAccordion.find(HTML(including(newFileName))).absent(), getLongDelay());
+    cy.expect(runningAccordion.find(HTML(including(newFileName))).absent(), getLongDelay(120000));
     cy.expect(
       MultiColumnList({ id: 'job-logs-list' })
         .find(Button(including(newFileName)))

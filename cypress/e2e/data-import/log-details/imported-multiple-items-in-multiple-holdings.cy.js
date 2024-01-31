@@ -238,7 +238,7 @@ describe('data-import', () => {
         const quantityOfCreatedItems = 8;
         const quantityOfErrors = 5;
         const jsonHoldingsTestData = [
-          'Import Log for Record 1 (Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.)',
+          'Import Log for Record 01 (Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.)',
           'KU/CC/DI/M',
           'KU/CC/DI/A',
           'E',
@@ -246,7 +246,7 @@ describe('data-import', () => {
           '{"key":"permanentLocationId","value":"null"}',
         ];
         const jsonItemTestData = [
-          'Import Log for Record 1 (Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.)',
+          'Import Log for Record 01 (Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.)',
           "Mapped Item is invalid: [Field 'materialType.id' is a required field and can not be null]",
           'ERROR: invalid input syntax for type uuid: "arch" (22P02)',
         ];
