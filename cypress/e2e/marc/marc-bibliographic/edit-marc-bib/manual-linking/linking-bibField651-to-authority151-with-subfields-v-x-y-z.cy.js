@@ -46,7 +46,7 @@ describe('MARC', () => {
           '0',
           '$a C377034 Clear Creek (Tex.) $g Place in Texas',
           '$v TestV $x TestX $y TestY $z TestZ',
-          '$0 id.loc.gov/authorities/names/n79041362',
+          '$0 http://id.loc.gov/authorities/names/n79041362',
           '$3 papers',
         ];
 

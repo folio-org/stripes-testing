@@ -43,7 +43,7 @@ describe('MARC', () => {
           '7',
           '$a C377033 Speaking Oratory $b debating',
           '$v TestV $x TestX $y TestY $z TestZ',
-          '$0 id.loc.gov/authorities/subjects/sh85095299',
+          '$0 http://id.loc.gov/authorities/subjects/sh85095299',
           '$2 fast',
         ];
 

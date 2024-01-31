@@ -58,7 +58,7 @@ describe('MARC', () => {
           '7',
           '$a C380766 Drama',
           '',
-          '$0 id.loc.gov/authorities/genreForms/gf2014026297',
+          '$0 http://id.loc.gov/authorities/genreForms/gf2014026297',
           '$2 fast',
         ];
 
@@ -67,7 +67,7 @@ describe('MARC', () => {
           testData.tag655,
           '\\',
           '7',
-          '$a C380766 Drama $0 id.loc.gov/authorities/genreForms/gf2014026297 $2 fast',
+          '$a C380766 Drama $0 http://id.loc.gov/authorities/genreForms/gf2014026297 $2 fast',
         ];
 
         before('Creating user and data', () => {
@@ -125,7 +125,7 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
             MarcAuthorities.checkSearchInput(
-              'identifiers.value==(OCoLC)fst01710451 or identifiers.value==(OCoLC)fst01122346',
+              'identifiers.value exactPhrase (OCoLC)fst01710451 or identifiers.value exactPhrase (OCoLC)fst01122346',
             );
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthoritiesDelete.checkEmptySearchResults(
@@ -138,7 +138,7 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
-            MarcAuthorities.checkSearchInput('identifiers.value==(OCoLC)fst01710451');
+            MarcAuthorities.checkSearchInput('identifiers.value exactPhrase (OCoLC)fst01710451');
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthoritiesDelete.checkEmptySearchResults('identifiers.value==(OCoLC)fst01710451');
 

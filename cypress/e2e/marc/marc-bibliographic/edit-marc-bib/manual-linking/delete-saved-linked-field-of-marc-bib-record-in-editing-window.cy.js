@@ -22,7 +22,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       '\\',
       '$a C366573 Coates, Ta-Nehisi',
       '$e author.',
-      '$0 id.loc.gov/authorities/names/n2008001084',
+      '$0 http://id.loc.gov/authorities/names/n2008001084',
       '',
     ],
   };

@@ -151,7 +151,7 @@ describe('MARC', () => {
             '7',
             `$a ${testData.updated155FieldValue}`,
             '',
-            `$0 id.loc.gov/authorities/genreForms/${testData.updated010FieldValue}`,
+            `$0 http://id.loc.gov/authorities/genreForms/${testData.updated010FieldValue}`,
             '$2 fast',
           );
         },

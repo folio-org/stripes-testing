@@ -262,21 +262,21 @@ describe('data-import', () => {
           '700',
           '1',
           '\\',
-          '$a C385667 Chin, S-nn, $d 1972- $e letterer. $0 id.loc.gov/authorities/names/n2008052404123',
+          '$a C385667 Chin, S-nn, $d 1972- $e letterer. $0 http://id.loc.gov/authorities/names/n2008052404123',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
           76,
           '700',
           '1',
           '\\',
-          '$a C385667 Kirby, Steve, $e creator. $0 id.loc.gov/authorities/names/n77020008123',
+          '$a C385667 Kirby, Steve, $e creator. $0 http://id.loc.gov/authorities/names/n77020008123',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
           77,
           '700',
           '1',
           '\\',
-          '$a C385667 Lee, Stanley, $d 1922-2018 $e creator $0 id.loc.gov/authorities/names/n83169267123',
+          '$a C385667 Lee, Stanley, $d 1922-2018 $e creator $0 http://id.loc.gov/authorities/names/n83169267123',
         );
       },
     );

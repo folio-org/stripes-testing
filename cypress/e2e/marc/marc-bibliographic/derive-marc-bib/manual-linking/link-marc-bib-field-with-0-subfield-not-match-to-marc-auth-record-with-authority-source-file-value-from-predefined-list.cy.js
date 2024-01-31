@@ -51,7 +51,7 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
     '\\',
     '$a C365585 Kirby, Jack',
     '$e creator.',
-    '$0 id.loc.gov/authorities/names/n77020008',
+    '$0 http://id.loc.gov/authorities/names/n77020008',
     '',
   ];
 

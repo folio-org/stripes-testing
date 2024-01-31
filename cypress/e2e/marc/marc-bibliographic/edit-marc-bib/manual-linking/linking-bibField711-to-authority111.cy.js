@@ -27,7 +27,7 @@ describe('MARC', () => {
             '711',
             '2',
             '\\',
-            '$a C375082 Mostly Mozart Festival. $e Orchestra $t sonet $v version 1 $0 id.loc.gov/authorities/names/n81142344 $4 prf',
+            '$a C375082 Mostly Mozart Festival. $e Orchestra $t sonet $v version 1 $0 http://id.loc.gov/authorities/names/n81142344 $4 prf',
           ],
         };
         const marcFiles = [
@@ -60,7 +60,7 @@ describe('MARC', () => {
           '\\',
           '$a C375082 Mostly Mozart Festival. $e Orchestra $t sonet',
           '$v version 1',
-          '$0 id.loc.gov/authorities/names/n81142344',
+          '$0 http://id.loc.gov/authorities/names/n81142344',
           '$4 prf',
         ];
 

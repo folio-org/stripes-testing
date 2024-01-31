@@ -45,7 +45,7 @@ describe('MARC', () => {
             '0',
             '$a Chin, Staceyann, $d 1972-',
             '$x Childhood and youth.',
-            '$0 id.loc.gov/authorities/names/n2008052404',
+            '$0 http://id.loc.gov/authorities/names/n2008052404',
             '',
           ],
           colloutMessage: 'Field 600 and 650 has been linked to MARC authority record(s).',
@@ -59,7 +59,7 @@ describe('MARC', () => {
             '0',
             '$a Chin, Staceyann, $d 1972- $h Spoken word $t Crossfire.',
             '$x Childhood and youth.',
-            '$0 id.loc.gov/authorities/names/no2021056177',
+            '$0 http://id.loc.gov/authorities/names/no2021056177',
             '',
           ],
           [
@@ -69,7 +69,7 @@ describe('MARC', () => {
             '0',
             '$a Authors, Jamaican',
             '$y 21st century $v Biography.',
-            '$0 id.loc.gov/authorities/subjects/sh85009933',
+            '$0 http://id.loc.gov/authorities/subjects/sh85009933',
             '',
           ],
           [
@@ -79,7 +79,7 @@ describe('MARC', () => {
             '0',
             '$a Lesbian authors',
             '$z Jamaica $v Biography.',
-            '$0 id.loc.gov/authorities/subjects/sh99014708',
+            '$0 http://id.loc.gov/authorities/subjects/sh99014708',
             '',
           ],
           [
@@ -89,7 +89,7 @@ describe('MARC', () => {
             '0',
             '$a Lesbian activists',
             '$z Jamaica $v Biography.',
-            '$0 id.loc.gov/authorities/subjects/sh96007532',
+            '$0 http://id.loc.gov/authorities/subjects/sh96007532',
             '',
           ],
         ];

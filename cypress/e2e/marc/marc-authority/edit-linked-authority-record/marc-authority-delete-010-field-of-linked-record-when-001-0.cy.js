@@ -35,7 +35,7 @@ describe('MARC', () => {
           '0',
           '$a C374163 Clovio, Giulio, $d 1498-1578',
           '',
-          '$0 id.loc.gov/authorities/names/n83073672',
+          '$0 http://id.loc.gov/authorities/names/n83073672',
           '',
         ],
       };

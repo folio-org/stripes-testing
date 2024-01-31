@@ -28,7 +28,7 @@ describe('MARC', () => {
           '\\',
           '$a Erbil, H. Yıldırım',
           '',
-          '$0 id.loc.gov/authorities/names/n00000912',
+          '$0 http://id.loc.gov/authorities/names/n00000912',
           '',
         ],
         updated100Field: [
@@ -38,7 +38,7 @@ describe('MARC', () => {
           '\\',
           '$a Erbil, H. Yıldırım',
           '',
-          '$0 id.loc.gov/authorities/names/n00000911',
+          '$0 http://id.loc.gov/authorities/names/n00000911',
           '',
         ],
         saveCalloutMessage:

@@ -51,7 +51,7 @@ describe('MARC', () => {
           testData.tag610,
           '2',
           '0',
-          '$a C374706 Radio "Vaticana". $b Hrvatski program $v Congresses. $u test $0 id.loc.gov/authorities/names/n93094742',
+          '$a C374706 Radio "Vaticana". $b Hrvatski program $v Congresses. $u test $0 http://id.loc.gov/authorities/names/n93094742',
         ];
         const bib610LinkedFieldValues = [
           18,
@@ -60,7 +60,7 @@ describe('MARC', () => {
           '0',
           '$a C374706 Radio "Vaticana". $b Hrvatski program',
           '$v Congresses. $u test',
-          '$0 id.loc.gov/authorities/names/n93094742',
+          '$0 http://id.loc.gov/authorities/names/n93094742',
           '',
         ];
 

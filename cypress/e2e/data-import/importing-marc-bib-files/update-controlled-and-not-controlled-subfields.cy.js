@@ -246,7 +246,7 @@ describe('data-import', () => {
           '\\',
           '$a C375098 Chin, Staceyann, $d 1972-',
           '$e Producer $e Narrator $u test',
-          '$0 id.loc.gov/authorities/names/n2008052404',
+          '$0 http://id.loc.gov/authorities/names/n2008052404',
           '$4 prf.',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(

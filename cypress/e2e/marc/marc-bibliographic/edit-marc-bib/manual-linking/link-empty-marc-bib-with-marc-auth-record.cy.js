@@ -107,7 +107,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
         '\\',
         '$a C380755 Lee, Stan, $d 1922-2018',
         '',
-        '$0 id.loc.gov/authorities/names/n83169267',
+        '$0 http://id.loc.gov/authorities/names/n83169267',
         '',
       );
 

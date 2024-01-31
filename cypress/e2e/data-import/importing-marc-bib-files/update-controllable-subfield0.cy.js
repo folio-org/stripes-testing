@@ -262,7 +262,7 @@ describe('data-import', () => {
           '\\',
           '$a Chin, Staceyann C385665',
           '$e letterer.',
-          '$0 id.loc.gov/authorities/names/n2008052404',
+          '$0 http://id.loc.gov/authorities/names/n2008052404',
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -272,7 +272,7 @@ describe('data-import', () => {
           '\\',
           '$a Lee, Stan, $d 1922-2018',
           '$e creator',
-          '$0 id.loc.gov/authorities/names/n83169267',
+          '$0 http://id.loc.gov/authorities/names/n83169267',
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
@@ -280,7 +280,7 @@ describe('data-import', () => {
           '700',
           '1',
           '\\',
-          '$a Kirby, Steve, $e creator. $0 id.loc.gov/authorities/names/n77020008test',
+          '$a Kirby, Steve, $e creator. $0 http://id.loc.gov/authorities/names/n77020008test',
         );
 
         QuickMarcEditor.closeEditorPane();

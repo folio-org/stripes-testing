@@ -52,7 +52,7 @@ describe('MARC', () => {
           '0',
           '$a pass (read only) $f pass (read only) $g pass (read only) $h pass (read only) $k pass (read only) $l epass (read only) $m pass (read only) $n pass (read only) $o pass (read only) $p pass (read only) $r pass (read only) $s pass (read only)',
           '$d PASS (editable) $t test',
-          '$0 id.loc.gov/authorities/names/n80030866',
+          '$0 http://id.loc.gov/authorities/names/n80030866',
           '$1 pass (editable) $2 pass (editable) $6 pass (editable) $7 pass (editable) $8 pass(editable)',
         ];
         const bib110UnlinkedFieldValues = [
@@ -60,7 +60,7 @@ describe('MARC', () => {
           testData.tag240,
           '1',
           '0',
-          '$a pass (read only) $f pass (read only) $g pass (read only) $h pass (read only) $k pass (read only) $l epass (read only) $m pass (read only) $n pass (read only) $o pass (read only) $p pass (read only) $r pass (read only) $s pass (read only) $d PASS (editable) $t test $0 id.loc.gov/authorities/names/n80030866 $1 pass (editable) $2 pass (editable) $6 pass (editable) $7 pass (editable) $8 pass(editable)',
+          '$a pass (read only) $f pass (read only) $g pass (read only) $h pass (read only) $k pass (read only) $l epass (read only) $m pass (read only) $n pass (read only) $o pass (read only) $p pass (read only) $r pass (read only) $s pass (read only) $d PASS (editable) $t test $0 http://id.loc.gov/authorities/names/n80030866 $1 pass (editable) $2 pass (editable) $6 pass (editable) $7 pass (editable) $8 pass(editable)',
         ];
 
         const createdAuthorityIDs = [];

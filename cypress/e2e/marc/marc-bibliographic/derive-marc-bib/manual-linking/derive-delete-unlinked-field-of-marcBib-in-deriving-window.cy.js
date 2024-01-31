@@ -26,7 +26,7 @@ describe('MARC', () => {
             '\\',
             '$a C366579 Chin, Staceyann, $d 1972-',
             '$e Author $e Narrator',
-            '$0 id.loc.gov/authorities/names/n2008052404',
+            '$0 http://id.loc.gov/authorities/names/n2008052404',
             '$1 http://viaf.org/viaf/24074052',
           ],
           bib700AfterUnlinking: [
@@ -34,7 +34,7 @@ describe('MARC', () => {
             '100',
             '1',
             '\\',
-            '$a C366579 Chin, Staceyann, $d 1972- $e Author $e Narrator $0 id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052',
+            '$a C366579 Chin, Staceyann, $d 1972- $e Author $e Narrator $0 http://id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052',
           ],
           marcAuthIcon: 'Linked to MARC authority',
         };
