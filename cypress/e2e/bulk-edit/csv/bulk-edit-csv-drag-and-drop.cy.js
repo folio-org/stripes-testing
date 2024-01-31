@@ -68,14 +68,14 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyDefaultFilterState();
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
-        BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
         BulkEditSearchPane.selectRecordIdentifier('Select record identifier');
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
-        BulkEditSearchPane.verifyDragNDropExternalIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'External IDs');
         BulkEditSearchPane.selectRecordIdentifier('Select record identifier');
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
-        BulkEditSearchPane.verifyDragNDropUsernamesArea();
-        BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'Usernames');
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
       },

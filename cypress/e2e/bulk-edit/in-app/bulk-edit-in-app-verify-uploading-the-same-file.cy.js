@@ -60,9 +60,7 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.saveHoldingsUUIDs();
 
         TopMenuNavigation.navigateToApp('Bulk edit');
-        BulkEditSearchPane.checkHoldingsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
-        BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
 
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.checkForUploading(holdingUUIDsFileName);
@@ -72,9 +70,7 @@ describe('bulk-edit', () => {
         TopMenuNavigation.navigateToApp('Bulk edit');
         BulkEditSearchPane.verifyPanesBeforeImport();
 
-        BulkEditSearchPane.checkHoldingsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
-        BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
 
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.checkForUploading(holdingUUIDsFileName);

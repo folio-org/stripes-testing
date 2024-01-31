@@ -58,10 +58,7 @@ describe('bulk-edit', () => {
       { tags: ['extendedPath', 'firebird'] },
       () => {
         // Navigate to the "Bulk edit" app => Select the "Inventory-holdings" radio button on  the "Record types" accordion => Select  "Items barcode" option from the "Record identifier" dropdown
-        BulkEditSearchPane.checkHoldingsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Item barcodes');
-        BulkEditSearchPane.verifyDragNDropHoldingsItemBarcodesArea();
-        BulkEditSearchPane.isDragAndDropAreaDisabled(false);
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Item barcodes');
         // Upload a .csv file  with "Items barcode" by dragging it on the "Drag & drop" area=> Click "Actions" menu => Select the "Start bulk edit" element
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();

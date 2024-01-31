@@ -1,6 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  holdingsIdentifiers,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -70,31 +72,9 @@ describe('bulk-edit', () => {
       'C360089 Verify "Inventory - holdings" option on "Bulk edit" app (firebird)',
       { tags: ['smoke', 'firebird'] },
       () => {
-        [
-          {
-            identifier: 'Holdings UUIDs',
-            label: 'Select a file with holdings UUIDs',
-            pageText: 'Drag and drop or choose file with holdings UUIDs',
-          },
-          {
-            identifier: 'Holdings HRIDs',
-            label: 'Select a file with holdings HRIDs',
-            pageText: 'Drag and drop or choose file with holdings HRIDs',
-          },
-          {
-            identifier: 'Instance HRIDs',
-            label: 'Select a file with instance HRIDs',
-            pageText: 'Drag and drop or choose file with instance HRIDs',
-          },
-          {
-            identifier: 'Item barcodes',
-            label: 'Select a file with item barcode',
-            pageText: 'Drag and drop or choose file with item barcode',
-          },
-        ].forEach((checker) => {
-          BulkEditSearchPane.selectRecordIdentifier(checker.identifier);
-          BulkEditSearchPane.verifyInputLabel(checker.label);
-          BulkEditSearchPane.verifyInputLabel(checker.pageText);
+        BulkEditSearchPane.verifyRecordTypeIdentifiers('Holdings');
+        holdingsIdentifiers.forEach((identifier) => {
+          BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', identifier);
         });
       },
     );
