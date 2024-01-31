@@ -13,7 +13,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Holdings', () => {
     const testData = {
       jobProfileToRun: 'Default - Create Holdings and SRS MARC Holdings',

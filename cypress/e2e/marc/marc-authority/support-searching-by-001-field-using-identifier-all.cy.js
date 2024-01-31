@@ -46,7 +46,7 @@ const testData = {
   ],
 };
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     before('Create test data', () => {
       cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
@@ -94,6 +94,7 @@ describe('marc', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       testData.authorityIDs.forEach((id) => {
         MarcAuthority.deleteViaAPI(id);

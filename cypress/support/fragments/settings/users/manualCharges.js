@@ -7,6 +7,7 @@ import {
   Modal,
   Section,
   Option,
+  including,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import SettingsPane from '../settingsPane';
@@ -112,7 +113,7 @@ export default {
   checkManualCharge({ feeFineType, amount, chargeNoticeId = '', actionNoticeId = '' }) {
     cy.expect([
       MultiColumnListCell({ content: feeFineType }).exists(),
-      MultiColumnListCell({ content: amount }).exists(),
+      MultiColumnListCell({ content: including(amount) }).exists(),
       MultiColumnListCell({ content: chargeNoticeId }).exists(),
       MultiColumnListCell({ content: actionNoticeId }).exists(),
     ]);

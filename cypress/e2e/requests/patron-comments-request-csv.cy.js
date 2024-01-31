@@ -147,7 +147,7 @@ describe('Requests Export CSV File', () => {
 
   it(
     'C199705 Patron Comments are Displayed in Requests Export CSV File (vega)',
-    { tags: ['criticalPath', 'vega', 'nonParallel'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();
@@ -159,7 +159,7 @@ describe('Requests Export CSV File', () => {
 
   it(
     'C199708 Patron Comments are Displayed in the "Awaiting pickup for a request" Modal at Check In (vega)',
-    { tags: ['criticalPath', 'vega', 'nonParallel'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.visit(TopMenu.checkInPath);
       CheckInActions.checkInItemGui(itemData.barcode);

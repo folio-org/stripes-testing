@@ -4,12 +4,19 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Log details', () => {
     let user;
 
     before('create user and login', () => {
+      cy.getAdminToken();
+      for (let i = 0; i < 101; i++) {
+        const fileNameForCreate = `oneMarcBib.mrc${getRandomPostfix()}`;
+
+        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileNameForCreate);
+      }
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,

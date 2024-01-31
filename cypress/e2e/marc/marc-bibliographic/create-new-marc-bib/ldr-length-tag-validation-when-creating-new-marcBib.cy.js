@@ -6,7 +6,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {
@@ -58,7 +58,7 @@ describe('marc', () => {
       });
 
       it(
-        'C380715 LDR length, tag validation when when creating a new "MARC bib" record (spitfire)',
+        'C422118 LDR length, tag validation when when creating a new "MARC bib" record (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstance.newMarcBibRecord();

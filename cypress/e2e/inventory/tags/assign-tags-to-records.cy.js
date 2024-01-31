@@ -132,7 +132,6 @@ describe('inventory', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToHoldings();
-        InventorySearchAndFilter.resetAll();
         InventorySearchAndFilter.verifyTagIsAbsent(tagName);
       },
     );
@@ -155,6 +154,7 @@ describe('inventory', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToHoldings();
+        InventorySearchAndFilter.byKeywords(instanceData.title);
         InventoryInstance.openHoldingView();
         HoldingsRecordEdit.openTags();
         cy.wrap(tags).each((tag) => {
@@ -184,7 +184,6 @@ describe('inventory', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.resetAll();
         InventorySearchAndFilter.verifyTagIsAbsent(tagName);
       },
     );

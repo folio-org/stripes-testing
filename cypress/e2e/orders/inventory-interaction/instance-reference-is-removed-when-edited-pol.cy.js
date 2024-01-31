@@ -99,7 +99,7 @@ describe('Orders', () => {
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
-    cy.wait(4000);
+    cy.wait(6000);
     Orders.deleteOrderViaApi(firstOrder.id);
     Organizations.deleteOrganizationViaApi(organization.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);

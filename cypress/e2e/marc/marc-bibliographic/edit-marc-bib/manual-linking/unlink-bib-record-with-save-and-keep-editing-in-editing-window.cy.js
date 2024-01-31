@@ -99,7 +99,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(marcFile.fileName);
           Logs.getCreatedItemsID().then((link) => {
             createdRecordIDs.push(link.split('/')[5]);

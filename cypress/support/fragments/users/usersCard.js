@@ -512,9 +512,9 @@ export default {
 
   verifyOpenedFeeFines(count, totalAmount) {
     cy.expect(
-      feesFinesAccordion
-        .find(ListItem(including('open')))
-        .has({ text: including(`${count.toString()} open` && `Total: ${totalAmount.toString()}`) }),
+      feesFinesAccordion.find(ListItem(including('open'))).has({
+        text: including(`${count.toString()} open` && `Total: $${totalAmount.toString()}`),
+      }),
     );
   },
 

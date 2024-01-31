@@ -5,7 +5,7 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {

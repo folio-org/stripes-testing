@@ -9,7 +9,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       createdAuthorityIDs: [],
@@ -59,10 +59,10 @@ describe('marc', () => {
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
               Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkStatusOfJobProfile('Completed');
+              Logs.checkJobStatus(marcFile.fileName, 'Completed');
               Logs.openFileDetails(marcFile.fileName);
               Logs.getCreatedItemsID(0).then((link) => {
-                testData.createdAuthorityID = link.split('/')[5];
+                testData.createdAuthorityIDs = link.split('/')[5];
               });
             },
           );
@@ -78,7 +78,7 @@ describe('marc', () => {
     after('Deleting created user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
-      MarcAuthority.deleteViaAPI(testData.createdAuthorityID);
+      MarcAuthority.deleteViaAPI(testData.createdAuthorityIDs);
     });
 
     it(

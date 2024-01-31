@@ -78,10 +78,6 @@ describe('Create Item or Title level request', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
-        cy.loginAsAdmin({
-          path: SettingsMenu.circulationTitleLevelRequestsPath,
-          waiter: TitleLevelRequests.waitLoading,
-        });
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);
@@ -133,7 +129,7 @@ describe('Create Item or Title level request', () => {
       .then(() => {
         RequestPolicy.createViaApi(requestPolicyBody);
         CirculationRules.addRuleViaApi(
-          { t: testData.loanTypeId },
+          { t: instanceData.loanTypeId },
           { r: requestPolicyBody.id },
         ).then((newRule) => {
           testData.addedRule = newRule;
@@ -175,7 +171,7 @@ describe('Create Item or Title level request', () => {
         });
       })
       .then(() => {
-        TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+        TitleLevelRequests.enableTLRViaApi();
         cy.getInstance({
           limit: 1,
           expandAll: true,
@@ -225,7 +221,7 @@ describe('Create Item or Title level request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
+    TitleLevelRequests.disableTLRViaApi();
   });
   it(
     'C380490 Verify that user can create TLR: Recall request for instance with item statuses "Paged" and "Checked out" (vega) (Taas)',

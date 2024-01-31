@@ -12,7 +12,7 @@ describe('data-import', () => {
   describe('Uploading files', () => {
     let user = {};
     const filesNames = 'C2378_File1.mrc';
-    const fileNameForUpload = `autoTest${getRandomPostfix()}.mrc`;
+    const fileNameForUpload = `C358540 autoTest${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
     before('create test data', () => {
