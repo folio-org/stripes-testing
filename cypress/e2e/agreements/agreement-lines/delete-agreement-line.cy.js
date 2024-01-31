@@ -31,7 +31,7 @@ describe('agreements', () => {
       Agreements.deleteViaApi(agreementId);
     });
 
-    it('C405546 Delete Agreement Line (erm) (TaaS)', { tags: ['extendedPath', 'erm'] }, () => {
+    it('C405546 Delete Agreement Line (erm) (TaaS)', { tags: ['extendedPathErm', 'erm'] }, () => {
       AgreementViewDetails.openAgreementLineFilter();
       SearchAndFilterAgreementLines.verifyFilterOptions();
 

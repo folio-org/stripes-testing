@@ -36,7 +36,7 @@ describe('agreements', () => {
 
     it(
       'C343340 Add tags to an Agreement Line record (erm) (TaaS)',
-      { tags: ['extendedPath', 'erm'] },
+      { tags: ['extendedPathErm', 'erm'] },
       () => {
         AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
         AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(
