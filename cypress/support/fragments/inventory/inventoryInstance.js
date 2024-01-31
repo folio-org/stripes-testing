@@ -978,8 +978,10 @@ export default {
 
   checkAddedTag: (tagName, instanceTitle) => {
     cy.do(MultiColumnListCell(instanceTitle).click());
+    cy.wait(1500);
     cy.do(tagButton.click());
-    cy.expect(MultiSelect().exists(tagName));
+    cy.wait(1500);
+    cy.expect(MultiSelect({ ariaLabelledby: 'input-tag-label' }).exists(tagName));
   },
 
   deleteTag: (tagName) => {

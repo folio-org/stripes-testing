@@ -41,7 +41,7 @@ describe('agreements', () => {
 
     it(
       'C1309 Edit a note on an Agreement record (erm) (TaaS)',
-      { tags: ['extendedPath', 'erm'] },
+      { tags: ['extendedPathErm', 'erm'] },
       () => {
         const changedNote = {
           title: `newTilteNote ${randomFourDigitNumber()}`,

@@ -33,7 +33,7 @@ describe('agreements', () => {
 
     it(
       'C15829 Add agreement line with description only (erm) (TaaS)',
-      { tags: ['extendedPath', 'erm'] },
+      { tags: ['extendedPathErm', 'erm'] },
       () => {
         AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
         AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(
