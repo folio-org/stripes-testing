@@ -125,7 +125,7 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
             MarcAuthorities.checkSearchInput(
-              'identifiers.value==(OCoLC)fst01710451 or identifiers.value==(OCoLC)fst01122346',
+              'identifiers.value exactPhrase (OCoLC)fst01710451 or identifiers.value exactPhrase (OCoLC)fst01122346',
             );
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthoritiesDelete.checkEmptySearchResults(
@@ -138,7 +138,7 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
-            MarcAuthorities.checkSearchInput('identifiers.value==(OCoLC)fst01710451');
+            MarcAuthorities.checkSearchInput('identifiers.value exactPhrase (OCoLC)fst01710451');
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthoritiesDelete.checkEmptySearchResults('identifiers.value==(OCoLC)fst01710451');
 
