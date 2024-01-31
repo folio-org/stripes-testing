@@ -77,10 +77,7 @@ describe('bulk-edit', () => {
       'C353635 Verify that user can bulk edit  permanent and temporary location at once (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.checkItemsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-        // Upload a .csv file with items barcodes
-        BulkEditSearchPane.verifyDragNDropItemBarcodeArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.checkForUploading(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();

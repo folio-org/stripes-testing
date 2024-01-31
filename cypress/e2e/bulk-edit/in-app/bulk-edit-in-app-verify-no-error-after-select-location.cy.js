@@ -43,9 +43,7 @@ describe('bulk-edit', () => {
       'C359152 Verify that no error after "Select location" option selected in Bulk Edit appeared (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.checkItemsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-        BulkEditSearchPane.verifyDragNDropItemBarcodeArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
 
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();

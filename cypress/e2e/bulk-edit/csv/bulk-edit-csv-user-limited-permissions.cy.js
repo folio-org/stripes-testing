@@ -35,7 +35,7 @@ describe('bulk-edit', () => {
       'C359007 Verify populating User records in "Preview of records matched" using limited permissions (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.checkForUploading(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();

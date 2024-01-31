@@ -43,9 +43,7 @@ describe('bulk-edit', () => {
       'C396401 Verify reset state after clicking "Bulk edit" icon from the bulk edit In app form (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.checkUsersRadio();
-        BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-        BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(user.barcode);
@@ -56,9 +54,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyPanesBeforeImport();
         BulkEditSearchPane.verifyBulkEditPaneItems();
 
-        BulkEditSearchPane.checkUsersRadio();
-        BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-        BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(user.barcode);

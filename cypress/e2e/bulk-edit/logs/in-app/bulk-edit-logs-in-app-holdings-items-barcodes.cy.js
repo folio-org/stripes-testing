@@ -185,7 +185,7 @@ describe('Bulk Edit - Logs', () => {
     'C375300 Verify generated Logs files for Holdings In app -- only valid Item barcodes (firebird)',
     { tags: ['smoke', 'firebird'] },
     () => {
-      BulkEditSearchPane.verifyDragNDropHoldingsItemBarcodesArea();
+      BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Item barcodes');
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 

@@ -53,7 +53,7 @@ describe('Bulk Edit - Logs', () => {
     'C375214 Verify generated Logs files for Users CSV -- only valid (firebird)',
     { tags: ['smoke', 'firebird'] },
     () => {
-      BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
+      BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
 

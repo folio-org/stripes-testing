@@ -42,7 +42,7 @@ describe('agreements', () => {
 
     it(
       'C1347 View a note on an Agreement record (erm) (TaaS)',
-      { tags: ['extendedPath', 'erm'] },
+      { tags: ['extendedPathErm', 'erm'] },
       () => {
         AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
         AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(
