@@ -37,7 +37,7 @@ describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {
       accordion: 'Subject',
-      naturalId: '$0 id.loc.gov/authorities/names/n2008052404',
+      naturalId: '$0 http://id.loc.gov/authorities/names/n2008052404',
       deletedValue: 'C375108 Chin, Staceyann, 1972---Childhood and youth',
       searchOption: 'Keyword',
     };

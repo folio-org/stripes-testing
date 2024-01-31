@@ -59,7 +59,7 @@ describe('MARC', () => {
           '7',
           '$c Basilica di San Pietro in Vaticano) $a C380764 Vatican Council $d 1962-1965 : $n (2nd :',
           '',
-          '$0 id.loc.gov/authorities/names/n79084169',
+          '$0 http://id.loc.gov/authorities/names/n79084169',
           '$2 fast $1 http://viaf.org/viaf/133636573/',
         ];
 
@@ -68,7 +68,7 @@ describe('MARC', () => {
           testData.tag611,
           '2',
           '7',
-          '$c Basilica di San Pietro in Vaticano) $a C380764 Vatican Council $d 1962-1965 : $n (2nd : $0 id.loc.gov/authorities/names/n79084169 $2 fast $1 http://viaf.org/viaf/133636573/',
+          '$c Basilica di San Pietro in Vaticano) $a C380764 Vatican Council $d 1962-1965 : $n (2nd : $0 http://id.loc.gov/authorities/names/n79084169 $2 fast $1 http://viaf.org/viaf/133636573/',
         ];
 
         before('Creating user and data', () => {

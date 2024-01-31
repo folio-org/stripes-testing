@@ -186,16 +186,16 @@ describe('MARC', () => {
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t650\t  0\t$a Normal authors $z Jamaica $v Biography. $0 id.loc.gov/authorities/subjects/sh99014708C388552 $9`,
+              `${marcAuthIcon}\n\t650\t  0\t$a Normal authors $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh99014708C388552 $9`,
             );
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t650\t  0\t$a Normal activists $z Jamaica $v Biography. $0 id.loc.gov/authorities/subjects/sh96007532C388552 $9`,
+              `${marcAuthIcon}\n\t650\t  0\t$a Normal activists $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh96007532C388552 $9`,
             );
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t655\t  2\t$a AutobiographyC388552 $0 id.loc.gov/authorities/subjects/sh85010050 $9`,
+              `${marcAuthIcon}\n\t655\t  2\t$a AutobiographyC388552 $0 http://id.loc.gov/authorities/subjects/sh85010050 $9`,
             );
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t655\t  7\t$a BiographiesC388552 $0 id.loc.gov/authorities/genreForms/gf2014026049 $9`,
+              `${marcAuthIcon}\n\t655\t  7\t$a BiographiesC388552 $0 http://id.loc.gov/authorities/genreForms/gf2014026049 $9`,
             );
             InventoryViewSource.contains('$2 fast');
           },

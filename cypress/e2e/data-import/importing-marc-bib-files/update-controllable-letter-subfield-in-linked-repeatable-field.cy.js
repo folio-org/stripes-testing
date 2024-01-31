@@ -50,7 +50,7 @@ describe('data-import', () => {
         '\\',
         '$a C385660 Lee, Stan, $d 1922-2018',
         '$e author.',
-        '$0 id.loc.gov/authorities/names/n83169267',
+        '$0 http://id.loc.gov/authorities/names/n83169267',
         '',
       ],
     };

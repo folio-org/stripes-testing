@@ -52,16 +52,16 @@ describe('MARC', () => {
           testData.tag810,
           '2',
           '\\',
-          '$a C375085 John Bartholomew and Son. $t Bartholomew world travel series $l English $d 1995 $x 810 $e map $0 id.loc.gov/authorities/names/n84704570',
+          '$a C375085 John Bartholomew and Son. $l English $t Bartholomew world travel series $d 1995 $x 810 $e map $0 http://id.loc.gov/authorities/names/n84704570',
         ];
         const bib810LinkedFieldValues = [
           25,
           testData.tag810,
           '2',
           '\\',
-          '$a C375085 John Bartholomew and Son. $t Bartholomew world travel series $l English $d 1995',
+          '$a C375085 John Bartholomew and Son. $l English $t Bartholomew world travel series $d 1995',
           '$x 810 $e map',
-          '$0 id.loc.gov/authorities/names/n84704570',
+          '$0 http://id.loc.gov/authorities/names/n84704570',
           '',
         ];
 

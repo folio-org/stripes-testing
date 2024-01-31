@@ -30,7 +30,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       '\\',
       '$a Chin, Staceyann, $d 1972-',
       '$e Author $e Narrator',
-      '$0 id.loc.gov/authorities/names/n2008052404',
+      '$0 http://id.loc.gov/authorities/names/n2008052404',
       '$1 http://viaf.org/viaf/24074052',
     ],
     bib100AfterUnlinking: [
@@ -38,7 +38,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       '100',
       '1',
       '\\',
-      '$a Chin, Staceyann, $d 1972- $e Author $e Narrator $0 id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052',
+      '$a Chin, Staceyann, $d 1972- $e Author $e Narrator $0 http://id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052',
     ],
     linkedIconText: 'Linked to MARC authority',
     unlinkIconText: 'Unlink from MARC Authority record',

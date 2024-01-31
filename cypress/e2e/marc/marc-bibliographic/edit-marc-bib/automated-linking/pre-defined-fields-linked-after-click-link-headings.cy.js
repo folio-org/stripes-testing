@@ -44,7 +44,7 @@ describe('MARC', () => {
             boxThird: '7',
             boxFourth: '$a C389486 Superheroes',
             boxFifth: '',
-            boxSixth: '$0 id.loc.gov/authorities/subjects/sh2007009593',
+            boxSixth: '$0 http://id.loc.gov/authorities/subjects/sh2007009593',
             boxSeventh: '$2 fast',
           },
           {
@@ -55,7 +55,7 @@ describe('MARC', () => {
             boxThird: '\\',
             boxFourth: '$a C389486 Sabino, Joe',
             boxFifth: '$e letterer.',
-            boxSixth: '$0 id.loc.gov/authorities/names/no2011137752',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/no2011137752',
             boxSeventh: '',
           },
         ];

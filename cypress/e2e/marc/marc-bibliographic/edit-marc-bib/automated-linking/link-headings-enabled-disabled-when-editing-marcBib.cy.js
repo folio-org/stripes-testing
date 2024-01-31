@@ -28,7 +28,7 @@ describe('MARC', () => {
             emptyContent: '',
             fourthBox: '$a C387524 Roberts, Julia, $d 1967-',
             fifthBox: '$e Actor.',
-            sixthBox: '$0 id.loc.gov/authorities/names/n91074080C387524',
+            sixthBox: '$0 http://id.loc.gov/authorities/names/n91074080C387524',
             seventhBox: '',
             valueAfterSave: 'C387524 Roberts, Julia, 1967-',
           },
@@ -162,7 +162,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.updateExistingFieldContent(
               fieldsToUpdate[1].rowIndex,
-              '$a C387524 Roberts, Julia, $d 1967- $e Actor. $0 id.loc.gov/authorities/names/n91074080C387524',
+              '$a C387524 Roberts, Julia, $d 1967- $e Actor. $0 http://id.loc.gov/authorities/names/n91074080C387524',
             );
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.updateExistingTagValue(fieldsToUpdate[1].rowIndex, '701');

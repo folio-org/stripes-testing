@@ -41,7 +41,7 @@ describe('MARC', () => {
       const viewSourceData = [
         'Linked to MARC authority',
         '100',
-        '$a C422066 Kerouac, Jack (001 has valid prefix), $d 1922-1969 $e author. $0 id.loc.gov/authorities/names/n80036674',
+        '$a C422066 Kerouac, Jack (001 has valid prefix), $d 1922-1969 $e author. $0 http://id.loc.gov/authorities/names/n80036674',
       ];
 
       const marcFiles = [

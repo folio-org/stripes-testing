@@ -51,14 +51,14 @@ describe('MARC', () => {
           testData.tag800,
           '1',
           '\\',
-          '$a C375084 Robinson, Peter, $d 1950-2022 $c Inspector Banks series ; $v 24. $y 2023 $0 3052044 $8 800',
+          '$a C375084 Robinson, Peter, $c Inspector Banks series ; $d 1950-2022 $v 24. $y 2023 $0 3052044 $8 800',
         ];
         const bib800LinkedFieldValues = [
           35,
           testData.tag800,
           '1',
           '\\',
-          '$a C375084 Robinson, Peter, $d 1950-2022 $c Inspector Banks series ;',
+          '$a C375084 Robinson, Peter, $c Inspector Banks series ; $d 1950-2022',
           '$v 24. $y 2023',
           '$0 3052044',
           '$8 800',

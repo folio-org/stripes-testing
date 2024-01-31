@@ -217,7 +217,7 @@ describe('MARC', () => {
               '\\',
               '$a Lee, Stan, $d 1922-2018',
               '$e author.',
-              '$0 id.loc.gov/authorities/names/n83169267',
+              '$0 http://id.loc.gov/authorities/names/n83169267',
               '',
             );
             // #6 Edit subfield "$0" value of unlinked field to another valid (matched with "naturalId" of existing "MARC authority" record)

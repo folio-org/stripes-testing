@@ -29,7 +29,7 @@ describe('MARC', () => {
             '\\',
             '$a C366577 Coates, Ta-Nehisi',
             '$e author.',
-            '$0 id.loc.gov/authorities/names/n2008001084',
+            '$0 http://id.loc.gov/authorities/names/n2008001084',
             '',
           ],
           marcAuthIcon: 'Linked to MARC authority',

@@ -41,7 +41,7 @@ describe('data-import', () => {
         '110',
         '1',
         '\\',
-        '$a C374189 Chin, Staceyann, $d 1972- $e author. $0 id.loc.gov/authorities/names/n2008052404',
+        '$a C374189 Chin, Staceyann, $d 1972- $e author. $0 http://id.loc.gov/authorities/names/n2008052404',
       ],
       updated600Field: [
         31,
@@ -50,7 +50,7 @@ describe('data-import', () => {
         '0',
         '$a C374189 Chin, Staceyann, $d 1972-',
         '$x Childhood and youth.',
-        '$0 id.loc.gov/authorities/names/n2008052404',
+        '$0 http://id.loc.gov/authorities/names/n2008052404',
         '',
       ],
       instanceTitle: 'C374189 The other side of paradise : a memoir / Staceyann Chin.',

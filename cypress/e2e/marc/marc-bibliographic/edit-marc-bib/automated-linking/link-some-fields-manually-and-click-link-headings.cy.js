@@ -46,7 +46,7 @@ describe('MARC', () => {
             boxThird: '\\',
             boxFourth: '$a C388504 Chin, Staceyann, $d 1972-',
             boxFifth: '$e author.',
-            boxSixth: '$0 id.loc.gov/authorities/names/n2008052404C388504',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n2008052404C388504',
             boxSeventh: '',
             linkHeadingsEnabledOrDisabled: () => {
               return QuickMarcEditor.verifyEnabledLinkHeadingsButton();
@@ -64,7 +64,7 @@ describe('MARC', () => {
             boxThird: '0',
             boxFourth: '$a C388504 Normal authors',
             boxFifth: '$z Jamaica $v Biography.',
-            boxSixth: '$0 id.loc.gov/authorities/subjects/sh99014708C388504',
+            boxSixth: '$0 http://id.loc.gov/authorities/subjects/sh99014708C388504',
             boxSeventh: '',
             linkHeadingsEnabledOrDisabled: () => {
               return QuickMarcEditor.verifyDisabledLinkHeadingsButton();
@@ -87,7 +87,7 @@ describe('MARC', () => {
           '0',
           '$a C388504 Authors, Jamaican',
           '$y 21st century $v Biography.',
-          '$0 id.loc.gov/authorities/subjects/sh85009933C388504',
+          '$0 http://id.loc.gov/authorities/subjects/sh85009933C388504',
           '',
         ];
 

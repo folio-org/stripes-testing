@@ -106,7 +106,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         '\\',
         '$a Sprouse, Chris',
         '',
-        '$0 id.loc.gov/authorities/names/nb98017694',
+        '$0 http://id.loc.gov/authorities/names/nb98017694',
         '',
       );
       QuickMarcEditor.clickLinkIconInTagField(14);
@@ -122,7 +122,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         '\\',
         '$a Sabino, Joe',
         '',
-        '$0 id.loc.gov/authorities/names/no2011137752',
+        '$0 http://id.loc.gov/authorities/names/no2011137752',
         '',
       );
       QuickMarcEditor.clickUnlinkIconInTagField(13);
