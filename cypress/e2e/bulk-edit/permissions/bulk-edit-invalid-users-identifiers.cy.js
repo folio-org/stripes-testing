@@ -44,9 +44,7 @@ describe('bulk-edit', () => {
       { tags: ['extendedPath', 'firebird'] },
       () => {
         // Navigate to the "Bulk edit" app => Select "Users" App => Select "Users UUIDs" from "Records identifier" dropdown
-        BulkEditSearchPane.checkUsersRadio();
-        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
-        BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
 
         // Upload .csv file  with **invalid** Users UUIDs by dragging it on the "Drag & drop" area
         BulkEditSearchPane.uploadFile(userUUIDsFileName);

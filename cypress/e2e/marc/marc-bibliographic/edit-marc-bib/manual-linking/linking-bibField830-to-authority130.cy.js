@@ -52,7 +52,7 @@ describe('MARC', () => {
           testData.tag830,
           '\\',
           '0',
-          '$a C375088 Cambridge tracts in mathematics and mathematical physics $l english $v no. 19. $0 id.loc.gov/authorities/names/n84801249',
+          '$a C375088 Cambridge tracts in mathematics and mathematical physics $l english $v no. 19. $0 http://id.loc.gov/authorities/names/n84801249',
         ];
         const bib830LinkedFieldValues = [
           21,
@@ -61,7 +61,7 @@ describe('MARC', () => {
           '0',
           '$a C375088 Cambridge tracts in mathematics and mathematical physics $l english',
           '$v no. 19.',
-          '$0 id.loc.gov/authorities/names/n84801249',
+          '$0 http://id.loc.gov/authorities/names/n84801249',
           '',
         ];
 

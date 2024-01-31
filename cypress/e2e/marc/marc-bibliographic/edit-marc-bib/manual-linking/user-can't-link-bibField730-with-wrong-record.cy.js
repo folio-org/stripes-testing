@@ -184,7 +184,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
         bib730FieldValues[3],
         '$a C380464 Marvel comics',
         '',
-        '$0 id.loc.gov/authorities/names/n80026980',
+        '$0 http://id.loc.gov/authorities/names/n80026980',
         '',
       );
     },

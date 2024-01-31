@@ -43,7 +43,7 @@ describe('MARC', () => {
         '\\',
         '$a Chin, Staceyann, $d 1972-',
         '$e Author $e Narrator',
-        '$0 id.loc.gov/authorities/names/n2008052404',
+        '$0 http://id.loc.gov/authorities/names/n2008052404',
         '$1 http://viaf.org/viaf/24074052',
       ],
       notLinked650FieldValues: [
@@ -51,7 +51,7 @@ describe('MARC', () => {
         '650',
         '\\',
         '0',
-        '$a Feminist poetry $0 id.loc.gov/authorities/subjects/sh85047755',
+        '$a Feminist poetry $0 http://id.loc.gov/authorities/subjects/sh85047755',
       ],
       deleteModalMessage:
         'Are you sure you want to permanently delete the authority record:  Poetry ? If you proceed with deletion, then 1 linked bibliographic record will retain authorized value and will become uncontrolled.',

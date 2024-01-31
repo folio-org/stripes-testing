@@ -41,7 +41,7 @@ describe('MARC', () => {
             tag: 700,
             boxFourth: '$a C388535 Lee, Stan, $d 1922-2018',
             boxFifth: '$e creator.',
-            boxSixth: '$0 id.loc.gov/authorities/names/n83169267',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n83169267',
             boxSeventh: '',
           },
           {
@@ -50,7 +50,7 @@ describe('MARC', () => {
             tag: 710,
             boxFourth: '$a C388535 Robinson & Associates, Inc.',
             boxFifth: '',
-            boxSixth: '$0 id.loc.gov/authorities/names/no2008081921',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/no2008081921',
             boxSeventh: '',
           },
           {
@@ -61,7 +61,7 @@ describe('MARC', () => {
             boxFourth:
               '$a C388535 Delaware Symposium on Language Studies. $f 1985 $t Delaware symposia on language studies',
             boxFifth: '',
-            boxSixth: '$0 id.loc.gov/authorities/names/n84745425',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n84745425',
             boxSeventh: '',
           },
           {
@@ -70,7 +70,7 @@ describe('MARC', () => {
             tag: 730,
             boxFourth: '$a C388535 Gone with the wind $f 1939) $g (Motion picture :',
             boxFifth: '',
-            boxSixth: '$0 id.loc.gov/authorities/names/n79066095',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n79066095',
             boxSeventh: '',
           },
         ];

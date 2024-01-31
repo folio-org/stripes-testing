@@ -31,7 +31,7 @@ describe('MARC', () => {
           '\\',
           '$a C376936 Roberts, Julia, $d 1967-',
           '$e Actor.',
-          '$0 id.loc.gov/authorities/names/n91074080',
+          '$0 http://id.loc.gov/authorities/names/n91074080',
           '',
         ],
       };

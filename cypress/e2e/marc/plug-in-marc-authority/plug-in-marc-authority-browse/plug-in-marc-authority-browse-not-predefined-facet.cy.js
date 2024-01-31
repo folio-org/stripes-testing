@@ -22,7 +22,7 @@ describe('MARC', () => {
           name: `Source option created by USER 6${getRandomPostfix()}`,
           code: randomCode,
           type: 'names',
-          baseUrl: `id.loc.gov/authorities/pv6/${getRandomPostfix()}`,
+          baseUrl: `http://id.loc.gov/authorities/pv6/${getRandomPostfix()}`,
           selectable: false,
           hridManagement: { startNumber: 112 },
         },

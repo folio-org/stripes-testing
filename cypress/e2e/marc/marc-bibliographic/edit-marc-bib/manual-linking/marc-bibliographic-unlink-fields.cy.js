@@ -50,7 +50,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
     thirdBox: '\\',
     content: '$a C365598 Chin, Staceyann, $d 1972-',
     eSubfield: '$e Author $e Narrator',
-    zeroSubfield: '$0 id.loc.gov/authorities/names/n2008052404365598',
+    zeroSubfield: '$0 http://id.loc.gov/authorities/names/n2008052404365598',
     seventhBox: '$1 http://viaf.org/viaf/24074052',
   };
   const unlinkedField = {
@@ -59,7 +59,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
     indicator0: '1',
     indicator1: '\\',
     content:
-      '$a C365598 Chin, Staceyann, $d 1972- $e Author $e Narrator $0 id.loc.gov/authorities/names/n2008052404365598 $1 http://viaf.org/viaf/24074052',
+      '$a C365598 Chin, Staceyann, $d 1972- $e Author $e Narrator $0 http://id.loc.gov/authorities/names/n2008052404365598 $1 http://viaf.org/viaf/24074052',
   };
   const contributors = {
     firstName: 'C365598 Chin, Staceyann, 1972-',

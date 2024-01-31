@@ -45,7 +45,7 @@ describe('data-import', () => {
         '\\',
         '$a C380519 Ludwig van, Beethoven, $d 1770-1827',
         '$e composer.',
-        '$0 id.loc.gov/authorities/names/n79107741',
+        '$0 http://id.loc.gov/authorities/names/n79107741',
         '',
       ],
       updated240Field: [
@@ -55,7 +55,7 @@ describe('data-import', () => {
         '0',
         '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
         '$c Ludwig Van Beethoven.',
-        '$0 id.loc.gov/authorities/names/n83130832',
+        '$0 http://id.loc.gov/authorities/names/n83130832',
         '',
       ],
       updated700Field: [
@@ -65,7 +65,7 @@ describe('data-import', () => {
         '\\',
         '$a C380519 Hewitt, Angela, $d 1958-',
         '$e instrumentalist, $e writer of supplementary textual content.',
-        '$0 id.loc.gov/authorities/names/n91099716',
+        '$0 http://id.loc.gov/authorities/names/n91099716',
         '',
       ],
     };

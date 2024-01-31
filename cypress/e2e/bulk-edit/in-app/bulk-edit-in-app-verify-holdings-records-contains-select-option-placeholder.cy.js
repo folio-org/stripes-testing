@@ -53,9 +53,7 @@ describe('bulk-edit', () => {
       'C365617 Verify that In app bulk edit form  for holdings records contains "Select option" placeholder for Options dropdown (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.checkHoldingsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Item barcodes');
-        BulkEditSearchPane.verifyDragNDropHoldingsItemBarcodesArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Item barcodes');
 
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.checkForUploading(itemBarcodesFileName);

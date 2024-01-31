@@ -62,9 +62,7 @@ describe('bulk-edit', () => {
       'C380547 Verify updating Holdings "Effective location" in case of updating Holdings "Temporary location" (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.checkHoldingsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
-        BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();

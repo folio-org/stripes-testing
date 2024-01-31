@@ -236,7 +236,7 @@ describe('data-import', () => {
           '700',
           '1',
           '\\',
-          '$a C385663 Lee, Stan, $d 1922-2018 $e author. $0 id.loc.gov/authorities/names/n83169267TEST',
+          '$a C385663 Lee, Stan, $d 1922-2018 $e author. $0 http://id.loc.gov/authorities/names/n83169267TEST',
         );
 
         QuickMarcEditor.closeEditorPane();

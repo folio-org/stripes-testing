@@ -33,7 +33,7 @@ describe('MARC', () => {
             '\\',
             '$a C388561 Runaway Bride (Motion picture)',
             '',
-            '$0 id.loc.gov/authorities/names/n2002076264',
+            '$0 http://id.loc.gov/authorities/names/n2002076264',
             '$0 n91074080',
           ],
           bib700AfterLinkingToAuth100: [
@@ -43,7 +43,7 @@ describe('MARC', () => {
             '\\',
             '$a C388561 Roberts, Julia, $d 1967-',
             '$e Actor.',
-            '$0 id.loc.gov/authorities/names/n91074080',
+            '$0 http://id.loc.gov/authorities/names/n91074080',
             '',
           ],
           bib700_1AfterLinkingToAuth100: [
@@ -53,7 +53,7 @@ describe('MARC', () => {
             '\\',
             '$a C388561 Gere, Richard, $d 1949-',
             '$e Actor.',
-            '$0 id.loc.gov/authorities/names/n86041334',
+            '$0 http://id.loc.gov/authorities/names/n86041334',
             '',
           ],
           bib700AfterUnlinking: [
@@ -61,7 +61,7 @@ describe('MARC', () => {
             '700',
             '1',
             '\\',
-            '$a C388561 Gere, Richard, $d 1949- $e Actor. $0 id.loc.gov/authorities/names/n86041334',
+            '$a C388561 Gere, Richard, $d 1949- $e Actor. $0 http://id.loc.gov/authorities/names/n86041334',
           ],
         };
 

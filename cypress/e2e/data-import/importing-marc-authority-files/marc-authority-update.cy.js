@@ -239,7 +239,7 @@ describe('data-import', () => {
           '\\',
           '$a Elizabeth $b II, $c 1926-2022, $q Queen of G. Britain',
           '',
-          '$0 id.loc.gov/authorities/names/n80126296',
+          '$0 http://id.loc.gov/authorities/names/n80126296',
           '',
         );
       },

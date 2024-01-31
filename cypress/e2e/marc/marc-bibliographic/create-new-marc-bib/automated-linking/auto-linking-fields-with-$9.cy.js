@@ -43,7 +43,7 @@ describe('MARC', () => {
             '\\',
             '$a Hosanna Bible',
             '',
-            '$0 id.loc.gov/authorities/names/n99036055',
+            '$0 http://id.loc.gov/authorities/names/n99036055',
             '',
           ],
           successCalloutMessage: 'Field 100 and 240 has been linked to MARC authority record(s).',

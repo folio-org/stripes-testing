@@ -28,7 +28,7 @@ describe('MARC', () => {
           '700',
           '1',
           '\\',
-          '$a C366115 Martin, Laura $c (Comic book artist) $e colorist. $0 id.loc.gov/authorities/names/n2014052262',
+          '$a C366115 Martin, Laura $c (Comic book artist) $e colorist. $0 http://id.loc.gov/authorities/names/n2014052262',
         ],
       };
       const marcFiles = [

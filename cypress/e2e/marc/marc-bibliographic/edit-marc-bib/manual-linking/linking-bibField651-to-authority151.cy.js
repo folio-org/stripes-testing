@@ -51,7 +51,7 @@ describe('MARC', () => {
           testData.tag651,
           '\\',
           '0',
-          '$a C375071 Clear Creek (Tex.) $g Place in Texas $v Form $0 id.loc.gov/authorities/names/n79041362 $3 papers',
+          '$a C375071 Clear Creek (Tex.) $g Place in Texas $v Form $0 http://id.loc.gov/authorities/names/n79041362 $3 papers',
         ];
         const bib651LinkedFieldValues = [
           20,
@@ -60,7 +60,7 @@ describe('MARC', () => {
           '0',
           '$a C375071 Clear Creek (Tex.) $g Place in Texas',
           '$v Form',
-          '$0 id.loc.gov/authorities/names/n79041362',
+          '$0 http://id.loc.gov/authorities/names/n79041362',
           '$3 papers',
         ];
 

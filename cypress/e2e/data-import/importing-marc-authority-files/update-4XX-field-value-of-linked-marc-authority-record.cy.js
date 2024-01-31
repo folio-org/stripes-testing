@@ -56,7 +56,7 @@ describe('data-import', () => {
         '\\',
         '$a C374187 Elizabeth $b II, $c Queen of Great Britain, $d 1926-',
         '',
-        '$0 id.loc.gov/authorities/names/n80126296',
+        '$0 http://id.loc.gov/authorities/names/n80126296',
         '',
       ],
       instanceTitle:

@@ -71,9 +71,8 @@ describe('bulk-edit', () => {
       { tags: ['extendedPath', 'firebird'] },
       () => {
         // Select the "Inventory-holdings" radio button on  the "Record types" accordion => Select "Instance HRIDs" option from the "Record identifier" dropdown
-        BulkEditSearchPane.checkHoldingsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');
-        BulkEditSearchPane.verifyDragNDropInstanceHRIDsArea();
+
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Instance HRIDs');
 
         // Upload a .csv file  with "Instance HRIDs" (see preconditions) by dragging it on the "Drag & drop" area
         BulkEditSearchPane.uploadFile(instanceHRIDFileName);

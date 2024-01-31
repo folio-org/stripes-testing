@@ -118,9 +118,10 @@ export default {
   },
 
   getDayTomorrowDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() + 1,
+    const date = new Date();
+    date.setDate(date.getDate() + 1);
+    return `${date.getFullYear()}-${padWithZero(date.getMonth() + 1)}-${padWithZero(
+      date.getDate(),
     )}`;
   },
 

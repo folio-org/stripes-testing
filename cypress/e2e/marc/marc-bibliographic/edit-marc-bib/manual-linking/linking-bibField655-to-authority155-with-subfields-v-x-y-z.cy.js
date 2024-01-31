@@ -46,7 +46,7 @@ describe('MARC', () => {
           '7',
           '$a C377035 Drama',
           '$v TestV $x TestX $y TestY $z TestZ',
-          '$0 id.loc.gov/authorities/genreForms/gf2014026297',
+          '$0 http://id.loc.gov/authorities/genreForms/gf2014026297',
           '$2 fast',
         ];
 

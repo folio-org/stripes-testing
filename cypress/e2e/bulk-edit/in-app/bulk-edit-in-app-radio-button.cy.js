@@ -50,11 +50,11 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
 
         // Click "Select record identifier" dropdown
-        BulkEditSearchPane.verifyRecordIdentifierItems();
+        BulkEditSearchPane.verifyRecordTypeIdentifiers('Users');
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
 
         // Click the "Inventory - items" radio button
-        BulkEditSearchPane.verifyItemIdentifiers();
+        BulkEditSearchPane.verifyRecordTypeIdentifiers('Items');
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
       },
     );

@@ -52,7 +52,7 @@ describe('data-import', () => {
         '700',
         '1',
         '\\',
-        '$a C374167 DiCaprio, Leonardo $e actor. $0 id.loc.gov/authorities/names/n94000330',
+        '$a C374167 DiCaprio, Leonardo $e actor. $0 http://id.loc.gov/authorities/names/n94000330',
       ],
     };
     const mappingProfile = {
