@@ -99,7 +99,7 @@ describe('bulk-edit', () => {
           true,
         );
 
-        BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.usersRadioIsDisabled(false);
         BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
 
@@ -128,7 +128,7 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
 
         BulkEditSearchPane.verifyChangedResults(newUsername);
-        BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
         BulkEditSearchPane.usersRadioIsDisabled(false);
         BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
       },

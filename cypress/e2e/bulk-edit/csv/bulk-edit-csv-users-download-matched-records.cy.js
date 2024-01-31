@@ -44,7 +44,7 @@ describe('bulk-edit', () => {
       'C353571 Verify "Download matched records (CSV)" option (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.downloadMatchedResults();
