@@ -34,7 +34,7 @@ describe('MARC', () => {
             emptyContent: '',
             fourthBox: '$a C388533 Roberts, Julia, $d 1967-',
             fifthBox: '$e Actor.',
-            sixthBox: '$0 id.loc.gov/authorities/names/n91074080C388533',
+            sixthBox: '$0 http://id.loc.gov/authorities/names/n91074080C388533',
             seventhBox: '',
           },
         ];
@@ -161,7 +161,7 @@ describe('MARC', () => {
               `${linkingTagAndValues[1].tag}`,
               '1',
               '\\',
-              '$a C388533 Gere, Richard, $d 1949- $e Actor. $0 id.loc.gov/authorities/names/n86041334C388533',
+              '$a C388533 Gere, Richard, $d 1949- $e Actor. $0 http://id.loc.gov/authorities/names/n86041334C388533',
             );
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.clickLinkHeadingsButton();
@@ -173,7 +173,7 @@ describe('MARC', () => {
               '\\',
               '$a C388533 Gere, Richard, $d 1949-',
               '$e Actor.',
-              '$0 id.loc.gov/authorities/names/n86041334C388533',
+              '$0 http://id.loc.gov/authorities/names/n86041334C388533',
               '',
             );
             QuickMarcEditor.updateExistingFieldContent(
@@ -214,13 +214,13 @@ describe('MARC', () => {
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t130\t0  \t$a C388533 Runaway Bride (Motion picture) $0 id.loc.gov/authorities/names/n2002076264C388533 $9`,
+              `${marcAuthIcon}\n\t130\t0  \t$a C388533 Runaway Bride (Motion picture) $0 http://id.loc.gov/authorities/names/n2002076264C388533 $9`,
             );
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t700\t1  \t$a C388533 Roberts, Julia, $d 1967- $e Actor. $0 id.loc.gov/authorities/names/n91074080C388533 $9`,
+              `${marcAuthIcon}\n\t700\t1  \t$a C388533 Roberts, Julia, $d 1967- $e Actor. $0 http://id.loc.gov/authorities/names/n91074080C388533 $9`,
             );
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t700\t1  \t$a C388533 Gere, Richard, $d 1949- $e Actor. $0 id.loc.gov/authorities/names/n86041334C388533 $9`,
+              `${marcAuthIcon}\n\t700\t1  \t$a C388533 Gere, Richard, $d 1949- $e Actor. $0 http://id.loc.gov/authorities/names/n86041334C388533 $9`,
             );
           },
         );

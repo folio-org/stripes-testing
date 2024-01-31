@@ -47,7 +47,7 @@ describe('MARC', () => {
           testData.tag110,
           '2',
           '\\',
-          '$a Beatles $0 id.loc.gov/authorities/names/n79018119 $4 prf',
+          '$a Beatles $0 http://id.loc.gov/authorities/names/n79018119 $4 prf',
         ];
         const bib110LinkedFieldValues = [
           33,
@@ -56,7 +56,7 @@ describe('MARC', () => {
           '\\',
           '$a Beatles',
           '',
-          `$0 id.loc.gov/authorities/names/${marcFiles[1].authority110FieldValue}`,
+          `$0 http://id.loc.gov/authorities/names/${marcFiles[1].authority110FieldValue}`,
           '$4 prf',
         ];
 

@@ -52,7 +52,7 @@ describe('MARC', () => {
           testData.tag811,
           '2',
           '\\',
-          '$a C375086 Delaware Symposium on Language Studies. $f 1985 $t Delaware symposia on language studies $v 4. $0 id.loc.gov/authorities/names/n84745425',
+          '$a C375086 Delaware Symposium on Language Studies. $f 1985 $t Delaware symposia on language studies $v 4. $0 http://id.loc.gov/authorities/names/n84745425',
         ];
         const bib811LinkedFieldValues = [
           25,
@@ -61,7 +61,7 @@ describe('MARC', () => {
           '\\',
           '$a C375086 Delaware Symposium on Language Studies. $f 1985 $t Delaware symposia on language studies',
           '$v 4.',
-          '$0 id.loc.gov/authorities/names/n84745425',
+          '$0 http://id.loc.gov/authorities/names/n84745425',
           '',
         ];
 

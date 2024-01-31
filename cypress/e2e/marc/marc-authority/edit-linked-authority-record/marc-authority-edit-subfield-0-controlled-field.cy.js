@@ -132,7 +132,7 @@ describe('MARC', () => {
           );
           InventoryInstance.viewSource();
           InventoryViewSource.contains(
-            'Linked to MARC authority\n\t700\t1  \t$a C374157 Roberts, Julia, $d 1967- $e Actor. $0 id.loc.gov/authorities/names/n91074081',
+            'Linked to MARC authority\n\t700\t1  \t$a C374157 Roberts, Julia, $d 1967- $e Actor. $0 http://id.loc.gov/authorities/names/n91074081',
           );
         },
       );

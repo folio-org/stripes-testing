@@ -25,7 +25,7 @@ describe('MARC', () => {
           '\\',
           '$a C422060 Robinson, Peter, $c Inspector Banks series ; $d 1950-2022',
           '$e author.',
-          '$0 id.loc.gov/authorities/names/n123123',
+          '$0 http://id.loc.gov/authorities/names/n123123',
           '',
         ],
         searchOption: 'Keyword',

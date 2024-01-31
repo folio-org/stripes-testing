@@ -151,7 +151,7 @@ describe('MARC', () => {
             '0',
             '$a Variation:, $n op. 44, $r E♭ major $s ver. 5',
             '',
-            '$0 id.loc.gov/authorities/names/n83130832',
+            '$0 http://id.loc.gov/authorities/names/n83130832',
             '',
           );
         },

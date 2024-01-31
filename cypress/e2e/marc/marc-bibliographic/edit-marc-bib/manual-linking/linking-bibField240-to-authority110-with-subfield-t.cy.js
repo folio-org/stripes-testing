@@ -49,7 +49,7 @@ describe('MARC', () => {
           '0',
           '$a Treaties, etc. $g Israel, $d 1978 September 17 (Framework for Peace in the Middle East)',
           '',
-          '$0 id.loc.gov/authorities/names/n91006627',
+          '$0 http://id.loc.gov/authorities/names/n91006627',
           '',
         ];
         const bib240AfterUninkingToAuth110 = [
@@ -57,7 +57,7 @@ describe('MARC', () => {
           testData.tag240,
           '1',
           '0',
-          '$a Treaties, etc. $g Israel, $d 1978 September 17 (Framework for Peace in the Middle East) $0 id.loc.gov/authorities/names/n91006627',
+          '$a Treaties, etc. $g Israel, $d 1978 September 17 (Framework for Peace in the Middle East) $0 http://id.loc.gov/authorities/names/n91006627',
         ];
 
         const createdAuthorityIDs = [];

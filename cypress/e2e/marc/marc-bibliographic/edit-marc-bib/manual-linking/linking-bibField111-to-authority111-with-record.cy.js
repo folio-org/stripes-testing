@@ -53,7 +53,7 @@ describe('MARC', () => {
           testData.tag111,
           '2',
           '\\',
-          '$a Mediterranean Conference on Medical and Biological Engineering $n (13th : $d 2013 : $0 id.loc.gov/authorities/names/n85281584',
+          '$a Mediterranean Conference on Medical and Biological Engineering $n (13th : $d 2013 : $0 http://id.loc.gov/authorities/names/n85281584',
         ];
         const bib111LinkedFieldValues = [
           28,
@@ -62,7 +62,7 @@ describe('MARC', () => {
           '\\',
           '$a Mediterranean Conference on Medical and Biological Engineering',
           '$n (13th : $d 2013 :',
-          `$0 id.loc.gov/authorities/names/${marcFiles[1].authority111FieldValue}`,
+          `$0 http://id.loc.gov/authorities/names/${marcFiles[1].authority111FieldValue}`,
           '',
         ];
 

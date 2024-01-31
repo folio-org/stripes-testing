@@ -46,7 +46,7 @@ describe('MARC', () => {
             '$a C380742 Lee, Stan, $d 1922-2018, $e creator. $0 http://id.loc.gov/authorities/names/n83169267',
           ],
           updatedContent:
-            '$d C380742 Lee, Stan, $t 1922-2018, $e creator. $0 id.loc.gov/authorities/names/n83169267',
+            '$d C380742 Lee, Stan, $t 1922-2018, $e creator. $0 http://id.loc.gov/authorities/names/n83169267',
           contentAfterLinking: [
             79,
             '700',
@@ -54,7 +54,7 @@ describe('MARC', () => {
             '\\',
             '$a C380742 Lee, Stan, $d 1922-2018',
             '$e creator.',
-            '$0 id.loc.gov/authorities/names/n83169267',
+            '$0 http://id.loc.gov/authorities/names/n83169267',
             '',
           ],
           contentAfterUnlinking: [
@@ -62,7 +62,7 @@ describe('MARC', () => {
             '700',
             '1',
             '\\',
-            '$a C380742 Lee, Stan, $d 1922-2018 $e creator. $0 id.loc.gov/authorities/names/n83169267',
+            '$a C380742 Lee, Stan, $d 1922-2018 $e creator. $0 http://id.loc.gov/authorities/names/n83169267',
           ],
         };
 

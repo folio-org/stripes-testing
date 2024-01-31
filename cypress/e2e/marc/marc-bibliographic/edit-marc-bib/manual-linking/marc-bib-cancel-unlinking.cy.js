@@ -28,7 +28,7 @@ describe('MARC', () => {
             '\\',
             '$a C365601 Chin, Staceyann, $d 1972-',
             '$e Author $e Narrator',
-            '$0 id.loc.gov/authorities/names/n2008052404',
+            '$0 http://id.loc.gov/authorities/names/n2008052404',
             '$1 http://viaf.org/viaf/24074052',
           ],
         };

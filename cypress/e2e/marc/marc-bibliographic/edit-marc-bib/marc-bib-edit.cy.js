@@ -48,7 +48,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(marcFile.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFile.fileName);
         Logs.getCreatedItemsID().then((link) => {
           createdInstanceIDs.push(link.split('/')[5]);
@@ -60,7 +60,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(`${marcFile.fileName}_copy`);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(`${marcFile.fileName}_copy`, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(`${marcFile.fileName}_copy`);
         Logs.getCreatedItemsID().then((link) => {
           createdInstanceIDs.push(link.split('/')[5]);
@@ -72,7 +72,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         JobProfiles.search(marcFileC359239.jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileC359239.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(marcFileC359239.fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileC359239.fileName);
         Logs.getCreatedItemsID().then((link) => {
           createdInstanceIDs.push(link.split('/')[5]);

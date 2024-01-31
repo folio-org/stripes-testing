@@ -51,7 +51,7 @@ describe('MARC', () => {
           '7',
           '$a C375070 Speaking Oratory $b debating',
           '',
-          `$0 id.loc.gov/authorities/subjects/${marcFiles[1].authority010FieldValue}`,
+          `$0 http://id.loc.gov/authorities/subjects/${marcFiles[1].authority010FieldValue}`,
           '$2 fast',
         ];
 
@@ -60,7 +60,7 @@ describe('MARC', () => {
           testData.tag650,
           '\\',
           '7',
-          `$a C375070 Speaking Oratory $b debating $0 id.loc.gov/authorities/subjects/${marcFiles[1].authority010FieldValue} $2 fast`,
+          `$a C375070 Speaking Oratory $b debating $0 http://id.loc.gov/authorities/subjects/${marcFiles[1].authority010FieldValue} $2 fast`,
         ];
 
         before('Creating user', () => {
