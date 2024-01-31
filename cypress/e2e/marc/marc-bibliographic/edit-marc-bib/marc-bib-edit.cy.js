@@ -44,7 +44,9 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
       testData.userProperties = createdUserProperties;
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.verifyUploadState();
-        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+        DataImport.waitFileIsUploaded();
+        DataImport.waitLoadingList();
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(marcFile.fileName);
@@ -56,7 +58,9 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.waitLoading();
         DataImport.verifyUploadState();
-        DataImport.uploadFile(marcFile.marc, `${marcFile.fileName}_copy`);
+        DataImport.uploadFileAndRetry(marcFile.marc, `${marcFile.fileName}_copy`);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.waitLoadingList();
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(`${marcFile.fileName}_copy`);
@@ -68,7 +72,9 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.waitLoading();
         DataImport.verifyUploadState();
-        DataImport.uploadFile(marcFileC359239.marc, marcFileC359239.fileName);
+        DataImport.uploadFileAndRetry(marcFileC359239.marc, marcFileC359239.fileName);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.waitLoadingList();
         JobProfiles.search(marcFileC359239.jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileC359239.fileName);
