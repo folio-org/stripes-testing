@@ -22,58 +22,67 @@ const testData = {
 
 let instanceId;
 
-describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
-  before('Create test data', () => {
-    cy.createTempUser([
-      Permissions.inventoryAll.gui,
-      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-    ]).then((createdUserProperties) => {
-      testData.userProperties = createdUserProperties;
+describe('MARC', () => {
+  describe('MARC Bibliographic', () => {
+    describe('Edit MARC bib', () => {
+      before('Create test data', () => {
+        cy.createTempUser([
+          Permissions.inventoryAll.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        ]).then((createdUserProperties) => {
+          testData.userProperties = createdUserProperties;
 
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(testData.marc, testData.fileName);
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(testData.jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.fileName);
-        Logs.checkStatusOfJobProfile('Completed');
-        Logs.openFileDetails(testData.fileName);
-        Logs.getCreatedItemsID().then((link) => {
-          instanceId = link.split('/')[5];
+          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
+            () => {
+              DataImport.verifyUploadState();
+              DataImport.uploadFile(testData.marc, testData.fileName);
+              JobProfiles.waitLoadingList();
+              JobProfiles.search(testData.jobProfileToRun);
+              JobProfiles.runImportFile();
+              JobProfiles.waitFileIsImported(testData.fileName);
+              Logs.checkStatusOfJobProfile('Completed');
+              Logs.openFileDetails(testData.fileName);
+              Logs.getCreatedItemsID().then((link) => {
+                instanceId = link.split('/')[5];
+              });
+            },
+          );
+
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
       });
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
+      after('Delete test data', () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.userProperties.userId);
+        InventoryInstance.deleteInstanceViaApi(instanceId);
       });
+
+      it(
+        'C375205 Error notification shown before confirmation modal when saving "MARC bib" record with invalid LDR (spitfire) (TaaS)',
+        { tags: ['extendedPath', 'spitfire'] },
+        () => {
+          InventorySearchAndFilter.selectSearchOptions(
+            testData.searchOption,
+            testData.instanceTitle,
+          );
+          InventorySearchAndFilter.clickSearch();
+          InventoryInstances.selectInstanceById(instanceId);
+          InventoryInstance.waitLoading();
+          InventoryInstance.editMarcBibliographicRecord();
+          QuickMarcEditor.updateExistingField('LDR', testData.updateLDRValue);
+          QuickMarcEditor.deleteFieldByTagAndCheck('222');
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.verifyRecordCanNotBeSavedCalloutLDR();
+          QuickMarcEditor.updateExistingField('LDR', testData.LDRValue);
+          QuickMarcEditor.clickSaveAndCloseThenCheck(1);
+          QuickMarcEditor.clickRestoreDeletedField();
+          QuickMarcEditor.checkButtonsDisabled();
+        },
+      );
     });
   });
-
-  after('Delete test data', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(testData.userProperties.userId);
-    InventoryInstance.deleteInstanceViaApi(instanceId);
-  });
-
-  it(
-    'C375205 Error notification shown before confirmation modal when saving "MARC bib" record with invalid LDR (spitfire) (TaaS)',
-    { tags: ['extendedPath', 'spitfire'] },
-    () => {
-      InventorySearchAndFilter.selectSearchOptions(testData.searchOption, testData.instanceTitle);
-      InventorySearchAndFilter.clickSearch();
-      InventoryInstances.selectInstanceById(instanceId);
-      InventoryInstance.waitLoading();
-      InventoryInstance.editMarcBibliographicRecord();
-      QuickMarcEditor.updateExistingField('LDR', testData.updateLDRValue);
-      QuickMarcEditor.deleteFieldByTagAndCheck('222');
-      QuickMarcEditor.clickSaveAndKeepEditingButton();
-      QuickMarcEditor.verifyRecordCanNotBeSavedCalloutLDR();
-      QuickMarcEditor.updateExistingField('LDR', testData.LDRValue);
-      QuickMarcEditor.clickSaveAndCloseThenCheck(1);
-      QuickMarcEditor.clickRestoreDeletedField();
-      QuickMarcEditor.checkButtonsDisabled();
-    },
-  );
 });
