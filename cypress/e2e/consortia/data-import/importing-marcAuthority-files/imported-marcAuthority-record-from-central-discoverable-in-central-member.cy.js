@@ -85,7 +85,7 @@ describe('Data Import', () => {
         MarcAuthorities.verifyResultsRowContent(searchRecordName, type, headingType);
 
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
 
         MarcAuthorities.switchToBrowse();
