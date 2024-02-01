@@ -36,7 +36,8 @@ describe('MARC', () => {
             tag: '650',
             value: 'Lesbian activists',
             rowIndex: 32,
-            newContent: '$a Lesbian activists $0 http://id.loc.gov/authorities/subjects/sh960075325555',
+            newContent:
+              '$a Lesbian activists $0 http://id.loc.gov/authorities/subjects/sh960075325555',
           },
         ];
         const authority = {

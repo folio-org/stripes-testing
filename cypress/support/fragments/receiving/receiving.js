@@ -165,14 +165,13 @@ export default {
     ]);
   },
 
-  receivePieceWithoutBarcode: (rowNumber, caption) => {
+  receivePieceWithoutBarcode: (rowNumber = 0) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
       Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
       receiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
-      TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
       receiveButton.click(),
     ]);
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
@@ -229,7 +228,7 @@ export default {
     );
   },
 
-  checkReceivedPiece: (rowNumber, caption, barcode) => {
+  checkReceivedPiece: (rowNumber = 0, barcode) => {
     // Need to wait, while data will be loaded before start checking
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
@@ -237,10 +236,6 @@ export default {
       Accordion({ id: receivedPiecesAccordionId })
         .find(MultiColumnListRow({ index: rowNumber }))
         .find(MultiColumnListCell({ content: barcode }))
-        .exists(),
-      Accordion({ id: receivedPiecesAccordionId })
-        .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: caption }))
         .exists(),
       Accordion({ id: expectedPiecesAccordionId })
         .find(MultiColumnListCell({ content: barcode }))

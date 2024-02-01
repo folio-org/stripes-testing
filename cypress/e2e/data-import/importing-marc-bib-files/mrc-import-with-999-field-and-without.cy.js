@@ -8,6 +8,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -50,7 +51,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameMarcFileForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.checkJobStatus(nameMarcFileForCreate, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(nameMarcFileForCreate);
         // check that "SRS MARC" and "Instance" were created for record, that not contains 999 ff field
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
@@ -70,7 +71,9 @@ describe('data-import', () => {
           RECORD_STATUSES.ERROR,
           FileDetails.columnNameInResultList.error,
         );
-        FileDetails.verifyErrorMessage(error);
+        FileDetails.openJsonScreen('No content');
+        JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.verifyContentInTab(error);
       },
     );
   });
