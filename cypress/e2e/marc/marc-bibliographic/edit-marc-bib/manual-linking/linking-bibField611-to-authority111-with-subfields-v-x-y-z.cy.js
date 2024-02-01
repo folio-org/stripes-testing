@@ -47,7 +47,7 @@ describe('MARC', () => {
           '7',
           '$a C377027 Roma Council $d 1962-1965 : $c Basilica di San Pietro in Roma) $n (2nd :',
           '$v TestV $x TestX $y TestY $z TestZ',
-          '$0 id.loc.gov/authorities/names/n79084169',
+          '$0 http://id.loc.gov/authorities/names/n79084169',
           '$2 fast $1 http://viaf.org/viaf/133636573/',
         ];
 

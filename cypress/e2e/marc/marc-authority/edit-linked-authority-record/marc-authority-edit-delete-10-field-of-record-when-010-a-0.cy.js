@@ -38,7 +38,7 @@ describe('MARC', () => {
           '\\',
           '$a Roberts, Julia, $d 1967-',
           '$e Actor.',
-          '$0 id.loc.gov/authorities/names/n91074080',
+          '$0 http://id.loc.gov/authorities/names/n91074080',
           '',
         ],
         colloutMessage: 'Cannot delete 010. It is required.',

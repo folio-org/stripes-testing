@@ -39,7 +39,7 @@ describe('MARC', () => {
             boxFourth:
               '$a C380727 Edinburgh tracts in mathematics and mathematical physics $l english',
             boxFifth: '',
-            boxSixth: '$0 id.loc.gov/authorities/names/n84801249',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n84801249',
             boxSeventh: '',
             searchOption: 'Uniform title',
             marcValue:
@@ -53,7 +53,7 @@ describe('MARC', () => {
             content: '$9 test123',
             boxFourth: '$a C380727 Hosanna Bible',
             boxFifth: '',
-            boxSixth: '$0 id.loc.gov/authorities/names/n99036055',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n99036055',
             boxSeventh: '',
             searchOption: 'Name-title',
             marcValue: 'C380727 Abraham, Angela, 1958- C380727 Hosanna Bible',
@@ -193,10 +193,10 @@ describe('MARC', () => {
             QuickMarcEditor.closeEditorPane();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C380727 Edinburgh tracts in mathematics and mathematical physics $l english $0 id.loc.gov/authorities/names/n84801249 $9`,
+              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C380727 Edinburgh tracts in mathematics and mathematical physics $l english $0 http://id.loc.gov/authorities/names/n84801249 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C380727 Hosanna Bible $0 id.loc.gov/authorities/names/n99036055 $9`,
+              `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C380727 Hosanna Bible $0 http://id.loc.gov/authorities/names/n99036055 $9`,
             );
 
             cy.visit(TopMenu.marcAuthorities);

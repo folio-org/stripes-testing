@@ -27,14 +27,14 @@ describe('MARC', () => {
             'C380753 Black Panther (Fictitious character) Wakanda Forever--Comic books, strips, etc',
           filterState: [
             'advancedSearch',
-            'keyword==C380753 Black Panther or identifiers.value==n2016004081 or identifiers.value==no2020004029 or identifiers.value==2006108277 or identifiers.value==no 00041049',
+            'keyword exactPhrase C380753 Black Panther or identifiers.value exactPhrase n2016004081 or identifiers.value exactPhrase no2020004029 or identifiers.value exactPhrase 2006108277 or identifiers.value exactPhrase no 00041049',
           ],
           bib600AfterUnlinking: [
             46,
             '600',
             '0',
             '0',
-            '$a C380753 Black Panther $c (Fictitious character) $t Wakanda Forever $v Comic books, strips, etc. $i comics $0 id.loc.gov/authorities/names/n2016004081 $4 .prt $2 test',
+            '$a C380753 Black Panther $c (Fictitious character) $t Wakanda Forever $v Comic books, strips, etc. $i comics $0 http://id.loc.gov/authorities/names/n2016004081 $4 .prt $2 test',
           ],
         };
 
@@ -59,7 +59,7 @@ describe('MARC', () => {
           testData.tag600,
           '0',
           '0',
-          '$a C380753 Black Panther $c (Fictitious character) $v Comic books, strips, etc. $4 .prt $2 test $i comics $0 id.loc.gov/authorities/names/n2016004081 $0 id.loc.gov/authorities/names/no2020004029 $0 2006108277 $0 custom/field/no 00041049 ',
+          '$a C380753 Black Panther $c (Fictitious character) $v Comic books, strips, etc. $4 .prt $2 test $i comics $0 http://id.loc.gov/authorities/names/n2016004081 $0 http://id.loc.gov/authorities/names/no2020004029 $0 2006108277 $0 custom/field/no 00041049 ',
         ];
 
         const bib600AfterLinkingToAuth100 = [
@@ -69,7 +69,7 @@ describe('MARC', () => {
           '0',
           '$a C380753 Black Panther $c (Fictitious character) $t Wakanda Forever',
           '$v Comic books, strips, etc. $i comics',
-          '$0 id.loc.gov/authorities/names/n2016004081',
+          '$0 http://id.loc.gov/authorities/names/n2016004081',
           '$4 .prt $2 test',
         ];
 

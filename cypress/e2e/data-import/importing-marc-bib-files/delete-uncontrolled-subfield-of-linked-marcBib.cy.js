@@ -43,7 +43,7 @@ describe('data-import', () => {
         '\\',
         '$a C376967 Chin, Staceyann, $d 1972-',
         '',
-        '$0 id.loc.gov/authorities/names/n2008052404',
+        '$0 http://id.loc.gov/authorities/names/n2008052404',
         '',
       ],
       updated245Field: [

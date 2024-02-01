@@ -26,7 +26,7 @@ describe('MARC', () => {
             '\\',
             '$a C366574 Coates, Ta-Nehisi',
             '$e author.',
-            '$0 id.loc.gov/authorities/names/n2008001084',
+            '$0 http://id.loc.gov/authorities/names/n2008001084',
             '',
           ],
           bib700AfterLinkingToAuth100: [
@@ -36,7 +36,7 @@ describe('MARC', () => {
             '\\',
             '$a C366574 Sprouse, Chris',
             '$e artist.',
-            '$0 id.loc.gov/authorities/names/nb98017694',
+            '$0 http://id.loc.gov/authorities/names/nb98017694',
             '',
           ],
           marcAuthIcon: 'Linked to MARC authority',

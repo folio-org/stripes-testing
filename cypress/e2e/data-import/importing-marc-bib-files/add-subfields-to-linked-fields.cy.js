@@ -241,7 +241,7 @@ describe('data-import', () => {
           '\\',
           '$a Coates, Ta-Nehisi',
           '$e Writer $e author.',
-          '$0 id.loc.gov/authorities/names/n2008001084',
+          '$0 http://id.loc.gov/authorities/names/n2008001084',
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -251,7 +251,7 @@ describe('data-import', () => {
           '\\',
           '$a Chin, Staceyann, C385673',
           '$e letterer.',
-          '$0 id.loc.gov/authorities/names/n2008052404',
+          '$0 http://id.loc.gov/authorities/names/n2008052404',
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -261,7 +261,7 @@ describe('data-import', () => {
           '\\',
           '$a Lee, Stan, $d 1922-2018',
           '$e AUTHOR $e creator',
-          '$0 id.loc.gov/authorities/names/n83169267',
+          '$0 http://id.loc.gov/authorities/names/n83169267',
           '',
         );
 

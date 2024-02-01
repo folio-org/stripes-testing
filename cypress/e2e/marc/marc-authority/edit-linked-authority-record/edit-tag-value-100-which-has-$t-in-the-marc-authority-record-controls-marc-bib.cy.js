@@ -54,7 +54,7 @@ describe('MARC', () => {
           'C374138 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
         tag: '240',
         content:
-          '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major $0 id.loc.gov/authorities/names/n83130832',
+          '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major $0 http://id.loc.gov/authorities/names/n83130832',
       };
       const createdAuthorityIDs = [];
 

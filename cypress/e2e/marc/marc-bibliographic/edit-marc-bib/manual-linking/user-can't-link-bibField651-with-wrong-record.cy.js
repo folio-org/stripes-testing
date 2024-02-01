@@ -178,7 +178,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
         bib651FieldValues[3],
         '$a C380459 Gulf Stream',
         '$e C380459 Clear Creek',
-        '$0 id.loc.gov/authorities/subjects/sh85057894',
+        '$0 http://id.loc.gov/authorities/subjects/sh85057894',
         '$4 (Tex.)',
       );
     },

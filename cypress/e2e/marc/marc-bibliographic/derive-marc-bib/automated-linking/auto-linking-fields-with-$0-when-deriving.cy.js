@@ -27,7 +27,7 @@ describe('MARC', () => {
             '\\',
             '$a C388638 Runaway Bride (Motion picture)',
             '',
-            '$0 id.loc.gov/authorities/names/n2002076264',
+            '$0 http://id.loc.gov/authorities/names/n2002076264',
             '',
           ],
           fieldContents: {

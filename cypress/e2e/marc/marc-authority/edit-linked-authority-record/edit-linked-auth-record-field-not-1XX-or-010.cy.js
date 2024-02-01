@@ -46,7 +46,7 @@ describe('MARC', () => {
         value: 'C374160 Beethoven, Ludwig van',
         boxFourth: '$m piano, violin, cello, $n op. 44, $r E♭ major $a Variations,',
         boxFifth: '',
-        boxSifth: '$0 id.loc.gov/authorities/names/n83130832',
+        boxSifth: '$0 http://id.loc.gov/authorities/names/n83130832',
         boxSeventh: '',
       };
 

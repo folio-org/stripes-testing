@@ -180,7 +180,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
         bib600FieldValues[3],
         '$a C380454 Stone, Robert B.',
         '',
-        '$0 id.loc.gov/authorities/names/n79061096',
+        '$0 http://id.loc.gov/authorities/names/n79061096',
         '',
       );
     },
