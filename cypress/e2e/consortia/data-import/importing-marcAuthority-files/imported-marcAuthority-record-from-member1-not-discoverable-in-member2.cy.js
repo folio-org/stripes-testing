@@ -19,7 +19,6 @@ describe('Data Import', () => {
         marc: 'marcAuthFileForC405522.mrc',
         fileName: `C405522 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
-        numOfRecords: 1,
       };
       let createdAuthorityID;
       const searchRecordName = 'C405522 Gabaldon, Diana. Outlander novel.';
@@ -99,10 +98,9 @@ describe('Data Import', () => {
           MarcAuthorityBrowse.searchBy(browseOption, searchRecordName);
           MarcAuthorities.verifyResultsRowContent(searchRecordName, type, headingType);
 
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
           ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.college);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-
           MarcAuthorities.checkDefaultSearchOptions(searchRecordName);
           MarcAuthorities.searchBeats(searchRecordName);
           MarcAuthorities.checkNoResultsMessage(
