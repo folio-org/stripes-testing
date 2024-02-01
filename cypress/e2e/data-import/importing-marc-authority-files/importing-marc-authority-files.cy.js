@@ -16,7 +16,7 @@ import {
 } from '../../../support/constants';
 
 describe('data-import', () => {
-  describe('Importing MARC Authority files', { retries: 2 }, () => {
+  describe('Importing MARC Authority files', () => {
     const testData = {};
     const jobProfileToRun = 'Default - Create SRS MARC Authority';
     const createdJobProfile = {

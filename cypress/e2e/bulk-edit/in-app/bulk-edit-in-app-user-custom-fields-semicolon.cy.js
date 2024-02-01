@@ -27,7 +27,7 @@ const previewOfProposedChangesFileName = `*-Updates-Preview-${userBarcodesFileNa
 const changedRecordsFileName = `*-Changed-Records-${userBarcodesFileName}`;
 
 describe('bulk-edit', () => {
-  describe('in-app approach', { retries: 1 }, () => {
+  describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditUpdateRecords.gui,
