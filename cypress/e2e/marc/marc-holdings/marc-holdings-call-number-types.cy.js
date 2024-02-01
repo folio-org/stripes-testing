@@ -12,7 +12,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('MARC', { retries: 2 }, () => {
+describe('MARC', () => {
   describe('MARC Holdings', () => {
     const testData = {
       tag852: '852',
