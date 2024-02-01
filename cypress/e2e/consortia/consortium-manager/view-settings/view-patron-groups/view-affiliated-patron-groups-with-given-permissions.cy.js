@@ -39,7 +39,6 @@ describe('Consortium manager', () => {
         PatronGroupsConcortiumManager.createViaApi(testData.centralSharedPatronGroup).then(
           (newPatronGroup) => {
             testData.centralSharedPatronGroup = newPatronGroup;
-            console.log(newPatronGroup);
           },
         );
         PatronGroups.createViaApi(testData.centralLocalPatronGroup.name).then((response) => {
