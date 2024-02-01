@@ -16,13 +16,14 @@ import DataImport from '../../../../support/fragments/data_import/dataImport';
 import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
+import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
     describe('Consortia', () => {
       const randomPostfix = getRandomPostfix();
-      const instancePrefix = 'YExpAuto Instance';
-      const callNumber = `YExpAuto ${randomPostfix}`;
+      const instancePrefix = 'C402777Auto Instance';
+      const callNumber = `C402777Auto ${randomPostfix}`;
       const testData = {
         collegeHoldings: [],
         universityHoldings: [],
@@ -31,10 +32,10 @@ describe('Inventory', () => {
         instances: [
           { title: `${instancePrefix} 1 M1 Folio Shared`, callNumberInItem: false },
           { title: `${instancePrefix} 2 M1 MARC Shared`, callNumberInItem: true },
-          { title: `${instancePrefix} 5 M2 Folio Shared`, callNumberInItem: true },
-          { title: `${instancePrefix} 6 M2 MARC Shared`, callNumberInItem: false },
           { title: `${instancePrefix} 3 M1 Folio Local`, callNumberInItem: true },
           { title: `${instancePrefix} 4 M1 MARC Local`, callNumberInItem: false },
+          { title: `${instancePrefix} 5 M2 Folio Shared`, callNumberInItem: true },
+          { title: `${instancePrefix} 6 M2 MARC Shared`, callNumberInItem: false },
           { title: `${instancePrefix} 7 M2 Folio Local`, callNumberInItem: false },
           { title: `${instancePrefix} 8 M2 MARC Local`, callNumberInItem: true },
         ],
@@ -94,7 +95,7 @@ describe('Inventory', () => {
               Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
               Logs.openFileDetails(marcFiles[0].fileNameImported);
               for (let i = 0; i < marcFiles[0].numberOftitles; i++) {
-                Logs.getCreatedItemsID().then((link) => {
+                Logs.getCreatedItemsID(i).then((link) => {
                   createdInstanceIds.shared.push(link.split('/')[5]);
                 });
               }
@@ -111,7 +112,7 @@ describe('Inventory', () => {
               Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
               Logs.openFileDetails(marcFiles[1].fileNameImported);
               for (let i = 0; i < marcFiles[1].numberOftitles; i++) {
-                Logs.getCreatedItemsID().then((link) => {
+                Logs.getCreatedItemsID(i).then((link) => {
                   createdInstanceIds.college.push(link.split('/')[5]);
                 });
               }
@@ -131,7 +132,7 @@ describe('Inventory', () => {
               Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
               Logs.openFileDetails(marcFiles[2].fileNameImported);
               for (let i = 0; i < marcFiles[2].numberOftitles; i++) {
-                Logs.getCreatedItemsID().then((link) => {
+                Logs.getCreatedItemsID(i).then((link) => {
                   createdInstanceIds.university.push(link.split('/')[5]);
                 });
               }
@@ -293,6 +294,7 @@ describe('Inventory', () => {
                 ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
                 cy.visit(TopMenu.inventoryPath);
                 InventoryInstances.waitContentLoading();
+                InventorySearchAndFilter.selectBrowseCallNumbers();
               },
             );
           });
@@ -302,125 +304,193 @@ describe('Inventory', () => {
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
-        // cy.setTenant(Affiliations.College);
-        // testData.collegeItems.forEach(item => {
-        //   InventoryItems.deleteItemViaApi(item.id);
-        // });
-        // testData.collegeHoldings.forEach((holding) => {
-        //   InventoryHoldings.deleteHoldingRecordViaApi(holding.id);
-        // });
-        // Locations.deleteViaApi(testData.collegeLocation);
-        // cy.setTenant(Affiliations.University);
-        // testData.universityItems.forEach(item => {
-        //   InventoryItems.deleteItemViaApi(item.id);
-        // });
-        // testData.universityHoldings.forEach((holding) => {
-        //   InventoryHoldings.deleteHoldingRecordViaApi(holding.id);
-        // });
-        // Locations.deleteViaApi(testData.universityLocation);
-        // cy.setTenant(Affiliations.College);
-        // createdInstanceIds.college.forEach(id => {
-        //   InventoryInstance.deleteInstanceViaApi(id);
-        // });
-        // cy.setTenant(Affiliations.University);
-        // createdInstanceIds.university.forEach(id => {
-        //   InventoryInstance.deleteInstanceViaApi(id);
-        // });
-        // cy.resetTenant();
-        // createdInstanceIds.shared.forEach(id => {
-        //   InventoryInstance.deleteInstanceViaApi(id);
-        // });
+        cy.setTenant(Affiliations.College);
+        testData.collegeItems.forEach((item) => {
+          InventoryItems.deleteItemViaApi(item.id);
+        });
+        testData.collegeHoldings.forEach((holding) => {
+          InventoryHoldings.deleteHoldingRecordViaApi(holding.id);
+        });
+        Locations.deleteViaApi(testData.collegeLocation);
+        cy.setTenant(Affiliations.University);
+        testData.universityItems.forEach((item) => {
+          InventoryItems.deleteItemViaApi(item.id);
+        });
+        testData.universityHoldings.forEach((holding) => {
+          InventoryHoldings.deleteHoldingRecordViaApi(holding.id);
+        });
+        Locations.deleteViaApi(testData.universityLocation);
+        cy.setTenant(Affiliations.College);
+        createdInstanceIds.college.forEach((id) => {
+          InventoryInstance.deleteInstanceViaApi(id);
+        });
+        cy.setTenant(Affiliations.University);
+        createdInstanceIds.university.forEach((id) => {
+          InventoryInstance.deleteInstanceViaApi(id);
+        });
+        cy.resetTenant();
+        createdInstanceIds.shared.forEach((id) => {
+          InventoryInstance.deleteInstanceViaApi(id);
+        });
       });
 
       it(
         'C402777 Apply "Shared" facet when Browse for same Call number existing in different tenants (exact match) (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire'] },
         () => {
-          InventorySearchAndFilter.switchToBrowseTab();
-          InventorySearchAndFilter.selectBrowseOption(testData.callNumberBrowseoption);
+          InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'Yes',
+            false,
+          );
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'No',
+            false,
+          );
           BrowseSubjects.browse(callNumber);
-          cy.wait(10000);
+          BrowseCallNumber.valueInResultTableIsHighlighted(callNumber);
+          BrowseCallNumber.checkNumberOfTitlesForRow(callNumber, '6');
+          InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'Yes',
+            false,
+          );
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'No',
+            false,
+          );
+          BrowseCallNumber.clickOnResult(callNumber);
+          InventoryInstances.waitLoading();
+          InventoryInstance.verifySharedIconByTitle(testData.instances[0].title);
+          InventoryInstance.verifySharedIconByTitle(testData.instances[1].title);
+          InventoryInstance.verifySharedIconByTitle(testData.instances[4].title);
+          InventoryInstance.verifySharedIconByTitle(testData.instances[5].title);
+          InventoryInstance.verifySharedIconAbsentByTitle(testData.instances[2].title);
+          InventoryInstance.verifySharedIconAbsentByTitle(testData.instances[3].title);
+          InventorySearchAndFilter.verifyNumberOfSearchResults(6);
 
-          // InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
-          // InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);
-          // InventorySearchAndFilter.verifyCheckboxInAccordion(
-          //   testData.sharedAccordionName,
-          //   'Yes',
-          //   false,
-          // );
-          // InventorySearchAndFilter.verifyCheckboxInAccordion(
-          //   testData.sharedAccordionName,
-          //   'No',
-          //   false,
-          // );
+          InventorySearchAndFilter.switchToBrowseTab();
+          InventorySearchAndFilter.verifyCallNumberBrowseNotEmptyPane();
+          InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);
+          BrowseCallNumber.valueInResultTableIsHighlighted(callNumber);
+          BrowseCallNumber.checkNumberOfTitlesForRow(callNumber, '6');
+          InventorySearchAndFilter.selectOptionInExpandedFilter(testData.sharedAccordionName, 'No');
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'Yes',
+            false,
+          );
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'No',
+            true,
+          );
+          BrowseCallNumber.valueInResultTableIsHighlighted(callNumber);
+          BrowseCallNumber.checkNumberOfTitlesForRow(callNumber, '2');
+          BrowseCallNumber.clickOnResult(callNumber);
+          InventoryInstances.waitLoading();
+          InventoryInstance.verifySharedIconAbsentByTitle(testData.instances[2].title);
+          InventoryInstance.verifySharedIconAbsentByTitle(testData.instances[3].title);
+          InventorySearchAndFilter.verifyNumberOfSearchResults(2);
 
-          // BrowseSubjects.browse(testData.sharedInstance.subjects[0].value);
-          // BrowseSubjects.checkValueIsBold(testData.sharedInstance.subjects[0].value);
-          // BrowseSubjects.verifyNumberOfTitlesForRowWithValueAndNoAuthorityIcon(
-          //   testData.sharedInstance.subjects[0].value,
-          //   1,
-          // );
-          // BrowseSubjects.verifyNumberOfTitlesForRowWithValueAndNoAuthorityIcon(
-          //   testData.sharedInstance.subjects[1].value,
-          //   1,
-          // );
-          // InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);
-          // InventorySearchAndFilter.verifyCheckboxInAccordion(
-          //   testData.sharedAccordionName,
-          //   'Yes',
-          //   false,
-          // );
-          // InventorySearchAndFilter.verifyCheckboxInAccordion(
-          //   testData.sharedAccordionName,
-          //   'No',
-          //   false,
-          // );
+          InventorySearchAndFilter.switchToBrowseTab();
+          InventorySearchAndFilter.verifyCallNumberBrowseNotEmptyPane();
+          InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'No',
+            true,
+          );
+          BrowseCallNumber.valueInResultTableIsHighlighted(callNumber);
+          BrowseCallNumber.checkNumberOfTitlesForRow(callNumber, '2');
+          InventorySearchAndFilter.selectOptionInExpandedFilter(
+            testData.sharedAccordionName,
+            'No',
+            false,
+          );
+          BrowseCallNumber.valueInResultTableIsHighlighted(callNumber);
+          BrowseCallNumber.checkNumberOfTitlesForRow(callNumber, '6');
+          InventorySearchAndFilter.selectOptionInExpandedFilter(
+            testData.sharedAccordionName,
+            'Yes',
+          );
+          BrowseCallNumber.valueInResultTableIsHighlighted(callNumber);
+          BrowseCallNumber.checkNumberOfTitlesForRow(callNumber, '4');
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'Yes',
+            true,
+          );
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'No',
+            false,
+          );
+          BrowseCallNumber.clickOnResult(callNumber);
+          InventoryInstances.waitLoading();
+          InventoryInstance.verifySharedIconByTitle(testData.instances[0].title);
+          InventoryInstance.verifySharedIconByTitle(testData.instances[1].title);
+          InventoryInstance.verifySharedIconByTitle(testData.instances[4].title);
+          InventoryInstance.verifySharedIconByTitle(testData.instances[5].title);
+          InventorySearchAndFilter.verifyNumberOfSearchResults(4);
 
-          // InventorySearchAndFilter.selectOptionInExpandedFilter(testData.sharedAccordionName, 'No');
-          // BrowseSubjects.verifyNonExistentSearchResult(testData.sharedInstance.subjects[0].value);
-          // BrowseSubjects.checkResultIsAbsent(testData.sharedInstance.subjects[1].value);
-          // InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);
-          // InventorySearchAndFilter.verifyCheckboxInAccordion(
-          //   testData.sharedAccordionName,
-          //   'Yes',
-          //   false,
-          // );
-          // InventorySearchAndFilter.verifyCheckboxInAccordion(
-          //   testData.sharedAccordionName,
-          //   'No',
-          //   true,
-          // );
+          InventorySearchAndFilter.switchToBrowseTab();
+          InventorySearchAndFilter.verifyCallNumberBrowseNotEmptyPane();
+          InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'Yes',
+            true,
+          );
+          BrowseCallNumber.valueInResultTableIsHighlighted(callNumber);
+          BrowseCallNumber.checkNumberOfTitlesForRow(callNumber, '4');
+          InventorySearchAndFilter.selectOptionInExpandedFilter(testData.sharedAccordionName, 'No');
+          BrowseCallNumber.valueInResultTableIsHighlighted(callNumber);
+          BrowseCallNumber.checkNumberOfTitlesForRow(callNumber, '6');
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'Yes',
+            true,
+          );
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'No',
+            true,
+          );
+          BrowseCallNumber.clickOnResult(callNumber);
+          InventoryInstances.waitLoading();
+          InventoryInstance.verifySharedIconByTitle(testData.instances[0].title);
+          InventoryInstance.verifySharedIconByTitle(testData.instances[1].title);
+          InventoryInstance.verifySharedIconByTitle(testData.instances[4].title);
+          InventoryInstance.verifySharedIconByTitle(testData.instances[5].title);
+          InventoryInstance.verifySharedIconAbsentByTitle(testData.instances[2].title);
+          InventoryInstance.verifySharedIconAbsentByTitle(testData.instances[3].title);
+          InventorySearchAndFilter.verifyNumberOfSearchResults(6);
 
-          // BrowseSubjects.verifyClickTakesNowhere(testData.sharedInstance.subjects[0].value);
-
-          // InventorySearchAndFilter.selectOptionInExpandedFilter(
-          //   testData.sharedAccordionName,
-          //   'No',
-          //   false,
-          // );
-          // BrowseSubjects.checkValueIsBold(testData.sharedInstance.subjects[0].value);
-          // BrowseSubjects.verifyNumberOfTitlesForRowWithValueAndNoAuthorityIcon(
-          //   testData.sharedInstance.subjects[0].value,
-          //   1,
-          // );
-          // BrowseSubjects.verifyNumberOfTitlesForRowWithValueAndNoAuthorityIcon(
-          //   testData.sharedInstance.subjects[1].value,
-          //   1,
-          // );
-          // InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);
-          // InventorySearchAndFilter.verifyCheckboxInAccordion(
-          //   testData.sharedAccordionName,
-          //   'Yes',
-          //   false,
-          // );
-          // InventorySearchAndFilter.verifyCheckboxInAccordion(
-          //   testData.sharedAccordionName,
-          //   'No',
-          //   false,
-          // );
-
-          // BrowseSubjects.verifyClickTakesToInventory(testData.sharedInstance.subjects[1].value);
-          // InventoryInstance.checkSharedTextInDetailView();
+          InventorySearchAndFilter.switchToBrowseTab();
+          InventorySearchAndFilter.verifyCallNumberBrowseNotEmptyPane();
+          InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);
+          BrowseCallNumber.valueInResultTableIsHighlighted(callNumber);
+          BrowseCallNumber.checkNumberOfTitlesForRow(callNumber, '6');
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'Yes',
+            true,
+          );
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'No',
+            true,
+          );
         },
       );
     });
