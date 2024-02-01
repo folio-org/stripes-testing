@@ -91,6 +91,7 @@ export default {
   },
 
   chooseSecondMenuItem(item) {
+    cy.expect(Spinner().absent());
     cy.do([
       NavListItem(item).click(),
       Pane(item).exists(),

@@ -11,54 +11,54 @@ import ConsortiumManagerApp from '../consortiumManagerApp';
 
 const id = uuid();
 
-export const reasonsActions = {
+export const groupsActions = {
   edit: 'edit',
   trash: 'trash',
 };
 
 export default {
-  createViaApi: (reason) => {
+  createViaApi: (group) => {
     return cy.getConsortiaId().then((consortiaId) => {
       cy.okapiRequest({
         method: REQUEST_METHOD.POST,
         path: `consortia/${consortiaId}/sharing/settings`,
         body: {
-          url: '/cancellation-reason-storage/cancellation-reasons',
+          url: '/groups',
           settingId: id,
           payload: {
+            group: group.payload.group,
             id,
-            name: reason.payload.name,
           },
         },
       }).then(() => {
-        reason.url = '/cancellation-reason-storage/cancellation-reasons';
-        reason.settingId = id;
-        return reason;
+        group.url = '/groups';
+        group.settingId = id;
+        return group;
       });
     });
   },
 
-  deleteViaApi: (reason) => {
+  deleteViaApi: (group) => {
     cy.getConsortiaId().then((consortiaId) => {
       cy.okapiRequest({
         method: REQUEST_METHOD.DELETE,
-        path: `consortia/${consortiaId}/sharing/settings/${reason.settingId}`,
-        body: reason,
+        path: `consortia/${consortiaId}/sharing/settings/${group.settingId}`,
+        body: group,
       });
     });
   },
 
-  verifyReasonInTheList(name, members, ...actions) {
+  verifyGroupInTheList(name, members, ...actions) {
     const row = MultiColumnListRow({ content: including(name) });
-    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
+    const actionsCell = MultiColumnListCell({ columnIndex: 5 });
     cy.expect([
       row.exists(),
-      row.find(MultiColumnListCell({ columnIndex: 3, content: members })).exists(),
+      row.find(MultiColumnListCell({ columnIndex: 4, content: members })).exists(),
     ]);
     if (actions.length === 0) {
       cy.expect(row.find(actionsCell).has({ content: '' }));
     } else {
-      Object.values(reasonsActions).forEach((action) => {
+      Object.values(groupsActions).forEach((action) => {
         const buttonSelector = row.find(actionsCell).find(Button({ icon: action }));
         if (actions.includes(action)) {
           cy.expect(buttonSelector.exists());
@@ -69,16 +69,17 @@ export default {
     }
   },
 
-  verifyNoReasonInTheList(name) {
+  verifyNoGroupInTheList(name) {
     cy.expect(MultiColumnListRow({ content: including(name) }).absent());
   },
 
   choose() {
-    ConsortiumManagerApp.chooseSecondMenuItem('Request cancellation reasons');
+    ConsortiumManagerApp.chooseSecondMenuItem('Patron groups');
     [
-      'Cancel reason',
-      'Description (internal)',
-      'Description (public)',
+      'Patron group',
+      'Description',
+      'Expiration date offset (days)',
+      'Last updated',
       'Member libraries',
       'Actions',
     ].forEach((header) => {
