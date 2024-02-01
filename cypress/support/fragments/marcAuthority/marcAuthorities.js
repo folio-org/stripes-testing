@@ -79,7 +79,7 @@ const sourceFileAccordion = Section({ id: 'sourceFileId' });
 const cancelButton = Button('Cancel');
 const closeLinkAuthorityModal = Button({ ariaLabel: 'Dismiss modal' });
 const exportSelectedRecords = Button('Export selected records (CSV/MARC)');
-const accordionShared = Section('Shared');
+const accordionShared = Accordion('Shared');
 const authoritySourceAccordion = Accordion({ id: 'sourceFileId' });
 const authoritySourceOptions = [
   'LC Name Authority file (LCNAF)',
@@ -518,6 +518,45 @@ export default {
 
   verifyAbsenceOfSharedAccordion: () => {
     cy.expect(accordionShared.absent());
+  },
+
+  verifyExistanceOfSharedAccordion() {
+    cy.expect(accordionShared.exists());
+  },
+
+  verifySharedAccordionOpen(isOpened) {
+    cy.expect(accordionShared.has({ open: isOpened }));
+  },
+
+  clickAccordionByName(accordionName) {
+    cy.do(Accordion(accordionName).clickHeader());
+  },
+
+  verifyCheckboxInAccordion(accordionName, checkboxValue, isChecked = null) {
+    cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).exists());
+    if (isChecked !== null) cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).has({ checked: isChecked }));
+  },
+
+  verifySharedIcon(row = 0) {
+    cy.expect(
+      searchResults.find(MultiColumnListCell({ row, innerHTML: including('sharedIcon') })).exists(),
+    );
+  },
+
+  verifySharedIconAbsent(row = 0) {
+    cy.expect(
+      searchResults.find(MultiColumnListCell({ row, innerHTML: including('sharedIcon') })).absent(),
+    );
+  },
+
+  verifyFilterOptionCount(accordionName, optionName, expectedCount) {
+    cy.expect(
+      Accordion(accordionName)
+        .find(
+          HTML({ className: including('checkbox---'), text: `${optionName}\n${expectedCount}` }),
+        )
+        .exists(),
+    );
   },
 
   actionsSortBy(value) {
