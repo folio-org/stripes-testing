@@ -10,7 +10,6 @@ import LoanPolicy from '../../support/fragments/circulation/loan-policy';
 import OverdueFinePolicy from '../../support/fragments/circulation/overdue-fine-policy';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 import NewNoticePolicyTemplate, {
   createNoticeTemplate,
@@ -207,7 +206,6 @@ describe('Overdue fine', () => {
         });
       });
 
-    OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
     LoanPolicy.createViaApi(loanPolicyBody);
     OverdueFinePolicy.createViaApi(overdueFinePolicyBody);
     UsersOwners.createViaApi(userOwnerBody);
