@@ -71,6 +71,7 @@ describe('inventory', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       ServicePoints.deleteViaApi(testData.servicePoint.id);
       testData.folioInstances.forEach((instance) => InventoryInstances.deleteInstanceViaApi({
         instance,

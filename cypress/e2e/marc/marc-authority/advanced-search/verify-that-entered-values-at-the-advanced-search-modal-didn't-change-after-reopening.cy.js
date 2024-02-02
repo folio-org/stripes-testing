@@ -8,7 +8,7 @@ import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Advanced Search', () => {
       const testData = {
@@ -40,7 +40,7 @@ describe('marc', () => {
             JobProfiles.search(testData.marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
             JobProfiles.waitFileIsImported(testData.marcFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
+            Logs.checkJobStatus(testData.marcFile.fileName, 'Completed');
             Logs.openFileDetails(testData.marcFile.fileName);
             Logs.getCreatedItemsID().then((link) => {
               createdAuthorityIDs.push(link.split('/')[5]);

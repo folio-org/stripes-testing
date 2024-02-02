@@ -31,6 +31,7 @@ describe('ui-users-settings: Owners', () => {
     });
 
     after(() => {
+      cy.getAdminToken();
       servicePoints.forEach((servicePointId) => {
         ServicePoints.deleteViaApi(servicePointId.id);
       });
@@ -220,6 +221,7 @@ describe('ui-users-settings: Owners', () => {
     );
 
     afterEach(() => {
+      cy.getAdminToken();
       testUsers.forEach((user) => users.deleteViaApi(user.userId));
     });
   });

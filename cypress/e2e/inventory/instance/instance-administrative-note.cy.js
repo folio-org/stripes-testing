@@ -81,6 +81,7 @@ describe('inventory', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       ServicePoints.deleteViaApi(testData.userServicePoint.id);
       InventoryInstances.deleteInstanceViaApi({
         instance: marcInstanceData,

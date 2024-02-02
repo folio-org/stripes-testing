@@ -8,7 +8,7 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import Users from '../../../support/fragments/users/users';
 import { Permissions } from '../../../support/dictionary';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       user: {},
@@ -78,6 +78,7 @@ describe('marc', () => {
     });
 
     after('Deleting data', () => {
+      cy.getAdminToken();
       createdAuthorityID.forEach((authId) => {
         MarcAuthority.deleteViaAPI(authId);
       });

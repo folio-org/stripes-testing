@@ -8,7 +8,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Advanced Search', () => {
       const testData = {
@@ -52,7 +52,7 @@ describe('marc', () => {
             JobProfiles.search(jobProfileToRun);
             JobProfiles.runImportFile();
             Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
+            Logs.checkJobStatus(marcFile.fileName, 'Completed');
             Logs.openFileDetails(marcFile.fileName);
             for (let i = 0; i < 3; i++) {
               Logs.getCreatedItemsID(i).then((link) => {

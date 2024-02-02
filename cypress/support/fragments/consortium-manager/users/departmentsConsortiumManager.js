@@ -1,11 +1,13 @@
 import uuid from 'uuid';
-import { REQUEST_METHOD } from '../../constants';
+import { REQUEST_METHOD } from '../../../constants';
 import {
   Button,
   MultiColumnListCell,
   MultiColumnListRow,
   including,
-} from '../../../../interactors';
+  MultiColumnListHeader,
+} from '../../../../../interactors';
+import ConsortiumManagerApp from '../consortiumManagerApp';
 
 const id = uuid();
 
@@ -73,5 +75,14 @@ export default {
 
   verifyNoDepartmentInTheList(name) {
     cy.expect(MultiColumnListRow({ content: including(name) }).absent());
+  },
+
+  choose() {
+    ConsortiumManagerApp.chooseSecondMenuItem('Departments');
+    ['Name', 'Code', 'Last updated', '# of Users', 'Member libraries', 'Actions'].forEach(
+      (header) => {
+        cy.expect(MultiColumnListHeader(header).exists());
+      },
+    );
   },
 };

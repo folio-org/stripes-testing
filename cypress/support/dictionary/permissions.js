@@ -398,6 +398,10 @@ export default {
     internal: 'ui-users.settings.patron-block-templates',
     gui: 'Settings (Users): Can create, edit and remove patron blocks templates',
   },
+  uiUsersViewPatronGroups: {
+    internal: 'ui-users.settings.usergroups.view',
+    gui: 'Settings (Users): Can view patron groups',
+  },
   uiUsersCreatePatronGroups: {
     internal: 'ui-users.settings.usergroups',
     gui: 'Settings (Users): Can create, edit and remove patron groups',
@@ -883,6 +887,10 @@ export default {
   uiSettingsHRIDHandlingCreateEditDelete: {
     internal: 'ui-inventory.settings.hridHandling',
     gui: 'Settings (Inventory): Create, edit and delete HRID handling',
+  },
+  uiSettingsManageAuthorityFiles: {
+    internal: 'ui-marc-authorities.settings.authority-files.all',
+    gui: 'Settings (MARC authority): View, create, edit, delete authority files',
   },
   // Added the below permissions for custom label creation
 

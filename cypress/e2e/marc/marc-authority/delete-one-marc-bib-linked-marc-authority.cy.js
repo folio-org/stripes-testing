@@ -12,7 +12,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       marcValue: 'C350932 Beethoven, Ludwig van, 1770-1827. 14 variations sur un thème original',
@@ -43,7 +43,7 @@ describe('marc', () => {
         'C350932 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
       tag: '240',
       content:
-        '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major $0 id.loc.gov/authorities/names/n83130832',
+        '$m piano, violin, cello, $n op. 44, $r E♭ major $a Variations, $0 id.loc.gov/authorities/names/n83130832',
     };
 
     before('Creating user and data', () => {

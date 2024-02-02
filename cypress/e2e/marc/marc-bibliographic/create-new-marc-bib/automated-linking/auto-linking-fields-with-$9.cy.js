@@ -12,7 +12,7 @@ import InventoryInstances from '../../../../../support/fragments/inventory/inven
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       describe('Automated linking', () => {

@@ -7,7 +7,7 @@ import Users from '../../../../support/fragments/users/users';
 import { randomizeArray } from '../../../../support/utils/arrays';
 import getRandomPostfix, { replaceByIndex } from '../../../../support/utils/stringTools';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {
@@ -207,7 +207,7 @@ describe('marc', () => {
       });
 
       it(
-        'C380707 Editing LDR 10, 11, 20-23 values when creating a new "MARC bib" record (spitfire)',
+        'C422113 Editing LDR 10, 11, 20-23 values when creating a new "MARC bib" record (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           cy.login(
@@ -238,7 +238,7 @@ describe('marc', () => {
       );
 
       it(
-        'C380704 Creating a new "MARC bib" record with valid LDR 06, 07 values. (spitfire)',
+        'C422109 Creating a new "MARC bib" record with valid LDR 06, 07 values. (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           cy.login(
@@ -299,7 +299,7 @@ describe('marc', () => {
       );
 
       it(
-        'C380711 Add all possible "245" subfields when creating a new "MARC bib" record (spitfire)',
+        'C422114 Add all possible "245" subfields when creating a new "MARC bib" record (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           cy.login(
@@ -331,7 +331,7 @@ describe('marc', () => {
       );
 
       it(
-        'C380713 "008" field updated when valid LDR 06-07 combinations entered upon creation of "MARC bib" record (spitfire)',
+        'C422116 "008" field updated when valid LDR 06-07 combinations entered upon creation of "MARC bib" record (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           cy.login(

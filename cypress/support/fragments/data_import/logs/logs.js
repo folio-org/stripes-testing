@@ -181,13 +181,13 @@ export default {
   },
 
   waitFileIsImported: (fileName) => {
-    cy.expect(runningAccordion.find(HTML(including(fileName))).absent(), getLongDelay());
     // wait until uploaded file is displayed in the list
+    cy.wait(60000);
+    cy.expect(runningAccordion.find(HTML(including(fileName))).absent(), getLongDelay());
     cy.expect(
       MultiColumnList({ id: 'job-logs-list' })
         .find(Button(including(fileName)))
         .exists(),
     );
-    cy.wait(60000);
   },
 };

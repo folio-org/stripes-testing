@@ -11,7 +11,7 @@ import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAut
 import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 
-describe('marc', () => {
+describe('MARC', () => {
   describe('plug-in MARC authority', () => {
     describe('plug-in MARC authority | Search', () => {
       const testData = {

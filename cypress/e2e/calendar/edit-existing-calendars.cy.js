@@ -17,63 +17,65 @@ testCalendar.normalHours.splice(1);
 
 const editExistingCalendarsData = calendarFixtures.data.editExistingCalendars;
 
-describe('Edit existing calendars', () => {
-  let testCalendarResponse;
-  before(() => {
-    // login
-    cy.loginAsAdmin();
+describe('Calendar', () => {
+  describe('Calendar New', () => {
+    let testCalendarResponse;
+    before(() => {
+      // login
+      cy.loginAsAdmin();
 
-    // get admin token to use in okapiRequest to retrieve service points
-    if (!Cypress.env('token')) {
-      cy.getAdminToken();
-    }
+      // get admin token to use in okapiRequest to retrieve service points
+      if (!Cypress.env('token')) {
+        cy.getAdminToken();
+      }
 
-    // reset db state
-    deleteServicePoint(testServicePoint.id, false);
+      // reset db state
+      deleteServicePoint(testServicePoint.id, false);
 
-    // create test service point
-    createServicePoint(testServicePoint, (response) => {
-      testCalendar.assignments = [response.body.id];
+      // create test service point
+      createServicePoint(testServicePoint, (response) => {
+        testCalendar.assignments = [response.body.id];
 
-      createCalendar(testCalendar, (calResponse) => {
-        testCalendarResponse = calResponse.body;
+        createCalendar(testCalendar, (calResponse) => {
+          testCalendarResponse = calResponse.body;
+        });
+        openCalendarSettings();
       });
-      openCalendarSettings();
     });
-  });
 
-  after(() => {
-    deleteServicePoint(testServicePoint.id, true);
-    deleteCalendar(testCalendarResponse.id);
-  });
+    after(() => {
+      deleteServicePoint(testServicePoint.id, true);
+      deleteCalendar(testCalendarResponse.id);
+    });
 
-  it('C360950 Edit -> Edit existing calendars (bama)', { tags: ['smoke', 'bama'] }, () => {
-    PaneActions.allCalendarsPane.openAllCalendarsPane();
-    PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
-    PaneActions.individualCalendarPane.selectEditAction({ calendarName: testCalendar.name });
-    PaneActions.individualCalendarPane.checkEditURLFromAllCalendarsPage();
-
-    CreateCalendarForm.editExistingCalendarsAndSave(editExistingCalendarsData);
-
-    // intercept http request
-    cy.intercept(
-      Cypress.env('OKAPI_HOST') + '/calendar/calendars/' + testCalendarResponse.id,
-      (req) => {
-        if (req.method === 'PUT') {
-          req.continue((res) => {
-            expect(res.statusCode).equals(200);
-          });
-        }
-      },
-    ).as('editCalendar');
-
-    cy.wait('@editCalendar').then(() => {
-      openCalendarSettings();
+    it('C360950 Edit -> Edit existing calendars (bama)', { tags: ['smokeBama', 'bama'] }, () => {
       PaneActions.allCalendarsPane.openAllCalendarsPane();
-      PaneActions.allCalendarsPane.checkCalendarExists(editExistingCalendarsData.name);
-      PaneActions.allCalendarsPane.selectCalendar(editExistingCalendarsData.name);
+      PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
+      PaneActions.individualCalendarPane.selectEditAction({ calendarName: testCalendar.name });
+      PaneActions.individualCalendarPane.checkEditURLFromAllCalendarsPage();
 
-      PaneActions.individualCalendarPane.checkEditExistingCalendars(editExistingCalendarsData);
+      CreateCalendarForm.editExistingCalendarsAndSave(editExistingCalendarsData);
+
+      // intercept http request
+      cy.intercept(
+        Cypress.env('OKAPI_HOST') + '/calendar/calendars/' + testCalendarResponse.id,
+        (req) => {
+          if (req.method === 'PUT') {
+            req.continue((res) => {
+              expect(res.statusCode).equals(200);
+            });
+          }
+        },
+      ).as('editCalendar');
+
+      cy.wait('@editCalendar').then(() => {
+        openCalendarSettings();
+        PaneActions.allCalendarsPane.openAllCalendarsPane();
+        PaneActions.allCalendarsPane.checkCalendarExists(editExistingCalendarsData.name);
+        PaneActions.allCalendarsPane.selectCalendar(editExistingCalendarsData.name);
+
+        PaneActions.individualCalendarPane.checkEditExistingCalendars(editExistingCalendarsData);
+      });
     });
   });
 });

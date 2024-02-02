@@ -82,6 +82,7 @@ describe('Loans', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       testData.folioInstances.forEach((instance) => {
         CheckInActions.checkinItemViaApi({
           itemBarcode: instance.barcodes[0],

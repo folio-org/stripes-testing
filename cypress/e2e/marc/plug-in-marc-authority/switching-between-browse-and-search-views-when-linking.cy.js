@@ -89,7 +89,7 @@ describe('plug-in MARC authority', () => {
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(marcFile.fileName);
           for (let i = 0; i < marcFile.numberOfRecords; i++) {
             Logs.getCreatedItemsID(i).then((link) => {

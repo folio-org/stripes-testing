@@ -159,7 +159,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForCreateInstance);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForCreateInstance, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreateInstance);
         Logs.clickOnHotLink(0, 3, RECORD_STATUSES.CREATED);
         InventoryInstance.verifyInstanceTitle(firstInstanceTitle);
@@ -222,7 +222,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForUpdateInstance);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForUpdateInstance, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdateInstance);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.DASH,

@@ -1017,14 +1017,14 @@ export default {
   addExpenceClass: (fundDistributionSource) => {
     cy.do([
       Select({
-        name: 'profile.mappingDetails.mappingFields[26].subfields.0.fields.14.value',
+        name: 'profile.mappingDetails.mappingFields[27].subfields.0.fields.14.value',
       }).focus(),
       Select({
-        name: 'profile.mappingDetails.mappingFields[26].subfields.0.fields.14.value',
+        name: 'profile.mappingDetails.mappingFields[27].subfields.0.fields.14.value',
       }).choose(fundDistributionSource),
     ]);
     cy.expect(
-      Select({ name: 'profile.mappingDetails.mappingFields[26].subfields.0.fields.14.value' }).has({
+      Select({ name: 'profile.mappingDetails.mappingFields[27].subfields.0.fields.14.value' }).has({
         error: 'One or more values must be added before the profile can be saved.',
       }),
     );

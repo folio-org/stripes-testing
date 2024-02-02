@@ -13,72 +13,74 @@ import PaneActions from '../../support/fragments/calendar/pane-actions';
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
 
-describe('Add new calendar for service point', () => {
-  let testCalendarResponse;
+describe('Calendar', () => {
+  describe('Calendar New', () => {
+    let testCalendarResponse;
 
-  const newCalendarInfo = {
-    name: 'test-calendar-create',
-    startDay: 1,
-    endDay: 2,
-  };
-  before(() => {
-    // login and open calendar settings
-    cy.loginAsAdmin();
+    const newCalendarInfo = {
+      name: 'test-calendar-create',
+      startDay: 1,
+      endDay: 2,
+    };
+    before(() => {
+      // login and open calendar settings
+      cy.loginAsAdmin();
 
-    // get admin token to use in okapiRequest to retrieve service points
-    if (!Cypress.env('token')) {
-      cy.getAdminToken();
-    }
+      // get admin token to use in okapiRequest to retrieve service points
+      if (!Cypress.env('token')) {
+        cy.getAdminToken();
+      }
 
-    // reset db state
-    deleteServicePoint(testServicePoint.id, false);
+      // reset db state
+      deleteServicePoint(testServicePoint.id, false);
 
-    // create test service point
-    createServicePoint(testServicePoint, (response) => {
-      testCalendar.assignments = [response.body.id];
+      // create test service point
+      createServicePoint(testServicePoint, (response) => {
+        testCalendar.assignments = [response.body.id];
 
-      createCalendar(testCalendar, (calResponse) => {
-        testCalendarResponse = calResponse.body;
+        createCalendar(testCalendar, (calResponse) => {
+          testCalendarResponse = calResponse.body;
+        });
       });
+      openCalendarSettings();
     });
-    openCalendarSettings();
+
+    it(
+      'C360958 Create -> Add new calendar for service point (bama)',
+      { tags: ['smokeBama', 'bama'] },
+      () => {
+        PaneActions.openCalendarWithServicePoint(testServicePoint.name);
+        PaneActions.individualCalendarPane.close(testCalendarResponse.name);
+        PaneActions.currentCalendarAssignmentsPane.clickNewButton();
+
+        deleteCalendar(testCalendarResponse.id);
+
+        CreateCalendarForm.createCalendarWithoutHoursOfOperation(
+          newCalendarInfo,
+          testServicePoint.name,
+        );
+
+        // intercept http request
+        let calendarID;
+        cy.intercept(Cypress.env('OKAPI_HOST') + '/calendar/calendars', (req) => {
+          if (req.method === 'POST') {
+            req.continue((res) => {
+              expect(res.statusCode).equals(201);
+              calendarID = res.body.id;
+            });
+          }
+        }).as('createCalendar');
+
+        // check that new calendar exists in list of calendars
+        cy.wait('@createCalendar').then(() => {
+          openCalendarSettings();
+          PaneActions.allCalendarsPane.openAllCalendarsPane();
+          PaneActions.allCalendarsPane.checkCalendarExists(newCalendarInfo.name);
+
+          // delete calendar
+          deleteCalendar(calendarID);
+        });
+      },
+    );
   });
-
-  it(
-    'C360958 Create -> Add new calendar for service point (bama)',
-    { tags: ['smoke', 'bama'] },
-    () => {
-      PaneActions.openCalendarWithServicePoint(testServicePoint.name);
-      PaneActions.individualCalendarPane.close(testCalendarResponse.name);
-      PaneActions.currentCalendarAssignmentsPane.clickNewButton();
-
-      deleteCalendar(testCalendarResponse.id);
-
-      CreateCalendarForm.createCalendarWithoutHoursOfOperation(
-        newCalendarInfo,
-        testServicePoint.name,
-      );
-
-      // intercept http request
-      let calendarID;
-      cy.intercept(Cypress.env('OKAPI_HOST') + '/calendar/calendars', (req) => {
-        if (req.method === 'POST') {
-          req.continue((res) => {
-            expect(res.statusCode).equals(201);
-            calendarID = res.body.id;
-          });
-        }
-      }).as('createCalendar');
-
-      // check that new calendar exists in list of calendars
-      cy.wait('@createCalendar').then(() => {
-        openCalendarSettings();
-        PaneActions.allCalendarsPane.openAllCalendarsPane();
-        PaneActions.allCalendarsPane.checkCalendarExists(newCalendarInfo.name);
-
-        // delete calendar
-        deleteCalendar(calendarID);
-      });
-    },
-  );
 });

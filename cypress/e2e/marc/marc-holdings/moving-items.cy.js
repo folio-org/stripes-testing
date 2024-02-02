@@ -17,7 +17,7 @@ import users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('marc', { retries: 2 }, () => {
+describe('MARC', () => {
   describe('MARC Holdings', () => {
     const successCalloutMessage = '1 item has been successfully moved.';
     const OCLCAuthentication = '100481406/PAOLF';
@@ -66,8 +66,8 @@ describe('marc', { retries: 2 }, () => {
             });
           })
           .then(() => {
-            firstHolding = Cypress.env('locations')[0].name;
-            secondHolding = Cypress.env('locations')[1].name;
+            firstHolding = 'Online';
+            secondHolding = 'Popular Reading Collection';
             cy.createInstance({
               instance: {
                 instanceTypeId: Cypress.env('instanceTypes')[0].id,
@@ -76,12 +76,12 @@ describe('marc', { retries: 2 }, () => {
               holdings: [
                 {
                   holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-                  permanentLocationId: Cypress.env('locations')[0].id,
+                  permanentLocationId: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5',
                   sourceId: source[0].id,
                 },
                 {
                   holdingsTypeId: Cypress.env('holdingsTypes')[1].id,
-                  permanentLocationId: Cypress.env('locations')[1].id,
+                  permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
                   sourceId: source[1].id,
                 },
               ],
