@@ -64,7 +64,8 @@ describe('bulk-edit', () => {
           InventoryInstance.openHoldingView();
           HoldingsRecordView.edit();
           HoldingsRecordEdit.addHoldingsNotes(holdingsNote);
-          HoldingsRecordEdit.saveAndClose();
+          HoldingsRecordEdit.saveAndClose(true);
+          InventoryInstance.closeHoldingsView();
         });
         cy.visit(TopMenu.bulkEditPath);
       });
