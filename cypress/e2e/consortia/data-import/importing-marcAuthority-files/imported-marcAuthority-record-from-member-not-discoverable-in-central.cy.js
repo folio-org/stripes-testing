@@ -49,7 +49,7 @@ describe('Data Import', () => {
             waiter: DataImport.waitLoading,
           }).then(() => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
           });
         });
@@ -91,7 +91,7 @@ describe('Data Import', () => {
         MarcAuthorities.verifyResultsRowContent(searchRecordName, type, headingType);
 
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.central);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
 
         MarcAuthorities.switchToBrowse();
