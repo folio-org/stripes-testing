@@ -49,6 +49,7 @@ import NewOrderModal from './modals/newOrderModal';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const actionsButton = instanceDetailsSection.find(Button('Actions'));
+const shareInstanceModal = Modal(including('Are you sure you want to share this instance?'));
 const identifiers = MultiColumnList({ id: 'list-identifiers' });
 const editMARCBibRecordButton = Button({ id: 'edit-instance-marc' });
 const editInstanceButton = Button({ id: 'edit-instance' });
@@ -1237,6 +1238,35 @@ export default {
   checkShareLocalInstanceButtonIsAbsent() {
     cy.do(actionsButton.click());
     cy.expect([Button({ id: 'share-local-instance' }).absent()]);
+  },
+
+  checkEditInstanceButtonIsAbsent() {
+    cy.do(actionsButton.click());
+    cy.expect([Button('Edit instance').absent()]);
+  },
+
+  clickShareLocalInstanceButton() {
+    cy.do(actionsButton.click());
+    cy.do(Button({ id: 'share-local-instance' }).click());
+  },
+
+  verifyShareInstanceModal(message) {
+    cy.expect(shareInstanceModal.exists());
+    cy.expect(shareInstanceModal.find(HTML(including(`You have chosen to share the local instance ${message} with other member libraries in your consortium`))).exists());
+    cy.expect(shareInstanceModal.find(Button('Cancel')).exists());
+    cy.expect(shareInstanceModal.find(Button('Share')).exists());
+  },
+
+  closeShareInstanceModal() {
+    cy.do(shareInstanceModal.find(Button('Cancel')).click());
+  },
+
+  shareInstance() {
+    cy.do(shareInstanceModal.find(Button('Share')).click());
+  },
+
+  verifyCalloutMessage(message) {
+    cy.expect(Callout({ type: calloutTypes.success }).is({ textContent: message }));
   },
 
   openCreateNewOrderModal() {
