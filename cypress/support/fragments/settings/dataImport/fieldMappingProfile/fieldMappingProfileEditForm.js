@@ -316,12 +316,12 @@ export default {
   }) {
     [
       { textField: summaryFields.name, fieldValue: name },
-      { textField: summaryFields.description, fieldValue: description },
+      { textField: summaryFields.description, fieldValue: `"${description}"` },
     ].forEach(({ textField, fieldValue }) => {
       InteractorsTools.setTextFieldValue({
         textField,
         clearField,
-        fieldValue: fieldValue && `"${fieldValue}"`,
+        fieldValue,
       });
     });
 

@@ -12,7 +12,7 @@ import Users from '../../../support/fragments/users/users';
 import { randomizeArray } from '../../../support/utils/arrays';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('MARC', { retries: 2 }, () => {
+describe('MARC', () => {
   describe('MARC Holdings', () => {
     const testData = {
       tagLDR: 'LDR',

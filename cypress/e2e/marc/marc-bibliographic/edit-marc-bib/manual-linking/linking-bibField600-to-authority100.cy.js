@@ -53,7 +53,7 @@ describe('MARC', () => {
           '0',
           '$a Black Panther $c (Fictitious character) $t Wakanda Forever',
           '$i comics $v TestV $x TestX $y TestY $z TestZ',
-          '$0 id.loc.gov/authorities/names/n2016004081',
+          '$0 http://id.loc.gov/authorities/names/n2016004081',
           '$4 .prt $2 test',
         ];
 

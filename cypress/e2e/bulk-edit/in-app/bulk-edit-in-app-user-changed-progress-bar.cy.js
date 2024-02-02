@@ -37,17 +37,13 @@ describe('bulk-edit', () => {
       'C409432 Verify progressbar starting bulk edit by changed identifiers_Users (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.checkUsersRadio();
-        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
-        BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.checkForUploading(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(user.barcode);
 
-        BulkEditSearchPane.checkUsersRadio();
-        BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-        BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.checkForUploading(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -61,9 +57,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.verifySuccessBanner(1);
 
-        BulkEditSearchPane.checkUsersRadio();
-        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
-        BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.checkForUploading(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();

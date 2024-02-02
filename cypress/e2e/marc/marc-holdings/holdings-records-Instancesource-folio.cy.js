@@ -5,7 +5,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
 import TopMenu from '../../../support/fragments/topMenu';
 
-describe('MARC', { retries: 2 }, () => {
+describe('MARC', () => {
   describe('MARC Holdings', () => {
     beforeEach(() => {
       cy.loginAsAdmin();
@@ -26,7 +26,6 @@ describe('MARC', { retries: 2 }, () => {
         HoldingsRecordEdit.waitLoading();
         HoldingsRecordEdit.checkReadOnlyFields();
         HoldingsRecordEdit.closeWithoutSave();
-        InventoryInstance.openHoldingView();
         HoldingsRecordView.tryToDelete();
         HoldingsRecordView.duplicate();
         InventoryNewHoldings.checkSource();

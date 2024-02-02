@@ -29,7 +29,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', { retries: 2 }, () => {
+describe('data-import', () => {
   describe('End to end scenarios', () => {
     let user = {};
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';

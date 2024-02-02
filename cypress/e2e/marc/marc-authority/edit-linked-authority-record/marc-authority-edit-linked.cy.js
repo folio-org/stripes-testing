@@ -145,7 +145,7 @@ describe('MARC', () => {
             '\\',
             `$a ${marcFiles[1].authorityHeading}`,
             '',
-            `$0 id.loc.gov/authorities/names/${marcFiles[1].authority010FieldValue}`,
+            `$0 http://id.loc.gov/authorities/names/${marcFiles[1].authority010FieldValue}`,
             '',
           );
         },

@@ -13,7 +13,7 @@ import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('MARC', { retries: 2 }, () => {
+describe('MARC', () => {
   describe('MARC Holdings', () => {
     const testData = {
       calloutMessage:

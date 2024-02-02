@@ -59,7 +59,7 @@ describe('MARC', () => {
           '7',
           '$c Basilica di San Pietro in Vaticano) $a C380764 Vatican Council $d 1962-1965 : $n (2nd :',
           '',
-          '$0 id.loc.gov/authorities/names/n79084169',
+          '$0 http://id.loc.gov/authorities/names/n79084169',
           '$2 fast $1 http://viaf.org/viaf/133636573/',
         ];
 
@@ -68,7 +68,7 @@ describe('MARC', () => {
           testData.tag611,
           '2',
           '7',
-          '$c Basilica di San Pietro in Vaticano) $a C380764 Vatican Council $d 1962-1965 : $n (2nd : $0 id.loc.gov/authorities/names/n79084169 $2 fast $1 http://viaf.org/viaf/133636573/',
+          '$c Basilica di San Pietro in Vaticano) $a C380764 Vatican Council $d 1962-1965 : $n (2nd : $0 http://id.loc.gov/authorities/names/n79084169 $2 fast $1 http://viaf.org/viaf/133636573/',
         ];
 
         before('Creating user and data', () => {
@@ -126,7 +126,21 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
             MarcAuthorities.checkSearchInput(
-              'keyword==V.Council 1960 ValueT or identifiers.value==fst01405122',
+              'keyword exactPhrase V.Council 1960 ValueT or identifiers.value exactPhrase fst01405122',
+            );
+            MarcAuthorities.verifyEmptyAuthorityField();
+            MarcAuthorities.closeAuthorityLinkingModal();
+
+            QuickMarcEditor.updateExistingField(
+              testData.tag611,
+              '$a V.Council $2 fast $0 http://id.worldcat.org/fast/fst01405122 $1 http://viaf.org/viaf/133636573/ $c San Pietro $t ValueT',
+            );
+            InventoryInstance.verifyAndClickLinkIcon(testData.tag611);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            InventoryInstance.verifySearchOptions();
+            MarcAuthorities.checkSearchInput(
+              'keyword exactPhrase V.Council ValueT or identifiers.value exactPhrase fst01405122',
             );
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthorities.closeAuthorityLinkingModal();
@@ -139,7 +153,9 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
-            MarcAuthorities.checkSearchInput('keyword==ValueT or identifiers.value==fst01405122');
+            MarcAuthorities.checkSearchInput(
+              'keyword exactPhrase ValueT or identifiers.value exactPhrase fst01405122',
+            );
             MarcAuthorities.verifyEmptyAuthorityField();
 
             MarcAuthorities.switchToBrowse();

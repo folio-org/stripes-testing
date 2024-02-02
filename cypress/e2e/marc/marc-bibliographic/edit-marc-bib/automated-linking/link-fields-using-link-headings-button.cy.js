@@ -257,7 +257,7 @@ describe('MARC', () => {
               '\\',
               '$a C388536 Stelfreeze, Brian',
               '$e artist.',
-              '$0 id.loc.gov/authorities/names/n91065740C388536',
+              '$0 http://id.loc.gov/authorities/names/n91065740C388536',
               '',
             );
             QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -267,7 +267,7 @@ describe('MARC', () => {
               '\\',
               '$a C388536 Sprouse, Chris',
               '$e artist.',
-              '$0 id.loc.gov/authorities/names/nb98017694',
+              '$0 http://id.loc.gov/authorities/names/nb98017694',
               '',
             );
             QuickMarcEditor.checkLinkHeadingsButton();
@@ -295,7 +295,7 @@ describe('MARC', () => {
               '\\',
               '$a C388536 Stelfreeze, Brian',
               '$e artist.',
-              '$0 id.loc.gov/authorities/names/n91065740C388536',
+              '$0 http://id.loc.gov/authorities/names/n91065740C388536',
               '',
             );
             matchingNaturalIds.forEach((matchs) => {
@@ -323,7 +323,7 @@ describe('MARC', () => {
               '\\',
               '$a C388536 Sprouse, Chris',
               '$e artist.',
-              '$0 id.loc.gov/authorities/names/nb98017694',
+              '$0 http://id.loc.gov/authorities/names/nb98017694',
               '',
             );
             QuickMarcEditor.verifyTagFieldAfterUnlinking(
@@ -358,7 +358,7 @@ describe('MARC', () => {
               '\\',
               '$a C388536 Sprouse, Chris',
               '$e artist.',
-              '$0 id.loc.gov/authorities/names/nb98017694',
+              '$0 http://id.loc.gov/authorities/names/nb98017694',
               '',
             );
             QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -368,7 +368,7 @@ describe('MARC', () => {
               '\\',
               '$a C388536 Stelfreeze, Brian',
               '$e artist.',
-              '$0 id.loc.gov/authorities/names/n91065740C388536',
+              '$0 http://id.loc.gov/authorities/names/n91065740C388536',
               '',
             );
             // Wait for requests to be finished.

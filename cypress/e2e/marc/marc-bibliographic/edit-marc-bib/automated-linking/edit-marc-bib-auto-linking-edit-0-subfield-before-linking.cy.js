@@ -30,13 +30,14 @@ describe('MARC', () => {
             value: 'Lesbian authors',
             rowIndex: 31,
             newContent:
-              '$a Lesbian authors $z Jamaica $v Biography. $0 id.loc.gov/authorities/subjects/sh96007532',
+              '$a Lesbian authors $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh96007532',
           },
           {
             tag: '650',
             value: 'Lesbian activists',
             rowIndex: 32,
-            newContent: '$a Lesbian activists $0 id.loc.gov/authorities/subjects/sh960075325555',
+            newContent:
+              '$a Lesbian activists $0 http://id.loc.gov/authorities/subjects/sh960075325555',
           },
         ];
         const authority = {
@@ -195,7 +196,7 @@ describe('MARC', () => {
               '0',
               '$a Lesbian activists',
               '$z Jamaica $v Biography.',
-              '$0 id.loc.gov/authorities/subjects/sh96007532',
+              '$0 http://id.loc.gov/authorities/subjects/sh96007532',
               '',
             );
             // #9 Click on the "Save & close" button.

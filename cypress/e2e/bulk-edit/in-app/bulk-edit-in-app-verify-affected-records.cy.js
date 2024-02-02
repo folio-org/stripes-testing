@@ -58,9 +58,7 @@ describe('bulk-edit', () => {
       'C353633 Verify that the in-app bulk edit preview contains affected records (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.checkItemsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-        BulkEditSearchPane.verifyDragNDropItemBarcodeArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.verifyMatchedResults(item.firstBarcode, item.secondBarcode);
         BulkEditSearchPane.waitFileUploading();

@@ -176,7 +176,7 @@ describe('MARC', () => {
           '100',
           '1',
           '\\',
-          '$a Chin, Staceyann, $d 1972- C369084 $e Author $e Narrator $0 id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052',
+          '$a Chin, Staceyann, $d 1972- C369084 $e Author $e Narrator $0 http://id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
           19,
@@ -185,7 +185,7 @@ describe('MARC', () => {
           '0',
           '$a Feminist poetry C369084',
           '',
-          '$0 id.loc.gov/authorities/subjects/sh85047755',
+          '$0 http://id.loc.gov/authorities/subjects/sh85047755',
           '',
         );
         QuickMarcEditor.checkLinkButtonExist('100');
@@ -201,14 +201,14 @@ describe('MARC', () => {
           '100',
           '1',
           '\\',
-          '$a Chin, Staceyann, $d 1972- C369084 $e author. $0 id.loc.gov/authorities/names/n2008052404',
+          '$a Chin, Staceyann, $d 1972- C369084 $e author. $0 http://id.loc.gov/authorities/names/n2008052404',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
           28,
           '600',
           '1',
           '0',
-          '$a Chin, Staceyann, $d 1972- C369084 $x Childhood and youth. $0 id.loc.gov/authorities/names/n2008052404',
+          '$a Chin, Staceyann, $d 1972- C369084 $x Childhood and youth. $0 http://id.loc.gov/authorities/names/n2008052404',
         );
         QuickMarcEditor.pressCancel();
 

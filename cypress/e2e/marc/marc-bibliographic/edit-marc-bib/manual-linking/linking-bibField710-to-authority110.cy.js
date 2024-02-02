@@ -27,7 +27,7 @@ describe('MARC', () => {
             '710',
             '2',
             '0',
-            '$a C375081 Carleton University. $b Anthropology Caucus $d 2023- $e term. $0 id.loc.gov/authorities/names/n93016434',
+            '$a C375081 Carleton University. $b Anthropology Caucus $d 2023- $e term. $0 http://id.loc.gov/authorities/names/n93016434',
           ],
         };
         const marcFiles = [
@@ -59,7 +59,7 @@ describe('MARC', () => {
           '0',
           '$a C375081 Carleton University. $b Anthropology Caucus $d 2023-',
           '$e term.',
-          '$0 id.loc.gov/authorities/names/n93016434',
+          '$0 http://id.loc.gov/authorities/names/n93016434',
           '',
         ];
 
