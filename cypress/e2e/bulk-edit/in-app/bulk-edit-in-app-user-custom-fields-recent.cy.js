@@ -31,20 +31,20 @@ const previewOfProposedChangesFileName = `*-Updates-Preview-${userBarcodesFileNa
 describe('bulk-edit', () => {
   describe('in-app approach', { retries: 1 }, () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditUpdateRecords.gui,
-        permissions.bulkEditLogsView.gui,
-        permissions.uiUsersPermissionsView.gui,
-        permissions.uiUsersCustomField.gui,
-        permissions.uiUserEdit.gui,
-      ]).then((userProperties) => {
+      cy.createTempUser(
+        [
+          permissions.bulkEditUpdateRecords.gui,
+          permissions.bulkEditLogsView.gui,
+          permissions.uiUsersPermissionsView.gui,
+          permissions.uiUsersCustomField.gui,
+          permissions.uiUserEdit.gui,
+        ],
+        'faculty',
+      ).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
           path: SettingsMenu.customFieldsPath,
           waiter: CustomFields.waitLoading,
-        });
-        cy.getUsers({ limit: 1, query: `username=${user.username}` }).then((users) => {
-          cy.updateUser({ ...users[0], patronGroup: '503a81cd-6c26-400f-b620-14c08943697c' });
         });
         FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
         CustomFields.addMultiSelectCustomField(customFieldData);

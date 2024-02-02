@@ -1100,9 +1100,9 @@ export default {
   },
 
   verifyLogsTableHeaders(verification = 'exists') {
-    if (cy.get('div.mclScrollable---JvHuN')) {
-      cy.get('div.mclScrollable---JvHuN').scrollTo('right');
-    }
+    cy.get('div[class^="mclScrollable"]')
+      .should('exist')
+      .scrollTo('right', { ensureScrollable: false });
     cy.expect([
       MultiColumnListHeader('Record type')[verification](),
       MultiColumnListHeader('Status')[verification](),
