@@ -148,4 +148,10 @@ export default {
     this.verifyModalCancelButtonEnabled();
     this.verifyModalSaveButtonEnabled();
   },
+
+  checkMember(tenantName) {
+    cy.contains('div[class^="mclRow--"]', tenantName).within(() => {
+      cy.get('input[type="checkbox"]').click();
+    });
+  },
 };
