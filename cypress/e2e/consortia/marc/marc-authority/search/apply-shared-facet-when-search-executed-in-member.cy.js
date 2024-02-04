@@ -21,31 +21,66 @@ describe('MARC', () => {
           fileName: `C404421 Central testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           tenant: tenantNames.central,
+          affiliation: Affiliations.Consortia,
         },
         {
           marc: 'marcAuthFileForC404421LocalMember1.mrc',
           fileName: `C404421 Local testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           tenant: tenantNames.college,
+          affiliation: Affiliations.College,
         },
         {
           marc: 'marcAuthFileForC404421LocalMember2.mrc',
           fileName: `C404421 Local testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           tenant: tenantNames.university,
+          affiliation: Affiliations.University,
         },
       ];
-      const createdAuthorityID = [];
-      const searchResultsData = [
-        ['Authorized', 'C404421 MARC authority 1st record from Central tenant', 'Genre'],
-        [
-          'Authorized',
-          'C404421 MARC authority 2nd record from Member 1 tenant title',
-          'Personal Name',
-        ],
-      ];
-
+      const sharedAuthorityFromCentralTenant = {
+        authRefType: 'Authorized',
+        heading: 'C404421 MARC authority 1st record from Central tenant',
+        typeOfHeading: 'Genre',
+      };
+      const localAuthorityFromMember1Tenant = {
+        authRefType: 'Authorized',
+        heading: 'C404421 MARC authority 2nd record from Member 1 tenant title',
+        typeOfHeading: 'Personal Name',
+      };
+      const searchValue = 'C404421 MARC authority';
+      const Dropdowns = {
+        SHARED: 'Shared',
+        YES: 'Yes',
+        NO: 'No',
+      };
       const users = {};
+
+      function verifySharedAndLocalRecordsFoundCheckBoxesUnchecked() {
+        MarcAuthorities.verifyResultsRowContent(
+          localAuthorityFromMember1Tenant.heading,
+          localAuthorityFromMember1Tenant.authRefType,
+          localAuthorityFromMember1Tenant.typeOfHeading,
+        );
+        MarcAuthorities.verifyResultsRowContent(
+          sharedAuthorityFromCentralTenant.heading,
+          sharedAuthorityFromCentralTenant.authRefType,
+          sharedAuthorityFromCentralTenant.typeOfHeading,
+        );
+        MarcAuthorities.checkRowsCount(2);
+        MarcAuthorities.verifyResultsRowContantSharedIcon(
+          localAuthorityFromMember1Tenant.heading,
+          false,
+        );
+        MarcAuthorities.verifyResultsRowContantSharedIcon(
+          sharedAuthorityFromCentralTenant.heading,
+          true,
+        );
+        MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
+        MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
+        MarcAuthorities.verifyFilterOptionCount(Dropdowns.SHARED, Dropdowns.YES, 1);
+        MarcAuthorities.verifyFilterOptionCount(Dropdowns.SHARED, Dropdowns.NO, 1);
+      }
 
       before('Create users, data', () => {
         cy.getAdminToken();
@@ -71,14 +106,12 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            marcFiles.forEach((marcFile) => {
-              if (marcFile.tenant === tenantNames.college) {
-                ConsortiumManager.switchActiveAffiliation(tenantNames.central, marcFile.tenant);
-                DataImport.waitLoading();
-                ConsortiumManager.checkCurrentTenantInTopMenu(marcFile.tenant);
-              }
-              if (marcFile.tenant === tenantNames.university) {
-                ConsortiumManager.switchActiveAffiliation(tenantNames.college, marcFile.tenant);
+            marcFiles.forEach((marcFile, index) => {
+              if (marcFile.tenant !== tenantNames.central) {
+                ConsortiumManager.switchActiveAffiliation(
+                  marcFiles[index - 1].tenant,
+                  marcFile.tenant,
+                );
                 DataImport.waitLoading();
                 ConsortiumManager.checkCurrentTenantInTopMenu(marcFile.tenant);
               }
@@ -92,7 +125,7 @@ describe('MARC', () => {
               Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
               Logs.openFileDetails(marcFile.fileName);
               Logs.getCreatedItemsID().then((link) => {
-                createdAuthorityID.push(link.split('/')[5]);
+                marcFile.createdAuthorityID = link.split('/')[5];
               });
             });
           })
@@ -113,11 +146,10 @@ describe('MARC', () => {
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
-        MarcAuthority.deleteViaAPI(createdAuthorityID[0]);
-        cy.setTenant(Affiliations.College);
-        MarcAuthority.deleteViaAPI(createdAuthorityID[1]);
-        cy.setTenant(Affiliations.University);
-        MarcAuthority.deleteViaAPI(createdAuthorityID[2]);
+        marcFiles.forEach((marcFile) => {
+          cy.setTenant(marcFile.affiliation);
+          MarcAuthority.deleteViaAPI(marcFile.createdAuthorityID);
+        });
       });
 
       it(
@@ -127,112 +159,106 @@ describe('MARC', () => {
           MarcAuthorities.verifyExistanceOfSharedAccordion();
           MarcAuthorities.verifySharedAccordionOpen(false);
 
-          MarcAuthorities.clickAccordionByName('Shared');
+          MarcAuthorities.clickAccordionByName(Dropdowns.SHARED);
           MarcAuthorities.verifySharedAccordionOpen(true);
-          MarcAuthorities.verifyCheckboxInAccordion('Shared', 'Yes', false);
-          MarcAuthorities.verifyCheckboxInAccordion('Shared', 'No', false);
+          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
+          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
 
-          MarcAuthorities.searchBy('Keyword', 'C404421 MARC authority');
-          searchResultsData.forEach((result) => {
-            MarcAuthorities.verifyResultsRowContent(result[1], result[0], result[2]);
-          });
-          MarcAuthorities.checkRowsCount(searchResultsData.length);
-          MarcAuthorities.verifySharedIcon(1);
-          MarcAuthorities.verifySharedIconAbsent(0);
-          MarcAuthorities.verifyFilterOptionCount('Shared', 'Yes', 1);
-          MarcAuthorities.verifyFilterOptionCount('Shared', 'No', 1);
+          MarcAuthorities.searchBy('Keyword', searchValue);
+          verifySharedAndLocalRecordsFoundCheckBoxesUnchecked();
 
           MarcAuthoritiesSearch.selectAuthorityByIndex(1);
           MarcAuthority.verifySharedAuthorityDetailsHeading(
-            'C404421 MARC authority 1st record from Central tenant',
+            sharedAuthorityFromCentralTenant.heading,
           );
 
-          MarcAuthorities.actionsSelectCheckbox('No');
+          MarcAuthorities.actionsSelectCheckbox(Dropdowns.NO);
           MarcAuthorities.verifyResultsRowContent(
-            searchResultsData[1][1],
-            searchResultsData[1][0],
-            searchResultsData[1][2],
+            localAuthorityFromMember1Tenant.heading,
+            localAuthorityFromMember1Tenant.authRefType,
+            localAuthorityFromMember1Tenant.typeOfHeading,
           );
           MarcAuthorities.checkRowsCount(1);
-          MarcAuthorities.verifySharedIconAbsent(0);
-          MarcAuthority.verifyLocalAuthorityDetailsHeading(
-            'C404421 MARC authority 2nd record from Member 1 tenant title',
+
+          MarcAuthorities.verifyResultsRowContantSharedIcon(
+            localAuthorityFromMember1Tenant.heading,
+            false,
           );
+          MarcAuthority.verifyLocalAuthorityDetailsHeading(localAuthorityFromMember1Tenant.heading);
           MarcAuthorities.verifySharedAccordionOpen(true);
-          MarcAuthorities.verifyCheckboxInAccordion('Shared', 'Yes', false);
-          MarcAuthorities.verifyCheckboxInAccordion('Shared', 'No', true);
-          MarcAuthorities.verifyFilterOptionCount('Shared', 'Yes', 1);
-          MarcAuthorities.verifyFilterOptionCount('Shared', 'No', 1);
+          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
+          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
+          MarcAuthorities.verifyFilterOptionCount(Dropdowns.SHARED, Dropdowns.YES, 1);
+          MarcAuthorities.verifyFilterOptionCount(Dropdowns.SHARED, Dropdowns.NO, 1);
 
-          MarcAuthorities.actionsSelectCheckbox('No');
-          searchResultsData.forEach((result) => {
-            MarcAuthorities.verifyResultsRowContent(result[1], result[0], result[2]);
-          });
-          MarcAuthorities.checkRowsCount(searchResultsData.length);
-          MarcAuthorities.verifySharedIcon(1);
-          MarcAuthorities.verifySharedIconAbsent(0);
-          MarcAuthorities.verifyFilterOptionCount('Shared', 'Yes', 1);
-          MarcAuthorities.verifyFilterOptionCount('Shared', 'No', 1);
+          MarcAuthorities.actionsSelectCheckbox(Dropdowns.NO);
+          verifySharedAndLocalRecordsFoundCheckBoxesUnchecked();
 
-          MarcAuthority.verifyLocalAuthorityDetailsHeading(
-            'C404421 MARC authority 2nd record from Member 1 tenant title',
-          );
-
-          MarcAuthorities.actionsSelectCheckbox('Yes');
+          MarcAuthorities.actionsSelectCheckbox(Dropdowns.YES);
           MarcAuthorities.verifyResultsRowContent(
-            searchResultsData[0][1],
-            searchResultsData[0][0],
-            searchResultsData[0][2],
+            sharedAuthorityFromCentralTenant.heading,
+            sharedAuthorityFromCentralTenant.authRefType,
+            sharedAuthorityFromCentralTenant.typeOfHeading,
           );
           MarcAuthorities.checkRowsCount(1);
-          MarcAuthorities.verifySharedIcon(0);
-          MarcAuthority.verifySharedAuthorityDetailsHeading(
-            'C404421 MARC authority 1st record from Central tenant',
+
+          MarcAuthorities.verifyResultsRowContantSharedIcon(
+            sharedAuthorityFromCentralTenant.heading,
+            true,
           );
+          MarcAuthority.verifySharedAuthorityDetailsHeading(
+            sharedAuthorityFromCentralTenant.heading,
+          );
+          MarcAuthorities.verifyFilterOptionCount(Dropdowns.SHARED, Dropdowns.YES, 1);
+          MarcAuthorities.verifyFilterOptionCount(Dropdowns.SHARED, Dropdowns.NO, 1);
+          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
+          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
 
-          MarcAuthorities.verifyFilterOptionCount('Shared', 'Yes', 1);
-          MarcAuthorities.verifyFilterOptionCount('Shared', 'No', 1);
-          MarcAuthorities.verifyCheckboxInAccordion('Shared', 'Yes', true);
-          MarcAuthorities.verifyCheckboxInAccordion('Shared', 'No', false);
+          MarcAuthorities.actionsSelectCheckbox(Dropdowns.YES);
+          verifySharedAndLocalRecordsFoundCheckBoxesUnchecked();
 
-          MarcAuthorities.actionsSelectCheckbox('Yes');
-          searchResultsData.forEach((result) => {
-            MarcAuthorities.verifyResultsRowContent(result[1], result[0], result[2]);
-          });
-          MarcAuthorities.checkRowsCount(searchResultsData.length);
-          MarcAuthorities.verifySharedIcon(1);
-          MarcAuthorities.verifySharedIconAbsent(0);
-          MarcAuthorities.verifyFilterOptionCount('Shared', 'Yes', 1);
-          MarcAuthorities.verifyFilterOptionCount('Shared', 'No', 1);
-          MarcAuthorities.verifyCheckboxInAccordion('Shared', 'Yes', false);
-          MarcAuthorities.verifyCheckboxInAccordion('Shared', 'No', false);
-
-          MarcAuthorities.actionsSelectCheckbox('Yes');
-          MarcAuthorities.actionsSelectCheckbox('No');
-
-          searchResultsData.forEach((result) => {
-            MarcAuthorities.verifyResultsRowContent(result[1], result[0], result[2]);
-          });
-          MarcAuthorities.checkRowsCount(searchResultsData.length);
-          MarcAuthorities.verifySharedIcon(1);
-          MarcAuthorities.verifySharedIconAbsent(0);
-          MarcAuthorities.verifyCheckboxInAccordion('Shared', 'Yes', true);
-          MarcAuthorities.verifyCheckboxInAccordion('Shared', 'No', true);
-          MarcAuthorities.verifyFilterOptionCount('Shared', 'Yes', 1);
-          MarcAuthorities.verifyFilterOptionCount('Shared', 'No', 1);
+          MarcAuthorities.actionsSelectCheckbox(Dropdowns.YES);
+          MarcAuthorities.actionsSelectCheckbox(Dropdowns.NO);
+          MarcAuthorities.verifyResultsRowContent(
+            localAuthorityFromMember1Tenant.heading,
+            localAuthorityFromMember1Tenant.authRefType,
+            localAuthorityFromMember1Tenant.typeOfHeading,
+          );
+          MarcAuthorities.verifyResultsRowContent(
+            sharedAuthorityFromCentralTenant.heading,
+            sharedAuthorityFromCentralTenant.authRefType,
+            sharedAuthorityFromCentralTenant.typeOfHeading,
+          );
+          MarcAuthorities.checkRowsCount(2);
+          MarcAuthorities.verifyResultsRowContantSharedIcon(
+            sharedAuthorityFromCentralTenant.heading,
+            true,
+          );
+          MarcAuthorities.verifyResultsRowContantSharedIcon(
+            localAuthorityFromMember1Tenant.heading,
+            false,
+          );
+          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
+          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
+          MarcAuthorities.verifyFilterOptionCount(Dropdowns.SHARED, Dropdowns.YES, 1);
+          MarcAuthorities.verifyFilterOptionCount(Dropdowns.SHARED, Dropdowns.NO, 1);
 
           MarcAuthorities.selectSearchOptionInDropdown(MARC_AUTHORITY_SEARCH_OPTIONS.NAME_TITLE);
           MarcAuthorities.checkSelectOptionFieldContent(MARC_AUTHORITY_SEARCH_OPTIONS.NAME_TITLE);
 
           MarcAuthoritiesSearch.clickSearchButton();
           MarcAuthorities.verifyResultsRowContent(
-            searchResultsData[1][1],
-            searchResultsData[1][0],
-            searchResultsData[1][2],
+            localAuthorityFromMember1Tenant.heading,
+            localAuthorityFromMember1Tenant.authRefType,
+            localAuthorityFromMember1Tenant.typeOfHeading,
           );
           MarcAuthorities.checkRowsCount(1);
-          MarcAuthorities.verifySharedIconAbsent(0);
-          MarcAuthorities.verifyCheckboxInAccordion('Shared', 'No', true);
+          MarcAuthorities.verifyResultsRowContantSharedIcon(
+            localAuthorityFromMember1Tenant.heading,
+            false,
+          );
+          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
+          MarcAuthorities.verifyFilterOptionCount(Dropdowns.SHARED, Dropdowns.NO, 1);
         },
       );
     });

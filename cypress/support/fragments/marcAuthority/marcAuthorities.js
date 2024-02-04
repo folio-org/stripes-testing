@@ -537,18 +537,6 @@ export default {
     if (isChecked !== null) cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).has({ checked: isChecked }));
   },
 
-  verifySharedIcon(row = 0) {
-    cy.expect(
-      searchResults.find(MultiColumnListCell({ row, innerHTML: including('sharedIcon') })).exists(),
-    );
-  },
-
-  verifySharedIconAbsent(row = 0) {
-    cy.expect(
-      searchResults.find(MultiColumnListCell({ row, innerHTML: including('sharedIcon') })).absent(),
-    );
-  },
-
   verifyFilterOptionCount(accordionName, optionName, expectedCount) {
     cy.expect(
       Accordion(accordionName)
@@ -914,6 +902,14 @@ export default {
           .exists(),
       );
     }
+  },
+
+  verifyResultRowContentSharedIcon(heading, isShared) {
+    const sharedIconRow = MultiColumnListRow(including(heading), { isContainer: false }).find(
+      MultiColumnListCell({ innerHTML: including('sharedIcon') }),
+    );
+
+    cy.expect(isShared ? sharedIconRow.exists() : sharedIconRow.absent());
   },
 
   verifyTextOfPaneHeaderMarcAuthority(text) {
