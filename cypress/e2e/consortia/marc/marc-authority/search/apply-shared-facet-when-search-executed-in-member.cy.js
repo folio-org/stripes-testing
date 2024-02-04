@@ -68,11 +68,11 @@ describe('MARC', () => {
           sharedAuthorityFromCentralTenant.typeOfHeading,
         );
         MarcAuthorities.checkRowsCount(2);
-        MarcAuthorities.verifyResultsRowContantSharedIcon(
+        MarcAuthorities.verifyResultRowContentSharedIcon(
           localAuthorityFromMember1Tenant.heading,
           false,
         );
-        MarcAuthorities.verifyResultsRowContantSharedIcon(
+        MarcAuthorities.verifyResultRowContentSharedIcon(
           sharedAuthorityFromCentralTenant.heading,
           true,
         );
@@ -180,7 +180,7 @@ describe('MARC', () => {
           );
           MarcAuthorities.checkRowsCount(1);
 
-          MarcAuthorities.verifyResultsRowContantSharedIcon(
+          MarcAuthorities.verifyResultRowContentSharedIcon(
             localAuthorityFromMember1Tenant.heading,
             false,
           );
@@ -202,7 +202,7 @@ describe('MARC', () => {
           );
           MarcAuthorities.checkRowsCount(1);
 
-          MarcAuthorities.verifyResultsRowContantSharedIcon(
+          MarcAuthorities.verifyResultRowContentSharedIcon(
             sharedAuthorityFromCentralTenant.heading,
             true,
           );
@@ -230,11 +230,11 @@ describe('MARC', () => {
             sharedAuthorityFromCentralTenant.typeOfHeading,
           );
           MarcAuthorities.checkRowsCount(2);
-          MarcAuthorities.verifyResultsRowContantSharedIcon(
+          MarcAuthorities.verifyResultRowContentSharedIcon(
             sharedAuthorityFromCentralTenant.heading,
             true,
           );
-          MarcAuthorities.verifyResultsRowContantSharedIcon(
+          MarcAuthorities.verifyResultRowContentSharedIcon(
             localAuthorityFromMember1Tenant.heading,
             false,
           );
@@ -253,7 +253,7 @@ describe('MARC', () => {
             localAuthorityFromMember1Tenant.typeOfHeading,
           );
           MarcAuthorities.checkRowsCount(1);
-          MarcAuthorities.verifyResultsRowContantSharedIcon(
+          MarcAuthorities.verifyResultRowContentSharedIcon(
             localAuthorityFromMember1Tenant.heading,
             false,
           );
