@@ -135,16 +135,18 @@ describe('MARC', () => {
             cy.loginAsAdmin().then(() => {
               marcFiles.forEach((marcFile) => {
                 cy.visit(TopMenu.dataImportPath);
-                if (marcFile.tenant === 'University')
+                if (marcFile.tenant === 'University') {
                   ConsortiumManager.switchActiveAffiliation(
                     tenantNames.central,
                     tenantNames.university,
                   );
-                else if (marcFile.tenant === 'College')
+                }
+                else if (marcFile.tenant === 'College') {
                   ConsortiumManager.switchActiveAffiliation(
                     tenantNames.university,
                     tenantNames.college,
                   );
+                }
                 DataImport.verifyUploadState();
                 DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
                 JobProfiles.waitLoadingList();
