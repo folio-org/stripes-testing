@@ -53,7 +53,7 @@ describe('MARC', () => {
 
       it(
         'C350767 Browse for MARC Authority record with " & " symbol in the title (spitfire) (TaaS)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire'] },
         () => {
           MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.checkSearchOptions();

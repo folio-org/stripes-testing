@@ -214,8 +214,7 @@ export default {
 
   verifyNumberOfTitles(columnIndex, linkValue) {
     cy.expect(
-      MultiColumnListRow({ indexRow: 'row-0' })
-        .find(MultiColumnListCell({ columnIndex, content: linkValue }))
+      MultiColumnListCell({ columnIndex, content: linkValue })
         .find(Link())
         .exists(),
     );
