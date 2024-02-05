@@ -7,6 +7,7 @@ import {
   Pane,
   Checkbox,
   ListRow,
+  SelectionOption,
 } from '../../../../../interactors';
 import textField from '../../../../../interactors/text-field';
 import ConsortiumManagerApp from '../consortiumManagerApp';
@@ -147,5 +148,31 @@ export default {
     this.verifyModalCloseButtonEnabled();
     this.verifyModalCancelButtonEnabled();
     this.verifyModalSaveButtonEnabled();
+  },
+
+  checkMember(tenantName, shouldBeChecked = true) {
+    cy.contains('div[class^="mclRow--"]', tenantName).within(() => {
+      cy.get('input[type="checkbox"]').then(($checkbox) => {
+        const isChecked = $checkbox.prop('checked');
+        if (shouldBeChecked && !isChecked) {
+          cy.wrap($checkbox).click();
+        } else if (!shouldBeChecked && isChecked) {
+          cy.wrap($checkbox).click();
+        }
+      });
+    });
+  },
+
+  selectMember(memberName) {
+    cy.do([
+      Button({ id: 'consortium-member-select' }).click(),
+      SelectionOption(memberName).click(),
+    ]);
+    cy.wait(6000);
+    cy.get('button#consortium-member-select')
+      .invoke('text')
+      .then((actualText) => {
+        expect(actualText.trim()).to.equal(`Select control${memberName}`);
+      });
   },
 };
