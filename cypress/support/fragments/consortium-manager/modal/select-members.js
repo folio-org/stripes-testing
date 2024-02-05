@@ -149,9 +149,16 @@ export default {
     this.verifyModalSaveButtonEnabled();
   },
 
-  checkMember(tenantName) {
+  checkMember(tenantName, shouldBeChecked = true) {
     cy.contains('div[class^="mclRow--"]', tenantName).within(() => {
-      cy.get('input[type="checkbox"]').click();
+      cy.get('input[type="checkbox"]').then(($checkbox) => {
+        const isChecked = $checkbox.prop('checked');
+        if (shouldBeChecked && !isChecked) {
+          cy.wrap($checkbox).click();
+        } else if (!shouldBeChecked && isChecked) {
+          cy.wrap($checkbox).click();
+        }
+      });
     });
   },
 };

@@ -35,7 +35,7 @@ describe('Consortia', () => {
     });
 
     after('Delete users data', () => {
-      cy.getAdminToken();
+      cy.loginAsAdmin();
       Users.deleteViaApi(userData.userId);
     });
 
@@ -46,11 +46,23 @@ describe('Consortia', () => {
         TopMenuNavigation.navigateToApp('Consortium manager');
         ConsortiumManager.verifyStatusOfConsortiumManager();
         ConsortiumManager.clickSelectMembers();
-        SelectMembers.verifyStatusOfSelectMembersModal();
-        SelectMembers.checkMember(tenantNames.central);
-        SelectMembers.checkMember(tenantNames.college);
-        SelectMembers.checkMember(tenantNames.university);
+        SelectMembers.checkMember(tenantNames.central, false);
+        SelectMembers.checkMember(tenantNames.college, true);
+        SelectMembers.checkMember(tenantNames.university, true);
         SelectMembers.saveAndClose();
+        ConsortiumManager.openListInSettings('Users');
+        ConsortiumManager.openListInOpenedPane('Users', 'Permission sets');
+        ConsortiumManager.openListInOpenedPane('Permission sets', 'folio_admin');
+        ConsortiumManager.collapseAll('folio_admin');
+        ConsortiumManager.expandAll('folio_admin');
+        ConsortiumManager.closeThirdPane('folio_admin');
+        ConsortiumManager.clickActionsInPermissionSets();
+        ConsortiumManager.selectMember(tenantNames.university);
+        ConsortiumManager.openListInOpenedPane('Permission sets', 'folio_migration');
+        ConsortiumManager.collapseAll('folio_migration');
+        ConsortiumManager.expandAll('folio_migration');
+        ConsortiumManager.closeThirdPane('folio_migration');
+        ConsortiumManager.clickActionsInPermissionSets();
       },
     );
   });
