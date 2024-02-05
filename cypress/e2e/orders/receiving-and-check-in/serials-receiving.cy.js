@@ -40,7 +40,7 @@ describe('Orders: Receiving and Check-in', () => {
     copyNumber: Helper.getRandomBarcode(),
     enumeration: Helper.getRandomBarcode(),
     chronology: Helper.getRandomBarcode(),
-    caption: `autotestCaption-${Helper.getRandomBarcode()}`,
+    displaySummary: `AQA-${Helper.getRandomBarcode()}`,
   };
 
   let orderNumber;
@@ -106,12 +106,12 @@ describe('Orders: Receiving and Check-in', () => {
       OrderLines.receiveOrderLineViaActions();
       Receiving.selectLinkFromResultsList();
       Receiving.addPiece(
-        firstPiece.caption,
+        firstPiece.displaySummary,
         firstPiece.copyNumber,
         firstPiece.enumeration,
         firstPiece.chronology,
       );
-      Receiving.selectPiece(firstPiece.caption);
+      Receiving.selectPiece(firstPiece.displaySummary);
       Receiving.selectConnectedInEditPiece();
       ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.ON_ORDER);
     },

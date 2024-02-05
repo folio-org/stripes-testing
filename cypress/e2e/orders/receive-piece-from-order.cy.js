@@ -65,7 +65,7 @@ describe('orders: Receive piece from Order', () => {
     { tags: ['smoke', 'thunderjet'] },
     () => {
       const barcode = Helper.getRandomBarcode();
-      const caption = 'autotestCaption';
+      const enumeration = 'autotestCaption';
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.openOrder();
@@ -75,8 +75,8 @@ describe('orders: Receive piece from Order', () => {
       Orders.receiveOrderViaActions();
       // Receiving part
       Receiving.selectPOLInReceive(orderLineTitle);
-      Receiving.receivePiece(0, caption, barcode);
-      Receiving.checkReceivedPiece(0, caption, barcode);
+      Receiving.receivePiece(0, enumeration, barcode);
+      Receiving.checkReceivedPiece(0, enumeration, barcode);
       // inventory part
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.switchToItem();
