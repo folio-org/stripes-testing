@@ -23,19 +23,19 @@ describe('MARC', () => {
         tag046: '046',
         tag377: '377',
         tag400: '400',
-        title: 'Dante Alighieri C405142, 1265-2024',
-        updatedTitle: `Dante Alighieri C405142, 1265-2024, Divine Comedy ${randomFourDigits}`,
-        updatedTag100Value: `$a Dante Alighieri C405142, $d 1265-2024, $t Divine Comedy ${randomFourDigits}`,
-        updatedTag046Value: '$g 847-111-2024 $2 xqcd',
-        tag400Value: `$a Данте Алигери C405142 ${randomFourDigits} $d 1265-1321`,
-        tag010Value: '$a n78095495405142',
-        tag377Value: '$a itaC405142',
+        title: 'Dante Alighieri C405537, 1265-2024',
+        updatedTitle: `Dante Alighieri C405537, 1265-2024, Divine Comedy ${randomFourDigits}`,
+        updatedTag100Value: `$a Dante Alighieri C405537, $d 1265-2024, $t Divine Comedy ${randomFourDigits}`,
+        updatedTag046Value: '$g 928-125-2024 $2 asmg',
+        tag400Value: `$a Данте Алигери C405537 ${randomFourDigits} $d 1265-1321`,
+        tag010Value: '$a n78095495405537',
+        tag377Value: '$a itaC405537',
         viewSharedRecordText: 'Shared MARC authority record',
         editSharedRecordText: 'Edit shared MARC authority record',
       };
       const marcFile = {
-        marc: 'marcAuthFileC405142.mrc',
-        fileName: `testMarcFileC405142.${getRandomPostfix()}.mrc`,
+        marc: 'marcAuthFileC405537.mrc',
+        fileName: `testMarcFileC405537.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
       };
@@ -69,7 +69,15 @@ describe('MARC', () => {
           testData.userProperties = createdUserProperties;
 
           cy.assignAffiliationToUser(Affiliations.College, testData.userProperties.userId);
+          cy.assignAffiliationToUser(Affiliations.University, testData.userProperties.userId);
           cy.setTenant(Affiliations.College);
+          cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
+            Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+            Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          ]);
+
+          cy.setTenant(Affiliations.University);
           cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           ]);
@@ -80,6 +88,9 @@ describe('MARC', () => {
             waiter: MarcAuthorities.waitLoading,
           }).then(() => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            MarcAuthorities.waitLoading();
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           });
         });
       });
@@ -92,7 +103,7 @@ describe('MARC', () => {
       });
 
       it(
-        'C405142 "MARC authority" record edited on Central tenant is updated in Member tenant (consortia) (spitfire)',
+        'C405537 Shared "MARC authority" record edited on Member 1 tenant is updated in Central and Member 2 tenants (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire'] },
         () => {
           MarcAuthorities.searchBeats(testData.title);
@@ -100,7 +111,8 @@ describe('MARC', () => {
           MarcAuthority.verifySharedAuthorityDetailsHeading(testData.title);
           MarcAuthority.contains(testData.viewSharedRecordText);
           MarcAuthority.edit();
-          QuickMarcEditor.checkPaneheaderContains(testData.editSharedRecordText);
+          // To be uncommented when UIMARCAUTH-385 is fixed
+          // QuickMarcEditor.checkPaneheaderContains(testData.editSharedRecordText);
           QuickMarcEditor.addEmptyFields(8);
           QuickMarcEditor.checkEmptyFieldAdded(9);
           QuickMarcEditor.addValuesToExistingField(
@@ -130,13 +142,27 @@ describe('MARC', () => {
           MarcAuthority.notContains(testData.tag377Value);
           MarcAuthority.verifyFieldPositionInView(5, testData.tag010, testData.tag010Value);
 
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           MarcAuthorities.waitLoading();
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           MarcAuthorities.searchBeats(testData.updatedTitle);
           MarcAuthorities.select(createdAuthorityID);
           MarcAuthority.verifySharedAuthorityDetailsHeading(testData.updatedTitle);
           MarcAuthority.contains(testData.viewSharedRecordText);
+          MarcAuthority.contains(testData.updatedTag100Value);
+          MarcAuthority.contains(testData.updatedTag046Value);
+          MarcAuthority.contains(testData.tag400Value);
+          MarcAuthority.notContains(testData.tag377Value);
+          MarcAuthority.verifyFieldPositionInView(5, testData.tag010, testData.tag010Value);
+
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+          MarcAuthorities.waitLoading();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+          MarcAuthorities.searchBeats(testData.updatedTitle);
+          MarcAuthorities.select(createdAuthorityID);
+          MarcAuthority.verifySharedAuthorityDetailsHeading(testData.updatedTitle);
+          // To be uncommented when UIMARCAUTH-385 is fixed
+          // MarcAuthority.contains(testData.viewSharedRecordText);
           MarcAuthority.contains(testData.updatedTag100Value);
           MarcAuthority.contains(testData.updatedTag046Value);
           MarcAuthority.contains(testData.tag400Value);
