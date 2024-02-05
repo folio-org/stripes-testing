@@ -89,7 +89,7 @@ describe('MARC', () => {
               cy.loginAsAdmin().then(() => {
                 marcFilesFor.forEach((marcFile) => {
                   cy.visit(TopMenu.dataImportPath);
-                  ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+                  ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
                   DataImport.waitLoading();
                   ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
                   DataImport.verifyUploadState();
@@ -110,7 +110,7 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               }).then(() => {
-                ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
                 InventoryInstances.waitContentLoading();
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
               });
@@ -187,7 +187,7 @@ describe('MARC', () => {
             MarcAuthorities.checkRecordDetailPageMarkedValue(linkingTagAndValues.authorityHeading);
 
             cy.visit(TopMenu.inventoryPath);
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.central);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             cy.visit(TopMenu.marcAuthorities);
@@ -207,7 +207,7 @@ describe('MARC', () => {
               `No results found for "${testData.instanceTitle}". Please check your spelling and filters.`,
             );
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
             cy.visit(TopMenu.marcAuthorities);

@@ -190,7 +190,7 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.searchByTitle(testData.fieldContents.tag245Content);
             InventoryInstances.selectInstance();
             InventoryInstance.verifySharedIcon();

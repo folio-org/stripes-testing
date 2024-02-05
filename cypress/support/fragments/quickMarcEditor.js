@@ -1939,13 +1939,24 @@ export default {
 
   verifyUpdateLinkedBibsKeepEditingModal(linkedRecordsNumber) {
     cy.expect(updateLinkedBibFieldsModal.exists());
-    cy.expect(
-      updateLinkedBibFieldsModal.has({
-        content: including(
-          `${linkedRecordsNumber} bibliographic record is linked to this authority record and will be updated by clicking the Save button.`,
-        ),
-      }),
-    );
+    if(linkedRecordsNumber === 1) {
+      cy.expect(
+        updateLinkedBibFieldsModal.has({
+          content: including(
+            `${linkedRecordsNumber} bibliographic record is linked to this authority record and will be updated by clicking the Save button.`,
+          ),
+        }),
+      );
+    } else {
+      cy.expect(
+        updateLinkedBibFieldsModal.has({
+          content: including(
+            `${linkedRecordsNumber} bibliographic records are linked to this authority record and will be updated by clicking the Save button.`,
+          ),
+        }),
+      );
+    }
+    
     cy.expect(saveButton.exists());
     cy.expect(keepEditingButton.exists());
   },

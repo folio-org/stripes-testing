@@ -111,7 +111,7 @@ describe('MARC', () => {
               cy.resetTenant();
               cy.setTenant(Affiliations.College);
               cy.visit(TopMenu.inventoryPath);
-              ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
@@ -185,7 +185,7 @@ describe('MARC', () => {
               `${testData.linkAuthorityIcon}\n${linkingTagAndValues.authorityHeading}`,
             );
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
             cy.visit(TopMenu.marcAuthorities);
