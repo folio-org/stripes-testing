@@ -119,7 +119,7 @@ describe('inventory', () => {
 
     it(
       'C359596 Verify that contributors with the same "Name", "Name type" and different "authorityID" will display in different rows in the response (spitfire)',
-      { tags: ['criticalPath', 'spitfire'], retries: 1 },
+      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();

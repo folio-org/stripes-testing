@@ -49,7 +49,7 @@ describe('MARC', () => {
               DataImport.verifyUploadState();
               DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
               DataImport.waitFileIsUploaded();
-              DataImport.waitLoadingList();
+              JobProfiles.waitLoadingList();
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
               Logs.waitFileIsImported(marcFile.fileName);
