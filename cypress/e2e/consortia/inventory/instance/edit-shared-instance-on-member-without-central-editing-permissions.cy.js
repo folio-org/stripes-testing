@@ -50,8 +50,10 @@ describe('Inventory', () => {
     after('Delete test data', () => {
       cy.resetTenant();
       cy.getAdminToken();
+      cy.setTenant(Affiliations.College);
       InventoryInstance.deleteInstanceViaApi(testData.instance1.instanceId);
       InventoryInstance.deleteInstanceViaApi(testData.instance2.instanceId);
+      cy.resetTenant();
       Users.deleteViaApi(testData.user.userId);
     });
 
@@ -85,7 +87,7 @@ describe('Inventory', () => {
         InventoryInstance.waitLoading();
 
         InventoryInstance.checkEditInstanceButtonIsAbsent();
-      }
+      },
     );
   });
 });
