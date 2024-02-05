@@ -1939,7 +1939,7 @@ export default {
 
   verifyUpdateLinkedBibsKeepEditingModal(linkedRecordsNumber) {
     cy.expect(updateLinkedBibFieldsModal.exists());
-    if(linkedRecordsNumber === 1) {
+    if (linkedRecordsNumber === 1) {
       cy.expect(
         updateLinkedBibFieldsModal.has({
           content: including(
@@ -1956,7 +1956,7 @@ export default {
         }),
       );
     }
-    
+
     cy.expect(saveButton.exists());
     cy.expect(keepEditingButton.exists());
   },
