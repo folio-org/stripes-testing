@@ -103,9 +103,9 @@ describe('MARC', () => {
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
-        createdInstanceIDs.forEach((instanceID) => {
-          InventoryInstance.deleteInstanceViaApi(instanceID);
-        });
+        InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[0]);
+        cy.setTenant(Affiliations.University);
+        InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[1]);
       });
 
       it(
