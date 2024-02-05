@@ -79,7 +79,7 @@ const sourceFileAccordion = Section({ id: 'sourceFileId' });
 const cancelButton = Button('Cancel');
 const closeLinkAuthorityModal = Button({ ariaLabel: 'Dismiss modal' });
 const exportSelectedRecords = Button('Export selected records (CSV/MARC)');
-const accordionShared = Section('Shared');
+const accordionShared = Accordion('Shared');
 const authoritySourceAccordion = Accordion({ id: 'sourceFileId' });
 const authoritySourceOptions = [
   'LC Name Authority file (LCNAF)',
@@ -520,6 +520,33 @@ export default {
     cy.expect(accordionShared.absent());
   },
 
+  verifyExistanceOfSharedAccordion() {
+    cy.expect(accordionShared.exists());
+  },
+
+  verifySharedAccordionOpen(isOpened) {
+    cy.expect(accordionShared.has({ open: isOpened }));
+  },
+
+  clickAccordionByName(accordionName) {
+    cy.do(Accordion(accordionName).clickHeader());
+  },
+
+  verifyCheckboxInAccordion(accordionName, checkboxValue, isChecked = null) {
+    cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).exists());
+    if (isChecked !== null) cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).has({ checked: isChecked }));
+  },
+
+  verifyFilterOptionCount(accordionName, optionName, expectedCount) {
+    cy.expect(
+      Accordion(accordionName)
+        .find(
+          HTML({ className: including('checkbox---'), text: `${optionName}\n${expectedCount}` }),
+        )
+        .exists(),
+    );
+  },
+
   actionsSortBy(value) {
     cy.do(Select({ dataTestID: 'sort-by-selection' }).choose(value));
     // need to wait until content will be sorted
@@ -875,6 +902,14 @@ export default {
           .exists(),
       );
     }
+  },
+
+  verifyResultRowContentSharedIcon(heading, isShared) {
+    const sharedIconRow = MultiColumnListRow(including(heading), { isContainer: false }).find(
+      MultiColumnListCell({ innerHTML: including('sharedIcon') }),
+    );
+
+    cy.expect(isShared ? sharedIconRow.exists() : sharedIconRow.absent());
   },
 
   verifyTextOfPaneHeaderMarcAuthority(text) {

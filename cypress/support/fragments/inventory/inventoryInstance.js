@@ -1502,4 +1502,20 @@ export default {
   checkInstanceHrId: (expectedInstanceHrId) => cy.expect(
     instanceDetailsSection.find(KeyValue('Instance HRID')).has({ value: expectedInstanceHrId }),
   ),
+
+  verifySharedIconByTitle(title) {
+    cy.expect(
+      paneResultsSection
+        .find(MultiColumnListCell(title, { innerHTML: including('sharedIcon') }))
+        .exists(),
+    );
+  },
+
+  verifySharedIconAbsentByTitle(title) {
+    cy.expect(
+      paneResultsSection
+        .find(MultiColumnListCell(title, { innerHTML: including('sharedIcon') }))
+        .absent(),
+    );
+  },
 };

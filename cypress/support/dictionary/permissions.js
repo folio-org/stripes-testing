@@ -398,6 +398,10 @@ export default {
     internal: 'ui-users.settings.patron-block-templates',
     gui: 'Settings (Users): Can create, edit and remove patron blocks templates',
   },
+  uiUsersViewPatronGroups: {
+    internal: 'ui-users.settings.usergroups.view',
+    gui: 'Settings (Users): Can view patron groups',
+  },
   uiUsersCreatePatronGroups: {
     internal: 'ui-users.settings.usergroups',
     gui: 'Settings (Users): Can create, edit and remove patron groups',
