@@ -34,7 +34,7 @@ describe('MARC', () => {
           thirdBox: '\\',
           content: '$a C405559 Lentz Shared',
           eSubfield: '',
-          zeroSubfield: '$0 id.loc.gov/authorities/names/n2011049161405559',
+          zeroSubfield: '$0 http://id.loc.gov/authorities/names/n2011049161405559',
           seventhBox: '',
         };
 
@@ -103,7 +103,7 @@ describe('MARC', () => {
                   JobProfiles.waitLoadingList();
                   JobProfiles.search(marcFile.jobProfileToRun);
                   JobProfiles.runImportFile();
-                  JobProfiles.waitFileIsImported(marcFile.fileNameImported);
+                  Logs.waitFileIsImported(marcFile.fileNameImported);
                   Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
                   Logs.openFileDetails(marcFile.fileNameImported);
                   Logs.getCreatedItemsID().then((link) => {

@@ -35,7 +35,7 @@ describe('MARC', () => {
           thirdBox: '\\',
           content: '$a C405560 Lentz Local M1',
           eSubfield: '',
-          zeroSubfield: '$0 id.loc.gov/authorities/names/n2011049161405560',
+          zeroSubfield: '$0 http://id.loc.gov/authorities/names/n2011049161405560',
           seventhBox: '',
         };
 
@@ -87,17 +87,16 @@ describe('MARC', () => {
             .then(() => {
               cy.resetTenant();
               cy.loginAsAdmin().then(() => {
+                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
                 marcFilesFor.forEach((marcFile) => {
                   cy.visit(TopMenu.dataImportPath);
-                  ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
-                  DataImport.waitLoading();
-                  ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
                   DataImport.verifyUploadState();
                   DataImport.uploadFile(marcFile.marc, marcFile.fileNameImported);
                   JobProfiles.waitLoadingList();
                   JobProfiles.search(marcFile.jobProfileToRun);
                   JobProfiles.runImportFile();
-                  JobProfiles.waitFileIsImported(marcFile.fileNameImported);
+                  Logs.waitFileIsImported(marcFile.fileNameImported);
                   Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
                   Logs.openFileDetails(marcFile.fileNameImported);
                   Logs.getCreatedItemsID().then((link) => {
