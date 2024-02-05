@@ -57,7 +57,7 @@ describe('Consortia', () => {
         ConsortiumManager.expandAll('folio_admin');
         ConsortiumManager.closeThirdPane('folio_admin');
         ConsortiumManager.clickActionsInPermissionSets();
-        ConsortiumManager.selectMember(tenantNames.university);
+        SelectMembers.selectMember(tenantNames.university);
         ConsortiumManager.openListInOpenedPane('Permission sets', 'folio_migration');
         ConsortiumManager.collapseAll('folio_migration');
         ConsortiumManager.expandAll('folio_migration');

@@ -7,7 +7,6 @@ import {
   including,
   Spinner,
   Section,
-  SelectionOption,
 } from '../../../../interactors';
 
 const selectMembersButton = Button('Select members');
@@ -144,18 +143,5 @@ export default {
 
   clickActionsInPermissionSets() {
     cy.do([Pane('Permission sets').find(Button('Actions')).click(), Button('Compare').exists()]);
-  },
-
-  selectMember(memberName) {
-    cy.do([
-      Button({ id: 'consortium-member-select' }).click(),
-      SelectionOption(memberName).click(),
-    ]);
-    cy.wait(6000);
-    cy.get('button#consortium-member-select')
-      .invoke('text')
-      .then((actualText) => {
-        expect(actualText.trim()).to.equal(`Select control${memberName}`);
-      });
   },
 };
