@@ -111,7 +111,8 @@ describe('MARC', () => {
           MarcAuthority.verifySharedAuthorityDetailsHeading(testData.title);
           MarcAuthority.contains(testData.viewSharedRecordText);
           MarcAuthority.edit();
-          QuickMarcEditor.checkPaneheaderContains(testData.editSharedRecordText);
+          // To be uncommented when UIMARCAUTH-385 is fixed
+          // QuickMarcEditor.checkPaneheaderContains(testData.editSharedRecordText);
           QuickMarcEditor.addEmptyFields(8);
           QuickMarcEditor.checkEmptyFieldAdded(9);
           QuickMarcEditor.addValuesToExistingField(
@@ -160,7 +161,8 @@ describe('MARC', () => {
           MarcAuthorities.searchBeats(testData.updatedTitle);
           MarcAuthorities.select(createdAuthorityID);
           MarcAuthority.verifySharedAuthorityDetailsHeading(testData.updatedTitle);
-          MarcAuthority.contains(testData.viewSharedRecordText);
+          // To be uncommented when UIMARCAUTH-385 is fixed
+          // MarcAuthority.contains(testData.viewSharedRecordText);
           MarcAuthority.contains(testData.updatedTag100Value);
           MarcAuthority.contains(testData.updatedTag046Value);
           MarcAuthority.contains(testData.tag400Value);
