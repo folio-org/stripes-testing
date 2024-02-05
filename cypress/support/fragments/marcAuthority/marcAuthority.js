@@ -313,6 +313,10 @@ export default {
     cy.expect(detailsPaneHeader.has({ title: `Shared • ${heading}` }));
   },
 
+  verifyLocalAuthorityDetailsHeading(heading) {
+    cy.expect(detailsPaneHeader.has({ title: `Local • ${heading}` }));
+  },
+
   verifyFieldPositionInView(index, tag, content) {
     cy.expect(
       rootSection
