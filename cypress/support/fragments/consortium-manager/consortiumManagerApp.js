@@ -11,6 +11,8 @@ import {
 } from '../../../../interactors';
 
 const selectMembersButton = Button('Select members');
+const collapseAllButton = Button('Collapse all');
+const expandAllButton = Button('Expand all');
 
 export const settingsItems = {
   circulation: 'Circulation',
@@ -117,17 +119,17 @@ export default {
 
   collapseAll(nameOfThirdPane) {
     cy.do([
-      Pane(nameOfThirdPane).find(Button('Collapse all')).click(),
-      Button('Collapse all').absent(),
-      Button('Expand all').exists(),
+      Pane(nameOfThirdPane).find(collapseAllButton).click(),
+      collapseAllButton.absent(),
+      expandAllButton.exists(),
     ]);
   },
 
   expandAll(nameOfThirdPane) {
     cy.do([
-      Pane(nameOfThirdPane).find(Button('Expand all')).click(),
-      Button('Expand all').absent(),
-      Button('Collapse all').exists(),
+      Pane(nameOfThirdPane).find(expandAllButton).click(),
+      expandAllButton.absent(),
+      collapseAllButton.exists(),
     ]);
   },
 
