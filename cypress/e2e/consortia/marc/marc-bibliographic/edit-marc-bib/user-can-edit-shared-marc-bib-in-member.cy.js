@@ -82,7 +82,7 @@ describe('MARC', () => {
                 JobProfiles.waitLoadingList();
                 JobProfiles.search(marcFile.jobProfileToRun);
                 JobProfiles.runImportFile();
-                JobProfiles.waitFileIsImported(marcFile.fileNameImported);
+                Logs.waitFileIsImported(marcFile.fileNameImported);
                 Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
                 Logs.openFileDetails(marcFile.fileNameImported);
                 Logs.getCreatedItemsID().then((link) => {
@@ -144,7 +144,7 @@ describe('MARC', () => {
           InventoryViewSource.verifyFieldInMARCBibSource(testData.tag245, testData.tag245Content);
           InventoryViewSource.verifyFieldInMARCBibSource(testData.tag500, testData.tag500Content);
           InventoryViewSource.close();
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.checkInstanceTitle(testData.tag245Content);
