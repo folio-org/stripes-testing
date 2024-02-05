@@ -35,7 +35,7 @@ describe('MARC', () => {
           content: 'test123',
           boxFourth: '$a C417050 Chin, Staceyann, $d 1972-',
           boxFifth: '',
-          boxSixth: '$0 id.loc.gov/authorities/names/n2008052404',
+          boxSixth: '$0 http://id.loc.gov/authorities/names/n2008052404',
           boxSeventh: '',
           searchOption: 'Personal name',
           marcValue: 'C417050 Chin, Staceyann, 1972-',

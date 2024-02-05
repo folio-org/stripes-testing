@@ -4,6 +4,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import TitleLevelRequests from '../../../support/fragments/settings/circulation/titleLevelRequests';
 
 describe('Permissions', () => {
   describe('Permissions --> Inventory', () => {
@@ -11,6 +12,11 @@ describe('Permissions', () => {
     let instanceID;
 
     before('Creating user', () => {
+      // This step added because when it runs checkbox "Allow title level requests" in settings/circulation/title-level-requests
+      // checked. For the test case it should be unchecked.
+      cy.getAdminToken().then(() => {
+        TitleLevelRequests.disableTLRViaApi();
+      });
       cy.createTempUser([
         Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
         Permissions.inventoryAll.gui,
@@ -30,6 +36,9 @@ describe('Permissions', () => {
       Users.deleteViaApi(userData.id);
 
       InventoryInstance.deleteInstanceViaApi(instanceID);
+      // This step returns checkbox "Allow title level requests" in settings/circulation/title-level-requests
+      // to the state it was before this test.
+      TitleLevelRequests.enableTLRViaApi();
     });
 
     it(

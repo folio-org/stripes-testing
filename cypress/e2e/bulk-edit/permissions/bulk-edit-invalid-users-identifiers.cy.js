@@ -57,8 +57,7 @@ describe('bulk-edit', () => {
         cy.visit(TopMenu.exportManagerPath);
         ExportManagerSearchPane.waitLoading();
         ExportManagerSearchPane.searchByBulkEdit();
-        ExportManagerSearchPane.verifyJobAmount(user.username, 1);
-        ExportManagerSearchPane.selectJob(user.username);
+        ExportManagerSearchPane.getElementByTextAndVerify(user.username, 1, 0);
 
         ExportManagerSearchPane.clickJobIdInThirdPane();
         BulkEditFiles.verifyMatchedResultFileContent(
