@@ -107,6 +107,10 @@ export default {
     cy.do(affiliationsSection.find(affiliationsButton).click());
   },
 
+  affiliationsAccordionIsAbsent() {
+    cy.expect(affiliationsSection.absent());
+  },
+
   expandLoansSection(openLoans, returnedLoans) {
     cy.do(loansSection.clickHeader());
 

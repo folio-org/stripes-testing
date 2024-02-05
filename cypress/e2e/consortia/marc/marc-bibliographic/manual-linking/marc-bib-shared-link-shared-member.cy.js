@@ -40,7 +40,7 @@ describe('MARC', () => {
         thirdBox: '\\',
         content: '$a Lentz, Mark Auto C397343',
         eSubfield: '$e author.',
-        zeroSubfield: '$0 id.loc.gov/authorities/names/n2011049161397343',
+        zeroSubfield: '$0 http://id.loc.gov/authorities/names/n2011049161397343',
         seventhBox: '',
       };
 
