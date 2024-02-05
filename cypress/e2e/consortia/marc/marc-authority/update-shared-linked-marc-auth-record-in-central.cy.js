@@ -140,8 +140,7 @@ describe('MARC', () => {
                     tenantNames.central,
                     tenantNames.university,
                   );
-                }
-                else if (marcFile.tenant === 'College') {
+                } else if (marcFile.tenant === 'College') {
                   ConsortiumManager.switchActiveAffiliation(
                     tenantNames.university,
                     tenantNames.college,
