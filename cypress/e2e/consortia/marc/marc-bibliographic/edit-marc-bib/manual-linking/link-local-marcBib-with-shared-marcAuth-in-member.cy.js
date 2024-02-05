@@ -131,7 +131,7 @@ describe('MARC', () => {
                 QuickMarcEditor.checkAfterSaveAndClose();
               });
 
-              ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
               marcFilesForMember.forEach((marcFile) => {
@@ -153,7 +153,7 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               }).then(() => {
-                ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
                 InventoryInstances.waitContentLoading();
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
               });
@@ -240,7 +240,7 @@ describe('MARC', () => {
             MarcAuthorities.checkRecordDetailPageMarkedValue(linkingTagAndValues.authorityHeading);
 
             cy.visit(TopMenu.inventoryPath);
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.central);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             cy.visit(TopMenu.marcAuthorities);
@@ -255,7 +255,7 @@ describe('MARC', () => {
             MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
             InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
             cy.visit(TopMenu.marcAuthorities);

@@ -122,7 +122,7 @@ describe('MARC', () => {
               cy.resetTenant();
               cy.setTenant(Affiliations.College);
               cy.visit(TopMenu.inventoryPath);
-              ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
@@ -139,7 +139,7 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               }).then(() => {
-                ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
                 InventoryInstances.waitContentLoading();
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
               });
@@ -200,7 +200,7 @@ describe('MARC', () => {
               `${testData.linkAuthorityIcon}\n${linkingTagAndValues.authorityHeading}`,
             );
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             cy.visit(TopMenu.marcAuthorities);
@@ -221,7 +221,7 @@ describe('MARC', () => {
             );
             InventoryViewSource.close();
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
             InventorySearchAndFilter.switchToBrowseTab();

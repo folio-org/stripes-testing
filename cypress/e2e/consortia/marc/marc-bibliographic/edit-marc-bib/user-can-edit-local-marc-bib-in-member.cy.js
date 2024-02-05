@@ -69,7 +69,7 @@ describe('MARC', () => {
             cy.loginAsAdmin().then(() => {
               marcFiles.forEach((marcFile) => {
                 cy.visit(TopMenu.dataImportPath);
-                ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
                 DataImport.waitLoading();
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
                 DataImport.verifyUploadState();
@@ -134,7 +134,7 @@ describe('MARC', () => {
             `No results found for "${testData.tag245Content}". Please check your spelling and filters.`,
           );
 
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstances.waitContentLoading();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           InventorySearchAndFilter.searchByParameter(

@@ -43,7 +43,7 @@ describe('MARC', () => {
           content: '$a Dante Alighieri',
           boxFourth: '$a C422141 Dante Alighieri, $d 1265-1321',
           boxFifth: '',
-          boxSixth: '$0 id.loc.gov/authorities/names/n78095495',
+          boxSixth: '$0 http://id.loc.gov/authorities/names/n78095495',
           boxSeventh: '',
         };
 
@@ -190,7 +190,7 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.searchByTitle(testData.fieldContents.tag245Content);
             InventoryInstances.selectInstance();
             InventoryInstance.verifySharedIcon();

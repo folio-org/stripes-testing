@@ -171,7 +171,7 @@ describe('Data Import', () => {
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFile.fileName);
+              Logs.waitFileIsImported(marcFile.fileName);
               Logs.checkJobStatus(marcFile.fileName, 'Completed');
               Logs.openFileDetails(marcFile.fileName);
               for (let i = 0; i < marcFile.numOfRecords; i++) {

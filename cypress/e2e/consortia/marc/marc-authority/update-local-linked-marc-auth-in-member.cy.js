@@ -99,7 +99,7 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
-              ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
             });
@@ -180,7 +180,7 @@ describe('MARC', () => {
           );
           QuickMarcEditor.closeEditorPane();
 
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.central);
           InventoryInstances.waitContentLoading();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           InventorySearchAndFilter.searchByParameter(
@@ -197,7 +197,7 @@ describe('MARC', () => {
           );
 
           cy.visit(TopMenu.inventoryPath);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.searchByParameter(
             testData.instanceSearchOption,
