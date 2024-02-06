@@ -18,9 +18,9 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Edit linked Authority record', () => {
       const testData = {
-        authorityTitle: 'C405927 Lentz Shared',
+        authorityTitle: 'C407633 Lentz Shared',
         tag100: '100',
-        updated100FieldValue: 'C405927 Lentz Shared (Updated in C)',
+        updated100FieldValue: 'C407633 Lentz Shared (Updated in M1)',
         authoritySearchOption: 'Keyword',
       };
 
@@ -30,28 +30,28 @@ describe('MARC', () => {
 
       const marcFiles = [
         {
-          marc: 'marcBibFileForC405927-Shared.mrc',
+          marc: 'marcBibFileForC407633-Shared.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
           numOfRecords: 3,
           tenant: 'Central Office',
         },
         {
-          marc: 'marcAuthFileForC405927.mrc',
+          marc: 'marcAuthFileForC407633.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           numOfRecords: 1,
           tenant: 'Central Office',
         },
         {
-          marc: 'marcBibFileForC405927-Local-M1.mrc',
+          marc: 'marcBibFileForC407633-Local-M1.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
           numOfRecords: 1,
           tenant: 'University',
         },
         {
-          marc: 'marcBibFileForC405927-Local-M2.mrc',
+          marc: 'marcBibFileForC407633-Local-M2.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
           numOfRecords: 1,
@@ -60,11 +60,11 @@ describe('MARC', () => {
       ];
 
       const instancesToLinkInM1 = [
-        'C405927 Instance Shared 1',
-        'C405927 Instance Shared 2',
-        'C405927 Instance Local M1',
+        'C407633 Instance Shared 1',
+        'C407633 Instance Shared 2',
+        'C407633 Instance Local M1',
       ];
-      const instancesToLinkInM2 = ['C405927 Instance Shared 3', 'C405927 Instance Local M2'];
+      const instancesToLinkInM2 = ['C407633 Instance Shared 3', 'C407633 Instance Local M2'];
 
       const linkingInTenants = [
         {
@@ -79,23 +79,23 @@ describe('MARC', () => {
         },
       ];
 
-      const instancesToCheckInCentral = [
-        'C405927 Instance Shared 1',
-        'C405927 Instance Shared 2',
-        'C405927 Instance Shared 3',
+      const instancesToCheckInCentral = ['C407633 Instance Shared 3'];
+      const instancesToCheckInM1 = [
+        'C407633 Instance Shared 1',
+        'C407633 Instance Shared 2',
+        'C407633 Instance Local M1',
       ];
-      const instancesToCheckInM1 = ['C405927 Instance Shared 1', 'C405927 Instance Local M1'];
-      const instancesToCheckInM2 = ['C405927 Instance Shared 3', 'C405927 Instance Local M2'];
+      const instancesToCheckInM2 = ['C407633 Instance Local M2'];
 
       const linkingTagAndValues = {
         rowIndex: 16,
-        value: 'C405927 Lentz Shared',
+        value: 'C407633 Lentz Shared',
         tag: '100',
         secondBox: '1',
         thirdBox: '\\',
-        content: '$a C405927 Lentz Shared (Updated in C)',
+        content: '$a C407633 Lentz Shared (Updated in M1)',
         eSubfield: '',
-        zeroSubfield: '$0 http://id.loc.gov/authorities/names/n2011049161405927',
+        zeroSubfield: '$0 http://id.loc.gov/authorities/names/n2011049161407633',
         seventhBox: '',
       };
 
@@ -118,6 +118,9 @@ describe('MARC', () => {
             cy.setTenant(Affiliations.University);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
+              Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+              Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+              Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             ]);
           })
@@ -149,7 +152,7 @@ describe('MARC', () => {
                 JobProfiles.waitLoadingList();
                 JobProfiles.search(marcFile.jobProfileToRun);
                 JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
+                JobProfiles.waitFileIsImported(marcFile.fileName);
                 Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
                 Logs.openFileDetails(marcFile.fileName);
                 for (let i = 0; i < marcFile.numOfRecords; i++) {
@@ -202,12 +205,16 @@ describe('MARC', () => {
       });
 
       it(
-        'C405927 Update shared linked "MARC Authority" record in Central tenant (consortia) (spitfire)',
+        'C407633 Update shared linked "MARC Authority" record in member tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire'] },
         () => {
           cy.login(users.userProperties.username, users.userProperties.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
+          }).then(() => {
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+            MarcAuthorities.waitLoading();
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
           });
           MarcAuthorities.searchBy(testData.authoritySearchOption, testData.authorityTitle);
           MarcAuthorities.selectTitle(`Shared\n${testData.authorityTitle}`);
@@ -218,10 +225,10 @@ describe('MARC', () => {
           // if clicked too fast, delete modal might not appear
           cy.wait(1000);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(3);
-          QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(3);
+          QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(4);
+          QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(4);
           cy.visit(TopMenu.inventoryPath);
-          instancesToCheckInCentral.forEach((instance) => {
+          instancesToCheckInM1.forEach((instance) => {
             InventoryInstances.searchByTitle(instance);
             InventoryInstances.selectInstanceByTitle(instance);
             InventoryInstance.editMarcBibliographicRecord();
@@ -238,9 +245,9 @@ describe('MARC', () => {
             QuickMarcEditor.closeEditorPane();
           });
 
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.central);
           InventoryInstances.waitContentLoading();
-          instancesToCheckInM1.forEach((instance) => {
+          instancesToCheckInCentral.forEach((instance) => {
             InventoryInstances.searchByTitle(instance);
             InventoryInstances.selectInstanceByTitle(instance);
             cy.wait(2000);
@@ -258,7 +265,7 @@ describe('MARC', () => {
             QuickMarcEditor.closeEditorPane();
           });
 
-          ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.college);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstances.waitContentLoading();
           instancesToCheckInM2.forEach((instance) => {
             InventoryInstances.searchByTitle(instance);

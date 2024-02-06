@@ -24,7 +24,7 @@ describe('Inventory', () => {
       cy.getAdminToken();
 
       cy.loginAsAdmin().then(() => {
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
@@ -124,7 +124,7 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
 
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 
         InventoryInstances.searchByTitle(testData.instanceId);
@@ -159,7 +159,7 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
 
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 
         InventoryInstances.searchByTitle(testData.instanceId);
