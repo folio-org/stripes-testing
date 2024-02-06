@@ -1,5 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-// import OaiPmh from '../../support/fragments/oai-pmh/oaipmhPane';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import Users from '../../support/fragments/users/users';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
