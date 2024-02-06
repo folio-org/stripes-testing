@@ -225,7 +225,7 @@ describe('data-import', () => {
           '100',
           '1',
           '\\',
-          '$a C385671 Coates, T, $e narrator $0 http://id.loc.gov/authorities/names/n2008001084',
+          '$a C385671 Coates, T, $e narrator $0 id.loc.gov/authorities/names/n2008001084',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
           75,
