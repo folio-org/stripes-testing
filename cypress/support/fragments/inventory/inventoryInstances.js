@@ -973,15 +973,15 @@ export default {
   },
 
   importWithOclc: (oclc) => {
-    cy.do(actionsButton.click());
-    cy.do(Button({ id: 'dropdown-clickable-import-record' }).click());
-    cy.do(
+    cy.do([
+      actionsButton.click(),
+      Button({ id: 'dropdown-clickable-import-record' }).click(),
       Select({ name: 'selectedJobProfileId' }).choose(
         'Inventory Single Record - Default Create Instance (Default)',
       ),
-    );
-    cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
-    cy.do(singleRecordImportModal.find(Button('Import')).click());
+      singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
+      singleRecordImportModal.find(Button('Import')).click(),
+    ]);
   },
 
   verifyInstanceDetailsView() {

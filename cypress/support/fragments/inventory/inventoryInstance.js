@@ -1249,14 +1249,15 @@ export default {
 
   singleOverlaySourceBibRecordModalIsPresented: () => cy.expect(singleRecordImportModal.exists()),
 
-  overlayWithOclc: (oclc) => {
-    cy.do(
+  overlayWithOclc: (oclc, identifierType = 'OCLC WorldCat') => {
+    cy.do([
+      Select({ name: 'externalIdentifierType' }).choose(identifierType),
       Select({ name: 'selectedJobProfileId' }).choose(
         'Inventory Single Record - Default Update Instance (Default)',
       ),
-    );
-    cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
-    cy.do(singleRecordImportModal.find(Button('Import')).click());
+      singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
+      singleRecordImportModal.find(Button('Import')).click(),
+    ]);
   },
 
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {

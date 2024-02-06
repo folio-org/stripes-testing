@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
@@ -13,6 +13,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import Z3950TargetProfiles from '../../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import LogsViewAll from '../../../../support/fragments/data_import/logs/logsViewAll';
 import FileManager from '../../../../support/utils/fileManager';
+import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -28,6 +29,8 @@ describe('Inventory', () => {
     const testData = {
       OCLCAuthentication: '100481406/PAOLF',
       oclcNumber: '1234568',
+      updatedInstanceTitle:
+        'Rincões dos frutos de ouro (tipos e cenarios do sul baiano) [por] Saboia Ribeiro.',
     };
 
     before('Create test data', () => {
@@ -38,9 +41,8 @@ describe('Inventory', () => {
         [marcFile.newInstanceTitle],
       );
       cy.getAdminToken();
-      cy.pause();
       cy.loginAsAdmin();
-      ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+      ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
       ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
       cy.visit(TopMenu.dataImportPath);
       DataImport.verifyUploadState();
@@ -78,6 +80,7 @@ describe('Inventory', () => {
           cy.login(testData.user.username, testData.user.password);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          cy.visit(TopMenu.inventoryPath);
         });
     });
 
@@ -85,7 +88,14 @@ describe('Inventory', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+      cy.setTenant(Affiliations.College);
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"hrid"=="${testData.instanceHRID}"`,
+      }).then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
       FileManager.deleteFile(`cypress/fixtures/${marcFile.editedFileName}`);
     });
 
@@ -96,13 +106,29 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(marcFile.newInstanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InventoryInstances.importWithOclc(testData.oclcNumber);
+        InventoryInstance.startOverlaySourceBibRecord();
+        InventoryInstance.overlayWithOclc(testData.oclcNumber);
+        InventoryInstance.waitLoading();
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openViewAllLogs();
         LogsViewAll.openUserIdAccordion();
         LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
         LogsViewAll.openFileDetails('No file name');
+        FileDetails.verifyTitle(
+          testData.updatedInstanceTitle,
+          FileDetails.columnNameInResultList.title,
+        );
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
+        });
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+          testData.instanceHRID = initialInstanceHrId;
+        });
       },
     );
   });
