@@ -325,7 +325,7 @@ describe('data-import', () => {
           '240',
           '1',
           '0',
-          '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
+          '$m piano, violin, cello, $n op. 44, $r E♭ major $a Variations,',
           '$c Ludwig Van Beethoven.',
           '$0 http://id.loc.gov/authorities/names/n83130832',
           '',
