@@ -5,15 +5,16 @@ const deletedRecordsSupportDropdown = Select('Deleted records support');
 const suppressedRecordsProcessingDropdown = Select('Suppressed records processing');
 const oaipmhErrorsProcessingDropdown = Select('OAI-PMH errors processing');
 const recordSourceDropdown = Select('Record source');
+const saveButton = Button('Save');
 
 export default {
-  verifyBehaviorPane() {
+  verifyBehaviorPane(disabled = false) {
     cy.expect([
       behaviorPane.exists(),
-      behaviorPane.find(deletedRecordsSupportDropdown).exists(),
-      behaviorPane.find(suppressedRecordsProcessingDropdown).exists(),
-      behaviorPane.find(oaipmhErrorsProcessingDropdown).exists(),
-      behaviorPane.find(recordSourceDropdown).exists(),
+      behaviorPane.find(deletedRecordsSupportDropdown).has({ disabled }),
+      behaviorPane.find(suppressedRecordsProcessingDropdown).has({ disabled }),
+      behaviorPane.find(oaipmhErrorsProcessingDropdown).has({ disabled }),
+      behaviorPane.find(recordSourceDropdown).has({ disabled }),
     ]);
   },
 
@@ -34,6 +35,10 @@ export default {
   },
 
   clickSave() {
-    cy.do(Button('Save').click());
+    cy.do(saveButton.click());
+  },
+
+  verifySaveButton(disabled = false) {
+    cy.expect(saveButton.has({ disabled }));
   },
 };

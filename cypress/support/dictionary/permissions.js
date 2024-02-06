@@ -929,6 +929,10 @@ export default {
     gui: 'Bursar exports: Bursar admin',
   },
   // OAI-PMH
+  oaipmhView: {
+    internal: 'ui-oai-pmh.view',
+    gui: 'Settings (OAI-PMH): Can view',
+  },
   oaipmhViewLogs: {
     internal: 'ui-oai-pmh.logs',
     gui: 'Settings (OAI-PMH): Can view logs',
