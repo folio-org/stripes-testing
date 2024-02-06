@@ -411,6 +411,7 @@ export default {
 
   goToEditMARCBiblRecord: () => {
     cy.do(actionsButton.click());
+    cy.expect(actionsButton.has({ ariaExpanded: 'true' }));
     cy.do(editMARCBibRecordButton.click());
   },
 
