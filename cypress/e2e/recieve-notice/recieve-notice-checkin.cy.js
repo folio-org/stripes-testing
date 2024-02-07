@@ -7,7 +7,6 @@ import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 import NewNoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import NoticePolicyApi, {
@@ -135,7 +134,6 @@ describe('Receiving notice: Checkout', () => {
         });
         cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
       });
-    OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
     PatronGroups.createViaApi(patronGroup.name).then((res) => {
       patronGroup.id = res;
       cy.createTempUser(

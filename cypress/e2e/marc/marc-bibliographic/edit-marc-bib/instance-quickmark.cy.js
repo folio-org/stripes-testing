@@ -49,8 +49,7 @@ describe('MARC', () => {
         'C353612 Verify "LDR" validation rules with invalid data for editable (06, 07) and non-editable positions when editing/deriving record (spitfire)',
         { tags: ['smoke', 'spitfire'] },
         () => {
-          const checkLdrErrors = () => {
-            const initialLDRValue = InventoryInstance.validOCLC.ldrValue;
+          const checkLdrErrors = (initialLDRValue) => {
             const positions6Error =
               'Record cannot be saved. Please enter a valid Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
             const position7Error =
@@ -130,12 +129,14 @@ describe('MARC', () => {
           InventoryInstance.checkExpectedMARCSource();
           InventoryInstance.goToEditMARCBiblRecord();
           QuickMarcEditor.waitLoading();
-          cy.reload();
-          checkLdrErrors();
-          QuickMarcEditor.closeWithoutSavingAfterChange();
-          InventoryInstance.deriveNewMarcBib();
-          QuickMarcEditor.check008FieldsAbsent('Type', 'Blvl');
-          checkLdrErrors();
+          QuickMarcEditor.getRegularTagContent('LDR').then((initialLDRValue) => {
+            cy.reload();
+            checkLdrErrors(initialLDRValue);
+            QuickMarcEditor.closeWithoutSavingAfterChange();
+            InventoryInstance.deriveNewMarcBib();
+            QuickMarcEditor.check008FieldsAbsent('Type', 'Blvl');
+            checkLdrErrors(initialLDRValue);
+          });
         },
       );
 
@@ -143,34 +144,34 @@ describe('MARC', () => {
         'C353610 Verify "LDR" validation rules with valid data for positions 06 and 07 when editing record (spitfire)',
         { tags: ['smoke', 'spitfire'] },
         () => {
-          const initialLDRValue = '01799cam\\a22004094a\\4500';
           const changesIn06 = ['c', 'd', 'e', 'f', 'g', 'i', 'j', 'k', 'm', 'o', 'p', 'r', 't'];
           const changesIn07 = ['a', 'b', 'c', 'd', 'i', 'm', 's'];
 
           InventoryInstance.checkExpectedMARCSource();
-
           InventoryInstance.goToEditMARCBiblRecord();
           QuickMarcEditor.waitLoading();
-          QuickMarcEditor.updateExistingField('LDR', replaceByIndex(initialLDRValue, 6, 'b'));
-          QuickMarcEditor.check008FieldsAbsent('DtSt', 'Ctry');
-          QuickMarcEditor.closeWithoutSavingAfterChange();
+          QuickMarcEditor.getRegularTagContent('LDR').then((initialLDRValue) => {
+            QuickMarcEditor.updateExistingField('LDR', replaceByIndex(initialLDRValue, 6, 'b'));
+            QuickMarcEditor.check008FieldsAbsent('DtSt', 'Ctry');
+            QuickMarcEditor.closeWithoutSavingAfterChange();
 
-          const checkCorrectUpdate = (subfieldIndex, values) => {
-            values.forEach((specialValue) => {
-              InventoryInstance.goToEditMARCBiblRecord();
-              QuickMarcEditor.waitLoading();
-              QuickMarcEditor.updateExistingField(
-                'LDR',
-                replaceByIndex(initialLDRValue, subfieldIndex, specialValue),
-              );
-              QuickMarcEditor.checkSubfieldsPresenceInTag008();
-              QuickMarcEditor.pressSaveAndClose();
-              InventoryInstance.waitLoading();
-            });
-          };
+            const checkCorrectUpdate = (subfieldIndex, values) => {
+              values.forEach((specialValue) => {
+                InventoryInstance.goToEditMARCBiblRecord();
+                QuickMarcEditor.waitLoading();
+                QuickMarcEditor.updateExistingField(
+                  'LDR',
+                  replaceByIndex(initialLDRValue, subfieldIndex, specialValue),
+                );
+                QuickMarcEditor.checkSubfieldsPresenceInTag008();
+                QuickMarcEditor.pressSaveAndClose();
+                InventoryInstance.waitLoading();
+              });
+            };
 
-          checkCorrectUpdate(6, changesIn06);
-          checkCorrectUpdate(7, changesIn07);
+            checkCorrectUpdate(6, changesIn06);
+            checkCorrectUpdate(7, changesIn07);
+          });
         },
       );
     });

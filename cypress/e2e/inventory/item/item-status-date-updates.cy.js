@@ -170,7 +170,7 @@ describe.skip('inventory', () => {
 
     // test is looping
     it('C9200 Item status date updates (folijet)', { tags: ['smoke', 'folijet'] }, () => {
-      const caption = `autotest_caption_${getRandomPostfix()}`;
+      const enumeration = `autotest_caption_${getRandomPostfix()}`;
       const numberOfPieces = '3';
       // open order and create Item
       cy.visit(TopMenu.ordersPath);
@@ -185,7 +185,7 @@ describe.skip('inventory', () => {
       selectOrderWithNumber(orderNumber);
       Orders.receiveOrderViaActions();
       Receiving.selectFromResultsList(instanceTitle);
-      Receiving.receivePiece(0, caption, itemBarcode);
+      Receiving.receivePiece(0, enumeration, itemBarcode);
       openItem(instanceTitle, effectiveLocation.name, itemBarcode);
       fullCheck(ItemRecordView.itemStatuses.inProcess);
 
