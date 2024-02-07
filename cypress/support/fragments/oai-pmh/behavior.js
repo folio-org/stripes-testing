@@ -9,12 +9,13 @@ const saveButton = Button('Save');
 
 export default {
   verifyBehaviorPane(disabled = false) {
+    const hasValue = true;
     cy.expect([
       behaviorPane.exists(),
-      behaviorPane.find(deletedRecordsSupportDropdown).has({ disabled }),
-      behaviorPane.find(suppressedRecordsProcessingDropdown).has({ disabled }),
-      behaviorPane.find(oaipmhErrorsProcessingDropdown).has({ disabled }),
-      behaviorPane.find(recordSourceDropdown).has({ disabled }),
+      behaviorPane.find(deletedRecordsSupportDropdown).has({ disabled, hasValue }),
+      behaviorPane.find(suppressedRecordsProcessingDropdown).has({ disabled, hasValue }),
+      behaviorPane.find(oaipmhErrorsProcessingDropdown).has({ disabled, hasValue }),
+      behaviorPane.find(recordSourceDropdown).has({ disabled, hasValue }),
     ]);
   },
 
