@@ -1315,4 +1315,67 @@ export default {
   checkSelectOptionFieldContent(option) {
     cy.expect(selectField.has({ checkedOptionText: option }));
   },
+
+  checkRecordInBold(heading) {
+    MultiColumnListRow(including(heading), { isContainer: false }).has({
+      innerHTML: including(`<strong>${heading}</strong>`),
+    });
+  },
+
+  searchButtonClick() {
+    cy.do(searchButton.click());
+  },
+
+  checkRecordsResultListIsAbsent() {
+    cy.expect(
+      rootSection
+        .find(HTML(including('Choose a filter or enter a search query to show results')))
+        .exists(),
+    );
+  },
+
+  checkRecordsCountExistsInSharedFacet() {
+    cy.expect(
+      accordionShared.find(
+        Checkbox({ name: 'Yes' })
+          .find(HTML({ className: including('checkBoxLabelInfo--') }))
+          .exists(),
+      ),
+    );
+    cy.expect(
+      accordionShared.find(
+        Checkbox({ name: 'No' })
+          .find(HTML({ className: including('checkBoxLabelInfo--') }))
+          .exists(),
+      ),
+    );
+  },
+
+  getSharedRecordsCountInSharedFacet() {
+    return cy.then(() => {
+      accordionShared.find(
+        Checkbox({ name: 'Yes' })
+          .find(HTML({ className: including('checkBoxLabelInfo--') }))
+          .textContent(),
+      );
+    });
+  },
+
+  getLocalRecordsCountInSharedFacet() {
+    return cy.then(() => {
+      accordionShared.find(
+        Checkbox({ name: 'No' })
+          .find(HTML({ className: including('checkBoxLabelInfo--') }))
+          .textContent(),
+      );
+    });
+  },
+
+  checkTypeOfHeadingFacetCleared() {
+    cy.expect(typeOfHeadingSelect.has({ selectedCount: 0 }));
+  },
+
+  checkPreviousAndNextPaginationButtonsShown() {
+    cy.expect([previousButton.visible(), nextButton.visible()]);
+  },
 };
