@@ -45,8 +45,143 @@ describe('Inventory', () => {
                 callNumber: `${callNumberPrefix} M1 Shared 1`,
               },
               [tenantNames.university]: {
-                callNumberInHoldings: true,
+                callNumberInHoldings: false,
                 callNumber: `${callNumberPrefix} M2 Shared 1`,
+              },
+            },
+          },
+          {
+            title: `${instancePrefix} 2`,
+            instanceTenant: tenantNames.central,
+            isMarc: true,
+            holdings: {
+              [tenantNames.college]: {
+                callNumberInHoldings: false,
+                callNumber: `${callNumberPrefix} M1 Shared 2`,
+              },
+              [tenantNames.university]: {
+                callNumberInHoldings: true,
+                callNumber: `${callNumberPrefix} M2 Shared 2`,
+              },
+            },
+          },
+          {
+            title: `${instancePrefix} 3`,
+            instanceTenant: tenantNames.central,
+            isMarc: false,
+            holdings: {
+              [tenantNames.college]: {
+                callNumberInHoldings: true,
+                callNumber: `${callNumberPrefix} M1 Shared 3`,
+              },
+              [tenantNames.university]: {
+                callNumberInHoldings: true,
+                callNumber: `${callNumberPrefix} M2 Shared 3`,
+              },
+            },
+          },
+          {
+            title: `${instancePrefix} 4`,
+            instanceTenant: tenantNames.central,
+            isMarc: true,
+            holdings: {
+              [tenantNames.college]: {
+                callNumberInHoldings: false,
+                callNumber: `${callNumberPrefix} M1 Shared 4`,
+              },
+              [tenantNames.university]: {
+                callNumberInHoldings: false,
+                callNumber: `${callNumberPrefix} M2 Shared 4`,
+              },
+            },
+          },
+          {
+            title: `${instancePrefix} 5`,
+            instanceTenant: tenantNames.central,
+            isMarc: true,
+            holdings: {
+              [tenantNames.college]: {
+                callNumberInHoldings: true,
+                callNumber: `${callNumberPrefix} M1 Shared 5`,
+              },
+              [tenantNames.university]: {
+                callNumberInHoldings: true,
+                callNumber: `${callNumberPrefix} M2 Shared 5`,
+              },
+            },
+          },
+          {
+            title: `${instancePrefix} 6`,
+            instanceTenant: tenantNames.central,
+            isMarc: false,
+            holdings: {
+              [tenantNames.college]: {
+                callNumberInHoldings: true,
+                callNumber: `${callNumberPrefix} M1 Shared 6`,
+              },
+              [tenantNames.university]: {
+                callNumberInHoldings: false,
+                callNumber: `${callNumberPrefix} M2 Shared 6`,
+              },
+            },
+          },
+          {
+            title: `${instancePrefix} 7`,
+            instanceTenant: tenantNames.central,
+            isMarc: true,
+            holdings: {
+              [tenantNames.college]: {
+                callNumberInHoldings: true,
+                callNumber: `${callNumberPrefix} M1 Shared 7`,
+              },
+              [tenantNames.university]: null,
+            },
+          },
+          {
+            title: `${instancePrefix} 8`,
+            instanceTenant: tenantNames.central,
+            isMarc: false,
+            holdings: {
+              [tenantNames.college]: null,
+              [tenantNames.university]: {
+                callNumberInHoldings: false,
+                callNumber: `${callNumberPrefix} M2 Shared 8`,
+              },
+            },
+          },
+          {
+            title: `${instancePrefix} 9`,
+            instanceTenant: tenantNames.college,
+            isMarc: true,
+            holdings: {
+              [tenantNames.college]: {
+                callNumberInHoldings: true,
+                callNumber: `${callNumberPrefix} M1 Local 9`,
+              },
+              [tenantNames.university]: null,
+            },
+          },
+          {
+            title: `${instancePrefix} 10`,
+            instanceTenant: tenantNames.college,
+            isMarc: false,
+            holdings: {
+              [tenantNames.college]: {
+                callNumberInHoldings: true,
+                callNumber: `${callNumberPrefix} M1 Local 10`,
+              },
+              [tenantNames.university]: null,
+            },
+          },
+          {
+            title: `${instancePrefix} 11`,
+            instanceTenant: tenantNames.college,
+            isMarc: false,
+            holdings: {
+              [tenantNames.college]: null,
+              [tenantNames.university]: {
+                callNumberInHoldings: true,
+                callNumber: `${callNumberPrefix} M2 Local 11`,
               },
             },
           },
