@@ -253,7 +253,7 @@ describe('Loans', () => {
         UserLoans.openLoanDetails(testData.folioInstances[3].barcodes[0]);
         // Declare item lost.
         LoanDetails.declareItemLost(comment);
-        LoanDetails.checkKeyValue('Fees/fines incurred', `${totalAmount}.00`);
+        LoanDetails.checkKeyValue('Fees/fines incurred', `$${totalAmount}.00`);
         // Navigate to the fee and pay the total combined amount.
         LoanDetails.openFeeFine();
         cy.wait(1000);
