@@ -77,14 +77,14 @@ export default {
       ExportSettingsModal.clickExportButton();
     }
   },
-  receivePiece: (rowNumber, caption, barcode) => {
+  receivePiece: (rowNumber, enumeration, barcode) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
       Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
       receiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
-      TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
+      TextField({ name: `${recievingFieldName}.enumeration` }).fillIn(enumeration),
       TextField({ name: `${recievingFieldName}.barcode` }).fillIn(barcode),
       receiveButton.click(),
     ]);
@@ -104,12 +104,12 @@ export default {
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
-  addPiece: (caption, copyNumber, enumeration, chronology) => {
+  addPiece: (displaySummary, copyNumber, enumeration, chronology) => {
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
       Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
       addPieceButton.click(),
-      addPieceModal.find(TextField('Caption')).fillIn(caption),
+      addPieceModal.find(TextField('Display summary')).fillIn(displaySummary),
       addPieceModal.find(TextField('Copy number')).fillIn(copyNumber),
       addPieceModal.find(TextField('Enumeration')).fillIn(enumeration),
       addPieceModal.find(TextField('Chronology')).fillIn(chronology),
@@ -177,7 +177,7 @@ export default {
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
-  receivePieceWithBarcode: (rowNumber, caption) => {
+  receivePieceWithBarcode: (rowNumber, displaySummary) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
@@ -190,7 +190,7 @@ export default {
     ]);
     cy.do([
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
-      TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
+      TextField({ name: `${recievingFieldName}.displaySummary` }).fillIn(displaySummary),
     ]);
     cy.expect(receiveButton.has({ disabled: false, visible: true }));
     cy.do(receiveButton.click());
@@ -401,7 +401,7 @@ export default {
   verifyRequestIsCreated: () => {
     cy.expect(
       Accordion({ id: expectedPiecesAccordionId })
-        .find(MultiColumnListCell({ columnIndex: 7, content: 'Yes' }))
+        .find(MultiColumnListCell({ columnIndex: 8, content: 'Yes' }))
         .exists(),
     );
   },
