@@ -63,13 +63,7 @@ describe('MARC', () => {
             '$0 http://id.worldcat.org/fast/fst01198648410818C410818',
             '$2 fast',
           ],
-          notLinked710Field: [
-            21,
-            '710',
-            '\\',
-            '\\',
-            '$a Gálvez $0 n20114108184C410818',
-          ],
+          notLinked710Field: [21, '710', '\\', '\\', '$a Gálvez $0 n20114108184C410818'],
         };
 
         const linkableFields = [100, 600, 650, 710];
@@ -129,7 +123,10 @@ describe('MARC', () => {
                 marcFiles.forEach((marcFile) => {
                   cy.visit(TopMenu.dataImportPath);
                   if (marcFile.tenant === 'College') {
-                    ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+                    ConsortiumManager.switchActiveAffiliation(
+                      tenantNames.central,
+                      tenantNames.college,
+                    );
                     DataImport.waitLoading();
                     ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
                   }
@@ -155,19 +152,19 @@ describe('MARC', () => {
             })
             .then(() => {
               // adding Holdings in College for shared Instance
-                cy.setTenant(Affiliations.College);
-                const collegeLocationData = Locations.getDefaultLocation({
-                    servicePointId: ServicePoints.getDefaultServicePoint().id,
-                }).location;
-                Locations.createViaApi(collegeLocationData).then((location) => {
-                    testData.collegeLocation = location;
-                    InventoryHoldings.createHoldingRecordViaApi({
-                    instanceId: createdRecordIDs[0],
-                    permanentLocationId: testData.collegeLocation.id,
-                    }).then((holding) => {
-                        testData.collegeHoldings.push(holding);
-                    });
+              cy.setTenant(Affiliations.College);
+              const collegeLocationData = Locations.getDefaultLocation({
+                servicePointId: ServicePoints.getDefaultServicePoint().id,
+              }).location;
+              Locations.createViaApi(collegeLocationData).then((location) => {
+                testData.collegeLocation = location;
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: createdRecordIDs[0],
+                  permanentLocationId: testData.collegeLocation.id,
+                }).then((holding) => {
+                  testData.collegeHoldings.push(holding);
                 });
+              });
 
               cy.login(users.userProperties.username, users.userProperties.password, {
                 path: TopMenu.inventoryPath,
@@ -201,10 +198,13 @@ describe('MARC', () => {
             InventoryInstance.checkExpectedMARCSource();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkPaneheaderContains(testData.editSharedRecordText);
-            
             QuickMarcEditor.clickLinkHeadingsButton();
-            QuickMarcEditor.checkCallout('Field 100, 600, and 650 has been linked to MARC authority record(s).');
-            QuickMarcEditor.checkCallout('Field 710 must be set manually by selecting the link icon.');
+            QuickMarcEditor.checkCallout(
+              'Field 100, 600, and 650 has been linked to MARC authority record(s).',
+            );
+            QuickMarcEditor.checkCallout(
+              'Field 710 must be set manually by selecting the link icon.',
+            );
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100Field);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_1);
