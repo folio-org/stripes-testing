@@ -132,7 +132,7 @@ describe('MARC', () => {
                   waiter: InventoryInstances.waitContentLoading,
                 });
               });
-            })
+            });
         });
 
         after('Delete users, data', () => {
