@@ -74,7 +74,7 @@ describe('inventory', () => {
         InventoryInstance.checkCalloutMessage(
           `Record ${oclcRecordData.oclc} updated. Results may take a few moments to become visible in Inventory`,
         );
-
+        cy.wait(15000);
         cy.reload();
         InventoryInstance.waitInstanceRecordViewOpened(oclcRecordData.title);
         InventoryInstance.verifyLastUpdatedDate();

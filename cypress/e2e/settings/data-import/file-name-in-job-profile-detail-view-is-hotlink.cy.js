@@ -4,33 +4,25 @@ import JobProfileView from '../../../support/fragments/data_import/job_profiles/
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import Logs from '../../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('data-import', () => {
   describe('Settings', () => {
     let user;
+    let instanceId;
     const filePathToUpload = 'oneMarcBib.mrc';
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const fileNameToUpload = `C380637autotestFile.${getRandomPostfix()}.mrc`;
+    const fileNameToUpload = `C380637autotestFile${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
-      cy.loginAsAdmin({
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
-      });
-
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      DataImport.waitLoading();
-      DataImport.uploadFile(filePathToUpload, fileNameToUpload);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfileToRun);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(fileNameToUpload);
-      cy.logout();
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi(filePathToUpload, fileNameToUpload, jobProfileToRun).then(
+        (response) => {
+          instanceId = response.relatedInstanceInfo.idList[0];
+        },
+      );
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -44,6 +36,7 @@ describe('data-import', () => {
     after('delete user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
+      InventoryInstance.deleteInstanceViaApi(instanceId);
     });
 
     it(
