@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import Permissions from '../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Users from '../../../../support/fragments/users/users';
