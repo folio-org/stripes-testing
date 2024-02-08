@@ -12,16 +12,12 @@ import Logs from '../../../../../../support/fragments/data_import/logs/logs';
 import QuickMarcEditor from '../../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../../../support/fragments/marcAuthority/marcAuthority';
-import InventoryHoldings from '../../../../../../support/fragments/inventory/holdings/inventoryHoldings';
-import ServicePoints from '../../../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Locations from '../../../../../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       describe('Automated linking', () => {
         const testData = {
-          collegeHoldings: [],
           editSharedRecordText: 'Edit shared MARC record',
           linked100Field: [
             9,
@@ -30,7 +26,7 @@ describe('MARC', () => {
             '\\',
             '$a Bate, Walter Jackson, $d 1918-1999',
             '',
-            '$0 http://id.loc.gov/authorities/names/n79039769410818C410818',
+            '$0 http://id.loc.gov/authorities/names/n79039769C400663',
             '',
           ],
           linked600Field_1: [
@@ -40,7 +36,7 @@ describe('MARC', () => {
             '0',
             '$a Johnson, Samuel, $d 1709-1784',
             '$x Criticism and interpretation.',
-            '$0 http://id.loc.gov/authorities/names/n78095825410818C410818',
+            '$0 http://id.loc.gov/authorities/names/n78095825C400663',
             '',
           ],
           linked600Field_2: [
@@ -50,7 +46,7 @@ describe('MARC', () => {
             '7',
             '$a Johnson, Samuel, $d 1709-1784',
             '',
-            '$0 http://id.worldcat.org/fast/fst00029184410818C410818',
+            '$0 http://id.worldcat.org/fast/fst00029184C400663',
             '$2 fast',
           ],
           linked650Field: [
@@ -60,37 +56,27 @@ describe('MARC', () => {
             '7',
             '$a Criticism and interpretation',
             '',
-            '$0 http://id.worldcat.org/fast/fst01198648410818C410818',
+            '$0 http://id.worldcat.org/fast/fst01198648C400663',
             '$2 fast',
           ],
-          notLinked710Field: [21, '710', '\\', '\\', '$a Gálvez $0 n20114108184C410818'],
         };
 
-        const linkableFields = [100, 600, 650, 710];
+        const linkableFields = [100, 600, 650];
 
         const users = {};
 
         const marcFiles = [
           {
-            marc: 'marcBibFileForC410818-Shared.mrc',
+            marc: 'marcBibFileForC400663.mrc',
             fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numOfRecords: 1,
-            tenant: 'Central Office',
           },
           {
-            marc: 'marcAuthFileForC410818-Shared.mrc',
+            marc: 'marcAuthFileForC400663.mrc',
             fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 4,
-            tenant: 'Central Office',
-          },
-          {
-            marc: 'marcAuthFileForC410818-Local.mrc',
-            fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
-            numOfRecords: 1,
-            tenant: 'College',
           },
         ];
 
@@ -122,14 +108,6 @@ describe('MARC', () => {
               cy.loginAsAdmin().then(() => {
                 marcFiles.forEach((marcFile) => {
                   cy.visit(TopMenu.dataImportPath);
-                  if (marcFile.tenant === 'College') {
-                    ConsortiumManager.switchActiveAffiliation(
-                      tenantNames.central,
-                      tenantNames.college,
-                    );
-                    DataImport.waitLoading();
-                    ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-                  }
                   DataImport.verifyUploadState();
                   DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileNameImported);
                   JobProfiles.waitLoadingList();
@@ -148,27 +126,11 @@ describe('MARC', () => {
                 linkableFields.forEach((tag) => {
                   QuickMarcEditor.setRulesForField(tag, true);
                 });
-              });
-            })
-            .then(() => {
-              // adding Holdings in College for shared Instance
-              cy.setTenant(Affiliations.College);
-              const collegeLocationData = Locations.getDefaultLocation({
-                servicePointId: ServicePoints.getDefaultServicePoint().id,
-              }).location;
-              Locations.createViaApi(collegeLocationData).then((location) => {
-                testData.collegeLocation = location;
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: createdRecordIDs[0],
-                  permanentLocationId: testData.collegeLocation.id,
-                }).then((holding) => {
-                  testData.collegeHoldings.push(holding);
-                });
-              });
 
-              cy.login(users.userProperties.username, users.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
+                cy.login(users.userProperties.username, users.userProperties.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
               });
             });
         });
@@ -177,20 +139,14 @@ describe('MARC', () => {
           cy.resetTenant();
           cy.getAdminToken();
           Users.deleteViaApi(users.userProperties.userId);
-          InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
-          for (let i = 1; i < 5; i++) {
-            MarcAuthority.deleteViaAPI(createdRecordIDs[i]);
-          }
-          cy.setTenant(Affiliations.College);
-          MarcAuthority.deleteViaAPI(createdRecordIDs[5]);
-          testData.collegeHoldings.forEach((holding) => {
-            InventoryHoldings.deleteHoldingRecordViaApi(holding.id);
+          createdRecordIDs.forEach((id, index) => {
+            if (index) MarcAuthority.deleteViaAPI(id);
+            else InventoryInstance.deleteInstanceViaApi(id);
           });
-          Locations.deleteViaApi(testData.collegeLocation);
         });
 
         it(
-          'C410818 Automated linking of Shared MARC bib (shadow MARC Instance in Member tenant) with Shared MARC authority records on Central tenant (consortia) (spitfire)',
+          'C400663 Automated linking of Shared MARC bib with Shared MARC authority records on Central tenant (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
@@ -202,15 +158,11 @@ describe('MARC', () => {
             QuickMarcEditor.checkCallout(
               'Field 100, 600, and 650 has been linked to MARC authority record(s).',
             );
-            QuickMarcEditor.checkCallout(
-              'Field 710 must be set manually by selecting the link icon.',
-            );
-            QuickMarcEditor.verifyEnabledLinkHeadingsButton();
+            QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100Field);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_1);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_2);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked650Field);
-            QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.notLinked710Field);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkExpectedMARCSource();
@@ -227,7 +179,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_1);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_2);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked650Field);
-            QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.notLinked710Field);
           },
         );
       });
