@@ -72,7 +72,14 @@ export default {
       }),
     );
   },
-
+  openFileDetailsByRowNumber: (rowNumber = 0) => {
+    cy.do(
+      MultiColumnList({ id: 'list-data-import' })
+        .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+        .find(Link({ href: including('/data-import/job-summary') }))
+        .click(),
+    );
+  },
   openFileDetails: (fileName) => {
     cy.do(Link(fileName).click());
     FileDetails.verifyLogDetailsPageIsOpened(fileName);

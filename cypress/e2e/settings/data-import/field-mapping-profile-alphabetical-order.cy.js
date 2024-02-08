@@ -42,19 +42,9 @@ describe('data-import', () => {
     };
 
     before('create test data', () => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.mappingProfilePath,
-        waiter: FieldMappingProfiles.waitLoading,
-      }).then(() => {
-        testData.mappingProfiles.forEach((mappingProfile) => {
-          FieldMappingProfiles.openNewMappingProfileForm();
-          NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-          NewFieldMappingProfile.save();
-          NewFieldMappingProfile.checkCalloutMessage('New record created:');
-          FieldMappingProfileView.verifyMappingProfileOpened();
-          FieldMappingProfileView.closeViewMode(mappingProfile.name);
-          FieldMappingProfiles.waitLoading();
-        });
+      cy.getAdminToken();
+      testData.mappingProfiles.forEach((mappingProfile) => {
+        NewFieldMappingProfile.createMappingProfileViaApi(mappingProfile.name);
       });
 
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {

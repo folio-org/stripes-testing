@@ -1,7 +1,5 @@
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
@@ -12,7 +10,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
-      createdAuthorityIDs: [],
       calloutMessage:
         'This record has successfully saved and is in process. Changes may not appear immediately.',
       editedField: {
@@ -21,17 +18,23 @@ describe('MARC', () => {
         editedContent: 'test',
       },
       authTitle: 'C417046 Jackson, Peter',
-      marcFiles: [
-        {
-          marc: 'marcAuthC417046.mrc',
-          fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
-          numOfRecords: 1,
-        },
-      ],
+      marcFile: {
+        marc: 'marcAuthC417046.mrc',
+        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: 'Default - Create SRS MARC Authority',
+      },
     };
 
     before('Creating user', () => {
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi(
+        testData.marcFile.marc,
+        testData.marcFile.fileName,
+        testData.marcFile.jobProfileToRun,
+      ).then((response) => {
+        testData.recordId = response.relatedAuthorityInfo.idList[0];
+      });
+
       cy.createTempUser([
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -50,24 +53,6 @@ describe('MARC', () => {
           }
         });
 
-        testData.marcFiles.forEach((marcFile) => {
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, 'Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              Logs.getCreatedItemsID(0).then((link) => {
-                testData.createdAuthorityIDs = link.split('/')[5];
-              });
-            },
-          );
-        });
-
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
@@ -78,7 +63,7 @@ describe('MARC', () => {
     after('Deleting created user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
-      MarcAuthority.deleteViaAPI(testData.createdAuthorityIDs);
+      MarcAuthority.deleteViaAPI(testData.recordId);
     });
 
     it(

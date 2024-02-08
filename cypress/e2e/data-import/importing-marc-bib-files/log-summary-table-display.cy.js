@@ -1,30 +1,34 @@
-import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import { RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathToUpload = 'marcBibFileForC353624.mrc';
-    const fileName = `C356324 autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C356324 autotestFile${getRandomPostfix()}.mrc`;
+    let instanceId;
 
     before('login', () => {
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi(filePathToUpload, fileName, jobProfileToRun).then((response) => {
+        instanceId = response.relatedInstanceInfo.idList[0];
+      });
+
       cy.loginAsAdmin({
         path: TopMenu.dataImportPath,
         waiter: DataImport.waitLoading,
       });
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(filePathToUpload, fileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfileToRun);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(fileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+    });
+
+    after('delete test data', () => {
+      cy.getAdminToken().then(() => {
+        InventoryInstance.deleteInstanceViaApi(instanceId);
+      });
     });
 
     it(
