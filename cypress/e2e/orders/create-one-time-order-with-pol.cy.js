@@ -64,7 +64,10 @@ describe('Orders: Inventory interaction', () => {
     firstOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
 
-    cy.createTempUser([permissions.uiOrdersCreate.gui]).then((userProperties) => {
+    cy.createTempUser([
+      permissions.uiOrdersCreate.gui,
+      permissions.uiOrdersApprovePurchaseOrders.gui,
+    ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ordersPath,

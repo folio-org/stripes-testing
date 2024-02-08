@@ -18,6 +18,7 @@ export default HTML.extend('text area')
     cols: (el) => el.querySelector('textarea').getAttribute('cols'),
     label,
     value: (el) => el.querySelector('textarea').value,
+    hasValue: (el) => el.querySelector('select').value !== '',
     hasClearIcon: (el) => Boolean(el.querySelector('[class^=textFieldIcon-]')),
     textContent: (el) => el.querySelector('textarea').textContent,
     focused: (el) => el.querySelector('textarea').contains(el.ownerDocument.activeElement),
