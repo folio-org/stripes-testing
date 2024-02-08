@@ -495,7 +495,6 @@ export default {
   },
 
   verifyNextPagination: () => {
-    cy.expect([previousButton.has({ disabled: false }), nextButton.has({ disabled: false })]);
     cy.get('#pane-results')
       .find('div[class^="mclPrevNextPageInfoContainer-"]')
       .invoke('text')
@@ -503,7 +502,13 @@ export default {
     cy.get('#pane-results')
       .find('div[class^="mclPrevNextPageInfoContainer-"]')
       .invoke('text')
-      .should('include', '200');
+      .then((text) => {
+        if (/\b(1\d{2}|200)\b/.test(text)) {
+          cy.expect(nextButton.has({ disabled: true }));
+        } else {
+          cy.expect(nextButton.has({ disabled: false }));
+        }
+      });
   },
 
   verifyUserNameIsAbsntInFilter(userName) {

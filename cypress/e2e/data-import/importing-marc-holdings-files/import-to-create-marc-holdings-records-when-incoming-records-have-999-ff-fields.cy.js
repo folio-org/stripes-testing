@@ -24,21 +24,10 @@ describe('data-import', () => {
       '{"error":"A new MARC-Holding was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
 
     before('create test data', () => {
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      // upload a marc file for creating of the new instance, holding and item
-      DataImport.uploadFile(filePathForUpload, fileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfileToRun);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(fileName);
-      Logs.openFileDetails(fileName);
-      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-        instanceHrid = initialInstanceHrId;
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then((response) => {
+        instanceHrid = response.relatedInstanceInfo.hridList[0];
       });
-      cy.logout();
 
       cy.createTempUser([
         Permissions.inventoryAll.gui,

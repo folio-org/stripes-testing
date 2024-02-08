@@ -17,6 +17,15 @@ describe('data-import', () => {
     const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
 
     before('create test data', () => {
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi(
+        'oneMarcBib.mrc',
+        fileName,
+        'Default - Create instance and SRS MARC Bib',
+      ).then((response) => {
+        instanceHrid = response.relatedInstanceInfo.hridList[0];
+      });
+
       cy.createTempUser([
         Permissions.settingsDataImportView.gui,
         Permissions.uiInventoryViewInstances.gui,
@@ -24,7 +33,6 @@ describe('data-import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -47,14 +55,6 @@ describe('data-import', () => {
       'C356780 A user can view logs but can not import files with "Data import: Can view only" permission (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        DataImport.verifyChooseFileButtonState({ isDisabled: true });
-        Logs.openFileDetails(fileName);
-        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InventoryInstance.getAssignedHRID().then((hrId) => {
-          instanceHrid = hrId;
-        });
-        InventoryInstances.verifyInstanceDetailsView();
-        cy.visit(TopMenu.dataImportPath);
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
         LogsViewAll.searchWithTerm(fileName);

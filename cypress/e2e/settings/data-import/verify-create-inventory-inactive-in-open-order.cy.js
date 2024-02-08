@@ -58,10 +58,13 @@ describe('data-import', () => {
     before('Create test data', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         testData.user = userProperties;
-        cy.login(testData.user.username, testData.user.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
-        });
+      });
+    });
+
+    beforeEach('Login', () => {
+      cy.login(testData.user.username, testData.user.password, {
+        path: SettingsMenu.mappingProfilePath,
+        waiter: FieldMappingProfiles.waitLoading,
       });
     });
 
