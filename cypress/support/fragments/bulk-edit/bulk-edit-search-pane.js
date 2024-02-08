@@ -699,7 +699,7 @@ export default {
       DropdownMenu().find(Checkbox('Acquisition method')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Receipt status')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Note')).has({ checked: false }),
-      // DropdownMenu().find(Checkbox('Administrative note')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Administrative note')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Ill policy')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Retention policy')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Digitization policy')).has({ checked: false }),
@@ -1251,5 +1251,16 @@ export default {
           }
         });
     });
+  },
+
+  clearSearchColumnNameTextfield() {
+    cy.do(searchColumnNameTextfield.clear());
+  },
+
+  searchColumnNameTextfieldDisabled(disabled = true) {
+    cy.expect([
+      searchColumnNameTextfield.has({ disabled }),
+      Checkbox({ disabled: false }).absent(),
+    ]);
   },
 };

@@ -1,11 +1,13 @@
 import uuid from 'uuid';
 import Permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const invalidHoldingUUID = `invalidHoldingUUID-${uuid()}`;
@@ -63,7 +65,6 @@ describe('bulk-edit', () => {
       () => {
         cy.viewport(1920, 1080);
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
-
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.checkForUploading(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -72,16 +73,25 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyCheckedCheckboxesPresentInTheTable();
         BulkEditSearchPane.verifyActionsDropdownScrollable();
         BulkEditSearchPane.searchColumnName('note');
-        BulkEditSearchPane.searchColumnName('fewoh');
+        // BulkEditSearchPane.searchColumnName('fewoh');
+        BulkEditSearchPane.clearSearchColumnNameTextfield();
+        const columnName = 'Holdings ID';
+        BulkEditSearchPane.searchColumnName(columnName);
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(columnName);
+        BulkEditSearchPane.changeShowColumnCheckbox(columnName);
+        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude(columnName);
 
-        // BulkEditSearchPane.verifyErrorLabel(invalidHoldingUUIDsFileName, 0, 1);
-        // BulkEditSearchPane.verifyPaneRecordsCount(0);
-        // BulkEditSearchPane.verifyNonMatchedResults();
-        // BulkEditActions.openActions();
-        // BulkEditActions.downloadMatchedRecordsAbsent();
-        // BulkEditActions.downloadErrorsExists();
-        // BulkEditActions.startBulkEditAbsent();
-        // BulkEditSearchPane.verifyAllCheckboxesInShowColumnMenuAreDisabled();
+        TopMenuNavigation.navigateToApp('Bulk edit');
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
+        BulkEditSearchPane.uploadFile(invalidHoldingUUIDsFileName);
+        BulkEditSearchPane.checkForUploading(invalidHoldingUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyErrorLabel(invalidHoldingUUIDsFileName, 0, 1);
+        BulkEditSearchPane.verifyPaneRecordsCount(0);
+        BulkEditSearchPane.verifyNonMatchedResults(invalidHoldingUUID);
+        BulkEditActions.openActions();
+        BulkEditActions.downloadErrorsExists();
+        BulkEditSearchPane.searchColumnNameTextfieldDisabled();
       },
     );
   });
