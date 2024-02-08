@@ -68,7 +68,6 @@ describe('data-import', () => {
           // verify that user can cancel deletion of logs
           DataImport.selectAllLogs();
           DataImport.verifyAllLogsCheckedStatus({ logsCount: numberOfLogsPerPage, checked: true });
-
           DataImport.verifyLogsPaneSubtitleExist(numberOfLogsPerPage);
           DataImport.openDeleteImportLogsModal();
           DataImport.cancelDeleteImportLogs();
