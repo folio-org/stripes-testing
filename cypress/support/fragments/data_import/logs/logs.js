@@ -190,4 +190,9 @@ export default {
         .exists(),
     );
   },
+
+  getCreatedItemsTitle: (rowIndex = 0) => cy.then(() => searchResultList
+    .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+    .find(Link({ href: including('/data-import/log/') }))
+    .title()),
 };

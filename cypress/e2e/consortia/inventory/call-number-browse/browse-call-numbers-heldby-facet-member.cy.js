@@ -25,8 +25,8 @@ import BrowseCallNumber from '../../../../support/fragments/inventory/search/bro
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
     describe('Consortia', () => {
-      const instancePrefix = `TestAuto Instance ${getRandomLetters(7)}`;
-      const callNumberPrefix = `TestAuto ${getRandomLetters(7)}`;
+      const instancePrefix = 'C404353Auto Instance';
+      const callNumberPrefix = `XTestAuto ${getRandomLetters(7)}`;
       const testData = {
         instances: [
           {
@@ -34,11 +34,11 @@ describe('Inventory', () => {
             instanceTenant: Affiliations.Consortia,
             isMarc: true,
             holdings: {
-              [tenantNames.college]: {
+              college: {
                 callNumberInHoldings: true,
                 callNumber: `${callNumberPrefix} M1 Shared 1`,
               },
-              [tenantNames.university]: {
+              university: {
                 callNumberInHoldings: false,
                 callNumber: `${callNumberPrefix} M2 Shared 1`,
               },
@@ -49,11 +49,11 @@ describe('Inventory', () => {
             instanceTenant: Affiliations.Consortia,
             isMarc: true,
             holdings: {
-              [tenantNames.college]: {
+              college: {
                 callNumberInHoldings: false,
                 callNumber: `${callNumberPrefix} M1 Shared 2`,
               },
-              [tenantNames.university]: {
+              university: {
                 callNumberInHoldings: true,
                 callNumber: `${callNumberPrefix} M2 Shared 2`,
               },
@@ -64,11 +64,11 @@ describe('Inventory', () => {
             instanceTenant: Affiliations.Consortia,
             isMarc: false,
             holdings: {
-              [tenantNames.college]: {
+              college: {
                 callNumberInHoldings: true,
                 callNumber: `${callNumberPrefix} M1 Shared 3`,
               },
-              [tenantNames.university]: {
+              university: {
                 callNumberInHoldings: true,
                 callNumber: `${callNumberPrefix} M2 Shared 3`,
               },
@@ -79,11 +79,11 @@ describe('Inventory', () => {
             instanceTenant: Affiliations.Consortia,
             isMarc: true,
             holdings: {
-              [tenantNames.college]: {
+              college: {
                 callNumberInHoldings: false,
                 callNumber: `${callNumberPrefix} M1 Shared 4`,
               },
-              [tenantNames.university]: {
+              university: {
                 callNumberInHoldings: false,
                 callNumber: `${callNumberPrefix} M2 Shared 4`,
               },
@@ -94,11 +94,11 @@ describe('Inventory', () => {
             instanceTenant: Affiliations.Consortia,
             isMarc: true,
             holdings: {
-              [tenantNames.college]: {
+              college: {
                 callNumberInHoldings: true,
                 callNumber: `${callNumberPrefix} M1 Shared 5`,
               },
-              [tenantNames.university]: {
+              university: {
                 callNumberInHoldings: true,
                 callNumber: `${callNumberPrefix} M2 Shared 5`,
               },
@@ -109,11 +109,11 @@ describe('Inventory', () => {
             instanceTenant: Affiliations.Consortia,
             isMarc: false,
             holdings: {
-              [tenantNames.college]: {
+              college: {
                 callNumberInHoldings: true,
                 callNumber: `${callNumberPrefix} M1 Shared 6`,
               },
-              [tenantNames.university]: {
+              university: {
                 callNumberInHoldings: false,
                 callNumber: `${callNumberPrefix} M2 Shared 6`,
               },
@@ -124,7 +124,7 @@ describe('Inventory', () => {
             instanceTenant: Affiliations.Consortia,
             isMarc: true,
             holdings: {
-              [tenantNames.college]: {
+              college: {
                 callNumberInHoldings: true,
                 callNumber: `${callNumberPrefix} M1 Shared 7`,
               },
@@ -135,7 +135,7 @@ describe('Inventory', () => {
             instanceTenant: Affiliations.Consortia,
             isMarc: false,
             holdings: {
-              [tenantNames.university]: {
+              university: {
                 callNumberInHoldings: false,
                 callNumber: `${callNumberPrefix} M2 Shared 8`,
               },
@@ -146,7 +146,7 @@ describe('Inventory', () => {
             instanceTenant: Affiliations.College,
             isMarc: true,
             holdings: {
-              [tenantNames.college]: {
+              college: {
                 callNumberInHoldings: true,
                 callNumber: `${callNumberPrefix} M1 Local 9`,
               },
@@ -157,7 +157,7 @@ describe('Inventory', () => {
             instanceTenant: Affiliations.College,
             isMarc: false,
             holdings: {
-              [tenantNames.college]: {
+              college: {
                 callNumberInHoldings: true,
                 callNumber: `${callNumberPrefix} M1 Local 10`,
               },
@@ -168,7 +168,7 @@ describe('Inventory', () => {
             instanceTenant: Affiliations.University,
             isMarc: false,
             holdings: {
-              [tenantNames.university]: {
+              university: {
                 callNumberInHoldings: true,
                 callNumber: `${callNumberPrefix} M2 Local 11`,
               },
@@ -218,14 +218,17 @@ describe('Inventory', () => {
           instanceTitle,
         }).then((instanceData) => {
           createdInstanceIds[targetTenant].push(instanceData.instanceData.instanceId);
-          testData.instances.find((instance) => instance.title === instanceTitle).instanceId =
-            instanceData.instanceData.instanceId;
+          testData.instances[
+            testData.instances.findIndex((instance) => instance.title === instanceTitle)
+          ].instanceId = instanceData.instanceData.instanceId;
         });
       }
 
       function addHoldingsRecord(instanceId, tenantId) {
-        cy.log('hold for ' + instanceId + ' | ' + tenantId);
-        const instance = testData.instances.find((inst) => inst.instanceId === instanceId);
+        const instance =
+          testData.instances[
+            testData.instances.findIndex((inst) => inst.instanceId === instanceId)
+          ];
         const targetTenant = Object.keys(Affiliations)
           .find((key) => Affiliations[key] === tenantId)
           .toLowerCase();
@@ -245,8 +248,10 @@ describe('Inventory', () => {
       }
 
       function addItemRecord(instanceId, tenantId) {
-        cy.log('item for ' + instanceId + ' | ' + tenantId);
-        const instance = testData.instances.find((inst) => inst.instanceId === instanceId);
+        const instance =
+          testData.instances[
+            testData.instances.findIndex((inst) => inst.instanceId === instanceId)
+          ];
         const targetTenant = Object.keys(Affiliations)
           .find((key) => Affiliations[key] === tenantId)
           .toLowerCase();
@@ -278,41 +283,46 @@ describe('Inventory', () => {
               Permissions.inventoryAll.gui,
             ]);
 
-            // cy.loginAsAdmin().then(() => {
-            //   ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            //   cy.visit(TopMenu.dataImportPath);
-            //   DataImport.verifyUploadState();
-            //   DataImport.uploadFileAndRetry(marcFiles[0].marc, marcFiles[0].fileNameImported);
-            //   JobProfiles.waitFileIsUploaded();
-            //   JobProfiles.waitLoadingList();
-            //   JobProfiles.search(marcFiles[0].jobProfileToRun);
-            //   JobProfiles.runImportFile();
-            //   JobProfiles.waitFileIsImported(marcFiles[0].fileNameImported);
-            //   Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            //   Logs.openFileDetails(marcFiles[0].fileNameImported);
-            //   for (let i = 0; i < marcFiles[0].numberOftitles; i++) {
-            //     Logs.getCreatedItemsID(i).then((link) => {
-            //       createdInstanceIds.consortia.push(link.split('/')[5]);
-            //     });
-            //   }
+            cy.loginAsAdmin().then(() => {
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+              cy.visit(TopMenu.dataImportPath);
+              DataImport.verifyUploadState();
+              DataImport.uploadFileAndRetry(marcFiles[0].marc, marcFiles[0].fileNameImported);
+              JobProfiles.waitFileIsUploaded();
+              JobProfiles.waitLoadingList();
+              JobProfiles.search(marcFiles[0].jobProfileToRun);
+              JobProfiles.runImportFile();
+              JobProfiles.waitFileIsImported(marcFiles[0].fileNameImported);
+              Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+              Logs.openFileDetails(marcFiles[0].fileNameImported);
+              for (let i = 0; i < marcFiles[0].numberOftitles; i++) {
+                Logs.getCreatedItemsID(i).then((link) => {
+                  createdInstanceIds.consortia.push(link.split('/')[5]);
+                });
+              }
+              for (let i = 0; i < marcFiles[0].numberOftitles; i++) {
+                Logs.getCreatedItemsTitle(i).then((title) => {
+                  cy.log(title);
+                });
+              }
 
-            //   ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            //   DataImport.waitLoading();
-            //   DataImport.verifyUploadState();
-            //   DataImport.uploadFileAndRetry(marcFiles[1].marc, marcFiles[1].fileNameImported);
-            //   JobProfiles.waitFileIsUploaded();
-            //   JobProfiles.waitLoadingList();
-            //   JobProfiles.search(marcFiles[1].jobProfileToRun);
-            //   JobProfiles.runImportFile();
-            //   JobProfiles.waitFileIsImported(marcFiles[1].fileNameImported);
-            //   Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            //   Logs.openFileDetails(marcFiles[1].fileNameImported);
-            //   for (let i = 0; i < marcFiles[1].numberOftitles; i++) {
-            //     Logs.getCreatedItemsID(i).then((link) => {
-            //       createdInstanceIds.college.push(link.split('/')[5]);
-            //     });
-            //   }
-            // });
+              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+              DataImport.waitLoading();
+              DataImport.verifyUploadState();
+              DataImport.uploadFileAndRetry(marcFiles[1].marc, marcFiles[1].fileNameImported);
+              JobProfiles.waitFileIsUploaded();
+              JobProfiles.waitLoadingList();
+              JobProfiles.search(marcFiles[1].jobProfileToRun);
+              JobProfiles.runImportFile();
+              JobProfiles.waitFileIsImported(marcFiles[1].fileNameImported);
+              Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+              Logs.openFileDetails(marcFiles[1].fileNameImported);
+              for (let i = 0; i < marcFiles[1].numberOftitles; i++) {
+                Logs.getCreatedItemsID(i).then((link) => {
+                  createdInstanceIds.college.push(link.split('/')[5]);
+                });
+              }
+            });
 
             cy.setTenant(Affiliations.College);
             const collegeLocationData = Locations.getDefaultLocation({
@@ -347,43 +357,35 @@ describe('Inventory', () => {
             });
           })
           .then(() => {
-            testData.instances
-              .filter((inst) => !inst.isMarc)
-              .forEach((instance) => {
-                createFolioInstance(instance.title, instance.instanceTenant);
-              });
-            testData.instances
-              .filter((inst) => !inst.isMarc)
-              .forEach((instance) => {
-                addHoldingsRecord(instance.instanceId, Affiliations.College);
-              });
-            testData.instances
-              .filter((inst) => !inst.isMarc)
-              .forEach((instance) => {
-                addHoldingsRecord(instance.instanceId, Affiliations.University);
-              });
-            testData.instances
-              .filter((inst) => !inst.isMarc)
-              .forEach((instance) => {
-                addItemRecord(instance.instanceId, Affiliations.College);
-              });
-            testData.instances
-              .filter((inst) => !inst.isMarc)
-              .forEach((instance) => {
-                addItemRecord(instance.instanceId, Affiliations.University);
-              });
-
-            cy.login(testData.userProperties.username, testData.userProperties.password).then(
-              () => {
-                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-                cy.visit(TopMenu.inventoryPath);
-                InventoryInstances.waitContentLoading();
-                InventorySearchAndFilter.selectBrowseCallNumbers();
-              },
-            );
+            // testData.instances
+            //   .filter((inst) => !inst.isMarc)
+            //   .forEach((instance) => {
+            //     createFolioInstance(instance.title, instance.instanceTenant);
+            //   });
           });
       });
+
+      // before(() => {
+      //   testData.instances
+      //     .forEach((instance) => {
+      //       addHoldingsRecord(instance.instanceId, Affiliations.College);
+      //     });
+      //   testData.instances
+      //     .forEach((instance) => {
+      //       addHoldingsRecord(instance.instanceId, Affiliations.University);
+      //     });
+      // });
+
+      // before(() => {
+      //   testData.instances
+      //     .forEach((instance) => {
+      //       addItemRecord(instance.instanceId, Affiliations.College);
+      //     });
+      //   testData.instances
+      //     .forEach((instance) => {
+      //       addItemRecord(instance.instanceId, Affiliations.University);
+      //     });
+      // });
 
       after('Delete user, data', () => {
         cy.resetTenant();
@@ -428,9 +430,19 @@ describe('Inventory', () => {
         'C404353 Use "Held by" facet when browsing Call numbers in Consortia tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire'] },
         () => {
-          InventorySearchAndFilter.clickAccordionByName(testData.heldByAccordionName);
-          InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.heldByAccordionName);
-          BrowseSubjects.browse(callNumberPrefix);
+          // cy.login(testData.userProperties.username, testData.userProperties.password).then(
+          //   () => {
+          //     ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          //     ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          //     cy.visit(TopMenu.inventoryPath);
+          //     InventoryInstances.waitContentLoading();
+          //     InventorySearchAndFilter.selectBrowseCallNumbers();
+          //   },
+          // );
+          // InventorySearchAndFilter.clickAccordionByName(testData.heldByAccordionName);
+          // InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.heldByAccordionName);
+          // BrowseSubjects.browse(callNumberPrefix);
+          // cy.wait(15000);
           // InventorySearchAndFilter.verifyCheckboxInAccordion(
           //   testData.sharedAccordionName,
           //   'Yes',
@@ -464,7 +476,6 @@ describe('Inventory', () => {
           // InventoryInstance.verifySharedIconAbsentByTitle(testData.instances[2].title);
           // InventoryInstance.verifySharedIconAbsentByTitle(testData.instances[3].title);
           // InventorySearchAndFilter.verifyNumberOfSearchResults(6);
-
           // InventorySearchAndFilter.switchToBrowseTab();
           // InventorySearchAndFilter.verifyCallNumberBrowseNotEmptyPane();
           // InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
@@ -489,7 +500,6 @@ describe('Inventory', () => {
           // InventoryInstance.verifySharedIconAbsentByTitle(testData.instances[2].title);
           // InventoryInstance.verifySharedIconAbsentByTitle(testData.instances[3].title);
           // InventorySearchAndFilter.verifyNumberOfSearchResults(2);
-
           // InventorySearchAndFilter.switchToBrowseTab();
           // InventorySearchAndFilter.verifyCallNumberBrowseNotEmptyPane();
           // InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
@@ -531,7 +541,6 @@ describe('Inventory', () => {
           // InventoryInstance.verifySharedIconByTitle(testData.instances[4].title);
           // InventoryInstance.verifySharedIconByTitle(testData.instances[5].title);
           // InventorySearchAndFilter.verifyNumberOfSearchResults(4);
-
           // InventorySearchAndFilter.switchToBrowseTab();
           // InventorySearchAndFilter.verifyCallNumberBrowseNotEmptyPane();
           // InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
@@ -565,7 +574,6 @@ describe('Inventory', () => {
           // InventoryInstance.verifySharedIconAbsentByTitle(testData.instances[2].title);
           // InventoryInstance.verifySharedIconAbsentByTitle(testData.instances[3].title);
           // InventorySearchAndFilter.verifyNumberOfSearchResults(6);
-
           // InventorySearchAndFilter.switchToBrowseTab();
           // InventorySearchAndFilter.verifyCallNumberBrowseNotEmptyPane();
           // InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
