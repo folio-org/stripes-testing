@@ -462,6 +462,8 @@ export default {
         }
       },
     );
+    // need to reload the page for cleaning upload area
+    cy.reload();
   },
 
   clickResumeButton: () => {
