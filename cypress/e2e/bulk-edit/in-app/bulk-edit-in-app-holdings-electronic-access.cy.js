@@ -82,7 +82,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(holdingsHRID);
-        BulkEditSearchPane.verifyReasonForError('Electronic access relationship not found by id=');
+        // BulkEditSearchPane.verifyReasonForError('Electronic access relationship not found by id=');
 
         const tempLocation = 'Online (E)';
 

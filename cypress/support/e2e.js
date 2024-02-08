@@ -22,7 +22,7 @@ import './data-import';
 import './commands';
 
 registerCypressGrep();
-setInteractorTimeout(50_000);
+setInteractorTimeout(10_000);
 
 require('cypress-xpath');
 require('@shelex/cypress-allure-plugin');

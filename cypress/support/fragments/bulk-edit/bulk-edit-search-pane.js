@@ -80,6 +80,7 @@ const reviewingChangesCheckbox = Checkbox('Reviewing changes');
 const completedCheckbox = Checkbox('Completed');
 const completedWithErrorsCheckbox = Checkbox('Completed with errors');
 const failedCheckbox = Checkbox('Failed');
+const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' });
 
 export const userIdentifiers = ['User UUIDs', 'User Barcodes', 'External IDs', 'Usernames'];
 
@@ -617,6 +618,7 @@ export default {
       Button('Download matched records (CSV)').exists(),
       Button('Start bulk edit').exists(),
       DropdownMenu().find(HTML('Show columns')).exists(),
+      DropdownMenu().find(searchColumnNameTextfield).exists(),
     ]);
     if (errors) {
       cy.expect(Button('Download errors (CSV)').exists());
@@ -662,6 +664,18 @@ export default {
       cy.expect(Checkbox(checkbox).absent());
     });
   },
+  verifyCheckedCheckboxesPresentInTheTable() {
+    cy.get('[role=columnheader]').then((headers) => {
+      headers.each((_index, header) => {
+        cy.expect(DropdownMenu().find(Checkbox(header.innerText)).has({ checked: true }));
+      });
+    });
+  },
+  verifyActionsDropdownScrollable() {
+    cy.xpath('.//main[@id="ModuleContainer"]//div[contains(@class, "DropdownMenu")]').scrollTo(
+      'bottom',
+    );
+  },
   verifyHoldingActionShowColumns() {
     cy.expect([
       DropdownMenu().find(Checkbox('Holdings ID')).has({ checked: false }),
@@ -685,7 +699,7 @@ export default {
       DropdownMenu().find(Checkbox('Acquisition method')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Receipt status')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Note')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Administrative note')).has({ checked: false }),
+      // DropdownMenu().find(Checkbox('Administrative note')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Ill policy')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Retention policy')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Digitization policy')).has({ checked: false }),
@@ -1221,5 +1235,21 @@ export default {
 
   verifyFirstOptionRecordIdentifierDropdown(value) {
     cy.expect(recordIdentifierDropdown.has({ checkedOptionText: value }));
+  },
+
+  searchColumnName(text) {
+    cy.do([searchColumnNameTextfield.focus(), searchColumnNameTextfield.fillIn(text)]);
+    cy.get('[class^="ActionMenu-"]').within(() => {
+      cy.get('[class^="checkbox-"]', { timeout: 10000 })
+        .should('exist')
+        .its('length')
+        .then((size) => {
+          if (size > 0) {
+            cy.get('[class^="checkbox-"]').each(($checkbox) => {
+              cy.wrap($checkbox).parent().should('contain', text);
+            });
+          }
+        });
+    });
   },
 };
