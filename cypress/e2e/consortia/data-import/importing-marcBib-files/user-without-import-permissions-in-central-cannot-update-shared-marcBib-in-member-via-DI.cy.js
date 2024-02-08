@@ -152,7 +152,7 @@ describe('Data Import', () => {
             waiter: InventoryInstances.waitContentLoading,
           });
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         });
     });
 
