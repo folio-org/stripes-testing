@@ -35,7 +35,7 @@ import NewMatchProfile from '../../../../support/fragments/settings/dataImport/m
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {
-      sharedInstanceId: [],
+      instanceIds: [],
       marcFile: {
         marc: 'marcBibFileForC405531.mrc',
         fileName: `C405531 testMarcFile${getRandomPostfix()}.mrc`,
@@ -130,7 +130,7 @@ describe('Data Import', () => {
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(testData.marcFile.fileName);
       Logs.getCreatedItemsID().then((link) => {
-        testData.sharedInstanceId.push(link.split('/')[5]);
+        testData.instanceIds.push(link.split('/')[5]);
       });
 
       cy.createTempUser([
