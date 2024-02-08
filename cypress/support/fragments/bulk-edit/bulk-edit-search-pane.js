@@ -1237,19 +1237,23 @@ export default {
     cy.expect(recordIdentifierDropdown.has({ checkedOptionText: value }));
   },
 
-  searchColumnName(text) {
-    cy.do([searchColumnNameTextfield.focus(), searchColumnNameTextfield.fillIn(text)]);
+  searchColumnName(text, valid = true) {
+    cy.get('[placeholder="Search column name"]').type(text);
+    cy.wait(500);
     cy.get('[class^="ActionMenu-"]').within(() => {
-      cy.get('[class^="checkbox-"]', { timeout: 10000 })
-        .should('exist')
-        .its('length')
-        .then((size) => {
-          if (size > 0) {
+      if (valid) {
+        cy.get('[class^="checkbox-"]')
+          .should('exist')
+          .then(() => {
             cy.get('[class^="checkbox-"]').each(($checkbox) => {
-              cy.wrap($checkbox).parent().should('contain', text);
+              cy.wrap($checkbox).should(($el) => {
+                expect($el.text().toLowerCase()).to.contain(text.toLowerCase());
+              });
             });
-          }
-        });
+          });
+      } else {
+        cy.get('[class^="checkbox-"]').should('not.exist');
+      }
     });
   },
 

@@ -73,7 +73,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyCheckedCheckboxesPresentInTheTable();
         BulkEditSearchPane.verifyActionsDropdownScrollable();
         BulkEditSearchPane.searchColumnName('note');
-        // BulkEditSearchPane.searchColumnName('fewoh');
+        BulkEditSearchPane.searchColumnName('fewoh', false);
         BulkEditSearchPane.clearSearchColumnNameTextfield();
         const columnName = 'Holdings ID';
         BulkEditSearchPane.searchColumnName(columnName);
