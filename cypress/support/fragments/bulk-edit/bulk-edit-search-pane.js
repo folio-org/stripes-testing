@@ -80,6 +80,7 @@ const reviewingChangesCheckbox = Checkbox('Reviewing changes');
 const completedCheckbox = Checkbox('Completed');
 const completedWithErrorsCheckbox = Checkbox('Completed with errors');
 const failedCheckbox = Checkbox('Failed');
+const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' });
 
 export const userIdentifiers = ['User UUIDs', 'User Barcodes', 'External IDs', 'Usernames'];
 
@@ -110,10 +111,12 @@ export default {
     cy.expect(HTML(including(`Uploading ${fileName} and retrieving relevant data`)).exists());
     cy.expect(HTML(including('Retrieving...')));
   },
+
   progresBarIsAbsent() {
     cy.expect(HTML(including('Uploading ... and retrieving relevant data')).absent());
     cy.expect(HTML(including('Retrieving...')).absent());
   },
+
   verifyNoPermissionWarning() {
     cy.expect(HTML("You don't have permission to view this app/record").exists());
   },
@@ -137,6 +140,7 @@ export default {
   verifyPopulatedPreviewPage() {
     cy.expect([errorsAccordion.exists(), resultsAccordion.exists(), actions.exists()]);
   },
+
   logActionsIsAbsent() {
     cy.expect(logsActionButton.absent());
   },
@@ -617,6 +621,7 @@ export default {
       Button('Download matched records (CSV)').exists(),
       Button('Start bulk edit').exists(),
       DropdownMenu().find(HTML('Show columns')).exists(),
+      DropdownMenu().find(searchColumnNameTextfield).exists(),
     ]);
     if (errors) {
       cy.expect(Button('Download errors (CSV)').exists());
@@ -650,6 +655,7 @@ export default {
       DropdownMenu().find(Checkbox('Custom fields')).has({ checked: false }),
     ]);
   },
+
   verifyAllCheckboxesInShowColumnMenuAreDisabled() {
     cy.expect(
       DropdownMenu()
@@ -657,11 +663,27 @@ export default {
         .absent(),
     );
   },
+
   verifyCheckboxesAbsent(...checkboxes) {
     checkboxes.forEach((checkbox) => {
       cy.expect(Checkbox(checkbox).absent());
     });
   },
+
+  verifyCheckedCheckboxesPresentInTheTable() {
+    cy.get('[role=columnheader]').then((headers) => {
+      headers.each((_index, header) => {
+        cy.expect(DropdownMenu().find(Checkbox(header.innerText)).has({ checked: true }));
+      });
+    });
+  },
+
+  verifyActionsDropdownScrollable() {
+    cy.xpath('.//main[@id="ModuleContainer"]//div[contains(@class, "DropdownMenu")]').scrollTo(
+      'bottom',
+    );
+  },
+
   verifyHoldingActionShowColumns() {
     cy.expect([
       DropdownMenu().find(Checkbox('Holdings ID')).has({ checked: false }),
@@ -715,6 +737,17 @@ export default {
       cy.get(`[name='${name}']`).then((element) => {
         const checked = element.attr('checked');
         if (!checked) {
+          cy.do(DropdownMenu().find(Checkbox(name)).click());
+        }
+      });
+    });
+  },
+
+  uncheckShowColumnCheckbox(...names) {
+    names.forEach((name) => {
+      cy.get(`[name='${name}']`).then((element) => {
+        const checked = element.attr('checked');
+        if (checked) {
           cy.do(DropdownMenu().find(Checkbox(name)).click());
         }
       });
@@ -1221,5 +1254,36 @@ export default {
 
   verifyFirstOptionRecordIdentifierDropdown(value) {
     cy.expect(recordIdentifierDropdown.has({ checkedOptionText: value }));
+  },
+
+  searchColumnName(text, valid = true) {
+    cy.get('[placeholder="Search column name"]').type(text);
+    cy.wait(500);
+    cy.get('[class^="ActionMenu-"]').within(() => {
+      if (valid) {
+        cy.get('[class^="checkbox-"]')
+          .should('exist')
+          .then(() => {
+            cy.get('[class^="checkbox-"]').each(($checkbox) => {
+              cy.wrap($checkbox).should(($el) => {
+                expect($el.text().toLowerCase()).to.contain(text.toLowerCase());
+              });
+            });
+          });
+      } else {
+        cy.get('[class^="checkbox-"]').should('not.exist');
+      }
+    });
+  },
+
+  clearSearchColumnNameTextfield() {
+    cy.do(searchColumnNameTextfield.clear());
+  },
+
+  searchColumnNameTextfieldDisabled(disabled = true) {
+    cy.expect([
+      searchColumnNameTextfield.has({ disabled }),
+      Checkbox({ disabled: false }).absent(),
+    ]);
   },
 };
