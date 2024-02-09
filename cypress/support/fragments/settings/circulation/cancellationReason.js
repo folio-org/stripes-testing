@@ -38,7 +38,7 @@ export default {
     cy.expect(MultiColumnListRow(including(message)).exists());
   },
 
-  verifyReasonIsNotListed(name) {
+  verifyNoReasonInTheList(name) {
     cy.expect(MultiColumnListRow({ content: including(name) }).absent());
   },
 

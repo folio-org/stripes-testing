@@ -142,21 +142,21 @@ describe('Consortia', () => {
             RequestCancellationReasonsConsortiumManager.checkMessage(
               messages.deleted(cancelReason),
             );
-            RequestCancellationReasonsConsortiumManager.verifyReasonIsNotListed(cancelReason.name);
+            RequestCancellationReasonsConsortiumManager.verifyNoReasonInTheList(cancelReason.name);
 
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
             CancellationReason.waitLoading();
-            CancellationReason.verifyReasonIsNotListed(cancelReason.name);
+            CancellationReason.verifyNoReasonInTheList(cancelReason.name);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
             CancellationReason.waitLoading();
-            CancellationReason.verifyReasonIsNotListed(cancelReason.name);
+            CancellationReason.verifyNoReasonInTheList(cancelReason.name);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
             CancellationReason.waitLoading();
-            CancellationReason.verifyReasonIsNotListed(cancelReason.name);
+            CancellationReason.verifyNoReasonInTheList(cancelReason.name);
           },
         );
       });

@@ -44,7 +44,7 @@ const cancelButton = rootPane.find(Button('Cancel'));
 const saveButton = rootPane.find(Button('Save'));
 
 export default {
-  createViaApi: (reason) => {
+  createViaApi(reason) {
     return cy.getConsortiaId().then((consortiaId) => {
       cy.okapiRequest({
         method: REQUEST_METHOD.POST,
@@ -65,7 +65,7 @@ export default {
     });
   },
 
-  deleteViaApi: (reason) => {
+  deleteViaApi(reason) {
     cy.getConsortiaId().then((consortiaId) => {
       cy.okapiRequest({
         method: REQUEST_METHOD.DELETE,
@@ -75,11 +75,11 @@ export default {
     });
   },
 
-  waitLoading: () => {
+  waitLoading() {
     cy.expect(rootPane.find(PaneHeader('Request cancellation reasons')).exists());
   },
 
-  clickNew: () => {
+  clickNew() {
     cy.do(newButton.click());
   },
 
@@ -87,7 +87,7 @@ export default {
     cy.expect(newButton.is({ disabled: status }));
   },
 
-  verifyEditModeElementsIsActive: () => {
+  verifyEditModeElementsIsActive() {
     cy.expect([
       newButton.is({ disabled: true }),
       cancelReasonField.exists(),
@@ -99,15 +99,15 @@ export default {
     ]);
   },
 
-  fillInCancelReasonName: (name) => {
+  fillInCancelReasonName(name) {
     cy.do(cancelReasonField.fillIn(name));
   },
 
-  fillInInternalDescription: (description) => {
+  fillInInternalDescription(description) {
     cy.do(cancelDescriptionInternalField.fillIn(description));
   },
 
-  fillInPublicDescription: (publicDescription) => {
+  fillInPublicDescription(publicDescription) {
     cy.do(cancelDescriptionPublicField.fillIn(publicDescription));
   },
 
@@ -121,15 +121,15 @@ export default {
     cy.do(shared && memberLibrariesShare.click());
   },
 
-  clickCancel: () => {
+  clickCancel() {
     cy.do(cancelButton.click());
   },
 
-  clickSave: () => {
+  clickSave() {
     cy.do(saveButton.click());
   },
 
-  performAction: (cancelReasonName, action) => {
+  performAction(cancelReasonName, action) {
     // actions are selected by button name: trash(delete) or edit
     cy.do(
       MultiColumnListRow({ content: including(cancelReasonName) })
@@ -139,7 +139,7 @@ export default {
     );
   },
 
-  checkMessage: (message, calloutType = calloutTypes.success) => {
+  checkMessage(message, calloutType = calloutTypes.success) {
     InteractorsTools.checkCalloutMessage(message, calloutType);
     InteractorsTools.closeCalloutMessage();
   },
@@ -148,12 +148,8 @@ export default {
     cy.expect(cancelReasonField.has({ error: message }));
   },
 
-  verifyListIsEmpty: () => {
+  verifyListIsEmpty() {
     cy.expect(rootPane.find(HTML(including('The list contains no items'))).exists());
-  },
-
-  verifyReasonIsNotListed: (name) => {
-    cy.expect(MultiColumnListRow({ content: including(name) }).absent());
   },
 
   verifyReasonInTheList({ name, description = '', publicDescription = '', members, actions = [] }) {
