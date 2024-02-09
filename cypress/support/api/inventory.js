@@ -1,5 +1,6 @@
 import uuid from 'uuid';
 import { INSTANCE_SOURCE_NAMES } from '../constants';
+import QuickMarcEditor from '../fragments/quickMarcEditor';
 
 const DEFAULT_INSTANCE = {
   source: INSTANCE_SOURCE_NAMES.FOLIO,
@@ -328,6 +329,34 @@ Cypress.Commands.add('getHridHandlingSettingsViaApi', () => {
       method: 'GET',
       path: 'hrid-settings-storage/hrid-settings',
       isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => {
+      return body;
+    });
+});
+
+Cypress.Commands.add('createSimpleMarcBibViaAPI', (title) => {
+  return cy
+    .okapiRequest({
+      path: 'records-editor/records',
+      method: 'POST',
+      body: {
+        _actionType: 'create',
+        leader: QuickMarcEditor.defaultValidLdr,
+        fields: [
+          {
+            tag: '008',
+            content: QuickMarcEditor.defaultValid008Values,
+          },
+          {
+            tag: '245',
+            content: `$a ${title}`,
+            indicators: ['\\', '\\'],
+          },
+        ],
+        suppressDiscovery: false,
+        marcFormat: 'BIBLIOGRAPHIC',
+      },
     })
     .then(({ body }) => {
       return body;

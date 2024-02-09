@@ -357,8 +357,33 @@ const holdingsLocationSelectDisabled = holdingsLocationModal.find(
   Button({ name: 'locationId', disabled: true }),
 );
 const holdingsLocationSaveButton = holdingsLocationModal.find(Button('Save and close'));
+const defaultValidLdr = '00000naa\\a2200000uu\\4500';
+const defaultValid008Values = {
+  Type: '\\',
+  BLvl: '\\',
+  DtSt: '\\',
+  Date1: '\\\\\\\\',
+  Date2: '\\\\\\\\',
+  Ctry: '\\\\\\',
+  Lang: '\\\\\\',
+  MRec: '\\',
+  Srce: '\\',
+  Ills: ['\\', '\\', '\\', '\\'],
+  Audn: '\\',
+  Form: '\\',
+  Cont: ['\\', '\\', '\\', '\\'],
+  GPub: '\\',
+  Conf: '\\',
+  Fest: '\\',
+  Indx: '\\',
+  LitF: '\\',
+  Biog: '\\',
+};
 
 export default {
+  defaultValidLdr,
+  defaultValid008Values,
+
   getInitialRowsCount() {
     return validRecord.lastRowNumber;
   },
@@ -2067,5 +2092,27 @@ export default {
     cy.get('@link').then((link) => {
       cy.visit(link);
     });
+  },
+
+  getCreatedMarcBibIds(marcBibTitle, timeOutSeconds = 120) {
+    let timeCounter = 0;
+    function checkBib() {
+      cy.okapiRequest({
+        path: 'instance-storage/instances',
+        searchParams: { query: `(title all "${marcBibTitle}")` },
+        isDefaultSearchParamsRequired: false,
+      }).then(({ body }) => {
+        if (body.instances[0] || timeCounter >= timeOutSeconds) {
+          cy.expect(body.instances[0].title).equals(marcBibTitle);
+          cy.wrap(body.instances[0]).as('bib');
+        } else {
+          cy.wait(1000);
+          checkBib();
+          timeCounter++;
+        }
+      });
+    }
+    checkBib();
+    return cy.get('@bib');
   },
 };
