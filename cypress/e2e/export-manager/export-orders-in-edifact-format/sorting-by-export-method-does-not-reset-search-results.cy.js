@@ -178,6 +178,7 @@ describe('orders: export', () => {
       ExportManagerSearchPane.searchByFailed();
       ExportManagerSearchPane.sortByJobID();
       ExportManagerSearchPane.selectJobByIntegrationInList(integrationNameForFirstOrganization);
+      ExportManagerSearchPane.resetAll();
       ExportManagerSearchPane.selectJobByIntegrationInList(integrationNameForSecondOrganization);
     },
   );
