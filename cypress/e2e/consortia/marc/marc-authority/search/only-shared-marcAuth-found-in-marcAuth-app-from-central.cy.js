@@ -155,7 +155,7 @@ describe('MARC', () => {
             testData.authorityBrowseOption,
             testData.marcValueLocal,
           );
-          InventorySearchAndFilter.verifySearchResult(`${testData.marcValueLocal} would be here`);
+          InventorySearchAndFilter.verifySearchResult(`${testData.marcValueLocal} would be here`);
 
           MarcAuthorities.searchByParameter(testData.authorityBrowseOption, testData.testId);
           MarcAuthorities.checkAfterSearch(
