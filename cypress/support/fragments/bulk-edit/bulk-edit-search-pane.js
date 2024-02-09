@@ -111,10 +111,12 @@ export default {
     cy.expect(HTML(including(`Uploading ${fileName} and retrieving relevant data`)).exists());
     cy.expect(HTML(including('Retrieving...')));
   },
+
   progresBarIsAbsent() {
     cy.expect(HTML(including('Uploading ... and retrieving relevant data')).absent());
     cy.expect(HTML(including('Retrieving...')).absent());
   },
+
   verifyNoPermissionWarning() {
     cy.expect(HTML("You don't have permission to view this app/record").exists());
   },
@@ -138,6 +140,7 @@ export default {
   verifyPopulatedPreviewPage() {
     cy.expect([errorsAccordion.exists(), resultsAccordion.exists(), actions.exists()]);
   },
+
   logActionsIsAbsent() {
     cy.expect(logsActionButton.absent());
   },
@@ -652,6 +655,7 @@ export default {
       DropdownMenu().find(Checkbox('Custom fields')).has({ checked: false }),
     ]);
   },
+
   verifyAllCheckboxesInShowColumnMenuAreDisabled() {
     cy.expect(
       DropdownMenu()
@@ -659,11 +663,13 @@ export default {
         .absent(),
     );
   },
+
   verifyCheckboxesAbsent(...checkboxes) {
     checkboxes.forEach((checkbox) => {
       cy.expect(Checkbox(checkbox).absent());
     });
   },
+
   verifyCheckedCheckboxesPresentInTheTable() {
     cy.get('[role=columnheader]').then((headers) => {
       headers.each((_index, header) => {
@@ -671,11 +677,13 @@ export default {
       });
     });
   },
+
   verifyActionsDropdownScrollable() {
     cy.xpath('.//main[@id="ModuleContainer"]//div[contains(@class, "DropdownMenu")]').scrollTo(
       'bottom',
     );
   },
+
   verifyHoldingActionShowColumns() {
     cy.expect([
       DropdownMenu().find(Checkbox('Holdings ID')).has({ checked: false }),
@@ -729,6 +737,17 @@ export default {
       cy.get(`[name='${name}']`).then((element) => {
         const checked = element.attr('checked');
         if (!checked) {
+          cy.do(DropdownMenu().find(Checkbox(name)).click());
+        }
+      });
+    });
+  },
+
+  uncheckShowColumnCheckbox(...names) {
+    names.forEach((name) => {
+      cy.get(`[name='${name}']`).then((element) => {
+        const checked = element.attr('checked');
+        if (checked) {
           cy.do(DropdownMenu().find(Checkbox(name)).click());
         }
       });

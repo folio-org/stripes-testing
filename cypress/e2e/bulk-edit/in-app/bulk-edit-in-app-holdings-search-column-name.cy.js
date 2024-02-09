@@ -36,9 +36,7 @@ describe('bulk-edit', () => {
           limit: 1,
           query: `"instanceId"="${item.instanceId}"`,
         }).then((holdings) => {
-          item.holdingUUID = holdings[0].id;
-          item.holdingHRID = holdings[0].hrid;
-          FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, item.holdingUUID);
+          FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
           FileManager.createFile(
             `cypress/fixtures/${invalidHoldingUUIDsFileName}`,
             invalidHoldingUUID,
