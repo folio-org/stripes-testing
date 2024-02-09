@@ -120,55 +120,57 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
           RequestCancellationReasonsConsortiumManager.choose();
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList(
-            testData.centralSharedReason.payload.name,
-            'All',
-          );
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList(
-            testData.centralLocalReason.name,
-            tenantNames.central,
-            'edit',
-            'trash',
-          );
 
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList(
-            testData.collegeLocalReason.name,
-            tenantNames.college,
-            'edit',
-            'trash',
-          );
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList(
-            testData.universityLocalReason.name,
-            tenantNames.university,
-            'edit',
-            'trash',
-          );
+          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+            name: testData.centralSharedReason.payload.name,
+            members: 'All',
+          });
+          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+            name: testData.centralLocalReason.name,
+            members: tenantNames.central,
+            actions: ['edit', 'trash'],
+          });
+
+          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+            name: testData.collegeLocalReason.name,
+            members: tenantNames.college,
+            actions: ['edit', 'trash'],
+          });
+          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+            name: testData.universityLocalReason.name,
+            members: tenantNames.university,
+            actions: ['edit', 'trash'],
+          });
 
           ConsortiumManagerApp.clickSelectMembers();
           SelectMembers.verifyStatusOfSelectMembersModal(3, 3);
           SelectMembers.selectMembers(tenantNames.central);
           SelectMembers.saveAndClose();
           ConsortiumManagerApp.verifyMembersSelected(2);
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList(
-            testData.centralSharedReason.payload.name,
-            'All',
-          );
+          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+            name: testData.centralSharedReason.payload.name,
+            description: '',
+            publicDescription: '',
+            members: 'All',
+          });
           RequestCancellationReasonsConsortiumManager.verifyNoReasonInTheList(
             testData.centralLocalReason.name,
           );
 
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList(
-            testData.collegeLocalReason.name,
-            tenantNames.college,
-            'edit',
-            'trash',
-          );
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList(
-            testData.universityLocalReason.name,
-            tenantNames.university,
-            'edit',
-            'trash',
-          );
+          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+            name: testData.collegeLocalReason.name,
+            description: '',
+            publicDescription: '',
+            members: tenantNames.college,
+            actions: ['edit', 'trash'],
+          });
+          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+            name: testData.universityLocalReason.name,
+            description: '',
+            publicDescription: '',
+            members: tenantNames.university,
+            actions: ['edit', 'trash'],
+          });
         },
       );
 
@@ -184,31 +186,27 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
           RequestCancellationReasonsConsortiumManager.choose();
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList(
-            testData.centralSharedReason.payload.name,
-            'All',
-            'edit',
-            'trash',
-          );
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList(
-            testData.centralLocalReason.name,
-            tenantNames.central,
-            'edit',
-            'trash',
-          );
+          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+            name: testData.centralSharedReason.payload.name,
+            members: 'All',
+            actions: ['edit', 'trash'],
+          });
+          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+            name: testData.centralLocalReason.name,
+            members: tenantNames.central,
+            actions: ['edit', 'trash'],
+          });
 
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList(
-            testData.collegeLocalReason.name,
-            tenantNames.college,
-            'edit',
-            'trash',
-          );
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList(
-            testData.universityLocalReason.name,
-            tenantNames.university,
-            'edit',
-            'trash',
-          );
+          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+            name: testData.collegeLocalReason.name,
+            members: tenantNames.college,
+            actions: ['edit', 'trash'],
+          });
+          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+            name: testData.universityLocalReason.name,
+            members: tenantNames.university,
+            actions: ['edit', 'trash'],
+          });
 
           ConsortiumManagerApp.clickSelectMembers();
           SelectMembers.verifyStatusOfSelectMembersModal(3, 3);
@@ -216,18 +214,16 @@ describe('Consortium manager', () => {
           SelectMembers.selectMembers(tenantNames.university);
           SelectMembers.saveAndClose();
           ConsortiumManagerApp.verifyMembersSelected(1);
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList(
-            testData.centralSharedReason.payload.name,
-            'All',
-            'edit',
-            'trash',
-          );
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList(
-            testData.centralLocalReason.name,
-            tenantNames.central,
-            'edit',
-            'trash',
-          );
+          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+            name: testData.centralSharedReason.payload.name,
+            members: 'All',
+            actions: ['edit', 'trash'],
+          });
+          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+            name: testData.centralLocalReason.name,
+            members: tenantNames.central,
+            actions: ['edit', 'trash'],
+          });
 
           RequestCancellationReasonsConsortiumManager.verifyNoReasonInTheList(
             testData.collegeLocalReason.name,
