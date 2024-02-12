@@ -1,27 +1,29 @@
 import { HTML, including } from '@interactors/html';
+import { recurse } from 'cypress-recurse';
 import {
   Button,
   Checkbox,
-  Section,
-  PaneHeader,
-  Pane,
   Modal,
   MultiColumnList,
   MultiColumnListCell,
   NavListItem,
+  Pane,
+  PaneHeader,
+  Section,
 } from '../../../../interactors';
-import { getLongDelay } from '../../utils/cypressTools';
-import getRandomPostfix from '../../utils/stringTools';
-import JobProfiles from './job_profiles/jobProfiles';
-import InventorySearchAndFilter from '../inventory/inventorySearchAndFilter';
-import TopMenu from '../topMenu';
-import MarcAuthority from '../marcAuthority/marcAuthority';
-import MarcAuthoritiesSearch from '../marcAuthority/marcAuthoritiesSearch';
-import MarcAuthorities from '../marcAuthority/marcAuthorities';
-import FileManager from '../../utils/fileManager';
-import Logs from './logs/logs';
 import DataImportUploadFile from '../../../../interactors/dataImportUploadFile';
 import { ACCEPTED_DATA_TYPE_NAMES, JOB_STATUS_NAMES } from '../../constants';
+import { getLongDelay } from '../../utils/cypressTools';
+import FileManager from '../../utils/fileManager';
+import getRandomPostfix from '../../utils/stringTools';
+import InventorySearchAndFilter from '../inventory/inventorySearchAndFilter';
+import MarcAuthorities from '../marcAuthority/marcAuthorities';
+import MarcAuthoritiesSearch from '../marcAuthority/marcAuthoritiesSearch';
+import MarcAuthority from '../marcAuthority/marcAuthority';
+import SettingsJobProfile from '../settings/dataImport/jobProfiles/jobProfiles';
+import TopMenu from '../topMenu';
+import JobProfiles from './job_profiles/jobProfiles';
+import Logs from './logs/logs';
 
 const sectionPaneJobsTitle = Section({ id: 'pane-jobs-title' });
 const actionsButton = Button('Actions');
@@ -197,6 +199,20 @@ function processFile(
   });
 }
 
+function getCreatedRecordInfo(jobExecutionId) {
+  return cy.okapiRequest({
+    path: `metadata-provider/jobLogEntries/${jobExecutionId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+}
+
+function getJodStatus(jobExecutionId) {
+  return cy.okapiRequest({
+    path: `change-manager/jobExecutions/${jobExecutionId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+}
+
 export default {
   importFile,
   uploadFile,
@@ -322,14 +338,13 @@ export default {
     });
   },
 
-  uploadFileViaApi: (filePathName, fileName) => {
+  uploadFileViaApi: (filePathName, fileName, profileName) => {
     const uiKeyValue = fileName;
 
-    uploadDefinitions(uiKeyValue, fileName).then((response) => {
+    return uploadDefinitions(uiKeyValue, fileName).then((response) => {
       const uploadDefinitionId = response.body.fileDefinitions[0].uploadDefinitionId;
       const fileId = response.body.fileDefinitions[0].id;
       const jobExecutionId = response.body.fileDefinitions[0].jobExecutionId;
-      const jobProfileId = 'e34d7b92-9b83-11eb-a8b3-0242ac130003';
 
       uploadBinaryMarcFile(filePathName, uploadDefinitionId, fileId);
       // need to wait until file will be converted and uploaded
@@ -339,16 +354,36 @@ export default {
         const metaJobExecutionId = res.body.metaJobExecutionId;
         const date = res.body.createDate;
 
-        processFile(
-          uploadDefinitionId,
-          fileId,
-          sourcePath,
-          jobExecutionId,
-          uiKeyValue,
-          jobProfileId,
-          metaJobExecutionId,
-          date,
+        SettingsJobProfile.getJobProfilesViaApi({ query: `name="${profileName}"` }).then(
+          ({ jobProfiles }) => {
+            processFile(
+              uploadDefinitionId,
+              fileId,
+              sourcePath,
+              jobExecutionId,
+              uiKeyValue,
+              jobProfiles[0].id,
+              metaJobExecutionId,
+              date,
+            );
+          },
         );
+
+        recurse(
+          () => getJodStatus(jobExecutionId),
+          (resp) => resp.body.status === 'COMMITTED' && resp.body.uiStatus === 'RUNNING_COMPLETE',
+          {
+            limit: 12,
+            timeout: 60000,
+            delay: 5000,
+          },
+        );
+
+        getCreatedRecordInfo(jobExecutionId).then((resp) => {
+          // we can get relatedInstanceInfo and in it get idList or hridList
+          const recordInfo = resp.body.entries[0];
+          return recordInfo;
+        });
       });
     });
   },

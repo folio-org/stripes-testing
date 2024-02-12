@@ -409,8 +409,9 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[1].actionProfile.name,
           5,
         );
+        cy.wait(2000);
         NewJobProfile.saveAndClose();
-
+        cy.wait(2000);
         JobProfileView.duplicate();
         NewJobProfile.unlinkProfile(1);
         NewJobProfile.fillProfileName(jobProfileNameForChanging);
