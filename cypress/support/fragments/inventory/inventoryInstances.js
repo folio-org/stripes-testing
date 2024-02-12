@@ -972,13 +972,16 @@ export default {
     cy.do(Checkbox(source).click());
   },
 
-  importWithOclc: (oclc) => {
+  importWithOclc: (
+    oclc,
+    identifierType = 'OCLC WorldCat',
+    profile = 'Inventory Single Record - Default Create Instance (Default)',
+  ) => {
     cy.do([
       actionsButton.click(),
       Button({ id: 'dropdown-clickable-import-record' }).click(),
-      Select({ name: 'selectedJobProfileId' }).choose(
-        'Inventory Single Record - Default Create Instance (Default)',
-      ),
+      Select({ name: 'externalIdentifierType' }).choose(identifierType),
+      Select({ name: 'selectedJobProfileId' }).choose(profile),
       singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
       singleRecordImportModal.find(Button('Import')).click(),
     ]);
