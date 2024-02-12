@@ -340,6 +340,7 @@ Cypress.Commands.add('createSimpleMarcBibViaAPI', (title) => {
     .okapiRequest({
       path: 'records-editor/records',
       method: 'POST',
+      isDefaultSearchParamsRequired: false,
       body: {
         _actionType: 'create',
         leader: QuickMarcEditor.defaultValidLdr,
@@ -362,3 +363,45 @@ Cypress.Commands.add('createSimpleMarcBibViaAPI', (title) => {
       return body;
     });
 });
+
+Cypress.Commands.add(
+  'createSimpleMarcHoldingsViaAPI',
+  (instanceId, instanceHrid, locationCode, actionNote = 'note') => {
+    return cy
+      .okapiRequest({
+        path: 'records-editor/records',
+        method: 'POST',
+        isDefaultSearchParamsRequired: false,
+        body: {
+          _actionType: 'create',
+          externalId: instanceId,
+          fields: [
+            {
+              content: instanceHrid,
+              tag: '004',
+            },
+            {
+              content: QuickMarcEditor.defaultValid008HoldingsValues,
+              tag: '008',
+            },
+            {
+              content: `$b ${locationCode}`,
+              indicators: ['\\', '\\'],
+              tag: '852',
+            },
+            {
+              content: `$a ${actionNote}`,
+              indicators: ['\\', '\\'],
+              tag: '583',
+            },
+          ],
+          leader: QuickMarcEditor.defaultValidHoldingsLdr,
+          marcFormat: 'HOLDINGS',
+          suppressDiscovery: false,
+        },
+      })
+      .then(({ body }) => {
+        return body;
+      });
+  },
+);

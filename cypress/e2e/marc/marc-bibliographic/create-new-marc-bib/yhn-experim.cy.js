@@ -1,5 +1,5 @@
 // import Permissions from '../../../../support/dictionary/permissions';
-// import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 // import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 // import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
@@ -11,22 +11,26 @@ describe('Create new MARC bib', () => {
   const marcBibTitle = `AutoMARC ${getRandomPostfix()}`;
   let uuid;
   let hrid;
+  let holdUuid;
   before(() => {
     cy.getAdminToken();
     cy.log(marcBibTitle);
     cy.createSimpleMarcBibViaAPI(marcBibTitle);
-    QuickMarcEditor.getCreatedMarcBibIds(marcBibTitle).then((ids) => {
-      uuid = ids.id;
-      hrid = ids.hrid;
-      cy.log(uuid);
-      cy.log(hrid);
+    QuickMarcEditor.getCreatedMarcBib(marcBibTitle).then((bib) => {
+      uuid = bib.id;
+      hrid = bib.hrid;
+      cy.createSimpleMarcHoldingsViaAPI(uuid, hrid, 'E', marcBibTitle);
+      QuickMarcEditor.getCreatedMarcHoldings(uuid, marcBibTitle).then((hold) => {
+        holdUuid = hold.id;
+      });
     });
   });
 
   beforeEach('Login to the application', () => {});
 
   after('Deleting created user', () => {
-    // InventoryInstance.deleteInstanceViaApi(uuid);
+    cy.deleteHoldingRecordViaApi(holdUuid);
+    InventoryInstance.deleteInstanceViaApi(uuid);
   });
 
   it('test', () => {});
