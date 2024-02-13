@@ -95,10 +95,11 @@ export default {
   },
 
   waitFileIsImported: (fileName) => {
+    const newFileName = fileName.replace('/.mrc/i', '');
     // wait until uploaded file is displayed in the list
     cy.expect(
       MultiColumnList({ id: 'job-logs-list' })
-        .find(Button(including(fileName)))
+        .find(Button(including(newFileName)))
         .exists(),
     );
   },

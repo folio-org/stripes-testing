@@ -462,6 +462,8 @@ export default {
         }
       },
     );
+    // need to reload the page for cleaning upload area
+    cy.reload();
   },
 
   clickResumeButton: () => {
@@ -477,9 +479,9 @@ export default {
     cy.get('div[class^="listContainer-"]')
       .contains('li[class^="job-"]', fileName)
       .then((elem) => {
-        elem.parent()[0].querySelector('button[icon="trash"]').click();
-
-        cy.get('div[class^="listContainer-"] button[icon="trash"]').should('not.be.visible');
+        const trashButton = elem.parent()[0].querySelector('button[icon="trash"]');
+        cy.wrap(trashButton).click();
+        cy.wrap(trashButton).should('not.be.visible');
       });
   },
 
