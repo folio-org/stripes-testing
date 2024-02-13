@@ -69,13 +69,13 @@
     "localforage": "^1.9.0",
     "prettier": "^3.0.2",
     "uuid": "^3.4.0",
-    "tsx": "3.14.0"
+    "tsx": "4.6.0"
   },
   "resolutions": {
     "cypress": "12.0.0",
     "chromedriver": "107.0.0",
     "sharp": "0.32.6",
-    "tsx": "3.14.0"
+    "tsx": "4.6.0"
   },
   "overrides": {
     "bigtest": {
