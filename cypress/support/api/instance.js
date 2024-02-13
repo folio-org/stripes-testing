@@ -17,3 +17,18 @@ Cypress.Commands.add('getAlternativeTitlesTypes', (searchParams) => cy
     isDefaultSearchParamsRequired: false,
   })
   .then(({ body }) => body.alternativeTitleTypes));
+
+Cypress.Commands.add('createAlternativeTitleTypes', (alternativeTitleType) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'alternative-title-types',
+    body: alternativeTitleType,
+  }).then(({ body }) => body.id);
+});
+
+Cypress.Commands.add('deleteAlternativeTitleTypes', (alternativeTitleTypeID) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: `alternative-title-types/${alternativeTitleTypeID}`,
+  });
+});

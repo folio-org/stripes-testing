@@ -1252,7 +1252,17 @@ export default {
 
   verifyShareInstanceModal(message) {
     cy.expect(shareInstanceModal.exists());
-    cy.expect(shareInstanceModal.find(HTML(including(`You have chosen to share the local instance ${message} with other member libraries in your consortium`))).exists());
+    cy.expect(
+      shareInstanceModal
+        .find(
+          HTML(
+            including(
+              `You have chosen to share the local instance ${message} with other member libraries in your consortium`,
+            ),
+          ),
+        )
+        .exists(),
+    );
     cy.expect(shareInstanceModal.find(Button('Cancel')).exists());
     cy.expect(shareInstanceModal.find(Button('Share')).exists());
   },
@@ -1279,14 +1289,15 @@ export default {
 
   singleOverlaySourceBibRecordModalIsPresented: () => cy.expect(singleRecordImportModal.exists()),
 
-  overlayWithOclc: (oclc) => {
-    cy.do(
+  overlayWithOclc: (oclc, identifierType = 'OCLC WorldCat') => {
+    cy.do([
+      Select({ name: 'externalIdentifierType' }).choose(identifierType),
       Select({ name: 'selectedJobProfileId' }).choose(
         'Inventory Single Record - Default Update Instance (Default)',
       ),
-    );
-    cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
-    cy.do(singleRecordImportModal.find(Button('Import')).click());
+      singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
+      singleRecordImportModal.find(Button('Import')).click(),
+    ]);
   },
 
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
@@ -1547,5 +1558,15 @@ export default {
         .find(MultiColumnListCell(title, { innerHTML: including('sharedIcon') }))
         .absent(),
     );
+  },
+
+  createAlternativeTitleTypeViaAPI(alternativeTitleTypeName, sourceName = 'local', id = uuid()) {
+    const body = {
+      id,
+      name: alternativeTitleTypeName,
+      source: sourceName,
+    };
+
+    return cy.createAlternativeTitleTypes(body);
   },
 };
