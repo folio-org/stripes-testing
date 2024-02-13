@@ -136,7 +136,7 @@ describe('data-import', () => {
 
     it(
       'C356829 Test field protections when importing to update instance, after editing the MARC Bib in quickMARC (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();

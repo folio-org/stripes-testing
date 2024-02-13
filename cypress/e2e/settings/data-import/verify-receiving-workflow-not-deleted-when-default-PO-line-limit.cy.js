@@ -67,7 +67,7 @@ describe('data-import', () => {
 
     it(
       'C375211 Order field mapping profile: Verify Receiving Workflow value is not deleted when default order line limit setting is changed (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'nonParallel'] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // #1 Go to "Settings" application -> Select "Orders" setting -> Select "Purchase order lines limit"
         cy.visit(SettingsMenu.ordersPath);
