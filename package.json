@@ -74,7 +74,8 @@
   "resolutions": {
     "cypress": "12.0.0",
     "chromedriver": "107.0.0",
-    "sharp": "0.32.6"
+    "sharp": "0.32.6",
+    "tsx": "4.6.2"
   },
   "overrides": {
     "bigtest": {
