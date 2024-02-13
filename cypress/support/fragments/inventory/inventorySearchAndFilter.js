@@ -77,7 +77,9 @@ const actionsButton = Button('Actions');
 const editInstanceButton = Button('Edit instance');
 const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
 const nextButton = Button({ id: 'browse-results-list-callNumbers-next-paging-button' });
+const listInventoryNextPagingButton = Button({ id: 'list-inventory-next-paging-button' });
 const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
+const listInventoryPreviousPagingButton = Button({ id: 'list-inventory-prev-paging-button' });
 const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-inventory' }));
 
 const searchToggleButton = Button({ id: 'mode-navigation-search' });
@@ -582,8 +584,16 @@ export default {
     cy.do(inventorySearchResultsPane.find(nextButton).click());
   },
 
+  clickListInventoryNextPaginationButton() {
+    cy.do(listInventoryNextPagingButton.click());
+  },
+
   clickPreviousPaginationButton() {
     cy.do(inventorySearchResultsPane.find(previousButton).click());
+  },
+
+  clickListInventoryPreviousPaginationButton() {
+    cy.do(listInventoryPreviousPagingButton.click());
   },
 
   checkContributorsColumResult(cellContent) {
@@ -797,6 +807,10 @@ export default {
     ]);
   },
 
+  verifyResultListExists(isExist = true) {
+    cy.expect(isExist ? instancesList.exists() : instancesList.absent());
+  },
+
   verifyInstanceDetailsViewAbsent() {
     cy.expect(instanceDetailsSection.absent());
   },
@@ -999,5 +1013,40 @@ export default {
 
   clearFilter(accordionName) {
     cy.do(Button({ ariaLabel: `Clear selected filters for "${accordionName}"` }).click());
+  },
+
+  checkSharedInstancesInResultList() {
+    return cy
+      .get('div[class^="mclRowContainer--"]')
+      .find('[class*="mclCell-"]:nth-child(2)')
+      .each(($cell) => {
+        cy.wrap($cell).find('span[class*="sharedIcon"]').should('exist');
+      });
+  },
+
+  checkNoSharedInstancesInResultList() {
+    cy.expect(MultiColumnListCell(including('sharedIcon')).absent());
+  },
+
+  checkSharedAndLocalInstancesInResultList() {
+    cy.get('div[class^="mclRowContainer--"]')
+      .find('[class*="mclCell-"]:nth-child(2)')
+      .find('span[class*="sharedIcon"]')
+      .then(($sharedInstances) => {
+        const numberOfSharedInstances = $sharedInstances.length;
+
+        return cy
+          .get('div[class^="mclRowContainer--"]')
+          .find('[class*="mclCell-"]:nth-child(2)')
+          .then(($allInstances) => {
+            const totalNumberOfInstances = $allInstances.length;
+
+            expect(totalNumberOfInstances).not.to.eq(numberOfSharedInstances);
+          });
+      });
+  },
+
+  clearSharedFilter() {
+    cy.do(sharedAccordion.find(Button({ ariaLabel: including('Clear selected filters') })).click());
   },
 };
