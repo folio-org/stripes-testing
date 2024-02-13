@@ -1,9 +1,9 @@
 import permissions from '../../../support/dictionary/permissions';
 import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 import CreateLocations from '../../../support/fragments/settings/tenant/locations/createLocations';
-import settingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 
@@ -12,7 +12,9 @@ describe('remote-storage-configuration', () => {
     cy.createTempUser([permissions.uiTenantSettingsSettingsLocation.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password);
-      cy.visit(settingsMenu.tenantLocationsPath);
+      cy.wait(1000);
+      TopMenuNavigation.navigateToApp('Settings');
+      Locations.goToLocationsTab();
     });
   });
 

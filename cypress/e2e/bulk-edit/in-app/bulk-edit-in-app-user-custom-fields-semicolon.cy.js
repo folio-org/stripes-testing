@@ -74,7 +74,7 @@ describe('bulk-edit', () => {
 
     it(
       "C389568 In app | Verify that User's Custom fields with semicolons are updated correctly (firebird)",
-      { tags: ['criticalPath', 'firebird', 'nonParallel'] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
