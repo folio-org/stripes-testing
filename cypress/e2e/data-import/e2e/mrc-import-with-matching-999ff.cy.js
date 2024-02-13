@@ -104,7 +104,7 @@ describe('data-import', () => {
 
     it(
       'C343343 MARC file import with matching for 999 ff field (folijet)',
-      { tags: ['smoke', 'folijet', 'nonParallel'] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         // create Field mapping profile for export
         cy.visit(SettingsMenu.mappingProfilePath);
