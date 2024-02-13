@@ -231,7 +231,7 @@ describe('data-import', () => {
         InventoryInstance.checkIsInstanceUpdated();
         InventoryInstance.viewSource();
         InventoryViewSource.contains('651\t');
-        InventoryViewSource.contains('$a Louisiana $2 fast $5 amb');
+        InventoryViewSource.contains('‡a Louisiana ‡2 fast ‡5 amb');
         InventoryViewSource.contains('920\t');
         InventoryViewSource.contains('This should be a protected field');
       },

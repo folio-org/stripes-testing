@@ -58,7 +58,7 @@ export default {
   checkStatusOfJobProfile: (status = 'Completed', rowNumber = 0) => cy.do(MultiColumnListCell({ row: rowNumber, content: status }).exists()),
 
   checkJobStatus: (fileName, status) => {
-    const newFileName = fileName.toLowerCase().replace('.mrc', '');
+    const newFileName = fileName.replace(/\.mrc/i, '');
     cy.do(
       MultiColumnListCell({ content: including(newFileName) }).perform((element) => {
         const rowNumber = element.parentElement.getAttribute('data-row-inner');
@@ -117,7 +117,10 @@ export default {
     .find(Link('Created'))
     .href()),
 
-  checkFileIsRunning: (fileName) => cy.expect(runningAccordion.find(HTML(including(fileName))).exists()),
+  checkFileIsRunning: (fileName) => {
+    cy.wait(2000);
+    cy.expect(runningAccordion.find(HTML(including(fileName))).exists());
+  },
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),
   verifyDeleteSelectedLogsButtonAbsent: () => cy.expect(deleteSelectedLogsButton.absent()),
 
