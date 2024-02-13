@@ -123,7 +123,10 @@ export default {
     .find(Link('Created'))
     .href()),
 
-  checkFileIsRunning: (fileName) => cy.expect(runningAccordion.find(HTML(including(fileName))).exists()),
+  checkFileIsRunning: (fileName) => {
+    cy.wait(2000);
+    cy.expect(runningAccordion.find(HTML(including(fileName))).exists());
+  },
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),
   verifyDeleteSelectedLogsButtonAbsent: () => cy.expect(deleteSelectedLogsButton.absent()),
   closePane: () => {
