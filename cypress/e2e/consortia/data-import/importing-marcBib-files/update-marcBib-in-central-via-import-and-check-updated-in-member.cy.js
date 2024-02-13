@@ -17,14 +17,14 @@ import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import NewFieldMappingProfile from '../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-// import Users from '../../../../support/fragments/users/users';
-// import FileManager from '../../../../support/utils/fileManager';
-// import {
-//   JobProfiles as SettingsJobProfiles,
-//   MatchProfiles as SettingsMatchProfiles,
-//   ActionProfiles as SettingsActionProfiles,
-//   FieldMappingProfiles as SettingsFieldMappingProfiles,
-// } from '../../../../support/fragments/settings/dataImport';
+import Users from '../../../../support/fragments/users/users';
+import FileManager from '../../../../support/utils/fileManager';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../../support/fragments/settings/dataImport';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
@@ -133,7 +133,7 @@ describe('Data Import', () => {
           testData.holding = holding;
         });
       });
-      cy.logout();
+      cy.resetTenant();
 
       // create user A
       cy.createTempUser([
@@ -144,7 +144,6 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         users.userAProperties = userProperties;
       });
-      cy.resetTenant();
 
       // create user B
       cy.createTempUser([
@@ -161,24 +160,29 @@ describe('Data Import', () => {
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           ]);
-          cy.resetTenant();
         });
+      cy.resetTenant();
     });
 
-    // after('Delete test data', () => {
-    //   cy.resetTenant();
-    //   cy.getAdminToken();
-    //   Users.deleteViaApi(users.userAProperties.userId);
-    //   Users.deleteViaApi(users.userBProperties.userId);
-    //   InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId[0]);
-    //   SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
-    //   SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
-    //   SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
-    //   SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-    //   // delete created files in fixtures
-    //   FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.exportedFileName}`);
-    //   FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
-    // });
+    after('Delete test data', () => {
+      cy.resetTenant();
+      cy.getAdminToken();
+      Users.deleteViaApi(users.userAProperties.userId);
+      Users.deleteViaApi(users.userBProperties.userId);
+      cy.setTenant(Affiliations.College);
+      InventoryHoldings.deleteHoldingRecordViaApi(testData.holding.id);
+      Locations.deleteViaApi(testData.collegeLocation);
+      InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId[0]);
+      cy.resetTenant();
+      InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId[0]);
+      SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
+      SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.exportedFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
+    });
 
     it(
       'C411795 User can update "MARC Bib" in Central tenant via import and check updated in member tenant (consortia) (folijet)',
@@ -226,7 +230,7 @@ describe('Data Import', () => {
           users.userAProperties.lastName,
         );
         InventoryInstance.viewSource();
-        InventoryViewSource.contains(`${testData.field245.tag}\t   \t${testData.field245.content}`);
+        InventoryViewSource.contains(`${testData.field245.tag}\t0 0\t${testData.field245.content}`);
         InventoryViewSource.contains(`${testData.field500.tag}\t   \t${testData.field500.content}`);
 
         cy.login(users.userBProperties.username, users.userBProperties.password);
