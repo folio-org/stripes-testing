@@ -175,7 +175,7 @@ describe('Inventory', () => {
       });
 
       it(
-        'C422238 Verify that subject from Shared Instance is not displayed in browse result list when "No" is selected in "Shared" facet (current tenant doesn\'t have this local subject, but another tenant has) (consortia) (spitfire)',
+        'C422237 Verify that contributors from Shared Instance is not displayed in browse result list when "No" is selected in "Shared" facet (current tenant doesn\'t have this local contributor, but another tenant has) (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire'] },
         () => {
           InventorySearchAndFilter.switchToBrowseTab();
@@ -192,7 +192,6 @@ describe('Inventory', () => {
             'No',
             false,
           );
-
           BrowseContributors.browse(`${contributorPrefix} 1`);
           BrowseContributors.checkSearchResultRecord(`${contributorPrefix} 1`);
           BrowseContributors.checkSearchResultRow(
@@ -217,7 +216,6 @@ describe('Inventory', () => {
             'No',
             false,
           );
-
           InventorySearchAndFilter.selectOptionInExpandedFilter(testData.sharedAccordionName, 'No');
           BrowseContributors.checkNonExactMatchPlaceholder(`${contributorPrefix} 1`);
           BrowseContributors.checkValueAbsentInResults(`${contributorPrefix} 2`);
@@ -231,9 +229,7 @@ describe('Inventory', () => {
             'No',
             true,
           );
-
           BrowseSubjects.verifyClickTakesNowhere(`${contributorPrefix} 1`);
-
           InventorySearchAndFilter.selectOptionInExpandedFilter(
             testData.sharedAccordionName,
             'No',
@@ -262,7 +258,6 @@ describe('Inventory', () => {
             'No',
             false,
           );
-
           BrowseSubjects.verifyClickTakesToInventory(`${contributorPrefix} 2`);
           InventoryInstance.checkSharedTextInDetailView();
         },
