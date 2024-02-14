@@ -229,6 +229,10 @@ export default {
     internal: 'ui-notes.settings.view',
     gui: 'Settings (Notes): View General settings',
   },
+  crudAlternativeTitleTypes: {
+    internal: 'ui-inventory.settings.alternative-title-types',
+    gui: 'Settings (Inventory): Create, edit, delete alternative title types',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
