@@ -1029,17 +1029,15 @@ export default {
   },
 
   checkSharedAndLocalInstancesInResultList() {
-    cy.get('div[class^="mclRowContainer--"]')
+    return cy
+      .get('div[class^="mclRowContainer--"]')
       .find('[class*="mclCell-"]:nth-child(2)')
-      .find('span[class*="sharedIcon"]')
-      .then(($sharedInstances) => {
-        const numberOfSharedInstances = $sharedInstances.length;
-
-        return cy
-          .get('div[class^="mclRowContainer--"]')
-          .find('[class*="mclCell-"]:nth-child(2)')
-          .then(($allInstances) => {
-            const totalNumberOfInstances = $allInstances.length;
+      .then(($allInstances) => {
+        const totalNumberOfInstances = $allInstances.length;
+        cy.wrap($allInstances)
+          .find('span[class*="sharedIcon"]')
+          .then(($sharedInstances) => {
+            const numberOfSharedInstances = $sharedInstances.length;
 
             expect(totalNumberOfInstances).not.to.eq(numberOfSharedInstances);
           });
