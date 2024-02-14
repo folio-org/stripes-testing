@@ -1,37 +1,26 @@
-// import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../../support/constants';
+import { RECORD_STATUSES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-// import DataImport from '../../../../support/fragments/data_import/dataImport';
-// import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-// import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
-// import Logs from '../../../../support/fragments/data_import/logs/logs';
-// import LogsViewAll from '../../../../support/fragments/data_import/logs/logsViewAll';
+import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../../support/fragments/data_import/logs/logs';
+import LogsViewAll from '../../../../support/fragments/data_import/logs/logsViewAll';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Z3950TargetProfiles from '../../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import TopMenu from '../../../../support/fragments/topMenu';
-// import Users from '../../../../support/fragments/users/users';
-// import FileManager from '../../../../support/utils/fileManager';
-// import getRandomPostfix from '../../../../support/utils/stringTools';
+import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    // const marcFile = {
-    //   marc: 'oneMarcBib.mrc',
-    //   fileNameImported: `C418582 autotestFileName${getRandomPostfix()}.mrc`,
-    //   editedFileName: `C418582 editedAutotestFileName${getRandomPostfix()}.mrc`,
-    //   jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-    //   instanceTitle:
-    //     'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)',
-    //   newInstanceTitle: `Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor) ${getRandomPostfix()}`,
-    // };
     const testData = {
       OCLCAuthentication: '100481406/PAOLF',
       oclcNumberForImport: '1234568',
       oclcNumberForOverlay: '1234566',
-      //   updatedInstanceTitle:
-      //     'Rincões dos frutos de ouro (tipos e cenarios do sul baiano) [por] Saboia Ribeiro.',
+      localInstanceTitle:
+        'Local instance • Rincões dos frutos de ouro (tipos e cenarios do sul baiano) [por] Saboia Ribeiro.  • P. Simone • 1933',
+      updatedInstanceTitle:
+        'Updated Local instance • Rincões dos frutos de ouro (tipos e cenarios do sul baiano) [por] Saboia Ribeiro.  • P. Simone • 1933',
     };
 
     before('Create test data', () => {
@@ -62,20 +51,18 @@ describe('Inventory', () => {
         });
     });
 
-    // after('Delete test data', () => {
-    //   cy.resetTenant();
-    //   cy.getAdminToken();
-    //   Users.deleteViaApi(testData.user.userId);
-    //   cy.setTenant(Affiliations.College);
-    //   cy.getInstance({
-    //     limit: 1,
-    //     expandAll: true,
-    //     query: `"hrid"=="${testData.instanceHRID}"`,
-    //   }).then((instance) => {
-    //     InventoryInstance.deleteInstanceViaApi(instance.id);
-    //   });
-    //   FileManager.deleteFile(`cypress/fixtures/${marcFile.editedFileName}`);
-    // });
+    after('Delete test data', () => {
+      cy.resetTenant();
+      cy.getAdminToken();
+      Users.deleteViaApi(testData.user.userId);
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"hrid"=="${testData.instanceHRID}"`,
+      }).then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    });
 
     it(
       'C418586 (CONSORTIA) Verify Inventory Single Record Import and log on member tenant when updating Local Source = MARC Instance (consortia) (folijet)',
@@ -83,36 +70,32 @@ describe('Inventory', () => {
       () => {
         InventoryInstances.importWithOclc(testData.oclcNumberForImport);
         InventoryInstance.waitLoading();
-        InventoryInstance.verifyInstanceTitle(
-          'Local instance • Rincões dos frutos de ouro (tipos e cenarios do sul baiano) [por] Saboia Ribeiro.  • P. Simone • 1933',
+        InventoryInstance.verifyInstanceTitle(testData.localInstanceTitle);
+        InventoryInstance.startOverlaySourceBibRecord();
+        InventoryInstance.overlayWithOclc(testData.oclcNumberForOverlay);
+        InventoryInstance.waitLoading();
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openViewAllLogs();
+        LogsViewAll.openUserIdAccordion();
+        LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
+        LogsViewAll.openFileDetails('No file name');
+        FileDetails.verifyTitle(
+          testData.updatedInstanceTitle,
+          FileDetails.columnNameInResultList.title,
         );
-
-        // InventoryInstances.searchByTitle(marcFile.newInstanceTitle);
-        // InventoryInstances.selectInstance();
-        // InventoryInstance.waitLoading();
-        // InventoryInstance.startOverlaySourceBibRecord();
-        // InventoryInstance.overlayWithOclc(testData.oclcNumber);
-        // InventoryInstance.waitLoading();
-
-        // cy.visit(TopMenu.dataImportPath);
-        // Logs.openViewAllLogs();
-        // LogsViewAll.openUserIdAccordion();
-        // LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
-        // LogsViewAll.openFileDetails('No file name');
-        // FileDetails.verifyTitle(
-        //   testData.updatedInstanceTitle,
-        //   FileDetails.columnNameInResultList.title,
-        // );
-        // [
-        //   FileDetails.columnNameInResultList.srsMarc,
-        //   FileDetails.columnNameInResultList.instance,
-        // ].forEach((columnName) => {
-        //   FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
-        // });
-        // FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
-        // InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-        //   testData.instanceHRID = initialInstanceHrId;
-        // });
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
+        });
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+        InventoryInstance.waitLoading();
+        InventoryInstance.verifyInstanceTitle(testData.updatedInstanceTitle);
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+          testData.instanceHRID = initialInstanceHrId;
+        });
       },
     );
   });
