@@ -996,4 +996,8 @@ export default {
   checkBrowseOptionSelected(option) {
     cy.expect(browseSearchAndFilterInput.has({ checkedOptionText: option }));
   },
+
+  clearFilter(accordionName) {
+    cy.do(Button({ ariaLabel: `Clear selected filters for "${accordionName}"` }).click());
+  },
 };

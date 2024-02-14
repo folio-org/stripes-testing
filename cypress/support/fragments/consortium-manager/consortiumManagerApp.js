@@ -10,6 +10,8 @@ import {
 } from '../../../../interactors';
 
 const selectMembersButton = Button('Select members');
+const collapseAllButton = Button('Collapse all');
+const expandAllButton = Button('Expand all');
 
 export const settingsItems = {
   circulation: 'Circulation',
@@ -88,6 +90,7 @@ export default {
   clickSelectMembers() {
     cy.expect(Spinner().absent());
     cy.do(selectMembersButton.click());
+    cy.wait(4000);
   },
 
   chooseSecondMenuItem(item) {
@@ -97,5 +100,48 @@ export default {
       Pane(item).exists(),
       HTML(including(item, { class: 'headline' })).exists(),
     ]);
+  },
+
+  openListInSettings(settingsListName) {
+    cy.do([
+      Section({ id: 'settings-nav-pane' }).find(NavListItem(settingsListName)).click(),
+      Pane(settingsListName).exists(),
+    ]);
+  },
+
+  openListInOpenedPane(settingsListName, nameOfThirdPane) {
+    cy.do([
+      Pane(settingsListName).find(NavListItem(nameOfThirdPane)).click(),
+      Pane(nameOfThirdPane).exists(),
+    ]);
+  },
+
+  collapseAll(nameOfThirdPane) {
+    cy.do([
+      Pane(nameOfThirdPane).find(collapseAllButton).click(),
+      collapseAllButton.absent(),
+      expandAllButton.exists(),
+    ]);
+  },
+
+  expandAll(nameOfThirdPane) {
+    cy.do([
+      Pane(nameOfThirdPane).find(expandAllButton).click(),
+      expandAllButton.absent(),
+      collapseAllButton.exists(),
+    ]);
+  },
+
+  closeThirdPane(nameOfThirdPane) {
+    cy.do([
+      Pane(nameOfThirdPane)
+        .find(Button({ icon: 'times' }))
+        .click(),
+      Pane(nameOfThirdPane).absent(),
+    ]);
+  },
+
+  clickActionsInPermissionSets() {
+    cy.do([Pane('Permission sets').find(Button('Actions')).click(), Button('Compare').exists()]);
   },
 };
