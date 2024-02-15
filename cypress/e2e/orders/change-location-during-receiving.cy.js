@@ -87,15 +87,15 @@ describe('orders: Receive piece from Order', () => {
     'C9177 Change location during receiving (thunderjet)',
     { tags: ['smoke', 'thunderjet'] },
     () => {
-      const caption = 'autotestCaption';
+      const displaySummary = 'autotestCaption';
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       // Receiving part
       Orders.receiveOrderViaActions();
       Receiving.selectFromResultsList(item.instanceName);
-      Receiving.receiveAndChangeLocation(0, caption, location.institutionId);
+      Receiving.receiveAndChangeLocation(0, displaySummary, location.institutionId);
 
-      Receiving.checkReceived(0, caption);
+      Receiving.checkReceived(0, displaySummary);
       Receiving.selectInstanceInReceive(item.instanceName);
     },
   );
