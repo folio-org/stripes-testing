@@ -183,7 +183,7 @@ describe('MARC', () => {
             );
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t${newField.tag}\t2 0\t$a C422141 Dante Alighieri, $d 1265-1321 $e writer $0 id.loc.gov/authorities/names/n78095495 $9`,
+              `${testData.marcAuthIcon}\n\t${newField.tag}\t2 0\t$a C422141 Dante Alighieri, $d 1265-1321 $e writer $0 http://id.loc.gov/authorities/names/n78095495 $9`,
             );
 
             cy.login(users.userBProperties.username, users.userBProperties.password, {
