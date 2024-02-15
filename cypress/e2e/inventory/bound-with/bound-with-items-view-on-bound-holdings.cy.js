@@ -147,8 +147,8 @@ describe('inventory', () => {
     });
 
     it(
-      'C409512 Verify the Bound-with items view on bound holdings (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      'C409512 Verify the Bound-with items view on bound holdings (sif)',
+      { tags: ['criticalPath', 'sif'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', testData.firstInstanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();

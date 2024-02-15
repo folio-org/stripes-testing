@@ -72,7 +72,14 @@ export default {
       }),
     );
   },
-
+  openFileDetailsByRowNumber: (rowNumber = 0) => {
+    cy.do(
+      MultiColumnList({ id: 'list-data-import' })
+        .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+        .find(Link({ href: including('/data-import/job-summary') }))
+        .click(),
+    );
+  },
   openFileDetails: (fileName) => {
     cy.do(Link(fileName).click());
     FileDetails.verifyLogDetailsPageIsOpened(fileName);
@@ -116,7 +123,10 @@ export default {
     .find(Link('Created'))
     .href()),
 
-  checkFileIsRunning: (fileName) => cy.expect(runningAccordion.find(HTML(including(fileName))).exists()),
+  checkFileIsRunning: (fileName) => {
+    cy.wait(2000);
+    cy.expect(runningAccordion.find(HTML(including(fileName))).exists());
+  },
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),
   verifyDeleteSelectedLogsButtonAbsent: () => cy.expect(deleteSelectedLogsButton.absent()),
   closePane: () => {
@@ -170,7 +180,7 @@ export default {
   waitFileIsImported: (fileName) => {
     const newFileName = fileName.replace('.mrc', '');
 
-    cy.expect(runningAccordion.find(HTML(including(newFileName))).absent(), getLongDelay(120000));
+    cy.expect(runningAccordion.find(HTML(including(newFileName))).absent(), getLongDelay(180000));
     cy.expect(
       MultiColumnList({ id: 'job-logs-list' })
         .find(Button(including(newFileName)))

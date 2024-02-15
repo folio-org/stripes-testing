@@ -51,11 +51,6 @@ describe('bulk-edit', () => {
       });
     });
 
-    beforeEach('select holdings', () => {
-      BulkEditSearchPane.checkHoldingsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
-    });
-
     after('delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
@@ -81,8 +76,9 @@ describe('bulk-edit', () => {
 
     it(
       'C356810 Verify uploading file with holdings UUIDs (firebird)',
-      { tags: ['smoke', 'firebird'], retries: 1 },
+      { tags: ['smoke', 'firebird'] },
       () => {
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
         BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(hrid);
@@ -104,8 +100,7 @@ describe('bulk-edit', () => {
       'C360120 Verify that User can trigger bulk of holdings with file containing Holdings identifiers (firebird)',
       { tags: ['smoke', 'firebird'] },
       () => {
-        BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
-
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
         BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(hrid);
@@ -142,8 +137,7 @@ describe('bulk-edit', () => {
       'C367975 Verify Bulk edit Holdings records with empty Electronic access Relationship type (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
-
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
         BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(hrid);

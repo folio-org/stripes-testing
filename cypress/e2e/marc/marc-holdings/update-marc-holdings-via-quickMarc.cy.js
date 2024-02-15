@@ -6,32 +6,46 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-import { RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import FileManager from '../../../support/utils/fileManager';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
-    let user;
     let instanceHrid;
-    const filePathForUpload = 'oneMarcBib.mrc';
-    const fileName = `C417047 autotestFile${getRandomPostfix()}.mrc`;
+    const testData = {
+      filePath: 'oneMarcBib.mrc',
+      fileNameForCreateInstance: `C417047 autotestFile${getRandomPostfix()}.mrc`,
+      jobProfileForCreateInstance: 'Default - Create instance and SRS MARC Bib',
+      editedFile: `C417047 editedAutotestFileName${getRandomPostfix()}`,
+      fileNameForCreateHoldings: `C417047 autotestFileName${getRandomPostfix()}`,
+      jobProfileForCreateHoldings: 'Default - Create Holdings and SRS MARC Holdings',
+    };
 
     before('Create test data', () => {
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      cy.getAdminToken().then(() => {
-        DataImport.uploadFileViaApi(filePathForUpload, fileName);
-        Logs.waitFileIsImported(fileName);
-        Logs.openFileDetails(fileName);
-        // open Instance for getting hrid
-        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHrid = initialInstanceHrId;
-        });
-        InventoryInstance.createHoldingsRecord();
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi(
+        testData.filePath,
+        testData.fileNameForCreateInstance,
+        testData.jobProfileForCreateInstance,
+      ).then((response) => {
+        instanceHrid = response.relatedInstanceInfo.hridList[0];
+        testData.instanceId = response.relatedInstanceInfo.idList[0];
+
+        DataImport.editMarcFile(
+          'marcBibFileForC359241.mrc',
+          testData.editedFile,
+          ['in11887186'],
+          [instanceHrid],
+        );
+      });
+      DataImport.uploadFileViaApi(
+        testData.editedFile,
+        testData.fileNameForCreateHoldings,
+        testData.jobProfileForCreateHoldings,
+      ).then((response) => {
+        testData.holdingsId = response.relatedHoldingsInfo[0].id;
       });
 
       cy.createTempUser([
@@ -40,9 +54,9 @@ describe('MARC', () => {
         Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorView.gui,
       ]).then((userProperties) => {
-        user = userProperties;
+        testData.user = userProperties;
 
-        cy.login(user.username, user.password, {
+        cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
@@ -51,14 +65,11 @@ describe('MARC', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken(() => {
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
-        Users.deleteViaApi(user.userId);
+        cy.deleteHoldingRecordViaApi(testData.holdingsId);
+        InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+        Users.deleteViaApi(testData.user.userId);
       });
+      FileManager.deleteFile(`cypress/fixtures/${testData.editedFile}`);
     });
 
     it(

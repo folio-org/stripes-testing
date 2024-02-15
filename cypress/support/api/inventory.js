@@ -1,5 +1,6 @@
 import uuid from 'uuid';
 import { INSTANCE_SOURCE_NAMES } from '../constants';
+import QuickMarcEditor from '../fragments/quickMarcEditor';
 
 const DEFAULT_INSTANCE = {
   source: INSTANCE_SOURCE_NAMES.FOLIO,
@@ -333,3 +334,67 @@ Cypress.Commands.add('getHridHandlingSettingsViaApi', () => {
       return body;
     });
 });
+
+Cypress.Commands.add('createSimpleMarcBibViaAPI', (title) => {
+  cy.okapiRequest({
+    path: 'records-editor/records',
+    method: 'POST',
+    isDefaultSearchParamsRequired: false,
+    body: {
+      _actionType: 'create',
+      leader: QuickMarcEditor.defaultValidLdr,
+      fields: [
+        {
+          tag: '008',
+          content: QuickMarcEditor.defaultValid008Values,
+        },
+        {
+          tag: '245',
+          content: `$a ${title}`,
+          indicators: ['\\', '\\'],
+        },
+      ],
+      suppressDiscovery: false,
+      marcFormat: 'BIBLIOGRAPHIC',
+    },
+  }).then(({ body }) => cy.wrap(body).as('body'));
+  return cy.get('@body');
+});
+
+Cypress.Commands.add(
+  'createSimpleMarcHoldingsViaAPI',
+  (instanceId, instanceHrid, locationCode, actionNote = 'note') => {
+    cy.okapiRequest({
+      path: 'records-editor/records',
+      method: 'POST',
+      isDefaultSearchParamsRequired: false,
+      body: {
+        _actionType: 'create',
+        externalId: instanceId,
+        fields: [
+          {
+            content: instanceHrid,
+            tag: '004',
+          },
+          {
+            content: QuickMarcEditor.defaultValid008HoldingsValues,
+            tag: '008',
+          },
+          {
+            content: `$b ${locationCode}`,
+            indicators: ['\\', '\\'],
+            tag: '852',
+          },
+          {
+            content: `$a ${actionNote}`,
+            indicators: ['\\', '\\'],
+            tag: '583',
+          },
+        ],
+        leader: QuickMarcEditor.defaultValidHoldingsLdr,
+        marcFormat: 'HOLDINGS',
+        suppressDiscovery: false,
+      },
+    }).then(({ body }) => cy.expect(body.status === 'IN_PROGRESS'));
+  },
+);

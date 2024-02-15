@@ -1,13 +1,6 @@
-import {
-  JOB_STATUS_NAMES,
-  TARGET_PROFILE_NAMES,
-  RECORD_STATUSES,
-} from '../../../support/constants';
+import { TARGET_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryEditMarcRecord from '../../../support/fragments/inventory/inventoryEditMarcRecord';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -22,7 +15,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let user = null;
-    let instanceHrid = null;
+    let instanceHrid;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const protectedFieldData = {
       protectedField: '856',
@@ -36,8 +29,17 @@ describe('data-import', () => {
     const oclcForChanging = '466478385';
     const imported856Field =
       'Notice et cote du catalogue de la Bibliothèque nationale de France $u http://catalogue.bnf.fr/ark:/12148/cb371881758';
+    const fileName = `C358968 autotestFile${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi('marcFileForC358968.mrc', fileName, jobProfileToRun).then(
+        (response) => {
+          instanceHrid = response.relatedInstanceInfo.hridList[0];
+        },
+      );
+      Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -55,33 +57,6 @@ describe('data-import', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
-        });
-
-        const fileName = `C358968autotestFile.${getRandomPostfix()}.mrc`;
-
-        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.uploadFile('marcFileForC358968.mrc', fileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(jobProfileToRun);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(fileName);
-        [
-          FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.instance,
-        ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
-        });
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-        FileDetails.checkInstanceQuantityInSummaryTable('1');
-
-        // open Instance for getting hrid
-        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHrid = initialInstanceHrId;
         });
       });
     });
@@ -104,7 +79,7 @@ describe('data-import', () => {
 
     it(
       'C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
