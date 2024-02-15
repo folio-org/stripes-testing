@@ -1317,9 +1317,9 @@ export default {
   },
 
   checkRecordInBold(heading) {
-    MultiColumnListRow(including(heading), { isContainer: false }).has({
-      innerHTML: including(`<strong>${heading}</strong>`),
-    });
+    cy.expect(
+      MultiColumnListCell(including(heading)).has({ innerHTML: including('anchorLink--') }),
+    );
   },
 
   searchButtonClick() {
@@ -1335,39 +1335,22 @@ export default {
   },
 
   checkRecordsCountExistsInSharedFacet() {
-    cy.expect(
-      accordionShared.find(
-        Checkbox({ name: 'Yes' })
-          .find(HTML({ className: including('checkBoxLabelInfo--') }))
-          .exists(),
-      ),
-    );
-    cy.expect(
-      accordionShared.find(
-        Checkbox({ name: 'No' })
-          .find(HTML({ className: including('checkBoxLabelInfo--') }))
-          .exists(),
-      ),
-    );
-  },
-
-  getSharedRecordsCountInSharedFacet() {
-    return cy.then(() => {
-      accordionShared.find(
-        Checkbox({ name: 'Yes' })
-          .find(HTML({ className: including('checkBoxLabelInfo--') }))
-          .textContent(),
-      );
+    this.getRecordsCountInOptionsInSharedFacet('Yes').then((count) => {
+      // eslint-disable-next-line no-unused-expressions
+      cy.expect(count).to.exist;
+    });
+    this.getRecordsCountInOptionsInSharedFacet('No').then((count) => {
+      // eslint-disable-next-line no-unused-expressions
+      cy.expect(count).to.exist;
     });
   },
 
-  getLocalRecordsCountInSharedFacet() {
+  getRecordsCountInOptionsInSharedFacet(optionName) {
     return cy.then(() => {
-      accordionShared.find(
-        Checkbox({ name: 'No' })
-          .find(HTML({ className: including('checkBoxLabelInfo--') }))
-          .textContent(),
-      );
+      return accordionShared
+        .find(Checkbox({ name: optionName }))
+        .find(HTML({ className: including('checkBoxLabelInfo--') }))
+        .perform((element) => element.textContent);
     });
   },
 
