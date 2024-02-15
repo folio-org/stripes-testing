@@ -17,6 +17,8 @@ describe('MARC', () => {
         authority: {
           title: 'Twain, Mark, 1835-1910. Adventures of Huckleberry Finn',
           searchOption: 'Keyword',
+          tag: '100',
+          rowIndex: 14,
         },
         authorityB: {
           title: 'Beethoven, Ludwig van (no 010)',
@@ -156,9 +158,21 @@ describe('MARC', () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectTitle(testData.authority.title);
           MarcAuthority.edit();
-          MarcAuthority.checkRemoved1XXTag(14);
-          QuickMarcEditor.updateExistingTagValue(14, '150');
-          MarcAuthority.checkAddNew1XXTag(14, '100', '$a');
+          MarcAuthority.changeTag(testData.authority.rowIndex, '');
+          MarcAuthority.deleteTag(testData.authority.rowIndex);
+          MarcAuthority.clicksaveAndCloseButton();
+          MarcAuthority.checkRemoved1XXTag();
+          QuickMarcEditor.undoDelete();
+          MarcAuthority.changeTag(testData.authority.rowIndex, testData.authority.tag);
+          QuickMarcEditor.checkContentByTag(
+            '$a Twain, Mark, $d 1835-1910. $t Adventures of Huckleberry Finn',
+            testData.authority.tag,
+          );
+          MarcAuthority.checkAddNew1XXTag(
+            testData.authority.rowIndex,
+            testData.authority.tag,
+            '$a C350901',
+          );
           QuickMarcEditor.closeWithoutSavingAfterChange();
           MarcAuthorities.selectTitle(testData.authority.title);
           MarcAuthority.contains(testData.authority.title);

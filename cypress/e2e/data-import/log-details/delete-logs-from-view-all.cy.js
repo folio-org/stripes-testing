@@ -48,7 +48,7 @@ describe('data-import', () => {
 
     it(
       'C367923 A user can delete logs from the Import app "View all" page (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
