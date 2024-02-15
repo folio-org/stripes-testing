@@ -88,8 +88,8 @@ export default {
   },
 
   verifyEditModeElementsIsActive() {
+    this.verifyNewButtonDisabled();
     cy.expect([
-      newButton.is({ disabled: true }),
       cancelReasonField.exists(),
       cancelDescriptionInternalField.exists(),
       cancelDescriptionPublicField.exists(),
