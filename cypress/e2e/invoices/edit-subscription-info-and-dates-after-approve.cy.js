@@ -100,7 +100,7 @@ describe('Invoices', () => {
 
   it(
     'C350952 Allow editing of subscription dates and subscription info after an invoice is approved/paid (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'nonParallel'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Approvals.setApprovePayValue(false);
 
