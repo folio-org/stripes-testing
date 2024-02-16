@@ -121,22 +121,12 @@ describe('Inventory', () => {
         ],
         callNumberBrowseoption: 'Call numbers (all)',
       };
-      // const allVisibleCNs = [
-      //   `${callNumberPrefix} M1 Shared 1`,
-      //   `${callNumberPrefix} M1 Shared 2`,
-      //   `${callNumberPrefix} M1 Shared 3`,
-      //   `${callNumberPrefix} M1 Shared 4`,
-      //   `${callNumberPrefix} M1 Shared 5`,
-      //   `${callNumberPrefix} M1 Local 7`,
-      //   `${callNumberPrefix} M2 Shared 1`,
-      //   `${callNumberPrefix} M2 Shared 2`,
-      //   `${callNumberPrefix} M2 Shared 3`,
-      //   `${callNumberPrefix} M2 Shared 4`,
-      //   `${callNumberPrefix} M2 Shared 6`,
-      // ];
-      // const getCollegeCNs = (cns) => cns.filter((cn) => cn.includes(' M1 '));
-      // const getUniversityCNs = (cns) => cns.filter((cn) => cn.includes(' M2 '));
-      // const getSharedCNs = (cns) => cns.filter((cn) => cn.includes(' Shared '));
+      const allVisibleCNs = [
+        `${callNumberPrefix} Inst01 Call FH`,
+        `${callNumberPrefix} Inst02 Call FI`,
+        `${callNumberPrefix} Inst03 Call MH`,
+        `${callNumberPrefix} Inst04 Call MI`,
+      ];
       const createdInstanceIds = {
         consortia: [],
         college: [],
@@ -202,13 +192,6 @@ describe('Inventory', () => {
       before('Create user, data', () => {
         cy.getAdminToken();
 
-        // cy.setTenant(Affiliations.Consortia);
-        // const bibTitle = `MARC auto Bib ${getRandomPostfix()}`;
-        // cy.createSimpleMarcBibViaAPI(bibTitle);
-        // QuickMarcEditor.getCreatedMarcBib(bibTitle).then((bib) => {
-        //   cy.log(bib.id);
-        // });
-
         cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
           .then((userProperties) => {
             testData.userProperties = userProperties;
@@ -263,6 +246,13 @@ describe('Inventory', () => {
         testData.instances.forEach((instance) => {
           addItemRecordInCollege(instance.instanceId);
         });
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          InventorySearchAndFilter.selectBrowseCallNumbers();
+        });
       });
 
       after('Delete user, data', () => {
@@ -294,17 +284,11 @@ describe('Inventory', () => {
         'C410759 Call numbers from "Shared" Instance records are shown in the browse result list on Central tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire'] },
         () => {
-          // cy.login(testData.userProperties.username, testData.userProperties.password).then(() => {
-          //   ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-          //   ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          //   cy.visit(TopMenu.inventoryPath);
-          //   InventoryInstances.waitContentLoading();
-          //   InventorySearchAndFilter.selectBrowseCallNumbers();
-          // });
-          // BrowseSubjects.browse(`${callNumberPrefix} M1 Shared 1`);
-          // allVisibleCNs.forEach((callNumber) => {
-          //   BrowseCallNumber.checkValuePresentInResults(callNumber);
-          // });
+          BrowseSubjects.browse(callNumberPrefix);
+          BrowseCallNumber.checkNonExactSearchResult(callNumberPrefix);
+          allVisibleCNs.forEach((callNumber) => {
+            BrowseCallNumber.checkValuePresentInResults(callNumber);
+          });
           // InventorySearchAndFilter.clickAccordionByName(testData.heldByAccordionName);
           // InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.heldByAccordionName);
           // InventorySearchAndFilter.verifyCheckboxInAccordion(
