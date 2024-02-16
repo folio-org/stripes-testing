@@ -51,7 +51,7 @@ const resetAllButton = Button('Reset all');
 const logsStatusesAccordion = Accordion('Statuses');
 const logsUsersAccordion = Accordion('User');
 const clearAccordionButton = Button({ icon: 'times-circle-solid' });
-const usersSelectionList = SelectionList({ id: 'sl-container-stripes-selection-18' });
+const usersSelectionList = SelectionList({ placeholder: 'Filter options list' });
 const saveAndClose = Button('Save and close');
 const textFieldTo = TextField('To');
 const textFieldFrom = TextField('From');
@@ -269,6 +269,7 @@ export default {
   },
 
   verifyDragNDropRecordTypeIdentifierArea(recordType, identifier) {
+    this.openIdentifierSearch();
     const lowercaseRecordType = recordType === 'Users' ? recordType : recordType.toLowerCase();
     cy.do(RadioButton(including(lowercaseRecordType)).click());
     this.selectRecordIdentifier(identifier);
