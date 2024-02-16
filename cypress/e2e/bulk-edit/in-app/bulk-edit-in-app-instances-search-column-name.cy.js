@@ -10,21 +10,20 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
-const invalidHoldingUUID = `invalidHoldingUUID-${uuid()}`;
+const invalidInstanceUUID = `invalidInstanceUUID-${uuid()}`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
-const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
-const invalidHoldingUUIDsFileName = `InvalidHoldingUUIDs_${getRandomPostfix()}.csv`;
+const instanceUUIDsFileName = `validInstanceUUIDs_${getRandomPostfix()}.csv`;
+const invalidInstanceUUIDsFileName = `invalidInstanceUUIDs_${getRandomPostfix()}.csv`;
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         Permissions.bulkEditView.gui,
-        Permissions.bulkEditEdit.gui,
-        Permissions.inventoryAll.gui,
+        Permissions.uiInventoryViewCreateEditInstances.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -32,16 +31,11 @@ describe('bulk-edit', () => {
           item.instanceName,
           item.itemBarcode,
         );
-        cy.getHoldings({
-          limit: 1,
-          query: `"instanceId"="${item.instanceId}"`,
-        }).then((holdings) => {
-          FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
-          FileManager.createFile(
-            `cypress/fixtures/${invalidHoldingUUIDsFileName}`,
-            invalidHoldingUUID,
-          );
-        });
+        FileManager.createFile(
+          `cypress/fixtures/${invalidInstanceUUIDsFileName}`,
+          invalidInstanceUUID,
+        );
+        FileManager.createFile(`cypress/fixtures/${instanceUUIDsFileName}`, item.instanceId);
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
@@ -53,40 +47,43 @@ describe('bulk-edit', () => {
       cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       Users.deleteViaApi(user.userId);
-      FileManager.deleteFile(`cypress/fixtures/${holdingUUIDsFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${invalidHoldingUUIDsFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${invalidInstanceUUIDsFileName}`);
     });
 
     it(
-      'C423558 Verify "Search column name" search box for Holdings records. (firebird)',
+      'C423687 Verify "Search column name" search box for Instances records (firebird)',
       { tags: ['smoke', 'firebird'] },
       () => {
-        cy.viewport(1920, 1080);
-        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
-        BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
-        BulkEditSearchPane.checkForUploading(holdingUUIDsFileName);
+        cy.viewport(1000, 660);
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
+        BulkEditSearchPane.uploadFile(instanceUUIDsFileName);
+        BulkEditSearchPane.checkForUploading(instanceUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
-        BulkEditSearchPane.verifyHoldingActionShowColumns();
+        BulkEditActions.openActions();
         BulkEditSearchPane.verifyCheckedCheckboxesPresentInTheTable();
         BulkEditSearchPane.verifyActionsDropdownScrollable();
         BulkEditSearchPane.searchColumnName('note');
+        const columnNameNote = 'Administrative note';
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(columnNameNote);
+        BulkEditSearchPane.verifyResultColumTitles(columnNameNote);
+        BulkEditSearchPane.clearSearchColumnNameTextfield();
+
         BulkEditSearchPane.searchColumnName('fewoh', false);
         BulkEditSearchPane.clearSearchColumnNameTextfield();
-        const columnName = 'Holdings ID';
-        BulkEditSearchPane.searchColumnName(columnName);
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(columnName);
-        BulkEditSearchPane.changeShowColumnCheckbox(columnName);
-        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude(columnName);
+        BulkEditSearchPane.searchColumnName('id');
+        const columnNameId = 'Instance HRID';
+        BulkEditSearchPane.uncheckShowColumnCheckbox(columnNameId);
+        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude(columnNameId);
 
         TopMenuNavigation.navigateToApp('Bulk edit');
-        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
-        BulkEditSearchPane.uploadFile(invalidHoldingUUIDsFileName);
-        BulkEditSearchPane.checkForUploading(invalidHoldingUUIDsFileName);
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
+        BulkEditSearchPane.uploadFile(invalidInstanceUUIDsFileName);
+        BulkEditSearchPane.checkForUploading(invalidInstanceUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabel(invalidHoldingUUIDsFileName, 0, 1);
+        BulkEditSearchPane.verifyErrorLabel(invalidInstanceUUIDsFileName, 0, 1);
         BulkEditSearchPane.verifyPaneRecordsCount(0);
-        BulkEditSearchPane.verifyNonMatchedResults(invalidHoldingUUID);
+        BulkEditSearchPane.verifyNonMatchedResults(invalidInstanceUUID);
         BulkEditActions.openActions();
         BulkEditActions.downloadErrorsExists();
         BulkEditSearchPane.searchColumnNameTextfieldDisabled();
