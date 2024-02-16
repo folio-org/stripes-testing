@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import ConsortiumManagerApp, {
@@ -9,17 +10,14 @@ import ConsortiumManagerApp, {
 } from '../../../support/fragments/consortium-manager/consortiumManagerApp';
 import RequestCancellationReasonsConsortiumManager from '../../../support/fragments/consortium-manager/circulation/requestCancellationReasonsConsortiumManager';
 import SelectMembers from '../../../support/fragments/consortium-manager/modal/select-members';
-// import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
+import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
+import CancellationReason from '../../../support/fragments/settings/circulation/cancellationReason';
 
 const testData = {
   centralSharedReason: {
     payload: {
       name: getTestEntityValue('centralSharedReason_name'),
     },
-  },
-  centralLocalReason: {
-    id: uuid(),
-    name: getTestEntityValue('centralLocalReason_name'),
   },
   collegeLocalReason: {
     id: uuid(),
@@ -41,49 +39,49 @@ describe('Consortium manager', () => {
             testData.centralSharedReason = newReason;
           },
         );
-        cy.addCancellationReasonApi(testData.centralLocalReason);
 
-        cy.createTempUser([
-          permissions.consortiaSettingsConsortiumManagerView.gui,
-          permissions.settingsCircView.gui,
-        ]).then((userProperties) => {
-          // User for test C410834
-          testData.user834 = userProperties;
+        cy.createTempUser([]).then((userProperties) => {
+          // User for test C400666
+          testData.user400666 = userProperties;
 
           cy.resetTenant();
           cy.getAdminToken();
-          cy.assignAffiliationToUser(Affiliations.College, testData.user834.userId);
+          cy.assignAffiliationToUser(Affiliations.College, testData.user400666.userId);
           cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(testData.user834.userId, [
+          cy.assignPermissionsToExistingUser(testData.user400666.userId, [
             permissions.settingsCircView.gui,
           ]);
-          cy.createTempUser([permissions.settingsCircView.gui])
-            .then((user) => {
-              // User for test C410837
-              testData.user837 = user;
-            })
-            .then(() => {
-              cy.addCancellationReasonApi(testData.collegeLocalReason);
-              cy.resetTenant();
-              cy.getAdminToken();
-              cy.assignPermissionsToExistingUser(testData.user837.userId, [
-                permissions.consortiaSettingsConsortiumManagerShare.gui,
-                permissions.settingsCircView.gui,
-              ]);
+          cy.addCancellationReasonApi(testData.collegeLocalReason);
+          cy.resetTenant();
+          cy.getAdminToken();
+          cy.assignAffiliationToUser(Affiliations.University, testData.user400666.userId);
+          cy.setTenant(Affiliations.University);
+          cy.assignPermissionsToExistingUser(testData.user400666.userId, [
+            permissions.settingsCircView.gui,
+          ]);
+          cy.addCancellationReasonApi(testData.universityLocalReason);
+          cy.loginAsAdmin({
+            path: TopMenu.consortiumManagerPath,
+            waiter: ConsortiumManagerApp.waitLoading,
+          });
+          SelectMembers.selectAllMembers();
+          ConsortiumManagerApp.verifyStatusOfConsortiumManager(7);
+          ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
+          RequestCancellationReasonsConsortiumManager.choose();
 
-              cy.resetTenant();
-              cy.getAdminToken();
-              cy.assignAffiliationToUser(Affiliations.University, testData.user834.userId);
-              cy.assignAffiliationToUser(Affiliations.University, testData.user837.userId);
-              cy.setTenant(Affiliations.University);
-              cy.assignPermissionsToExistingUser(testData.user834.userId, [
-                permissions.settingsCircView.gui,
-              ]);
-              cy.assignPermissionsToExistingUser(testData.user837.userId, [
-                permissions.settingsCircView.gui,
-              ]);
-              cy.addCancellationReasonApi(testData.universityLocalReason);
-            });
+          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+            name: testData.centralSharedReason.payload.name,
+            members: 'All',
+          });
+
+          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+            name: testData.collegeLocalReason.name,
+            members: tenantNames.college,
+          });
+          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+            name: testData.universityLocalReason.name,
+            members: tenantNames.university,
+          });
         });
       });
 
@@ -101,10 +99,8 @@ describe('Consortium manager', () => {
 
         cy.setTenant(Affiliations.Consortia);
         cy.getAdminToken();
-        cy.deleteCancellationReasonApi(testData.centralLocalReason.id);
         RequestCancellationReasonsConsortiumManager.deleteViaApi(testData.centralSharedReason);
-        Users.deleteViaApi(testData.user834.userId);
-        Users.deleteViaApi(testData.user837.userId);
+        Users.deleteViaApi(testData.user400666.userId);
       });
 
       it(
@@ -112,64 +108,39 @@ describe('Consortium manager', () => {
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
           cy.resetTenant();
-          cy.login(testData.user834.username, testData.user834.password, {
-            path: TopMenu.consortiumManagerPath,
-            waiter: ConsortiumManagerApp.waitLoading,
-          });
-          SelectMembers.selectAllMembers();
-          ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
-          ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
-          RequestCancellationReasonsConsortiumManager.choose();
+          cy.login(testData.user400666.username, testData.user400666.password);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
 
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+          CancellationReason.verifyReasonInTheList({
             name: testData.centralSharedReason.payload.name,
-            members: 'All',
-          });
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
-            name: testData.centralLocalReason.name,
-            members: tenantNames.central,
-            actions: ['edit', 'trash'],
           });
 
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+          CancellationReason.verifyReasonInTheList({
             name: testData.collegeLocalReason.name,
-            members: tenantNames.college,
-            actions: ['edit', 'trash'],
-          });
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
-            name: testData.universityLocalReason.name,
-            members: tenantNames.university,
             actions: ['edit', 'trash'],
           });
 
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.verifyStatusOfSelectMembersModal(3, 3);
-          SelectMembers.selectMembers(tenantNames.central);
-          SelectMembers.saveAndClose();
-          ConsortiumManagerApp.verifyMembersSelected(2);
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+          CancellationReason.clickTrashButtonForReason({
+            name: testData.collegeLocalReason.name,
+          });
+
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
+          cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
+
+          CancellationReason.verifyReasonInTheList({
+            name: testData.universityLocalReason.name,
+            actions: ['edit', 'trash'],
+          });
+
+          CancellationReason.verifyReasonInTheList({
+            name: testData.universityLocalReason.name,
+          });
+          CancellationReason.verifyReasonInTheList({
             name: testData.centralSharedReason.payload.name,
-            description: '',
-            publicDescription: '',
-            members: 'All',
           });
-          RequestCancellationReasonsConsortiumManager.verifyNoReasonInTheList(
-            testData.centralLocalReason.name,
-          );
-
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
+          CancellationReason.verifyReasonAbsentInTheList({
             name: testData.collegeLocalReason.name,
-            description: '',
-            publicDescription: '',
-            members: tenantNames.college,
-            actions: ['edit', 'trash'],
-          });
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
-            name: testData.universityLocalReason.name,
-            description: '',
-            publicDescription: '',
-            members: tenantNames.university,
-            actions: ['edit', 'trash'],
           });
         },
       );
