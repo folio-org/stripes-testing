@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import Permissions from '../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Users from '../../../../support/fragments/users/users';
@@ -14,12 +13,7 @@ import InventoryHoldings from '../../../../support/fragments/inventory/holdings/
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import BrowseSubjects from '../../../../support/fragments/inventory/search/browseSubjects';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
-import DataImport from '../../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 
@@ -114,7 +108,7 @@ describe('Inventory', () => {
             holdings: {
               college: {
                 callNumberInHoldings: false,
-                callNumber: `${callNumberPrefix} Inst8 Call MI`,
+                callNumber: `${callNumberPrefix} Inst08 Call MI`,
               },
             },
           },
@@ -126,6 +120,12 @@ describe('Inventory', () => {
         `${callNumberPrefix} Inst02 Call FI`,
         `${callNumberPrefix} Inst03 Call MH`,
         `${callNumberPrefix} Inst04 Call MI`,
+      ];
+      const allNonVisibleCNs = [
+        `${callNumberPrefix} Inst05 Call FH`,
+        `${callNumberPrefix} Inst06 Call FI`,
+        `${callNumberPrefix} Inst07 Call MH`,
+        `${callNumberPrefix} Inst08 Call MI`,
       ];
       const createdInstanceIds = {
         consortia: [],
@@ -284,73 +284,35 @@ describe('Inventory', () => {
         'C410759 Call numbers from "Shared" Instance records are shown in the browse result list on Central tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire'] },
         () => {
-          BrowseSubjects.browse(callNumberPrefix);
+          InventorySearchAndFilter.browseSearch(callNumberPrefix);
           BrowseCallNumber.checkNonExactSearchResult(callNumberPrefix);
           allVisibleCNs.forEach((callNumber) => {
             BrowseCallNumber.checkValuePresentInResults(callNumber);
           });
-          // InventorySearchAndFilter.clickAccordionByName(testData.heldByAccordionName);
-          // InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.heldByAccordionName);
-          // InventorySearchAndFilter.verifyCheckboxInAccordion(
-          //   testData.heldByAccordionName,
-          //   tenantNames.college,
-          //   false,
-          // );
-          // InventorySearchAndFilter.verifyCheckboxInAccordion(
-          //   testData.heldByAccordionName,
-          //   tenantNames.university,
-          //   false,
-          // );
-          // InventorySearchAndFilter.selectOptionInExpandedFilter(
-          //   testData.heldByAccordionName,
-          //   tenantNames.college,
-          // );
-          // getCollegeCNs(allVisibleCNs).forEach((callNumber) => {
-          //   BrowseCallNumber.checkValuePresentInResults(callNumber);
-          // });
-          // InventorySearchAndFilter.selectOptionInExpandedFilter(
-          //   testData.heldByAccordionName,
-          //   tenantNames.university,
-          // );
-          // allVisibleCNs.forEach((callNumber) => {
-          //   BrowseCallNumber.checkValuePresentInResults(callNumber);
-          // });
-          // InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
-          // InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);
-          // InventorySearchAndFilter.selectOptionInExpandedFilter(
-          //   testData.sharedAccordionName,
-          //   'Yes',
-          // );
-          // getSharedCNs(allVisibleCNs).forEach((callNumber) => {
-          //   BrowseCallNumber.checkValuePresentInResults(callNumber);
-          // });
-          // InventorySearchAndFilter.selectOptionInExpandedFilter(
-          //   testData.sharedAccordionName,
-          //   'Yes',
-          //   false,
-          // );
-          // InventorySearchAndFilter.selectOptionInExpandedFilter(testData.sharedAccordionName, 'No');
-          // BrowseCallNumber.checkNonExactSearchResult(`${callNumberPrefix} M1 Shared 1`);
-          // BrowseCallNumber.checkValuePresentInResults(`${callNumberPrefix} M1 Local 7`);
-          // InventorySearchAndFilter.selectOptionInExpandedFilter(
-          //   testData.sharedAccordionName,
-          //   'Yes',
-          // );
-          // allVisibleCNs.forEach((callNumber) => {
-          //   BrowseCallNumber.checkValuePresentInResults(callNumber);
-          // });
-          // InventorySearchAndFilter.selectOptionInExpandedFilter(
-          //   testData.heldByAccordionName,
-          //   tenantNames.college,
-          //   false,
-          // );
-          // getUniversityCNs(allVisibleCNs).forEach((callNumber) => {
-          //   BrowseCallNumber.checkValuePresentInResults(callNumber);
-          // });
-          // InventorySearchAndFilter.clearFilter(testData.heldByAccordionName);
-          // allVisibleCNs.forEach((callNumber) => {
-          //   BrowseCallNumber.checkValuePresentInResults(callNumber);
-          // });
+          InventorySearchAndFilter.browseSearch(allNonVisibleCNs[0]);
+          BrowseCallNumber.checkNonExactSearchResult(allNonVisibleCNs[0]);
+          allNonVisibleCNs.forEach((callNumber) => {
+            BrowseCallNumber.checkValuePresentInResults(callNumber, false);
+          });
+          InventorySearchAndFilter.browseSearch(allVisibleCNs[0]);
+          BrowseCallNumber.valueInResultTableIsHighlighted(allVisibleCNs[0]);
+          allVisibleCNs.forEach((callNumber) => {
+            BrowseCallNumber.checkValuePresentInResults(callNumber);
+          });
+          BrowseCallNumber.clickOnResult(allVisibleCNs[0]);
+          InventorySearchAndFilter.verifyInstanceDisplayed(testData.instances[0].title);
+          InventorySearchAndFilter.verifyNumberOfSearchResults(1);
+          InventoryInstance.verifySharedIcon();
+          InventorySearchAndFilter.switchToBrowseTab();
+          InventorySearchAndFilter.verifyCallNumberBrowsePane();
+          BrowseCallNumber.valueInResultTableIsHighlighted(allVisibleCNs[0]);
+          allVisibleCNs.forEach((callNumber) => {
+            BrowseCallNumber.checkValuePresentInResults(callNumber);
+          });
+          BrowseCallNumber.clickOnResult(allVisibleCNs[2]);
+          InventorySearchAndFilter.verifyInstanceDisplayed(testData.instances[2].title);
+          InventorySearchAndFilter.verifyNumberOfSearchResults(1);
+          InventoryInstance.verifySharedIcon();
         },
       );
     });
