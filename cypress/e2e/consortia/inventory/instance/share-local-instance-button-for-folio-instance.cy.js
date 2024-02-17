@@ -3,17 +3,12 @@ import Permissions from '../../../../support/dictionary/permissions';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    const testData = {
-      newInstanceTitle: `C411343 instanceTitle${getRandomPostfix()}`,
-      servicePoint: ServicePoints.defaultServicePoint,
-    };
+    const testData = {};
 
     before('Create test data', () => {
       cy.getAdminToken();
@@ -101,7 +96,8 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
 
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
@@ -136,7 +132,8 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
 
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);

@@ -48,7 +48,7 @@ describe('MARC', () => {
           thirdBox: '\\',
           content: '$a Lentz C410819',
           eSubfield: '$e author.',
-          zeroSubfield: '$0 id.loc.gov/authorities/names/n2011410819',
+          zeroSubfield: '$0 http://id.loc.gov/authorities/names/n2011410819',
           seventhBox: '',
         };
 
@@ -217,7 +217,7 @@ describe('MARC', () => {
             InventoryInstance.checkExpectedMARCSource();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${testData.linkAuthorityIcon}\n\t${linkingTagAndValues.tag}\t1  \t$a Lentz C410819 $e author. $0 id.loc.gov/authorities/names/n2011410819 $9`,
+              `${testData.linkAuthorityIcon}\n\t${linkingTagAndValues.tag}\t1  \t$a Lentz C410819 $e author. $0 http://id.loc.gov/authorities/names/n2011410819 $9`,
             );
             InventoryViewSource.close();
 
