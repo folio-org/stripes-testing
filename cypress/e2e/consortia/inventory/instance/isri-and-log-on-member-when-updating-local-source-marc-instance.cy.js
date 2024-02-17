@@ -17,10 +17,13 @@ describe('Inventory', () => {
       OCLCAuthentication: '100481406/PAOLF',
       oclcNumberForImport: '1234568',
       oclcNumberForOverlay: '1234566',
+      jobProfileName: 'Inventory Single Record - Default Update Instance',
+      fileName: 'No file name',
+      instanceTitle: 'New ideas in chess / by Larry Evans.',
       localInstanceTitle:
         'Local instance • Rincões dos frutos de ouro (tipos e cenarios do sul baiano) [por] Saboia Ribeiro.  • P. Simone • 1933',
       updatedInstanceTitle:
-        'Updated Local instance • Rincões dos frutos de ouro (tipos e cenarios do sul baiano) [por] Saboia Ribeiro.  • P. Simone • 1933',
+        'Local instance • New ideas in chess / by Larry Evans.  • Pitman • 1958',
     };
 
     before('Create test data', () => {
@@ -55,6 +58,8 @@ describe('Inventory', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
+      cy.resetTenant();
+      cy.setTenant(Affiliations.College);
       cy.getInstance({
         limit: 1,
         expandAll: true,
@@ -79,11 +84,9 @@ describe('Inventory', () => {
         Logs.openViewAllLogs();
         LogsViewAll.openUserIdAccordion();
         LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
-        LogsViewAll.openFileDetails('No file name');
-        FileDetails.verifyTitle(
-          testData.updatedInstanceTitle,
-          FileDetails.columnNameInResultList.title,
-        );
+        LogsViewAll.filterJobsByJobProfile(testData.jobProfileName);
+        LogsViewAll.openFileDetails(testData.fileName);
+        FileDetails.verifyTitle(testData.instanceTitle, FileDetails.columnNameInResultList.title);
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
