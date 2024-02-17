@@ -26,7 +26,7 @@ describe('data-import', () => {
     before('create test data', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then((response) => {
-        instanceHrid = response.relatedInstanceInfo.hridList[0];
+        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
       });
 
       cy.createTempUser([

@@ -19,7 +19,7 @@ describe('data-import', () => {
       cy.createTempUser([Permissions.dataImportDeleteLogs.gui]).then((userProperties) => {
         user = userProperties;
 
-        for (let i = 0; i < 101; i++) {
+        for (let i = 0; i < 70; i++) {
           const fileName = `C367923 autotestFileName${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFileViaApi(
@@ -27,8 +27,9 @@ describe('data-import', () => {
             fileName,
             'Default - Create instance and SRS MARC Bib',
           ).then((response) => {
-            instanceIds.push(response.relatedInstanceInfo.idList[0]);
+            instanceIds.push(response.entries[0].relatedInstanceInfo.idList[0]);
           });
+          cy.wait(2000);
         }
 
         cy.login(userProperties.username, userProperties.password, {

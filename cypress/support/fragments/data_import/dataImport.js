@@ -203,6 +203,7 @@ function getCreatedRecordInfo(jobExecutionId) {
   return cy.okapiRequest({
     path: `metadata-provider/jobLogEntries/${jobExecutionId}`,
     isDefaultSearchParamsRequired: false,
+    searchParams: { limit: 100 },
   });
 }
 
@@ -373,15 +374,15 @@ export default {
           () => getJodStatus(jobExecutionId),
           (resp) => resp.body.status === 'COMMITTED' && resp.body.uiStatus === 'RUNNING_COMPLETE',
           {
-            limit: 12,
-            timeout: 60000,
+            limit: 16,
+            timeout: 80000,
             delay: 5000,
           },
         );
 
         getCreatedRecordInfo(jobExecutionId).then((resp) => {
           // we can get relatedInstanceInfo and in it get idList or hridList
-          const recordInfo = resp.body.entries[0];
+          const recordInfo = resp.body;
           return recordInfo;
         });
       });

@@ -46,6 +46,7 @@ describe('data-import', () => {
         })
         .then(() => {
           testData.mapping = FieldMappingProfiles.getDefaultMappingProfile({
+            incomingRecordType: 'MARC_BIBLIOGRAPHIC',
             existingRecordType: 'ORDER',
             mappingFields,
           });
