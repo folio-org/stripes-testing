@@ -74,11 +74,9 @@ describe('Inventory', () => {
       { tags: ['criticalPathECS', 'folijet'] },
       () => {
         InventoryInstances.importWithOclc(testData.oclcNumberForImport);
-        InventoryInstance.waitLoading();
         InventoryInstance.verifyInstanceTitle(testData.localInstanceTitle);
         InventoryInstance.startOverlaySourceBibRecord();
         InventoryInstance.overlayWithOclc(testData.oclcNumberForOverlay);
-        InventoryInstance.waitLoading();
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openViewAllLogs();
@@ -94,7 +92,6 @@ describe('Inventory', () => {
           FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
-        InventoryInstance.waitLoading();
         InventoryInstance.verifyInstanceTitle(testData.updatedInstanceTitle);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           testData.instanceHRID = initialInstanceHrId;
