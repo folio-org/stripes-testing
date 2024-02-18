@@ -11,7 +11,7 @@ describe('Permissions', () => {
   describe('Permissions --> Inventory', () => {
     const userData = {};
     let instanceID;
-    const marcFile = 'oneMarcBib.mrc'; 
+    const marcFile = 'oneMarcBib.mrc';
     const fileName = `autotest1Bib${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const propertyName = 'relatedInstanceInfo';

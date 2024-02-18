@@ -45,7 +45,7 @@ describe('MARC', () => {
           waiter: DataImport.waitLoading,
         });
       });
-    
+
       after('Deleting data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);

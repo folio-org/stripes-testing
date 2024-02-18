@@ -110,7 +110,7 @@ describe('MARC', () => {
             JobProfiles.waitFileIsImported(instanceFile.fileName);
             Logs.checkJobStatus(instanceFile.fileName, JOB_STATUS_NAMES.COMPLETED);
             Logs.openFileDetails(instanceFile.fileName);
-            Logs.getCreatedItemsID().then((link) => {
+            Logs.getCreatedItemsID().then(() => {
               cy.getInstanceHRID(recordIDs[0]).then((instanceHRID) => {
                 DataImport.editMarcFile(
                   holdingsFile.marc,
