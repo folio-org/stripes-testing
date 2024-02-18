@@ -1,7 +1,5 @@
 import permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
@@ -26,19 +24,15 @@ describe('inventory', () => {
 
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFile('marcFileForC350387.mrc', fileName);
-            JobProfiles.waitFileIsUploaded();
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(fileName);
-            for (let i = 0; i < 2; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                createdInstanceIDs.push(link.split('/')[5]);
+            DataImport.uploadFileViaApi(
+              'marcFileForC350387.mrc',
+              fileName,
+              jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdInstanceIDs.push(record['relatedInstanceInfo'].idList[0]);
               });
-            }
+            });
           },
         );
 
@@ -59,7 +53,7 @@ describe('inventory', () => {
 
     it(
       'C350387 Verify the "Browse subjects" result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseSubjects.searchBrowseSubjects(testData.testValue);

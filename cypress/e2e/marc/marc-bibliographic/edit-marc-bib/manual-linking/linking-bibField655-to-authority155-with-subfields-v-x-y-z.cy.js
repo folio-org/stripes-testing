@@ -112,7 +112,7 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag655);
             QuickMarcEditor.checkUnlinkTooltipText(
-              testData.tag655,
+              52,
               'Unlink from MARC Authority record',
             );
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(bib655AfterLinkingToAuth155[0]);

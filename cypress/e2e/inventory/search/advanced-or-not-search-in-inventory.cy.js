@@ -2,7 +2,6 @@ import uuid from 'uuid';
 import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
@@ -35,13 +34,14 @@ describe('inventory', () => {
 
     before('Creating data', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-      JobProfiles.waitLoadingList();
-      JobProfiles.search(marcFile.jobProfileToRun);
-      JobProfiles.runImportFile();
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi(
+        marcFile.marc,
+        marcFile.fileName,
+        marcFile.jobProfileToRun,
+      );
       Logs.waitFileIsImported(marcFile.fileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFile.fileName);
       FileDetails.openItemInInventoryByTitle(testData.searchResults[1], 3, RECORD_STATUSES.CREATED);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
@@ -61,8 +61,7 @@ describe('inventory', () => {
       InventoryInstance.fillItemRequiredFields();
       InventoryInstance.fillItemBarcode(testData.itemBarcode);
       InventoryInstance.saveItemDataAndVerifyExistence('-');
-      cy.logout();
-
+      
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         user = userProperties;
 
@@ -88,7 +87,7 @@ describe('inventory', () => {
 
     it(
       'C422016 Search Instances using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(

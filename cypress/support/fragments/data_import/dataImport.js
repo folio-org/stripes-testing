@@ -203,6 +203,7 @@ function getCreatedRecordInfo(jobExecutionId) {
   return cy.okapiRequest({
     path: `metadata-provider/jobLogEntries/${jobExecutionId}`,
     isDefaultSearchParamsRequired: false,
+    searchParams: { limit: 100 },
   });
 }
 
@@ -381,7 +382,7 @@ export default {
 
         getCreatedRecordInfo(jobExecutionId).then((resp) => {
           // we can get relatedInstanceInfo and in it get idList or hridList
-          const recordInfo = resp.body.entries[0];
+          const recordInfo = resp.body;
           return recordInfo;
         });
       });

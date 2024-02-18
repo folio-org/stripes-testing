@@ -44,6 +44,7 @@ describe('MARC', () => {
       };
       const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
       const updatedfileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
+      const propertyName = 'relatedAuthorityInfo';
       let createdAuthorityID;
 
       before('Creating data', () => {
@@ -66,18 +67,14 @@ describe('MARC', () => {
           NewJobProfile.linkActionProfileByName('Default - Create MARC Authority');
           NewJobProfile.saveAndClose();
 
-          cy.visit(TopMenu.dataImportPath);
-          DataImport.verifyUploadState();
-          DataImport.uploadFile('oneMarcAuthority.mrc', fileName);
-          JobProfiles.waitFileIsUploaded();
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(fileName);
-          Logs.getCreatedItemsID().then((link) => {
-            createdAuthorityID = link.split('/')[5];
+          DataImport.uploadFileViaApi(
+            'oneMarcAuthority.mrc',
+            fileName,
+            jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityID = record[propertyName].idList[0];
+            });
           });
         });
       });
