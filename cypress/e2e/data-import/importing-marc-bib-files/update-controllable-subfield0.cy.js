@@ -131,7 +131,7 @@ describe('data-import', () => {
         Permissions.dataExportEnableApp.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
-        
+
         cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(

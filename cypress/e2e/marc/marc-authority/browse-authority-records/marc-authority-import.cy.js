@@ -36,10 +36,10 @@ describe('MARC', () => {
           testData.userProperties = createdUserProperties;
         });
       });
-    
+
       beforeEach('Login to the application', () => {
         fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
-    
+
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -217,14 +217,16 @@ describe('MARC', () => {
         'C356765 Search for record without subfield "t" (personalNameTitle and sftPersonalName) (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          DataImport.uploadFileViaApi(
-            'marcFileForC356765.mrc',
-            fileName,
-            jobProfileToRun,
-          ).then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityIDs.push(record[propertyName].idList[0]);
-            });
+          DataImport.uploadFile('marcFileForC356765.mrc', fileName);
+          JobProfiles.waitFileIsUploaded();
+          JobProfiles.waitLoadingList();
+          JobProfiles.search(jobProfileToRun);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(fileName);
+          Logs.checkStatusOfJobProfile('Completed');
+          Logs.openFileDetails(fileName);
+          Logs.getCreatedItemsID(0).then((link) => {
+            createdAuthorityIDs.push(link.split('/')[5]);
           });
 
           cy.visit(TopMenu.marcAuthorities);
@@ -249,15 +251,19 @@ describe('MARC', () => {
         'C353995 Search for records which have subfield "t" value (personalNameTitle and sftPersonalNameTitle) (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          DataImport.uploadFileViaApi(
-            'marcFileForC353995.mrc',
-            fileName,
-            jobProfileToRun,
-          ).then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityIDs.push(record[propertyName].idList[0]);
+          DataImport.uploadFile('marcFileForC353995.mrc', fileName);
+          JobProfiles.waitFileIsUploaded();
+          JobProfiles.waitLoadingList();
+          JobProfiles.search(jobProfileToRun);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(fileName);
+          Logs.checkStatusOfJobProfile('Completed');
+          Logs.openFileDetails(fileName);
+          for (let i = 0; i < 1; i++) {
+            Logs.getCreatedItemsID(i).then((link) => {
+              createdAuthorityIDs.push(link.split('/')[5]);
             });
-          });
+          }
 
           cy.visit(TopMenu.marcAuthorities);
           MarcAuthorities.checkSearchOption('keyword');

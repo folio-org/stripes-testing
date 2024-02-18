@@ -61,7 +61,7 @@ describe('inventory', () => {
       InventoryInstance.fillItemRequiredFields();
       InventoryInstance.fillItemBarcode(testData.itemBarcode);
       InventoryInstance.saveItemDataAndVerifyExistence('-');
-      
+
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         user = userProperties;
 

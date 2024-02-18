@@ -15,6 +15,7 @@ describe('inventory', () => {
 
     const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const propertyName = 'relatedInstanceInfo';
 
     const createdInstanceIDs = [];
 
@@ -30,7 +31,7 @@ describe('inventory', () => {
               jobProfileToRun,
             ).then((response) => {
               response.entries.forEach((record) => {
-                createdInstanceIDs.push(record['relatedInstanceInfo'].idList[0]);
+                createdInstanceIDs.push(record[propertyName].idList[0]);
               });
             });
           },

@@ -47,11 +47,11 @@ describe('Browse in Inventory', () => {
       testData.userProperties = createdUserProperties;
 
       cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
+      marcFiles.forEach((marcFile) => {
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
         ).then((response) => {
           response.entries.forEach((record) => {
             createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
