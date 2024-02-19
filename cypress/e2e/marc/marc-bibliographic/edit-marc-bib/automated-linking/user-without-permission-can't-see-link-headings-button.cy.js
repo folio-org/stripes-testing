@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
@@ -25,6 +23,7 @@ describe('MARC', () => {
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numOfRecords: 1,
+            propertyName: 'relatedInstanceInfo',
           },
         ];
 
@@ -36,23 +35,6 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           ]).then((createdUserProperties) => {
             testData.userPropertiesC387521 = createdUserProperties;
-
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkJobStatus(marcFile.fileName, 'Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordsIDs.push(link.split('/')[5]);
-                });
-              });
-            });
           });
 
           cy.createTempUser([
@@ -60,6 +42,19 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
           ]).then((createdUserProperties) => {
             testData.userPropertiesC387523 = createdUserProperties;
+          });
+
+          cy.getAdminToken();
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdRecordsIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
           });
         });
 

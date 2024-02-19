@@ -1,7 +1,5 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import ExportManagerSearchPane from '../../../../support/fragments/exportManager/exportManagerSearchPane';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -38,18 +36,21 @@ const marcFiles = [
     fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     numOfRecords: 1,
+    propertyName: 'relatedInstanceInfo',
   },
   {
     marc: 'marcAuthFileForC375230_1.mrc',
     fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create SRS MARC Authority',
     numOfRecords: 1,
+    propertyName: 'relatedAuthorityInfo',
   },
   {
     marc: 'marcAuthFileForC375230_2.mrc',
     fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create SRS MARC Authority',
     numOfRecords: 1,
+    propertyName: 'relatedAuthorityInfo',
   },
 ];
 
@@ -104,25 +105,18 @@ describe('MARC', () => {
           testData.userProperties = createdUserProperties;
 
           marcFiles.forEach((marcFile) => {
-            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-              () => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    testData.createdAuthorityID.push(link.split('/')[5]);
-                  });
-                }
-              },
-            );
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                testData.createdAuthorityID.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
           });
 
+          cy.loginAsAdmin();
           cy.visit(TopMenu.inventoryPath).then(() => {
             InventoryInstances.searchByTitle(testData.createdAuthorityID[0]);
             InventoryInstances.selectInstance();
@@ -148,9 +142,9 @@ describe('MARC', () => {
 
       after('Deleting user and data', () => {
         cy.getAdminToken();
+        Users.deleteViaApi(testData.userProperties.userId);
         InventoryInstance.deleteInstanceViaApi(testData.createdAuthorityID[0]);
         MarcAuthority.deleteViaAPI(testData.createdAuthorityID[1]);
-        Users.deleteViaApi(testData.userProperties.userId);
       });
 
       it(

@@ -1,7 +1,5 @@
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
@@ -13,7 +11,6 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -63,16 +60,19 @@ describe('MARC', () => {
         fileName: `testMarcFileC374148.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         instanceTitle: 'Crossfire : a litany for survival.',
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'marcAuthFileForC374148_01.mrc',
         fileName: `testMarcFileC374148.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
+        propertyName: 'relatedAuthorityInfo',
       },
       {
         marc: 'marcAuthFileForC374148_02.mrc',
         fileName: `testMarcFileC374148.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
+        propertyName: 'relatedAuthorityInfo',
         authorutyTitle: 'Poetry',
       },
     ];
@@ -81,47 +81,43 @@ describe('MARC', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        InventoryInstances.getInstancesViaApi({
+      InventoryInstances.getInstancesViaApi({
+        limit: 100,
+        query: `title="${marcFiles[0].instanceTitle}"`,
+      }).then((instances) => {
+        if (instances) {
+          instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
+        }
+      });
+
+      testData.searchAuthorityQueries.forEach((query) => {
+        MarcAuthorities.getMarcAuthoritiesViaApi({
           limit: 100,
-          query: `title="${marcFiles[0].instanceTitle}"`,
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
+          query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
+        }).then((authorities) => {
+          if (authorities) {
+            authorities.forEach(({ id }) => {
+              MarcAuthority.deleteViaAPI(id);
             });
           }
         });
-        testData.searchAuthorityQueries.forEach((query) => {
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
-              });
-            }
-          });
-        });
 
         marcFiles.forEach((marcFile) => {
-          cy.visit(TopMenu.dataImportPath);
-          DataImport.verifyUploadState();
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitFileIsUploaded();
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(marcFile.fileName);
-          Logs.getCreatedItemsID().then((link) => {
-            createdRecordIDs.push(link.split('/')[5]);
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            });
           });
         });
       });
 
+      cy.loginAsAdmin();
       cy.visit(TopMenu.inventoryPath).then(() => {
         InventoryInstances.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
@@ -162,9 +158,9 @@ describe('MARC', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      Users.deleteViaApi(testData.userProperties.userId);
       InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
       MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
+      Users.deleteViaApi(testData.userProperties.userId);
     });
 
     it(
