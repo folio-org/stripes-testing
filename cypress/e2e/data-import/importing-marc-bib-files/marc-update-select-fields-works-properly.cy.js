@@ -109,7 +109,7 @@ describe.skip('data-import', () => {
           marcFileForCreate,
           'Default - Create instance and SRS MARC Bib',
         ).then((response) => {
-          instanceHrid = response.relatedInstanceInfo.hridList[0];
+          instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
 
           // change Instance HRID in .mrc file
           DataImport.editMarcFile(

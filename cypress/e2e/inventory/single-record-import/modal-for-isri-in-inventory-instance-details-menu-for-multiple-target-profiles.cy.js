@@ -42,7 +42,7 @@ describe('inventory', () => {
           fileName,
           'Default - Create instance and SRS MARC Bib',
         ).then((response) => {
-          instanceHRID = response.relatedInstanceInfo.hridList[0];
+          instanceHRID = response.entries[0].relatedInstanceInfo.hridList[0];
         });
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
         Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(newTargetProfileName).then(

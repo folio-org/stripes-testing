@@ -33,7 +33,7 @@ describe('data-import', () => {
         fileNameForCreateInstance,
         jobProfileToRun,
       ).then((response) => {
-        instanceHrid = response.relatedInstanceInfo.hridList[0];
+        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
       });
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {

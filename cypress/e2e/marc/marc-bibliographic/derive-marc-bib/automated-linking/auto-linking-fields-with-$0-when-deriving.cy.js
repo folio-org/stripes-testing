@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
@@ -73,36 +71,42 @@ describe('MARC', () => {
             fileName: `C388638 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numOfRecords: 1,
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileForC388638_1.mrc',
             fileName: `C388638_1 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
             authorityHeading: 'C388638 Runaway Bride (Motion picture)',
           },
           {
             marc: 'marcAuthFileForC388638_2.mrc',
             fileName: `C388638_2 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
+            propertyName: 'relatedAuthorityInfo',
             numOfRecords: 1,
           },
           {
             marc: 'marcAuthFileForC388638_3.mrc',
             fileName: `C388638_3 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
+            propertyName: 'relatedAuthorityInfo',
             numOfRecords: 1,
           },
           {
             marc: 'marcAuthFileForC388638_4.mrc',
             fileName: `C388638_4 testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
+            propertyName: 'relatedAuthorityInfo',
             numOfRecords: 1,
           },
           {
             marc: 'marcAuthFileForC388638_5.mrc',
             fileName: `C388638_5 testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
+            propertyName: 'relatedAuthorityInfo',
             numOfRecords: 1,
           },
         ];
@@ -123,22 +127,19 @@ describe('MARC', () => {
                 });
               });
             });
+
             marcFiles.forEach((marcFile) => {
-              cy.visit(TopMenu.dataImportPath);
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkStatusOfJobProfile('Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  testData.createdRecordIDs.push(link.split('/')[5]);
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
                 });
-              }
+              });
             });
+
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });

@@ -77,11 +77,11 @@ describe('data-import', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.importWithOclc(oclcForImport);
-        cy.wait(15000);
-        cy.reload();
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openViewAllLogs();
+        cy.wait(20000);
+        cy.reload();
         LogsViewAll.openUserIdAccordion();
         LogsViewAll.filterJobsByUser(`${user.firstName} ${user.lastName}`);
         LogsViewAll.openFileDetails('No file name');
@@ -94,7 +94,6 @@ describe('data-import', () => {
           `Record ${oclcForUpdating} updated. Results may take a few moments to become visible in Inventory`,
           calloutTypes.success,
         );
-        cy.wait(15000);
         cy.reload();
         // check instance is updated
         InventoryInstance.verifyInstanceTitle(updatedInstanceData.title);

@@ -1,7 +1,5 @@
 import { Permissions } from '../../../../support/dictionary';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -10,7 +8,6 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -52,12 +49,14 @@ describe('MARC', () => {
           marc: 'marcBibFileForC376595.mrc',
           fileName: `testMarcFileC376595.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          propertyName: 'relatedInstanceInfo',
           instanceTitle: 'Surface chemistry of solid and liquid interfaces / H. Yıldırım Erbil.',
         },
         {
           marc: 'marcAuthFileForC376595.mrc',
           fileName: `testMarcFileC376595.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
+          propertyName: 'relatedAuthorityInfo',
           authorityHeading: 'Erbil, H. Yıldırım',
         },
       ];
@@ -65,27 +64,20 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Create test data', () => {
-        cy.loginAsAdmin({
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        }).then(() => {
-          marcFiles.forEach((marcFile) => {
-            cy.visit(TopMenu.dataImportPath);
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitFileIsUploaded();
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(marcFile.fileName);
-            Logs.getCreatedItemsID().then((link) => {
-              createdRecordIDs.push(link.split('/')[5]);
+        cy.getAdminToken();
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
             });
           });
         });
 
+        cy.loginAsAdmin();
         cy.visit(TopMenu.inventoryPath).then(() => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
@@ -124,9 +116,9 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
-        Users.deleteViaApi(testData.userProperties.userId);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
+        Users.deleteViaApi(testData.userProperties.userId);
       });
 
       it(

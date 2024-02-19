@@ -28,7 +28,7 @@ describe('data-import', () => {
           waiter: DataImport.waitLoading,
         });
         DataImport.uploadFileViaApi(filesPath, fileName, jobProfileToRun).then((response) => {
-          instanceId = response.relatedInstanceInfo.idList[0];
+          instanceId = response.entries[0].relatedInstanceInfo.idList[0];
         });
       });
     });

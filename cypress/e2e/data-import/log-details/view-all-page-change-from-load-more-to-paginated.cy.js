@@ -14,7 +14,7 @@ describe('data-import', () => {
 
     before('create user and login', () => {
       cy.getAdminToken();
-      for (let i = 0; i < 101; i++) {
+      for (let i = 0; i < 51; i++) {
         const fileName = `C353589 autotestFileName${getRandomPostfix()}.mrc`;
 
         DataImport.uploadFileViaApi(
@@ -22,8 +22,9 @@ describe('data-import', () => {
           fileName,
           'Default - Create instance and SRS MARC Bib',
         ).then((response) => {
-          instanceIds.push(response.relatedInstanceInfo.idList[0]);
+          instanceIds.push(response.entries[0].relatedInstanceInfo.idList[0]);
         });
+        cy.wait(2000);
       }
 
       cy.createTempUser([
