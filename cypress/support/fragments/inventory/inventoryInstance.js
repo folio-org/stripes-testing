@@ -549,6 +549,14 @@ export default {
     );
   },
 
+  verifyRecordAndMarcAuthIconAbsence(accordion, expectedText) {
+    cy.expect(
+      Accordion(accordion)
+        .find(HTML(including(expectedText)))
+        .absent(),
+    );
+  },
+
   checkExistanceOfAuthorityIconInInstanceDetailPane(accordion) {
     cy.expect(Accordion(accordion).find(Link()).exists());
   },
