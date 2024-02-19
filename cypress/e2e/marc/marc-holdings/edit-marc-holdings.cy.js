@@ -44,7 +44,7 @@ describe('MARC', () => {
         testData.fileNameForCreateInstance,
         'Default - Create instance and SRS MARC Bib',
       ).then((response) => {
-        instanceHrid = response.relatedInstanceInfo.hridList[0];
+        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
 
         DataImport.editMarcFile(
           testData.filePath,

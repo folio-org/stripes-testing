@@ -4,13 +4,10 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import Users from '../../../../support/fragments/users/users';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 
 describe('MARC', () => {
@@ -40,11 +37,13 @@ describe('MARC', () => {
           marc: 'marcBibFileC374143.mrc',
           fileName: `C374143 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          propertyName: 'relatedInstanceInfo',
         },
         {
           marc: 'marcAuthFileC374143.mrc',
           fileName: `C374143 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
+          propertyName: 'relatedAuthorityInfo',
         },
       ];
       const linkingTagAndValue = {
@@ -67,22 +66,20 @@ describe('MARC', () => {
             },
           );
         });
-        cy.loginAsAdmin().then(() => {
-          marcFiles.forEach((marcFile) => {
-            cy.visit(TopMenu.dataImportPath);
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(marcFile.fileName);
-            Logs.getCreatedItemsID().then((link) => {
-              testData.createdRecordIDs.push(link.split('/')[5]);
+
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
             });
           });
         });
 
+        cy.loginAsAdmin();
         cy.visit(TopMenu.inventoryPath).then(() => {
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
           InventoryInstances.selectInstance();

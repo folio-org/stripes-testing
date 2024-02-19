@@ -84,7 +84,7 @@ describe('data-import', () => {
       const fileName = `C17039 autotestFile${getRandomPostfix()}.mrc`;
       cy.getAdminToken();
       DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then((response) => {
-        instanceHridForReimport = response.relatedInstanceInfo.hridList[0];
+        instanceHridForReimport = response.entries[0].relatedInstanceInfo.hridList[0];
       });
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     });

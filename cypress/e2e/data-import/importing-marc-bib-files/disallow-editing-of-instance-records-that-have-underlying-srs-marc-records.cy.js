@@ -20,7 +20,7 @@ describe('data-import', () => {
     before('login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePath, marcFileName, jobProfileToRun).then((response) => {
-        instanceHrid = response.relatedInstanceInfo.hridList[0];
+        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
       });
 
       // create temp user with inventoryAll permissions

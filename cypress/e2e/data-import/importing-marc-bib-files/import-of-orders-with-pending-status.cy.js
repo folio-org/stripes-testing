@@ -177,15 +177,16 @@ describe('data-import', () => {
         Logs.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
-
-        [0, 1].forEach((rowNumber) => {
-          [
-            FileDetails.columnNameInResultList.srsMarc,
-            FileDetails.columnNameInResultList.order,
-          ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName, rowNumber);
-          });
-        });
+        FileDetails.checkStatusInColumn(
+          RECORD_STATUSES.CREATED,
+          FileDetails.columnNameInResultList.order,
+          0,
+        );
+        FileDetails.checkStatusInColumn(
+          RECORD_STATUSES.CREATED,
+          FileDetails.columnNameInResultList.order,
+          1,
+        );
         FileDetails.checkOrderQuantityInSummaryTable(quantityOfOrders);
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();

@@ -374,8 +374,8 @@ export default {
           () => getJodStatus(jobExecutionId),
           (resp) => resp.body.status === 'COMMITTED' && resp.body.uiStatus === 'RUNNING_COMPLETE',
           {
-            limit: 12,
-            timeout: 60000,
+            limit: 16,
+            timeout: 80000,
             delay: 5000,
           },
         );

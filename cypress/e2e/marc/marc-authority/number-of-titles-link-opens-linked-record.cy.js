@@ -1,8 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
@@ -33,65 +31,60 @@ const marcFiles = [
     fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     numOfRecords: 1,
+    propertyName: 'relatedInstanceInfo',
   },
   {
     marc: 'marcAuthC375263.mrc',
     fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create SRS MARC Authority',
     numOfRecords: 1,
+    propertyName: 'relatedAuthorityInfo',
   },
 ];
 describe('MARC', () => {
   describe('MARC Authority', () => {
     before('Creating user', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
-      }).then(() => {
-        InventoryInstances.getInstancesViaApi({
-          limit: 100,
-          query: `title="${testData.instanceTitle}"`,
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
-        MarcAuthorities.getMarcAuthoritiesViaApi({
-          limit: 100,
-          query: `keyword="${testData.marcValue}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-        }).then((authorities) => {
-          if (authorities) {
-            authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id);
-            });
-          }
-        });
-        marcFiles.forEach((marcFile) => {
-          DataImport.verifyUploadState();
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(marcFile.fileName);
 
-          for (let i = 0; i < marcFile.numOfRecords; i++) {
-            Logs.getCreatedItemsID(i).then((link) => {
-              if (marcFile.jobProfileToRun === 'Default - Create instance and SRS MARC Bib') {
-                testData.instanceIDs.push(link.split('/')[5]);
-              } else {
-                testData.authorityIDs.push(link.split('/')[5]);
-              }
-            });
-          }
-          cy.visit(TopMenu.dataImportPath);
+      InventoryInstances.getInstancesViaApi({
+        limit: 100,
+        query: `title="${testData.instanceTitle}"`,
+      }).then((instances) => {
+        if (instances) {
+          instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
+        }
+      });
+
+      MarcAuthorities.getMarcAuthoritiesViaApi({
+        limit: 100,
+        query: `keyword="${testData.marcValue}" and (authRefType==("Authorized" or "Auth/Ref"))`,
+      }).then((authorities) => {
+        if (authorities) {
+          authorities.forEach(({ id }) => {
+            MarcAuthority.deleteViaAPI(id);
+          });
+        }
+      });
+
+      marcFiles.forEach((marcFile) => {
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.entries.forEach((record) => {
+            if (marcFile.jobProfileToRun === 'Default - Create instance and SRS MARC Bib') {
+              testData.instanceIDs.push(record[marcFile.propertyName].idList[0]);
+            } else {
+              testData.authorityIDs.push(record[marcFile.propertyName].idList[0]);
+            }
+          });
         });
       });
 
+      cy.loginAsAdmin();
       cy.visit(TopMenu.inventoryPath).then(() => {
         InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceTitle);
@@ -128,13 +121,13 @@ describe('MARC', () => {
 
     after('Deleting created user', () => {
       cy.getAdminToken();
-      Users.deleteViaApi(testData.user.userId);
       testData.instanceIDs.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
       });
       testData.authorityIDs.forEach((id) => {
         MarcAuthority.deleteViaAPI(id);
       });
+      Users.deleteViaApi(testData.user.userId);
     });
 
     it(

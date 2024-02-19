@@ -11,15 +11,13 @@ import {
 } from '../../../../../interactors';
 
 const manageAuthorityFilesPane = Pane('Manage authority files');
-const newButton = manageAuthorityFilesPane.find(
-  Button({ id: 'clickable-add-authority-source-files' }),
-);
+const newButton = manageAuthorityFilesPane.find(Button({ id: 'clickable-add-authorityfiles' }));
 const firstRow = manageAuthorityFilesPane.find(MultiColumnListRow({ ariaRowIndex: 2 }));
-const nameTextField = TextField({ placeholder: 'name' });
-const prefixTextField = TextField({ placeholder: 'codes' });
-const hridStartsWithTextField = TextField({ placeholder: 'startNumber' });
-const baseUrlTextField = TextField({ placeholder: 'baseUrl' });
-const activeCheckbox = Checkbox({ ariaLabel: 'Active' });
+const nameTextField = TextField({ placeholder: 'Name' });
+const prefixTextField = TextField({ placeholder: 'Prefix' });
+const hridStartsWithTextField = TextField({ placeholder: 'HRID starts with' });
+const baseUrlTextField = TextField({ placeholder: 'Base URL' });
+const activeCheckbox = Checkbox({ ariaLabel: including('Active') });
 const sourceCell = MultiColumnListCell({ columnIndex: 5 });
 const lastUpdatedCell = MultiColumnListCell({ columnIndex: 6 });
 const cancelButton = Button('Cancel');
@@ -35,7 +33,7 @@ const tableHeaderTexts = [
 ];
 const editButton = Button({ icon: 'edit' });
 const deleteButton = Button({ icon: 'trash' });
-const successSaveCalloutText = (authorityFileName) => `The authority file ${authorityFileName} was successfully created`;
+const successSaveCalloutText = (authorityFileName) => `The authority file ${authorityFileName} has been successfully created.`;
 
 const waitLoading = () => {
   cy.expect(newButton.has({ disabled: false }));
@@ -54,7 +52,7 @@ const verifyEditableRowAdded = () => {
   cy.expect(firstRow.find(baseUrlTextField).has({ value: '' }));
   cy.expect(firstRow.find(activeCheckbox).has({ checked: false }));
   cy.expect(firstRow.find(sourceCell).has({ content: 'Local' }));
-  cy.expect(firstRow.find(lastUpdatedCell).has({ content: '-' }));
+  cy.expect(firstRow.find(lastUpdatedCell).has({ content: 'No value set-' }));
   cy.expect(firstRow.find(cancelButton).has({ disabled: false }));
   cy.expect(firstRow.find(saveButton).has({ disabled: false }));
 };
