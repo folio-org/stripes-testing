@@ -197,14 +197,14 @@ export default {
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
-  receiveAndChangeLocation: (rowNumber, caption, institutionId) => {
+  receiveAndChangeLocation: (rowNumber, displaySummary, institutionId) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
       Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
       receiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
-      TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
+      TextField({ name: `${recievingFieldName}.displaySummary` }).fillIn(displaySummary),
       MultiColumnListRow({ indexRow: `row-${rowNumber}` })
         .find(Button('Assign a different location'))
         .click(),

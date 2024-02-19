@@ -34,8 +34,7 @@ describe('bulk-edit', () => {
 
     beforeEach('go to bulk-edit page', () => {
       cy.visit(TopMenu.bulkEditPath);
-      BulkEditSearchPane.checkUsersRadio();
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+      BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
     });
 
     it(
