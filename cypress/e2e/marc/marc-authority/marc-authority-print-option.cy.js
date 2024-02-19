@@ -4,8 +4,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import Users from '../../../support/fragments/users/users';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('MARC', () => {
@@ -21,42 +19,35 @@ describe('MARC', () => {
           marc: 'marcAuthFileForC380635.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           numOfRecords: 1,
+          propertyName: 'relatedAuthorityInfo',
         },
       ],
     };
     const createdAuthorityIDs = [];
 
     before('Create test data', () => {
-      cy.loginAsAdmin({
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
-      }).then(() => {
-        testData.marcFiles.forEach((marcFile) => {
-          cy.visit(TopMenu.dataImportPath);
-          DataImport.verifyUploadState();
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(testData.jobProfileToRun);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(marcFile.fileName);
-          for (let i = 0; i < marcFile.numOfRecords; i++) {
-            Logs.getCreatedItemsID(i).then((link) => {
-              createdAuthorityIDs.push(link.split('/')[5]);
-            });
-          }
-        });
-        cy.createTempUser([
-          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
+      cy.getAdminToken();
+      testData.marcFiles.forEach((marcFile) => {
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          testData.jobProfileToRun,
+        ).then((response) => {
+          response.entries.forEach((record) => {
+            createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
           });
+        });
+      });
+
+      cy.createTempUser([
+        Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+        Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
+      ]).then((createdUserProperties) => {
+        testData.userProperties = createdUserProperties;
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.marcAuthorities,
+          waiter: MarcAuthorities.waitLoading,
         });
       });
     });

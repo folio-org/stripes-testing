@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -57,12 +55,26 @@ describe('MARC', () => {
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
         const createdAuthorityIDs = [];
 
         before(() => {
+          cy.getAdminToken();
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
+          });
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
@@ -71,27 +83,6 @@ describe('MARC', () => {
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
-
-            marcFiles.forEach((marcFile) => {
-              cy.loginAsAdmin({
-                path: TopMenu.dataImportPath,
-                waiter: DataImport.waitLoading,
-              }).then(() => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdAuthorityIDs.push(link.split('/')[5]);
-                  });
-                }
-              });
-            });
           });
         });
 

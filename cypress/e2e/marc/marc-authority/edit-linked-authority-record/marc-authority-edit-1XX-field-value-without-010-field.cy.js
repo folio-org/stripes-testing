@@ -4,13 +4,10 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import Users from '../../../../support/fragments/users/users';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import InventoryKeyboardShortcuts from '../../../../support/fragments/inventory/inventoryKeyboardShortcuts';
 import InventoryHotkeys from '../../../../support/fragments/inventory/inventoryHotkeys';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
@@ -32,6 +29,7 @@ describe('MARC', () => {
           fileName: `testMarcFileC374158${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
           instanceTitle: 'An Anglican view of the Vatican Council.',
+          propertyName: 'relatedInstanceInfo',
         },
         {
           marc: 'marcAuthFileC374158.mrc',
@@ -41,6 +39,7 @@ describe('MARC', () => {
             'C374158 Vatican Council (2nd : 1962-1965 : Basilica di San Pietro in Vaticano)',
           updatedAuthorityHeading:
             'C374158 Vatican Council (2nd : 1962-1966 : Basilica di San Pietro in Vaticano)',
+          propertyName: 'relatedAuthorityInfo',
         },
       ];
       const linkingTagAndValue = {
@@ -52,6 +51,19 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Creating user, importing and linking records', () => {
+        cy.getAdminToken();
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            });
+          });
+        });
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -62,23 +74,7 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          marcFiles.forEach((marcFile) => {
-            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-              () => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
-                });
-              },
-            );
-          });
-
+          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
           cy.visit(TopMenu.inventoryPath).then(() => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

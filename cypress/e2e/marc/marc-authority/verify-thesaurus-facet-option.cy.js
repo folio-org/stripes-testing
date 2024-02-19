@@ -1,7 +1,5 @@
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -15,7 +13,7 @@ describe('MARC', () => {
     const fileName = '100_MARC_authority_records.mrc';
     const updatedFileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
     const thesaurusType = 'Library of Congress Subject Headings';
-    let createdAuthorityID;
+    const createdAuthorityID = [];
 
     before('Creating data', () => {
       cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
@@ -23,33 +21,27 @@ describe('MARC', () => {
           testData.userProperties = createdUserProperties;
         },
       );
-      cy.loginAsAdmin({
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
-      }).then(() => {
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(fileName, updatedFileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(updatedFileName);
-        Logs.checkStatusOfJobProfile('Completed');
-        Logs.openFileDetails(updatedFileName);
-        Logs.getCreatedItemsID().then((link) => {
-          createdAuthorityID = link.split('/')[5];
+
+      DataImport.uploadFileViaApi(fileName, updatedFileName, jobProfileToRun)
+        .then((response) => {
+          response.entries.forEach((record) => {
+            createdAuthorityID.push(record.relatedAuthorityInfo.idList[0]);
+          });
+        })
+        .then(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
         });
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-        });
-      });
     });
 
     after('Deleting data', () => {
       cy.getAdminToken();
-      if (createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID);
       Users.deleteViaApi(testData.userProperties.userId);
+      createdAuthorityID.forEach((id) => {
+        MarcAuthority.deleteViaAPI(id);
+      });
     });
 
     it(

@@ -116,7 +116,7 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              testData.createdRecordIDs.push(response.relatedAuthorityInfo.idList[0]);
+              testData.createdRecordIDs.push(response.entries[0].relatedAuthorityInfo.idList[0]);
             });
           });
 

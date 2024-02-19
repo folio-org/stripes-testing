@@ -1,7 +1,5 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
@@ -50,18 +48,33 @@ describe('MARC', () => {
           fileName: `testMarcFileC422066${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
           numOfRecords: 1,
+          propertyName: 'relatedInstanceInfo',
         },
         {
           marc: 'marcAuthFileForC422066.mrc',
           fileName: `testMarcFileC422066${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           numOfRecords: 1,
+          propertyName: 'relatedAuthorityInfo',
         },
       ];
 
       const createdAuthorityIDs = [];
 
       before('Creating user and data', () => {
+        cy.getAdminToken();
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+            });
+          });
+        });
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -72,43 +85,24 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           userData = createdUserProperties;
 
-          cy.loginAsAdmin()
-            .then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdAuthorityIDs.push(link.split('/')[5]);
-                  });
-                }
-              });
-            })
-            .then(() => {
-              cy.visit(TopMenu.inventoryPath);
-              InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-              InventoryInstances.selectInstance();
-              InventoryInstance.editMarcBibliographicRecord();
-              QuickMarcEditor.clickLinkIconInTagField(marcBibRecordData.rowIndex);
-              MarcAuthorities.switchToSearch();
-              InventoryInstance.verifySelectMarcAuthorityModal();
-              InventoryInstance.verifySearchOptions();
-              InventoryInstance.searchResults(marcAuthRecordData.authorityHeading);
-              InventoryInstance.clickLinkButton();
-              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
-                marcBibRecordData.tag100,
-                marcBibRecordData.rowIndex,
-              );
-              QuickMarcEditor.pressSaveAndClose();
-              QuickMarcEditor.checkAfterSaveAndClose();
-            });
+          cy.loginAsAdmin().then(() => {
+            cy.visit(TopMenu.inventoryPath);
+            InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            QuickMarcEditor.clickLinkIconInTagField(marcBibRecordData.rowIndex);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            InventoryInstance.verifySearchOptions();
+            InventoryInstance.searchResults(marcAuthRecordData.authorityHeading);
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
+              marcBibRecordData.tag100,
+              marcBibRecordData.rowIndex,
+            );
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
+          });
 
           cy.login(userData.username, userData.password, {
             path: TopMenu.marcAuthorities,

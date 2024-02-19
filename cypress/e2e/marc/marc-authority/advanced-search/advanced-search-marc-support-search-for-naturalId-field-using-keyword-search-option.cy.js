@@ -3,8 +3,6 @@ import { Permissions } from '../../../../support/dictionary';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 
@@ -21,23 +19,21 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before(() => {
+        cy.getAdminToken();
+        DataImport.uploadFileViaApi(
+          testData.marcFile.marc,
+          testData.marcFile.fileName,
+          testData.marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.entries.forEach((record) => {
+            createdAuthorityIDs.push(record.relatedAuthorityInfo.idList[0]);
+          });
+        });
+
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
           (userProperties) => {
             testData.user = userProperties;
-            cy.loginAsAdmin({
-              path: TopMenu.dataImportPath,
-              waiter: DataImport.waitLoading,
-            });
-            DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(testData.marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(testData.marcFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(testData.marcFile.fileName);
-            Logs.getCreatedItemsID().then((link) => {
-              createdAuthorityIDs.push(link.split('/')[5]);
-            });
+
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
