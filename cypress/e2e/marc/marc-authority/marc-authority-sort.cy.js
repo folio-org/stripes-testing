@@ -1,7 +1,5 @@
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
@@ -48,12 +46,14 @@ describe('MARC', () => {
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 2,
+        propertyName: 'relatedAuthorityInfo',
       },
       {
         marc: 'marcFileForC365113.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 19,
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
 
@@ -77,25 +77,17 @@ describe('MARC', () => {
         },
       );
 
+      cy.getAdminToken();
       marcFiles.forEach((marcFile) => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitFileIsUploaded();
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkJobStatus(marcFile.fileName, 'Completed');
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                createdAuthorityIDs.push(link.split('/')[5]);
-              });
-            }
-          },
-        );
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.entries.forEach((record) => {
+            createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+          });
+        });
       });
     });
 
@@ -116,7 +108,7 @@ describe('MARC', () => {
 
     it(
       'C365113 Apply "Authority source" facet to the search result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.all);
         MarcAuthorities.checkResultsListRecordsCountGreaterThan(0);
@@ -151,7 +143,7 @@ describe('MARC', () => {
 
     it(
       'C350579 Sorting and displaying results of search authority records by "Actions" dropdown menu (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'parallel'] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         MarcAuthorities.checkSearchOptions();
         MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);

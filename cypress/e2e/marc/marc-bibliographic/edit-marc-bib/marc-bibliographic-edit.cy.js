@@ -25,6 +25,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+      const propertyName = 'relatedInstanceInfo';
       const tagArray = [
         '100',
         '110',
@@ -108,17 +109,18 @@ describe('MARC', () => {
             path: TopMenu.dataImportPath,
             waiter: DataImport.waitLoading,
           });
-          DataImport.uploadFile('marcFileForC360542.mrc', fileName);
-          JobProfiles.waitFileIsUploaded();
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(fileName);
-          Logs.getCreatedItemsID().then((link) => {
-            createdInstanceID = link.split('/')[5];
+          DataImport.uploadFileViaApi(
+            'marcFileForC360542.mrc',
+            fileName,
+            jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdInstanceID = record[propertyName].idList[0];
+            });
           });
+          JobProfiles.waitFileIsImported(fileName);
+          Logs.checkJobStatus(fileName, 'Completed');
+          Logs.openFileDetails(fileName);
           Logs.goToTitleLink(RECORD_STATUSES.CREATED);
         });
       });
