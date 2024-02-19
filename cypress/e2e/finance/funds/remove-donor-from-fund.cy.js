@@ -3,6 +3,8 @@ import { FiscalYears, Funds, Ledgers } from '../../../support/fragments/finance'
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import FundEditForm from '../../../support/fragments/finance/funds/fundEditForm';
+import FundDetails from '../../../support/fragments/finance/funds/fundDetails';
 
 describe('Finance', () => {
   describe('Funds', () => {
@@ -61,10 +63,10 @@ describe('Finance', () => {
       () => {
         // Open Fund from Preconditions
         Funds.searchByName(testData.fund.name);
-        const FundDetails = Funds.selectFund(testData.fund.name);
+        Funds.selectFund(testData.fund.name);
 
         // Click on "Actions" button, Select "Edit" option
-        const FundEditForm = FundDetails.openFundEditForm();
+        FundDetails.openFundEditForm();
 
         // Expand "Donor information" accordion
         FundEditForm.expandDonorInformationSection();

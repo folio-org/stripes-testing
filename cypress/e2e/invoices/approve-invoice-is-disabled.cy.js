@@ -93,7 +93,7 @@ describe('Invoices', () => {
       isApprovePayEnabled: false,
     },
   ].forEach(({ description, isApprovePayEnabled }) => {
-    it(description, { tags: ['criticalPath', 'thunderjet', 'nonParallel'] }, () => {
+    it(description, { tags: ['criticalPath', 'thunderjet'] }, () => {
       setApprovePayValue(isApprovePayEnabled);
 
       // Click on "Vendor invoice number" link
