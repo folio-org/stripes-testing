@@ -1,7 +1,5 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -39,6 +37,7 @@ describe('MARC', () => {
           fileName: `testMarcFileC374138${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
           numOfRecords: 1,
+          propertyName: 'relatedInstanceInfo',
         },
         {
           marc: 'marcAuthFileForC374138.mrc',
@@ -46,6 +45,7 @@ describe('MARC', () => {
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           authorityHeading: 'C374138 Beethoven, Ludwig van,',
           numOfRecords: 1,
+          propertyName: 'relatedAuthorityInfo',
         },
       ];
       const linkingTagAndValues = {
@@ -59,6 +59,19 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Creating user and data', () => {
+        cy.getAdminToken();
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+            });
+          });
+        });
+
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -67,43 +80,24 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.loginAsAdmin()
-            .then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdAuthorityIDs.push(link.split('/')[5]);
-                  });
-                }
-              });
-            })
-            .then(() => {
-              cy.visit(TopMenu.inventoryPath);
-              InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-              InventoryInstances.selectInstance();
-              InventoryInstance.editMarcBibliographicRecord();
-              QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
-              MarcAuthorities.switchToSearch();
-              InventoryInstance.verifySelectMarcAuthorityModal();
-              InventoryInstance.verifySearchOptions();
-              InventoryInstance.searchResults(linkingTagAndValues.value);
-              InventoryInstance.clickLinkButton();
-              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
-                linkingTagAndValues.tag,
-                linkingTagAndValues.rowIndex,
-              );
-              QuickMarcEditor.pressSaveAndClose();
-              QuickMarcEditor.checkAfterSaveAndClose();
-            });
+          cy.loginAsAdmin().then(() => {
+            cy.visit(TopMenu.inventoryPath);
+            InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            InventoryInstance.verifySearchOptions();
+            InventoryInstance.searchResults(linkingTagAndValues.value);
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
+              linkingTagAndValues.tag,
+              linkingTagAndValues.rowIndex,
+            );
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
+          });
 
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.marcAuthorities,

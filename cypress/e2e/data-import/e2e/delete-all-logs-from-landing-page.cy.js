@@ -35,7 +35,7 @@ describe('data-import', () => {
 
           DataImport.uploadFileViaApi(filePathToUpload, fileNameToUpload, jobProfileToRun).then(
             (response) => {
-              instanceIds.push(response.relatedInstanceInfo.idList[0]);
+              instanceIds.push(response.entries[0].relatedInstanceInfo.idList[0]);
             },
           );
         }

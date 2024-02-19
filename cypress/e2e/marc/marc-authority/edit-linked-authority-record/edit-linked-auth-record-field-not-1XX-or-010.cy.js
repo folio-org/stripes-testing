@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -31,12 +28,14 @@ describe('MARC', () => {
           fileName: `testMarcFileC374160.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
           instanceTitle: 'C374160 Variations / Ludwig Van Beethoven.',
+          propertyName: 'relatedInstanceInfo',
         },
         {
           marc: 'marcAuthFileForC374160.mrc',
           fileName: `testMarcFileC374160.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           authorityHeading: 'C374160 Beethoven, Ludwig van',
+          propertyName: 'relatedAuthorityInfo',
         },
       ];
 
@@ -64,20 +63,21 @@ describe('MARC', () => {
               });
             },
           );
-          cy.loginAsAdmin();
+
+          cy.getAdminToken();
           marcFiles.forEach((marcFile) => {
-            cy.visit(TopMenu.dataImportPath);
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(marcFile.fileName);
-            Logs.getCreatedItemsID().then((link) => {
-              createdRecordIDs.push(link.split('/')[5]);
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              });
             });
           });
+
+          cy.loginAsAdmin();
         });
 
         cy.createTempUser([

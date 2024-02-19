@@ -89,7 +89,7 @@ describe('orders: Receiving and Check-in', () => {
 
   it(
     'C374133: Copy number applies to the item when receiving through "Receive" option (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'nonParallel'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

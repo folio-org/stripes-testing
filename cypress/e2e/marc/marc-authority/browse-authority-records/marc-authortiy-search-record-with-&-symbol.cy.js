@@ -1,7 +1,5 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
@@ -15,25 +13,18 @@ describe('MARC', () => {
       let user;
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
       const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
-      let createdAuthorityID;
+      const createdAuthorityID = [];
 
       before('Creating data', () => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFile('uniform_title.mrc', fileName);
-            JobProfiles.waitFileIsUploaded();
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(jobProfileToRun);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(fileName);
-            Logs.getCreatedItemsID().then((link) => {
-              createdAuthorityID = link.split('/')[5];
+        cy.getAdminToken();
+        DataImport.uploadFileViaApi('uniform_title.mrc', fileName, jobProfileToRun).then(
+          (response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityID.push(record.relatedAuthorityInfo.idList[0]);
             });
           },
         );
+
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
           (userProperties) => {
             user = userProperties;
@@ -47,7 +38,7 @@ describe('MARC', () => {
 
       after('Deleting data', () => {
         cy.getAdminToken();
-        MarcAuthority.deleteViaAPI(createdAuthorityID);
+        MarcAuthority.deleteViaAPI(createdAuthorityID[0]);
         Users.deleteViaApi(user.userId);
       });
 

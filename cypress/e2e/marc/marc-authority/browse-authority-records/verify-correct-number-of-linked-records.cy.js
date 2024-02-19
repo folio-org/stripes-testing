@@ -1,7 +1,5 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -12,7 +10,6 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -37,6 +34,7 @@ describe('MARC', () => {
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
           title: 'The Journal of ecclesiastical history.',
+          propertyName: 'relatedInstanceInfo',
         },
         {
           marc: 'marcBibFileForC367936_2.mrc',
@@ -44,30 +42,35 @@ describe('MARC', () => {
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
           title:
             'Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.',
+          propertyName: 'relatedInstanceInfo',
         },
         {
           marc: 'marcAuthFileForC367936_1.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           title: 'Dugmore, C. W. (Clifford William)',
+          propertyName: 'relatedAuthorityInfo',
         },
         {
           marc: 'marcAuthFileForC367936_2.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           title: 'Woodson, Jacqueline',
+          propertyName: 'relatedAuthorityInfo',
         },
         {
           marc: 'marcAuthFileForC367936_3.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           title: 'Chin, Staceyann, 1972-',
+          propertyName: 'relatedAuthorityInfo',
         },
         {
           marc: 'marcAuthFileForC367936_4.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           title: 'Lee, Stan, 1922-2018',
+          propertyName: 'relatedAuthorityInfo',
         },
       ];
 
@@ -144,26 +147,24 @@ describe('MARC', () => {
             });
           });
 
-          cy.loginAsAdmin().then(() => {
-            marcFiles.forEach((marcFile) => {
-              cy.visit(TopMenu.dataImportPath);
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFile.fileName);
-              Logs.getCreatedItemsID().then((link) => {
+          cy.getAdminToken();
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
                 if (marcFile.jobProfileToRun === 'Default - Create instance and SRS MARC Bib') {
-                  instanceIDs.push(link.split('/')[5]);
+                  instanceIDs.push(record[marcFile.propertyName].idList[0]);
                 } else {
-                  authorityIDs.push(link.split('/')[5]);
+                  authorityIDs.push(record[marcFile.propertyName].idList[0]);
                 }
               });
             });
           });
+
+          cy.loginAsAdmin();
           cy.visit(TopMenu.inventoryPath).then(() => {
             instanceIDs.forEach((instanceRecord, index) => {
               InventoryInstances.searchByTitle(instanceRecord);

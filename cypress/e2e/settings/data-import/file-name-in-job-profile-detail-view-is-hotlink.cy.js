@@ -20,7 +20,7 @@ describe('data-import', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathToUpload, fileNameToUpload, jobProfileToRun).then(
         (response) => {
-          instanceId = response.relatedInstanceInfo.idList[0];
+          instanceId = response.entries[0].relatedInstanceInfo.idList[0];
         },
       );
 
