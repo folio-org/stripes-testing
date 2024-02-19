@@ -29,7 +29,7 @@ const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const previewOfProposedChangesFileName = `*-Updates-Preview-${userBarcodesFileName}`;
 
 describe('bulk-edit', () => {
-  describe('in-app approach', { retries: 1 }, () => {
+  describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser(
         [
