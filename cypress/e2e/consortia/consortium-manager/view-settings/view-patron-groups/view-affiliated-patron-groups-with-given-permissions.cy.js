@@ -9,7 +9,7 @@ import ConsortiumManagerApp, {
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import PatronGroups from '../../../../../support/fragments/settings/users/patronGroups';
-import PatronGroupsConcortiumManager from '../../../../../support/fragments/consortium-manager/users/patronGroupsConcortiumManager';
+import PatronGroupsConsortiumManager from '../../../../../support/fragments/consortium-manager/users/patronGroupsConsortiumManager';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 
 const testData = {
@@ -37,7 +37,7 @@ describe('Consortium manager', () => {
     describe('View Patron groups', () => {
       before('create test data', () => {
         cy.getAdminToken();
-        PatronGroupsConcortiumManager.createViaApi(testData.centralSharedPatronGroup).then(
+        PatronGroupsConsortiumManager.createViaApi(testData.centralSharedPatronGroup).then(
           (newPatronGroup) => {
             testData.centralSharedPatronGroup = newPatronGroup;
           },
@@ -111,7 +111,7 @@ describe('Consortium manager', () => {
         cy.setTenant(Affiliations.Consortia);
         cy.getAdminToken();
         PatronGroups.deleteViaApi(testData.centralLocalPatronGroup.id);
-        PatronGroupsConcortiumManager.deleteViaApi(testData.centralSharedPatronGroup);
+        PatronGroupsConsortiumManager.deleteViaApi(testData.centralSharedPatronGroup);
         Users.deleteViaApi(testData.user753.userId);
         Users.deleteViaApi(testData.user754.userId);
       });
@@ -128,21 +128,21 @@ describe('Consortium manager', () => {
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.users);
-          PatronGroupsConcortiumManager.choose();
-          PatronGroupsConcortiumManager.verifyGroupInTheList(
+          PatronGroupsConsortiumManager.choose();
+          PatronGroupsConsortiumManager.verifyGroupInTheList(
             testData.centralSharedPatronGroup.payload.group,
             'All',
           );
-          PatronGroupsConcortiumManager.verifyGroupInTheList(
+          PatronGroupsConsortiumManager.verifyGroupInTheList(
             testData.centralLocalPatronGroup.name,
             tenantNames.central,
           );
 
-          PatronGroupsConcortiumManager.verifyGroupInTheList(
+          PatronGroupsConsortiumManager.verifyGroupInTheList(
             testData.collegeLocalPatronGroup.name,
             tenantNames.college,
           );
-          PatronGroupsConcortiumManager.verifyGroupInTheList(
+          PatronGroupsConsortiumManager.verifyGroupInTheList(
             testData.universityLocalPatronGroup.name,
             tenantNames.university,
             'edit',
@@ -154,19 +154,19 @@ describe('Consortium manager', () => {
           SelectMembers.selectMembers(tenantNames.central);
           SelectMembers.saveAndClose();
           ConsortiumManagerApp.verifyMembersSelected(2);
-          PatronGroupsConcortiumManager.verifyGroupInTheList(
+          PatronGroupsConsortiumManager.verifyGroupInTheList(
             testData.centralSharedPatronGroup.payload.group,
             'All',
           );
-          PatronGroupsConcortiumManager.verifyNoGroupInTheList(
+          PatronGroupsConsortiumManager.verifyNoGroupInTheList(
             testData.centralLocalPatronGroup.name,
           );
 
-          PatronGroupsConcortiumManager.verifyGroupInTheList(
+          PatronGroupsConsortiumManager.verifyGroupInTheList(
             testData.collegeLocalPatronGroup.name,
             tenantNames.college,
           );
-          PatronGroupsConcortiumManager.verifyGroupInTheList(
+          PatronGroupsConsortiumManager.verifyGroupInTheList(
             testData.universityLocalPatronGroup.name,
             tenantNames.university,
             'edit',
@@ -192,23 +192,23 @@ describe('Consortium manager', () => {
           SelectMembers.saveAndClose();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(2);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.users);
-          PatronGroupsConcortiumManager.choose();
-          PatronGroupsConcortiumManager.verifyGroupInTheList(
+          PatronGroupsConsortiumManager.choose();
+          PatronGroupsConsortiumManager.verifyGroupInTheList(
             testData.centralSharedPatronGroup.payload.group,
             'All',
           );
-          PatronGroupsConcortiumManager.verifyGroupInTheList(
+          PatronGroupsConsortiumManager.verifyGroupInTheList(
             testData.centralLocalPatronGroup.name,
             tenantNames.central,
           );
 
-          PatronGroupsConcortiumManager.verifyGroupInTheList(
+          PatronGroupsConsortiumManager.verifyGroupInTheList(
             testData.collegeLocalPatronGroup.name,
             tenantNames.college,
             'edit',
             'trash',
           );
-          PatronGroupsConcortiumManager.verifyNoGroupInTheList(
+          PatronGroupsConsortiumManager.verifyNoGroupInTheList(
             testData.universityLocalPatronGroup.name,
           );
 
@@ -217,19 +217,19 @@ describe('Consortium manager', () => {
           SelectMembers.selectMembers(tenantNames.college);
           SelectMembers.saveAndClose();
           ConsortiumManagerApp.verifyMembersSelected(1);
-          PatronGroupsConcortiumManager.verifyGroupInTheList(
+          PatronGroupsConsortiumManager.verifyGroupInTheList(
             testData.centralSharedPatronGroup.payload.group,
             'All',
           );
-          PatronGroupsConcortiumManager.verifyGroupInTheList(
+          PatronGroupsConsortiumManager.verifyGroupInTheList(
             testData.centralLocalPatronGroup.name,
             tenantNames.central,
           );
 
-          PatronGroupsConcortiumManager.verifyNoGroupInTheList(
+          PatronGroupsConsortiumManager.verifyNoGroupInTheList(
             testData.collegeLocalPatronGroup.name,
           );
-          PatronGroupsConcortiumManager.verifyNoGroupInTheList(
+          PatronGroupsConsortiumManager.verifyNoGroupInTheList(
             testData.universityLocalPatronGroup.name,
           );
         },
