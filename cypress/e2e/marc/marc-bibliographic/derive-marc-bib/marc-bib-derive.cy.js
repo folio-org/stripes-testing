@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import { Permissions } from '../../../../support/dictionary';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySteps from '../../../../support/fragments/inventory/inventorySteps';
@@ -22,6 +19,7 @@ describe('MARC', () => {
           marc: 'marcBibFileC396356.mrc',
           fileName: `testMarcFileC396356.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          propertyName: 'relatedInstanceInfo',
         },
       };
 
@@ -34,24 +32,22 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
-              JobProfiles.search(testData.marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(testData.marcFile.fileName);
-              Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(testData.marcFile.fileName);
-              Logs.getCreatedItemsID().then((link) => {
-                createdRecordIDs.push(link.split('/')[5]);
-                cy.login(testData.userProperties.username, testData.userProperties.password, {
-                  path: `${TopMenu.inventoryPath}/view/${createdRecordIDs[0]}`,
-                  waiter: InventoryInstances.waitContentLoading,
-                });
-              });
-            },
-          );
+
+          cy.getAdminToken();
+          DataImport.uploadFileViaApi(
+            testData.marcFile.marc,
+            testData.marcFile.fileName,
+            testData.marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdRecordIDs.push(record[testData.marcFile.propertyName].idList[0]);
+            });
+          });
+
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: `${TopMenu.inventoryPath}/view/${createdRecordIDs[0]}`,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
       });
 

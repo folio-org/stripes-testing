@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
@@ -58,6 +55,7 @@ describe('MARC', () => {
           marc: 'oneMarcBib.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          propertyName: 'relatedInstanceInfo',
         };
 
         before(() => {
@@ -66,22 +64,18 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
-            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-              () => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitFileIsUploaded();
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdInstanceIDs.push(link.split('/')[5]);
-                });
-              },
-            );
+
+            cy.getAdminToken();
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdInstanceIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
+
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,

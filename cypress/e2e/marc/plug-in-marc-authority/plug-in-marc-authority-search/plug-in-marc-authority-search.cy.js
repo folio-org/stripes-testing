@@ -111,7 +111,7 @@ describe('MARC', () => {
 
       const createdAuthorityIDs = [];
 
-      before('Creating user', () => {
+      beforeEach('Creating user', () => {
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -133,28 +133,30 @@ describe('MARC', () => {
               });
             });
           });
+
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
       });
 
-      beforeEach('Login to the application', () => {
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-      });
-
-      after('Deleting created user', () => {
+      afterEach('Deleting created user', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
         InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
         createdAuthorityIDs.forEach((id, index) => {
           if (index) MarcAuthority.deleteViaAPI(id);
         });
+        createdAuthorityIDs.length = 0;
+        // Wait for the file to be deleted and not affect to the next test run
+        // TODO: delete this wait after fix of the bug MODDATAIMP-987
+        cy.wait(120000);
       });
 
       it(
         'C380565 MARC Authority plug-in | Search for MARC authority records when the user clicks on the "Link" icon (spitfire)',
-        { tags: ['smoke', 'spitfire', 'nonParallel'] },
+        { tags: ['smoke', 'spitfire'] },
         () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
@@ -177,7 +179,7 @@ describe('MARC', () => {
 
       it(
         'C359206 MARC Authority plug-in | Search using "Identifier (all)" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+        { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
@@ -209,7 +211,7 @@ describe('MARC', () => {
 
       it(
         'C380567 MARC Authority plug-in | Search using "Corporate/Conference name" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+        { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
@@ -240,7 +242,7 @@ describe('MARC', () => {
 
       it(
         'C380568 MARC Authority plug-in | Search using "Geographic name" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+        { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
@@ -258,7 +260,7 @@ describe('MARC', () => {
 
       it(
         'C380569 MARC Authority plug-in | Search using "Name-title" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+        { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
@@ -287,7 +289,7 @@ describe('MARC', () => {
 
       it(
         'C380566 MARC Authority plug-in | Search using "Personal name" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+        { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
@@ -302,7 +304,7 @@ describe('MARC', () => {
 
       it(
         'C380570 MARC Authority plug-in | Search using "Uniform title" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+        { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();

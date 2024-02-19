@@ -95,7 +95,7 @@ describe('MARC', () => {
 
       it(
         'C350667 Update a MARC authority record via data import. Record match with 010 $a (spitfire)',
-        { tags: ['smoke', 'spitfire', 'nonParallel'] },
+        { tags: ['smoke', 'spitfire'] },
         () => {
           cy.visit(TopMenu.dataImportPath);
           DataImport.uploadFile('test-auth-file.mrc', updatedfileName);
@@ -113,7 +113,7 @@ describe('MARC', () => {
 
       it(
         'C350575 MARC Authority fields LEADER and 008 can not be deleted (spitfire)',
-        { tags: ['smoke', 'spitfire', 'nonParallel'] },
+        { tags: ['smoke', 'spitfire'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
@@ -124,7 +124,7 @@ describe('MARC', () => {
 
       it(
         'C350576 Update 008 of Authority record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'nonParallel'] },
+        { tags: ['smoke', 'spitfire'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
@@ -150,7 +150,7 @@ describe('MARC', () => {
 
       it(
         'C350513 Browse authority - handling for when there is no exact match (spitfire)',
-        { tags: ['smoke', 'spitfire', 'nonParallel'] },
+        { tags: ['smoke', 'spitfire'] },
         () => {
           MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.checkSearchOptions();
@@ -164,7 +164,7 @@ describe('MARC', () => {
 
       it(
         'C350902 MARC fields behavior when editing "MARC Authority" record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'nonParallel'] },
+        { tags: ['smoke', 'spitfire'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
@@ -177,7 +177,7 @@ describe('MARC', () => {
 
       it(
         'C350680 Duplicate records do not return when searching by Identifier (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+        { tags: ['criticalPath', 'spitfire'] },
         () => {
           const searchOption = 'Identifier (all)';
           const identifier = 'n  42008104';
@@ -190,7 +190,7 @@ describe('MARC', () => {
 
       it(
         'C350641 Search MARC: support exact match searching Library of Congress Control Number - 010 field $a subfield (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+        { tags: ['criticalPath', 'spitfire'] },
         () => {
           MarcAuthorities.checkSearchOptions();
           MarcAuthorities.searchBy(
@@ -232,7 +232,7 @@ describe('MARC', () => {
 
       it(
         'C350572 Edit an Authority record (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'parallel'] },
+        { tags: ['criticalPath', 'spitfire'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
