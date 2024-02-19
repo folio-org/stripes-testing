@@ -1315,4 +1315,50 @@ export default {
   checkSelectOptionFieldContent(option) {
     cy.expect(selectField.has({ checkedOptionText: option }));
   },
+
+  checkRecordInBold(heading) {
+    cy.expect(
+      MultiColumnListCell(including(heading)).has({ innerHTML: including('anchorLink--') }),
+    );
+  },
+
+  searchButtonClick() {
+    cy.do(searchButton.click());
+  },
+
+  checkRecordsResultListIsAbsent() {
+    cy.expect(
+      rootSection
+        .find(HTML(including('Choose a filter or enter a search query to show results')))
+        .exists(),
+    );
+  },
+
+  checkRecordsCountExistsInSharedFacet() {
+    this.getRecordsCountInOptionsInSharedFacet('Yes').then((count) => {
+      // eslint-disable-next-line no-unused-expressions
+      cy.expect(count).to.exist;
+    });
+    this.getRecordsCountInOptionsInSharedFacet('No').then((count) => {
+      // eslint-disable-next-line no-unused-expressions
+      cy.expect(count).to.exist;
+    });
+  },
+
+  getRecordsCountInOptionsInSharedFacet(optionName) {
+    return cy.then(() => {
+      return accordionShared
+        .find(Checkbox({ name: optionName }))
+        .find(HTML({ className: including('checkBoxLabelInfo--') }))
+        .perform((element) => element.textContent);
+    });
+  },
+
+  checkTypeOfHeadingFacetCleared() {
+    cy.expect(typeOfHeadingSelect.has({ selectedCount: 0 }));
+  },
+
+  checkPreviousAndNextPaginationButtonsShown() {
+    cy.expect([previousButton.visible(), nextButton.visible()]);
+  },
 };

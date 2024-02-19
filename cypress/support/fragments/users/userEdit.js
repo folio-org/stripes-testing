@@ -28,11 +28,25 @@ const saveAndCloseBtn = Button('Save & close');
 const actionsButton = Button('Actions');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const editButton = Button('Edit');
-const extendedInformationAccordion = Accordion('Extended information');
 const externalSystemIdTextfield = TextField('External system ID');
-const customFieldsAccordion = Accordion('Custom fields');
 const selectPermissionsModal = Modal('Select Permissions');
 const permissionsAccordion = Accordion({ id: 'permissions' });
+const userInformationAccordion = Accordion('User information');
+const affiliationsAccordion = Accordion('Affiliations');
+const extendedInformationAccordion = Accordion('Extended information');
+const contactInformationAccordion = Accordion('Contact information');
+const customFieldsAccordion = Accordion('Custom fields');
+const userPermissionsAccordion = Accordion('User permissions');
+const servicePointsAccordion = Accordion('Service points');
+const patronBlocksAccordion = Accordion('Patron blocks');
+const proxySponsorAccordion = Accordion('Proxy/sponsor');
+const feesFinesAccordion = Accordion('Fees/fines');
+const loansAccordion = Accordion('Loans');
+const requestsAccordion = Accordion('Requests');
+const notesAccordion = Accordion('Notes');
+const createRequestActionsButton = Button('Create request');
+const createFeeFineActionsButton = Button('Create fee/fine');
+const createPatronBlockActionsButton = Button('Create block');
 const addPermissionsButton = Button({ id: 'clickable-add-permission' });
 const permissionsSearch = selectPermissionsModal.find(SearchField());
 const searchButton = Button('Search');
@@ -176,6 +190,68 @@ export default {
     });
 
     cy.do(Modal().find(saveAndCloseBtn).click());
+  },
+
+  selectPreferableServicePoint(point) {
+    cy.do(Select({ id: 'servicePointPreference' }).choose(point));
+  },
+
+  openServicePointsAccordion() {
+    cy.do(Button({ id: 'accordion-toggle-button-servicePointsSection' }).click());
+  },
+
+  checkServicePoints(...points) {
+    points.forEach((point) => {
+      cy.expect(servicePointsAccordion.find(HTML(including(point))).exists());
+    });
+  },
+
+  checkAccordionsForShadowUser() {
+    cy.expect([
+      userInformationAccordion.exists(),
+      affiliationsAccordion.exists(),
+      extendedInformationAccordion.exists(),
+      contactInformationAccordion.exists(),
+      customFieldsAccordion.exists(),
+      userPermissionsAccordion.exists(),
+      servicePointsAccordion.exists(),
+    ]);
+    cy.expect([
+      patronBlocksAccordion.absent(),
+      proxySponsorAccordion.absent(),
+      feesFinesAccordion.absent(),
+      loansAccordion.absent(),
+      requestsAccordion.absent(),
+      notesAccordion.absent(),
+    ]);
+  },
+
+  checkAccordionsForShadowUserInEditMode() {
+    cy.expect([
+      userInformationAccordion.exists(),
+      extendedInformationAccordion.exists(),
+      contactInformationAccordion.exists(),
+      userPermissionsAccordion.exists(),
+      servicePointsAccordion.exists(),
+    ]);
+    cy.expect([
+      patronBlocksAccordion.absent(),
+      proxySponsorAccordion.absent(),
+      feesFinesAccordion.absent(),
+      loansAccordion.absent(),
+      requestsAccordion.absent(),
+      notesAccordion.absent(),
+    ]);
+  },
+
+  checkActionsForShadowUser() {
+    cy.do(userDetailsPane.find(actionsButton).click());
+    cy.expect([
+      createRequestActionsButton.absent(),
+      createFeeFineActionsButton.absent(),
+      createPatronBlockActionsButton.absent(),
+    ]);
+    cy.do(userDetailsPane.find(actionsButton).click());
   },
 
   addProxySponsor(users, type = 'sponsor') {

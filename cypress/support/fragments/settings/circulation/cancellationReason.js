@@ -63,4 +63,27 @@ export default {
       });
     }
   },
+
+  verifyReasonAbsentInTheList({ name }) {
+    const row = MultiColumnListRow({ content: including(name) });
+    cy.expect(row.absent());
+  },
+
+  clickEditButtonForReason(name) {
+    const row = MultiColumnListRow({ content: including(name) });
+    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
+    row
+      .find(actionsCell)
+      .find(Button({ icon: 'edit' }))
+      .click();
+  },
+
+  clickTrashButtonForReason(name) {
+    const row = MultiColumnListRow({ content: including(name) });
+    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
+    row
+      .find(actionsCell)
+      .find(Button({ icon: 'trash' }))
+      .click();
+  },
 };

@@ -1240,6 +1240,10 @@ export default {
     cy.expect([Button({ id: 'share-local-instance' }).absent()]);
   },
 
+  checkInstanceHeader(header) {
+    cy.get('#paneHeaderpane-instancedetails-pane-title > h2').should('have.text', header);
+  },
+
   checkEditInstanceButtonIsAbsent() {
     cy.do(actionsButton.click());
     cy.expect([Button('Edit instance').absent()]);
