@@ -9,6 +9,9 @@ import {
   matching,
   Accordion,
   TextField,
+  Selection,
+  FieldSet,
+  RepeatableFieldItem,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -53,7 +56,7 @@ export default {
     instanceStatus,
     statisticalCode,
     adminNote,
-    instnaceIdentifier,
+    instnaceIdentifier: instanceIdentifier,
     edition,
     natureOfContent,
     format,
@@ -97,20 +100,30 @@ export default {
 
     if (statisticalCode) {
       cy.do(Button('Add statistical code').click());
-      cy.do(Select({ name: 'statisticalCodeIds[0]' }).choose(statisticalCode));
+      cy.do([
+        FieldSet('Statistical code')
+          .find(RepeatableFieldItem({ index: 1 }))
+          .find(Selection())
+          .choose(including(statisticalCode)),
+      ]);
     }
 
     if (adminNote) {
       cy.do(Button('Add administrative note').click());
-      cy.do(TextField({ name: 'administrativeNotes[0]' }).fillIn(adminNote));
+      cy.do(
+        FieldSet('Administrative note')
+          .find(RepeatableFieldItem({ index: 1 }))
+          .find(TextArea({ name: 'administrativeNotes[0]' }))
+          .fillIn(adminNote),
+      );
     }
 
-    if (instnaceIdentifier) {
-      for (let i = 0; i < instnaceIdentifier.length; i++) {
+    if (instanceIdentifier) {
+      for (let i = 0; i < instanceIdentifier.length; i++) {
         cy.do([
           Button('Add identifier').click(),
-          Select({ name: `identifiers[${i}].identifierTypeId` }).choose(instnaceIdentifier[i].type),
-          TextField({ name: `identifiers[${i}].value` }).fillIn(instnaceIdentifier[i].value),
+          Select({ name: `identifiers[${i}].identifierTypeId` }).choose(instanceIdentifier[i].type),
+          TextField({ name: `identifiers[${i}].value` }).fillIn(instanceIdentifier[i].value),
         ]);
       }
     }
@@ -123,7 +136,7 @@ export default {
       for (let i = 0; i < natureOfContent.length; i++) {
         cy.do([
           Button('Add nature of content').click(),
-          Select({ name: `natureOfContentTermIds[${i}].value` }).choose(natureOfContent[i]),
+          Select({ name: `natureOfContentTermIds[${i}]` }).choose(natureOfContent[i]),
         ]);
       }
     }
@@ -141,7 +154,7 @@ export default {
       for (let i = 0; i < frequency.length; i++) {
         cy.do([
           Button('Add frequency').click(),
-          TextField({ name: `publicationFrequency[${i}]` }).fillIn(frequency[i]),
+          TextArea({ name: `publicationFrequency[${i}]` }).fillIn(frequency[i]),
         ]);
       }
     }
@@ -151,7 +164,7 @@ export default {
         cy.do([
           Button('Add note').click(),
           Select({ name: `notes[${i}].instanceNoteTypeId` }).choose(instanceNote[i].type),
-          TextField({ name: `notes[${i}].note` }).fillIn(instanceNote[i].value),
+          TextArea({ name: `notes[${i}].note` }).fillIn(instanceNote[i].value),
         ]);
       }
     }
@@ -162,8 +175,8 @@ export default {
         Select({ name: 'electronicAccess[0].relationshipId' }).choose(
           electronicAccess.relationship,
         ),
-        TextField({ name: 'electronicAccess[0].uri' }).fillIn(electronicAccess.uri),
-        TextField({ name: 'electronicAccess[0].linkText' }).fillIn(electronicAccess.linkText),
+        TextArea({ name: 'electronicAccess[0].uri' }).fillIn(electronicAccess.uri),
+        TextArea({ name: 'electronicAccess[0].linkText' }).fillIn(electronicAccess.linkText),
       ]);
     }
 
@@ -171,7 +184,7 @@ export default {
       for (let i = 0; i < subject.length; i++) {
         cy.do([
           Button('Add subject').click(),
-          TextField({ name: `subjects[${i}]` }).fillIn(subject[i]),
+          TextField({ name: `subjects[${i}].value` }).fillIn(subject[i]),
         ]);
       }
     }

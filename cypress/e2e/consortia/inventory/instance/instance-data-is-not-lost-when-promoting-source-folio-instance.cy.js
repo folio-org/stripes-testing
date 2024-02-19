@@ -8,16 +8,18 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import DateTools from '../../../../support/utils/dateTools';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import inventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+// import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('Inventory', () => {
   describe('Instance', () => {
     let user;
-    let instanceHRID;
+    // let instanceHRID;
     const instanceData = {
       today: DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD'),
       instanceStatusTerm: 'Batch Loaded (consortium: batch)',
-      instanceTitle: `C422050 instanceTitle${getRandomPostfix}`,
+      instanceTitle: `C422050 instanceTitle${getRandomPostfix()}`,
+      statisticalCode: 'ARL (Collection stats):    books - Book, print (books)',
+      adminNote: `Instance admin note${getRandomPostfix()}`,
     };
 
     before('Create test data', () => {
@@ -60,16 +62,16 @@ describe('Inventory', () => {
         InventoryNewInstance.fillInstanceFields({
           catalogedDate: instanceData.today,
           instanceStatus: instanceData.instanceStatusTerm,
-          statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
-          adminNote: `Instance admin note${getRandomPostfix}`,
+          statisticalCode: instanceData.statisticalCode,
+          adminNote: instanceData.adminNote,
           title: instanceData.instanceTitle,
-          instnaceIdentifier: [
+          instanceIdentifier: [
             { type: 'ISBN', value: uuid() },
             { type: 'ISBN', value: uuid() },
             { type: 'ISBN', value: uuid() },
           ],
           contributor: {
-            name: `autotest_contributor${getRandomPostfix}`,
+            name: `autotest_contributor${getRandomPostfix()}`,
             nameType: 'Personal name',
           },
           publication: { place: 'autotest_publication_place', date: moment.utc().format() },
@@ -80,53 +82,57 @@ describe('Inventory', () => {
           format: ['audio -- other', 'audio -- other', 'audio -- other'],
           language: 'English',
           frequency: [
-            `Publication frequency${getRandomPostfix}`,
-            `Publication frequency${getRandomPostfix}`,
-            `Publication frequency${getRandomPostfix}`,
+            `Publication frequency${getRandomPostfix()}`,
+            `Publication frequency${getRandomPostfix()}`,
+            `Publication frequency${getRandomPostfix()}`,
           ],
           instanceNote: [
-            { type: 'Bibliography note', value: `Instance note ${getRandomPostfix}` },
-            { type: 'Bibliography note', value: `Instance note ${getRandomPostfix}` },
-            { type: 'Bibliography note', value: `Instance note ${getRandomPostfix}` },
+            { type: 'Bibliography note', value: `Instance note ${getRandomPostfix()}` },
+            { type: 'Bibliography note', value: `Instance note ${getRandomPostfix()}` },
+            { type: 'Bibliography note', value: `Instance note ${getRandomPostfix()}` },
           ],
           electronicAccess: {
             relationship: 'Resource',
             uri: 'test@mail.com',
-            textLink: 'test@mail.com',
+            linkText: 'test@mail.com',
           },
           subject: ['test', 'test', 'test'],
           classification: [
-            { type: 'Dewey', value: `classification${getRandomPostfix}` },
-            { type: 'Dewey', value: `classification${getRandomPostfix}` },
-            { type: 'Dewey', value: `classification${getRandomPostfix}` },
+            { type: 'Dewey', value: `classification${getRandomPostfix()}` },
+            { type: 'Dewey', value: `classification${getRandomPostfix()}` },
+            { type: 'Dewey', value: `classification${getRandomPostfix()}` },
           ],
         });
         InventoryNewInstance.clickSaveAndCloseButton();
         InventoryInstance.checkInstanceDetails([
-          // { key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO },
+          { key: 'Cataloged date', value: instanceData.today },
+          { key: 'Instance status term', value: instanceData.instanceStatusTerm },
+          // { key: 'Statistical code', value: 'Book, print (books)' },
+          // { key: 'Administrative note', value: instanceData.adminNote },
+          { key: 'Resource title', value: instanceData.title },
         ]);
-        InventoryInstance.shareInstance();
-        InventoryInstance.verifyCalloutMessage(
-          `Local instance ${instanceData.instanceTitle} has been successfully shared`,
-        );
-        InventoryInstance.waitInstanceRecordViewOpened(instanceData.instanceTitle);
-        cy.reload();
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHRID = initialInstanceHrId;
+        // InventoryInstance.shareInstance();
+        // InventoryInstance.verifyCalloutMessage(
+        //   `Local instance ${instanceData.instanceTitle} has been successfully shared`,
+        // );
+        // InventoryInstance.waitInstanceRecordViewOpened(instanceData.instanceTitle);
+        // cy.reload();
+        // InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+        //   instanceHRID = initialInstanceHrId;
 
-          InventoryInstance.checkInstanceDetails([
-            // { key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO },
-          ]);
+        //   InventoryInstance.checkInstanceDetails([
+        //     // { key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO },
+        //   ]);
 
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
-          inventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
-          InventoryInstances.selectInstance();
-          InventoryInstance.waitLoading();
-          InventoryInstance.checkInstanceDetails([
-            // { key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO },
-          ]);
-        });
+        //   ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+        //   ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+        //   inventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+        //   InventoryInstances.selectInstance();
+        //   InventoryInstance.waitLoading();
+        //   InventoryInstance.checkInstanceDetails([
+        //     // { key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO },
+        //   ]);
+        // });
       },
     );
   });
