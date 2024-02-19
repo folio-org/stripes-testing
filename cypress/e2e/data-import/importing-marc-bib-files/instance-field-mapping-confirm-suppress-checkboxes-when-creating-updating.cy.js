@@ -159,7 +159,7 @@ describe('data-import', () => {
         };
 
         const matchProfile = {
-          profileName: `C17017 autotest MatchProf${getRandomPostfix()}`,
+          profileName: `C11088 autotest MatchProf${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '001',
           },
@@ -169,7 +169,7 @@ describe('data-import', () => {
         };
 
         const jobProfileUpdate = {
-          profileName: `C17017 autotest update JobProf${getRandomPostfix()}`,
+          profileName: `C11088 autotest update JobProf${getRandomPostfix()}`,
           acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
         };
 

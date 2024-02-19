@@ -23,7 +23,7 @@ describe('data-import', () => {
         fileName,
         'Default - Create instance and SRS MARC Bib',
       ).then((response) => {
-        instanceId = response.relatedInstanceInfo.idList[0];
+        instanceId = response.entries[0].relatedInstanceInfo.idList[0];
       });
 
       cy.createTempUser([

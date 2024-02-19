@@ -32,7 +32,7 @@ describe('MARC', () => {
         testData.marcFile.fileName,
         testData.marcFile.jobProfileToRun,
       ).then((response) => {
-        testData.recordId = response.relatedAuthorityInfo.idList[0];
+        testData.recordId = response.entries[0].relatedAuthorityInfo.idList[0];
       });
 
       cy.createTempUser([

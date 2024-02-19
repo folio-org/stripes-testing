@@ -9,6 +9,7 @@ import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import FileManager from '../../../support/utils/fileManager';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -16,29 +17,32 @@ describe('data-import', () => {
     const instanceHrids = [];
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathToUpload = 'marcBibFileForC6690.mrc';
-    const fileName = `C6690 autotestFile.${getRandomPostfix()}.mrc`;
+    const editedFileForUpload = `C6690 editedAutotestFile${getRandomPostfix()}.mrc`;
+    const fileName = `C6690 autotestFile${getRandomPostfix()}.mrc`;
     const instances = [
       {
         title: '2000 Philippine provincial poverty statistics.',
-        resourceTitle: '2000 Philippine provincial poverty statistics.',
-        indexTitle: '2000 Philippine provincial poverty statistics.',
+        updatedTitle: `2000 Philippine provincial poverty statistics.${getRandomPostfix()}`,
       },
       {
         title: "Halsbury's laws of England.",
-        resourceTitle: "Halsbury's laws of England.",
-        indexTitle: "Halsbury's laws of England.",
+        updatedTitle: `Halsbury's laws of England.${getRandomPostfix()}`,
       },
       {
-        title:
-          'The war of the rebellion [electronic resource]: a compilation of the official records of the Union and Confederate armies',
-        resourceTitle:
-          'The war of the rebellion [electronic resource]: a compilation of the official records of the Union and Confederate armies. Pub. under the direction of the secretary of war ...',
-        indexTitle:
-          'War of the rebellion a compilation of the official records of the Union and Confederate armies.',
+        title: 'The war of the rebellion',
+        updatedTitle: `The war of the rebellion${getRandomPostfix()}`,
       },
     ];
 
     before('create test data', () => {
+      // need to edit file for creating unique instance title
+      DataImport.editMarcFile(
+        filePathToUpload,
+        editedFileForUpload,
+        [instances[0].title, instances[1].title, instances[2].title],
+        [instances[0].updatedTitle, instances[1].updatedTitle, instances[2].updatedTitle],
+      );
+
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
@@ -63,6 +67,7 @@ describe('data-import', () => {
           );
         });
       });
+      FileManager.deleteFile(`cypress/fixtures/${editedFileForUpload}`);
     });
 
     it(
@@ -71,7 +76,7 @@ describe('data-import', () => {
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile(filePathToUpload, fileName);
+        DataImport.uploadFile(editedFileForUpload, fileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
@@ -80,7 +85,7 @@ describe('data-import', () => {
 
         cy.visit(TopMenu.inventoryPath);
         instances.forEach((instance) => {
-          InventorySearchAndFilter.searchInstanceByTitle(instance.title);
+          InventorySearchAndFilter.searchInstanceByTitle(instance.updatedTitle);
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
             const instanceHrid = initialInstanceHrId;
@@ -88,8 +93,8 @@ describe('data-import', () => {
             instanceHrids.push(instanceHrid);
           });
 
-          InstanceRecordView.verifyResourceTitle(instance.resourceTitle);
-          InstanceRecordView.verifyIndexTitle(instance.indexTitle);
+          InstanceRecordView.verifyResourceTitle(instance.updatedTitle);
+          InstanceRecordView.verifyIndexTitle(instance.updatedTitle);
         });
       },
     );

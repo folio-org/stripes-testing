@@ -25,12 +25,11 @@ const close = (profileName) => cy.do(Pane({ title: profileName }).find(iconButto
 
 const search = (profileName) => {
   // TODO: clarify with developers what should be waited
-  cy.wait(1500);
-  cy.do([
-    searchField.focus(),
-    searchField.fillIn(profileName),
-    Pane('Action profiles').find(Button('Search')).click(),
-  ]);
+  cy.wait(2000);
+  cy.expect(resultsPane.find(searchField).exists());
+  cy.do(searchField.focus());
+  cy.expect(resultsPane.find(searchField).exists());
+  cy.do([searchField.fillIn(profileName), Pane('Action profiles').find(Button('Search')).click()]);
 };
 
 export default {

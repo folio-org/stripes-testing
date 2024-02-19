@@ -35,7 +35,7 @@ describe('data-import', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi('marcFileForC358968.mrc', fileName, jobProfileToRun).then(
         (response) => {
-          instanceHrid = response.relatedInstanceInfo.hridList[0];
+          instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
         },
       );
       Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
