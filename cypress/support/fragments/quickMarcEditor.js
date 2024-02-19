@@ -358,7 +358,50 @@ const holdingsLocationSelectDisabled = holdingsLocationModal.find(
 );
 const holdingsLocationSaveButton = holdingsLocationModal.find(Button('Save and close'));
 
+const defaultValidLdr = '00000naa\\a2200000uu\\4500';
+const defaultValidHoldingsLdr = '00000nu\\\\\\2200000un\\4500';
+const defaultValid008Values = {
+  Type: '\\',
+  BLvl: '\\',
+  DtSt: '\\',
+  Date1: '\\\\\\\\',
+  Date2: '\\\\\\\\',
+  Ctry: '\\\\\\',
+  Lang: '\\\\\\',
+  MRec: '\\',
+  Srce: '\\',
+  Ills: ['\\', '\\', '\\', '\\'],
+  Audn: '\\',
+  Form: '\\',
+  Cont: ['\\', '\\', '\\', '\\'],
+  GPub: '\\',
+  Conf: '\\',
+  Fest: '\\',
+  Indx: '\\',
+  LitF: '\\',
+  Biog: '\\',
+};
+const defaultValid008HoldingsValues = {
+  AcqEndDate: '\\\\\\\\',
+  AcqMethod: '\\',
+  AcqStatus: '\\',
+  Compl: '\\',
+  Copies: '\\\\\\',
+  'Gen ret': '\\',
+  Lang: '\\\\\\',
+  Lend: '\\',
+  Repro: '\\',
+  'Rept date': '\\\\\\\\\\\\',
+  'Sep/comp': '\\',
+  'Spec ret': ['\\', '\\', '\\'],
+};
+
 export default {
+  defaultValidLdr,
+  defaultValidHoldingsLdr,
+  defaultValid008Values,
+  defaultValid008HoldingsValues,
+
   getInitialRowsCount() {
     return validRecord.lastRowNumber;
   },
@@ -2099,5 +2142,49 @@ export default {
   checkAfterSaveAndKeepEditing() {
     cy.expect(calloutAfterSaveAndClose.exists());
     cy.expect(rootSection.exists());
+  },
+
+  getCreatedMarcBib(marcBibTitle, timeOutSeconds = 120) {
+    let timeCounter = 0;
+    function checkBib() {
+      cy.okapiRequest({
+        path: 'instance-storage/instances',
+        searchParams: { query: `(title=="${marcBibTitle}")` },
+        isDefaultSearchParamsRequired: false,
+      }).then(({ body }) => {
+        if (body.instances[0] || timeCounter >= timeOutSeconds) {
+          cy.expect(body.instances[0].title).equals(marcBibTitle);
+          cy.wrap(body.instances[0]).as('bib');
+        } else {
+          cy.wait(1000);
+          checkBib();
+          timeCounter++;
+        }
+      });
+    }
+    checkBib();
+    return cy.get('@bib');
+  },
+
+  getCreatedMarcHoldings(marcBibId, holdingsNote, timeOutSeconds = 120) {
+    let timeCounter = 0;
+    function checkHoldings() {
+      cy.okapiRequest({
+        path: 'holdings-storage/holdings',
+        searchParams: { query: `(notes="${holdingsNote}" and instanceId=="${marcBibId}")` },
+        isDefaultSearchParamsRequired: false,
+      }).then(({ body }) => {
+        if (body.holdingsRecords[0] || timeCounter >= timeOutSeconds) {
+          cy.expect(body.holdingsRecords[0].instanceId).equals(marcBibId);
+          cy.wrap(body.holdingsRecords[0]).as('holdings');
+        } else {
+          cy.wait(1000);
+          checkHoldings();
+          timeCounter++;
+        }
+      });
+    }
+    checkHoldings();
+    return cy.get('@holdings');
   },
 };

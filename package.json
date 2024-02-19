@@ -78,7 +78,8 @@
   },
   "overrides": {
     "bigtest": {
-      "chromedriver": "107.0.0"
+      "chromedriver": "107.0.0",
+      "tsx": "3.14.0"
     },
     "@folio/eslint-config-stripes": {
       "sharp": "0.32.6"
