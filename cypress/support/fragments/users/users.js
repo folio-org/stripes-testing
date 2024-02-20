@@ -61,11 +61,15 @@ export default {
       middleName: response.body.personal.middleName,
     })),
 
-  deleteViaApi: (userId) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `bl-users/by-id/${userId}`,
-    isDefaultSearchParamsRequired: false,
-  }),
+  deleteViaApi: (userId) => {
+    if (!Cypress.env('runAsAdmin')) {
+      return cy.okapiRequest({
+        method: 'DELETE',
+        path: `bl-users/by-id/${userId}`,
+        isDefaultSearchParamsRequired: false,
+      });
+    } else return null;
+  },
 
   getUsers: (searchParams) => {
     return cy

@@ -21,16 +21,18 @@ module.exports = defineConfig({
   pageLoadTimeout: 120000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://okapi-bugfest-poppy-aqa.int.aws.folio.org',
-    OKAPI_TENANT: 'fs09000003',
-    diku_login: 'folio-aqa',
-    diku_password: 'Folio-aqa1',
+    OKAPI_HOST: 'https://kong-pbfe2.int.aws.folio.org',
+    OKAPI_TENANT: 'fs09000000',
+    diku_login: 'folio',
+    diku_password: 'folio',
     is_kiwi_release: false,
     downloadTimeout: 2000,
     allure: 'true',
     grepFilterSpecs: true,
     grepOmitFiltered: true,
     rtrAuth: false,
+    eureka: true,
+    runAsAdmin: true,
   },
   e2e: {
     async setupNodeEvents(on, config) {
@@ -112,7 +114,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://bugfest-poppy-aqa.int.aws.folio.org',
+    baseUrl: 'https://arch-poc.int.aws.folio.org',
     testIsolation: false,
   },
 });
