@@ -1,7 +1,5 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import ExportManagerSearchPane from '../../../../support/fragments/exportManager/exportManagerSearchPane';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -28,16 +26,19 @@ describe('MARC', () => {
           marc: 'marcBibFileForC375231_1.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          propertyName: 'relatedInstanceInfo',
         },
         {
           marc: 'marcBibFileForC375231_2.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          propertyName: 'relatedInstanceInfo',
         },
         {
           marc: 'marcAuthFileForC375231_1.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
+          propertyName: 'relatedAuthorityInfo',
         },
       ];
 
@@ -57,22 +58,17 @@ describe('MARC', () => {
           testData.userProperties = createdUserProperties;
         });
 
+        cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkStatusOfJobProfile('Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              Logs.getCreatedItemsID().then((link) => {
-                createdAuthorityID.push(link.split('/')[5]);
-              });
-            },
-          );
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityID.push(record[marcFile.propertyName].idList[0]);
+            });
+          });
         });
       });
 
@@ -93,7 +89,7 @@ describe('MARC', () => {
 
       it(
         'C375231 "MARC authority headings updates (CSV)" report includes correct number of linked "MARC bib" records (spitfire)',
-        { tags: ['smoke', 'spitfire', 'nonParallel'] },
+        { tags: ['smoke', 'spitfire'] },
         () => {
           const dataForC375231 = [
             {

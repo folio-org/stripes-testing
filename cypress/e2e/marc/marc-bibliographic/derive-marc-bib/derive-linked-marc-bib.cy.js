@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -30,6 +27,7 @@ describe('MARC', () => {
           marc: 'marcBibFileC375994.mrc',
           fileName: `testMarcFileC375994.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          propertyName: 'relatedInstanceInfo',
           instanceTitle:
             'C375994 Abraham Lincoln, by Lillian Hertz. Prize essay in Alexander Hamilton junior high school P.S. 186, June 24, 1927.',
         },
@@ -39,6 +37,7 @@ describe('MARC', () => {
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           authorityHeading: 'C375994 Robinson, Peter, 1950-2022 Alt. title',
           authority001FieldValue: '30520443759941',
+          propertyName: 'relatedAuthorityInfo',
         },
         {
           marc: 'marcAuthFileC375994_2.mrc',
@@ -46,6 +45,7 @@ describe('MARC', () => {
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           authorityHeading: 'C375994 Speaking Oratory debating',
           authority010FieldValue: 'sh850952993759942',
+          propertyName: 'relatedAuthorityInfo',
         },
       ];
 
@@ -59,24 +59,24 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
+
+          cy.getAdminToken();
           marcFiles.forEach((marcFile) => {
-            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-              () => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
-                });
-              },
-            );
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
           });
 
-          cy.visit(TopMenu.inventoryPath).then(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
             InventoryInstances.waitContentLoading();
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -141,7 +141,7 @@ describe('MARC', () => {
 
       it(
         'C375994 Add controllable subfields to multiple linked fields in "MARC bib" record when deriving record (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+        { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();

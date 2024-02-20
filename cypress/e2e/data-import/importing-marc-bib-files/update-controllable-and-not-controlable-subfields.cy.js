@@ -78,12 +78,14 @@ describe('data-import', () => {
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numOfRecords: 1,
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'marcAuthFileForC385671.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
 
@@ -100,20 +102,15 @@ describe('data-import', () => {
         cy.loginAsAdmin()
           .then(() => {
             marcFiles.forEach((marcFile) => {
-              cy.visit(TopMenu.dataImportPath);
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, 'Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  createdAuthorityIDs.push(link.split('/')[5]);
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
                 });
-              }
+              });
             });
           })
           .then(() => {
@@ -167,7 +164,7 @@ describe('data-import', () => {
 
     it(
       'C385671 Update controllable, non-controllable subfields in one of the not linked repeatable fields with "$0" (multiple repeatable fields with same indicators) (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

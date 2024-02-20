@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -28,12 +25,14 @@ describe('inventory', () => {
         marc: 'marcBibC375163.mrc',
         fileName: `testMarcFileC375163.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'marcAuthC375163.mrc',
         fileName: `testMarcFileC375163.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         naturalId: 'gf201402375163',
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
 
@@ -48,26 +47,23 @@ describe('inventory', () => {
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
+        cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFile.fileName);
-              Logs.getCreatedItemsID().then((link) => {
-                createdRecordIDs.push(link.split('/')[5]);
-              });
-            },
-          );
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            });
+          });
         });
 
-        cy.visit(TopMenu.inventoryPath).then(() => {
-          InventoryInstances.waitContentLoading();
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -103,7 +99,7 @@ describe('inventory', () => {
 
     it(
       'C375163 Browse | Separate entries for "Subjects" from linked and unlinked "6XX" fields of "MARC bib" record (same subject names) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();

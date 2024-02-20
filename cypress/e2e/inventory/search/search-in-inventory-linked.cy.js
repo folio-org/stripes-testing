@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -42,6 +39,7 @@ describe('inventory', () => {
         fileName: `testMarcFileC375256.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numberOfRecords: 4,
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'marcAuthFileC375256_1.mrc',
@@ -50,6 +48,7 @@ describe('inventory', () => {
         authorityHeading: 'BibleC375256. Polish. Biblia Płocka C375256',
         authority010FieldValue: 'n92085235375256',
         numberOfRecords: 1,
+        propertyName: 'relatedAuthorityInfo',
       },
       {
         marc: 'marcAuthFileC375256_2.mrc',
@@ -58,6 +57,7 @@ describe('inventory', () => {
         authorityHeading: 'Abraham, Angela, C375256 Hosanna',
         authority010FieldValue: 'n99036055375256',
         numberOfRecords: 1,
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
 
@@ -66,26 +66,24 @@ describe('inventory', () => {
     before('Importing data, linking Bib fields', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
+
+        cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numberOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
-                });
-              }
-            },
-          );
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            });
+          });
         });
-        // linking fields in MARC Bib records
-        cy.visit(TopMenu.inventoryPath).then(() => {
+
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
@@ -139,7 +137,7 @@ describe('inventory', () => {
 
     it(
       'C375256 Query search | Search by "Alternative title" field of linked "MARC Bib" records (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.selectSearchOptions(
           testData.querySearchOption,

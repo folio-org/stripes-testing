@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -30,11 +27,13 @@ describe('MARC', () => {
         marc: 'marcBibFileC360098.mrc',
         fileName: `testMarcFileC360098.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        propertyName: 'relatedInstanceInfo',
       };
       const marcFileC359239 = {
         marc: 'marcBibFileC359239.mrc',
         fileName: `testMarcFileC359239.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        propertyName: 'relatedInstanceInfo',
       };
       const createdInstanceIDs = [];
 
@@ -46,45 +45,32 @@ describe('MARC', () => {
           testData.userProperties = createdUserProperties;
           cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
             () => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-              DataImport.waitFileIsUploaded();
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFile.fileName);
-              Logs.getCreatedItemsID().then((link) => {
-                createdInstanceIDs.push(link.split('/')[5]);
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdInstanceIDs.push(record[marcFile.propertyName].idList[0]);
+                });
               });
-              cy.visit(TopMenu.dataImportPath);
-              DataImport.waitLoading();
-              DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFile.marc, `${marcFile.fileName}_copy`);
-              JobProfiles.waitFileIsUploaded();
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(`${marcFile.fileName}_copy`);
-              Logs.checkJobStatus(`${marcFile.fileName}_copy`, JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(`${marcFile.fileName}_copy`);
-              Logs.getCreatedItemsID().then((link) => {
-                createdInstanceIDs.push(link.split('/')[5]);
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                `${marcFile.fileName}_copy`,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdInstanceIDs.push(record[marcFile.propertyName].idList[0]);
+                });
               });
-              cy.visit(TopMenu.dataImportPath);
-              DataImport.waitLoading();
-              DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFileC359239.marc, marcFileC359239.fileName);
-              JobProfiles.waitFileIsUploaded();
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFileC359239.jobProfileToRun);
-              JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFileC359239.fileName);
-              Logs.checkJobStatus(marcFileC359239.fileName, JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFileC359239.fileName);
-              Logs.getCreatedItemsID().then((link) => {
-                createdInstanceIDs.push(link.split('/')[5]);
+              DataImport.uploadFileViaApi(
+                marcFileC359239.marc,
+                marcFileC359239.fileName,
+                marcFileC359239.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdInstanceIDs.push(record[marcFileC359239.propertyName].idList[0]);
+                });
               });
             },
           );

@@ -53,7 +53,7 @@ describe('eHoldings', () => {
 
     it(
       'C9236 Settings: Add/Edit a custom label(spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         cy.visit(SettingsMenu.eHoldingsPath).then(() => {
           EHoldingsPackage.updateCustomLabelInSettings(testData.label1Value, 1);

@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -33,6 +30,7 @@ describe('MARC', () => {
           marc: 'marcBibFileC375173.mrc',
           fileName: `testMarcFileC375173.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          propertyName: 'relatedInstanceInfo',
           instanceTitle:
             'C375173 Farnese book of hours : MS M.69 of the Pierpont Morgan Library New York / commentary, William M. Voelkle, Ivan Golub.',
         },
@@ -40,6 +38,7 @@ describe('MARC', () => {
           marc: 'marcAuthFileC375173.mrc',
           fileName: `testMarcFileC375173.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
+          propertyName: 'relatedAuthorityInfo',
           authorityHeading: 'C375173 Clovio, Giulio, 1498-1578',
           authority001FieldValue: 'n83073672375173',
           authority035FieldValue: '(OCoLC)oca00955395',
@@ -59,25 +58,23 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
+          cy.getAdminToken();
           marcFiles.forEach((marcFile) => {
-            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-              () => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
-                });
-              },
-            );
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
           });
 
-          cy.visit(TopMenu.inventoryPath).then(() => {
-            InventoryInstances.waitContentLoading();
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             // wait for detail view to be fully loaded
@@ -115,7 +112,7 @@ describe('MARC', () => {
 
       it(
         'C375173 Save linked "MARC authority" record with deleted fields and edited "1XX" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+        { tags: ['criticalPath', 'spitfire'] },
         () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
