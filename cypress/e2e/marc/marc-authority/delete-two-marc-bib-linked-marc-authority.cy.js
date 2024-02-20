@@ -130,8 +130,8 @@ describe('MARC', () => {
       Users.deleteViaApi(testData.userProperties.userId);
       InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
       InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[1]);
-      MarcAuthority.deleteViaAPI(createdAuthorityIDs[2])
-      MarcAuthority.deleteViaAPI(createdAuthorityIDs[3])
+      MarcAuthority.deleteViaAPI(createdAuthorityIDs[2]);
+      MarcAuthority.deleteViaAPI(createdAuthorityIDs[3]);
     });
 
     it(
