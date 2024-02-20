@@ -357,7 +357,7 @@ Cypress.Commands.add('createSimpleMarcBibViaAPI', (title) => {
       suppressDiscovery: false,
       marcFormat: 'BIBLIOGRAPHIC',
     },
-  }).then({ timeout: 60000 }, ({ body }) => cy.wrap(body).as('body'));
+  }).then({ timeout: 80000 }, ({ body }) => cy.wrap(body).as('body'));
   return cy.get('@body');
 });
 

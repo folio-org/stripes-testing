@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import Permissions from '../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Users from '../../../../support/fragments/users/users';
@@ -62,7 +61,7 @@ describe('Inventory', () => {
             holdings: {
               college: {
                 callNumberInHoldings: true,
-                callNumber: `${callNumberPrefix} Inst03 Call M1 H`,
+                callNumber: `${callNumberPrefix} Inst03 M1 H`,
               },
               university: {
                 callNumberInHoldings: true,
@@ -77,7 +76,7 @@ describe('Inventory', () => {
             holdings: {
               college: {
                 callNumberInHoldings: false,
-                callNumber: `${callNumberPrefix} Inst04 Call M1 I`,
+                callNumber: `${callNumberPrefix} Inst04 M1 I`,
               },
               university: {
                 callNumberInHoldings: false,
@@ -92,7 +91,7 @@ describe('Inventory', () => {
             holdings: {
               college: {
                 callNumberInHoldings: true,
-                callNumber: `${callNumberPrefix} Inst05 Call M1 H`,
+                callNumber: `${callNumberPrefix} Inst05 M1 H`,
               },
             },
           },
@@ -103,7 +102,7 @@ describe('Inventory', () => {
             holdings: {
               college: {
                 callNumberInHoldings: false,
-                callNumber: `${callNumberPrefix}  Inst06 Call M1 I`,
+                callNumber: `${callNumberPrefix} Inst06 M1 I`,
               },
             },
           },
@@ -114,7 +113,7 @@ describe('Inventory', () => {
             holdings: {
               college: {
                 callNumberInHoldings: true,
-                callNumber: `${callNumberPrefix} Inst07 Call M1 H`,
+                callNumber: `${callNumberPrefix} Inst07 M1 H`,
               },
             },
           },
@@ -125,7 +124,7 @@ describe('Inventory', () => {
             holdings: {
               college: {
                 callNumberInHoldings: false,
-                callNumber: `${callNumberPrefix} Inst08 Call M1 I`,
+                callNumber: `${callNumberPrefix} Inst08 M1 I`,
               },
             },
           },
@@ -136,7 +135,7 @@ describe('Inventory', () => {
             holdings: {
               university: {
                 callNumberInHoldings: true,
-                callNumber: `${callNumberPrefix} Inst09 Call M2 H`,
+                callNumber: `${callNumberPrefix} Inst09 M2 H`,
               },
             },
           },
@@ -147,7 +146,7 @@ describe('Inventory', () => {
             holdings: {
               university: {
                 callNumberInHoldings: false,
-                callNumber: `${callNumberPrefix} Inst10 Call M2 I`,
+                callNumber: `${callNumberPrefix} Inst10 M2 I`,
               },
             },
           },
@@ -158,7 +157,7 @@ describe('Inventory', () => {
             holdings: {
               university: {
                 callNumberInHoldings: true,
-                callNumber: `${callNumberPrefix} Inst11 Call M2 H`,
+                callNumber: `${callNumberPrefix} Inst11 M2 H`,
               },
             },
           },
@@ -169,7 +168,7 @@ describe('Inventory', () => {
             holdings: {
               university: {
                 callNumberInHoldings: false,
-                callNumber: `${callNumberPrefix} Inst12 Call M2 I`,
+                callNumber: `${callNumberPrefix} Inst12 M2 I`,
               },
             },
           },
@@ -177,16 +176,24 @@ describe('Inventory', () => {
         callNumberBrowseoption: 'Call numbers (all)',
       };
       const allVisibleCNs = [
-        `${callNumberPrefix} Inst01 Call FH`,
-        `${callNumberPrefix} Inst02 Call FI`,
-        `${callNumberPrefix} Inst03 Call MH`,
-        `${callNumberPrefix} Inst04 Call MI`,
+        `${callNumberPrefix} Inst01 M1 H`,
+        `${callNumberPrefix} Inst01 M2 H`,
+        `${callNumberPrefix} Inst02 M1 I`,
+        `${callNumberPrefix} Inst02 M2 I`,
+        `${callNumberPrefix} Inst03 M1 H`,
+        `${callNumberPrefix} Inst03 M2 H`,
+        `${callNumberPrefix} Inst04 M1 I`,
+        `${callNumberPrefix} Inst04 M2 I`,
+        `${callNumberPrefix} Inst05 M1 H`,
+        `${callNumberPrefix} Inst06 M1 I`,
+        `${callNumberPrefix} Inst07 M1 H`,
+        `${callNumberPrefix} Inst08 M1 I`,
       ];
       const allNonVisibleCNs = [
-        `${callNumberPrefix} Inst05 Call FH`,
-        `${callNumberPrefix} Inst06 Call FI`,
-        `${callNumberPrefix} Inst07 Call MH`,
-        `${callNumberPrefix} Inst08 Call MI`,
+        `${callNumberPrefix} Inst09 M2 H`,
+        `${callNumberPrefix} Inst10 M2 I`,
+        `${callNumberPrefix} Inst11 M2 H`,
+        `${callNumberPrefix} Inst12 M2 I`,
       ];
       const createdInstanceIds = {
         consortia: [],
@@ -401,34 +408,35 @@ describe('Inventory', () => {
             InventorySearchAndFilter.selectBrowseCallNumbers();
           });
           InventorySearchAndFilter.browseSearch(callNumberPrefix);
-          // BrowseCallNumber.checkNonExactSearchResult(callNumberPrefix);
-          // allVisibleCNs.forEach((callNumber) => {
-          //   BrowseCallNumber.checkValuePresentInResults(callNumber);
-          // });
-          // InventorySearchAndFilter.browseSearch(allNonVisibleCNs[0]);
-          // BrowseCallNumber.checkNonExactSearchResult(allNonVisibleCNs[0]);
-          // allNonVisibleCNs.forEach((callNumber) => {
-          //   BrowseCallNumber.checkValuePresentInResults(callNumber, false);
-          // });
-          // InventorySearchAndFilter.browseSearch(allVisibleCNs[0]);
-          // BrowseCallNumber.valueInResultTableIsHighlighted(allVisibleCNs[0]);
-          // allVisibleCNs.forEach((callNumber) => {
-          //   BrowseCallNumber.checkValuePresentInResults(callNumber);
-          // });
-          // BrowseCallNumber.clickOnResult(allVisibleCNs[0]);
-          // InventorySearchAndFilter.verifyInstanceDisplayed(testData.instances[0].title);
-          // InventorySearchAndFilter.verifyNumberOfSearchResults(1);
-          // InventoryInstance.verifySharedIcon();
-          // InventorySearchAndFilter.switchToBrowseTab();
-          // InventorySearchAndFilter.verifyCallNumberBrowsePane();
-          // BrowseCallNumber.valueInResultTableIsHighlighted(allVisibleCNs[0]);
-          // allVisibleCNs.forEach((callNumber) => {
-          //   BrowseCallNumber.checkValuePresentInResults(callNumber);
-          // });
-          // BrowseCallNumber.clickOnResult(allVisibleCNs[2]);
-          // InventorySearchAndFilter.verifyInstanceDisplayed(testData.instances[2].title);
-          // InventorySearchAndFilter.verifyNumberOfSearchResults(1);
-          // InventoryInstance.verifySharedIcon();
+          BrowseCallNumber.checkNonExactSearchResult(callNumberPrefix);
+          allVisibleCNs.forEach((callNumber) => {
+            BrowseCallNumber.checkValuePresentInResults(callNumber);
+          });
+          InventorySearchAndFilter.browseSearch(allNonVisibleCNs[0]);
+          BrowseCallNumber.checkNonExactSearchResult(allNonVisibleCNs[0]);
+          allNonVisibleCNs.forEach((callNumber) => {
+            BrowseCallNumber.checkValuePresentInResults(callNumber, false);
+          });
+          InventorySearchAndFilter.browseSearch(allVisibleCNs[7]);
+          BrowseCallNumber.valueInResultTableIsHighlighted(allVisibleCNs[7]);
+          allNonVisibleCNs.forEach((callNumber) => {
+            BrowseCallNumber.checkValuePresentInResults(callNumber, false);
+          });
+          InventorySearchAndFilter.browseSearch(allVisibleCNs[4]);
+          BrowseCallNumber.valueInResultTableIsHighlighted(allVisibleCNs[4]);
+          InventorySearchAndFilter.browseSearch(allVisibleCNs[10]);
+          BrowseCallNumber.valueInResultTableIsHighlighted(allVisibleCNs[10]);
+          BrowseCallNumber.clickOnResult(allVisibleCNs[10]);
+          InventorySearchAndFilter.verifyInstanceDisplayed(testData.instances[6].title);
+          InventorySearchAndFilter.verifyNumberOfSearchResults(1);
+          InventoryInstance.verifySharedIconAbsent();
+          InventorySearchAndFilter.switchToBrowseTab();
+          InventorySearchAndFilter.verifyCallNumberBrowsePane();
+          BrowseCallNumber.valueInResultTableIsHighlighted(allVisibleCNs[10]);
+          BrowseCallNumber.clickOnResult(allVisibleCNs[6]);
+          InventorySearchAndFilter.verifyInstanceDisplayed(testData.instances[3].title);
+          InventorySearchAndFilter.verifyNumberOfSearchResults(1);
+          InventoryInstance.verifySharedIcon();
         },
       );
     });
