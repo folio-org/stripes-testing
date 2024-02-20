@@ -214,7 +214,7 @@ describe('MARC', () => {
               '$0 http://id.loc.gov/authorities/names/n99036055',
               '',
             );
-
+            cy.getAdminToken();
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
@@ -287,6 +287,7 @@ describe('MARC', () => {
             newFieldsForC388562.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, '');
             });
+            cy.getAdminToken();
             linkableFieldsForC388562.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });

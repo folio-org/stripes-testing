@@ -57,7 +57,7 @@ describe('eHoldings', () => {
       () => {
         EHoldingSearch.switchToPackages();
         // wait until package is created via API
-        cy.wait(10000);
+        cy.wait(15000);
         EHoldingsPackagesSearch.byName(testData.defaultPackage.data.attributes.name);
         EHoldingsPackages.verifyPackageInResults(testData.defaultPackage.data.attributes.name);
         EHoldingsPackages.openPackage();

@@ -70,9 +70,9 @@ describe('MARC', () => {
 
       after(() => {
         cy.getAdminToken();
-        createdAuthorityIDs.forEach((id) => {
-          MarcAuthority.deleteViaAPI(id);
-        });
+        MarcAuthority.deleteViaAPI(createdAuthorityIDs[0]);
+        MarcAuthority.deleteViaAPI(createdAuthorityIDs[1]);
+        MarcAuthority.deleteViaAPI(createdAuthorityIDs[3]);
         Users.deleteViaApi(testData.userProperties.userId);
       });
 

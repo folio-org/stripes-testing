@@ -196,6 +196,7 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
+            cy.loginAsAdmin();
             cy.visit(TopMenu.inventoryPath).then(() => {
               InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
               InventoryInstances.selectInstance();
