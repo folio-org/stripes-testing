@@ -128,10 +128,10 @@ describe('MARC', () => {
     after('Deleting created user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
-      createdAuthorityIDs.forEach((id, index) => {
-        if (index) MarcAuthority.deleteViaAPI(id);
-        else InventoryInstance.deleteInstanceViaApi(id);
-      });
+      InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
+      InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[1]);
+      MarcAuthority.deleteViaAPI(createdAuthorityIDs[2])
+      MarcAuthority.deleteViaAPI(createdAuthorityIDs[3])
     });
 
     it(
