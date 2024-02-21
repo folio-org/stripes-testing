@@ -41,12 +41,11 @@ describe('MARC', () => {
           ).then((response) => {
             response.entries.forEach((record) => {
               createdRecordIDs.push(record[testData.marcFile.propertyName].idList[0]);
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: `${TopMenu.inventoryPath}/view/${createdRecordIDs[0]}`,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
-          });
-
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: `${TopMenu.inventoryPath}/view/${createdRecordIDs[0]}`,
-            waiter: InventoryInstances.waitContentLoading,
           });
         });
       });
