@@ -42,7 +42,7 @@ describe('data-import', () => {
         '1',
         '\\',
         '$a C376967 Chin, Staceyann, $d 1972-',
-        '',
+        '$e author.',
         '$0 http://id.loc.gov/authorities/names/n2008052404',
         '',
       ],
