@@ -206,7 +206,7 @@ describe('MARC', () => {
 
         it(
           'C388512 Delete one eligible for linking field >> click on "Link headings" button when edit "MARC bib" (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

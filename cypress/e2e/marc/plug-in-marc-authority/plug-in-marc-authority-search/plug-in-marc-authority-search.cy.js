@@ -40,8 +40,8 @@ describe('MARC', () => {
           typeOfHeadingA: 'Personal Name',
           typeOfHeadingB: 'Corporate Name',
           typeOfHeadingC: 'Conference Name',
-          value: 'Twain, Mark, 1835-1910. Adventures of Huckleberry Finn',
-          valurMarked: 'Twain, Mark,',
+          value: 'C380569 Twain, Mark, 1835-1910. Adventures of Huckleberry Finn',
+          valurMarked: 'C380569 Twain, Mark,',
           type: 'Authorized',
         },
         forC359231: {
@@ -87,6 +87,23 @@ describe('MARC', () => {
           propertyName: 'relatedAuthorityInfo',
         },
         {
+          marc: 'marcFileForC359231.mrc',
+          fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          numOfRecords: 1,
+          propertyName: 'relatedAuthorityInfo',
+        },
+        {
+          marc: 'marcFileForC380566.mrc',
+          fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          numOfRecords: 2,
+          propertyName: 'relatedAuthorityInfo',
+        },
+      ];
+
+      const marcFileForC380569 = [
+        {
           marc: 'marcFileForC359230_2.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
@@ -101,7 +118,7 @@ describe('MARC', () => {
           propertyName: 'relatedAuthorityInfo',
         },
         {
-          marc: 'marcFileForC359231.mrc',
+          marc: 'marcFileForC359230_twain.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           numOfRecords: 1,
@@ -111,7 +128,7 @@ describe('MARC', () => {
 
       const createdAuthorityIDs = [];
 
-      beforeEach('Creating user', () => {
+      before('Creating user', () => {
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -122,42 +139,45 @@ describe('MARC', () => {
           testData.userProperties = createdUserProperties;
 
           cy.getAdminToken();
-          marcFiles.forEach((marcFile) => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.entries.forEach((record) => {
-                createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
-              });
+          DataImport.uploadFileViaApi(
+            marcFiles[0].marc,
+            marcFiles[0].fileName,
+            marcFiles[0].jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFiles[0].propertyName].idList[0]);
             });
-          });
-
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
           });
         });
       });
 
-      afterEach('Deleting created user', () => {
+      after('Deleting created user', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
         InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
         createdAuthorityIDs.forEach((id, index) => {
           if (index) MarcAuthority.deleteViaAPI(id);
         });
-        createdAuthorityIDs.length = 0;
-        // Wait for the file to be deleted and not affect to the next test run
-        // TODO: delete this wait after fix of the bug MODDATAIMP-987
-        cy.wait(120000);
       });
 
       it(
         'C380565 MARC Authority plug-in | Search for MARC authority records when the user clicks on the "Link" icon (spitfire)',
         { tags: ['smoke', 'spitfire'] },
         () => {
+          cy.getAdminToken();
+          DataImport.uploadFileViaApi(
+            marcFiles[1].marc,
+            marcFiles[1].fileName,
+            marcFiles[1].jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFiles[1].propertyName].idList[0]);
+            });
+          });
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -181,6 +201,20 @@ describe('MARC', () => {
         'C359206 MARC Authority plug-in | Search using "Identifier (all)" option (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
+          cy.getAdminToken();
+          DataImport.uploadFileViaApi(
+            marcFiles[2].marc,
+            marcFiles[2].fileName,
+            marcFiles[2].jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFiles[2].propertyName].idList[0]);
+            });
+          });
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -213,6 +247,20 @@ describe('MARC', () => {
         'C380567 MARC Authority plug-in | Search using "Corporate/Conference name" option (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
+          cy.getAdminToken();
+          DataImport.uploadFileViaApi(
+            marcFiles[3].marc,
+            marcFiles[3].fileName,
+            marcFiles[3].jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFiles[2].propertyName].idList[0]);
+            });
+          });
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -244,6 +292,20 @@ describe('MARC', () => {
         'C380568 MARC Authority plug-in | Search using "Geographic name" option (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
+          cy.getAdminToken();
+          DataImport.uploadFileViaApi(
+            marcFiles[4].marc,
+            marcFiles[4].fileName,
+            marcFiles[4].jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFiles[4].propertyName].idList[0]);
+            });
+          });
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -262,6 +324,22 @@ describe('MARC', () => {
         'C380569 MARC Authority plug-in | Search using "Name-title" option (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
+          cy.getAdminToken();
+          marcFileForC380569.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
+          });
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -291,14 +369,28 @@ describe('MARC', () => {
         'C380566 MARC Authority plug-in | Search using "Personal name" option (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
+          cy.getAdminToken();
+          DataImport.uploadFileViaApi(
+            marcFiles[6].marc,
+            marcFiles[6].fileName,
+            marcFiles[6].jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFiles[6].propertyName].idList[0]);
+            });
+          });
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           InventoryInstance.verifyAndClickLinkIcon('700');
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySearchOptions();
-          MarcAuthorities.searchByParameter('Personal name', 'Erbil, H. Yıldırım');
-          MarcAuthorities.checkRecordDetailPageMarkedValue('Erbil, H. Yıldırım');
+          MarcAuthorities.searchByParameter('Personal name', 'C380566 Stone, Robert B.');
+          MarcAuthorities.checkRecordDetailPageMarkedValue('C380566 Stone, Robert B.');
         },
       );
 
@@ -306,6 +398,20 @@ describe('MARC', () => {
         'C380570 MARC Authority plug-in | Search using "Uniform title" option (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
+          cy.getAdminToken();
+          DataImport.uploadFileViaApi(
+            marcFiles[5].marc,
+            marcFiles[5].fileName,
+            marcFiles[5].jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFiles[5].propertyName].idList[0]);
+            });
+          });
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
