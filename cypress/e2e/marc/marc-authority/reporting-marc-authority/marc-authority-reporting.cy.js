@@ -18,7 +18,7 @@ describe('MARC', () => {
       const testData = {
         searchOption: 'Keyword',
         title:
-          'Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
+          'C375231Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
       };
 
       const marcFiles = [
@@ -96,13 +96,13 @@ describe('MARC', () => {
               recordTitle: createdAuthorityID[0],
               tagValue: '240',
               marcValue:
-                'Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
+                'C375231Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
             },
             {
               recordTitle: createdAuthorityID[1],
               tagValue: '700',
               marcValue:
-                'Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
+                'C375231Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
             },
           ];
 
@@ -128,7 +128,7 @@ describe('MARC', () => {
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(
             '100',
-            '$a Beethoven, Ludwig Jr, $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
+            '$a C375231Beethoven, Ludwig Jr, $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
           );
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.saveAndCheck();
@@ -158,9 +158,9 @@ describe('MARC', () => {
               'Last updated',
               `${downloadedReportDate}`,
               'Original heading',
-              '"Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major"',
+              '"C375231Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major"',
               'New heading',
-              '"Beethoven, Ludwig Jr, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major"',
+              '"C375231Beethoven, Ludwig Jr, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major"',
               'Identifier',
               'n83130007',
               'Original 1XX',
