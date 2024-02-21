@@ -26,7 +26,6 @@ import {
   FieldMappingProfiles as SettingsFieldMappingProfiles,
 } from '../../../../support/fragments/settings/dataImport';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
-// import BrowseContributors from '../../../../support/fragments/inventory/search/browseContributors';
 import BrowseSubjects from '../../../../support/fragments/inventory/search/browseSubjects';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
