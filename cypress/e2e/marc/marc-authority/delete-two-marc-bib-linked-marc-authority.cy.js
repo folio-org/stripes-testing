@@ -131,7 +131,6 @@ describe('MARC', () => {
       InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
       InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[1]);
       MarcAuthority.deleteViaAPI(createdAuthorityIDs[2]);
-      MarcAuthority.deleteViaAPI(createdAuthorityIDs[3]);
     });
 
     it(
