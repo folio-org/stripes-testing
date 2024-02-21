@@ -90,6 +90,7 @@ describe('data-import', () => {
         fileName: `C374167 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numOfRecords: 2,
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'marcAuthFileForC374167.mrc',
@@ -97,6 +98,7 @@ describe('data-import', () => {
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
         authorityHeading: 'C374167 DiCaprio, Leonardo',
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
     const linkingTagForFirstMarcBib = [
@@ -155,20 +157,15 @@ describe('data-import', () => {
           NewJobProfile.saveAndClose();
 
           marcFiles.forEach((marcFile) => {
-            cy.visit(TopMenu.dataImportPath);
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                testData.createdRecordIDs.push(link.split('/')[5]);
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
               });
-            }
+            });
           });
         })
         .then(() => {

@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../../../support/constants';
 import { Permissions } from '../../../../../support/dictionary';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
@@ -30,6 +27,7 @@ describe('MARC', () => {
             marc: 'marcBibFileC374197.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileC374197.mrc',
@@ -37,6 +35,7 @@ describe('MARC', () => {
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             authorityHeading: 'Mediterranean Conference on Medical and Biological Engineering',
             authority111FieldValue: 'n85281584',
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
@@ -75,24 +74,19 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
+            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
-              cy.loginAsAdmin({
-                path: TopMenu.dataImportPath,
-                waiter: DataImport.waitLoading,
-              }).then(() => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
                 });
               });
             });
+
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -112,7 +106,7 @@ describe('MARC', () => {
 
         it(
           'C374197 Link the "111" of "MARC Bib" field with "111" field of "MARC Authority" record. (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'nonParallel'] },
+          { tags: ['extendedPath', 'spitfire'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

@@ -24,6 +24,7 @@ describe('MARC', () => {
         recordWithoutTitle: 'Twain, Mark, 1835-1910',
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const propertyName = 'relatedAuthorityInfo';
       let fileName;
       const createdAuthorityIDs = [];
 
@@ -48,30 +49,32 @@ describe('MARC', () => {
       after('Deleting data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
+      });
+
+      afterEach(() => {
+        cy.getAdminToken();
         createdAuthorityIDs.forEach((id) => {
           MarcAuthority.deleteViaAPI(id);
         });
+        createdAuthorityIDs.length = 0;
       });
 
       it(
         'C360520 Import of "MARC Authority" record with valid prefix in "001" field only (spitfire)',
         {
-          tags: ['smoke', 'authority', 'spitfire', 'nonParallel'],
+          tags: ['smoke', 'authority', 'spitfire'],
         },
         () => {
-          DataImport.uploadFile('marcFileForC360520.mrc', fileName);
-          JobProfiles.waitFileIsUploaded();
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(jobProfileToRun);
-          JobProfiles.runImportFile();
+          DataImport.uploadFileViaApi('marcFileForC360520.mrc', fileName, jobProfileToRun).then(
+            (response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityIDs.push(record[propertyName].idList[0]);
+              });
+            },
+          );
           JobProfiles.waitFileIsImported(fileName);
-          Logs.checkStatusOfJobProfile('Completed');
+          Logs.checkJobStatus(fileName, 'Completed');
           Logs.openFileDetails(fileName);
-          for (let i = 0; i < 1; i++) {
-            Logs.getCreatedItemsID(i).then((link) => {
-              createdAuthorityIDs.push(link.split('/')[5]);
-            });
-          }
           Logs.goToTitleLink('Chemistry, Organic');
           Logs.checkAuthorityLogJSON([
             '"sourceFileId":',
@@ -86,19 +89,18 @@ describe('MARC', () => {
         'C360521 Import of "MARC Authority" record with valid prefix in "010 $a" field only (spitfire)',
         { tags: ['smoke', 'authority', 'spitfire'] },
         () => {
-          DataImport.uploadFile('corporate_name(prefix_in_010Sa)sc_02.mrc', fileName);
-          JobProfiles.waitFileIsUploaded();
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(fileName);
-          for (let i = 0; i < 3; i++) {
-            Logs.getCreatedItemsID(i).then((link) => {
-              createdAuthorityIDs.push(link.split('/')[5]);
+          DataImport.uploadFileViaApi(
+            'corporate_name(prefix_in_010Sa)sc_02.mrc',
+            fileName,
+            jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityIDs.push(record[propertyName].idList[0]);
             });
-          }
+          });
+          JobProfiles.waitFileIsImported(fileName);
+          Logs.checkJobStatus(fileName, 'Completed');
+          Logs.openFileDetails(fileName);
           Logs.goToTitleLink('Apple Academic Press');
           Logs.checkAuthorityLogJSON([
             '"sourceFileId":',
@@ -113,19 +115,18 @@ describe('MARC', () => {
         'C360522 Import of "MARC Authority" record with same valid prefixes in "001" and "010 $a" fields (spitfire)',
         { tags: ['smoke', 'authority', 'spitfire'] },
         () => {
-          DataImport.uploadFile('D_genre(prefixes_in_001_010Sa)sc_03.mrc', fileName);
-          JobProfiles.waitFileIsUploaded();
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(fileName);
-          for (let i = 0; i < 2; i++) {
-            Logs.getCreatedItemsID(i).then((link) => {
-              createdAuthorityIDs.push(link.split('/')[5]);
+          DataImport.uploadFileViaApi(
+            'D_genre(prefixes_in_001_010Sa)sc_03.mrc',
+            fileName,
+            jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityIDs.push(record[propertyName].idList[0]);
             });
-          }
+          });
+          JobProfiles.waitFileIsImported(fileName);
+          Logs.checkJobStatus(fileName, 'Completed');
+          Logs.openFileDetails(fileName);
           Logs.goToTitleLink('Case Reports');
           Logs.checkAuthorityLogJSON([
             '"sourceFileId":',
@@ -140,19 +141,14 @@ describe('MARC', () => {
         'C353997 Browse for records which have subfield "t" value (personalNameTitle and sftPersonalNameTitle) (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          DataImport.uploadFile('marcFileForC353997.mrc', fileName);
-          JobProfiles.waitFileIsUploaded();
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(fileName);
-          for (let i = 0; i < 1; i++) {
-            Logs.getCreatedItemsID(i).then((link) => {
-              createdAuthorityIDs.push(link.split('/')[5]);
-            });
-          }
+          DataImport.uploadFileViaApi('marcFileForC353997.mrc', fileName, jobProfileToRun).then(
+            (response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityIDs.push(record[propertyName].idList[0]);
+              });
+            },
+          );
+
           cy.visit(TopMenu.marcAuthorities);
           MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.searchBy(testData.searchOptionPersonalName, testData.recordA);
@@ -185,21 +181,16 @@ describe('MARC', () => {
 
       it(
         'C356766 Browse for record without subfield "t" (personalNameTitle and sftPersonalName) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+        { tags: ['criticalPath', 'spitfire'] },
         () => {
-          DataImport.uploadFile('marcFileForC356766.mrc', fileName);
-          JobProfiles.waitFileIsUploaded();
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(fileName);
-          for (let i = 0; i < 1; i++) {
-            Logs.getCreatedItemsID(i).then((link) => {
-              createdAuthorityIDs.push(link.split('/')[5]);
-            });
-          }
+          DataImport.uploadFileViaApi('marcFileForC356766.mrc', fileName, jobProfileToRun).then(
+            (response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityIDs.push(record[propertyName].idList[0]);
+              });
+            },
+          );
+
           cy.visit(TopMenu.marcAuthorities);
           MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.searchBy(
@@ -220,7 +211,7 @@ describe('MARC', () => {
 
       it(
         'C356765 Search for record without subfield "t" (personalNameTitle and sftPersonalName) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+        { tags: ['criticalPath', 'spitfire'] },
         () => {
           DataImport.uploadFile('marcFileForC356765.mrc', fileName);
           JobProfiles.waitFileIsUploaded();
@@ -235,7 +226,6 @@ describe('MARC', () => {
           });
 
           cy.visit(TopMenu.marcAuthorities);
-
           MarcAuthorities.clickActionsButton();
           MarcAuthorities.actionsSortBy('Type of heading');
 
@@ -272,7 +262,6 @@ describe('MARC', () => {
           }
 
           cy.visit(TopMenu.marcAuthorities);
-
           MarcAuthorities.checkSearchOption('keyword');
           MarcAuthorities.searchByParameter(testData.searchOptionKeyword, testData.recordB);
           MarcAuthorityBrowse.checkResultWithValue(testData.authorized, testData.recordB);

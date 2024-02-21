@@ -63,6 +63,7 @@ describe('MARC', () => {
       marc: 'marcBibFileC389500.mrc',
       fileName: `testMarcFile.C389500.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      propertyName: 'relatedInstanceInfo',
     };
 
     const holdingsFile = {
@@ -97,16 +98,19 @@ describe('MARC', () => {
 
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(instanceFile.marc, instanceFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(instanceFile.jobProfileToRun);
-            JobProfiles.runImportFile();
+            DataImport.uploadFileViaApi(
+              instanceFile.marc,
+              instanceFile.fileName,
+              instanceFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                recordIDs.push(record[instanceFile.propertyName].idList[0]);
+              });
+            });
             JobProfiles.waitFileIsImported(instanceFile.fileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+            Logs.checkJobStatus(instanceFile.fileName, JOB_STATUS_NAMES.COMPLETED);
             Logs.openFileDetails(instanceFile.fileName);
-            Logs.getCreatedItemsID().then((link) => {
-              recordIDs.push(link.split('/')[5]);
+            Logs.getCreatedItemsID().then(() => {
               cy.getInstanceHRID(recordIDs[0]).then((instanceHRID) => {
                 DataImport.editMarcFile(
                   holdingsFile.marc,
@@ -121,15 +125,16 @@ describe('MARC', () => {
                     instanceHRID,
                   ],
                 );
+
                 cy.visit(TopMenu.dataImportPath);
                 DataImport.waitLoading();
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(testData.editedHoldingsFileName, holdingsFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(holdingsFile.jobProfileToRun);
-                JobProfiles.runImportFile();
+                DataImport.uploadFileViaApi(
+                  testData.editedHoldingsFileName,
+                  holdingsFile.fileName,
+                  holdingsFile.jobProfileToRun,
+                );
                 JobProfiles.waitFileIsImported(holdingsFile.fileName);
-                Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+                Logs.checkJobStatus(holdingsFile.fileName, JOB_STATUS_NAMES.COMPLETED);
                 Logs.openFileDetails(holdingsFile.fileName);
                 // additional wait for holdings list to load
                 cy.wait(2000);
@@ -161,7 +166,7 @@ describe('MARC', () => {
 
     it(
       'C389500 Verify that "Call number type" is correctly mapped after importing and editing. (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventoryInstances.searchByTitle(recordIDs[0]);
         for (let i = 0; i < holdingsFile.numOfRecords; i++) {

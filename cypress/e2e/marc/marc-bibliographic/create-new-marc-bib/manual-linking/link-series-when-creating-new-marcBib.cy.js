@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -36,14 +34,14 @@ describe('MARC', () => {
             rowIndex: 5,
             tag: '800',
             content: '$t testT $0 123 $dtestD  $a testA $0 971255',
-            boxFourth: '$a C380729 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
+            boxFourth: '$a C380729 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
             boxFifth: '',
             boxSixth: '$0 3052044',
             boxSeventh: '',
             searchOption: 'Personal name',
             marcValue: 'C380729 Jackson, Peter, 1950-2022 Inspector Banks series ;',
             markedValue: 'C380729 Kerouac, Jack,',
-            valueAfterSave: 'C380729 Jackson, Peter, 1950-2022 Inspector Banks series',
+            valueAfterSave: 'C380729 Jackson, Peter, Inspector Banks series ; 1950-2022',
           },
           {
             rowIndex: 6,
@@ -70,6 +68,7 @@ describe('MARC', () => {
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 3,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
@@ -85,24 +84,16 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
+            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
-              cy.loginAsAdmin({
-                path: TopMenu.dataImportPath,
-                waiter: DataImport.waitLoading,
-              }).then(() => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdAuthorityIDs.push(link.split('/')[5]);
-                  });
-                }
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+                });
               });
             });
 
@@ -176,8 +167,6 @@ describe('MARC', () => {
             MarcAuthorityBrowse.checkSearchOptions();
             MarcAuthorities.clickReset();
             MarcAuthorityBrowse.searchBy(newFields[1].searchOption, newFields[1].marcValue);
-            MarcAuthorities.checkRow(newFields[1].marcValue);
-            MarcAuthorities.selectTitle(newFields[1].marcValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
               newFields[1].tag,
@@ -227,7 +216,7 @@ describe('MARC', () => {
             QuickMarcEditor.closeEditorPane();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C380729 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ; $0 3052044 $9`,
+              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C380729 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052044 $9`,
             );
             InventoryViewSource.contains(
               `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C380729 John Bartholomew and Son. $l English $t Bartholomew world travel series $d 1995 $0 http://id.loc.gov/authorities/names/n84704570 $9`,
