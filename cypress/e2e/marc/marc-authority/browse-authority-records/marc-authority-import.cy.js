@@ -52,9 +52,11 @@ describe('MARC', () => {
       });
 
       afterEach(() => {
+        cy.getAdminToken();
         createdAuthorityIDs.forEach((id) => {
           MarcAuthority.deleteViaAPI(id);
         });
+        createdAuthorityIDs.length = 0;
       });
 
       it(
@@ -63,15 +65,13 @@ describe('MARC', () => {
           tags: ['smoke', 'authority', 'spitfire'],
         },
         () => {
-          DataImport.uploadFileViaApi(
-            'marcFileForC360520.mrc',
-            fileName,
-            jobProfileToRun,
-          ).then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityIDs.push(record[propertyName].idList[0]);
-            });
-          });
+          DataImport.uploadFileViaApi('marcFileForC360520.mrc', fileName, jobProfileToRun).then(
+            (response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityIDs.push(record[propertyName].idList[0]);
+              });
+            },
+          );
           JobProfiles.waitFileIsImported(fileName);
           Logs.checkJobStatus(fileName, 'Completed');
           Logs.openFileDetails(fileName);
@@ -141,15 +141,13 @@ describe('MARC', () => {
         'C353997 Browse for records which have subfield "t" value (personalNameTitle and sftPersonalNameTitle) (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          DataImport.uploadFileViaApi(
-            'marcFileForC353997.mrc',
-            fileName,
-            jobProfileToRun,
-          ).then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityIDs.push(record[propertyName].idList[0]);
-            });
-          });
+          DataImport.uploadFileViaApi('marcFileForC353997.mrc', fileName, jobProfileToRun).then(
+            (response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityIDs.push(record[propertyName].idList[0]);
+              });
+            },
+          );
 
           cy.visit(TopMenu.marcAuthorities);
           MarcAuthorities.switchToBrowse();
@@ -185,15 +183,13 @@ describe('MARC', () => {
         'C356766 Browse for record without subfield "t" (personalNameTitle and sftPersonalName) (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          DataImport.uploadFileViaApi(
-            'marcFileForC356766.mrc',
-            fileName,
-            jobProfileToRun,
-          ).then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityIDs.push(record[propertyName].idList[0]);
-            });
-          });
+          DataImport.uploadFileViaApi('marcFileForC356766.mrc', fileName, jobProfileToRun).then(
+            (response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityIDs.push(record[propertyName].idList[0]);
+              });
+            },
+          );
 
           cy.visit(TopMenu.marcAuthorities);
           MarcAuthorities.switchToBrowse();

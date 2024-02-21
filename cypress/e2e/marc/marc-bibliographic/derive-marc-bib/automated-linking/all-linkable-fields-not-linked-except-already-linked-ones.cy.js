@@ -187,6 +187,7 @@ describe('MARC', () => {
               });
             });
 
+            cy.loginAsAdmin();
             cy.visit(TopMenu.inventoryPath).then(() => {
               InventoryInstances.searchByTitle(createdRecordsIDs[0]);
               InventoryInstances.selectInstance();
