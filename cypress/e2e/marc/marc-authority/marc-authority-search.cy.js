@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -56,12 +53,14 @@ describe('MARC', () => {
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         authorityHeading: 'C360532 Cartoons & Comics',
         numberOfRecors: 1,
+        propertyName: 'relatedAuthorityInfo',
       },
       {
         marc: 'marcAuthFileC409449.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numberOfRecors: 17,
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
 
@@ -79,23 +78,15 @@ describe('MARC', () => {
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
           (createdUserProperties2) => {
             testData.userPropertiesC409449 = createdUserProperties2;
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.waitLoading();
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numberOfRecors; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdRecordIDs.push(link.split('/')[5]);
-                  });
-                }
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+                });
               });
             });
           },
