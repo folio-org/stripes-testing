@@ -76,26 +76,6 @@ describe('MARC', () => {
           testData.userProperties = createdUserProperties;
         },
       );
-
-      cy.getAdminToken();
-      marcFiles.forEach((marcFile) => {
-        DataImport.uploadFileViaApi(
-          marcFile.marc,
-          marcFile.fileName,
-          marcFile.jobProfileToRun,
-        ).then((response) => {
-          response.entries.forEach((record) => {
-            createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
-          });
-        });
-      });
-    });
-
-    beforeEach(() => {
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.marcAuthorities,
-        waiter: MarcAuthorities.waitLoading,
-      });
     });
 
     after(() => {
@@ -110,6 +90,20 @@ describe('MARC', () => {
       'C365113 Apply "Authority source" facet to the search result list (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
+        cy.getAdminToken();
+        DataImport.uploadFileViaApi(
+          marcFiles[1].marc,
+          marcFiles[1].fileName,
+          marcFiles[1].jobProfileToRun,
+        ).then((response) => {
+          response.entries.forEach((record) => {
+            createdAuthorityIDs.push(record[marcFiles[1].propertyName].idList[0]);
+          });
+        });
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.marcAuthorities,
+          waiter: MarcAuthorities.waitLoading,
+        });
         MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.all);
         MarcAuthorities.checkResultsListRecordsCountGreaterThan(0);
         MarcAuthorities.checkAuthoritySourceOptions();
@@ -145,6 +139,20 @@ describe('MARC', () => {
       'C350579 Sorting and displaying results of search authority records by "Actions" dropdown menu (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
+        cy.getAdminToken();
+        DataImport.uploadFileViaApi(
+          marcFiles[0].marc,
+          marcFiles[0].fileName,
+          marcFiles[0].jobProfileToRun,
+        ).then((response) => {
+          response.entries.forEach((record) => {
+            createdAuthorityIDs.push(record[marcFiles[0].propertyName].idList[0]);
+          });
+        });
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.marcAuthorities,
+          waiter: MarcAuthorities.waitLoading,
+        });
         MarcAuthorities.checkSearchOptions();
         MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
         MarcAuthorities.chooseTypeOfHeading(headingTypes);
