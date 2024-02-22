@@ -63,35 +63,50 @@ describe('Consortium manager', () => {
               testData.user856 = user;
             })
             .then(() => {
-              InventoryInstance.createAlternativeTitleTypeViaAPI(
-                testData.collegeLocalType.name,
-              ).then((alternativeTitleTypeID) => {
-                testData.collegeLocalType.id = alternativeTitleTypeID;
-              });
+              cy.createTempUser([permissions.crudAlternativeTitleTypes.gui])
+                .then((lastUser) => {
+                  // User for test C410858
+                  testData.user858 = lastUser;
+                })
+                .then(() => {
+                  InventoryInstance.createAlternativeTitleTypeViaAPI(
+                    testData.collegeLocalType.name,
+                  ).then((alternativeTitleTypeID) => {
+                    testData.collegeLocalType.id = alternativeTitleTypeID;
+                  });
 
-              cy.resetTenant();
-              cy.getAdminToken();
-              cy.assignPermissionsToExistingUser(testData.user856.userId, [
-                permissions.consortiaSettingsConsortiumManagerEdit.gui,
-                permissions.crudAlternativeTitleTypes.gui,
-              ]);
+                  cy.resetTenant();
+                  cy.getAdminToken();
+                  cy.assignPermissionsToExistingUser(testData.user856.userId, [
+                    permissions.consortiaSettingsConsortiumManagerEdit.gui,
+                    permissions.crudAlternativeTitleTypes.gui,
+                  ]);
+                  cy.assignPermissionsToExistingUser(testData.user858.userId, [
+                    permissions.consortiaSettingsConsortiumManagerShare.gui,
+                    permissions.crudAlternativeTitleTypes.gui,
+                  ]);
 
-              cy.resetTenant();
-              cy.getAdminToken();
-              cy.assignAffiliationToUser(Affiliations.University, testData.user855.userId);
-              cy.assignAffiliationToUser(Affiliations.University, testData.user856.userId);
-              cy.setTenant(Affiliations.University);
-              cy.assignPermissionsToExistingUser(testData.user855.userId, [
-                permissions.crudAlternativeTitleTypes.gui,
-              ]);
-              cy.assignPermissionsToExistingUser(testData.user856.userId, [
-                permissions.crudAlternativeTitleTypes.gui,
-              ]);
-              InventoryInstance.createAlternativeTitleTypeViaAPI(
-                testData.universityLocalType.name,
-              ).then((alternativeTitleTypeID) => {
-                testData.universityLocalType.id = alternativeTitleTypeID;
-              });
+                  cy.resetTenant();
+                  cy.getAdminToken();
+                  cy.assignAffiliationToUser(Affiliations.University, testData.user855.userId);
+                  cy.assignAffiliationToUser(Affiliations.University, testData.user856.userId);
+                  cy.assignAffiliationToUser(Affiliations.University, testData.user858.userId);
+                  cy.setTenant(Affiliations.University);
+                  cy.assignPermissionsToExistingUser(testData.user855.userId, [
+                    permissions.crudAlternativeTitleTypes.gui,
+                  ]);
+                  cy.assignPermissionsToExistingUser(testData.user856.userId, [
+                    permissions.crudAlternativeTitleTypes.gui,
+                  ]);
+                  cy.assignPermissionsToExistingUser(testData.user858.userId, [
+                    permissions.crudAlternativeTitleTypes.gui,
+                  ]);
+                  InventoryInstance.createAlternativeTitleTypeViaAPI(
+                    testData.universityLocalType.name,
+                  ).then((alternativeTitleTypeID) => {
+                    testData.universityLocalType.id = alternativeTitleTypeID;
+                  });
+                });
             });
         });
       });
@@ -114,6 +129,7 @@ describe('Consortium manager', () => {
         AlternativeTitleTypesConsortiumManager.deleteViaApi(testData.centralSharedType);
         Users.deleteViaApi(testData.user855.userId);
         Users.deleteViaApi(testData.user856.userId);
+        Users.deleteViaApi(testData.user858.userId);
       });
 
       it(
@@ -238,6 +254,78 @@ describe('Consortium manager', () => {
             testData.centralSharedType.payload.name,
             'consortium',
             'All',
+          );
+          AlternativeTitleTypesConsortiumManager.verifyTypeInTheList(
+            testData.centralLocalType.name,
+            'local',
+            tenantNames.central,
+            'edit',
+            'trash',
+          );
+
+          AlternativeTitleTypesConsortiumManager.verifyNoTypeInTheList(
+            testData.collegeLocalType.name,
+          );
+          AlternativeTitleTypesConsortiumManager.verifyNoTypeInTheList(
+            testData.universityLocalType.name,
+          );
+        },
+      );
+
+      it(
+        'C410858 User with "Consortium manager: Can share settings to all members" permission is able to view the list of alternative title types of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
+        { tags: ['criticalPathECS', 'thunderjet'] },
+        () => {
+          cy.resetTenant();
+          cy.login(testData.user858.username, testData.user858.password);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+          cy.visit(TopMenu.consortiumManagerPath);
+          SelectMembers.selectAllMembers();
+          ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
+          ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
+          AlternativeTitleTypesConsortiumManager.choose();
+          AlternativeTitleTypesConsortiumManager.verifyTypeInTheList(
+            testData.centralSharedType.payload.name,
+            'consortium',
+            'All',
+            'edit',
+            'trash',
+          );
+          AlternativeTitleTypesConsortiumManager.verifyTypeInTheList(
+            testData.centralLocalType.name,
+            'local',
+            tenantNames.central,
+            'edit',
+            'trash',
+          );
+
+          AlternativeTitleTypesConsortiumManager.verifyTypeInTheList(
+            testData.collegeLocalType.name,
+            'local',
+            tenantNames.college,
+            'edit',
+            'trash',
+          );
+          AlternativeTitleTypesConsortiumManager.verifyTypeInTheList(
+            testData.universityLocalType.name,
+            'local',
+            tenantNames.university,
+            'edit',
+            'trash',
+          );
+
+          ConsortiumManagerApp.clickSelectMembers();
+          SelectMembers.verifyStatusOfSelectMembersModal(3, 2);
+          SelectMembers.selectMembers(tenantNames.college);
+          SelectMembers.selectMembers(tenantNames.university);
+          SelectMembers.saveAndClose();
+          ConsortiumManagerApp.verifyMembersSelected(1);
+          AlternativeTitleTypesConsortiumManager.verifyTypeInTheList(
+            testData.centralSharedType.payload.name,
+            'consortium',
+            'All',
+            'edit',
+            'trash',
           );
           AlternativeTitleTypesConsortiumManager.verifyTypeInTheList(
             testData.centralLocalType.name,
