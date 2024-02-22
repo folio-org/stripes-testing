@@ -40,8 +40,8 @@ describe('Inventory', () => {
       title: 'C411611 Instance 5 Local FOLIO with Holdings',
       alternativeTitle: 'C411611 Alternative title 5',
     };
-    const sharedMarcTitle_1 = 'C411611 Instance 1 Shared MARC';
-    const sharedMarcTitle_2 = 'C411611 Instance 2 Shared MARC with Holdings';
+    const sharedMarcTitle1 = 'C411611 Instance 1 Shared MARC';
+    const sharedMarcTitle2 = 'C411611 Instance 2 Shared MARC with Holdings';
 
     const marcFiles = [
       {
@@ -236,8 +236,8 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectSearchOptions('Title (all)', searchValue);
         InventorySearchAndFilter.verifySelectedSearchOption('title');
         InventorySearchAndFilter.clickSearch();
-        InventorySearchAndFilter.verifySearchResult(sharedMarcTitle_1);
-        InventorySearchAndFilter.verifySearchResult(sharedMarcTitle_2);
+        InventorySearchAndFilter.verifySearchResult(sharedMarcTitle1);
+        InventorySearchAndFilter.verifySearchResult(sharedMarcTitle2);
         InventorySearchAndFilter.verifySearchResult(sharedFOLIOInstancesFromCentral[0].title);
         InventorySearchAndFilter.verifySearchResult(sharedFOLIOInstancesFromCentral[1].title);
       },
