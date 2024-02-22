@@ -36,7 +36,7 @@ describe('Inventory', () => {
         alternativeTitle: 'C411611 Alternative title 4',
       },
     ];
-    const localFOLIOInstanceFromMember1 = {
+    const localFOLIOInstanceFromMember = {
       title: 'C411611 Instance 5 Local FOLIO with Holdings',
       alternativeTitle: 'C411611 Alternative title 5',
     };
@@ -123,11 +123,11 @@ describe('Inventory', () => {
             InventoryInstances.createFolioInstanceViaApi({
               instance: {
                 instanceTypeId: testData.instanceTypeId,
-                title: localFOLIOInstanceFromMember1.title,
+                title: localFOLIOInstanceFromMember.title,
                 alternativeTitles: [
                   {
                     alternativeTitleTypeId: testData.alternativeTitleTypeIDCollege,
-                    alternativeTitle: localFOLIOInstanceFromMember1.alternativeTitle,
+                    alternativeTitle: localFOLIOInstanceFromMember.alternativeTitle,
                   },
                 ],
               },
@@ -138,7 +138,7 @@ describe('Inventory', () => {
                 },
               ],
             }).then((specialInstanceIds) => {
-              localFOLIOInstanceFromMember1.testInstanceId = specialInstanceIds.instanceId;
+              localFOLIOInstanceFromMember.testInstanceId = specialInstanceIds.instanceId;
               createdHoldingsCollege.push(specialInstanceIds.holdingIds[0].id);
             });
           });
@@ -221,7 +221,7 @@ describe('Inventory', () => {
       createdHoldingsCollege.forEach((collegeHoldingId) => {
         InventoryHoldings.deleteHoldingRecordViaApi(collegeHoldingId);
       });
-      InventoryInstance.deleteInstanceViaApi(localFOLIOInstanceFromMember1.testInstanceId);
+      InventoryInstance.deleteInstanceViaApi(localFOLIOInstanceFromMember.testInstanceId);
       InventoryInstance.deleteInstanceViaApi(marcFiles[1].createdRecordsId[0]);
       InventoryInstance.deleteInstanceViaApi(sharedFOLIOInstancesFromCentral[1].testInstanceId);
       InventoryInstance.deleteInstanceViaApi(marcFiles[0].createdRecordsId[1]);
