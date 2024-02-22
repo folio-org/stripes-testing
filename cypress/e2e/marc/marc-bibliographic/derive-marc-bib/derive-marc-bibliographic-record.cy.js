@@ -1,7 +1,5 @@
 import { Permissions } from '../../../../support/dictionary';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
@@ -17,6 +15,7 @@ describe('MARC', () => {
         marcBibFilePath: 'Pretty_Woman_movie.mrc',
         marcBibFileName: `testMarcFileC380646.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        propertyName: 'relatedInstanceInfo',
       };
       let createdRecordIDs;
 
@@ -33,17 +32,14 @@ describe('MARC', () => {
             path: TopMenu.dataImportPath,
             waiter: DataImport.waitLoading,
           }).then(() => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(testData.marcBibFilePath, testData.marcBibFileName);
-            JobProfiles.waitFileIsUploaded();
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(testData.jobProfileToRun);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(testData.marcBibFileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(testData.marcBibFileName);
-            Logs.getCreatedItemsID().then((link) => {
-              createdRecordIDs = link.split('/')[5];
+            DataImport.uploadFileViaApi(
+              testData.marcBibFilePath,
+              testData.marcBibFileName,
+              testData.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdRecordIDs = record[testData.propertyName].idList[0];
+              });
             });
           });
         });

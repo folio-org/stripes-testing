@@ -14,7 +14,7 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       tag: '110',
-      marcValue: 'Beatles',
+      marcValue: 'C375261 Beatles',
       rowIndex: 33,
       searchOption: 'Corporate/Conference name',
       instanceTitle: 'The Beatles in mono.',
