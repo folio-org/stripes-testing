@@ -46,6 +46,7 @@ const marcViewSection = Section({ id: 'marc-view-pane' });
 const editorSection = Section({ id: 'quick-marc-editor-pane' });
 const typeOfHeadingSelect = MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' });
 const findAuthorityModal = Modal({ id: 'find-authority-modal' });
+const detailsMarcViewPaneheader = PaneHeader({ id: 'paneHeadermarc-view-pane' });
 
 // actions dropdown window
 const authorityActionsDropDown = DropdownMenu();
@@ -97,6 +98,8 @@ const authoritySourceOptions = [
   'Not specified',
 ];
 const thesaurusAccordion = Accordion('Thesaurus');
+const sharedTextInDetailView = 'Shared • ';
+const localTextInDetailView = 'Local • ';
 
 export default {
   waitLoading() {
@@ -440,8 +443,20 @@ export default {
     ]);
   },
 
+  checkHeadlineInBoldExistsInMarkViewPaneContent(heading) {
+    cy.expect(
+      marcViewSectionContent
+        .find(HTML({ className: including('font-weight-bold--'), text: heading }))
+        .exists(),
+    );
+  },
+
   verifyViewPaneContent(value) {
     cy.expect([marcViewSection.exists(), marcViewSectionContent.has({ text: including(value) })]);
+  },
+
+  verifyViewPaneContentExists() {
+    cy.expect(marcViewSection.exists());
   },
 
   getViewPaneContent() {
@@ -1360,5 +1375,16 @@ export default {
 
   checkPreviousAndNextPaginationButtonsShown() {
     cy.expect([previousButton.visible(), nextButton.visible()]);
+  },
+
+  verifySharedIcon(row = 0) {
+    cy.expect(
+      rootSection.find(MultiColumnListCell({ row, innerHTML: including('sharedIcon') })).exists(),
+    );
+  },
+
+  checkSharedTextInDetailView(isShared = true) {
+    const expectedText = isShared ? sharedTextInDetailView : localTextInDetailView;
+    cy.expect(detailsMarcViewPaneheader.has({ title: including(expectedText) }));
   },
 };
