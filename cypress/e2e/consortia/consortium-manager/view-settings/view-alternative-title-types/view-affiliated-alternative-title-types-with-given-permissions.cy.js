@@ -315,7 +315,7 @@ describe('Consortium manager', () => {
           );
 
           ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.verifyStatusOfSelectMembersModal(3, 2);
+          SelectMembers.verifyStatusOfSelectMembersModal(3, 3);
           SelectMembers.selectMembers(tenantNames.college);
           SelectMembers.selectMembers(tenantNames.university);
           SelectMembers.saveAndClose();
