@@ -51,15 +51,13 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
 
   before('Create user and data', () => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-      DataImport.uploadFileViaApi(
-        marcFile.marc,
-        marcFile.fileName,
-        marcFile.jobProfileToRun,
-      ).then((response) => {
-        response.entries.forEach((record) => {
-          testData.instanceID = record[marcFile.propertyName].idList[0];
-        });
-      });
+      DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, marcFile.jobProfileToRun).then(
+        (response) => {
+          response.entries.forEach((record) => {
+            testData.instanceID = record[marcFile.propertyName].idList[0];
+          });
+        },
+      );
     });
 
     cy.createTempUser([

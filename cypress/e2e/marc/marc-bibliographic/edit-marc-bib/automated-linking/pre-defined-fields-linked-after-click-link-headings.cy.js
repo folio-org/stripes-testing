@@ -266,6 +266,8 @@ describe('MARC', () => {
               '$a Coates, Ta-Nehisi, $e author. $0n2008001084C389486',
             );
             QuickMarcEditor.clickLinkHeadingsButton();
+            // need to wait until message appear
+            cy.wait(2000);
             QuickMarcEditor.checkCallout(
               'Field 100, 110, 111, 130, 240, 700, 710, 730, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
             );

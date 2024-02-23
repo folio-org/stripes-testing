@@ -58,15 +58,17 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userData = createdUserProperties;
 
-            cy.getAdminToken();
-            marcFiles.forEach((marcFile) => {
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                marcFile.fileName,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.entries.forEach((record) => {
-                  createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+            cy.loginAsAdmin().then(() => {
+              cy.visit(TopMenu.dataImportPath);
+              marcFiles.forEach((marcFile) => {
+                DataImport.uploadFileViaApi(
+                  marcFile.marc,
+                  marcFile.fileName,
+                  marcFile.jobProfileToRun,
+                ).then((response) => {
+                  response.entries.forEach((record) => {
+                    createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+                  });
                 });
               });
             });

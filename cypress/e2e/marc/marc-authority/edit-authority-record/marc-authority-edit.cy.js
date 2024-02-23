@@ -401,7 +401,7 @@ describe('MARC', () => {
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
       const propertyName = 'relatedAuthorityInfo';
-      const initialLDRValue = String.raw`03821cz\\a2200505n\\4500`;
+      const initialLDRValue = String.raw`03891cz\\a2200505n\\4500`;
       const changesSavedCallout =
         'This record has successfully saved and is in process. Changes may not appear immediately.';
       const changedLDRs = [
@@ -516,7 +516,7 @@ describe('MARC', () => {
             MarcAuthority.edit();
             QuickMarcEditor.updateExistingField('LDR', changeLDR.newContent);
             QuickMarcEditor.pressSaveAndClose();
-            if (changeLDR.newContent === String.raw`04112az\\a2200589n\\4500`) {
+            if (changeLDR.newContent === String.raw`03891az\\a2200505n\\4500`) {
               MarcAuthorities.verifyFirstValueSaveSuccess(
                 changesSavedCallout,
                 changeLDR.newContent,

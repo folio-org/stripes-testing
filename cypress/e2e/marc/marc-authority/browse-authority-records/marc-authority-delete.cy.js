@@ -69,7 +69,7 @@ describe('MARC', () => {
         'C350643 Delete a "MARC Authority" record via "MARC Authority" app (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
+          DataImport.uploadFile('marcFileForC350643.mrc', testData.fileName);
           JobProfiles.waitFileIsUploaded();
           JobProfiles.waitLoadingList();
           JobProfiles.search('Default - Create SRS MARC Authority');
