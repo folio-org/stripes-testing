@@ -73,7 +73,10 @@ describe('MARC', () => {
               });
             });
 
-            cy.visit(TopMenu.inventoryPath).then(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            }).then(() => {
               InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();

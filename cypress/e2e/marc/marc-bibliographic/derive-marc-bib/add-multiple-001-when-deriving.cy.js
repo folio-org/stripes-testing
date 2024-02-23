@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import { Permissions } from '../../../../support/dictionary';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
@@ -20,6 +17,7 @@ describe('MARC', () => {
           marc: 'marcBibFileC387459.mrc',
           fileName: `testMarcFileC387459.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          propertyName: 'relatedInstanceInfo',
         },
       };
 
@@ -34,15 +32,14 @@ describe('MARC', () => {
           testData.userProperties = createdUserProperties;
           cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
             () => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
-              JobProfiles.search(testData.marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(testData.marcFile.fileName);
-              Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(testData.marcFile.fileName);
-              Logs.getCreatedItemsID().then((link) => {
-                createdRecordIDs.push(link.split('/')[5]);
+              DataImport.uploadFileViaApi(
+                testData.marcFile.marc,
+                testData.marcFile.fileName,
+                testData.marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdRecordIDs.push(record[testData.marcFile.propertyName].idList[0]);
+                });
               });
             },
           );

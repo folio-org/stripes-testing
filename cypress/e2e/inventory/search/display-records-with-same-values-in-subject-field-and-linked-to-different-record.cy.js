@@ -135,7 +135,7 @@ describe('inventory', () => {
 
     it(
       'C375224 Browse | Display records with same values in "Subject" field and linked to different "MARC authority" records (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
