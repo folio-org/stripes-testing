@@ -1,15 +1,12 @@
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('inventory', () => {
   describe('Contributors Browse', () => {
@@ -18,6 +15,7 @@ describe('inventory', () => {
       marc: 'marcBibC397324.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      propertyName: 'relatedInstanceInfo',
       numOfRecords: 1,
     };
     let createdAuthorityID;
@@ -33,20 +31,19 @@ describe('inventory', () => {
           cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
         })
         .then(() => {
-          DataImport.verifyUploadState();
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(marcFile.fileName);
-          Logs.getCreatedItemsID().then((link) => {
-            createdAuthorityID = link.split('/')[5];
-            cy.login(user.userProperties.username, user.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityID = record[marcFile.propertyName].idList[0];
             });
+          });
+
+          cy.login(user.userProperties.username, user.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
           });
           InventorySearchAndFilter.selectBrowseContributors();
         });

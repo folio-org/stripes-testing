@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import { RECORD_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -49,23 +49,21 @@ describe('MARC', () => {
       marc: 'oneMarcBib.mrc',
       fileName: `C375187 testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      propertyName: 'relatedInstanceInfo',
     };
 
     before('create test data and login', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(marcFile.jobProfileToRun);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(marcFile.fileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(marcFile.fileName);
-      Logs.getCreatedItemsID(0).then((link) => {
-        testData.instanceID = link.split('/')[5];
+      DataImport.uploadFileViaApi(
+        marcFile.marc,
+        marcFile.fileName,
+        marcFile.jobProfileToRun,
+      ).then((response) => {
+        response.entries.forEach((record) => {
+          testData.instanceID = record[marcFile.propertyName].idList[0];
+        });
       });
+
       FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
         // edit marc file adding instance hrid

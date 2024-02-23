@@ -15,7 +15,7 @@ describe('MARC', () => {
       const testData = {};
       const OCLCAuthentication = '100481406/PAOLF';
 
-      before(() => {
+      beforeEach(() => {
         cy.getAdminToken().then(() => {
           Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
         });
@@ -29,7 +29,19 @@ describe('MARC', () => {
           Permissions.converterStorageAll.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
+        });
+      });
 
+      afterEach(() => {
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.userProperties.userId);
+        InventoryInstance.deleteInstanceViaApi(testData.instanceID);
+      });
+
+      it(
+        'C10950 Edit and save a MARC record in quickMARC (spitfire)',
+        { tags: ['smoke', 'spitfire'] },
+        () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventorySearchAndFilter.waitLoading,
@@ -38,27 +50,6 @@ describe('MARC', () => {
           InventoryInstance.getId().then((id) => {
             testData.instanceID = id;
           });
-        });
-      });
-
-      beforeEach(() => {
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventorySearchAndFilter.waitLoading,
-        });
-      });
-
-      after(() => {
-        cy.getAdminToken();
-        Users.deleteViaApi(testData.userProperties.userId);
-        InventoryInstance.deleteInstanceViaApi(testData.instanceID);
-      });
-
-      it(
-        'C10950 Edit and save a MARC record in quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire', 'nonParallel'] },
-        () => {
-          InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
           InventoryInstance.goToEditMARCBiblRecord();
           QuickMarcEditor.waitLoading();
@@ -83,9 +74,16 @@ describe('MARC', () => {
 
       it(
         'C10924 Add a field to a record using quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire', 'nonParallel'] },
+        { tags: ['smoke', 'spitfire'] },
         () => {
-          InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventorySearchAndFilter.waitLoading,
+          });
+          InventoryActions.import();
+          InventoryInstance.getId().then((id) => {
+            testData.instanceID = id;
+          });
 
           InventoryInstance.goToEditMARCBiblRecord();
           QuickMarcEditor.waitLoading();
@@ -110,9 +108,16 @@ describe('MARC', () => {
 
       it(
         'C10928 Delete a field(s) from a record in quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire', 'nonParallel'] },
+        { tags: ['smoke', 'spitfire'] },
         () => {
-          InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventorySearchAndFilter.waitLoading,
+          });
+          InventoryActions.import();
+          InventoryInstance.getId().then((id) => {
+            testData.instanceID = id;
+          });
 
           InventoryInstance.goToEditMARCBiblRecord();
           QuickMarcEditor.waitLoading();
@@ -132,9 +137,16 @@ describe('MARC', () => {
 
       it(
         'C10957 Attempt to delete a required field (spitfire)',
-        { tags: ['smoke', 'spitfire', 'nonParallel'] },
+        { tags: ['smoke', 'spitfire'] },
         () => {
-          InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventorySearchAndFilter.waitLoading,
+          });
+          InventoryActions.import();
+          InventoryInstance.getId().then((id) => {
+            testData.instanceID = id;
+          });
 
           InventoryInstance.goToEditMARCBiblRecord();
           QuickMarcEditor.waitLoading();
@@ -144,9 +156,16 @@ describe('MARC', () => {
 
       it(
         'C10951 Add a 5XX field to a marc record in quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire', 'nonParallel'] },
+        { tags: ['smoke', 'spitfire'] },
         () => {
-          InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventorySearchAndFilter.waitLoading,
+          });
+          InventoryActions.import();
+          InventoryInstance.getId().then((id) => {
+            testData.instanceID = id;
+          });
 
           InventoryInstance.startOverlaySourceBibRecord();
           InventoryActions.fillImportFields(InventoryInstance.validOCLC.id);
@@ -186,10 +205,17 @@ describe('MARC', () => {
 
       it(
         'C345388 Derive a MARC bib record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'nonParallel'] },
+        { tags: ['smoke', 'spitfire'] },
         () => {
-          InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
-
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventorySearchAndFilter.waitLoading,
+          });
+          InventoryActions.import();
+          InventoryInstance.getId().then((id) => {
+            testData.instanceID = id;
+          });
+          
           InventoryInstance.getAssignedHRID().then((instanceHRID) => {
             InventoryInstance.deriveNewMarcBib();
             const expectedCreatedValue = QuickMarcEditor.addNewField();
