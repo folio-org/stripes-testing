@@ -9,7 +9,6 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {

@@ -215,7 +215,7 @@ describe('MARC', () => {
           InventoryInstance.getId().then((id) => {
             testData.instanceID = id;
           });
-          
+
           InventoryInstance.getAssignedHRID().then((instanceHRID) => {
             InventoryInstance.deriveNewMarcBib();
             const expectedCreatedValue = QuickMarcEditor.addNewField();

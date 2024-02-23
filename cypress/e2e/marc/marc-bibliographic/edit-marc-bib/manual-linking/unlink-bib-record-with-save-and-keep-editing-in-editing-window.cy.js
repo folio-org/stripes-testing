@@ -10,7 +10,6 @@ import InstanceRecordView from '../../../../../support/fragments/inventory/insta
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import { JOB_STATUS_NAMES } from '../../../../../support/constants';
 
 describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => {
   let userData = {};
