@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -33,12 +30,14 @@ describe('MARC', () => {
             fileName: `testMarcFileBib360551.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numberOfRecords: 1,
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthC360551.mrc',
             fileName: `testMarcFileAuthC360551.${randomFourDigitNumber()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numberOfRecords: 13,
+            propertyName: 'relatedAuthorityInfo',
           },
         ],
       };
@@ -76,23 +75,19 @@ describe('MARC', () => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })
           .then(() => {
             testData.marcFiles.forEach((marcFile) => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numberOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
                   if (marcFile.jobProfileToRun === 'Default - Create instance and SRS MARC Bib') {
-                    testData.instanceIDs.push(link.split('/')[5]);
+                    testData.instanceIDs.push(record[marcFile.propertyName].idList[0]);
                   } else {
-                    testData.authorityIDs.push(link.split('/')[5]);
+                    testData.authorityIDs.push(record[marcFile.propertyName].idList[0]);
                   }
                 });
-              }
-              cy.visit(TopMenu.dataImportPath);
+              });
             });
           })
           .then(() => {
