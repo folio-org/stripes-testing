@@ -7,6 +7,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 
 let user;
 const items = [];
@@ -70,12 +71,7 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
 
         const values = BulkEditFiles.getValuesFromCSVFile(fileContent);
-        BulkEditFiles.verifyMatchedResultFileContent(
-          matchedRecordsFileName,
-          values,
-          'barcode',
-          true,
-        );
+        ExportFile.verifyFileIncludes(matchedRecordsFileName, values);
       },
     );
   });
