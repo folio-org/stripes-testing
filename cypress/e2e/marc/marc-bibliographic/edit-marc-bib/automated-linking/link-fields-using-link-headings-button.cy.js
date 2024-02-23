@@ -273,9 +273,11 @@ describe('MARC', () => {
             QuickMarcEditor.afterDeleteNotification('700');
 
             QuickMarcEditor.clickLinkHeadingsButton();
+            cy.wait(1000);
             QuickMarcEditor.checkCallout(
               'Field 100, 240, 600, 630, 655, 700, 710, 711, 800, and 830 has been linked to MARC authority record(s).',
             );
+            cy.wait(1000);
             QuickMarcEditor.checkCallout(
               'Field 110, 111, 130, 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.',
             );
@@ -328,7 +330,9 @@ describe('MARC', () => {
             );
 
             QuickMarcEditor.clickLinkHeadingsButton();
+            cy.wait(1000);
             QuickMarcEditor.checkCallout('Field 700 has been linked to MARC authority record(s).');
+            cy.wait(1000);
             QuickMarcEditor.checkCallout(
               'Field 110, 111, 130, 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.',
             );

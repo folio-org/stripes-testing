@@ -272,11 +272,12 @@ describe('MARC', () => {
             testData.searchOptionKeyword,
             `C353995 ${testData.recordA}`,
           );
+
           MarcAuthorityBrowse.checkResultWithValueB(
             testData.authorized,
             `C353995 ${testData.recordB}`,
             testData.reference,
-            testData.recordBRef,
+            `C353995 ${testData.recordBRef}`,
           );
 
           MarcAuthorities.searchByParameter(
@@ -284,7 +285,7 @@ describe('MARC', () => {
             `C353995 ${testData.recordA}`,
           );
           MarcAuthorities.checkNoResultsMessage(
-            'No results found for "Angelou, Maya.". Please check your spelling and filters.',
+            'No results found for "C353995 Angelou, Maya.". Please check your spelling and filters.',
           );
 
           MarcAuthorities.searchByParameter(
@@ -304,7 +305,7 @@ describe('MARC', () => {
             testData.authorized,
             `C353995 ${testData.recordB}`,
             testData.reference,
-            testData.recordBRef,
+            `C353995 ${testData.recordBRef}`,
           );
         },
       );

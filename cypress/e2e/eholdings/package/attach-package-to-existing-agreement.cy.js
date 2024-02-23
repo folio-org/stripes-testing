@@ -25,10 +25,6 @@ describe('eHoldings', () => {
       ])
         .then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: EHoldingsTitlesSearch.waitLoading,
-          });
         })
         .then(() => {
           cy.getAdminToken();
@@ -40,6 +36,12 @@ describe('eHoldings', () => {
           cy.getAdminToken();
           Agreements.createViaApi().then((response) => {
             testData.agreementId = response.id;
+          });
+        })
+        .then(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: EHoldingsTitlesSearch.waitLoading,
           });
         });
     });

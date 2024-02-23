@@ -171,6 +171,7 @@ describe('MARC', () => {
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value2);
           QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
           MarcAuthority.delete();
           QuickMarcEditor.confirmDeletingRecord();
 
