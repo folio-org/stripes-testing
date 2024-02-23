@@ -65,11 +65,12 @@ describe('MARC', () => {
 
     const twoMarcBibsToLink = [
       {
-        marcBibRecord: 'The other side of paradise : a memoir / Staceyann Chin.',
+        marcBibRecord: 'C369084The other side of paradise : a memoir / Staceyann Chin.',
         linkingFields: linkingTagForFirstMarcBib,
       },
       {
-        marcBibRecord: 'Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin',
+        marcBibRecord:
+          'C369084Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin',
         linkingFields: linkingTagForSecondMarcBib,
       },
     ];
