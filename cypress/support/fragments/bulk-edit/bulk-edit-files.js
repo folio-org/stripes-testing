@@ -158,7 +158,7 @@ export default {
   },
 
   verifyMatchedResultByTemporaryLocation(actualResult, expectedResult) {
-    const actualTemporaryLocation = actualResult.split(',')[7];
+    const actualTemporaryLocation = actualResult.split(',')[8];
     expect(actualTemporaryLocation).to.eq(expectedResult);
   },
 
