@@ -1581,4 +1581,14 @@ export default {
 
     return cy.createAlternativeTitleTypes(body);
   },
+
+  createClassificationTypeViaApi(classificationTypeName, sourceName = 'local', id = uuid()) {
+    const body = {
+      id,
+      name: classificationTypeName,
+      source: sourceName,
+    };
+
+    return cy.createClassifierIdentifierTypes(body);
+  },
 };

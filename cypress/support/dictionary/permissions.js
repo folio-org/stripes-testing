@@ -233,6 +233,10 @@ export default {
     internal: 'ui-inventory.settings.alternative-title-types',
     gui: 'Settings (Inventory): Create, edit, delete alternative title types',
   },
+  crudClassificationIdentifierTypes: {
+    internal: 'ui-inventory.settings.classification-types',
+    gui: 'Settings (Inventory): Create, edit, delete classification identifier types',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
