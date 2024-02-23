@@ -75,6 +75,7 @@ describe('MARC', () => {
 
           cy.getAdminToken();
           marcFiles.forEach((marcFile) => {
+            cy.getAdminToken();
             DataImport.uploadFileViaApi(
               marcFile.marc,
               marcFile.fileName,
@@ -86,8 +87,10 @@ describe('MARC', () => {
             });
           });
 
-          cy.visit(TopMenu.inventoryPath).then(() => {
-            InventoryInstances.waitContentLoading();
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             // wait for detail view to be fully loaded

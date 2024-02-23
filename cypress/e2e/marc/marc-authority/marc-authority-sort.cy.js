@@ -26,9 +26,9 @@ describe('MARC', () => {
       },
 
       facetValues: {
-        valueA: 'Postcards (with "tgm" in 010)',
-        valueB: 'GSAFD Genre (for test)',
-        valueC: 'Stone, Robert B (not from pre-defined list)',
+        valueA: 'C365113 Postcards (with "tgm" in 010)',
+        valueB: 'C365113 GSAFD Genre (for test)',
+        valueC: 'C365113 Stone, Robert B (not from pre-defined list)',
       },
 
       prefixValues: {

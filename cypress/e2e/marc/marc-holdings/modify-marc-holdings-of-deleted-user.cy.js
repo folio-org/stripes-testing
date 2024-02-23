@@ -42,15 +42,13 @@ describe('MARC', () => {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         }).then(() => {
-          DataImport.uploadFileViaApi(
-            'oneMarcBib.mrc',
-            fileName,
-            jobProfileToRun,
-          ).then((response) => {
-            response.entries.forEach((record) => {
-              instanceID = record[propertyName].idList[0];
-            });
-          });
+          DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
+            (response) => {
+              response.entries.forEach((record) => {
+                instanceID = record[propertyName].idList[0];
+              });
+            },
+          );
           JobProfiles.waitFileIsImported(fileName);
           Logs.checkJobStatus(fileName, 'Completed');
           Logs.openFileDetails(fileName);
@@ -86,6 +84,8 @@ describe('MARC', () => {
       InventorySearchAndFilter.searchInstanceByTitle(instanceID);
       InventorySearchAndFilter.selectViewHoldings();
       HoldingsRecordView.delete();
+      // need to wait until holding will be deleted
+      cy.wait(3000);
       if (instanceID) InventoryInstance.deleteInstanceViaApi(instanceID);
       Users.deleteViaApi(user.userBProperties.userId);
     });

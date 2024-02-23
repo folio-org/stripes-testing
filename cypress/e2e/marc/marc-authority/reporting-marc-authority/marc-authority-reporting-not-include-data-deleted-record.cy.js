@@ -28,6 +28,8 @@ const testData = {
     '$a C375230 Beethoven, Ludwig the Greatest $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
   updatedTag100Value2: '$a C375230 Kerouac, Jackson, $d 1922-1969',
   title: 'Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
+  updatedTitle:
+    'C375230 Beethoven, Ludwig the Greatest 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
 };
 
 const marcFiles = [
@@ -219,7 +221,7 @@ describe('MARC', () => {
               'Original heading',
               testData.authorityHeading1,
               'New heading',
-              testData.updatedTag100Value1,
+              testData.updatedTitle,
               'Identifier',
               testData.authority001FieldValue,
             ],
