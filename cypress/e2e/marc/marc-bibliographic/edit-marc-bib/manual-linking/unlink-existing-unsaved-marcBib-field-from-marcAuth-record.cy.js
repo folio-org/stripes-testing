@@ -6,8 +6,6 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 
@@ -94,24 +92,28 @@ describe('MARC', () => {
             fileName: `C366552 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numOfRecords: 1,
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileC366552.mrc',
             fileName: `C366552 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
           {
             marc: 'marcAuthFileC366552_1.mrc',
             fileName: `C366552 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
           {
             marc: 'marcAuthFileC366552_2.mrc',
             fileName: `C366552 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
@@ -129,21 +131,15 @@ describe('MARC', () => {
               });
             });
             marcFiles.forEach((marcFile) => {
-              cy.visit(TopMenu.dataImportPath);
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitFileIsUploaded();
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkStatusOfJobProfile('Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  testData.createdRecordIDs.push(link.split('/')[5]);
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
                 });
-              }
+              });
             });
           });
 

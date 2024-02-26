@@ -281,7 +281,7 @@ describe('data-import', () => {
             '0id.loc.gov/authorities/names/n83130832',
             'aMusic piano',
             'ewriter of supplementary textual content.',
-            'aLudwig van, Beethoven,d1770-1827iContainer of (work):0id.loc.gov/authorities/names/n79107741',
+            'aLudwig van, Beethoven,d1770-1827iContainer of (work):0http://id.loc.gov/authorities/names/n79107741',
           ],
           [
             'aBeethoven, Ludwig V.d1770-1827eAuthor',
@@ -320,7 +320,7 @@ describe('data-import', () => {
           '240',
           '1',
           '0',
-          '$m piano, violin, cello, $n op. 44, $r E♭ major $a Variations,',
+          '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
           '$c Ludwig Van Beethoven.',
           '$0 http://id.loc.gov/authorities/names/n83130832',
           '',

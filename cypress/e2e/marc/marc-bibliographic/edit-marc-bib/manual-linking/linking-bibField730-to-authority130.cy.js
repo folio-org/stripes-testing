@@ -4,8 +4,6 @@ import Users from '../../../../../support/fragments/users/users';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -32,12 +30,14 @@ describe('MARC', () => {
             marc: 'marcBibFileC375083.mrc',
             fileName: `testMarcFileC375083.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileC375083.mrc',
             fileName: `testMarcFileC375083.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             authorityHeading: 'C375083 Gone with the wind (Motion picture : 1939)',
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
         const createdRecordIDs = [];
@@ -69,22 +69,19 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
+            cy.getAdminToken();
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
                 });
               });
             });
+
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,

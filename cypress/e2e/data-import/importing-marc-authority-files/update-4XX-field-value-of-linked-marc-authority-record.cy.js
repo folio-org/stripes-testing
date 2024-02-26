@@ -102,6 +102,7 @@ describe('data-import', () => {
         fileName: `C374187 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numOfRecords: 2,
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'marcAuthFileForC374187.mrc',
@@ -109,6 +110,7 @@ describe('data-import', () => {
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
         authorityHeading: 'C374187 Elizabeth II, Queen of Great Britain, 1926-',
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
     const linkingTagAndValue = {
@@ -146,21 +148,17 @@ describe('data-import', () => {
       cy.wait(1000);
       NewJobProfile.saveAndClose();
 
+      cy.getAdminToken();
       marcFiles.forEach((marcFile) => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(marcFile.fileName);
-            Logs.getCreatedItemsID().then((link) => {
-              testData.createdRecordIDs.push(link.split('/')[5]);
-            });
-          },
-        );
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.entries.forEach((record) => {
+            testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+          });
+        });
       });
 
       cy.visit(TopMenu.inventoryPath).then(() => {

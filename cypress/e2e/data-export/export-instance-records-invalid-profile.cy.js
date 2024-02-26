@@ -45,7 +45,7 @@ describe('data-export', () => {
 
   it(
     'C350407 Verify that a user cannot trigger the DATA EXPORT using invalid job profile (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPathBroken', 'firebird'] },
     () => {
       ExportFileHelper.uploadFile(fileName);
       ExportFileHelper.exportWithDefaultJobProfile(fileName, 'holdings', 'Holdings');

@@ -1,7 +1,5 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
@@ -23,6 +21,7 @@ describe('MARC', () => {
         marc: 'marcBibFileForC380643.mrc',
         fileName: `testMarcFileC380643.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        propertyName: 'relatedInstanceInfo',
       };
       let instanceId;
       const calloutMessage = 'Record cannot be saved with more than one 010 field';
@@ -34,22 +33,16 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              // #1 - #4 upload test marcBibFile
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkStatusOfJobProfile('Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              Logs.getCreatedItemsID().then((link) => {
-                instanceId = link.split('/')[5];
-              });
-            },
-          );
+          cy.getAdminToken();
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              instanceId = record[marcFile.propertyName].idList[0];
+            });
+          });
         });
       });
 

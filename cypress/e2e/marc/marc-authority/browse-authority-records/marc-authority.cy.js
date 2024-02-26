@@ -12,6 +12,7 @@ import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -242,8 +243,11 @@ describe('MARC', () => {
             testData.authority.newField.tag,
             `$a ${testData.authority.newField.content}`,
           );
+          cy.wait(1000);
           MarcAuthority.changeField('130', testData.authority.newField.title);
+          cy.wait(1000);
           MarcAuthority.clicksaveAndCloseButton();
+          QuickMarcEditor.checkAfterSaveAndCloseAuthority();
 
           MarcAuthority.contains(testData.authority.newField.tag);
           MarcAuthority.contains(testData.authority.newField.content);
