@@ -166,7 +166,7 @@ describe('circulation-log loan period', () => {
     CheckOutActions.checkItemDueDate(DateTools.getFormattedDateWithSlashes({ date: itemDueDate }));
   });
 
-  it('C646: Test "Weeks" loan period (vega) (TaaS)', { tags: ['criticalPath', 'vega'] }, () => {
+  it('C646: Test "Weeks" loan period (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
     const ITEM_BARCODE = testData.folioInstances[1].barcodes[0];
     // Navigate to checkout page
     cy.visit(TopMenu.checkOutPath);
@@ -177,7 +177,7 @@ describe('circulation-log loan period', () => {
     CheckOutActions.checkItemDueDate(DateTools.getFormattedDateWithSlashes({ date: itemDueDate }));
   });
 
-  it('C647: Test "Months" loan period (vega) (TaaS)', { tags: ['criticalPath', 'vega'] }, () => {
+  it('C647: Test "Months" loan period (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
     const ITEM_BARCODE = testData.folioInstances[2].barcodes[0];
     // Navigate to checkout page
     cy.visit(TopMenu.checkOutPath);
