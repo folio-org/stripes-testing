@@ -181,6 +181,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
         testData.searchOptions.uniformTitle,
         testData.authorityFieldValue.field130,
       );
+      MarcAuthorities.checkRow(testData.authorityFieldValue.field130);
+      MarcAuthorities.selectTitle(testData.authorityFieldValue.field130);
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.checkCallout(testData.errorMessage);
       InventoryInstance.verifySelectMarcAuthorityModal();

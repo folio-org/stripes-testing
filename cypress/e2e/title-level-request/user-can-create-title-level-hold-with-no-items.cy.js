@@ -36,7 +36,7 @@ describe('Title Level Request', () => {
           cy.deleteItemViaApi(instance.items[1].id);
         },
       );
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+      TitleLevelRequests.enableTLRViaApi();
       TitleLevelRequests.uncheckFailToCreateHoldForBlockedRequestCheckBox();
       testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
       Location.createViaApi(testData.defaultLocation);
