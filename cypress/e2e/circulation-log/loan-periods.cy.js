@@ -155,7 +155,7 @@ describe('circulation-log loan period', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('C6458: Test "Days" loan period (vega) (TaaS)', { tags: ['criticalPath', 'vega'] }, () => {
+  it('C645: Test "Days" loan period (vega) (TaaS)', { tags: ['criticalPath', 'vega'] }, () => {
     const ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
     // Navigate to checkout page
     cy.visit(TopMenu.checkOutPath);
