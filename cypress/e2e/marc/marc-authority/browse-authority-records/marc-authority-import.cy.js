@@ -213,15 +213,13 @@ describe('MARC', () => {
         'C356765 Search for record without subfield "t" (personalNameTitle and sftPersonalName) (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          DataImport.uploadFileViaApi(
-            'marcFileForC356765.mrc',
-            fileName,
-            jobProfileToRun,
-          ).then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityIDs.push(record[propertyName].idList[0]);
-            });
-          });
+          DataImport.uploadFileViaApi('marcFileForC356765.mrc', fileName, jobProfileToRun).then(
+            (response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityIDs.push(record[propertyName].idList[0]);
+              });
+            },
+          );
 
           cy.visit(TopMenu.marcAuthorities);
           MarcAuthorities.clickActionsButton();
@@ -229,10 +227,16 @@ describe('MARC', () => {
 
           MarcAuthorities.checkSearchOption('keyword');
           MarcAuthorities.searchByParameter('Keyword', 'C356765 Twain');
-          MarcAuthorities.checkResultList(['C356765 Twain, Marek, 1835-1910', 'C356765 Twain, Mark, 1835-1910']);
+          MarcAuthorities.checkResultList([
+            'C356765 Twain, Marek, 1835-1910',
+            'C356765 Twain, Mark, 1835-1910',
+          ]);
 
           MarcAuthorities.searchByParameter('Personal name', 'C356765 Twain');
-          MarcAuthorities.checkResultList(['C356765 Twain, Marek, 1835-1910', 'C356765 Twain, Mark, 1835-1910']);
+          MarcAuthorities.checkResultList([
+            'C356765 Twain, Marek, 1835-1910',
+            'C356765 Twain, Mark, 1835-1910',
+          ]);
 
           MarcAuthorities.searchByParameter('Name-title', 'C356765 Twain');
           MarcAuthorities.checkNoResultsMessage(
@@ -245,43 +249,63 @@ describe('MARC', () => {
         'C353995 Search for records which have subfield "t" value (personalNameTitle and sftPersonalNameTitle) (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          DataImport.uploadFileViaApi(
-            'marcFileForC353995.mrc',
-            fileName,
-            jobProfileToRun,
-          ).then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityIDs.push(record[propertyName].idList[0]);
-            });
-          });
+          DataImport.uploadFileViaApi('marcFileForC353995.mrc', fileName, jobProfileToRun).then(
+            (response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityIDs.push(record[propertyName].idList[0]);
+              });
+            },
+          );
 
           cy.visit(TopMenu.marcAuthorities);
           MarcAuthorities.checkSearchOption('keyword');
-          MarcAuthorities.searchByParameter(testData.searchOptionKeyword, `C353995 ${testData.recordB}`);
-          MarcAuthorityBrowse.checkResultWithValue(testData.authorized, `C353995 ${testData.recordB}`);
+          MarcAuthorities.searchByParameter(
+            testData.searchOptionKeyword,
+            `C353995 ${testData.recordB}`,
+          );
+          MarcAuthorityBrowse.checkResultWithValue(
+            testData.authorized,
+            `C353995 ${testData.recordB}`,
+          );
 
-          MarcAuthorities.searchByParameter(testData.searchOptionKeyword, `C353995 ${testData.recordA}`);
+          MarcAuthorities.searchByParameter(
+            testData.searchOptionKeyword,
+            `C353995 ${testData.recordA}`,
+          );
+
           MarcAuthorityBrowse.checkResultWithValueB(
             testData.authorized,
             `C353995 ${testData.recordB}`,
             testData.reference,
-            testData.recordBRef,
+            `C353995 ${testData.recordBRef}`,
           );
 
-          MarcAuthorities.searchByParameter(testData.searchOptionPersonalName, `C353995 ${testData.recordA}`);
+          MarcAuthorities.searchByParameter(
+            testData.searchOptionPersonalName,
+            `C353995 ${testData.recordA}`,
+          );
           MarcAuthorities.checkNoResultsMessage(
-            'No results found for "Angelou, Maya.". Please check your spelling and filters.',
+            'No results found for "C353995 Angelou, Maya.". Please check your spelling and filters.',
           );
 
-          MarcAuthorities.searchByParameter(testData.searchOptionNameTitle, `C353995 ${testData.recordB}`);
-          MarcAuthorityBrowse.checkResultWithValue(testData.authorized, `C353995 ${testData.recordB}`);
+          MarcAuthorities.searchByParameter(
+            testData.searchOptionNameTitle,
+            `C353995 ${testData.recordB}`,
+          );
+          MarcAuthorityBrowse.checkResultWithValue(
+            testData.authorized,
+            `C353995 ${testData.recordB}`,
+          );
 
-          MarcAuthorities.searchByParameter(testData.searchOptionNameTitle, `C353995 ${testData.recordA}`);
+          MarcAuthorities.searchByParameter(
+            testData.searchOptionNameTitle,
+            `C353995 ${testData.recordA}`,
+          );
           MarcAuthorityBrowse.checkResultWithValueB(
             testData.authorized,
             `C353995 ${testData.recordB}`,
             testData.reference,
-            testData.recordBRef,
+            `C353995 ${testData.recordBRef}`,
           );
         },
       );

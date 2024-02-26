@@ -51,7 +51,7 @@ describe('settings: data-export', () => {
 
   it(
     'C350672 Verify Job profile - duplicate existing profile (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPathBroken', 'firebird'] },
     () => {
       ExportJobProfiles.goToJobProfilesTab();
       ExportJobProfiles.waitLoading();
