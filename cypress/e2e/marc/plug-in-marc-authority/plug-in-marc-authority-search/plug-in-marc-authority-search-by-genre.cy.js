@@ -13,7 +13,7 @@ describe('MARC', () => {
     describe('plug-in MARC authority | Search', () => {
       const testData = {
         searchOption: 'Genre',
-        value: 'Peplum films',
+        value: '380572Peplum films',
       };
 
       const marcFiles = [

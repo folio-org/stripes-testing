@@ -18,7 +18,8 @@ describe('MARC', () => {
         uniqueFileName: `C350643autotestFile.${getRandomPostfix()}.mrc`,
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         fileName2: `testMarcFile2.${getRandomPostfix()}.mrc`,
-        record: 'Angelou, Maya. And still I rise C357549',
+        recordForC357549: 'C357549 Angelou, Maya. And still I rise',
+        recordForC350643: 'C350643 Angelou, Maya. And still I rise',
         searchOption: 'Name-title',
       };
 
@@ -46,33 +47,6 @@ describe('MARC', () => {
       });
 
       it(
-        'C350643 Delete a "MARC Authority" record via "MARC Authority" app (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
-        () => {
-          DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
-          JobProfiles.waitFileIsUploaded();
-          JobProfiles.waitLoadingList();
-          JobProfiles.search('Default - Create SRS MARC Authority');
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(testData.fileName);
-          Logs.checkJobStatus(testData.fileName, 'Completed');
-
-          cy.visit(TopMenu.marcAuthorities);
-          MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.record);
-          MarcAuthorities.selectItem(testData.record);
-          MarcAuthority.waitLoading();
-
-          MarcAuthoritiesDelete.clickDeleteButton();
-          MarcAuthoritiesDelete.checkDeleteModal();
-          MarcAuthoritiesDelete.confirmDelete();
-          MarcAuthoritiesDelete.checkDelete(testData.record);
-          cy.visit(TopMenu.marcAuthorities);
-          MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.record);
-          MarcAuthoritiesDelete.checkEmptySearchResults(testData.record);
-        },
-      );
-
-      it(
         'C357549 Delete a "MARC Authority" record (from browse result list) (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
@@ -81,13 +55,40 @@ describe('MARC', () => {
           DataImport.importFileForBrowse(MarcAuthority.defaultCreateJobProfile, testData.fileName2);
           cy.visit(TopMenu.marcAuthorities);
           MarcAuthorities.switchToBrowse();
-          MarcAuthorityBrowse.searchBy(testData.searchOption, testData.record);
-          MarcAuthorities.selectItem(testData.record);
+          MarcAuthorityBrowse.searchBy(testData.searchOption, testData.recordForC357549);
+          MarcAuthorities.selectItem(testData.recordForC357549);
           MarcAuthority.waitLoading();
           MarcAuthoritiesDelete.clickDeleteButton();
           MarcAuthoritiesDelete.checkDeleteModal();
           MarcAuthoritiesDelete.confirmDelete();
-          MarcAuthoritiesDelete.checkAfterDeletion(testData.record);
+          MarcAuthoritiesDelete.checkAfterDeletion(testData.recordForC357549);
+        },
+      );
+
+      it(
+        'C350643 Delete a "MARC Authority" record via "MARC Authority" app (spitfire)',
+        { tags: ['criticalPath', 'spitfire'] },
+        () => {
+          DataImport.uploadFile('marcFileForC350643.mrc', testData.fileName);
+          JobProfiles.waitFileIsUploaded();
+          JobProfiles.waitLoadingList();
+          JobProfiles.search('Default - Create SRS MARC Authority');
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(testData.fileName);
+          Logs.checkJobStatus(testData.fileName, 'Completed');
+
+          cy.visit(TopMenu.marcAuthorities);
+          MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.recordForC350643);
+          MarcAuthorities.selectItem(testData.recordForC350643);
+          MarcAuthority.waitLoading();
+
+          MarcAuthoritiesDelete.clickDeleteButton();
+          MarcAuthoritiesDelete.checkDeleteModal();
+          MarcAuthoritiesDelete.confirmDelete();
+          MarcAuthoritiesDelete.checkDelete(testData.recordForC350643);
+          cy.visit(TopMenu.marcAuthorities);
+          MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.recordForC350643);
+          MarcAuthoritiesDelete.checkEmptySearchResults(testData.recordForC350643);
         },
       );
     });

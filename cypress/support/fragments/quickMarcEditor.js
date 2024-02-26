@@ -440,7 +440,7 @@ export default {
   },
 
   deletePenaltField() {
-    const shouldBeRemovedRowNumber = this.getInitialRowsCount() - 1;
+    const shouldBeRemovedRowNumber = 16;
     cy.expect(getRowInteractorByRowNumber(shouldBeRemovedRowNumber).exists());
     cy.then(() => QuickMarcEditor().presentedRowsProperties()).then((presentedRowsProperties) => {
       const shouldBeDeletedRowTag = presentedRowsProperties[shouldBeRemovedRowNumber].tag;

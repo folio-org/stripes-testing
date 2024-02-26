@@ -110,11 +110,11 @@ describe('data-import', () => {
       },
       {
         rowIndex: 76,
-        value: 'Lee, Stan, 1922-2018',
+        value: 'C385665Lee, Stan, 1922-2018',
       },
       {
         rowIndex: 77,
-        value: 'Kirby, Jack',
+        value: 'C385665Kirby, Jack',
       },
     ];
     const createdAuthorityIDs = [];
@@ -233,8 +233,8 @@ describe('data-import', () => {
         DataImport.editMarcFile(
           nameForExportedMarcFile,
           nameForUpdatedMarcFile,
-          ['aKirby, Jack', 'n77020008'],
-          ['aKirby, Steve,', 'n77020008test'],
+          ['aC385665Kirby, Jack', 'n77020008'],
+          ['aC385665Kirby, Steve,', 'n77020008test'],
         );
 
         // upload the exported marc file with 999.f.f.s fields
@@ -268,7 +268,7 @@ describe('data-import', () => {
           '700',
           '1',
           '\\',
-          '$a Lee, Stan, $d 1922-2018',
+          '$a C385665Lee, Stan, $d 1922-2018',
           '$e creator',
           '$0 http://id.loc.gov/authorities/names/n83169267',
           '',
@@ -278,7 +278,7 @@ describe('data-import', () => {
           '700',
           '1',
           '\\',
-          '$a Kirby, Steve, $e creator. $0 http://id.loc.gov/authorities/names/n77020008test',
+          '$a C385665Kirby, Steve, $e creator. $0 http://id.loc.gov/authorities/names/n77020008test',
         );
 
         QuickMarcEditor.closeEditorPane();

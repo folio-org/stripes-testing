@@ -5,8 +5,8 @@ import Users from '../../../support/fragments/users/users';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
-import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 
 let user;
 
@@ -79,21 +79,11 @@ describe('bulk-edit', () => {
         ExportManagerSearchPane.waitForJobs();
         ExportManagerSearchPane.getElementByTextAndVerify(user.username, 2, 0);
         ExportManagerSearchPane.clickJobIdInThirdPane();
-        BulkEditFiles.verifyMatchedResultFileContent(
-          itemMatchedRecordsFileName,
-          [item.itemBarcode],
-          'barcode',
-          true,
-        );
+        ExportFile.verifyFileIncludes(itemMatchedRecordsFileName, [item.itemBarcode]);
 
         ExportManagerSearchPane.getElementByTextAndVerify(user.username, 2, 1);
         ExportManagerSearchPane.clickJobIdInThirdPane();
-        BulkEditFiles.verifyMatchedResultFileContent(
-          userMatchedRecordsFileName,
-          [user.userId],
-          'userId',
-          true,
-        );
+        ExportFile.verifyFileIncludes(userMatchedRecordsFileName, [user.userId]);
       },
     );
   });
