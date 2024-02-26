@@ -98,6 +98,7 @@ describe('Fees&Fines', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [testData.servicePoint.id]);
       ServicePoints.deleteViaApi(testData.servicePoint.id);
       Users.deleteViaApi(testData.user.userId);
@@ -140,7 +141,7 @@ describe('Fees&Fines', () => {
         // Click "Refund" and "Confirm" button
         RefundFeeFine.submitAndConfirm();
         RefundFeeFine.verifyRefundSuccess(
-          `1 fee/fine for ${feeFineType.amount}.00 has been successfully fully refunded for `,
+          `1 fee/fine for $${feeFineType.amount}.00 has been successfully fully refunded for `,
         );
         // Switch to "Open" tab
         cy.visit(AppPaths.getOpenFeeFinePath(testData.user.userId));

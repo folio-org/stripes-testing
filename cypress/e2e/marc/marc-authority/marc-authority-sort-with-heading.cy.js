@@ -69,7 +69,7 @@ describe('MARC', () => {
 
     it(
       'C353607 The search result list is sorted by clicking on the titles of columns (TaaS) (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         MarcAuthorities.checkSearchOptions();
         MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.all);
