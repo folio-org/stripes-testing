@@ -143,7 +143,7 @@ describe('Check Out', () => {
     );
   };
 
-  it('C591 Check out: multipiece items (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
+  it('C591 Check out: multipiece items (vega)', { tags: ['smokeBroken', 'vega', 'system'] }, () => {
     cy.visit(TopMenu.checkOutPath);
     Checkout.waitLoading();
     CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);

@@ -171,7 +171,7 @@ describe('orders: export', () => {
 
   it(
     'C377045: Sorting by export method does not reset search results (thunderjet) (TaaS)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       ExportManagerSearchPane.selectOrganizationsSearch();
       ExportManagerSearchPane.searchBySuccessful();
