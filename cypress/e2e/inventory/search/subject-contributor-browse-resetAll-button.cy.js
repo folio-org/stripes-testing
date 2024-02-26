@@ -27,7 +27,7 @@ describe('inventory', () => {
 
     it(
       'C422099: Subject/Contributor browse: verify that clicking on "Reset all" button will return focus and cursor to the Search box (spitfire)',
-      { tags: ['extendedlPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         browseOption.forEach((option) => {
           InventorySearchAndFilter.selectBrowseOption(option);

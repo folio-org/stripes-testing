@@ -53,7 +53,7 @@ describe('inventory', () => {
 
     it(
       'C3494 Add an item to an existing title. There is already a copy at another library branch. (folijet) (TaaS)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter(
