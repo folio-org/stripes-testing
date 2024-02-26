@@ -115,7 +115,7 @@ describe('Invoices', () => {
             '110',
             '1',
             '110',
-            location.institutionId,
+            location.name,
           );
           OrderLines.backToEditingOrder();
           Orders.openOrder();

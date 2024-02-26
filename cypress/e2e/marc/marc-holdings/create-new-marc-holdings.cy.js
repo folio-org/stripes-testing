@@ -119,7 +119,7 @@ describe('MARC', () => {
         InventoryInstance.deleteInstanceViaApi(instanceId);
       });
       NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-        location.institutionId,
+        location.name,
         location.campusId,
         location.libraryId,
         location.id,

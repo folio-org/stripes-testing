@@ -209,9 +209,10 @@ export default {
         .find(Button('Assign a different location'))
         .click(),
     ]);
-    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
     cy.do([
-      Modal('Select permanent location').find(Button('Save and close')).click(),
+      TextField({ id: 'input-record-search' }).fillIn(institutionId),
+      Button('Search').click(),
+      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
       receiveButton.click(),
     ]);
     // Need to wait, while data will be loaded

@@ -98,7 +98,7 @@ describe('ui-orders: Orders', () => {
         '50',
         '1',
         '50',
-        location.institutionId,
+        location.name,
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
