@@ -107,7 +107,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(hrid);
 
-        const location = 'Online';
+        const location = 'onlineFC';
 
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();

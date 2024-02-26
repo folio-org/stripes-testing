@@ -104,7 +104,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
         BulkEditSearchPane.verifyPaneRecordsCount(1);
 
-        const newLocation = 'Annex';
+        const newLocation = 'onlineFC';
 
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
@@ -127,7 +127,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(validItemAccessionNumbersFileName);
         BulkEditSearchPane.waitFileUploading();
 
-        const newLocation = 'Online';
+        const newLocation = 'onlineFC';
 
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();

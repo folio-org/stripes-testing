@@ -76,7 +76,7 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
 
-        const location = 'Annex';
+        const location = 'Online (E)';
         BulkEditActions.typeInTemporaryLocationFilter(location);
         BulkEditActions.verifyMatchingOptionsForLocationFilter(location);
 

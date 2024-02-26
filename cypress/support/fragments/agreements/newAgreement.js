@@ -8,7 +8,7 @@ const startDateField = TextField({ id: 'period-start-date-0' });
 
 const statusValue = {
   closed: 'Closed',
-  draft: 'Draft',
+  draft: 'Temporary Draft',
   requested: 'Requested',
   inNegotiation: 'In negotiation',
   active: 'Active',

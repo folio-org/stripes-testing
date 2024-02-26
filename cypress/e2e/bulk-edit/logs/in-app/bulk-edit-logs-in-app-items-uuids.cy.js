@@ -78,7 +78,7 @@ describe('Bulk Edit - Logs', () => {
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.downloadMatchedResults();
 
-      const newLocation = 'Online';
+      const newLocation = 'Online (E)';
 
       BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.replaceTemporaryLocation(newLocation, 'item', 0);
