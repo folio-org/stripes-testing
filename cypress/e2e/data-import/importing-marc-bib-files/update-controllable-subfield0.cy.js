@@ -32,6 +32,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -118,6 +119,7 @@ describe('data-import', () => {
       },
     ];
     const createdAuthorityIDs = [];
+    const subfield = '$9';
 
     before('Creating user', () => {
       cy.createTempUser([
@@ -283,7 +285,12 @@ describe('data-import', () => {
 
         QuickMarcEditor.closeEditorPane();
         InventoryInstance.viewSource();
-        InventoryInstance.checkAbsenceOfAuthorityIconInMarcViewPane();
+        InventoryViewSource.verifyLinkedToAuthorityIcon(linkingTagAndValues[0].rowIndex);
+        InventoryViewSource.verifyExistanceOfValueInRow(subfield, linkingTagAndValues[0].rowIndex);
+        InventoryViewSource.verifyLinkedToAuthorityIcon(linkingTagAndValues[1].rowIndex);
+        InventoryViewSource.verifyExistanceOfValueInRow(subfield, linkingTagAndValues[1].rowIndex);
+        InventoryViewSource.verifyLinkedToAuthorityIcon(linkingTagAndValues[2].rowIndex, false);
+        InventoryViewSource.verifyAbsenceOfValueInRow(subfield, linkingTagAndValues[2].rowIndex);
       },
     );
   });

@@ -15,11 +15,11 @@ describe('MARC', () => {
         forC359233: {
           searchOptionA: "Children's subject heading",
           searchOptionB: 'Name-title',
-          value: 'María de Jesús, de Agreda, sister, 1602-1665',
-          valueInDetailView: '$a María de Jesús, $c de Agreda, sister, $d 1602-1665',
-          markedValue: 'María de Jesús,',
+          value: 'C359233María de Jesús, de Agreda, sister, 1602-1665',
+          valueInDetailView: '$a C359233María de Jesús, $c de Agreda, sister, $d 1602-1665',
+          markedValue: 'C359233María de Jesús,',
           noResults:
-            'No results found for "María de Jesús, de Agreda, sister, 1602-1665". Please check your spelling and filters.',
+            'No results found for "C359233María de Jesús, de Agreda, sister, 1602-1665". Please check your spelling and filters.',
         },
       };
 
