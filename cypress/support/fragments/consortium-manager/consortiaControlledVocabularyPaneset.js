@@ -80,10 +80,10 @@ export default {
   verifyRecordInTheList(record, actionButtons = []) {
     cy.then(() => MultiColumnListRow({ content: including(record[0]) }).rowIndexInParent()).then(
       (rowIndexInParent) => {
-        cy.wrap(record).each((innerText, columnIndex) => {
+        cy.wrap(record).each((text, columnIndex) => {
           cy.expect(
             MultiColumnListRow({ rowIndexInParent })
-              .find(MultiColumnListCell({ innerText, columnIndex }))
+              .find(MultiColumnListCell({ innerText: including(text), columnIndex }))
               .exists(),
           );
         });
