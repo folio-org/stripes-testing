@@ -114,7 +114,7 @@ describe('Orders', () => {
 
   it(
     'C423438: Populate claiming interval in PO line from Organization record for one-time order (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

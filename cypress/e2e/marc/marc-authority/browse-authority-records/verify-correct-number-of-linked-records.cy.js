@@ -212,7 +212,7 @@ describe('MARC', () => {
 
       it(
         'C367936 Verify that correct number of linked records are displayed in the "Number of titles" column when browsing for linked "MARC Authority" records (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire'] },
         () => {
           MarcAuthorityBrowse.searchBy(testData.personalNameSearchOption, marcFiles[2].title);
           MarcAuthorityBrowse.checkResultWithValue(testData.authorized, marcFiles[2].title);
