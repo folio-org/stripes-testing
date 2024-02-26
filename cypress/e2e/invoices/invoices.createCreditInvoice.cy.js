@@ -9,6 +9,7 @@ import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
+import { Approvals } from '../../support/fragments/settings/invoices';
 
 describe('ui-invoices: Credit Invoice creation', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -47,6 +48,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLine(invoiceLine);
       Invoices.addFundDistributionToLine(invoiceLine, fund);
+      Approvals.setApprovePayValue(false);
       Invoices.approveInvoice();
       // check transactions after approve
       cy.visit(TopMenu.fundPath);
@@ -63,6 +65,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
       cy.visit(TopMenu.invoicesPath);
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
+      Approvals.setApprovePayValue(false);
       Invoices.payInvoice();
       // check transactions after payment
       cy.visit(TopMenu.fundPath);

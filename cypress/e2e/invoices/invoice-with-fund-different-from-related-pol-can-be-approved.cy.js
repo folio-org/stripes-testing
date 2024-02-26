@@ -101,7 +101,7 @@ describe('Invoices', () => {
               '15',
               '1',
               '15',
-              location.institutionId,
+              location.name,
             );
             Orders.backToPO();
             Orders.openOrder();

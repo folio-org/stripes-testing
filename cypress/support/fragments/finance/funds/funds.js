@@ -1023,6 +1023,16 @@ export default {
     );
   },
 
+  varifyDetailsInTransactionFundTo: (fiscalYear, amount, source, type, fund) => {
+    cy.expect(
+      transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
+      transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
+      transactionDetailSection.find(KeyValue('Source')).has({ value: source }),
+      transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
+      transactionDetailSection.find(KeyValue('To')).has({ value: fund }),
+    );
+  },
+
   varifyCanNotCreatePlannedBudget: () => {
     cy.expect(cy.expect(Section({ id: 'plannedBudget' }).find(Button('New')).absent()));
   },
