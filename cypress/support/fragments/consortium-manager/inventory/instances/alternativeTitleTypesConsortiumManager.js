@@ -1,12 +1,6 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
-import {
-  Button,
-  MultiColumnListCell,
-  MultiColumnListRow,
-  including,
-  MultiColumnListHeader,
-} from '../../../../../../interactors';
+import { Button, MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 
 const id = uuid();
@@ -47,32 +41,6 @@ export default {
         body: type,
       });
     });
-  },
-
-  verifyTypeInTheList(name, source, members, ...actions) {
-    const row = MultiColumnListRow({ content: including(name) });
-    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
-    cy.expect([
-      row.exists(),
-      row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
-      row.find(MultiColumnListCell({ columnIndex: 3, content: members })).exists(),
-    ]);
-    if (actions.length === 0) {
-      cy.expect(row.find(actionsCell).has({ content: '' }));
-    } else {
-      Object.values(typeActions).forEach((action) => {
-        const buttonSelector = row.find(actionsCell).find(Button({ icon: action }));
-        if (actions.includes(action)) {
-          cy.expect(buttonSelector.exists());
-        } else {
-          cy.expect(buttonSelector.absent());
-        }
-      });
-    }
-  },
-
-  verifyNoTypeInTheList(name) {
-    cy.expect(MultiColumnListRow({ content: including(name) }).absent());
   },
 
   choose() {
