@@ -48,7 +48,7 @@ export default {
   createViaApi: (user) => cy
     .okapiRequest({
       method: 'POST',
-      path: 'users',
+      path: 'users-keycloak/users',
       body: user,
       isDefaultSearchParamsRequired: false,
     })
@@ -62,13 +62,11 @@ export default {
     })),
 
   deleteViaApi: (userId) => {
-    if (!Cypress.env('runAsAdmin')) {
-      return cy.okapiRequest({
-        method: 'DELETE',
-        path: `bl-users/by-id/${userId}`,
-        isDefaultSearchParamsRequired: false,
-      });
-    } else return null;
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `bl-users/by-id/${userId}`,
+      isDefaultSearchParamsRequired: false,
+    });
   },
 
   getUsers: (searchParams) => {
