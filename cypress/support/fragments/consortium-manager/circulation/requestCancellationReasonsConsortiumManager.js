@@ -9,27 +9,15 @@ import {
   PaneSet,
   TextField,
   Checkbox,
-  calloutTypes,
-  HTML,
   PaneHeader,
 } from '../../../../../interactors';
 import ConsortiumManagerApp from '../consortiumManagerApp';
-import InteractorsTools from '../../../utils/interactorsTools';
 
 const id = uuid();
 
 export const reasonsActions = {
   edit: 'edit',
   trash: 'trash',
-};
-
-export const messages = {
-  created: ({ name, members }) => `${name} was successfully created for ${members} libraries.`,
-  updated: ({ name, members }) => `${name} was successfully updated for ${members} libraries.`,
-  deleted: ({ name }) => `The cancel reason ${name} was successfully deleted`,
-  noPermission: (members) => `You do not have permissions at one or more members: ${members}`,
-  pleaseFillIn: 'Please fill this in to continue',
-  notUnique: 'Name is already in use at one or more member libraries.',
 };
 
 const rootPane = PaneSet({
@@ -139,17 +127,8 @@ export default {
     );
   },
 
-  checkMessage(message, calloutType = calloutTypes.success) {
-    InteractorsTools.checkCalloutMessage(message, calloutType);
-    InteractorsTools.closeCalloutMessage();
-  },
-
   verifyCancelReasonNameFailure(message) {
     cy.expect(cancelReasonField.has({ error: message }));
-  },
-
-  verifyListIsEmpty() {
-    cy.expect(rootPane.find(HTML(including('The list contains no items'))).exists());
   },
 
   verifyReasonInTheList({ name, description = '', publicDescription = '', members, actions = [] }) {

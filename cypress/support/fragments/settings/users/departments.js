@@ -14,6 +14,15 @@ export const reasonsActions = {
 export default {
   waitLoading: () => cy.expect(PaneHeader('Departments').exists()),
 
+  getViaApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'departments',
+        searchParams,
+      })
+      .then((response) => response.body.departments);
+  },
+
   createViaApi: (body) => {
     return cy
       .okapiRequest({

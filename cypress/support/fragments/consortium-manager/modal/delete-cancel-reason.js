@@ -6,11 +6,11 @@ const cancelButton = deleteCancelReasonModal.find(Button('Cancel'));
 const deleteButton = deleteCancelReasonModal.find(Button('Delete'));
 
 export default {
-  waitLoadingDeleteCancelReason(name) {
+  waitLoadingDeleteModal(settingName, entityName) {
     cy.expect([
       deleteCancelReasonModal.has({
-        header: 'Delete cancel reason',
-        content: including(`The cancel reason ${name} will be deleted.`),
+        header: `Delete ${settingName}`,
+        content: including(`The ${settingName} ${entityName} will be deleted.`),
       }),
       cancelButton.is({ disabled: false }),
       deleteButton.is({ disabled: false }),

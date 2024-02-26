@@ -34,6 +34,7 @@ export default {
   exportFundPath: 'settings/finance/export-fund',
   // Inventory
   inventoryPath: 'settings/inventory',
+  classificationTypes: 'settings/inventory/classificationTypes',
   materialTypePath: '/settings/inventory/materialtypes',
   targetProfilesPath: 'settings/inventory/targetProfiles',
   urlRelationshipPath: 'settings/inventory/URLrelationship',
