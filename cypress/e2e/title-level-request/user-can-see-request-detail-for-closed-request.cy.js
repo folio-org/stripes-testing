@@ -130,7 +130,7 @@ describe('Request Detail. TLR', () => {
         userData.userId,
         testData.userServicePoint.id,
       );
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+      TitleLevelRequests.enableTLRViaApi();
       Requests.createNewRequestViaApi({
         fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         holdingsRecordId: testData.holdingTypeId,
@@ -164,10 +164,7 @@ describe('Request Detail. TLR', () => {
   });
 
   after('Deleting created entities', () => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
+    cy.getAdminToken();
     cy.wrap(requestIds).each((id) => {
       Requests.deleteRequestViaApi(id);
     });
@@ -187,7 +184,6 @@ describe('Request Detail. TLR', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
 
   it(
@@ -218,7 +214,6 @@ describe('Request Detail. TLR', () => {
         type: REQUEST_TYPES.PAGE,
         status: EditRequest.requestStatuses.CLOSED_CANCELLED,
         level: REQUEST_LEVELS.ITEM,
-        reason: 'INN-Reach',
       });
 
       RequestDetail.checkRequesterInformation({
