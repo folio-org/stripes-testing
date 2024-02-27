@@ -103,6 +103,7 @@ describe('Consortia', () => {
 
             ConfirmShare.waitLoadingConfirmShareToAll(classificationIdentifierType2.name);
             ConfirmShare.clickKeepEditing();
+            ClassificationIdentifierTypesConsortiumManager.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive();
             ConsortiaControlledVocabularyPaneset.clickCancel();
 

@@ -99,6 +99,7 @@ describe('Consortia', () => {
 
             ConfirmShare.waitLoadingConfirmShareToAll(cancelReason2.name);
             ConfirmShare.clickKeepEditing();
+            RequestCancellationReasonsConsortiumManager.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive();
             ConsortiaControlledVocabularyPaneset.clickCancel();
 

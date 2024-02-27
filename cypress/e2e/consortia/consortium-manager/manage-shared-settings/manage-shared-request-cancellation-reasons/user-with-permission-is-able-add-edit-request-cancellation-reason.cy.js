@@ -53,7 +53,6 @@ describe('Consortia', () => {
           cy.resetTenant();
           cy.getAdminToken();
           Users.deleteViaApi(userData.userId);
-          cy.log(cancelReason.name);
           cy.getCancellationReasonsApi({
             limit: 1,
             query: `name=="${cancelReason.name}"`,
@@ -93,7 +92,6 @@ describe('Consortia', () => {
 
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
             RequestCancellationReasonsConsortiumManager.choose();
-            ConsortiaControlledVocabularyPaneset.waitLoading('Request cancellation reasons');
 
             ConsortiaControlledVocabularyPaneset.createViaUi(true, cancelReason);
             ConsortiaControlledVocabularyPaneset.clickSave();
@@ -108,12 +106,12 @@ describe('Consortia', () => {
 
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
             CancellationReason.waitLoading();
-            CancellationReason.verifyReasonInTheList(cancelReason);
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(Object.values(cancelReason));
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
             CancellationReason.waitLoading();
-            CancellationReason.verifyReasonInTheList(cancelReason);
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(Object.values(cancelReason));
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
             TopMenuNavigation.navigateToApp('Consortium manager');
@@ -131,6 +129,7 @@ describe('Consortia', () => {
 
             ConfirmShare.waitLoadingConfirmShareToAll(cancelReason.name);
             ConfirmShare.clickConfirm();
+            RequestCancellationReasonsConsortiumManager.waitLoading();
             ConsortiumManagerApp.checkMessage(messages.updated(cancelReason.name, 'All'));
 
             ConsortiumManagerApp.clickSelectMembers();
