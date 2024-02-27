@@ -25,11 +25,7 @@ Cypress.Commands.add(
       'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
       'Content-type': contentTypeHeader,
     };
-    if (additionalHeaders) {
-      Object.entries(additionalHeaders).forEach(([key, value]) => {
-        headersToSet[key] = value;
-      });
-    }
+    if (additionalHeaders) Object.assign(headersToSet, additionalHeaders);
     if (!Cypress.env('rtrAuth')) {
       headersToSet['x-okapi-token'] = Cypress.env('token');
     }
