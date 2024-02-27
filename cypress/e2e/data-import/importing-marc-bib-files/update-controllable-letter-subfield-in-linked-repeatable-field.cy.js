@@ -129,6 +129,7 @@ describe('data-import', () => {
           });
         });
       });
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       // create Match profile
       NewMatchProfile.createMatchProfileViaApiMarc(matchProfile);
       // create Field mapping profile
