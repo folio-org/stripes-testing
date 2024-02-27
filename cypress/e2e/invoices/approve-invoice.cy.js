@@ -1,5 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import Transaction from '../../support/fragments/finance/fabrics/newTransaction';
 import Helper from '../../support/fragments/finance/financeHelper';
 import Funds from '../../support/fragments/finance/funds/funds';
 import NewFund from '../../support/fragments/finance/funds/newFund';
@@ -69,7 +68,6 @@ describe('ui-invoices: Approve invoice', () => {
   });
 
   it('C10945 Approve invoice (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
-    const transactionFactory = new Transaction();
     Invoices.searchByNumber(invoice.invoiceNumber);
     Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.approveInvoice();
@@ -79,17 +77,13 @@ describe('ui-invoices: Approve invoice', () => {
     Funds.selectFund(defaultFund.name);
     Funds.openBudgetDetails(defaultFund.code, DateTools.getCurrentFiscalYearCode());
     Funds.openTransactions();
-    const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
-    Funds.checkTransaction(
-      1,
-      transactionFactory.create(
-        'pending',
-        valueInTransactionTable,
-        defaultFund.code,
-        '',
-        'Invoice',
-        '',
-      ),
+    Funds.selectTransactionInList('Pending payment');
+    Funds.varifyDetailsInTransaction(
+      DateTools.getCurrentFiscalYearCode(),
+      '$100.00',
+      invoice.invoiceNumber,
+      'Pending payment',
+      `${defaultFund.name} (${defaultFund.code})`,
     );
   });
 });
