@@ -112,8 +112,6 @@ describe('Inventory', () => {
             });
           })
           .then(() => {
-            // 3 Shared "Instance" records with source = "Folio" and filled alternative title fields should exist on Central tenant.
-
             sharedFOLIOInstancesFromCentral.forEach((sharedFOLIOInstance) => {
               InventoryInstances.createFolioInstanceViaApi({
                 instance: {
@@ -132,9 +130,6 @@ describe('Inventory', () => {
             });
           })
           .then(() => {
-            // 1 Local "Instance" record with source = "Folio" and filled alternative title field should exist in Member 1 tenant and
-            // should have "Holdings" records created on Member 1 tenant.
-
             cy.setTenant(Affiliations.College);
 
             BrowseContributors.getContributorNameTypes().then((contributorNameTypes) => {
@@ -170,9 +165,6 @@ describe('Inventory', () => {
             });
           })
           .then(() => {
-            // 1 Local "Instance" record with source = "Folio" and filled alternative title field should exist in Member 2 tenant and
-            // should have "Holdings" records created on Member 2 tenant.
-
             cy.setTenant(Affiliations.University);
 
             BrowseContributors.getContributorNameTypes().then((contributorNameTypes) => {
@@ -209,10 +201,6 @@ describe('Inventory', () => {
             });
           })
           .then(() => {
-            // 3 Shared "Instance" records with source = "MARC" and filled alternative title fields should exist on Central tenant.
-            // 1 Local "Instance" record with source = "MARC" and filled alternative title fields should exist on Member 1 tenant.
-            // 1 Local "Instance" record with source = "MARC" and filled alternative title fields should exist on Member 2 tenant.
-
             cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
               () => {
                 marcFiles.forEach((marcFile) => {
@@ -246,10 +234,6 @@ describe('Inventory', () => {
             );
           })
           .then(() => {
-            // 1 Shared "Instance" record with source = "MARC"
-            //  and 1 Shared "Instance" record with source = "FOLIO" should have "Holdings" records created on Member 1 tenant.
-            // 1 Local "Instance" record with source = "MARC" should have "Holdings" records created on Member 1 tenant
-
             cy.setTenant(Affiliations.College);
 
             InventoryHoldings.createHoldingRecordViaApi({
@@ -272,10 +256,6 @@ describe('Inventory', () => {
             });
           })
           .then(() => {
-            // 1 Shared "Instance" record with source = "MARC" and 1 Shared "Instance" record with source = "FOLIO"
-            //  should have "Holdings" records created on Member 2 tenant.
-            // 1 Local "Instance" record with source = "MARC" should have "Holdings" records created on Member 2 tenant
-
             cy.setTenant(Affiliations.University);
 
             InventoryHoldings.createHoldingRecordViaApi({
