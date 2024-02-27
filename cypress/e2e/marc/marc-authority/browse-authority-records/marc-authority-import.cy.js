@@ -240,7 +240,7 @@ describe('MARC', () => {
 
           MarcAuthorities.searchByParameter('Name-title', 'C356765 Twain');
           MarcAuthorities.checkNoResultsMessage(
-            'No results found for "Twain". Please check your spelling and filters.',
+            'No results found for "C356765 Twain". Please check your spelling and filters.',
           );
         },
       );

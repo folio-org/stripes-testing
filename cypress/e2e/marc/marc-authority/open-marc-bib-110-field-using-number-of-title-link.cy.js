@@ -100,8 +100,8 @@ describe('MARC', () => {
         MarcAuthorities.switchToBrowse();
         MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);
         MarcAuthorities.checkRow(testData.marcValue);
-        MarcAuthorities.verifyNumberOfTitles(5, '1');
-        MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
+        MarcAuthorities.verifyNumberOfTitlesForRowWithValue(testData.marcValue, '1');
+        MarcAuthorities.clickNumberOfTitlesByHeading(testData.marcValue);
         InventorySearchAndFilter.verifySearchResult(testData.instanceTitle);
         InventoryInstance.checkPresentedText(testData.instanceTitle);
       },

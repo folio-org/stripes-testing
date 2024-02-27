@@ -14,8 +14,8 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       tag: '610',
-      marcValueForBrowse: 'Radio "Vaticana". Hrvatski program',
-      marcValueForSearch: 'Radio Vaticana. Hrvatski program',
+      marcValueForBrowse: 'C375269Radio "Vaticana". Hrvatski program',
+      marcValueForSearch: 'C375269Radio Vaticana. Hrvatski program',
       rowIndex: 18,
       searchOption: 'Corporate/Conference name',
       instanceTitle:
@@ -101,8 +101,8 @@ describe('MARC', () => {
         MarcAuthorities.switchToBrowse();
         MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValueForBrowse);
         MarcAuthorities.checkRow(testData.marcValueForBrowse);
-        MarcAuthorities.verifyNumberOfTitles(5, '1');
-        MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
+        MarcAuthorities.verifyNumberOfTitlesForRowWithValue(testData.marcValueForBrowse, '1');
+        MarcAuthorities.clickNumberOfTitlesByHeading(testData.marcValueForBrowse);
         InventorySearchAndFilter.verifySearchResult(testData.instanceTitle);
         InventoryInstance.checkPresentedText(testData.instanceTitle);
       },

@@ -75,13 +75,7 @@ describe('Orders', () => {
       orderNumber = orderResponse.poNumber;
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-      OrderLines.fillInPOLineInfoforPEMIXWithFund(
-        defaultFund,
-        '10',
-        '1',
-        '20',
-        location.institutionId,
-      );
+      OrderLines.fillInPOLineInfoforPEMIXWithFund(defaultFund, '10', '1', '20', location.name);
       OrderLines.backToEditingOrder();
     });
 
@@ -111,13 +105,7 @@ describe('Orders', () => {
       OrderLines.editPOLInOrder();
       OrderLines.deleteFundsInPOL();
       OrderLines.deleteLocationsInPOL();
-      OrderLines.fillInPOLineInfoForElectronicWithFund(
-        defaultFund,
-        '10',
-        '1',
-        '10',
-        location.institutionId,
-      );
+      OrderLines.fillInPOLineInfoForElectronicWithFund(defaultFund, '10', '1', '10', location.name);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       OrderLines.selectPOLInOrder(0);
