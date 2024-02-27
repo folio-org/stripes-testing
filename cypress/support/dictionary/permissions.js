@@ -999,6 +999,14 @@ export default {
     internal: 'ui-consortia-settings.consortium-manager.view',
     gui: 'Consortium manager: Can view existing settings',
   },
+  consortiaSettingsConsortiumManagerDepartmentsAll: {
+    internal: 'ui-users.settings.departments.all',
+    gui: 'Settings (Users): Can create, edit, view, and delete departments',
+  },
+  consortiaSettingsConsortiumManagerDepartmentsCreateEditView: {
+    internal: 'ui-users.settings.departments.create.edit.view',
+    gui: 'Settings (Users): Can create, edit, and view department',
+  },
   // Lists
   listsAll: {
     internal: 'module.lists.all',
