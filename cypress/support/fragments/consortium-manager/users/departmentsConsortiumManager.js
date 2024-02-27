@@ -1,6 +1,6 @@
 import uuid from 'uuid';
+import { MultiColumnListHeader, PaneHeader } from '../../../../../interactors';
 import { REQUEST_METHOD } from '../../../constants';
-import { MultiColumnListHeader } from '../../../../../interactors';
 import ConsortiumManagerApp from '../consortiumManagerApp';
 
 const id = uuid();
@@ -50,6 +50,14 @@ export default {
       (header) => {
         cy.expect(MultiColumnListHeader(header).exists());
       },
+    );
+  },
+
+  waitLoading() {
+    cy.expect(
+      PaneHeader({
+        id: 'paneHeaderconsortia-controlled-vocabulary-pane',
+      }).exists(),
     );
   },
 };
