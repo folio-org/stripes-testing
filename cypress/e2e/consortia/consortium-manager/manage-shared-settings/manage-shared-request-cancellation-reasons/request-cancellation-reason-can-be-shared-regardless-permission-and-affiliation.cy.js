@@ -99,6 +99,7 @@ describe('Consortia', () => {
           { tags: ['criticalPathECS', 'thunderjet'] },
           () => {
             TopMenuNavigation.navigateToApp('Consortium manager');
+            ConsortiumManagerApp.waitLoading();
             SelectMembers.selectAllMembers();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(2);
 
@@ -121,6 +122,7 @@ describe('Consortia', () => {
 
             ConfirmShare.waitLoadingConfirmShareToAll(firstCancelReason.name);
             ConfirmShare.clickConfirm();
+            RequestCancellationReasonsConsortiumManager.waitLoading();
             ConsortiumManagerApp.checkMessage(messages.created(firstCancelReason.name, 'All'));
             ConsortiumManagerApp.checkMessage(
               messages.noPermission(tenantNames.college),
