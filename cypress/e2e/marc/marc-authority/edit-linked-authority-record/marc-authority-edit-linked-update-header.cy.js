@@ -122,6 +122,7 @@ describe('MARC', () => {
             testData.tag010,
             `$a ${testData.updated010FieldValue}`,
           );
+          cy.wait(2000);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
           MarcAuthorities.searchBy('Keyword', testData.updated155FieldValue);
