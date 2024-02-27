@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../constants';
 import { MultiColumnListHeader } from '../../../../../interactors';
 import ConsortiumManagerApp from '../consortiumManagerApp';
+import ConsortiaControlledVocabularyPaneset from '../consortiaControlledVocabularyPaneset';
 
 const id = uuid();
 
@@ -35,6 +36,10 @@ export default {
         body: reason,
       });
     });
+  },
+
+  waitLoading() {
+    ConsortiaControlledVocabularyPaneset.waitLoading('Request cancellation reasons');
   },
 
   choose() {
