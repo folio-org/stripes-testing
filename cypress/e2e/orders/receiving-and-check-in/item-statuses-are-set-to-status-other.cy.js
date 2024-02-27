@@ -79,7 +79,7 @@ describe('orders: Receiving and Check-in', () => {
               OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
               OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
                 'Purchase',
-                locationResponse.institutionId,
+                locationResponse.name,
                 '7',
               );
               OrderLines.backToEditingOrder();

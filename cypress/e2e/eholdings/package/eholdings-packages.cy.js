@@ -43,7 +43,9 @@ describe('eHoldings', () => {
               waiter: () => EHoldingsPackage.waitLoading(specialPackage.name),
             });
             EHoldingsPackage.addToHoldings();
+            cy.wait(1000);
             EHoldingsPackage.verifyHoldingStatus();
+            cy.wait(1000);
             EHoldingsPackage.filterTitles();
             EHoldingsPackage.checkEmptyTitlesList();
             // reset test data
@@ -117,9 +119,13 @@ describe('eHoldings', () => {
               path: `${TopMenu.eholdingsPath}/packages/${specialPackage.id}`,
               waiter: () => EHoldingsPackage.waitLoading(specialPackage.name),
             });
+            cy.wait(1000);
             EHoldingsPackage.removeFromHoldings();
+            cy.wait(1000);
             EHoldingsPackage.verifyHoldingStatus(FILTER_STATUSES.NOT_SELECTED);
+            cy.wait(1000);
             EHoldingsPackage.filterTitles(FILTER_STATUSES.NOT_SELECTED);
+            cy.wait(1000);
             EHoldingsPackage.checkEmptyTitlesList();
             // reset test data
             EHoldingsPackage.addToHoldings();

@@ -92,7 +92,7 @@ describe('Orders', () => {
         '40',
         '1',
         '40',
-        location.institutionId,
+        location.name,
       );
     });
     cy.createTempUser([permissions.uiOrdersEdit.gui]).then((userProperties) => {

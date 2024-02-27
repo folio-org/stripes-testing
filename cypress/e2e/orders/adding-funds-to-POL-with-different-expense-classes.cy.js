@@ -77,7 +77,7 @@ describe('Orders', () => {
         '1',
         'Electronic',
         '20',
-        location.institutionId,
+        location.name,
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
