@@ -112,6 +112,11 @@ describe('MARC', () => {
             });
           });
 
+          cy.getAdminToken();
+          linkableFields.forEach((tag) => {
+            QuickMarcEditor.setRulesForField(tag, true);
+          });
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -145,9 +150,6 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
 
-            linkableFields.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, true);
-            });
             linkingTagAndValues.forEach((linking) => {
               QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
               MarcAuthoritiesSearch.verifyFiltersState(
