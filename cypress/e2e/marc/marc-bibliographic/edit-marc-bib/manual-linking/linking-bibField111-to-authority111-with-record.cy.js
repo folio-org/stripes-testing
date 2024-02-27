@@ -153,6 +153,7 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib111LinkedFieldValues);
             QuickMarcEditor.clickUnlinkIconInTagField(bib111UnlinkedFieldValues[0]);
+            QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib111UnlinkedFieldValues);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib111UnlinkedFieldValues[0]);
             QuickMarcEditor.pressSaveAndClose();

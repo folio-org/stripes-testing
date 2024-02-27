@@ -219,7 +219,9 @@ describe('eHoldings', () => {
             });
 
             const yesterday = DateTools.getPreviousDayDate();
+            const yesterdayPaddingZero = DateTools.clearPaddingZero(yesterday);
             const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
+            const todayWithoutPaddingZero = DateTools.clearPaddingZero(today);
             EHoldingSearch.switchToPackages();
             // wait until package is created via API
             cy.wait(15000);
@@ -228,7 +230,7 @@ describe('eHoldings', () => {
             EHoldingsPackage.editProxyActions();
             EHoldingsPackages.fillDateCoverage(yesterday, today);
             EHoldingsPackage.saveAndClose();
-            EHoldingsPackages.verifyCustomCoverageDates(yesterday, today);
+            EHoldingsPackages.verifyCustomCoverageDates(yesterdayPaddingZero, todayWithoutPaddingZero);
           });
         });
       },

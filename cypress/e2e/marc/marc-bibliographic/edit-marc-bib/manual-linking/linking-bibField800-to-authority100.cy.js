@@ -17,7 +17,7 @@ describe('MARC', () => {
         const testData = {
           tag800: '800',
           authorityMarkedValue: 'C375084 Robinson, Peter,',
-          seriesStatementValue: 'C375084 Robinson, Peter, 1950-2022 Inspector Banks series ; 24.',
+          seriesStatementValue: 'C375084 Robinson, Peter, Inspector Banks series ; 1950-2022 24.',
           authorityIconText: 'Linked to MARC authority',
           accordion: 'Title data',
         };
