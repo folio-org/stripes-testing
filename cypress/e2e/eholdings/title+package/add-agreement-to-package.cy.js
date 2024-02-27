@@ -59,9 +59,6 @@ describe('eHoldings', () => {
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(testData.user.userId);
-        AgreementLines.getIdViaApi({ match: 'title', term: 'Biology of Fishes' }).then((id) => {
-          AgreementLines.deleteViaApi({ agreementId: testData.agreementId, agreementLineId: id });
-        });
         Agreements.deleteViaApi(testData.agreementId);
       });
     });
