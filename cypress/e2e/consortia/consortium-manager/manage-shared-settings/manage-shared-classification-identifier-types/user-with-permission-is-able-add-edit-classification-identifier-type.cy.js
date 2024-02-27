@@ -52,7 +52,6 @@ describe('Consortia', () => {
           cy.resetTenant();
           cy.getAdminToken();
           Users.deleteViaApi(userData.userId);
-          cy.log(classificationType3.name);
           ClassificationTypes.getClassificationTypesViaApi({
             limit: 1,
             query: `name=="${classificationType3.name}"`,
@@ -105,6 +104,7 @@ describe('Consortia', () => {
 
             ConfirmShare.waitLoadingConfirmShareToAll(classificationType3.name);
             ConfirmShare.clickConfirm();
+            ClassificationIdentifierTypesConsortiumManager.waitLoading();
             ConsortiumManagerApp.checkMessage(messages.created(classificationType3.name, 'All'));
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdCIT, [
               'edit',
