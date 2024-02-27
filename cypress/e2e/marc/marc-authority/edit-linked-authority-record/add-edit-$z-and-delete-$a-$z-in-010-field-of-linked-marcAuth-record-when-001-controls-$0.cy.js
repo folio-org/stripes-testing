@@ -186,7 +186,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_4, tag010.rowIndex);
 
           QuickMarcEditor.pressCancel();
-          QuickMarcEditor.checkContent(tag010.expectedContent.field010_4, tag010.rowIndex);
+          MarcAuthorities.checkFieldAndContentExistence('010', tag010.expectedContent.field010_4);
 
           MarcAuthorities.closeMarcViewPane();
           MarcAuthorities.verifyNumberOfTitles(5, '1');
