@@ -78,7 +78,7 @@ describe('orders: Edifact export', () => {
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-      OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+      OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
     });
@@ -111,7 +111,7 @@ describe('orders: Edifact export', () => {
 
   it(
     'C350550: NOT exported order DOES NOT display export details (thunderjet) (TaaS)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

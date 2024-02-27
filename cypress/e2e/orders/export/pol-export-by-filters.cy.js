@@ -81,7 +81,7 @@ describe('Orders', () => {
           '40',
           '1',
           '40',
-          location.institutionId,
+          location.name,
         );
         OrderLines.backToEditingOrder();
         Orders.openOrder();

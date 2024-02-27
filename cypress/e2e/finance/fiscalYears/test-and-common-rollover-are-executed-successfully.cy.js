@@ -92,7 +92,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         '150',
         '1',
         '150',
-        location.institutionId,
+        location.name,
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
@@ -118,7 +118,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
   it(
     'C366540 Test and common rollover are executed successfully when "Planned budget" was created by user (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

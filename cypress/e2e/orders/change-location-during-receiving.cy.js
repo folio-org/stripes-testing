@@ -93,7 +93,8 @@ describe('orders: Receive piece from Order', () => {
       // Receiving part
       Orders.receiveOrderViaActions();
       Receiving.selectFromResultsList(item.instanceName);
-      Receiving.receiveAndChangeLocation(0, displaySummary, location.institutionId);
+      console.log(location);
+      Receiving.receiveAndChangeLocation(0, displaySummary, location.name);
 
       Receiving.checkReceived(0, displaySummary);
       Receiving.selectInstanceInReceive(item.instanceName);

@@ -80,7 +80,7 @@ describe('Invoices', () => {
 
   it(
     'C350937: Update accordion labels and logic on Invoice (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);

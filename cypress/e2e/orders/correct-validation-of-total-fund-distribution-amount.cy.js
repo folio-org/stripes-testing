@@ -146,7 +146,7 @@ describe('Orders', () => {
         '90',
         '1',
         '90',
-        location.institutionId,
+        location.name,
       );
       OrderLines.backToEditingOrder();
     },
