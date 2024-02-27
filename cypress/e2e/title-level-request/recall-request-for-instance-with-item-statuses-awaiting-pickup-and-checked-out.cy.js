@@ -218,7 +218,7 @@ describe('Title level Request', () => {
   });
   it(
     'C380488 Verify that user can create TLR: Recall request for instance with item statuses "Awaiting pickup" and "Checked out" (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPathBroken', 'vega'] },
     () => {
       createTLR(users[1], REQUEST_TYPES.PAGE, ITEM_STATUS_NAMES.PAGED);
 

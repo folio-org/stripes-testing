@@ -109,7 +109,7 @@ describe('Orders: orders', () => {
         '40',
         '1',
         '40',
-        location.institutionId,
+        location.name,
       );
       cy.then(() => {
         firstDate = DateTools.getCurrentUTCTime();

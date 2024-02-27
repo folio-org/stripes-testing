@@ -94,7 +94,7 @@ describe('ui-acquisition units: Acquisition Units', () => {
           OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
           OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
             'Purchase',
-            location.institutionId,
+            location.name,
             '4',
           );
           OrderLines.backToEditingOrder();

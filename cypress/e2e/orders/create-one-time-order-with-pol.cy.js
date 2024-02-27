@@ -120,7 +120,7 @@ describe('Orders: Inventory interaction', () => {
           '20',
           '1',
           '20',
-          location.institutionId,
+          location.name,
         );
         OrderLines.backToEditingOrder();
       });

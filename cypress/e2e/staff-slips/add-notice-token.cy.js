@@ -53,7 +53,7 @@ describe('Patron Notices', () => {
 
   it(
     'C375248 Add "user.preferredFirstName" as staff slip token in Settings (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       NewNoticePolicyTemplate.editTemplate(testData.noticeTemplateBody.name);
       NewNoticePolicyTemplate.clearBody();

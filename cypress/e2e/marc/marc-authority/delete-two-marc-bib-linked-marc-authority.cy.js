@@ -107,6 +107,7 @@ describe('MARC', () => {
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             marcBib.linkingFields.forEach((linking) => {
+              cy.wait(2000);
               QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
               MarcAuthorities.switchToSearch();
               InventoryInstance.verifySelectMarcAuthorityModal();

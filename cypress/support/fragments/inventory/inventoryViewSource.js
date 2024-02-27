@@ -56,6 +56,12 @@ export default {
     );
   },
 
+  verifyExistanceOfValueInRow(expectedText, rowIndex) {
+    cy.expect(
+      rootSection.find(TableRow({ index: rowIndex, innerText: including(expectedText) })).exists(),
+    );
+  },
+
   verifyRecordNotContainsDuplicatedContent: (value) => {
     cy.get(`td:contains("${value}")`).then((elements) => elements.length === 1);
   },

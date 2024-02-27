@@ -100,7 +100,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C409495 Filters section: Users filter (firebird) (TaaS)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       BulkEditSearchPane.openLogsSearch();
       BulkEditSearchPane.verifyLogsPane();

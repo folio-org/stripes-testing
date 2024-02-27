@@ -95,7 +95,7 @@ describe('Finance: Ledgers', () => {
             '10',
             '1',
             '10',
-            location.institutionId,
+            location.name,
           );
           OrderLines.backToEditingOrder();
           Orders.openOrder();
@@ -111,7 +111,7 @@ describe('Finance: Ledgers', () => {
             '10',
             '1',
             '10',
-            location.institutionId,
+            location.name,
           );
           OrderLines.backToEditingOrder();
           Orders.openOrder();
@@ -143,7 +143,7 @@ describe('Finance: Ledgers', () => {
 
   it(
     'C353211: Ledger export settings: current year Fund with budget, Print (Active) and Economic (Inactive) Classes, Export settings: No fiscal year, Each class status (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
