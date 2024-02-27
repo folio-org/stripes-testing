@@ -13,10 +13,10 @@ Cypress.Commands.add('addPermissionsToNewUserApi', (userAndPermissions) => {
   });
 });
 
-Cypress.Commands.add('getCapabilitiesApi', () => {
+Cypress.Commands.add('getCapabilitiesApi', (limit = 3000) => {
   cy.okapiRequest({
     method: 'GET',
-    path: 'capabilities?limit=200',
+    path: `capabilities?limit=${limit}`,
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
     cy.wrap(body.capabilities).as('capabs');
@@ -24,10 +24,10 @@ Cypress.Commands.add('getCapabilitiesApi', () => {
   return cy.get('@capabs');
 });
 
-Cypress.Commands.add('getCapabilitySetsApi', () => {
+Cypress.Commands.add('getCapabilitySetsApi', (limit = 1000) => {
   cy.okapiRequest({
     method: 'GET',
-    path: 'capability-sets?limit=200',
+    path: `capability-sets?limit=${limit}`,
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
     cy.wrap(body.capabilitySets).as('capabSets');
@@ -50,7 +50,7 @@ Cypress.Commands.add('addCapabilitiesToNewUserApi', (userId, capabilityIds) => {
 Cypress.Commands.add('addCapabilitySetsToNewUserApi', (userId, capabilitySetIds) => {
   cy.okapiRequest({
     method: 'POST',
-    path: 'users/capabilities',
+    path: 'users/capability-sets',
     body: {
       userId,
       capabilitySetIds: [...capabilitySetIds],
@@ -97,11 +97,27 @@ Cypress.Commands.add('addCapabilitiesToNewRoleApi', (roleId, capabilityIds) => {
 Cypress.Commands.add('addCapabilitySetsToNewRoleApi', (roleId, capabilitySetIds) => {
   cy.okapiRequest({
     method: 'POST',
-    path: 'roles/capabilities',
+    path: 'roles/capability-sets',
     body: {
       roleId,
       capabilitySetIds: [...capabilitySetIds],
     },
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('deleteCapabilitiesFromRoleApi', (roleId) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: `roles/${roleId}/capabilities`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('deleteCapabilitySetsFromRoleApi', (roleId) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: `roles/${roleId}/capability-sets`,
     isDefaultSearchParamsRequired: false,
   });
 });
