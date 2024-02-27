@@ -18,14 +18,14 @@ import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('ui-finance: Fiscal Year Rollover', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
-    periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
+    code: DateTools.getRandomFiscalYearCode(2000, 9999),
+    periodStart: `${DateTools.getDayTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodEnd: `${DateTools.get2DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FYTA',
+    series: 'FY',
   };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
@@ -51,7 +51,8 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '1000';
   let user;
-  let orderNumber;
+  let firstOrderNumber;
+  let secondOrderNumber;
   let servicePointId;
   let location;
 
@@ -85,15 +86,15 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         });
       });
     });
+    // Create second Fiscal Year for Rollover
+    FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
+      secondFiscalYear.id = secondFiscalYearResponse.id;
+    });
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
         location = res;
       });
-    });
-    // Create second Fiscal Year for Rollover
-    FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
-      secondFiscalYear.id = secondFiscalYearResponse.id;
     });
 
     // Prepare 2 Open Orders for Rollover
@@ -107,7 +108,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     cy.visit(TopMenu.ordersPath);
     Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
-      orderNumber = firstOrderResponse.poNumber;
+      firstOrderNumber = firstOrderResponse.poNumber;
       Orders.checkCreatedOrder(firstOrder);
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
@@ -116,13 +117,14 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         '100',
         '1',
         '100',
-        location.institutionId,
+        location.name,
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       cy.visit(TopMenu.ordersPath);
       Orders.createApprovedOrderForRollover(secondOrder, true).then((secondOrderResponse) => {
         secondOrder.id = secondOrderResponse.id;
+        secondOrderNumber = secondOrderResponse.poNumber;
         Orders.checkCreatedOrder(secondOrder);
         OrderLines.addPOLine();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
@@ -131,14 +133,14 @@ describe('ui-finance: Fiscal Year Rollover', () => {
           '200',
           '1',
           '200',
-          location.institutionId,
+          location.name,
         );
         OrderLines.backToEditingOrder();
         Orders.openOrder();
       });
       cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(invoice, organization.name);
-      Invoices.createInvoiceLineFromPol(orderNumber);
+      Invoices.createInvoiceLineFromPol(firstOrderNumber);
       // Need to wait, while data will be loaded
       cy.wait(4000);
       Invoices.approveInvoice();
@@ -173,24 +175,54 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     Ledgers.selectFundInLedger(firstFund.name);
     Funds.selectPlannedBudgetDetails();
     Funds.viewTransactions();
-    Funds.checkOrderInTransactionList(firstFund.code, '($100.00)');
+    Funds.selectTransactionInList('Encumbrance');
+    Funds.varifyDetailsInTransaction(
+      secondFiscalYear.code,
+      '($100.00)',
+      `${firstOrderNumber}-1`,
+      'Encumbrance',
+      `${firstFund.name} (${firstFund.code})`,
+    );
+    Funds.closeTransactionDetails();
     Funds.closeMenu();
     cy.wait(1000);
     Funds.closeMenu();
     Funds.selectBudgetDetails();
     Funds.viewTransactions();
-    Funds.checkOrderInTransactionList(firstFund.code, '$0.00');
+    Funds.selectTransactionInList('Encumbrance');
+    Funds.varifyDetailsInTransaction(
+      firstFiscalYear.code,
+      '($0.00)',
+      `${firstOrderNumber}-1`,
+      'Encumbrance',
+      `${firstFund.name} (${firstFund.code})`,
+    );
     cy.visit(TopMenu.fundPath);
     FinanceHelp.searchByName(secondFund.name);
     Funds.selectFund(secondFund.name);
     Funds.selectPlannedBudgetDetails();
     Funds.viewTransactions();
-    Funds.checkOrderInTransactionList(secondFund.code, '($200.00)');
+    Funds.selectTransactionInList('Encumbrance');
+    Funds.varifyDetailsInTransaction(
+      secondFiscalYear.code,
+      '($200.00)',
+      `${secondOrderNumber}-1`,
+      'Encumbrance',
+      `${secondFund.name} (${secondFund.code})`,
+    );
+    Funds.closeTransactionDetails();
     Funds.closeMenu();
     cy.wait(1000);
     Funds.closeMenu();
     Funds.selectBudgetDetails();
     Funds.viewTransactions();
-    Funds.checkOrderInTransactionList(secondFund.code, '($200.00)');
+    Funds.selectTransactionInList('Encumbrance');
+    Funds.varifyDetailsInTransaction(
+      firstFiscalYear.code,
+      '($200.00)',
+      `${secondOrderNumber}-1`,
+      'Encumbrance',
+      `${secondFund.name} (${secondFund.code})`,
+    );
   });
 });

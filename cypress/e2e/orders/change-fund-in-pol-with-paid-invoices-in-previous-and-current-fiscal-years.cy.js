@@ -132,7 +132,7 @@ describe('Orders', () => {
           '10',
           '1',
           '10',
-          location.institutionId,
+          location.name,
         );
         OrderLines.backToEditingOrder();
         Orders.openOrder();

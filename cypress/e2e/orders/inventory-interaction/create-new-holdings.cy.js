@@ -108,10 +108,6 @@ describe('Orders: Inventory interaction', () => {
     InventoryHoldings.deleteHoldingRecordViaApi(testData.instance.holdingId);
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Orders.deleteOrderByOrderNumberViaApi(testData.orderNumber);
-    // InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-    // testData.locations.forEach((location) => {
-    //   Locations.deleteViaApi(location);
-    // });
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(testData.user.userId);
   });
@@ -124,12 +120,7 @@ describe('Orders: Inventory interaction', () => {
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
       OrderLines.selectRandomInstanceInTitleLookUP(`${testData.instance.instanceTitle}`, 0);
-      OrderLines.editPOLineInfoAndChangeLocation(
-        `${testData.organization.accounts[0].name} (${testData.organization.accounts[0].accountNo})`,
-        'Purchase',
-        testData.locations[1].institutionId,
-        '2',
-      );
+      OrderLines.editPOLineInfoAndChangeLocation(testData.locations[1].name, '2');
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       OrderLines.selectPOLInOrder(0);

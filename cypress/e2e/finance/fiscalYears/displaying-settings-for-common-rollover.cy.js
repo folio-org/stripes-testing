@@ -111,7 +111,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         '100',
         '1',
         '100',
-        location.institutionId,
+        location.name,
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
