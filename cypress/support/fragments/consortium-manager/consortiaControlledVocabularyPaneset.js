@@ -6,6 +6,7 @@ import {
   TextField,
   Checkbox,
   PaneHeader,
+  and,
 } from '../../../../interactors';
 
 export const actionIcons = {
@@ -78,32 +79,32 @@ export default {
   },
 
   verifyRecordInTheList(record, actionButtons = []) {
-    cy.then(() => MultiColumnListRow({ content: including(record[0]) }).rowIndexInParent()).then(
-      (rowIndexInParent) => {
-        cy.wrap(record).each((text, columnIndex) => {
-          cy.expect(
-            MultiColumnListRow({ rowIndexInParent })
-              .find(MultiColumnListCell({ innerText: including(text), columnIndex }))
-              .exists(),
-          );
-        });
-
-        const actionsCell = MultiColumnListRow({ rowIndexInParent }).find(
-          MultiColumnListCell({ columnIndex: record.length }),
+    cy.then(() => MultiColumnListRow({
+      content: and(including(record[0]), including(record[record.length - 1])),
+    }).rowIndexInParent()).then((rowIndexInParent) => {
+      cy.wrap(record).each((text, columnIndex) => {
+        cy.expect(
+          MultiColumnListRow({ rowIndexInParent })
+            .find(MultiColumnListCell({ innerText: including(text), columnIndex }))
+            .exists(),
         );
-        if (actionButtons.length === 0) {
-          cy.expect(actionsCell.has({ content: '' }));
-        } else {
-          cy.wrap(Object.values(actionIcons)).each((action) => {
-            if (actionButtons.includes(action)) {
-              cy.expect(actionsCell.find(Button({ icon: action })).exists());
-            } else {
-              cy.expect(actionsCell.find(Button({ icon: action })).absent());
-            }
-          });
-        }
-      },
-    );
+      });
+
+      const actionsCell = MultiColumnListRow({ rowIndexInParent }).find(
+        MultiColumnListCell({ columnIndex: record.length }),
+      );
+      if (actionButtons.length === 0) {
+        cy.expect(actionsCell.has({ content: '' }));
+      } else {
+        cy.wrap(Object.values(actionIcons)).each((action) => {
+          if (actionButtons.includes(action)) {
+            cy.expect(actionsCell.find(Button({ icon: action })).exists());
+          } else {
+            cy.expect(actionsCell.find(Button({ icon: action })).absent());
+          }
+        });
+      }
+    });
   },
 
   verifyRecordNotInTheList(name) {
