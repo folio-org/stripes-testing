@@ -134,7 +134,7 @@ describe('Consortia', () => {
             );
             DeleteCancelReason.waitLoadingDeleteModal('cancel reason', cancelReason.name);
             DeleteCancelReason.clickDelete();
-            ConsortiaControlledVocabularyPaneset.waitLoading('Request cancellation reasons');
+            RequestCancellationReasonsConsortiumManager.waitLoading();
             ConsortiumManagerApp.checkMessage(messages.deleted('cancel reason', cancelReason.name));
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(cancelReason.name);
 
