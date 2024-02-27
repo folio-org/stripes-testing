@@ -85,7 +85,6 @@ describe('Finance', () => {
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
-      cy.pause();
     });
     cy.createTempUser([
       permissions.uiFinanceViewFiscalYear.gui,
