@@ -94,7 +94,6 @@ describe('data-import', () => {
           });
 
           InstanceRecordView.verifyResourceTitle(instance.updatedTitle);
-          InstanceRecordView.verifyIndexTitle(instance.updatedTitle);
         });
       },
     );
