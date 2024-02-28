@@ -13,6 +13,7 @@ Cypress.Commands.add(
     isDefaultSearchParamsRequired = true,
     contentTypeHeader = 'application/json',
     failOnStatusCode = true,
+    additionalHeaders = null,
   }) => {
     const initialParams = new URLSearchParams({ ...searchParams });
     const cypressEnvPath = `${Cypress.env('OKAPI_HOST')}/${path}`;
@@ -24,6 +25,7 @@ Cypress.Commands.add(
       'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
       'Content-type': contentTypeHeader,
     };
+    if (additionalHeaders) Object.assign(headersToSet, additionalHeaders);
     if (!Cypress.env('rtrAuth')) {
       headersToSet['x-okapi-token'] = Cypress.env('token');
     }
