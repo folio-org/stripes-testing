@@ -75,7 +75,7 @@ describe('Finance', () => {
       defaultOrder.id = firstOrderResponse.id;
       Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
         defaultFund,
         '1100',
