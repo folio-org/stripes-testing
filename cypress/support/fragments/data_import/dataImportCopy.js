@@ -1,4 +1,4 @@
-// import { recurse } from 'cypress-recurse';
+import { recurse } from 'cypress-recurse';
 // import { ACCEPTED_DATA_TYPE_NAMES, JOB_STATUS_NAMES } from '../../constants';
 import SettingsJobProfile from '../settings/dataImport/jobProfiles/jobProfiles';
 
@@ -42,18 +42,7 @@ function uploadDefinitionWithId(uploadDefinitionId) {
   });
 }
 
-function processFile(
-  uploadDefinitionId,
-  uploadDefinition,
-  // metaJobExecutionId,
-  // sourcePath,
-  // jobExecutionId,
-  // uiKeyValue,
-  jobProfileId,
-  // date,
-  // fileName,
-  jobProfileName,
-) {
+function processFile(uploadDefinitionId, uploadDefinition, jobProfileId, jobProfileName) {
   return cy.okapiRequest({
     path: `data-import/uploadDefinitions/${uploadDefinitionId}/processFiles?defaultMapping=false`,
     method: 'POST',
@@ -64,50 +53,25 @@ function processFile(
         name: jobProfileName,
         dataType: 'MARC',
       },
-      // uploadDefinition: {
-      //   // 'id':'2d0fa1df-b7c5-4574-94c1-e38f94714fae',
-      //   metaJobExecutionId,
-      //   status: 'LOADED',
-      //   createDate: date,
-      //   fileDefinitions: [
-      //     {
-      //       // 'id':'25222a97-6000-43d7-9c07-97803bc1983c',
-      //       sourcePath,
-      //       name: fileName,
-      //       status: 'UPLOADED',
-      //       jobExecutionId,
-      //       uploadDefinitionId,
-      //       createDate: date,
-      //       uploadedDate: date,
-      //       size: 2,
-      //       uiKey: uiKeyValue
-      //     }
-      //   ],
-      // },
-      // jobProfileInfo: {
-      //   id: jobProfileId,
-      //   name: jobProfileName,
-      //   dataType: 'MARC'
-      // }
     },
     isDefaultSearchParamsRequired: false,
   });
 }
 
-// function getCreatedRecordInfo(jobExecutionId) {
-//   return cy.okapiRequest({
-//     path: `metadata-provider/jobLogEntries/${jobExecutionId}`,
-//     isDefaultSearchParamsRequired: false,
-//     searchParams: { limit: 100 },
-//   });
-// }
+function getCreatedRecordInfo(jobExecutionId) {
+  return cy.okapiRequest({
+    path: `metadata-provider/jobLogEntries/${jobExecutionId}`,
+    isDefaultSearchParamsRequired: false,
+    searchParams: { limit: 100 },
+  });
+}
 
-// function getJodStatus(jobExecutionId) {
-//   return cy.okapiRequest({
-//     path: `change-manager/jobExecutions/${jobExecutionId}`,
-//     isDefaultSearchParamsRequired: false,
-//   });
-// }
+function getJodStatus(jobExecutionId) {
+  return cy.okapiRequest({
+    path: `change-manager/jobExecutions/${jobExecutionId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+}
 
 function checkSplitStatus() {
   return cy.okapiRequest({
@@ -128,7 +92,7 @@ function getTag(uploadUrl, file) {
   return cy.request({
     method: 'PUT',
     url: uploadUrl,
-    body: { file },
+    body: file,
     headers: {
       'x-okapi-token': Cypress.env('token'),
       'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
@@ -157,6 +121,130 @@ function uploadDefinitionWithAssembleStorageFile(
   });
 }
 
+function getParentJobExecutionId() {
+  // splitting process creates additional job executions for parent/child
+  // so we need to query to get the correct job execution ID
+  return cy.okapiRequest({
+    path: 'metadata-provider/jobExecutions',
+    qs: {
+      subordinationTypeNotAny: ['COMPOSITE_CHILD', 'PARENT_SINGLE'],
+      sortBy: 'started_date,desc',
+    },
+    searchParams: { limit: 10000 },
+    isDefaultSearchParamsRequired: false,
+  });
+}
+
+function uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName) {
+  const uiKeyValue = fileName;
+
+  return uploadDefinitions(uiKeyValue, fileName).then((response) => {
+    const uploadDefinitionId = response.body.fileDefinitions[0].uploadDefinitionId;
+    const fileId = response.body.fileDefinitions[0].id;
+    const jobExecutionId = response.body.fileDefinitions[0].jobExecutionId;
+
+    uploadBinaryMarcFile(filePathName, uploadDefinitionId, fileId);
+    // need to wait until file will be converted and uploaded
+    cy.wait(1500);
+    uploadDefinitionWithId(uploadDefinitionId).then((res) => {
+      const sourcePath = res.body.fileDefinitions[0].sourcePath;
+      const metaJobExecutionId = res.body.metaJobExecutionId;
+      const date = res.body.createDate;
+
+      SettingsJobProfile.getJobProfilesViaApi({ query: `name="${profileName}"` }).then(
+        ({ jobProfiles }) => {
+          processFile(
+            uploadDefinitionId,
+            fileId,
+            sourcePath,
+            jobExecutionId,
+            uiKeyValue,
+            jobProfiles[0].id,
+            metaJobExecutionId,
+            date,
+          );
+        },
+      );
+
+      recurse(
+        () => getJodStatus(jobExecutionId),
+        (resp) => resp.body.status === 'COMMITTED' && resp.body.uiStatus === 'RUNNING_COMPLETE',
+        {
+          limit: 16,
+          timeout: 80000,
+          delay: 5000,
+        },
+      );
+
+      getCreatedRecordInfo(jobExecutionId).then((resp) => {
+        // we can get relatedInstanceInfo and in it get idList or hridList
+        const recordInfo = resp.body;
+        return recordInfo;
+      });
+    });
+  });
+}
+
+function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
+  const uiKeyValue = fileName;
+
+  return uploadDefinitions(uiKeyValue, fileName).then((response) => {
+    const uploadDefinitionId = response.body.fileDefinitions[0].uploadDefinitionId;
+    const fileId = response.body.fileDefinitions[0].id;
+
+    getUploadUrl(fileName).then((urlResponse) => {
+      const s3UploadKey = urlResponse.body.key;
+      const s3UploadId = urlResponse.body.uploadId;
+      const uploadUrl = urlResponse.body.url;
+
+      cy.fixture(filePathName).then((file) => {
+        cy.wait(1500);
+        getTag(uploadUrl, file).then((tagResponse) => {
+          const s3Etag = tagResponse.headers.etag;
+
+          uploadDefinitionWithAssembleStorageFile(
+            uploadDefinitionId,
+            fileId,
+            s3UploadId,
+            s3UploadKey,
+            s3Etag,
+          ).then(() => {
+            uploadDefinitionWithId(uploadDefinitionId).then((uploadDefinitionResponse) => {
+              const uploadDefinition = uploadDefinitionResponse.body;
+              const sourcePath = uploadDefinitionResponse.body.fileDefinitions[0].sourcePath;
+
+              SettingsJobProfile.getJobProfilesViaApi({ query: `name="${profileName}"` }).then(
+                ({ jobProfiles }) => {
+                  processFile(
+                    uploadDefinitionId,
+                    uploadDefinition,
+                    jobProfiles[0].id,
+                    jobProfiles[0].name,
+                  );
+                },
+              );
+
+              getParentJobExecutionId().then((jobExecutionResponse) => {
+                // need to cut the part of path for searching
+                const splittedFilePath = sourcePath.split('-');
+                const parentJobExecutionId = jobExecutionResponse.body.jobExecutions.find(
+                  (exec) => exec.sourcePath === splittedFilePath[2],
+                ).id;
+
+                getCreatedRecordInfo(parentJobExecutionId).then((recordResponse) => {
+                  // we can get relatedInstanceInfo and in it get idList or hridList
+                  const recordInfo = recordResponse.body;
+                  return recordInfo;
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+}
+
 export default {
   uploadDefinitions,
   uploadBinaryMarcFile,
@@ -164,218 +252,18 @@ export default {
   checkSplitStatus,
   getUploadUrl,
   uploadDefinitionWithAssembleStorageFile,
+  getCreatedRecordInfo,
+  getJodStatus,
+  uploadFileWithoutSplitFilesViaApi,
+  uploadFileWithSplitFilesViaApi,
 
   uploadFileViaApi: (filePathName, fileName, profileName) => {
-    // checkSplitStatus().then(resp => {
-    // if (resp.body.splitStatus === false) {
-    // const uiKeyValue = fileName;
-
-    // return uploadDefinitions(uiKeyValue, fileName).then((response) => {
-    //   const uploadDefinitionId = response.body.fileDefinitions[0].uploadDefinitionId;
-    //   const fileId = response.body.fileDefinitions[0].id;
-    //   const jobExecutionId = response.body.fileDefinitions[0].jobExecutionId;
-
-    //   uploadBinaryMarcFile(filePathName, uploadDefinitionId, fileId);
-    //   // need to wait until file will be converted and uploaded
-    //   cy.wait(1500);
-    //   uploadDefinitionWithId(uploadDefinitionId).then((res) => {
-    //     const sourcePath = res.body.fileDefinitions[0].sourcePath;
-    //     const metaJobExecutionId = res.body.metaJobExecutionId;
-    //     const date = res.body.createDate;
-
-    //     SettingsJobProfile.getJobProfilesViaApi({ query: `name="${profileName}"` }).then(
-    //       ({ jobProfiles }) => {
-    //         processFile(
-    //           uploadDefinitionId,
-    //           fileId,
-    //           sourcePath,
-    //           jobExecutionId,
-    //           uiKeyValue,
-    //           jobProfiles[0].id,
-    //           metaJobExecutionId,
-    //           date,
-    //         );
-    //       },
-    //     );
-
-    //     recurse(
-    //       () => getJodStatus(jobExecutionId),
-    //       (resp) => resp.body.status === 'COMMITTED' && resp.body.uiStatus === 'RUNNING_COMPLETE',
-    //       {
-    //         limit: 16,
-    //         timeout: 80000,
-    //         delay: 5000,
-    //       },
-    //     );
-
-    //     getCreatedRecordInfo(jobExecutionId).then((resp) => {
-    //       // we can get relatedInstanceInfo and in it get idList or hridList
-    //       const recordInfo = resp.body;
-    //       return recordInfo;
-    //     });
-    //   });
-    // });
-    // } else {
-    // const uiKeyValue = fileName;
-
-    // uploadDefinitions(uiKeyValue, fileName).then((response) => {
-    //   const uploadDefinitionId = response.body.fileDefinitions[0].uploadDefinitionId;
-    //   const fileId = response.body.fileDefinitions[0].id;
-    //   // const jobExecutionId = response.body.fileDefinitions[0].jobExecutionId;
-
-    //   getUploadUrl(fileName).then((respo) => {
-    //     const s3UploadKey = respo.body.key;
-    //     const s3UploadId = respo.body.uploadId;
-    //     const uploadUrl = respo.body.url;
-
-    //     cy.fixture(filePathName, 'binary')
-    //       .then((binary) => Cypress.Blob.binaryStringToBlob(binary))
-    //       .then((blob) => {
-    //         cy.wait(1500);
-    //         getTag(uploadUrl, blob)
-    //           .then((re) => {
-    //             const s3Etag = re.headers.etag;
-
-    //             uploadDefinitionWithAssembleStorageFile(uploadDefinitionId, fileId, s3UploadId, s3UploadKey, s3Etag);
-    //             //   SettingsJobProfile.getJobProfilesViaApi({ query: `name="${profileName}"` }).then(
-    //             //     ({ jobProfiles }) => {
-    //             uploadDefinitionWithId(uploadDefinitionId).then((res) => {
-    //               const sourcePath = res.body.fileDefinitions[0].sourcePath;
-    //               const metaJobExecutionId = res.body.metaJobExecutionId;
-    //               const date = res.body.createDate;
-
-    //               return cy.okapiRequest({
-    //                 path: 'metadata-provider/jobExecutions',
-    //                 qs: {
-    //                   subordinationTypeNotAny: ['COMPOSITE_CHILD', 'PARENT_SINGLE'],
-    //                   sortBy: 'started_date,desc',
-    //                 },
-    //                 searchParams: { limit: 10000 },
-    //                 isDefaultSearchParamsRequired: false,
-    //               }).then((re2) => {
-    //                 console.log('Response:', re2.body); // Log the entire response to inspect its structure
-    //                 console.log('SourcePath:', sourcePath); // Log the value of sourcePath
-    //                 const foundExecution = re2.body.jobExecutions.find(exec => exec.sourcePath === sourcePath);
-    //                 console.log('Found Execution:', foundExecution);
-    //                 // console.log();
-    //                 // console.log(re2.body.jobExecutions.find(exec => exec.sourcePath === sourcePath));
-    //                 cy.pause();
-    //                 // const parentJobExecution = re2.body.jobExecutions.find(exec => exec.sourcePath === sourcePath).id;
-
-    //                 // console.log(parentJobExecution);
-    //                 // cy.pause();
-
-    //                 // return cy.okapiRequest({
-    //                 //   path: `metadata-provider/jobExecutions/${parentJobExecution}/children`,
-    //                 //   isDefaultSearchParamsRequired: false,
-    //                 // }).then(res3 => {
-    //                 // // console.log(res3);
-    //                 //   // const childJobExecutionIds = res3.jobExecutions[*].id
-    //                 // });
-
-    //                 // processFile(
-    //                 //   uploadDefinitionId,
-    //                 //   sourcePath,
-    //                 //   parentJobExecution,
-    //                 //   uiKeyValue,
-    //                 //   jobProfiles[0].id,
-    //                 //   date,
-    //                 //   fileName,
-    //                 //   profileName,
-    //                 // );
-    //               });
-    //               // });
-    //             });
-    //           });
-    //       });
-    //   });
-    // });
-    // //   });
-    // // });
-
-    const uiKeyValue = fileName;
-
-    return uploadDefinitions(uiKeyValue, fileName).then((response) => {
-      const uploadDefinitionId = response.body.fileDefinitions[0].uploadDefinitionId;
-      const fileId = response.body.fileDefinitions[0].id;
-      // const jobExecutionId = response.body.fileDefinitions[0].jobExecutionId;
-      // const metaJobExecutionId = response.metaJobExecutionId;
-      // const createDate = response.body.createDate;
-      // const uploadedDate = createDate;
-
-      cy.fixture(filePathName, 'binary')
-        .then((binary) => Cypress.Blob.binaryStringToBlob(binary))
-        .then((blob) => {
-          cy.wait(1500);
-          getUploadUrl(fileName).then((respo) => {
-            const s3UploadKey = respo.body.key;
-            const s3UploadId = respo.body.uploadId;
-            const uploadUrl = respo.body.url;
-
-            getTag(uploadUrl, blob).then((re) => {
-              const s3Etag = re.headers.etag;
-
-              uploadDefinitionWithAssembleStorageFile(
-                uploadDefinitionId,
-                fileId,
-                s3UploadId,
-                s3UploadKey,
-                s3Etag,
-              ).then(() => {
-                uploadDefinitionWithId(uploadDefinitionId).then((res) => {
-                  const uploadDefinition = res.body;
-                  cy.pause();
-                  // const sourcePath = res.body.fileDefinitions[0].sourcePath;
-                  // const metaJobExecutionId = res.body.metaJobExecutionId;
-                  // const date = res.body.createDate;
-
-                  SettingsJobProfile.getJobProfilesViaApi({ query: `name="${profileName}"` }).then(
-                    ({ jobProfiles }) => {
-                      processFile(
-                        uploadDefinition.id,
-                        uploadDefinition,
-                        // metaJobExecutionId,
-                        // sourcePath,
-                        // jobExecutionId,
-                        // uiKeyValue,
-                        jobProfiles[0].id,
-                        // createDate,
-                        // fileName,
-                        jobProfiles[0].name,
-                      );
-                    },
-                  );
-
-                  // return cy.okapiRequest({
-                  //   path: 'metadata-provider/jobExecutions',
-                  //   qs: {
-                  //     subordinationTypeNotAny: ['COMPOSITE_CHILD', 'PARENT_SINGLE'],
-                  //     sortBy: 'started_date,desc',
-                  //   },
-                  //   searchParams: { limit: 10000 },
-                  //   isDefaultSearchParamsRequired: false,
-                  // }).then((re2) => {
-                  //   const parts = sourcePath.split('-');
-                  //   console.log(parts[2]);
-
-                  //   const parentJobExecution = re2.body.jobExecutions.find(exec => exec.sourcePath === parts[2]);
-                  //   console.log(parentJobExecution);
-                  //   const parentJobExecutionId = parentJobExecution.id;
-                  //   console.log(parentJobExecutionId);
-
-                  // return cy.okapiRequest({
-                  //   path: `metadata-provider/jobExecutions/${parentJobExecutionId}/children`,
-                  //   isDefaultSearchParamsRequired: false,
-                  // }).then((re4) => {
-                  //   console.log(re4);
-                  //   // const childJobExecutionIds = re4.body.jobExecutions[*].id
-                  // });
-                  // });
-                });
-              });
-            });
-          });
-        });
+    checkSplitStatus().then((resp) => {
+      if (resp.body.splitStatus === false) {
+        uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName);
+      } else {
+        uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName);
+      }
     });
   },
 };

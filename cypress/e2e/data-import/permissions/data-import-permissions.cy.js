@@ -22,9 +22,18 @@ describe('data-import', () => {
         'oneMarcBib.mrc',
         fileName,
         'Default - Create instance and SRS MARC Bib',
-        // ).then((response) => {
-        //   instanceId = response.entries[0].relatedInstanceInfo.idList[0];
-      );
+      ).then((response) => {
+        console.log(response.entries[0].relatedInstanceInfo.idList[0]);
+        // instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+      });
+      // DataImportCopy.uploadFileViaApi(
+      //   'oneMarcBib.mrc',
+      //   fileName,
+      //   'Default - Create instance and SRS MARC Bib',
+      // ).then((response) => {
+      //   console.log(response.entries[0].relatedInstanceInfo.idList[0]);
+      //   // instanceId = response.entries[0].relatedInstanceInfo.idList[0];
+      // });
 
       // cy.createTempUser([
       //   Permissions.moduleDataImportEnabled.gui,
