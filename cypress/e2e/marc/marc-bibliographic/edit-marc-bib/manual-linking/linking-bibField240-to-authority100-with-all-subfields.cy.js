@@ -24,7 +24,7 @@ describe('MARC', () => {
           authorityMarkedValue: 'Dowland, John',
           tag240rowindex: 29,
           authority100FieldValue:
-            'Dowland, John, num 1 test purpose 1563?-1626. (valery pilko) pass (read only) pass (read only) epass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only)',
+            'C380763Dowland, John, num 1 test purpose 1563?-1626. (valery pilko) pass (read only) pass (read only) epass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only)',
           changesSavedCallout:
             'This record has successfully saved and is in process. Changes may not appear immediately.',
         };
@@ -109,6 +109,7 @@ describe('MARC', () => {
           () => {
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
+            cy.wait(1000);
             InventoryInstance.editMarcBibliographicRecord();
             InventoryInstance.verifyAndClickLinkIcon(testData.tag240);
             InventoryInstance.verifySelectMarcAuthorityModal();
@@ -124,14 +125,12 @@ describe('MARC', () => {
             MarcAuthorities.selectTitle(testData.authority100FieldValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
-            QuickMarcEditor.checkUnlinkTooltipText(
-              29,
-              'Unlink from MARC Authority record',
-            );
+            QuickMarcEditor.checkUnlinkTooltipText(29, 'Unlink from MARC Authority record');
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(testData.tag240rowindex);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib240AfterLinkingToAuth100);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
+            cy.wait(2000);
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.clickUnlinkIconInTagField(testData.tag240rowindex);
             QuickMarcEditor.confirmUnlinkingField();
