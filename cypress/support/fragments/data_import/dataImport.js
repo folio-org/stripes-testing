@@ -1,4 +1,5 @@
 import { HTML, including } from '@interactors/html';
+import { recurse } from 'cypress-recurse';
 import {
   Button,
   Checkbox,
@@ -22,7 +23,6 @@ import FileManager from '../../utils/fileManager';
 import Logs from './logs/logs';
 import DataImportUploadFile from '../../../../interactors/dataImportUploadFile';
 import { ACCEPTED_DATA_TYPE_NAMES, JOB_STATUS_NAMES } from '../../constants';
-import { recurse } from 'cypress-recurse';
 import SettingsJobProfile from '../settings/dataImport/jobProfiles/jobProfiles';
 
 const sectionPaneJobsTitle = Section({ id: 'pane-jobs-title' });
