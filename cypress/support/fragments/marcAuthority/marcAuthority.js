@@ -122,11 +122,12 @@ export default {
         .exists(),
     );
   },
-  deleteViaAPI: (internalAuthorityId) => {
+  deleteViaAPI: (internalAuthorityId, ignoreErrors = false) => {
     cy.okapiRequest({
       method: 'DELETE',
       isDefaultSearchParamsRequired: false,
       path: `authority-storage/authorities/${internalAuthorityId}`,
+      failOnStatusCode: !ignoreErrors,
     });
   },
   addNewField: (rowIndex, tag, content, indicator0 = '\\', indicator1 = '\\') => {
