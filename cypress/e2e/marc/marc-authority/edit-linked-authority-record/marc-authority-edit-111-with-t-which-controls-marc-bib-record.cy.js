@@ -55,6 +55,7 @@ describe('MARC', () => {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         }).then(() => {
+          cy.getAdminToken();
           marcFiles.forEach((marcFile) => {
             cy.visit(TopMenu.dataImportPath);
             DataImport.verifyUploadState();

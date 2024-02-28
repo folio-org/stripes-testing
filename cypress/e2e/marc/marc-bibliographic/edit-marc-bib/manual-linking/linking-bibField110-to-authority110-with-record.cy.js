@@ -16,7 +16,7 @@ describe('MARC', () => {
       describe('Manual linking', () => {
         const testData = {
           tag110: '110',
-          authorityMarkedValue: 'Beatles',
+          authorityMarkedValue: 'C374194 Beatles',
           subjectValue: 'C374194 Speaking Oratory--debating',
           linkedIconText: 'Linked to MARC authority',
           accordion: 'Contributor',
@@ -33,27 +33,27 @@ describe('MARC', () => {
             marc: 'marcAuthFileC374194.mrc',
             fileName: `testMarcFileC374194.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
-            authorityHeading: 'Beatles',
+            authorityHeading: 'C374194 Beatles',
             authority110FieldValue: 'n79018119',
             propertyName: 'relatedAuthorityInfo',
           },
         ];
 
         const createdRecordIDs = [];
-        const bib110InitialFieldValues = [33, testData.tag110, '2', '\\', '$a The Beatles. $4 prf'];
+        const bib110InitialFieldValues = [33, testData.tag110, '2', '\\', '$a C374194 The Beatles. $4 prf'];
         const bib110UnlinkedFieldValues = [
           33,
           testData.tag110,
           '2',
           '\\',
-          '$a Beatles $0 http://id.loc.gov/authorities/names/n79018119 $4 prf',
+          '$a C374194 Beatles $0 http://id.loc.gov/authorities/names/n79018119 $4 prf',
         ];
         const bib110LinkedFieldValues = [
           33,
           testData.tag110,
           '2',
           '\\',
-          '$a Beatles',
+          '$a C374194 Beatles',
           '',
           `$0 http://id.loc.gov/authorities/names/${marcFiles[1].authority110FieldValue}`,
           '$4 prf',
@@ -147,6 +147,7 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib110LinkedFieldValues);
             QuickMarcEditor.clickUnlinkIconInTagField(bib110UnlinkedFieldValues[0]);
+            QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib110UnlinkedFieldValues);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib110UnlinkedFieldValues[0]);
             QuickMarcEditor.pressSaveAndClose();

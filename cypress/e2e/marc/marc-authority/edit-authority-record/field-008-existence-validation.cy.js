@@ -174,7 +174,7 @@ describe('MARC', () => {
           cy.intercept('GET', '**records-editor/records?externalId=**').as('editMarc');
           MarcAuthority.edit();
           cy.wait('@editMarc').then((res) => {
-            expect(res.response.body.fields[2].content['Date Ent']).to.be.eq(currentDate);
+            expect(res.response.body.fields[4].content['Date Ent']).to.be.eq(currentDate);
           });
         },
       );

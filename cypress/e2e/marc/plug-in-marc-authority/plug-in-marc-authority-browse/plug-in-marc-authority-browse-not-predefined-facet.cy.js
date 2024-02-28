@@ -88,6 +88,7 @@ describe('MARC', () => {
         cy.createTempUser([
           Permissions.moduleDataImportEnabled.gui,
           Permissions.inventoryAll.gui,
+          Permissions.inventoryAll.internal,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -130,6 +131,7 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire'] },
         () => {
           // #1 Create autority source
+          cy.getAdminToken();
           MarcAuthority.createAuthoritySource(testData.authoritySourceFile).then(() => {
             // #2 - #6 Upload marc authority file with the created "code"
             DataImport.editMarcFile(
