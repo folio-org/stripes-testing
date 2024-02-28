@@ -10,7 +10,7 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {};
     const jobProfileToRun = 'Default - Create SRS MARC Authority';
-    const fileName = 'oneMarcAuthority.mrc';
+    const fileName = 'marcAuthFileForC375089.mrc';
     const updatedFileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
     let createdAuthorityID;
 
@@ -36,17 +36,17 @@ describe('MARC', () => {
 
     after('Deleting data', () => {
       cy.getAdminToken();
-      if (createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID);
       Users.deleteViaApi(testData.userProperties.userId);
+      MarcAuthority.deleteViaAPI(createdAuthorityID);
     });
 
     it(
       'C375089 View Authority Record: record opens in third pane when "Heading/Reference" value clicked for highlighted row (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire'] },
       () => {
-        MarcAuthorities.searchBy('Keyword', 'Joseph');
+        MarcAuthorities.searchBy('Geographic name', 'C375089 Chidao Jineiya');
         MarcAuthorities.selectFirst();
-        MarcAuthorities.checkRecordDetailPageMarkedValue('Kowalewski, Joseph Étienne,');
+        MarcAuthorities.checkRecordDetailPageMarkedValue('C375089 Chidao Jineiya');
       },
     );
   });

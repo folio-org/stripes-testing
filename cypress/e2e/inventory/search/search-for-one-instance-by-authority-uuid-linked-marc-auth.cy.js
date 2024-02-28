@@ -124,19 +124,12 @@ describe('inventory', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
-
-        MarcAuthorities.getMarcAuthoritiesViaApi({
-          limit: 100,
-          query: `keyword="${testData.searchAuthorityQueries[0]}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-        }).then((authorities) => {
-          const authorityId = authorities[0].id;
-          InventoryInstances.searchInstancesWithOption(
-            testData.searchOptions.AUTHORITY_UUID,
-            authorityId,
-          );
-          InventorySearchAndFilter.checkRowsCount(1);
-          InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceRecords[0], true);
-        });
+        InventoryInstances.searchInstancesWithOption(
+          testData.searchOptions.AUTHORITY_UUID,
+          testData.recordIDs[2],
+        );
+        InventorySearchAndFilter.checkRowsCount(1);
+        InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceRecords[0], true);
       },
     );
   });

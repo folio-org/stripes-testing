@@ -148,6 +148,7 @@ describe('MARC', () => {
           MarcAuthorities.selectTitle(testData.authorityTitle);
           MarcAuthorities.getViewPaneContent();
           MarcAuthority.edit();
+          cy.wait(2000);
 
           QuickMarcEditor.checkContent(testData.field010Value, testData.tag010RowIndex);
 

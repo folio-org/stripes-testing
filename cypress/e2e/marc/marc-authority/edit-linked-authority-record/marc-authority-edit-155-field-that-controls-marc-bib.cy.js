@@ -125,6 +125,7 @@ describe('MARC', () => {
 
           MarcAuthority.edit();
           QuickMarcEditor.checkContent(testData.authority155FieldValue, testData.tag155RowIndex);
+          cy.wait(2000);
 
           QuickMarcEditor.updateExistingTagName(testData.tag155, testData.tag100);
           QuickMarcEditor.pressSaveAndClose();
