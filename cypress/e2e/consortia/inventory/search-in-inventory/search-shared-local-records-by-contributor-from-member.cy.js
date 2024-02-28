@@ -9,9 +9,6 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -54,30 +51,32 @@ describe('Inventory', () => {
     const sharedMarcTitle3 = 'C411578 Instance 3 Shared MARC with Holdings';
     const localSharedMarcTitle = 'C411578 Instance 8 Local MARC with Holdings';
 
+    const createdRecordsIds = [];
+
     const marcFiles = [
       {
         marc: 'marcBibFileForC411578-Shared.mrc',
         fileName: `C411578 Central testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        propertyName: 'relatedInstanceInfo',
         tenant: tenantNames.central,
         numOfRecords: 3,
-        createdRecordsId: [],
       },
       {
         marc: 'marcBibFileForC411578-Local-M1.mrc',
         fileName: `C411578 Member1 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        propertyName: 'relatedInstanceInfo',
         tenant: tenantNames.college,
         numOfRecords: 1,
-        createdRecordsId: [],
       },
       {
         marc: 'marcBibFileForC411578-Local-M2.mrc',
         fileName: `C411578 Member2 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        propertyName: 'relatedInstanceInfo',
         tenant: tenantNames.university,
         numOfRecords: 1,
-        createdRecordsId: [],
       },
     ];
 
@@ -203,32 +202,38 @@ describe('Inventory', () => {
           .then(() => {
             cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
               () => {
-                marcFiles.forEach((marcFile) => {
-                  cy.visit(TopMenu.dataImportPath);
-                  if (marcFile.tenant === 'College') {
-                    ConsortiumManager.switchActiveAffiliation(
-                      tenantNames.central,
-                      tenantNames.college,
-                    );
-                  } else if (marcFile.tenant === 'University') {
-                    ConsortiumManager.switchActiveAffiliation(
-                      tenantNames.college,
-                      tenantNames.university,
-                    );
-                  }
-                  DataImport.verifyUploadState();
-                  DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-                  JobProfiles.waitLoadingList();
-                  JobProfiles.search(marcFile.jobProfileToRun);
-                  JobProfiles.runImportFile();
-                  Logs.waitFileIsImported(marcFile.fileName);
-                  Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
-                  Logs.openFileDetails(marcFile.fileName);
-                  for (let i = 0; i < marcFile.numOfRecords; i++) {
-                    Logs.getCreatedItemsID(i).then((link) => {
-                      marcFile.createdRecordsId.push(link.split('/')[5]);
-                    });
-                  }
+                cy.resetTenant();
+                cy.getAdminToken();
+                DataImport.uploadFileViaApi(
+                  marcFiles[0].marc,
+                  marcFiles[0].fileName,
+                  marcFiles[0].jobProfileToRun,
+                ).then((response) => {
+                  response.entries.forEach((record) => {
+                    createdRecordsIds.push(record[marcFiles[0].propertyName].idList[0]);
+                  });
+                });
+
+                cy.setTenant(Affiliations.College);
+                DataImport.uploadFileViaApi(
+                  marcFiles[1].marc,
+                  marcFiles[1].fileName,
+                  marcFiles[1].jobProfileToRun,
+                ).then((response) => {
+                  response.entries.forEach((record) => {
+                    createdRecordsIds.push(record[marcFiles[1].propertyName].idList[0]);
+                  });
+                });
+
+                cy.setTenant(Affiliations.University);
+                DataImport.uploadFileViaApi(
+                  marcFiles[2].marc,
+                  marcFiles[2].fileName,
+                  marcFiles[2].jobProfileToRun,
+                ).then((response) => {
+                  response.entries.forEach((record) => {
+                    createdRecordsIds.push(record[marcFiles[2].propertyName].idList[0]);
+                  });
                 });
               },
             );
@@ -243,13 +248,13 @@ describe('Inventory', () => {
               createdHoldingsCollege.push(holding.id);
             });
             InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: marcFiles[0].createdRecordsId[1],
+              instanceId: createdRecordsIds[1],
               permanentLocationId: testData.collegeLocation.id,
             }).then((holding) => {
               createdHoldingsCollege.push(holding.id);
             });
             InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: marcFiles[1].createdRecordsId[0],
+              instanceId: createdRecordsIds[3],
               permanentLocationId: testData.collegeLocation.id,
             }).then((holding) => {
               createdHoldingsCollege.push(holding.id);
@@ -265,13 +270,13 @@ describe('Inventory', () => {
               createdHoldingsUniversity.push(holding.id);
             });
             InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: marcFiles[0].createdRecordsId[2],
+              instanceId: createdRecordsIds[2],
               permanentLocationId: testData.universityLocation.id,
             }).then((holding) => {
               createdHoldingsUniversity.push(holding.id);
             });
             InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: marcFiles[2].createdRecordsId[0],
+              instanceId: createdRecordsIds[4],
               permanentLocationId: testData.universityLocation.id,
             }).then((holding) => {
               createdHoldingsUniversity.push(holding.id);
@@ -298,9 +303,9 @@ describe('Inventory', () => {
       sharedFOLIOInstancesFromCentral.forEach((sharedInstance) => {
         InventoryInstance.deleteInstanceViaApi(sharedInstance.testInstanceId);
       });
-      marcFiles[0].createdRecordsId.forEach((id) => {
-        InventoryInstance.deleteInstanceViaApi(id);
-      });
+      for (let i = 0; i < 3; i++) {
+        InventoryInstance.deleteInstanceViaApi(createdRecordsIds[i]);
+      }
       ServicePoints.deleteViaApi(testData.servicePoint.id);
       Locations.deleteViaApi(testData.defaultLocation);
 
@@ -310,9 +315,9 @@ describe('Inventory', () => {
         InventoryHoldings.deleteHoldingRecordViaApi(collegeHoldingId);
       });
       InventoryInstance.deleteInstanceViaApi(localFOLIOInstanceFromMember1.testInstanceId);
-      InventoryInstance.deleteInstanceViaApi(marcFiles[1].createdRecordsId[0]);
+      InventoryInstance.deleteInstanceViaApi(createdRecordsIds[3]);
       InventoryInstance.deleteInstanceViaApi(sharedFOLIOInstancesFromCentral[1].testInstanceId);
-      InventoryInstance.deleteInstanceViaApi(marcFiles[0].createdRecordsId[1]);
+      InventoryInstance.deleteInstanceViaApi(createdRecordsIds[1]);
       Locations.deleteViaApi(testData.collegeLocation);
 
       // delete test data from the University
@@ -322,8 +327,8 @@ describe('Inventory', () => {
       });
       InventoryInstance.deleteInstanceViaApi(localFOLIOInstanceFromMember2.testInstanceId);
       InventoryInstance.deleteInstanceViaApi(sharedFOLIOInstancesFromCentral[2].testInstanceId);
-      InventoryInstance.deleteInstanceViaApi(marcFiles[2].createdRecordsId[0]);
-      InventoryInstance.deleteInstanceViaApi(marcFiles[0].createdRecordsId[2]);
+      InventoryInstance.deleteInstanceViaApi(createdRecordsIds[4]);
+      InventoryInstance.deleteInstanceViaApi(createdRecordsIds[2]);
       Locations.deleteViaApi(testData.universityLocation);
     });
 

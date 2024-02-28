@@ -22,6 +22,8 @@ import FileManager from '../../utils/fileManager';
 import Logs from './logs/logs';
 import DataImportUploadFile from '../../../../interactors/dataImportUploadFile';
 import { ACCEPTED_DATA_TYPE_NAMES, JOB_STATUS_NAMES } from '../../constants';
+import { recurse } from 'cypress-recurse';
+import SettingsJobProfile from '../settings/dataImport/jobProfiles/jobProfiles';
 
 const sectionPaneJobsTitle = Section({ id: 'pane-jobs-title' });
 const actionsButton = Button('Actions');
@@ -198,6 +200,21 @@ function processFile(
   });
 }
 
+function getCreatedRecordInfo(jobExecutionId) {
+  return cy.okapiRequest({
+    path: `metadata-provider/jobLogEntries/${jobExecutionId}`,
+    isDefaultSearchParamsRequired: false,
+    searchParams: { limit: 100 },
+  });
+}
+
+function getJodStatus(jobExecutionId) {
+  return cy.okapiRequest({
+    path: `change-manager/jobExecutions/${jobExecutionId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+}
+
 export default {
   importFile,
   uploadFile,
@@ -323,14 +340,13 @@ export default {
     });
   },
 
-  uploadFileViaApi: (filePathName, fileName) => {
+  uploadFileViaApi: (filePathName, fileName, profileName) => {
     const uiKeyValue = fileName;
 
-    uploadDefinitions(uiKeyValue, fileName).then((response) => {
+    return uploadDefinitions(uiKeyValue, fileName).then((response) => {
       const uploadDefinitionId = response.body.fileDefinitions[0].uploadDefinitionId;
       const fileId = response.body.fileDefinitions[0].id;
       const jobExecutionId = response.body.fileDefinitions[0].jobExecutionId;
-      const jobProfileId = 'e34d7b92-9b83-11eb-a8b3-0242ac130003';
 
       uploadBinaryMarcFile(filePathName, uploadDefinitionId, fileId);
       // need to wait until file will be converted and uploaded
@@ -340,16 +356,36 @@ export default {
         const metaJobExecutionId = res.body.metaJobExecutionId;
         const date = res.body.createDate;
 
-        processFile(
-          uploadDefinitionId,
-          fileId,
-          sourcePath,
-          jobExecutionId,
-          uiKeyValue,
-          jobProfileId,
-          metaJobExecutionId,
-          date,
+        SettingsJobProfile.getJobProfilesViaApi({ query: `name="${profileName}"` }).then(
+          ({ jobProfiles }) => {
+            processFile(
+              uploadDefinitionId,
+              fileId,
+              sourcePath,
+              jobExecutionId,
+              uiKeyValue,
+              jobProfiles[0].id,
+              metaJobExecutionId,
+              date,
+            );
+          },
         );
+
+        recurse(
+          () => getJodStatus(jobExecutionId),
+          (resp) => resp.body.status === 'COMMITTED' && resp.body.uiStatus === 'RUNNING_COMPLETE',
+          {
+            limit: 16,
+            timeout: 80000,
+            delay: 5000,
+          },
+        );
+
+        getCreatedRecordInfo(jobExecutionId).then((resp) => {
+          // we can get relatedInstanceInfo and in it get idList or hridList
+          const recordInfo = resp.body;
+          return recordInfo;
+        });
       });
     });
   },
