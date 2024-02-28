@@ -10,51 +10,67 @@ describe('lists', () => {
     const createdLists = [
       {
         name: `C411804-${getTestEntityValue('test_list')}-1`,
+        description: `C411804-${getTestEntityValue('test_list_description')}-1`,
         recordType: 'Loans',
-        status: 'Active',
-        visibility: 'Private',
+        fqlQuery: '',
+        isActive: true,
+        isPrivate: true,
       },
       {
         name: `C411804-${getTestEntityValue('test_list')}-2`,
+        description: `C411804-${getTestEntityValue('test_list_description')}-2`,
         recordType: 'Loans',
-        status: 'Inactive',
-        visibility: 'Private',
+        fqlQuery: '',
+        isActive: false,
+        isPrivate: true,
       },
       {
         name: `C411805-${getTestEntityValue('test_list')}-1`,
+        description: `C411805-${getTestEntityValue('test_list_description')}-2`,
         recordType: 'Loans',
-        status: 'Active',
-        visibility: 'Shared',
+        fqlQuery: '',
+        isActive: true,
+        isPrivate: false,
       },
       {
         name: `C411805-${getTestEntityValue('test_list')}-2`,
+        description: `C411805-${getTestEntityValue('test_list_description')}-2`,
         recordType: 'Loans',
-        status: 'Active',
-        visibility: 'Private',
+        fqlQuery: '',
+        isActive: true,
+        isPrivate: true,
       },
       {
         name: `C411806-${getTestEntityValue('test_list')}-1`,
+        description: `C411806-${getTestEntityValue('test_list_description')}-2`,
         recordType: 'Users',
-        status: 'Active',
-        visibility: 'Private',
+        fqlQuery: '',
+        isActive: true,
+        isPrivate: true,
       },
       {
         name: `C411806-${getTestEntityValue('test_list')}-2`,
+        description: `C411806-${getTestEntityValue('test_list_description')}-2`,
         recordType: 'Loans',
-        status: 'Active',
-        visibility: 'Private',
+        fqlQuery: '',
+        isActive: true,
+        isPrivate: true,
       },
       {
         name: `C411806-${getTestEntityValue('test_list')}-3`,
+        description: `C411806-${getTestEntityValue('test_list_description')}-3`,
         recordType: 'Items',
-        status: 'Active',
-        visibility: 'Private',
+        fqlQuery: '',
+        isActive: true,
+        isPrivate: true,
       },
       {
-        name: `C411806-${getTestEntityValue('test_list')}-3`,
-        recordType: 'Purchase order Lines',
-        status: 'Active',
-        visibility: 'Private',
+        name: `C411806-${getTestEntityValue('test_list')}-4`,
+        description: `C411806-${getTestEntityValue('test_list_description')}-4`,
+        recordType: 'Purchase order lines',
+        fqlQuery: '',
+        isActive: true,
+        isPrivate: true,
       },
     ];
 
@@ -68,7 +84,7 @@ describe('lists', () => {
     };
     const recordTypesFilters = {
       accordionName: 'Record types',
-      filters: ['Loans', 'Items', 'Users', 'Purchase order Lines'],
+      filters: ['Loans', 'Items', 'Users', 'Purchase order lines'],
     };
 
     before('Create test data', () => {
@@ -82,18 +98,10 @@ describe('lists', () => {
           path: TopMenu.listsPath,
           waiter: Lists.waitLoading,
         });
-      });
 
-      createdLists.forEach((list) => {
-        Lists.openNewListPane();
-        Lists.setName(list.name);
-        Lists.setDescription(list.name);
-        Lists.selectRecordType(list.recordType);
-        Lists.selectStatus(list.status);
-        Lists.selectVisibility(list.visibility);
-        Lists.saveList();
-        Lists.verifyCalloutMessage(`List ${list.name} saved.`);
-        Lists.closeListDetailsPane();
+        createdLists.forEach((list) => {
+          Lists.createViaApi(list);
+        });
       });
     });
 
