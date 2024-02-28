@@ -18,7 +18,7 @@ describe('MARC', () => {
           tag810: '810',
           authorityMarkedValue: 'C375085 John Bartholomew and Son.',
           seriesStatementValue:
-            'C375085 John Bartholomew and Son. Bartholomew world travel series English 1995 810 map',
+            'C375085 John Bartholomew and Son. English Bartholomew world travel series 1995 810 map',
           authorityIconText: 'Linked to MARC authority',
           accordion: 'Title data',
         };

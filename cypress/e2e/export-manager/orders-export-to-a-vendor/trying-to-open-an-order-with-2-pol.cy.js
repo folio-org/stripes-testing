@@ -111,7 +111,7 @@ describe('Export Manager', () => {
         OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
         OrderLines.fillInPOLineInfoForExportWithLocationAndAccountNumber(
           'Purchase',
-          location.institutionId,
+          location.name,
           `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
         );
         OrderLines.backToEditingOrder();
@@ -119,7 +119,7 @@ describe('Export Manager', () => {
         OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
         OrderLines.fillInPOLineInfoForExportWithLocationAndAccountNumber(
           'Purchase',
-          location.institutionId,
+          location.name,
           `${organization.accounts[1].name} (${organization.accounts[1].accountNo})`,
         );
         OrderLines.backToEditingOrder();

@@ -1,7 +1,6 @@
 import moment from 'moment';
 
 import { Permissions } from '../../../support/dictionary';
-import AgreementLines from '../../../support/fragments/agreements/agreementLines';
 import Agreements from '../../../support/fragments/agreements/agreements';
 import { EHoldingsTitles, EHoldingsTitlesSearch } from '../../../support/fragments/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -59,9 +58,6 @@ describe('eHoldings', () => {
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(testData.user.userId);
-        AgreementLines.getIdViaApi({ match: 'title', term: 'Biology of Fishes' }).then((id) => {
-          AgreementLines.deleteViaApi({ agreementId: testData.agreementId, agreementLineId: id });
-        });
         Agreements.deleteViaApi(testData.agreementId);
       });
     });

@@ -218,7 +218,9 @@ describe('data-import', () => {
 
         // upload the updated MARC file with 999 subfields and without 100 field
         cy.visit(TopMenu.dataImportPath);
-        DataImport.uploadFile(nameForUpdatedMarcBibFile, nameForUpdatedMarcBibFile);
+        DataImport.waitLoading();
+        DataImport.verifyUploadState();
+        DataImport.uploadFileAndRetry(nameForUpdatedMarcBibFile, nameForUpdatedMarcBibFile);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);

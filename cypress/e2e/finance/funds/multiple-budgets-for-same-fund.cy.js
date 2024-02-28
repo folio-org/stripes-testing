@@ -11,6 +11,7 @@ import {
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { CodeTools, StringTools } from '../../../support/utils';
+import FundDetails from '../../../support/fragments/finance/funds/fundDetails';
 
 describe('Finance', () => {
   describe('Funds', () => {
@@ -83,7 +84,7 @@ describe('Finance', () => {
       () => {
         // Open Fund from Preconditions
         FinanceHelper.searchByName(fund.name);
-        const FundDetails = Funds.selectFund(fund.name);
+        Funds.selectFund(fund.name);
 
         // Fund details includes "Current budget", "Planned budget", "Previous budget"
         FundDetails.checkFundDetails({

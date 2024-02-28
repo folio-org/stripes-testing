@@ -81,7 +81,7 @@ describe('Orders', () => {
           '40',
           '1',
           '40',
-          location.institutionId,
+          location.name,
         );
         OrderLines.backToEditingOrder();
         Orders.openOrder();
@@ -124,7 +124,6 @@ describe('Orders', () => {
         OrderLines.resetFilters();
         cy.reload();
         OrderLines.selectFilterOngoingPaymentStatus();
-        cy.pause();
         Orders.exportResultsToCsv();
         OrderLines.checkDownloadedFile();
       },

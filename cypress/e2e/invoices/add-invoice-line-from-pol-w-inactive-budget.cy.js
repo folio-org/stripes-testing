@@ -69,14 +69,6 @@ describe('Invoices', () => {
   after('Delete test data', () => {
     cy.getAdminToken().then(() => {
       Organizations.deleteOrganizationViaApi(testData.organization.id);
-      Invoices.getInvoiceViaApi({
-        query: `vendorInvoiceNo="${testData.invoice.invoiceNumber}"`,
-      }).then(({ invoices }) => {
-        invoices.forEach(({ id }) => Invoices.deleteInvoiceViaApi(id));
-      });
-      Orders.deleteOrderViaApi(testData.order.id);
-      Budgets.deleteBudgetWithFundLedgerAndFYViaApi(testData.budget);
-      BatchGroups.deleteBatchGroupViaApi(testData.batchGroup.id);
       Users.deleteViaApi(testData.user.userId);
     });
   });

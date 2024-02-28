@@ -51,14 +51,13 @@ describe('Orders', () => {
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken().then(() => {
-      OpenOrder.setOpenOrderValue(false);
-      Orders.getOrdersApi({ query: `"poNumber"=="${testData.poNumber}"` }).then((orders) => {
-        Orders.deleteOrderViaApi(orders[0].id);
-      });
-      InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-      Users.deleteViaApi(testData.user.userId);
+    cy.getAdminToken();
+    OpenOrder.setOpenOrderValue(false);
+    Orders.getOrdersApi({ query: `"poNumber"=="${testData.poNumber}"` }).then((orders) => {
+      Orders.deleteOrderViaApi(orders[0].id);
     });
+    InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+    Users.deleteViaApi(testData.user.userId);
   });
 
   describe('Inventory interaction', () => {
@@ -67,6 +66,7 @@ describe('Orders', () => {
     });
 
     after('Disable "Opening purchase orders"', () => {
+      cy.getAdminToken();
       OpenOrder.setOpenOrderValue(false);
     });
 

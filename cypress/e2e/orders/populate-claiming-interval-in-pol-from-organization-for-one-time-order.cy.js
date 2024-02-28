@@ -125,7 +125,7 @@ describe('Orders', () => {
         '20',
         '1',
         '20',
-        location.institutionId,
+        location.name,
       );
       OrderLines.checkClaimingIntervalInPOL('20');
       OrderLines.editPOLInOrder();
