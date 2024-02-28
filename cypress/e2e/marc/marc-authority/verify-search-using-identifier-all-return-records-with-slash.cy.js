@@ -46,7 +46,7 @@ describe('MARC', () => {
           }
         });
       });
-      
+
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         testData.marcFile.marc,
