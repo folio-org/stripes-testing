@@ -121,7 +121,7 @@ describe('MARC', () => {
         MarcAuthority.getRecordsViaAPI().then((body) => {
           expect(
             body.authorities.filter(
-              (record) => record.id === createdRecordIDs[1] || record.id === createdRecordIDs[1],
+              (record) => record.id === createdRecordIDs[1] || record.id === createdRecordIDs[2],
             ).length,
           ).to.equal(0);
         });
