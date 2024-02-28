@@ -34,12 +34,14 @@ describe('MARC', () => {
             marc: 'marcBibFileForC365595.mrc',
             fileName: `C365595 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            propertyName: 'relatedInstanceInfo',
           },
           marcAuthFile: {
             marc: 'marcAuthFileForC365595.mrc',
             fileName: `C365595 testMarcFile${getRandomPostfix()}.mrc`,
             editedFileName: `C365595 marcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
+            propertyName: 'relatedAuthorityInfo',
           },
           tag010: '010',
           tag010content: `${randomCode}91065740`,
@@ -88,16 +90,14 @@ describe('MARC', () => {
             waiter: DataImport.waitLoading,
           });
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-          DataImport.verifyUploadState();
-          DataImport.uploadFile(testData.marcBibFile.marc, testData.marcBibFile.fileName);
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(testData.marcBibFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(testData.marcBibFile.fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(testData.marcBibFile.fileName);
-          Logs.getCreatedItemsID().then((link) => {
-            testData.createdRecordIDs.push(link.split('/')[5]);
+          DataImport.uploadFileViaApi(
+            testData.marcBibFile.marc,
+            testData.marcBibFile.fileName,
+            testData.marcBibFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              testData.createdRecordIDs.push(record[testData.marcBibFile.propertyName].idList[0]);
+            });
           });
 
           cy.createTempUser([

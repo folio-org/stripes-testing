@@ -136,7 +136,7 @@ describe('MARC', () => {
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
-        QuickMarcEditor.verifyTagFieldAfterUnlinking(testData.bib240UnlinkedFieldValue);
+        QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib240UnlinkedFieldValue);
         QuickMarcEditor.verifyIconsAfterUnlinking(linkingTagAndValues.rowIndex);
         QuickMarcEditor.pressCancel();
         InventoryInstance.waitInventoryLoading();
