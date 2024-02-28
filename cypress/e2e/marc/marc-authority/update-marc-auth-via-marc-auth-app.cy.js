@@ -26,15 +26,6 @@ describe('MARC', () => {
     };
 
     before('Creating user', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(
-        testData.marcFile.marc,
-        testData.marcFile.fileName,
-        testData.marcFile.jobProfileToRun,
-      ).then((response) => {
-        testData.recordId = response.entries[0].relatedAuthorityInfo.idList[0];
-      });
-
       cy.createTempUser([
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -51,6 +42,14 @@ describe('MARC', () => {
               MarcAuthority.deleteViaAPI(id);
             });
           }
+        });
+        cy.getAdminToken();
+        DataImport.uploadFileViaApi(
+          testData.marcFile.marc,
+          testData.marcFile.fileName,
+          testData.marcFile.jobProfileToRun,
+        ).then((response) => {
+          testData.recordId = response.entries[0].relatedAuthorityInfo.idList[0];
         });
 
         cy.login(testData.userProperties.username, testData.userProperties.password, {
