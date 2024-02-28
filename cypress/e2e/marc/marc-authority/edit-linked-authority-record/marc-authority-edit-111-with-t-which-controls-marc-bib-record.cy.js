@@ -125,6 +125,7 @@ describe('MARC', () => {
 
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
           MarcAuthority.edit();
+          cy.wait(2000);
 
           let previousTagValue = testData.tag111;
           testData.newTagValuesSaveAndClose.forEach((newTagValue) => {
