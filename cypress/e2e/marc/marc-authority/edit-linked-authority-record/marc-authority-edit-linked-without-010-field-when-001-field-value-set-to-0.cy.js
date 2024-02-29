@@ -121,6 +121,7 @@ describe('MARC', () => {
           MarcAuthorities.verifyMarcViewPaneIsOpened();
 
           MarcAuthority.edit();
+          cy.wait(2000);
           QuickMarcEditor.checkFieldAbsense(testData.tag010);
 
           QuickMarcEditor.updateExistingField(

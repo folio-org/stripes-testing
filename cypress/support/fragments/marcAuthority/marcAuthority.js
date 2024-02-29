@@ -357,4 +357,16 @@ export default {
         .exists(),
     );
   },
+
+  getRecordsViaAPI: (deleted = false, idOnly = false, acceptHeader = null) => {
+    cy.okapiRequest({
+      method: 'GET',
+      isDefaultSearchParamsRequired: false,
+      path: `authority-storage/authorities?limit=1000&deleted=${deleted}&idOnly=${idOnly}`,
+      additionalHeaders: acceptHeader ? { accept: acceptHeader } : {},
+    }).then(({ body }) => {
+      cy.wrap(body).as('records');
+    });
+    return cy.get('@records');
+  },
 };

@@ -127,6 +127,7 @@ describe('MARC', () => {
         () => {
           MarcAuthorities.searchAndVerify(testData.searchOption, marcFiles[1].authorityHeading);
           MarcAuthority.edit();
+          cy.wait(2000);
 
           QuickMarcEditor.updateExistingField(testData.tag010, testData.tag010NewValue);
           QuickMarcEditor.checkButtonsEnabled();

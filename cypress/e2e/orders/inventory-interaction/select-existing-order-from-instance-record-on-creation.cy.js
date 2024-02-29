@@ -14,6 +14,7 @@ import {
 } from '../../../support/constants';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Users from '../../../support/fragments/users/users';
+import NewOrderModal from '../../../support/fragments/inventory/modals/newOrderModal';
 
 const organization = NewOrganization.getDefaultOrganization();
 const testData = {
@@ -23,8 +24,6 @@ const testData = {
   order: { ...NewOrder.getDefaultOrder({ vendorId: organization.id }), reEncumber: true },
 };
 let userData;
-const message =
-  'Selecting an existing order before clicking "Create", will add a new order line to the selected order for this title. Leaving the order number field blank and clicking "Create" will allow you to create a new purchase order and purchase order line for this title.';
 
 describe('Orders', () => {
   describe('Inventory interaction', () => {
@@ -69,10 +68,7 @@ describe('Orders', () => {
 
         InventorySearchAndFilter.byKeywords(testData.instanceName);
         InventoryInstance.checkInstanceTitle(testData.instanceName);
-
-        const NewOrderModal = InventoryInstance.newOrder();
-        NewOrderModal.waitLoading();
-        NewOrderModal.verifyTextDescriptionExists(message);
+        InventoryInstance.openCreateNewOrderModal();
 
         NewOrderModal.enterOrderNumber(testData.order.poNumber);
         NewOrderModal.clickCreateButton();

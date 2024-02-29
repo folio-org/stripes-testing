@@ -119,6 +119,7 @@ describe('MARC', () => {
           MarcAuthority.waitLoading();
           MarcAuthority.edit();
           QuickMarcEditor.checkContent(`$a ${testData.tag110content}`, 8);
+          cy.wait(2000);
           // tagsForChanging: ['100', '110', '111', '112', '130', '150', '151', '155'],
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[1],
