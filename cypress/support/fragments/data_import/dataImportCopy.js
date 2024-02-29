@@ -1,5 +1,4 @@
 import { recurse } from 'cypress-recurse';
-// import { ACCEPTED_DATA_TYPE_NAMES, JOB_STATUS_NAMES } from '../../constants';
 import SettingsJobProfile from '../settings/dataImport/jobProfiles/jobProfiles';
 
 function uploadDefinitions(keyValue, fileName) {
@@ -58,11 +57,10 @@ function processFile(uploadDefinitionId, uploadDefinition, jobProfileId, jobProf
   });
 }
 
-function getCreatedRecordInfo(jobExecutionId) {
+function getCreatedRecordInfo(jobExecutionId, recordId) {
   return cy.okapiRequest({
-    path: `metadata-provider/jobLogEntries/${jobExecutionId}`,
+    path: `metadata-provider/jobLogEntries/${jobExecutionId}/records/${recordId}`,
     isDefaultSearchParamsRequired: false,
-    searchParams: { limit: 100 },
   });
 }
 
@@ -125,13 +123,23 @@ function getParentJobExecutionId() {
   // splitting process creates additional job executions for parent/child
   // so we need to query to get the correct job execution ID
   return cy.okapiRequest({
-    path: 'metadata-provider/jobExecutions',
-    qs: {
-      subordinationTypeNotAny: ['COMPOSITE_CHILD', 'PARENT_SINGLE'],
-      sortBy: 'started_date,desc',
-    },
-    searchParams: { limit: 10000 },
+    path: 'metadata-provider/jobExecutions?limit=10000&sortBy=started_date,desc&subordinationTypeNotAny=COMPOSITE_CHILD&subordinationTypeNotAny=PARENT_SINGLE',
     isDefaultSearchParamsRequired: false,
+  });
+}
+
+function getChildJobExecutionId(jobExecutionId) {
+  return cy.okapiRequest({
+    path: `change-manager/jobExecutions/${jobExecutionId}/children`,
+    isDefaultSearchParamsRequired: false,
+  });
+}
+
+function getRecordSourceId(jobExecutionId) {
+  return cy.okapiRequest({
+    path: `metadata-provider/jobLogEntries/${jobExecutionId}`,
+    isDefaultSearchParamsRequired: false,
+    searchParams: { limit: 100, query: 'order=asc' },
   });
 }
 
@@ -225,16 +233,26 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
               );
 
               getParentJobExecutionId().then((jobExecutionResponse) => {
-                // need to cut the part of path for searching
-                const splittedFilePath = sourcePath.split('-');
+                // TODO add waiting status COMMITED
+                cy.wait(20000);
                 const parentJobExecutionId = jobExecutionResponse.body.jobExecutions.find(
-                  (exec) => exec.sourcePath === splittedFilePath[2],
+                  (exec) => exec.sourcePath === sourcePath,
                 ).id;
 
-                getCreatedRecordInfo(parentJobExecutionId).then((recordResponse) => {
-                  // we can get relatedInstanceInfo and in it get idList or hridList
-                  const recordInfo = recordResponse.body;
-                  return recordInfo;
+                getChildJobExecutionId(parentJobExecutionId).then((resp2) => {
+                  const childJobExecutionId = resp2.body.jobExecutions[0].id;
+
+                  getRecordSourceId(childJobExecutionId).then((resp3) => {
+                    const sourceRecordId = resp3.body.entries[0].sourceRecordId;
+
+                    getCreatedRecordInfo(childJobExecutionId, sourceRecordId).then(
+                      (recordResponse) => {
+                        // we can get relatedInstanceInfo and in it get idList or hridList
+                        const recordInfo = recordResponse.body;
+                        return recordInfo;
+                      },
+                    );
+                  });
                 });
               });
             });
@@ -246,19 +264,11 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
 }
 
 export default {
-  uploadDefinitions,
-  uploadBinaryMarcFile,
-  processFile,
-  checkSplitStatus,
-  getUploadUrl,
-  uploadDefinitionWithAssembleStorageFile,
-  getCreatedRecordInfo,
-  getJodStatus,
   uploadFileWithoutSplitFilesViaApi,
   uploadFileWithSplitFilesViaApi,
 
   uploadFileViaApi: (filePathName, fileName, profileName) => {
-    checkSplitStatus().then((resp) => {
+    return checkSplitStatus().then((resp) => {
       if (resp.body.splitStatus === false) {
         uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName);
       } else {
