@@ -112,6 +112,7 @@ describe('MARC', () => {
           MarcAuthority.waitLoading();
           MarcAuthority.edit();
           QuickMarcEditor.checkContent(`$a ${linkingTagAndValue.value}`, 20);
+          cy.wait(2000);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[2],
