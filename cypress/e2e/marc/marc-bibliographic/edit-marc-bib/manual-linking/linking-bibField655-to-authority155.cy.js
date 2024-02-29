@@ -125,7 +125,7 @@ describe('MARC', () => {
             );
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthoritiesDelete.checkEmptySearchResults(
-              'identifiers.value==(OCoLC)fst01710451 or identifiers.value==(OCoLC)fst01122346',
+              'identifiers.value exactPhrase (OCoLC)fst01710451 or identifiers.value exactPhrase (OCoLC)fst01122346',
             );
             MarcAuthorities.closeAuthorityLinkingModal();
 
@@ -136,7 +136,9 @@ describe('MARC', () => {
             InventoryInstance.verifySearchOptions();
             MarcAuthorities.checkSearchInput('identifiers.value exactPhrase (OCoLC)fst01710451');
             MarcAuthorities.verifyEmptyAuthorityField();
-            MarcAuthoritiesDelete.checkEmptySearchResults('identifiers.value==(OCoLC)fst01710451');
+            MarcAuthoritiesDelete.checkEmptySearchResults(
+              'identifiers.value exactPhrase (OCoLC)fst01710451',
+            );
 
             MarcAuthorities.switchToBrowse();
             MarcAuthorities.verifyDisabledSearchButton();
@@ -172,6 +174,7 @@ describe('MARC', () => {
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
             InventoryInstance.waitLoading();
+            cy.wait(1000);
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib655AfterLinkingToAuth155);
 
