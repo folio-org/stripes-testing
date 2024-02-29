@@ -34,7 +34,7 @@ describe('data-import', () => {
 
     it(
       'C2377 Delete an uploaded (but not yet imported) file (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'nonParallel'] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.clickResumeButton();

@@ -26,47 +26,47 @@ describe('MARC', () => {
           {
             rowIndex: 31,
             tag: '650',
-            aSubfield: '$a Lesbian authors',
-            newContent: '$a Lesbian authors $z Jamaica $v Biography. $0 sh96007532',
+            aSubfield: '$a C388515Lesbian authors',
+            newContent: '$a C388515Lesbian authors $z Jamaica $v Biography. $0 sh96007532',
             isUnlinked: true,
           },
           {
             rowIndex: 32,
             tag: '650',
-            aSubfield: '$a Lesbian activists',
-            newContent: '$a Lesbian activists $z Jamaica $v Biography.',
+            aSubfield: '$a C388515Lesbian activists',
+            newContent: '$a C388515Lesbian activists $z Jamaica $v Biography.',
             isUnlinked: true,
           },
         ];
         const manuallyUnlinkedFields = [
-          { rowIndex: 17, tag: '100', aSubfield: '$a Chin, Staceyann.' },
-          { rowIndex: 28, tag: '600', aSubfield: '$a Chin, Staceyann.' },
+          { rowIndex: 17, tag: '100', aSubfield: '$a C388515Chin, Staceyann.' },
+          { rowIndex: 28, tag: '600', aSubfield: '$a C388515Chin, Staceyann.' },
           {
             rowIndex: 31,
             tag: '650',
-            aSubfield: '$a Lesbian authors',
-            newContent: '$a Lesbian authors $z Jamaica $v Biography. $0 sh96007532',
+            aSubfield: '$a C388515Lesbian authors',
+            newContent: '$a C388515Lesbian authors $z Jamaica $v Biography. $0 sh96007532',
           },
           {
             rowIndex: 32,
             tag: '650',
-            aSubfield: '$a Lesbian activists',
-            newContent: '$a Lesbian activists $z Jamaica $v Biography.',
+            aSubfield: '$a C388515Lesbian activists',
+            newContent: '$a C388515Lesbian activists $z Jamaica $v Biography.',
           },
         ];
         const notLinkedFieldRow = 4;
         const createdRecordIDs = [];
         const naturalIds = [
-          'no2021056177',
-          'n83169267',
+          'no202105618',
+          'n83169268',
           'sh99014708',
           'sh96007532',
-          'n2008052404',
-          'sh85009933',
+          'n2008052405',
+          'sh85009932',
         ];
         const authority = {
           searchOption: 'Identifier (all)',
-          searchInput: 'n83169267',
+          searchInput: 'n83169268',
         };
         const marcFiles = [
           {
@@ -200,7 +200,7 @@ describe('MARC', () => {
               QuickMarcEditor.verifyRowLinked(field.rowIndex, false);
             });
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
-            // #5 Link first unlinked field to different "MARC authority" record ("$0" value should be changed). For example: link 100 to "n83169267"
+            // #5 Link first unlinked field to different "MARC authority" record ("$0" value should be changed). For example: link 100 to "n83169268"
             QuickMarcEditor.clickLinkIconInTagField(manuallyUnlinkedFields[0].rowIndex);
             InventoryInstance.verifySelectMarcAuthorityModal();
             MarcAuthorities.switchToSearch();
@@ -215,9 +215,9 @@ describe('MARC', () => {
               manuallyUnlinkedFields[0].tag,
               '1',
               '\\',
-              '$a Lee, Stan, $d 1922-2018',
+              '$a C388515Lee, Stan, $d 1922-2018',
               '$e author.',
-              '$0 http://id.loc.gov/authorities/names/n83169267',
+              '$0 http://id.loc.gov/authorities/names/n83169268',
               '',
             );
             // #6 Edit subfield "$0" value of unlinked field to another valid (matched with "naturalId" of existing "MARC authority" record)

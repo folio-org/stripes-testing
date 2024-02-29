@@ -22,9 +22,10 @@ const testData = {
     sixthQuery: '(OCoLC)oca00316600*',
   },
   authRows: {
-    warsaw: 'Warsaw Council (2nd : 1962-1965 : Basilica di San Pietro in Warsawo)',
-    delaware: 'Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
-    jackson: 'Jackson, Peter, 1950-2022 Inspector Banks series ;',
+    warsaw: 'C380591Warsaw Council (2nd : 1962-1965 : Basilica di San Pietro in Warsawo)',
+    delaware:
+      'C380591Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
+    jackson: 'C380591Jackson, Peter, 1950-2022 Inspector Banks series ;',
   },
   authorizedTypes: {
     AUTHORIZED: 'Authorized',

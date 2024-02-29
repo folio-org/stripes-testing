@@ -113,6 +113,7 @@ describe('MARC', () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authority555FieldValue);
           MarcAuthorities.selectTitle(marcFiles[1].authority555FieldValue);
           MarcAuthority.edit();
+          cy.wait(2000);
           QuickMarcEditor.updateExistingField(
             testData.tag155,
             `$a ${testData.updated155FieldValue}`,

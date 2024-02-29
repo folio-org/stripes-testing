@@ -44,7 +44,7 @@ describe('data-import', () => {
       instanceTitle:
         "Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
       updated700Field: [
-        76,
+        75,
         '700',
         '1',
         '\\',
@@ -216,21 +216,22 @@ describe('data-import', () => {
           cy.wait(4000);
           ExportFile.downloadExportedMarcFile(testData.exportedFileName);
 
-          // change exported file
-          DataImport.replace999SubfieldsInPreupdatedFile(
+          DataImport.editMarcFile(
             testData.exportedFileName,
-            testData.marcFileForModify,
             testData.modifiedMarcFile,
+            ['Lee, Stan', 'ecreator.'],
+            ['Lee, Stanley', 'eauthor.'],
           );
         });
+
         cy.visit(TopMenu.dataImportPath);
-        DataImport.uploadFile(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);
+        DataImport.uploadFile(testData.modifiedMarcFile, testData.modifiedMarcFile);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(testData.uploadModifiedMarcFile);
-        Logs.checkJobStatus(testData.uploadModifiedMarcFile, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(testData.uploadModifiedMarcFile);
+        Logs.waitFileIsImported(testData.modifiedMarcFile);
+        Logs.checkJobStatus(testData.modifiedMarcFile, JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(testData.modifiedMarcFile);
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
@@ -239,12 +240,13 @@ describe('data-import', () => {
         });
 
         cy.visit(TopMenu.inventoryPath);
+
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated700Field);
-        QuickMarcEditor.openLinkingAuthorityByIndex(76);
+        QuickMarcEditor.openLinkingAuthorityByIndex(75);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.markedValue);
       },
     );

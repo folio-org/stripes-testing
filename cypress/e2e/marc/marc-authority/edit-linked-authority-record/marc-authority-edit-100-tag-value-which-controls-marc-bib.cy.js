@@ -116,6 +116,7 @@ describe('MARC', () => {
           MarcAuthorities.searchBy(testData.searchOption, testData.searchValue);
 
           MarcAuthority.edit();
+          cy.wait(2000);
           let previousTagValue = testData.tag100;
           testData.newTagValues.forEach((newTagValue) => {
             const callOutMessage =

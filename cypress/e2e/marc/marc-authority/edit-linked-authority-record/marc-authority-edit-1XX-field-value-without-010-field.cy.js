@@ -116,6 +116,7 @@ describe('MARC', () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
           MarcAuthority.edit();
+          cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag111, testData.updatedValue);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
