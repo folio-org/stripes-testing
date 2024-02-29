@@ -52,7 +52,7 @@ describe('inventory', () => {
     );
 
     it(
-      'C350393 Verify selecting row from Browse Result list (firebird)',
+      'C350393 Verify selecting row from Browse Result list (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
         BrowseSubjects.searchBrowseSubjects(item.instanceSubjectName);
