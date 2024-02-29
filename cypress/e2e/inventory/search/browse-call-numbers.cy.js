@@ -43,8 +43,8 @@ describe('ui-inventory: browse call numbers', () => {
   );
 
   it(
-    'C350377 Verify the "Browse subjects" search option on the Instances tab (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    'C350377 Verify the "Browse subjects" search option on the Instances tab (spitfire)',
+    { tags: ['smoke', 'spitfire'] },
     () => {
       InventorySearchAndFilter.instanceTabIsDefault();
       InventorySearchAndFilter.switchToBrowseTab();
@@ -61,8 +61,8 @@ describe('ui-inventory: browse call numbers', () => {
   );
 
   it(
-    'C350378 Verify the "Browse subjects" search option on the Holdings tab (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    'C350378 Verify the "Browse subjects" search option on the Holdings tab (spitfire)',
+    { tags: ['smoke', 'spitfire'] },
     () => {
       InventorySearchAndFilter.instanceTabIsDefault();
       InventorySearchAndFilter.switchToHoldings();
@@ -73,8 +73,8 @@ describe('ui-inventory: browse call numbers', () => {
   );
 
   it(
-    'C350379 Verify the "Browse subjects" search option on the Item tab (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    'C350379 Verify the "Browse subjects" search option on the Item tab (spitfire)',
+    { tags: ['smoke', 'spitfire'] },
     () => {
       InventorySearchAndFilter.instanceTabIsDefault();
       InventorySearchAndFilter.switchToItem();
