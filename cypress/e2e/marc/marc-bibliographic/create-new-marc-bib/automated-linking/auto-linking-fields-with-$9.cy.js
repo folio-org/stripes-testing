@@ -31,7 +31,7 @@ describe('MARC', () => {
             '\\',
             '$a C422151 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
             '',
-            '$0 3052044',
+            '$0 3052039',
             '',
           ],
           bib240AfterLinkingToAuth100: [
@@ -41,7 +41,7 @@ describe('MARC', () => {
             '\\',
             '$a Hosanna Bible',
             '',
-            '$0 http://id.loc.gov/authorities/names/n99036055',
+            '$0 http://id.loc.gov/authorities/names/n99036049',
             '',
           ],
           successCalloutMessage: 'Field 100 and 240 has been linked to MARC authority record(s).',
@@ -55,13 +55,13 @@ describe('MARC', () => {
           {
             rowIndex: 4,
             tag: '100',
-            content: '$0 3052044 $9 812ef396-4451-48b3-b99c-6e59df6330e8',
+            content: '$0 3052039 $9 812ef396-4451-48b3-b99c-6e59df6330e8',
             status: 'linked',
           },
           {
             rowIndex: 5,
             tag: '240',
-            content: '$0 n99036055 $9 test',
+            content: '$0 n99036049 $9 test',
             status: 'linked',
           },
           {

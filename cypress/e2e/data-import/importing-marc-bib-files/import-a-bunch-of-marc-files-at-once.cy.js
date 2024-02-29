@@ -17,7 +17,7 @@ describe('data-import', () => {
 
     it(
       'C6707 Import a bunch of MARC files at once (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         [
           {

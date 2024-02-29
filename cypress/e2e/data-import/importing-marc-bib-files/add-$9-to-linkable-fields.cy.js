@@ -40,7 +40,7 @@ describe('data-import', () => {
       the240Field: [9, '240', '\\', '\\', '$a The value'],
       the800Field: [15, '800', '\\', '\\', '$a Series'],
       the811Field: [16, '811', '\\', '0', '$a Wangaratta, Victoria, 1994.'],
-      the245Field: [10, '245', '1', '0', '$a Welcome home Olympians Added subfields 9'],
+      the245Field: [10, '245', '1', '0', '$a Welcome home Olympians'],
     };
     function replace999SubfieldsInPreupdatedFile(
       exportedFileName,

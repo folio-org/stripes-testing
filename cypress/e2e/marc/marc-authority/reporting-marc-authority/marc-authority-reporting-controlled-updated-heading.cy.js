@@ -14,6 +14,7 @@ import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/m
 const testData = {
   marcValue: 'C380531 Beethoven, Ludwig van,',
   tag100: '100',
+  tag240: '240',
   title:
     'Beethoven, Ludwig the Greatest $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
   updatedTag100Value1:
@@ -82,7 +83,6 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(testData.marcValue);
-            MarcAuthoritiesSearch.selectAuthorityByIndex(0);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag240, 18);
             QuickMarcEditor.pressSaveAndClose();

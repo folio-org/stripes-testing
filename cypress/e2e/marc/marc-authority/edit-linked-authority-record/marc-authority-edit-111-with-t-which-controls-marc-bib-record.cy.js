@@ -55,6 +55,7 @@ describe('MARC', () => {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         }).then(() => {
+          cy.getAdminToken();
           marcFiles.forEach((marcFile) => {
             cy.visit(TopMenu.dataImportPath);
             DataImport.verifyUploadState();
@@ -124,6 +125,7 @@ describe('MARC', () => {
 
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
           MarcAuthority.edit();
+          cy.wait(2000);
 
           let previousTagValue = testData.tag111;
           testData.newTagValuesSaveAndClose.forEach((newTagValue) => {

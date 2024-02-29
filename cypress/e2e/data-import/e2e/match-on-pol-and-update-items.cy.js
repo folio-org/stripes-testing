@@ -291,7 +291,7 @@ describe('data-import', () => {
 
     it(
       'C350590 Match on POL and update related Instance, Holdings, Item (folijet)',
-      { tags: ['smoke', 'folijet', 'nonParallel'] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         // create the first PO with POL
         Orders.createOrderWithOrderLineViaApi(

@@ -131,6 +131,7 @@ describe('MARC', () => {
           MarcAuthority.waitLoading();
           MarcAuthority.edit();
           QuickMarcEditor.checkContent(`${testData.tag111content}`, 8);
+          cy.wait(2000);
 
           QuickMarcEditor.updateExistingTagName(testData.tag111, testData.tag100);
           QuickMarcEditor.pressSaveAndClose();
