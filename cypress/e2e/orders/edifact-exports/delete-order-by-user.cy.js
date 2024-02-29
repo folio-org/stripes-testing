@@ -80,7 +80,7 @@ describe('orders: Edifact export', () => {
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-      OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+      OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
       OrderLines.backToEditingOrder();
     });
 
