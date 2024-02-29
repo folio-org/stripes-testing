@@ -29,11 +29,12 @@ Cypress.Commands.add('getAuthoritySourceFileIdViaAPI', (authorityFileName) => {
   });
 });
 
-Cypress.Commands.add('deleteAuthoritySourceFileViaAPI', (id) => {
+Cypress.Commands.add('deleteAuthoritySourceFileViaAPI', (id, ignoreErrors = false) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `authority-source-files/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   }).then(({ status }) => {
     return status;
   });
