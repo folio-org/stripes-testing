@@ -3,7 +3,7 @@ import Users from '../fragments/users/users';
 import getRandomPostfix from '../utils/stringTools';
 import { FULFILMENT_PREFERENCES } from '../constants';
 
-const systemRoleName = '*';
+const systemRoleName = 'System admin role';
 
 Cypress.Commands.add('getUsers', (searchParams) => {
   cy.okapiRequest({

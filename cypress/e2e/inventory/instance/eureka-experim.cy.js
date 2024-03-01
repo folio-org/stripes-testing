@@ -12,13 +12,21 @@ import Users from '../../../support/fragments/users/users';
 describe('inventory', () => {
   describe('Instance', () => {
     const testData = {};
-    before('navigate to Inventory', () => {});
+    before('navigate to Inventory', () => {
+      cy.getAdminToken();
+      cy.createAuthorizationRoleApi().then((role) => {
+        cy.log(JSON.stringify(role, null, 2));
+        testData.roleName = role.name;
+        testData.roleId = role.id;
+      });
+    });
 
     after(() => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       cy.deleteCapabilitiesFromRoleApi(testData.roleId);
       cy.deleteCapabilitySetsFromRoleApi(testData.roleId);
+      cy.deleteAuthorizationRoleApi(testData.roleId);
     });
 
     it('experiment', () => {
@@ -28,7 +36,7 @@ describe('inventory', () => {
       });
       cy.getCapabilitiesApi(10).then((capabs) => {
         cy.getCapabilitySetsApi(10).then((capabSets) => {
-          cy.getUserRoleIdByNameApi('Role buffer 123').then((roleId) => {
+          cy.getUserRoleIdByNameApi(testData.roleName).then((roleId) => {
             testData.roleId = roleId;
             cy.addCapabilitiesToNewRoleApi(
               roleId,

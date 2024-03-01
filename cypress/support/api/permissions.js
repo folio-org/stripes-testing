@@ -1,3 +1,5 @@
+import getRandomPostfix from '../utils/stringTools';
+
 Cypress.Commands.add('getPermissionsApi', (searchParams) => {
   return cy.okapiRequest({
     path: 'perms/permissions',
@@ -118,6 +120,35 @@ Cypress.Commands.add('deleteCapabilitySetsFromRoleApi', (roleId) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `roles/${roleId}/capability-sets`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add(
+  'createAuthorizationRoleApi',
+  (
+    name = `Test_Auto_Role_${getRandomPostfix()}`,
+    description = `Test_Auto_Description_${getRandomPostfix()}`,
+  ) => {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'roles',
+      isDefaultSearchParamsRequired: false,
+      body: {
+        name,
+        description,
+      },
+    }).then(({ body }) => {
+      cy.wrap(body).as('role');
+    });
+    return cy.get('@role');
+  },
+);
+
+Cypress.Commands.add('deleteAuthorizationRoleApi', (roleId) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: `roles/${roleId}`,
     isDefaultSearchParamsRequired: false,
   });
 });
