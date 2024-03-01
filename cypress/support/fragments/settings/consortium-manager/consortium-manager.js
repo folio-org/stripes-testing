@@ -8,6 +8,7 @@ import {
   including,
   HTML,
   Dropdown,
+  or,
 } from '../../../../../interactors';
 
 const myProfileButton = Dropdown({ id: 'profileDropdown' }).find(Button());
@@ -73,7 +74,7 @@ export default {
     ]);
   },
 
-  switchActiveAffiliation(currentTenantName, newTenantName) {
+  switchActiveAffiliation(currentTenantName, newTenantName, servicePointName = null) {
     cy.wait(8000);
     cy.do([
       Dropdown({ id: 'profileDropdown' })
@@ -88,7 +89,9 @@ export default {
     ]);
     cy.wait(8000);
     cy.expect(
-      Button({ ariaLabel: `${newTenantName}  profile` })
+      Button({
+        ariaLabel: or(`${newTenantName}  profile`, `${newTenantName} ${servicePointName} profile`),
+      })
         .find(HTML({ text: including(newTenantName) }))
         .exists(),
     );
