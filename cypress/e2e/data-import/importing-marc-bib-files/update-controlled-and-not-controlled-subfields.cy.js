@@ -159,7 +159,7 @@ describe('data-import', () => {
             JobProfiles.openNewJobProfileForm();
             NewJobProfile.fillJobProfile(jobProfile);
             NewJobProfile.linkMatchProfile(matchProfile.profileName);
-            NewJobProfile.linkActionProfileByName(actionProfile.name);
+            NewJobProfile.linkActionProfileForMatches(actionProfile.name);
             // wait for the action profile to be linked
             cy.wait(1000);
             NewJobProfile.saveAndClose();

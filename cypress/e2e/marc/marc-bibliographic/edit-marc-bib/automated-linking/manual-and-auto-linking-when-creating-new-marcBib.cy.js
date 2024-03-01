@@ -26,10 +26,10 @@ describe('MARC', () => {
             tagLDRContent: '00000naa\\a2200000uu\\4500',
           },
           naturalIds: {
-            tag100: '0255864',
-            tag240: 'n99036055',
-            tag600: 'n93094742',
-            tag711: 'n79084169',
+            tag100: '0255863',
+            tag240: 'n99036054',
+            tag600: 'n93094743',
+            tag711: 'n79084160',
           },
           searchOptions: {
             identifierAll: 'Identifier (all)',
@@ -226,10 +226,10 @@ describe('MARC', () => {
             tagLDRContent: '00000naa\\a2200000uu\\4500',
           },
           naturalIds: {
-            tag100: '0255864',
+            tag100: '0255861',
             tag240: 'n99036055',
             tag600: 'n93094741',
-            tag711: 'n79084169',
+            tag711: 'n79084162',
           },
           searchOptions: {
             identifierAll: 'Identifier (all)',
@@ -256,7 +256,7 @@ describe('MARC', () => {
           {
             rowIndex: 7,
             tag: '711',
-            content: '$0 n79084169',
+            content: '$0 n79084162',
           },
           {
             rowIndex: 8,
