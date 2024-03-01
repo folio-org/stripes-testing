@@ -358,6 +358,7 @@ export default {
   },
 
   switchToBrowseTab() {
+    cy.wait(1000);
     cy.do(browseButton.click());
   },
 
