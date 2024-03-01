@@ -1273,4 +1273,12 @@ export default {
   checkSelectOptionFieldContent(option) {
     cy.expect(selectField.has({ checkedOptionText: option }));
   },
+
+  verifyAllResultsHaveSource(sourceNames) {
+    this.getResultsListByColumn(4).then((cellTexts) => {
+      cellTexts.forEach((cellText) => {
+        expect(cellText).to.be.oneOf([...sourceNames]);
+      });
+    });
+  },
 };
