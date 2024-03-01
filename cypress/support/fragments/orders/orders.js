@@ -437,8 +437,6 @@ export default {
   },
 
   resetFilters: () => {
-    cy.wait(1000);
-    cy.expect(searchButton.is({ disabled: false }));
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true }));
   },
