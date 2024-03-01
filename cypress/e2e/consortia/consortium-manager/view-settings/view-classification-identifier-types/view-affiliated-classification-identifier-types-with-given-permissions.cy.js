@@ -9,6 +9,7 @@ import ConsortiumManagerApp, {
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import ClassificationIdentifierTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/classificationIdentifierTypesConsortiumManager';
 import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
@@ -58,43 +59,58 @@ describe('Consortium manager', () => {
           cy.setTenant(Affiliations.College);
           cy.assignPermissionsToExistingUser(testData.user885.userId, [
             permissions.crudClassificationIdentifierTypes.gui,
-          ]).then(() => {
-            cy.createTempUser([permissions.crudClassificationIdentifierTypes.gui]).then((user) => {
+          ]);
+          cy.createTempUser([permissions.crudClassificationIdentifierTypes.gui])
+            .then((user) => {
               // User for test C410886
               testData.user886 = user;
+            })
+            .then(() => {
+              cy.createTempUser([permissions.crudClassificationIdentifierTypes.gui])
+                .then((lastUser) => {
+                  // User for test C410888
+                  testData.user888 = lastUser;
+                })
+                .then(() => {
+                  InventoryInstance.createClassificationTypeViaApi(
+                    testData.collegeLocalType.name,
+                  ).then((alternativeTitleTypeID) => {
+                    testData.collegeLocalType.id = alternativeTitleTypeID;
+                  });
 
-              InventoryInstance.createClassificationTypeViaApi(testData.collegeLocalType.name).then(
-                (alternativeTitleTypeID) => {
-                  testData.collegeLocalType.id = alternativeTitleTypeID;
-                },
-              );
+                  cy.resetTenant();
+                  cy.getAdminToken();
+                  cy.assignPermissionsToExistingUser(testData.user886.userId, [
+                    permissions.consortiaSettingsConsortiumManagerEdit.gui,
+                    permissions.crudClassificationIdentifierTypes.gui,
+                  ]);
+                  cy.assignPermissionsToExistingUser(testData.user888.userId, [
+                    permissions.consortiaSettingsConsortiumManagerShare.gui,
+                    permissions.crudClassificationIdentifierTypes.gui,
+                  ]);
 
-              cy.resetTenant();
-              cy.getAdminToken();
-              cy.assignPermissionsToExistingUser(testData.user886.userId, [
-                permissions.consortiaSettingsConsortiumManagerView.gui,
-                permissions.crudClassificationIdentifierTypes.gui,
-              ]);
-
-              cy.resetTenant();
-              cy.getAdminToken();
-              cy.assignAffiliationToUser(Affiliations.University, testData.user885.userId);
-              cy.assignAffiliationToUser(Affiliations.University, testData.user886.userId);
-              cy.setTenant(Affiliations.University);
-              cy.assignPermissionsToExistingUser(testData.user885.userId, [
-                permissions.crudClassificationIdentifierTypes.gui,
-              ]);
-              cy.assignPermissionsToExistingUser(testData.user886.userId, [
-                permissions.crudClassificationIdentifierTypes.gui,
-              ]);
-              InventoryInstance.createClassificationTypeViaApi(
-                testData.universityLocalType.name,
-              ).then((alternativeTitleTypeID) => {
-                testData.universityLocalType.id = alternativeTitleTypeID;
-              });
+                  cy.resetTenant();
+                  cy.getAdminToken();
+                  cy.assignAffiliationToUser(Affiliations.University, testData.user885.userId);
+                  cy.assignAffiliationToUser(Affiliations.University, testData.user886.userId);
+                  cy.assignAffiliationToUser(Affiliations.University, testData.user888.userId);
+                  cy.setTenant(Affiliations.University);
+                  cy.assignPermissionsToExistingUser(testData.user885.userId, [
+                    permissions.crudClassificationIdentifierTypes.gui,
+                  ]);
+                  cy.assignPermissionsToExistingUser(testData.user886.userId, [
+                    permissions.crudClassificationIdentifierTypes.gui,
+                  ]);
+                  cy.assignPermissionsToExistingUser(testData.user888.userId, [
+                    permissions.crudClassificationIdentifierTypes.gui,
+                  ]);
+                  InventoryInstance.createClassificationTypeViaApi(
+                    testData.universityLocalType.name,
+                  ).then((alternativeTitleTypeID) => {
+                    testData.universityLocalType.id = alternativeTitleTypeID;
+                  });
+                });
             });
-            cy.resetTenant();
-          });
         });
       });
 
@@ -116,16 +132,19 @@ describe('Consortium manager', () => {
         ClassificationIdentifierTypesConsortiumManager.deleteViaApi(testData.centralSharedType);
         Users.deleteViaApi(testData.user885.userId);
         Users.deleteViaApi(testData.user886.userId);
+        Users.deleteViaApi(testData.user888.userId);
       });
 
       it(
         'C410885 User with "Consortium manager: Can view existing settings" permission is able to view the list of classification identifier types of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
-          cy.login(testData.user885.username, testData.user885.password, {
-            path: TopMenu.consortiumManagerPath,
-            waiter: ConsortiumManagerApp.waitLoading,
-          });
+          cy.resetTenant();
+          cy.login(testData.user885.username, testData.user885.password);
+          // Without waiter, permissions aren't loading
+          cy.wait(10000);
+          TopMenuNavigation.navigateToApp('Consortium manager');
+          ConsortiumManagerApp.waitLoading();
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
@@ -258,6 +277,90 @@ describe('Consortium manager', () => {
             `${moment().format('l')} by SystemConsortia`,
             'All',
           ]);
+          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+            [
+              testData.centralLocalType.name,
+              'local',
+              `${moment().format('l')} by Admin, ECS`,
+              tenantNames.central,
+            ],
+            ['edit', 'trash'],
+          );
+
+          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
+            testData.collegeLocalType.name,
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
+            testData.universityLocalType.name,
+          );
+        },
+      );
+
+      it(
+        'C410888 User with "Consortium manager: Can share settings to all members" permission is able to view the list of classification identifier types of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
+        { tags: ['criticalPathECS', 'thunderjet'] },
+        () => {
+          cy.resetTenant();
+          cy.login(testData.user888.username, testData.user888.password);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+          cy.visit(TopMenu.consortiumManagerPath);
+          SelectMembers.selectAllMembers();
+          ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
+          ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
+          ClassificationIdentifierTypesConsortiumManager.choose();
+          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+            [
+              testData.centralSharedType.payload.name,
+              'consortium',
+              `${moment().format('l')} by SystemConsortia`,
+              'All',
+            ],
+            ['edit', 'trash'],
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+            [
+              testData.centralLocalType.name,
+              'local',
+              `${moment().format('l')} by Admin, ECS`,
+              tenantNames.central,
+            ],
+            ['edit', 'trash'],
+          );
+
+          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+            [
+              testData.collegeLocalType.name,
+              'local',
+              `${moment().format('l')} by Admin, ECS`,
+              tenantNames.college,
+            ],
+            ['edit', 'trash'],
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+            [
+              testData.universityLocalType.name,
+              'local',
+              `${moment().format('l')} by Admin, ECS`,
+              tenantNames.university,
+            ],
+            ['edit', 'trash'],
+          );
+
+          ConsortiumManagerApp.clickSelectMembers();
+          SelectMembers.verifyStatusOfSelectMembersModal(3, 3);
+          SelectMembers.selectMembers(tenantNames.college);
+          SelectMembers.selectMembers(tenantNames.university);
+          SelectMembers.saveAndClose();
+          ConsortiumManagerApp.verifyMembersSelected(1);
+          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+            [
+              testData.centralSharedType.payload.name,
+              'consortium',
+              `${moment().format('l')} by SystemConsortia`,
+              'All',
+            ],
+            ['edit', 'trash'],
+          );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
               testData.centralLocalType.name,
