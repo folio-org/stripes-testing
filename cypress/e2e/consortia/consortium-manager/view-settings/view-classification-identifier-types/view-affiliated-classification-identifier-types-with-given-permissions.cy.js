@@ -59,17 +59,19 @@ describe('Consortium manager', () => {
           cy.setTenant(Affiliations.College);
           cy.assignPermissionsToExistingUser(testData.user885.userId, [
             permissions.crudClassificationIdentifierTypes.gui,
-          ]).then(() => {
-            cy.createTempUser([permissions.crudClassificationIdentifierTypes.gui])
-              .then((user) => {
-                // User for test C410886
-                testData.user886 = user;
-              })
-              .then(() => {
-                cy.createTempUser([permissions.crudAlternativeTitleTypes.gui]).then((lastUser) => {
+          ]);
+          cy.createTempUser([permissions.crudClassificationIdentifierTypes.gui])
+            .then((user) => {
+              // User for test C410886
+              testData.user886 = user;
+            })
+            .then(() => {
+              cy.createTempUser([permissions.crudClassificationIdentifierTypes.gui])
+                .then((lastUser) => {
                   // User for test C410888
                   testData.user888 = lastUser;
-
+                })
+                .then(() => {
                   InventoryInstance.createClassificationTypeViaApi(
                     testData.collegeLocalType.name,
                   ).then((alternativeTitleTypeID) => {
@@ -108,8 +110,7 @@ describe('Consortium manager', () => {
                     testData.universityLocalType.id = alternativeTitleTypeID;
                   });
                 });
-              });
-          });
+            });
         });
       });
 
@@ -303,14 +304,7 @@ describe('Consortium manager', () => {
           cy.login(testData.user888.username, testData.user888.password);
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           cy.visit(TopMenu.consortiumManagerPath);
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.changeSelectAllCheckbox('check');
-          SelectMembers.saveAndClose();
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.changeSelectAllCheckbox('uncheck');
-          SelectMembers.saveAndClose();
           SelectMembers.selectAllMembers();
-
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
           ClassificationIdentifierTypesConsortiumManager.choose();
