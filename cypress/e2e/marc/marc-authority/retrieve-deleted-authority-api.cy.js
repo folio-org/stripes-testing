@@ -97,7 +97,11 @@ describe('MARC', () => {
     after('Deleting created user and data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
-      InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
+      createdRecordIDs.forEach((id, index) => {
+        // attept to delete all authorities just in case deletion failed in test
+        if (index) MarcAuthority.deleteViaAPI(id, true);
+        else InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
+      });
     });
 
     it(
