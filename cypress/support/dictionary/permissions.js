@@ -237,6 +237,10 @@ export default {
     internal: 'ui-inventory.settings.classification-types',
     gui: 'Settings (Inventory): Create, edit, delete classification identifier types',
   },
+  crudInstanceNoteTypes: {
+    internal: 'ui-inventory.settings.instance-note-types',
+    gui: 'Settings (Inventory): Create, edit, delete instance note types',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
