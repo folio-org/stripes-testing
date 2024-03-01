@@ -4,11 +4,6 @@ import { Button, MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 
 const id = uuid();
-
-export const typeActions = {
-  edit: 'edit',
-  trash: 'trash',
-};
 const newButton = Button('+ New');
 
 export default {
