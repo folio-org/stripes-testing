@@ -72,7 +72,7 @@ describe('orders: Settings', () => {
           Orders.createPOLineViaActions();
           OrderLines.POLineInfodorPhysicalMaterialWithLocation(
             orderLineTitle,
-            locationResponse.institutionId,
+            locationResponse.name,
           );
           OrderLines.backToEditingOrder();
         });

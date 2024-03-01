@@ -122,11 +122,12 @@ export default {
         .exists(),
     );
   },
-  deleteViaAPI: (internalAuthorityId) => {
+  deleteViaAPI: (internalAuthorityId, ignoreErrors = false) => {
     cy.okapiRequest({
       method: 'DELETE',
       isDefaultSearchParamsRequired: false,
       path: `authority-storage/authorities/${internalAuthorityId}`,
+      failOnStatusCode: !ignoreErrors,
     });
   },
   addNewField: (rowIndex, tag, content, indicator0 = '\\', indicator1 = '\\') => {
@@ -358,11 +359,17 @@ export default {
     );
   },
 
-  getRecordsViaAPI: (deleted = false, idOnly = false, acceptHeader = null) => {
+  getRecordsViaAPI: (deleted = false, idOnly = false, acceptHeader = null, query = null) => {
     cy.okapiRequest({
       method: 'GET',
       isDefaultSearchParamsRequired: false,
-      path: `authority-storage/authorities?limit=1000&deleted=${deleted}&idOnly=${idOnly}`,
+      path: 'authority-storage/authorities',
+      searchParams: {
+        limit: 1000,
+        deleted,
+        idOnly,
+        query: query || '',
+      },
       additionalHeaders: acceptHeader ? { accept: acceptHeader } : {},
     }).then(({ body }) => {
       cy.wrap(body).as('records');
