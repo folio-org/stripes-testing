@@ -13,7 +13,7 @@ import getRandomStringCode from '../../../../support/utils/genereteTextCode';
 describe('MARC', () => {
   describe('plug-in MARC authority', () => {
     describe('plug-in MARC authority | Browse', () => {
-      const randomCode = getRandomStringCode(4);
+      const randomCode = getRandomStringCode(8);
       const testData = {
         authoritySourceFile: {
           id: uuid(),
@@ -26,7 +26,7 @@ describe('MARC', () => {
         },
       };
       const createdAuthorityIDs = [];
-      const marcFileToEdit = 'Auth_1_record_C365110.mrc';
+      const marcFileToEdit = 'Auth_1_record_original_C365110.mrc';
       const marcFiles = [
         {
           marc: 'oneMarcBib.mrc',
@@ -135,7 +135,7 @@ describe('MARC', () => {
             DataImport.editMarcFile(
               marcFileToEdit,
               marcFiles[2].marc,
-              ['PLKV'],
+              ['PLKVPLKV'],
               [testData.authoritySourceFile.code],
             );
             DataImport.uploadFileViaApi(
