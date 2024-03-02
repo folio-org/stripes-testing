@@ -1,6 +1,6 @@
 import { Permissions } from '../../../support/dictionary';
 import { RECORD_STATUSES } from '../../../support/constants';
-import DataImportCopy from '../../../support/fragments/data_import/dataImportCopy';
+// import DataImportCopy from '../../../support/fragments/data_import/dataImportCopy';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -19,12 +19,12 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.getAdminToken();
-      DataImportCopy.uploadFileViaApi(
+      DataImport.uploadFileViaApi(
         'oneMarcBib.mrc',
         fileName,
         'Default - Create instance and SRS MARC Bib',
       ).then((response) => {
-        instanceId = response.relatedInstanceInfo.idList[0];
+        instanceId = response[0].relatedInstanceInfo.idList[0];
       });
 
       cy.createTempUser([
@@ -47,7 +47,6 @@ describe('data-import', () => {
     });
 
     it('C492 Data Import permissions (folijet)', { tags: ['extendedPath', 'folijet'] }, () => {
-      cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(fileName);
       FileDetails.checkStatusInColumn(
