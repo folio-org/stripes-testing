@@ -111,10 +111,14 @@ export default {
     cy.do(myProfileButton.click());
   },
 
-  checkCurrentTenantInTopMenu(tenantName) {
+  checkCurrentTenantInTopMenu(tenantName, servicePointName = null) {
     cy.expect(
       Dropdown({ id: 'profileDropdown' })
-        .find(Button({ ariaLabel: `${tenantName}  profile` }))
+        .find(
+          Button({
+            ariaLabel: or(`${tenantName}  profile`, `${tenantName} ${servicePointName} profile`),
+          }),
+        )
         .exists(),
     );
   },
