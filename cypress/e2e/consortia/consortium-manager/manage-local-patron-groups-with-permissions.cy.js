@@ -18,12 +18,12 @@ import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 const testData = {
   newPatronGroup: {
-    group: getTestEntityValue('AC410705'),
+    group: getTestEntityValue('AC41070_new'),
     desc: getTestEntityValue('AC410705'),
     expirationOffsetInDays: '5',
   },
   editPatronGroup: {
-    group: getTestEntityValue('AC410705'),
+    group: getTestEntityValue('AC410705_edit'),
     desc: getTestEntityValue('AC410705'),
     expirationOffsetInDays: '6',
   },
@@ -90,7 +90,7 @@ describe('Consortium manager', () => {
           SelectMembers.saveAndClose();
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
-
+cy.pause();
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
           ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.newPatronGroup);
           ConsortiaControlledVocabularyPaneset.clickSave();
@@ -189,16 +189,15 @@ describe('Consortium manager', () => {
           cy.visit(SettingsMenu.patronGroups);
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(testData.newPatronGroup.group);
 
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.University);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           cy.visit(SettingsMenu.patronGroups);
-          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(testData.editPatronGroup.group,
-            [
-              testData.editPatronGroup.group,
-              testData.editPatronGroup.desc,
-              testData.editPatronGroup.expirationOffsetInDays,
-              '',
-            ],
-            [actionIcons.edit, actionIcons.trash]);
+          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
+            testData.editPatronGroup.group,
+            testData.editPatronGroup.desc,
+            testData.editPatronGroup.expirationOffsetInDays,
+            '',
+          ],
+          [actionIcons.edit, actionIcons.trash]);
         },
       );
     });

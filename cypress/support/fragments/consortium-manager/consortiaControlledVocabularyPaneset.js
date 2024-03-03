@@ -5,7 +5,6 @@ import {
   MultiColumnListRow,
   PaneHeader,
   TextField,
-  and,
   including,
 } from '../../../../interactors';
 
@@ -36,7 +35,6 @@ export default {
     this.verifyNewButtonDisabled();
     cy.expect([
       MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(TextField()).exists(),
-      //memberLibrariesShare.is({ disabled: false }),
       cancelButton.is({ disabled: false }),
       saveButton.is({ disabled: false }),
     ]);
