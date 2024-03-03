@@ -90,7 +90,7 @@ describe('Consortium manager', () => {
           SelectMembers.saveAndClose();
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
-cy.pause();
+
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
           ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.newPatronGroup);
           ConsortiaControlledVocabularyPaneset.clickSave();
