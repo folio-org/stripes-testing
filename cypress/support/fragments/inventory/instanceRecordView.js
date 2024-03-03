@@ -519,6 +519,14 @@ export default {
     InventoryEditMarcRecord.checkEditableQuickMarcFormIsOpened();
   },
 
+  exportInstanceMarc: () => {
+    cy.wait(1000);
+    cy.do([
+      rootSection.find(actionsButton).click(),
+      Button({ id: 'quick-export-trigger' }).click(),
+    ]);
+  },
+
   verifyEditInstanceButtonAbsent() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'edit-instance' }).absent());
