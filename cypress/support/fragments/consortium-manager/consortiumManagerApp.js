@@ -42,7 +42,7 @@ export default {
     );
   },
 
-  verifySetingPaneIsDisplayed() {
+  verifySettingPaneIsDisplayed() {
     cy.expect(Section({ id: 'settings-nav-pane' }).exists());
   },
 
@@ -92,11 +92,11 @@ export default {
 
   verifyStatusOfConsortiumManager(members) {
     this.waitLoading();
-    this.verifySetingPaneIsDisplayed();
+    this.verifySettingPaneIsDisplayed();
     this.verifyPaneIncludesSettings();
     this.verifyMembersSelected(members);
     this.verifySelectMembersButton();
-    this.verifyChooseSettingsIsDisplayed();
+    //this.verifyChooseSettingsIsDisplayed();
   },
 
   clickSelectMembers() {

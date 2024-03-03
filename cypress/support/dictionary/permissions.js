@@ -1007,6 +1007,10 @@ export default {
     internal: 'ui-users.settings.departments.create.edit.view',
     gui: 'Settings (Users): Can create, edit, and view department',
   },
+  consortiaSettingsConsortiumManagerPatronGroupsAll: {
+    internal: 'ui-users.settings.usergroups.all',
+    gui: 'Settings (Users): Can create, edit and remove patron groups',
+  },
   // Lists
   listsAll: {
     internal: 'module.lists.all',
