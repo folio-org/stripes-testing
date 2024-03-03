@@ -1,6 +1,7 @@
 export default {
   Consortia: 'cs00000int',
   University: 'cs00000int_0005',
+  School: 'cs00000int_0003',
   College: 'cs00000int_0001',
 };
 

@@ -12,6 +12,7 @@ import RequestCancellationReasonsConsortiumManager from '../../../support/fragme
 import SelectMembers from '../../../support/fragments/consortium-manager/modal/select-members';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import CancellationReason from '../../../support/fragments/settings/circulation/cancellationReason';
+import ConsortiaControlledVocabularyPaneset from '../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 
 const testData = {
   centralSharedReason: {
@@ -69,19 +70,25 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
           RequestCancellationReasonsConsortiumManager.choose();
 
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
-            name: testData.centralSharedReason.payload.name,
-            members: 'All',
-          });
+          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
+            testData.centralSharedReason.payload.name,
+            '',
+            '',
+            'All',
+          ]);
 
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
-            name: testData.collegeLocalReason.name,
-            members: tenantNames.college,
-          });
-          RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
-            name: testData.universityLocalReason.name,
-            members: tenantNames.university,
-          });
+          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
+            testData.collegeLocalReason.name,
+            '',
+            '',
+            tenantNames.college,
+          ]);
+          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
+            testData.universityLocalReason.name,
+            '',
+            '',
+            tenantNames.university,
+          ]);
         });
       });
 

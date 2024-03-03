@@ -1,7 +1,8 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
-import { Button, MultiColumnListHeader } from '../../../../../../interactors';
+import { MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
+import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 
 const id = uuid();
 
@@ -9,7 +10,6 @@ export const typeActions = {
   edit: 'edit',
   trash: 'trash',
 };
-const newButton = Button('+ New');
 
 export default {
   createViaApi(type) {
@@ -18,7 +18,7 @@ export default {
         method: REQUEST_METHOD.POST,
         path: `consortia/${consortiaId}/sharing/settings`,
         body: {
-          url: '/alternative-title-types',
+          url: '/classification-types',
           settingId: id,
           payload: {
             id,
@@ -26,7 +26,7 @@ export default {
           },
         },
       }).then(() => {
-        type.url = '/alternative-title-types';
+        type.url = '/classification-types';
         type.settingId = id;
         return type;
       });
@@ -43,9 +43,12 @@ export default {
     });
   },
 
+  waitLoading() {
+    ConsortiaControlledVocabularyPaneset.waitLoading('Classification identifier types');
+  },
+
   choose() {
-    ConsortiumManagerApp.chooseSecondMenuItem('Alternative title types');
-    cy.expect(newButton.is({ disabled: false }));
+    ConsortiumManagerApp.chooseSecondMenuItem('Classification identifier types');
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });

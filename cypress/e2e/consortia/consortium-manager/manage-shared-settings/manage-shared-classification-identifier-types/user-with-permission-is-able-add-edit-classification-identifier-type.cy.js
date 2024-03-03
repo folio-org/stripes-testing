@@ -1,31 +1,30 @@
+import moment from 'moment';
 import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import ConsortiumManagerApp, {
   messages,
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import RequestCancellationReasonsConsortiumManager from '../../../../../support/fragments/consortium-manager/circulation/requestCancellationReasonsConsortiumManager';
 import Permissions from '../../../../../support/dictionary/permissions';
 import Users from '../../../../../support/fragments/users/users';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import ConfirmShare from '../../../../../support/fragments/consortium-manager/modal/confirm-share';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import CancellationReason from '../../../../../support/fragments/settings/circulation/cancellationReason';
 import SettingsMenu from '../../../../../support/fragments/settingsMenu';
 import ConsortiaControlledVocabularyPaneset, {
   actionIcons,
 } from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
+import ClassificationIdentifierTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/classificationIdentifierTypesConsortiumManager';
+import ClassificationTypes from '../../../../../support/fragments/settings/inventory/classification-types/classificationTypes';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
     describe('Manage shared settings', () => {
-      describe('Manage shared Request cancellation reasons', () => {
+      describe('Manage shared Classification identifier types', () => {
         let userData;
-        const cancelReason = {
-          name: getTestEntityValue('Shared_reason_3'),
-          description: '',
-          publicDescription: getTestEntityValue('SR3'),
+        const classificationType3 = {
+          name: getTestEntityValue('Shared_classification_identifier_type_3'),
         };
 
         before('Create users data', () => {
@@ -33,13 +32,13 @@ describe('Consortia', () => {
             .then(() => {
               cy.createTempUser([
                 Permissions.consortiaSettingsConsortiumManagerShare.gui,
-                Permissions.settingsCircView.gui,
+                Permissions.crudClassificationIdentifierTypes.gui,
               ]).then((userProperties) => {
                 userData = userProperties;
                 cy.assignAffiliationToUser(Affiliations.College, userData.userId);
                 cy.setTenant(Affiliations.College);
                 cy.assignPermissionsToExistingUser(userData.userId, [
-                  Permissions.settingsCircView.gui,
+                  Permissions.crudClassificationIdentifierTypes.gui,
                 ]);
               });
             })
@@ -53,24 +52,25 @@ describe('Consortia', () => {
           cy.resetTenant();
           cy.getAdminToken();
           Users.deleteViaApi(userData.userId);
-          cy.getCancellationReasonsApi({
+          ClassificationTypes.getClassificationTypesViaApi({
             limit: 1,
-            query: `name=="${cancelReason.name}"`,
-          }).then((cancellationReasons) => {
-            RequestCancellationReasonsConsortiumManager.deleteViaApi({
+            query: `name=="${classificationType3.name}"`,
+          }).then((citResp) => {
+            const citId = citResp.classificationTypes[0].id;
+            ClassificationIdentifierTypesConsortiumManager.deleteViaApi({
               payload: {
-                name: cancelReason.name,
-                id: cancellationReasons[0].id,
+                name: classificationType3.name,
+                id: citId,
                 source: 'consortium',
               },
-              settingId: cancellationReasons[0].id,
-              url: '/cancellation-reason-storage/cancellation-reasons',
+              settingId: citId,
+              url: '/classification-types',
             });
           });
         });
 
         it(
-          'C410842 User with "Consortium manager: Can share settings to all members" permission is able to add/edit request cancellation reason shared to all affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
+          'C410901 User with "Consortium manager: Can share settings to all members" permission is able to add/edit classification identifier type shared to all affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
           { tags: ['criticalPathECS', 'thunderjet'] },
           () => {
             TopMenuNavigation.navigateToApp('Consortium manager');
@@ -90,47 +90,53 @@ describe('Consortia', () => {
             SelectMembers.saveAndClose();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(1);
 
-            ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
-            RequestCancellationReasonsConsortiumManager.choose();
+            ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
+            ClassificationIdentifierTypesConsortiumManager.choose();
 
-            ConsortiaControlledVocabularyPaneset.createViaUi(true, cancelReason);
+            ConsortiaControlledVocabularyPaneset.createViaUi(true, classificationType3);
             ConsortiaControlledVocabularyPaneset.clickSave();
+            const createdCIT = [
+              classificationType3.name,
+              'consortium',
+              `${moment().format('l')} by SystemConsortia`,
+              'All',
+            ];
 
-            ConfirmShare.waitLoadingConfirmShareToAll(cancelReason.name);
+            ConfirmShare.waitLoadingConfirmShareToAll(classificationType3.name);
             ConfirmShare.clickConfirm();
-            ConsortiumManagerApp.checkMessage(messages.created(cancelReason.name, 'All'));
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-              [...Object.values(cancelReason), 'All'],
-              ['edit', 'trash'],
-            );
+            ClassificationIdentifierTypesConsortiumManager.waitLoading();
+            ConsortiumManagerApp.checkMessage(messages.created(classificationType3.name, 'All'));
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdCIT, [
+              'edit',
+              'trash',
+            ]);
 
-            cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
-            CancellationReason.waitLoading();
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(Object.values(cancelReason));
+            cy.visit(SettingsMenu.classificationTypes);
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdCIT.slice(0, -1));
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
-            CancellationReason.waitLoading();
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(Object.values(cancelReason));
+            cy.visit(SettingsMenu.classificationTypes);
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdCIT.slice(0, -1));
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
             TopMenuNavigation.navigateToApp('Consortium manager');
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
-            RequestCancellationReasonsConsortiumManager.choose();
-            ConsortiaControlledVocabularyPaneset.performAction(cancelReason.name, actionIcons.edit);
+            ClassificationIdentifierTypesConsortiumManager.choose();
+            ConsortiaControlledVocabularyPaneset.performAction(
+              classificationType3.name,
+              actionIcons.edit,
+            );
 
-            cancelReason.name = getTestEntityValue('Shared_reason_3_edited');
-            ConsortiaControlledVocabularyPaneset.fillInTextField({ name: cancelReason.name });
-            cancelReason.publicDescription = getTestEntityValue('SR3E');
+            classificationType3.name = getTestEntityValue('Shared_CIT_3_edited');
             ConsortiaControlledVocabularyPaneset.fillInTextField({
-              publicDescription: cancelReason.publicDescription,
+              name: classificationType3.name,
             });
             ConsortiaControlledVocabularyPaneset.clickSave();
 
-            ConfirmShare.waitLoadingConfirmShareToAll(cancelReason.name);
+            ConfirmShare.waitLoadingConfirmShareToAll(classificationType3.name);
             ConfirmShare.clickConfirm();
-            RequestCancellationReasonsConsortiumManager.waitLoading();
-            ConsortiumManagerApp.checkMessage(messages.updated(cancelReason.name, 'All'));
+            ClassificationIdentifierTypesConsortiumManager.waitLoading();
+            ConsortiumManagerApp.checkMessage(messages.updated(classificationType3.name, 'All'));
 
             ConsortiumManagerApp.clickSelectMembers();
             SelectMembers.verifyStatusOfSelectMembersModal(2, 1);
@@ -145,14 +151,12 @@ describe('Consortia', () => {
             ConsortiumManagerApp.verifyListIsEmpty();
             ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled();
 
-            cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
-            CancellationReason.waitLoading();
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(Object.values(cancelReason));
+            cy.visit(SettingsMenu.classificationTypes);
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdCIT.slice(0, -1));
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
-            CancellationReason.waitLoading();
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(Object.values(cancelReason));
+            cy.visit(SettingsMenu.classificationTypes);
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdCIT.slice(0, -1));
           },
         );
       });

@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { calloutTypes } from '../../../../../../interactors';
 import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 import ConsortiumManagerApp, {
@@ -9,28 +10,24 @@ import Permissions from '../../../../../support/dictionary/permissions';
 import Users from '../../../../../support/fragments/users/users';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
-import RequestCancellationReasonsConsortiumManager from '../../../../../support/fragments/consortium-manager/circulation/requestCancellationReasonsConsortiumManager';
 import ConfirmShare from '../../../../../support/fragments/consortium-manager/modal/confirm-share';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import CancellationReason from '../../../../../support/fragments/settings/circulation/cancellationReason';
 import SettingsMenu from '../../../../../support/fragments/settingsMenu';
 import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
+import ClassificationTypes from '../../../../../support/fragments/settings/inventory/classification-types/classificationTypes';
+import ClassificationIdentifierTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/classificationIdentifierTypesConsortiumManager';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
     describe('Manage shared settings', () => {
-      describe('Manage shared Request cancellation reasons', () => {
+      describe('Manage shared Classification identifier types', () => {
         let userAData;
         let userBData;
-        const firstCancelReason = {
+        const classificationType4 = {
           name: '',
-          description: 'decsInt',
-          publicDescription: '',
         };
-        const secondCancelReason2 = {
-          name: getTestEntityValue('rcr2'),
-          description: '',
-          publicDescription: '',
+        const classificationType5 = {
+          name: getTestEntityValue('Shared_classification_identifier_type_5'),
         };
 
         before('Create users data', () => {
@@ -38,7 +35,7 @@ describe('Consortia', () => {
             .then(() => {
               cy.createTempUser([
                 Permissions.consortiaSettingsConsortiumManagerShare.gui,
-                Permissions.settingsCircView.gui,
+                Permissions.crudClassificationIdentifierTypes.gui,
               ]).then((userProperties) => {
                 userAData = userProperties;
                 cy.assignAffiliationToUser(Affiliations.College, userAData.userId);
@@ -51,21 +48,23 @@ describe('Consortia', () => {
             .then(() => {
               cy.resetTenant();
               cy.getAdminToken();
-              cy.createTempUser([Permissions.settingsCircView.gui]).then((userProperties) => {
-                userBData = userProperties;
-                cy.assignAffiliationToUser(Affiliations.College, userBData.userId);
-                cy.setTenant(Affiliations.College);
-                cy.assignPermissionsToExistingUser(userBData.userId, [
-                  Permissions.settingsCircView.gui,
-                ]);
-                cy.resetTenant();
-                cy.getAdminToken();
-                cy.assignAffiliationToUser(Affiliations.University, userBData.userId);
-                cy.setTenant(Affiliations.University);
-                cy.assignPermissionsToExistingUser(userBData.userId, [
-                  Permissions.settingsCircView.gui,
-                ]);
-              });
+              cy.createTempUser([Permissions.crudClassificationIdentifierTypes.gui]).then(
+                (userProperties) => {
+                  userBData = userProperties;
+                  cy.assignAffiliationToUser(Affiliations.College, userBData.userId);
+                  cy.setTenant(Affiliations.College);
+                  cy.assignPermissionsToExistingUser(userBData.userId, [
+                    Permissions.crudClassificationIdentifierTypes.gui,
+                  ]);
+                  cy.resetTenant();
+                  cy.getAdminToken();
+                  cy.assignAffiliationToUser(Affiliations.University, userBData.userId);
+                  cy.setTenant(Affiliations.University);
+                  cy.assignPermissionsToExistingUser(userBData.userId, [
+                    Permissions.crudClassificationIdentifierTypes.gui,
+                  ]);
+                },
+              );
             })
             .then(() => {
               cy.resetTenant();
@@ -78,24 +77,25 @@ describe('Consortia', () => {
           cy.getAdminToken();
           Users.deleteViaApi(userAData.userId);
           Users.deleteViaApi(userBData.userId);
-          cy.getCancellationReasonsApi({
+          ClassificationTypes.getClassificationTypesViaApi({
             limit: 1,
-            query: `name=="${firstCancelReason.name}"`,
-          }).then((cancellationReasons) => {
-            RequestCancellationReasonsConsortiumManager.deleteViaApi({
+            query: `name=="${classificationType4.name}"`,
+          }).then((citResp) => {
+            const citId = citResp.classificationTypes[0].id;
+            ClassificationIdentifierTypesConsortiumManager.deleteViaApi({
               payload: {
-                name: firstCancelReason.name,
-                id: cancellationReasons[0].id,
+                name: classificationType4.name,
+                id: citId,
                 source: 'consortium',
               },
-              settingId: cancellationReasons[0].id,
-              url: '/cancellation-reason-storage/cancellation-reasons',
+              settingId: citId,
+              url: '/classification-types',
             });
           });
         });
 
         it(
-          'C410843 Request cancellation reason can be shared to all tenants in "Consortium manager" app regardless permission and affiliation (consortia) (thunderjet)',
+          'C410902 Classification identifier type can be shared to all tenants in "Consortium manager" app regardless permission and affiliation (consortia) (thunderjet)',
           { tags: ['criticalPathECS', 'thunderjet'] },
           () => {
             TopMenuNavigation.navigateToApp('Consortium manager');
@@ -103,64 +103,65 @@ describe('Consortia', () => {
             SelectMembers.selectAllMembers();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(2);
 
-            ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
-            RequestCancellationReasonsConsortiumManager.choose();
+            ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
+            ClassificationIdentifierTypesConsortiumManager.choose();
             ConsortiumManagerApp.checkMessage(
               messages.noPermission(tenantNames.college),
               calloutTypes.error,
             );
 
-            ConsortiaControlledVocabularyPaneset.createViaUi(true, firstCancelReason);
+            ConsortiaControlledVocabularyPaneset.createViaUi(true, classificationType4);
             ConsortiaControlledVocabularyPaneset.clickSave();
             ConsortiaControlledVocabularyPaneset.verifyFieldValidatorError({
               name: messages.pleaseFillIn,
             });
 
-            firstCancelReason.name = getTestEntityValue('rcr1');
-            ConsortiaControlledVocabularyPaneset.fillInTextField({ name: firstCancelReason.name });
+            classificationType4.name = getTestEntityValue(
+              'Shared_classification_identifier_type_4',
+            );
+            ConsortiaControlledVocabularyPaneset.fillInTextField({
+              name: classificationType4.name,
+            });
             ConsortiaControlledVocabularyPaneset.clickSave();
+            const createdCIT = [
+              classificationType4.name,
+              'consortium',
+              `${moment().format('l')} by SystemConsortia`,
+              'All',
+            ];
 
-            ConfirmShare.waitLoadingConfirmShareToAll(firstCancelReason.name);
+            ConfirmShare.waitLoadingConfirmShareToAll(classificationType4.name);
             ConfirmShare.clickConfirm();
-            RequestCancellationReasonsConsortiumManager.waitLoading();
-            ConsortiumManagerApp.checkMessage(messages.created(firstCancelReason.name, 'All'));
+            ClassificationIdentifierTypesConsortiumManager.waitLoading();
+            ConsortiumManagerApp.checkMessage(messages.created(classificationType4.name, 'All'));
             ConsortiumManagerApp.checkMessage(
               messages.noPermission(tenantNames.college),
               calloutTypes.error,
             );
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-              [...Object.values(firstCancelReason), 'All'],
-              ['edit', 'trash'],
-            );
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdCIT, [
+              'edit',
+              'trash',
+            ]);
 
-            ConsortiaControlledVocabularyPaneset.createViaUi(true, secondCancelReason2);
+            ConsortiaControlledVocabularyPaneset.createViaUi(true, classificationType5);
             ConsortiaControlledVocabularyPaneset.clickSave();
-            ConfirmShare.waitLoadingConfirmShareToAll(secondCancelReason2.name);
+            ConfirmShare.waitLoadingConfirmShareToAll(classificationType5.name);
             ConfirmShare.clickKeepEditing();
             ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive();
             ConsortiaControlledVocabularyPaneset.clickCancel();
 
             cy.logout();
             cy.login(userBData.username, userBData.password);
-            cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
-            CancellationReason.waitLoading();
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-              Object.values(firstCancelReason),
-            );
+            cy.visit(SettingsMenu.classificationTypes);
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdCIT.slice(0, -1));
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
-            CancellationReason.waitLoading();
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-              Object.values(firstCancelReason),
-            );
+            cy.visit(SettingsMenu.classificationTypes);
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdCIT.slice(0, -1));
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-            cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
-            CancellationReason.waitLoading();
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-              Object.values(firstCancelReason),
-            );
+            cy.visit(SettingsMenu.classificationTypes);
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdCIT.slice(0, -1));
           },
         );
       });

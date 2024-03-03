@@ -233,6 +233,10 @@ export default {
     internal: 'ui-inventory.settings.alternative-title-types',
     gui: 'Settings (Inventory): Create, edit, delete alternative title types',
   },
+  crudClassificationIdentifierTypes: {
+    internal: 'ui-inventory.settings.classification-types',
+    gui: 'Settings (Inventory): Create, edit, delete classification identifier types',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
@@ -994,6 +998,14 @@ export default {
   consortiaSettingsConsortiumManagerView: {
     internal: 'ui-consortia-settings.consortium-manager.view',
     gui: 'Consortium manager: Can view existing settings',
+  },
+  consortiaSettingsConsortiumManagerDepartmentsAll: {
+    internal: 'ui-users.settings.departments.all',
+    gui: 'Settings (Users): Can create, edit, view, and delete departments',
+  },
+  consortiaSettingsConsortiumManagerDepartmentsCreateEditView: {
+    internal: 'ui-users.settings.departments.create.edit.view',
+    gui: 'Settings (Users): Can create, edit, and view department',
   },
   // Lists
   listsAll: {
