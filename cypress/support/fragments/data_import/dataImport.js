@@ -155,7 +155,7 @@ function uploadDefinitionWithId(uploadDefinitionId) {
   });
 }
 
-function processFile1(
+function processFile(
   uploadDefinitionId,
   fileId,
   sourcePath,
@@ -333,7 +333,7 @@ function uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName) 
 
       SettingsJobProfile.getJobProfilesViaApi({ query: `name="${profileName}"` }).then(
         ({ jobProfiles }) => {
-          processFile1(
+          processFile(
             uploadDefinitionId,
             fileId,
             sourcePath,
@@ -441,23 +441,66 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                 getChildJobExecutionId(parentJobExecutionId).then((resp2) => {
                   const childJobExecutionId = resp2.body.jobExecutions[0].id;
 
-                  getRecordSourceId(childJobExecutionId).then((resp3) => {
-                    const sourceRecordId = resp3.body.entries[0].sourceRecordId;
+                  return getRecordSourceId(childJobExecutionId).then((resp3) => {
+                    const sourceRecords = resp3.body.entries;
+                    const infos = [];
 
-                    getCreatedRecordInfoWithSplitFiles(childJobExecutionId, sourceRecordId).then(
-                      (recordResponse) => {
-                        // we can get relatedInstanceInfo and in it get idList or hridList
-                        const recordInfo = [
-                          {
-                            relatedInstanceInfo: recordResponse.body.relatedInstanceInfo,
-                            relatedHoldingsInfo: recordResponse.body.relatedHoldingsInfo,
-                            relatedItemInfo: recordResponse.body.relatedItemInfo,
-                            relatedAuthorityInfo: recordResponse.body.relatedAuthorityInfo,
-                          },
-                        ];
-                        return recordInfo;
-                      },
-                    );
+                    // Use Promise.all to wait for all asynchronous operations to complete
+                    return Promise.all(
+                      sourceRecords.map((record) => {
+                        return getCreatedRecordInfoWithSplitFiles(
+                          childJobExecutionId,
+                          record.sourceRecordId,
+                        ).then((recordResponse) => {
+                          const recordInfo = {
+                            instance: {
+                              id:
+                                recordResponse.body.relatedInstanceInfo.length === 0
+                                  ? ''
+                                  : recordResponse.body.relatedInstanceInfo.idList[0],
+                              hrid:
+                                recordResponse.body.relatedInstanceInfo.length === 0
+                                  ? ''
+                                  : recordResponse.body.relatedInstanceInfo.hridList[0],
+                            },
+                            holding: {
+                              id:
+                                recordResponse.body.relatedHoldingsInfo.length === 0
+                                  ? ''
+                                  : recordResponse.body.relatedHoldingsInfo.idList[0],
+                              hrid:
+                                recordResponse.body.relatedHoldingsInfo.length === 0
+                                  ? ''
+                                  : recordResponse.body.relatedHoldingsInfo.hridList[0],
+                            },
+                            item: {
+                              id:
+                                recordResponse.body.relatedItemInfo.length === 0
+                                  ? ''
+                                  : recordResponse.body.relatedItemInfo.idList[0],
+                              hrid:
+                                recordResponse.body.relatedItemInfo.length === 0
+                                  ? ''
+                                  : recordResponse.body.relatedItemInfo.hridList[0],
+                            },
+                            authorityInfo: {
+                              id:
+                                recordResponse.body.relatedAuthorityInfo.length === 0
+                                  ? ''
+                                  : recordResponse.body.relatedAuthorityInfo.idList[0],
+                              hrid:
+                                recordResponse.body.relatedAuthorityInfo.length === 0
+                                  ? ''
+                                  : recordResponse.body.relatedAuthorityInfo.hridList[0],
+                            },
+                          };
+                          infos.push(recordInfo);
+                        });
+                      }),
+                    ).then(() => {
+                      // Return infos array after all asynchronous operations are completed
+                      return infos;
+                    });
                   });
                 });
               });
@@ -593,13 +636,64 @@ export default {
     });
   },
 
-  uploadFileViaApi: (filePathName, fileName, profileName) => {
+  uploadFileViaApi1: (filePathName, fileName, profileName) => {
     return checkSplitStatus().then((resp) => {
       if (resp.body.splitStatus === false) {
         uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName);
       } else {
         uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName);
       }
+    });
+  },
+
+  // TODO delete after moving all tests to uploadFileViaApi1 function
+  uploadFileViaApi: (filePathName, fileName, profileName) => {
+    const uiKeyValue = fileName;
+
+    return uploadDefinitions(uiKeyValue, fileName).then((response) => {
+      const uploadDefinitionId = response.body.fileDefinitions[0].uploadDefinitionId;
+      const fileId = response.body.fileDefinitions[0].id;
+      const jobExecutionId = response.body.fileDefinitions[0].jobExecutionId;
+
+      uploadBinaryMarcFile(filePathName, uploadDefinitionId, fileId);
+      // need to wait until file will be converted and uploaded
+      cy.wait(1500);
+      uploadDefinitionWithId(uploadDefinitionId).then((res) => {
+        const sourcePath = res.body.fileDefinitions[0].sourcePath;
+        const metaJobExecutionId = res.body.metaJobExecutionId;
+        const date = res.body.createDate;
+
+        SettingsJobProfile.getJobProfilesViaApi({ query: `name="${profileName}"` }).then(
+          ({ jobProfiles }) => {
+            processFile(
+              uploadDefinitionId,
+              fileId,
+              sourcePath,
+              jobExecutionId,
+              uiKeyValue,
+              jobProfiles[0].id,
+              metaJobExecutionId,
+              date,
+            );
+          },
+        );
+
+        recurse(
+          () => getJodStatus(jobExecutionId),
+          (resp) => resp.body.status === 'COMMITTED' && resp.body.uiStatus === 'RUNNING_COMPLETE',
+          {
+            limit: 16,
+            timeout: 80000,
+            delay: 5000,
+          },
+        );
+
+        getCreatedRecordInfo(jobExecutionId).then((resp) => {
+          // we can get relatedInstanceInfo and in it get idList or hridList
+          const recordInfo = resp.body;
+          return recordInfo;
+        });
+      });
     });
   },
 
