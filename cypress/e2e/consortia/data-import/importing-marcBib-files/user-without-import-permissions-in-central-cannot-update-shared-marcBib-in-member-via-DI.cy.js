@@ -186,9 +186,10 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
     });
 
+    // TC marked as Obsolete that's why deleted tags
     it(
       'C411791 User without import permissions in Central tenant cannot update Shared "MARC Bib" in member tenant via Data import (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet'] },
+      { tags: [] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventorySearchAndFilter.closeInstanceDetailPane();
