@@ -1,153 +1,126 @@
 import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
-import TopMenu from '../../../support/fragments/topMenu';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
-import ConsortiumManagerApp, {
-  settingsItems,
-} from '../../../support/fragments/consortium-manager/consortiumManagerApp';
-import RequestCancellationReasonsConsortiumManager from '../../../support/fragments/consortium-manager/circulation/requestCancellationReasonsConsortiumManager';
-import SelectMembers from '../../../support/fragments/consortium-manager/modal/select-members';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
-import CancellationReason from '../../../support/fragments/settings/circulation/cancellationReason';
-import ConsortiaControlledVocabularyPaneset from '../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import HoldingsNoteTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/holdingsNoteTypesConsortiumManager';
+import HoldingsTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/holdingsTypesConsortiumManager';
+import HoldingsTypes from '../../../support/fragments/settings/inventory/holdings/holdingsTypes';
+import HoldingsNoteTypes from '../../../support/fragments/settings/inventory/holdings/holdingsNoteTypes';
 
 const testData = {
-  centralSharedReason: {
+  centralSharedHoldingsNoteTypes: {
     payload: {
-      name: getTestEntityValue('centralSharedReason_name'),
+      name: getTestEntityValue('centralSharedHoldingsNoteTypes_name'),
     },
   },
-  collegeLocalReason: {
-    id: uuid(),
-    name: getTestEntityValue('collegeLocalReason_name'),
+  centralSharedHoldingsTypes: {
+    payload: {
+      name: getTestEntityValue('centralSharedHoldingsTypes_name'),
+    },
   },
-  universityLocalReason: {
+  collegeLocalHoldingsNoteType: {
     id: uuid(),
-    name: getTestEntityValue('universityLocalReason_name'),
+    name: getTestEntityValue('collegeLocalHoldingsNoteTypes_name'),
+    source: 'local',
+  },
+  universityLocalHoldingsTypes: {
+    id: uuid(),
+    name: getTestEntityValue('universityLocalHoldingsTypes_name'),
+    source: 'local',
   },
 };
 
 describe('Consortium manager', () => {
   describe('View settings', () => {
-    describe('View Request cancellation reasons', () => {
+    describe('View Inventory', () => {
       before('create test data', () => {
         cy.getAdminToken();
-        RequestCancellationReasonsConsortiumManager.createViaApi(testData.centralSharedReason).then(
-          (newReason) => {
-            testData.centralSharedReason = newReason;
+        HoldingsNoteTypesConsortiumManager.createViaApi(
+          testData.centralSharedHoldingsNoteTypes,
+        ).then((newHoldingsNoteType) => {
+          testData.centralSharedHoldingsNoteTypes = newHoldingsNoteType;
+        });
+        HoldingsTypesConsortiumManager.createViaApi(testData.centralSharedHoldingsTypes).then(
+          (newHoldingsTypes) => {
+            testData.centralSharedHoldingsTypes = newHoldingsTypes;
           },
         );
-
         cy.createTempUser([]).then((userProperties) => {
-          // User for test C400666
-          testData.user400666 = userProperties;
+          // User for test C401723
+          testData.user401723 = userProperties;
 
           cy.resetTenant();
           cy.getAdminToken();
-          cy.assignAffiliationToUser(Affiliations.College, testData.user400666.userId);
+          cy.assignAffiliationToUser(Affiliations.College, testData.user401723.userId);
           cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(testData.user400666.userId, [
-            permissions.settingsCircView.gui,
+          cy.assignPermissionsToExistingUser(testData.user401723.userId, [
+            permissions.inventoryCRUDHoldingsNoteTypes.gui,
           ]);
-          cy.addCancellationReasonApi(testData.collegeLocalReason);
+          HoldingsNoteTypes.createViaApi(testData.collegeLocalHoldingsNoteType);
           cy.resetTenant();
           cy.getAdminToken();
-          cy.assignAffiliationToUser(Affiliations.University, testData.user400666.userId);
+          cy.assignAffiliationToUser(Affiliations.University, testData.user401723.userId);
           cy.setTenant(Affiliations.University);
-          cy.assignPermissionsToExistingUser(testData.user400666.userId, [
-            permissions.settingsCircView.gui,
+          cy.assignPermissionsToExistingUser(testData.user401723.userId, [
+            permissions.inventoryCRUDHoldingsTypes.gui,
           ]);
-          cy.addCancellationReasonApi(testData.universityLocalReason);
-          cy.loginAsAdmin({
-            path: TopMenu.consortiumManagerPath,
-            waiter: ConsortiumManagerApp.waitLoading,
-          });
-          SelectMembers.selectAllMembers();
-          ConsortiumManagerApp.verifyStatusOfConsortiumManager(7);
-          ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
-          RequestCancellationReasonsConsortiumManager.choose();
-
-          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
-            testData.centralSharedReason.payload.name,
-            '',
-            '',
-            'All',
-          ]);
-
-          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
-            testData.collegeLocalReason.name,
-            '',
-            '',
-            tenantNames.college,
-          ]);
-          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
-            testData.universityLocalReason.name,
-            '',
-            '',
-            tenantNames.university,
-          ]);
+          HoldingsTypes.createViaApi(testData.universityLocalHoldingsTypes);
+          cy.resetTenant();
+          cy.login(testData.user401723.username, testData.user401723.password);
         });
       });
 
       after('delete test data', () => {
-        cy.setTenant(Affiliations.University);
-        cy.getUniversityAdminToken();
-        cy.deleteCancellationReasonApi(testData.universityLocalReason.id);
-
         cy.resetTenant();
-        cy.getAdminToken();
-
-        cy.setTenant(Affiliations.College);
-        cy.getCollegeAdminToken();
-        cy.deleteCancellationReasonApi(testData.collegeLocalReason.id);
-
         cy.setTenant(Affiliations.Consortia);
         cy.getAdminToken();
-        RequestCancellationReasonsConsortiumManager.deleteViaApi(testData.centralSharedReason);
-        Users.deleteViaApi(testData.user400666.userId);
+        HoldingsNoteTypesConsortiumManager.deleteViaApi(testData.centralSharedHoldingsNoteTypes);
+        HoldingsTypesConsortiumManager.deleteViaApi(testData.centralSharedHoldingsTypes);
+        Users.deleteViaApi(testData.user401723.userId);
       });
 
       it(
         'C401723 User is NOT able to edit and delete from member tenant "Inventory - Holdings" settings shared via "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
-          cy.resetTenant();
-          cy.login(testData.user400666.username, testData.user400666.password);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
-
-          CancellationReason.verifyReasonInTheList({
-            name: testData.centralSharedReason.payload.name,
+          cy.visit(SettingsMenu.holdingsNoteTypesPath);
+          HoldingsNoteTypes.verifyConsortiumHoldingsNoteTypesInTheList({
+            name: testData.centralSharedHoldingsNoteTypes.payload.name,
+            source: 'consortium',
           });
 
-          CancellationReason.verifyReasonInTheList({
-            name: testData.collegeLocalReason.name,
+          HoldingsNoteTypes.verifyLocalHoldingsNoteTypesInTheList({
+            name: testData.collegeLocalHoldingsNoteType.name,
             actions: ['edit', 'trash'],
           });
 
-          CancellationReason.clickTrashButtonForReason({
-            name: testData.collegeLocalReason.name,
-          });
+          HoldingsNoteTypes.clickTrashButtonForHoldingsNoteTypes(
+            testData.collegeLocalHoldingsNoteType.name,
+          );
 
+          HoldingsNoteTypes.verifyHoldingsNoteTypesAbsentInTheList({
+            name: testData.collegeLocalHoldingsNoteType.name,
+          });
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-          cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
+          cy.visit(SettingsMenu.holdingsTypes);
+          HoldingsTypes.verifyConsortiumHoldingsTypeInTheList({
+            name: testData.centralSharedHoldingsTypes.payload.name,
+            source: 'consortium',
+          });
 
-          CancellationReason.verifyReasonInTheList({
-            name: testData.universityLocalReason.name,
+          HoldingsTypes.verifyLocalHoldingsTypeInTheList({
+            name: testData.universityLocalHoldingsTypes.name,
             actions: ['edit', 'trash'],
           });
 
-          CancellationReason.verifyReasonInTheList({
-            name: testData.universityLocalReason.name,
-          });
-          CancellationReason.verifyReasonInTheList({
-            name: testData.centralSharedReason.payload.name,
-          });
-          CancellationReason.verifyReasonAbsentInTheList({
-            name: testData.collegeLocalReason.name,
+          HoldingsTypes.clickTrashButtonForHoldingsType(testData.universityLocalHoldingsTypes.name);
+
+          HoldingsTypes.verifyHoldingsTypesAbsentInTheList({
+            name: testData.universityLocalHoldingsTypes.name,
           });
         },
       );
