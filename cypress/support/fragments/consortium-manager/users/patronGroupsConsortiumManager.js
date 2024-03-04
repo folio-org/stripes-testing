@@ -5,11 +5,6 @@ import ConsortiumManagerApp from '../consortiumManagerApp';
 
 const id = uuid();
 
-export const groupsActions = {
-  edit: 'edit',
-  trash: 'trash',
-};
-
 export default {
   createViaApi: (group) => {
     return cy.getConsortiaId().then((consortiaId) => {
@@ -39,6 +34,32 @@ export default {
         path: `consortia/${consortiaId}/sharing/settings/${group.settingId}`,
         body: group,
       });
+    });
+  },
+
+  getPatronGroupByNameAndTenant(groupName, tenantId) {
+    return cy.getConsortiaId().then((consortiaId) => {
+      cy.getPublications([tenantId], '/groups?limit=2000&offset=0').then((publicationId) => {
+        cy.okapiRequest({
+          method: REQUEST_METHOD.GET,
+          path: `consortia/${consortiaId}/publications/${publicationId}/results`,
+        }).then(({ body }) => {
+          const groups = JSON.parse(body.publicationResults.find((publication) => publication.tenantId === tenantId).response).usergroups;
+          return groups.find((group) => group.group === groupName);
+        });
+      });
+    });
+  },
+
+  deletePatronGroupByNameAndTenant(groupName, tenantId) {
+    this.getPatronGroupByNameAndTenant(groupName, tenantId).then((group) => {
+      cy.setTenant(tenantId);
+      cy.okapiRequest({
+        method: REQUEST_METHOD.DELETE,
+        path: `groups/${group.id}`,
+        failOnStatusCode: false,
+      });
+      cy.resetTenant();
     });
   },
 

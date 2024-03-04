@@ -221,6 +221,10 @@ export default {
     internal: 'ui-inventory.settings.holdings-note-types',
     gui: 'Settings (Inventory): Create, edit, delete holdings note types',
   },
+  inventoryCRUDHoldingsTypes: {
+    internal: 'ui-inventory.settings.holdings-types',
+    gui: 'Settings (Inventory): Create, edit, delete holdings types',
+  },
   inventoryCRUDItemNoteTypes: {
     internal: 'ui-inventory.settings.item-note-types',
     gui: 'Settings (Inventory): Create, edit, delete item note types',
@@ -236,6 +240,10 @@ export default {
   crudClassificationIdentifierTypes: {
     internal: 'ui-inventory.settings.classification-types',
     gui: 'Settings (Inventory): Create, edit, delete classification identifier types',
+  },
+  crudInstanceNoteTypes: {
+    internal: 'ui-inventory.settings.instance-note-types',
+    gui: 'Settings (Inventory): Create, edit, delete instance note types',
   },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
@@ -999,13 +1007,13 @@ export default {
     internal: 'ui-consortia-settings.consortium-manager.view',
     gui: 'Consortium manager: Can view existing settings',
   },
-  consortiaSettingsConsortiumManagerDepartmentsAll: {
-    internal: 'ui-users.settings.departments.all',
-    gui: 'Settings (Users): Can create, edit, view, and delete departments',
-  },
   consortiaSettingsConsortiumManagerDepartmentsCreateEditView: {
     internal: 'ui-users.settings.departments.create.edit.view',
     gui: 'Settings (Users): Can create, edit, and view department',
+  },
+  consortiaSettingsConsortiumManagerPatronGroupsAll: {
+    internal: 'ui-users.settings.usergroups.all',
+    gui: 'Settings (Users): Can create, edit and remove patron groups',
   },
   // Lists
   listsAll: {

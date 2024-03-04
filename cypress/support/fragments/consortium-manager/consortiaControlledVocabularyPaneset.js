@@ -1,12 +1,11 @@
 import {
   Button,
+  Checkbox,
   MultiColumnListCell,
   MultiColumnListRow,
-  including,
-  TextField,
-  Checkbox,
   PaneHeader,
-  and,
+  TextField,
+  including,
 } from '../../../../interactors';
 
 export const actionIcons = {
@@ -36,7 +35,6 @@ export default {
     this.verifyNewButtonDisabled();
     cy.expect([
       MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(TextField()).exists(),
-      memberLibrariesShare.is({ disabled: false }),
       cancelButton.is({ disabled: false }),
       saveButton.is({ disabled: false }),
     ]);
@@ -64,6 +62,10 @@ export default {
     cy.do(saveButton.click());
   },
 
+  confirmDelete() {
+    cy.do(Button({ id: 'clickable-delete-controlled-vocab-entry-confirmation-confirm' }).click());
+  },
+
   verifyFieldValidatorError(errorMessage) {
     const [placeholder, error] = Object.entries(errorMessage)[0];
     cy.expect(TextField({ placeholder }).has({ errorIcon: true, errorBorder: true, error }));
@@ -80,7 +82,7 @@ export default {
 
   verifyRecordInTheList(record, actionButtons = []) {
     cy.then(() => MultiColumnListRow({
-      content: and(including(record[0]), including(record[record.length - 1])),
+      content: (including(record[0])),
     }).rowIndexInParent()).then((rowIndexInParent) => {
       cy.wrap(record).each((text, columnIndex) => {
         cy.expect(
@@ -105,6 +107,52 @@ export default {
         });
       }
     });
+  },
+
+  performActionFor(name, tenant, action) {
+    // actions are selected by button name: trash(delete) or edit
+    cy.xpath(`.//*[(contains(@class, 'mclRowFormatterContainer')) and (./*[(./*[text()='${name}']) and (./*[text()='${tenant}'])])]`)
+      .invoke('attr', 'data-row-index')
+      .then((rowIndexInParent) => {
+        cy.do(
+          MultiColumnListRow({ rowIndexInParent })
+            .find(Button({ icon: action }))
+            .click(),
+        );
+      });
+  },
+
+  verifyRecordIsInTheList(name, tenant, record, actionButtons = []) {
+    cy.xpath(`.//*[(contains(@class, 'mclRowFormatterContainer')) and (./*[(./*[text()='${name}']) and (./*[text()='${tenant}'])])]`)
+      .invoke('attr', 'data-row-index')
+      .then((rowIndexInParent) => {
+        cy.wrap(record).each((text, columnIndex) => {
+          cy.expect(
+            MultiColumnListRow({ rowIndexInParent })
+              .find(MultiColumnListCell({ innerText: including(text), columnIndex }))
+              .exists(),
+          );
+        });
+
+        const actionsCell = MultiColumnListRow({ rowIndexInParent }).find(
+          MultiColumnListCell({ columnIndex: record.length }),
+        );
+        if (actionButtons.length === 0) {
+          cy.expect(actionsCell.has({ content: '' }));
+        } else {
+          cy.wrap(Object.values(actionIcons)).each((action) => {
+            if (actionButtons.includes(action)) {
+              cy.expect(actionsCell.find(Button({ icon: action })).exists());
+            } else {
+              cy.expect(actionsCell.find(Button({ icon: action })).absent());
+            }
+          });
+        }
+      });
+  },
+
+  verifyRecordIsNotInTheList(name, tenant) {
+    cy.xpath(`.//*[(contains(@class, 'mclRowFormatterContainer')) and (./*[(./*[text()='${name}']) and (./*[text()='${tenant}'])])]`).should('not.exist');
   },
 
   verifyRecordNotInTheList(name) {
