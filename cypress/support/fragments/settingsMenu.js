@@ -35,6 +35,8 @@ export default {
   // Inventory
   inventoryPath: 'settings/inventory',
   classificationTypes: 'settings/inventory/classificationTypes',
+  itemNoteTypesPath: '/settings/inventory/itemNoteTypes',
+  loanTypesPath: '/settings/inventory/loantypes',
   materialTypePath: '/settings/inventory/materialtypes',
   targetProfilesPath: 'settings/inventory/targetProfiles',
   urlRelationshipPath: 'settings/inventory/URLrelationship',
