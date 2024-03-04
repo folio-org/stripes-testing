@@ -1591,4 +1591,14 @@ export default {
 
     return cy.createClassifierIdentifierTypes(body);
   },
+
+  createInstanceNoteTypeViaApi(instanceNoteTypeName, sourceName = 'local', id = uuid()) {
+    const body = {
+      id,
+      name: instanceNoteTypeName,
+      source: sourceName,
+    };
+
+    return cy.createInstanceNoteTypes(body);
+  },
 };

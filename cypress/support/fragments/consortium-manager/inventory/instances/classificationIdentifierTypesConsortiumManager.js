@@ -6,11 +6,6 @@ import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocab
 
 const id = uuid();
 
-export const typeActions = {
-  edit: 'edit',
-  trash: 'trash',
-};
-
 export default {
   createViaApi(type) {
     return cy.getConsortiaId().then((consortiaId) => {
