@@ -13,6 +13,7 @@ import ConfirmShare from '../../../../../support/fragments/consortium-manager/mo
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SettingsMenu from '../../../../../support/fragments/settingsMenu';
 import DepartmentsConsortiumManager, {
+  // eslint-disable-next-line import/named
   departmentsActions,
 } from '../../../../../support/fragments/consortium-manager/users/departmentsConsortiumManager';
 import Departments from '../../../../../support/fragments/settings/users/departments';
