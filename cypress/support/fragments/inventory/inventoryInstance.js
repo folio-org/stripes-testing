@@ -873,7 +873,9 @@ export default {
   },
 
   moveItemToAnotherInstance({ fromHolding, toInstance, shouldOpen = true }) {
-    cy.do([actionsButton.click(), moveHoldingsToAnotherInstanceButton.click()]);
+    cy.do(actionsButton.click());
+    cy.wait(1000);
+    cy.do(moveHoldingsToAnotherInstanceButton.click());
     InventoryInstanceSelectInstanceModal.waitLoading();
     InventoryInstanceSelectInstanceModal.searchByTitle(toInstance);
     InventoryInstanceSelectInstanceModal.selectInstance();
@@ -899,7 +901,9 @@ export default {
   },
 
   openMoveItemsWithinAnInstance: () => {
-    return cy.do([actionsButton.click(), moveItemsButton.click()]);
+    cy.do(actionsButton.click());
+    cy.wait(1000);
+    cy.do(moveItemsButton.click());
   },
 
   moveHoldingsToAnotherInstance: (newInstanceHrId) => {
