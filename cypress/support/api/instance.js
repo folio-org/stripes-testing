@@ -41,9 +41,24 @@ Cypress.Commands.add('createClassifierIdentifierTypes', (classificationType) => 
   }).then(({ body }) => body.id);
 });
 
-Cypress.Commands.add('deleteClassifierIdentifierTypes', (classificationType) => {
+Cypress.Commands.add('deleteClassifierIdentifierTypes', (classificationTypeId) => {
   cy.okapiRequest({
     method: REQUEST_METHOD.DELETE,
-    path: `classification-types/${classificationType}`,
+    path: `classification-types/${classificationTypeId}`,
+  });
+});
+
+Cypress.Commands.add('createInstanceNoteTypes', (noteType) => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.POST,
+    path: 'instance-note-types',
+    body: noteType,
+  }).then(({ body }) => body.id);
+});
+
+Cypress.Commands.add('deleteInstanceNoteTypes', (noteTypeId) => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.DELETE,
+    path: `instance-note-types/${noteTypeId}`,
   });
 });

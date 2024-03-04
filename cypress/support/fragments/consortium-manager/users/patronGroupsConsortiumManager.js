@@ -5,11 +5,6 @@ import ConsortiumManagerApp from '../consortiumManagerApp';
 
 const id = uuid();
 
-export const groupsActions = {
-  edit: 'edit',
-  trash: 'trash',
-};
-
 export default {
   createViaApi: (group) => {
     return cy.getConsortiaId().then((consortiaId) => {
