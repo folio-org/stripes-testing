@@ -11,24 +11,26 @@ import Affiliations, { tenantNames } from '../../../../../support/dictionary/aff
 import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 import ConfirmShare from '../../../../../support/fragments/consortium-manager/modal/confirm-share';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import SettingsMenu from '../../../../../support/fragments/settingsMenu';
+import DepartmentsConsortiumManager, {
+  departmentsActions,
+} from '../../../../../support/fragments/consortium-manager/users/departmentsConsortiumManager';
 import DeleteCancelReason from '../../../../../support/fragments/consortium-manager/modal/delete-cancel-reason';
-import ConsortiaControlledVocabularyPaneset, {
-  actionIcons,
-} from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
-import ClassificationIdentifierTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/classificationIdentifierTypesConsortiumManager';
+import SettingsMenu from '../../../../../support/fragments/settingsMenu';
+import Departments from '../../../../../support/fragments/settings/users/departments';
+import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
     describe('Manage shared settings', () => {
-      describe('Manage shared Classification identifier types', () => {
+      describe('Manage shared Departments', () => {
         let userData;
-        const classificationIdentifierType1 = {
-          name: getTestEntityValue('Shared_classification_identifier_type_1'),
+        const sharedDepartment = {
+          name: getTestEntityValue('Shared_department_1'),
+          code: getTestEntityValue('SD1'),
         };
-
-        const classificationIdentifierType2 = {
-          name: getTestEntityValue('Shared_classification_identifier_type_2'),
+        const sharedDepartment2 = {
+          name: getTestEntityValue('Shared_department_2'),
+          code: getTestEntityValue('SD2'),
         };
 
         before('Create users data', () => {
@@ -36,20 +38,20 @@ describe('Consortia', () => {
             .then(() => {
               cy.createTempUser([
                 Permissions.consortiaSettingsConsortiumManagerShare.gui,
-                Permissions.crudClassificationIdentifierTypes.gui,
+                Permissions.createEditViewDepartments.gui,
               ]).then((userProperties) => {
                 userData = userProperties;
                 cy.assignAffiliationToUser(Affiliations.College, userData.userId);
                 cy.setTenant(Affiliations.College);
                 cy.assignPermissionsToExistingUser(userData.userId, [
-                  Permissions.crudClassificationIdentifierTypes.gui,
+                  Permissions.departmentsAll.gui,
                 ]);
                 cy.resetTenant();
                 cy.getAdminToken();
                 cy.assignAffiliationToUser(Affiliations.University, userData.userId);
                 cy.setTenant(Affiliations.University);
                 cy.assignPermissionsToExistingUser(userData.userId, [
-                  Permissions.crudClassificationIdentifierTypes.gui,
+                  Permissions.departmentsAll.gui,
                 ]);
               });
             })
@@ -66,7 +68,7 @@ describe('Consortia', () => {
         });
 
         it(
-          'C410900 User with "Consortium manager: Can share settings to all members" permission is able to add/delete classification identifier type shared to all affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
+          'C406999 User with "Consortium manager: Can share settings to all members" permission is able to add/delete department shared to all affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
           { tags: ['criticalPathECS', 'thunderjet'] },
           () => {
             TopMenuNavigation.navigateToApp('Consortium manager');
@@ -74,104 +76,90 @@ describe('Consortia', () => {
             SelectMembers.selectAllMembers();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
 
-            ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
-            ClassificationIdentifierTypesConsortiumManager.choose();
+            ConsortiumManagerApp.chooseSettingsItem(settingsItems.users);
+            DepartmentsConsortiumManager.choose();
             ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
-            ConsortiaControlledVocabularyPaneset.createViaUi(true, classificationIdentifierType1);
+            ConsortiaControlledVocabularyPaneset.createViaUi(true, sharedDepartment);
             ConsortiaControlledVocabularyPaneset.clickSave();
-            const createdCIT = [
-              classificationIdentifierType1.name,
-              'consortium',
+            const createdDepartment = [
+              ...Object.values(sharedDepartment),
               moment().format('l'),
+              '-',
               'All',
             ];
 
-            ConfirmShare.waitLoadingConfirmShareToAll(classificationIdentifierType1.name);
+            ConfirmShare.waitLoadingConfirmShareToAll(sharedDepartment.name);
             ConfirmShare.clickConfirm();
-            ClassificationIdentifierTypesConsortiumManager.waitLoading();
-            ConsortiumManagerApp.checkMessage(
-              messages.created(classificationIdentifierType1.name, 'All'),
-            );
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdCIT, [
+            DepartmentsConsortiumManager.waitLoading();
+            ConsortiumManagerApp.checkMessage(messages.created(sharedDepartment.name, 'All'));
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdDepartment, [
               'edit',
               'trash',
             ]);
 
-            ConsortiaControlledVocabularyPaneset.createViaUi(true, classificationIdentifierType2);
+            ConsortiaControlledVocabularyPaneset.createViaUi(true, sharedDepartment2);
             ConsortiaControlledVocabularyPaneset.clickSave();
 
-            ConfirmShare.waitLoadingConfirmShareToAll(classificationIdentifierType2.name);
+            ConfirmShare.waitLoadingConfirmShareToAll(sharedDepartment2.name);
             ConfirmShare.clickKeepEditing();
-            ClassificationIdentifierTypesConsortiumManager.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive();
             ConsortiaControlledVocabularyPaneset.clickCancel();
 
-            ConsortiaControlledVocabularyPaneset.createViaUi(true, classificationIdentifierType1);
+            ConsortiaControlledVocabularyPaneset.createViaUi(true, sharedDepartment);
             ConsortiaControlledVocabularyPaneset.clickSave();
             ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive();
             ConsortiaControlledVocabularyPaneset.verifyFieldValidatorError({
               name: messages.notUnique('Name'),
             });
+            ConsortiaControlledVocabularyPaneset.verifyFieldValidatorError({
+              code: messages.notUnique('Code'),
+            });
 
             ConsortiaControlledVocabularyPaneset.clickCancel();
             ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdCIT, [
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdDepartment, [
               'edit',
               'trash',
             ]);
 
             ConsortiaControlledVocabularyPaneset.performAction(
-              classificationIdentifierType1.name,
-              actionIcons.trash,
+              sharedDepartment.name,
+              departmentsActions.trash,
             );
-            DeleteCancelReason.waitLoadingDeleteModal(
-              'classification identifier type',
-              classificationIdentifierType1.name,
-            );
+            DeleteCancelReason.waitLoadingDeleteModal('department', sharedDepartment.name);
 
             DeleteCancelReason.clickCancel();
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdCIT, [
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdDepartment, [
               'edit',
               'trash',
             ]);
 
             ConsortiaControlledVocabularyPaneset.performAction(
-              classificationIdentifierType1.name,
-              actionIcons.trash,
+              sharedDepartment.name,
+              departmentsActions.trash,
             );
-            DeleteCancelReason.waitLoadingDeleteModal(
-              'classification identifier type',
-              classificationIdentifierType1.name,
-            );
+            DeleteCancelReason.waitLoadingDeleteModal('department', sharedDepartment.name);
             DeleteCancelReason.clickDelete();
-            ClassificationIdentifierTypesConsortiumManager.waitLoading();
             ConsortiumManagerApp.checkMessage(
-              messages.deleted(
-                'classification identifier type',
-                classificationIdentifierType1.name,
-              ),
+              messages.deleted('department', sharedDepartment.name),
             );
-            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
-              classificationIdentifierType1.name,
-            );
+            DepartmentsConsortiumManager.waitLoading();
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(sharedDepartment.name);
 
-            cy.visit(SettingsMenu.classificationTypes);
-            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
-              classificationIdentifierType1.name,
-            );
+            cy.visit(SettingsMenu.departments);
+            Departments.waitLoading();
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(sharedDepartment.name);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            cy.visit(SettingsMenu.classificationTypes);
-            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
-              classificationIdentifierType1.name,
-            );
+            cy.visit(SettingsMenu.departments);
+            Departments.waitLoading();
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(sharedDepartment.name);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-            cy.visit(SettingsMenu.classificationTypes);
-            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
-              classificationIdentifierType1.name,
-            );
+            cy.visit(SettingsMenu.departments);
+            Departments.waitLoading();
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(sharedDepartment.name);
           },
         );
       });
