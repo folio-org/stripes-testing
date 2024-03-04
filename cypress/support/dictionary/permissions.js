@@ -221,6 +221,10 @@ export default {
     internal: 'ui-inventory.settings.holdings-note-types',
     gui: 'Settings (Inventory): Create, edit, delete holdings note types',
   },
+  inventoryCRUDHoldingsTypes: {
+    internal: 'ui-inventory.settings.holdings-types',
+    gui: 'Settings (Inventory): Create, edit, delete holdings types',
+  },
   inventoryCRUDItemNoteTypes: {
     internal: 'ui-inventory.settings.item-note-types',
     gui: 'Settings (Inventory): Create, edit, delete item note types',
@@ -1002,10 +1006,6 @@ export default {
   consortiaSettingsConsortiumManagerView: {
     internal: 'ui-consortia-settings.consortium-manager.view',
     gui: 'Consortium manager: Can view existing settings',
-  },
-  consortiaSettingsConsortiumManagerDepartmentsAll: {
-    internal: 'ui-users.settings.departments.all',
-    gui: 'Settings (Users): Can create, edit, view, and delete departments',
   },
   consortiaSettingsConsortiumManagerDepartmentsCreateEditView: {
     internal: 'ui-users.settings.departments.create.edit.view',

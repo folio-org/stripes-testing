@@ -43,6 +43,8 @@ export default {
   hridHandlingPath: 'settings/inventory/hridHandling',
   loantypesPath: 'settings/inventory/loantypes',
   alternativeTitleTypes: 'settings/inventory/alternativeTitleTypes',
+  holdingsNoteTypesPath: 'settings/inventory/holdingsNoteTypes',
+  holdingsTypes: 'settings/inventory/holdingsTypes',
   // Invoice
   invoiceApprovalsPath: 'settings/invoice/approvals',
   invoiceAdjustmentsPath: 'settings/invoice/adjustments',
