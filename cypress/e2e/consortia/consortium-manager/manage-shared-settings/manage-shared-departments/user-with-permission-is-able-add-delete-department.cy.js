@@ -12,6 +12,7 @@ import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 import ConfirmShare from '../../../../../support/fragments/consortium-manager/modal/confirm-share';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import DepartmentsConsortiumManager, {
+  // eslint-disable-next-line import/named
   departmentsActions,
 } from '../../../../../support/fragments/consortium-manager/users/departmentsConsortiumManager';
 import DeleteCancelReason from '../../../../../support/fragments/consortium-manager/modal/delete-cancel-reason';
