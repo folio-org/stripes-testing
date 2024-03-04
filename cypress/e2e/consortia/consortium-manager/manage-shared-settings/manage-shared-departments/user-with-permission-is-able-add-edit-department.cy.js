@@ -12,11 +12,11 @@ import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 import ConfirmShare from '../../../../../support/fragments/consortium-manager/modal/confirm-share';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SettingsMenu from '../../../../../support/fragments/settingsMenu';
-import DepartmentsConsortiumManager, {
-  departmentsActions,
-} from '../../../../../support/fragments/consortium-manager/users/departmentsConsortiumManager';
+import DepartmentsConsortiumManager from '../../../../../support/fragments/consortium-manager/users/departmentsConsortiumManager';
 import Departments from '../../../../../support/fragments/settings/users/departments';
-import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
+import ConsortiaControlledVocabularyPaneset, {
+  actionIcons,
+} from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -130,7 +130,7 @@ describe('Consortia', () => {
             DepartmentsConsortiumManager.choose();
             ConsortiaControlledVocabularyPaneset.performAction(
               sharedDepartment3.name,
-              departmentsActions.edit,
+              actionIcons.edit,
             );
 
             sharedDepartment3.name = getTestEntityValue('Shared_department_3_edited');
