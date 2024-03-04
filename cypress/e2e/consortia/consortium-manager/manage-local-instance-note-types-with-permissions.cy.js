@@ -9,7 +9,7 @@ import ConsortiumManagerApp, {
 } from '../../../support/fragments/consortium-manager/consortiumManagerApp';
 import ConfirmCreate from '../../../support/fragments/consortium-manager/modal/confirm-create';
 import SelectMembers from '../../../support/fragments/consortium-manager/modal/select-members';
-import AlternativeTitleTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/alternativeTitleTypesConsortiumManager';
+import InstanceNoteTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/instanceNoteTypesConsortiumManager';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -17,38 +17,38 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 const testData = {
-  newAlternativeTitleType: {
+  newInstanceNoteType: {
     name: getTestEntityValue('AC410862_new'),
   },
-  editAlternativeTitleType: {
+  editInstanceNoteType: {
     name: getTestEntityValue('AC410862_edit'),
   },
-  tempAlternativeTitleType: {
+  tempInstanceNoteType: {
     name: getTestEntityValue('AC410862'),
   },
 };
 
 describe('Consortium manager', () => {
   describe('Manage local settings', () => {
-    describe('Manage local Alternative title types', () => {
+    describe('Manage local Instance note types', () => {
       before('Create test data', () => {
         cy.getAdminToken();
         cy.resetTenant();
         cy.createTempUser([
           Permissions.consortiaSettingsConsortiumManagerEdit.gui,
-          Permissions.crudAlternativeTitleTypes.gui,
+          Permissions.crudInstanceNoteTypes.gui,
         ]).then((userProperties) => {
           testData.user = userProperties;
           cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
           cy.setTenant(Affiliations.College);
           cy.assignPermissionsToExistingUser(testData.user.userId, [
-            Permissions.crudAlternativeTitleTypes.gui,
+            Permissions.crudInstanceNoteTypes.gui,
           ]);
           cy.resetTenant();
           cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
           cy.setTenant(Affiliations.University);
           cy.assignPermissionsToExistingUser(testData.user.userId, [
-            Permissions.crudAlternativeTitleTypes.gui,
+            Permissions.crudInstanceNoteTypes.gui,
           ]);
           cy.resetTenant();
         });
@@ -58,26 +58,26 @@ describe('Consortium manager', () => {
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
-        AlternativeTitleTypesConsortiumManager.deleteAlternativeTitleTypeByNameAndTenant(
-          testData.newAlternativeTitleType.name,
+        InstanceNoteTypesConsortiumManager.deleteInstanceNoteTypeByNameAndTenant(
+          testData.newInstanceNoteType.name,
           Affiliations.Consortia,
         );
-        AlternativeTitleTypesConsortiumManager.deleteAlternativeTitleTypeByNameAndTenant(
-          testData.editAlternativeTitleType.name,
+        InstanceNoteTypesConsortiumManager.deleteInstanceNoteTypeByNameAndTenant(
+          testData.editInstanceNoteType.name,
           Affiliations.University,
         );
-        AlternativeTitleTypesConsortiumManager.deleteAlternativeTitleTypeByNameAndTenant(
-          testData.newAlternativeTitleType.name,
+        InstanceNoteTypesConsortiumManager.deleteInstanceNoteTypeByNameAndTenant(
+          testData.newInstanceNoteType.name,
           Affiliations.College,
         );
-        AlternativeTitleTypesConsortiumManager.deleteAlternativeTitleTypeByNameAndTenant(
-          testData.newAlternativeTitleType.name,
+        InstanceNoteTypesConsortiumManager.deleteInstanceNoteTypeByNameAndTenant(
+          testData.newInstanceNoteType.name,
           Affiliations.University,
         );
       });
 
       it(
-        'C410862 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local alternative title types of selected affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
+        'C410916 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local instance note types of selected affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
           cy.login(testData.user.username, testData.user.password, {
@@ -86,7 +86,7 @@ describe('Consortium manager', () => {
           });
 
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
-          AlternativeTitleTypesConsortiumManager.choose();
+          InstanceNoteTypesConsortiumManager.choose();
 
           ConsortiumManagerApp.clickSelectMembers();
           SelectMembers.changeSelectAllCheckbox('check');
@@ -102,80 +102,80 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
 
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
-          ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.newAlternativeTitleType);
+          ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.newInstanceNoteType);
           ConsortiaControlledVocabularyPaneset.clickSave();
 
-          ConfirmCreate.waitLoadingConfirmCreate(testData.newAlternativeTitleType.name);
+          ConfirmCreate.waitLoadingConfirmCreate(testData.newInstanceNoteType.name);
           ConfirmCreate.clickConfirm();
 
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-            testData.newAlternativeTitleType.name,
+            testData.newInstanceNoteType.name,
             tenantNames.central,
-            [testData.newAlternativeTitleType.name, 'local', '', tenantNames.central],
+            [testData.newInstanceNoteType.name, 'local', '', tenantNames.central],
             [actionIcons.edit, actionIcons.trash],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-            testData.newAlternativeTitleType.name,
+            testData.newInstanceNoteType.name,
             tenantNames.college,
-            [testData.newAlternativeTitleType.name, 'local', '', tenantNames.college],
+            [testData.newInstanceNoteType.name, 'local', '', tenantNames.college],
             [actionIcons.edit, actionIcons.trash],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-            testData.newAlternativeTitleType.name,
+            testData.newInstanceNoteType.name,
             tenantNames.university,
-            [testData.newAlternativeTitleType.name, 'local', '', tenantNames.university],
+            [testData.newInstanceNoteType.name, 'local', '', tenantNames.university],
             [actionIcons.edit, actionIcons.trash],
           );
 
           ConsortiaControlledVocabularyPaneset.performActionFor(
-            testData.newAlternativeTitleType.name,
+            testData.newInstanceNoteType.name,
             tenantNames.university,
             actionIcons.edit,
           );
 
           ConsortiaControlledVocabularyPaneset.fillInTextField({
-            name: testData.editAlternativeTitleType.name,
+            name: testData.editInstanceNoteType.name,
           });
           ConsortiaControlledVocabularyPaneset.clickSave();
           ConsortiumManagerApp.checkMessage(
-            `${testData.editAlternativeTitleType.name} was successfully updated for ${tenantNames.university} library.`,
+            `${testData.editInstanceNoteType.name} was successfully updated for ${tenantNames.university} library.`,
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-            testData.editAlternativeTitleType.name,
+            testData.editInstanceNoteType.name,
             tenantNames.university,
-            [testData.editAlternativeTitleType.name, 'local', '', tenantNames.university],
+            [testData.editInstanceNoteType.name, 'local', '', tenantNames.university],
             [actionIcons.edit, actionIcons.trash],
           );
 
           ConsortiaControlledVocabularyPaneset.performActionFor(
-            testData.newAlternativeTitleType.name,
+            testData.newInstanceNoteType.name,
             tenantNames.college,
             actionIcons.trash,
           );
           ConsortiaControlledVocabularyPaneset.confirmDelete();
           ConsortiumManagerApp.checkMessage(
-            messages.deleted('alternative title type', testData.newAlternativeTitleType.name),
+            messages.deleted('instance note type', testData.newInstanceNoteType.name),
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
-            testData.newAlternativeTitleType.name,
+            testData.newInstanceNoteType.name,
             tenantNames.central,
           );
 
           ConsortiaControlledVocabularyPaneset.createViaUi(
             false,
-            testData.tempAlternativeTitleType,
+            testData.tempInstanceNoteType,
           );
           ConsortiaControlledVocabularyPaneset.clickSave();
-          ConfirmCreate.waitLoadingConfirmCreate(testData.tempAlternativeTitleType.name);
+          ConfirmCreate.waitLoadingConfirmCreate(testData.tempInstanceNoteType.name);
           ConfirmCreate.clickKeepEditing();
           ConsortiaControlledVocabularyPaneset.clickCancel();
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
           ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
-            testData.tempAlternativeTitleType.name,
+            testData.tempInstanceNoteType.name,
             tenantNames.central,
           );
 
-          ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.newAlternativeTitleType);
+          ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.newInstanceNoteType);
           ConsortiaControlledVocabularyPaneset.clickSave();
           ConsortiaControlledVocabularyPaneset.verifyFieldValidatorError({
             name: messages.notUnique('Name'),
@@ -183,22 +183,22 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.clickCancel();
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
-          cy.visit(SettingsMenu.alternativeTitleTypes);
+          cy.visit(SettingsMenu.instanceNoteTypes);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [testData.newAlternativeTitleType.name, 'local', ''],
+            [testData.newInstanceNoteType.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(SettingsMenu.alternativeTitleTypes);
+          cy.visit(SettingsMenu.instanceNoteTypes);
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
-            testData.newAlternativeTitleType.name,
+            testData.newInstanceNoteType.name,
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-          cy.visit(SettingsMenu.alternativeTitleTypes);
+          cy.visit(SettingsMenu.instanceNoteTypes);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [testData.editAlternativeTitleType.name, 'local', ''],
+            [testData.editInstanceNoteType.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],
           );
         },
