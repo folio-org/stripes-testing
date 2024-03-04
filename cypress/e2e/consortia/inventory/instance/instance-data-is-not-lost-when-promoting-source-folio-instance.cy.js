@@ -17,9 +17,21 @@ describe('Inventory', () => {
     const instanceData = {
       today: DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD'),
       instanceStatusTerm: 'Batch Loaded (consortium: batch)',
+      instanceStatusTermUI: 'Batch Loaded',
       instanceTitle: `C422050 instanceTitle${getRandomPostfix()}`,
       statisticalCode: 'ARL (Collection stats):    books - Book, print (books)',
       adminNote: `Instance admin note${getRandomPostfix()}`,
+      instanceIdentifier: [
+        { type: 'ISBN', value: uuid() },
+        { type: 'ISBN', value: uuid() },
+        { type: 'ISBN', value: uuid() },
+      ],
+      contributor: {
+        name: `autotest_contributor${getRandomPostfix()}`,
+        nameType: 'Personal name',
+      },
+      publication: { place: 'autotest_publication_place', date: moment.utc().format() },
+      edition: '2023',
     };
 
     before('Create test data', () => {
@@ -54,6 +66,8 @@ describe('Inventory', () => {
     //   InventoryInstance.deleteInstanceViaApi(testData.instanceIds[0]);
     // });
 
+    // const verifyCreatedInstanceDetails = () => {}
+
     it(
       'C422050 (Consortia) Verify the instance data is not lost, when promoting Source = FOLIO instance (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet'] },
@@ -61,21 +75,14 @@ describe('Inventory', () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillInstanceFields({
           catalogedDate: instanceData.today,
-          instanceStatus: instanceData.instanceStatusTerm,
+          instanceStatus: instanceData.instanceStatusTermUI,
           statisticalCode: instanceData.statisticalCode,
           adminNote: instanceData.adminNote,
           title: instanceData.instanceTitle,
-          instanceIdentifier: [
-            { type: 'ISBN', value: uuid() },
-            { type: 'ISBN', value: uuid() },
-            { type: 'ISBN', value: uuid() },
-          ],
-          contributor: {
-            name: `autotest_contributor${getRandomPostfix()}`,
-            nameType: 'Personal name',
-          },
-          publication: { place: 'autotest_publication_place', date: moment.utc().format() },
-          edition: '2023',
+          instanceIdentifier: instanceData.instanceIdentifier,
+          contributor: instanceData.contributor,
+          publication: instanceData.publication,
+          edition: instanceData.edition,
           description: 'autotest_physical_description',
           resourceType: 'other',
           natureOfContent: ['audiobook', 'audiobook', 'audiobook'],
@@ -104,13 +111,52 @@ describe('Inventory', () => {
           ],
         });
         InventoryNewInstance.clickSaveAndCloseButton();
-        InventoryInstance.checkInstanceDetails([
+        InventoryInstance.checkInstanceDetails2([
           { key: 'Cataloged date', value: instanceData.today },
           { key: 'Instance status term', value: instanceData.instanceStatusTerm },
-          // { key: 'Statistical code', value: 'Book, print (books)' },
-          // { key: 'Administrative note', value: instanceData.adminNote },
           { key: 'Resource title', value: instanceData.title },
         ]);
+        // instanceData.statisticalCode,
+        // instanceData.adminNote,
+        // instanceData.instanceTitle,
+        // instanceData.instanceIdentifier,
+        // contributor: {
+        //   name: `autotest_contributor${getRandomPostfix()}`,
+        //   nameType: 'Personal name',
+        // },
+        // publication: { place: 'autotest_publication_place', date: moment.utc().format() },
+        // edition: '2023',
+        // description: 'autotest_physical_description',
+        // resourceType: 'other',
+        // { key: 'Resource title', value: instanceData.title },
+        // natureOfContent: ['audiobook', 'audiobook', 'audiobook'],
+        // format: ['audio -- other', 'audio -- other', 'audio -- other'],
+        // language: 'English',
+        // frequency: [
+        //   `Publication frequency${getRandomPostfix()}`,
+        //   `Publication frequency${getRandomPostfix()}`,
+        //   `Publication frequency${getRandomPostfix()}`,
+        // ],
+        // instanceNote: [
+        //   { type: 'Bibliography note', value: `Instance note ${getRandomPostfix()}` },
+        //   { type: 'Bibliography note', value: `Instance note ${getRandomPostfix()}` },
+        //   { type: 'Bibliography note', value: `Instance note ${getRandomPostfix()}` },
+        // ],
+        // electronicAccess: {
+        //   relationship: 'Resource',
+        //   uri: 'test@mail.com',
+        //   linkText: 'test@mail.com',
+        // },
+        // subject: ['test', 'test', 'test'],
+        // classification: [
+        //   { type: 'Dewey', value: `classification${getRandomPostfix()}` },
+        //   { type: 'Dewey', value: `classification${getRandomPostfix()}` },
+        //   { type: 'Dewey', value: `classification${getRandomPostfix()}` },
+        // ],
+        // { key: 'Statistical code', value: 'Book, print (books)' },
+        // { key: 'Administrative note', value: instanceData.adminNote },
+        // ]);
+
         // InventoryInstance.shareInstance();
         // InventoryInstance.verifyCalloutMessage(
         //   `Local instance ${instanceData.instanceTitle} has been successfully shared`,
@@ -131,7 +177,7 @@ describe('Inventory', () => {
         //   InventoryInstance.waitLoading();
         //   InventoryInstance.checkInstanceDetails([
         //     // { key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO },
-        //   ]);
+        // ]);
         // });
       },
     );
