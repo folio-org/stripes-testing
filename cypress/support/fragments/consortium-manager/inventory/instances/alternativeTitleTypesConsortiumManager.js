@@ -38,6 +38,32 @@ export default {
     });
   },
 
+  getAlternativeTitleTypeByNameAndTenant(name, tenantId) {
+    return cy.getConsortiaId().then((consortiaId) => {
+      cy.getPublications([tenantId], '/alternative-title-types?limit=2000&offset=0').then((publicationId) => {
+        cy.okapiRequest({
+          method: REQUEST_METHOD.GET,
+          path: `consortia/${consortiaId}/publications/${publicationId}/results`,
+        }).then(({ body }) => {
+          const alternativeTitleTypes = JSON.parse(body.publicationResults.find((publication) => publication.tenantId === tenantId).response).alternativeTitleTypes;
+          return alternativeTitleTypes.find((alternativeTitleType) => alternativeTitleType.name === name);
+        });
+      });
+    });
+  },
+
+  deleteAlternativeTitleTypeByNameAndTenant(name, tenantId) {
+    this.getAlternativeTitleTypeByNameAndTenant(name, tenantId).then((alternativeTitleType) => {
+      cy.setTenant(tenantId);
+      cy.okapiRequest({
+        method: REQUEST_METHOD.DELETE,
+        path: `alternative-title-types/${alternativeTitleType.id}`,
+        failOnStatusCode: false,
+      });
+      cy.resetTenant();
+    });
+  },
+
   choose() {
     ConsortiumManagerApp.chooseSecondMenuItem('Alternative title types');
     cy.expect(newButton.is({ disabled: false }));

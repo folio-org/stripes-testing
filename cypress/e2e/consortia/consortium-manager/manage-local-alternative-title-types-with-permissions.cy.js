@@ -18,7 +18,7 @@ import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 const testData = {
   newPatronGroup: {
-    group: getTestEntityValue('AC410705_new'),
+    group: getTestEntityValue('AC41070_new'),
     desc: getTestEntityValue('AC410705'),
     expirationOffsetInDays: '5',
   },
