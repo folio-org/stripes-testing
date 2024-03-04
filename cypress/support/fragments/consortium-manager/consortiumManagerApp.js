@@ -96,7 +96,6 @@ export default {
     this.verifyPaneIncludesSettings();
     this.verifyMembersSelected(members);
     this.verifySelectMembersButton();
-    //this.verifyChooseSettingsIsDisplayed();
   },
 
   clickSelectMembers() {
