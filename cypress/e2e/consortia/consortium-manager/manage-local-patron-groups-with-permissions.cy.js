@@ -18,7 +18,7 @@ import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 const testData = {
   newPatronGroup: {
-    group: getTestEntityValue('AC41070_new'),
+    group: getTestEntityValue('AC410705_new'),
     desc: getTestEntityValue('AC410705'),
     expirationOffsetInDays: '5',
   },
@@ -115,6 +115,7 @@ describe('Consortium manager', () => {
               '',
               tenantNames.college,
             ],
+
             [actionIcons.edit, actionIcons.trash]);
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(testData.newPatronGroup.group, tenantNames.university,
             [
@@ -151,7 +152,6 @@ describe('Consortium manager', () => {
 
           ConsortiaControlledVocabularyPaneset.performActionFor(testData.newPatronGroup.group, tenantNames.college, actionIcons.trash);
           ConsortiaControlledVocabularyPaneset.confirmDelete();
-          ConsortiumManagerApp.checkMessage(`The patron group ${testData.newPatronGroup.group} was successfully deleted.`);
           ConsortiumManagerApp.checkMessage(
             messages.deleted(
               'patron group',
@@ -177,13 +177,15 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
           cy.visit(SettingsMenu.patronGroups);
-          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
-            testData.newPatronGroup.group,
-            testData.newPatronGroup.desc,
-            testData.newPatronGroup.expirationOffsetInDays,
-            '',
-          ],
-          [actionIcons.edit, actionIcons.trash]);
+          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+            [
+              testData.newPatronGroup.group,
+              testData.newPatronGroup.desc,
+              testData.newPatronGroup.expirationOffsetInDays,
+              '',
+            ],
+            [actionIcons.edit, actionIcons.trash],
+          );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(SettingsMenu.patronGroups);
