@@ -6,11 +6,11 @@ import Affiliations, { tenantNames } from '../../../support/dictionary/affiliati
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import ItemNoteTypes from '../../../support/fragments/settings/inventory/items/itemNoteTypes';
-import ItemNoteTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/itemNoteTypesConsortiumManager';
+import ItemNoteTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/items/itemNoteTypesConsortiumManager';
 import LoanTypes from '../../../support/fragments/settings/inventory/items/loanTypes';
-import LoanTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/loanTypesConsortiumManager';
+import LoanTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/items/loanTypesConsortiumManager';
 import MaterialTypes from '../../../support/fragments/settings/inventory/items/materialTypes';
-import MaterialTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/materialTypesConsortiumManager';
+import MaterialTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/items/materialTypesConsortiumManager';
 
 const testData = {
   centralSharedItemNoteTypes: {
