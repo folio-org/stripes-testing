@@ -44,6 +44,7 @@ export default {
   statisticalCodesPath: 'settings/inventory/StatisticalCodeSettings',
   hridHandlingPath: 'settings/inventory/hridHandling',
   loantypesPath: 'settings/inventory/loantypes',
+  alternativeTitleTypes: 'settings/inventory/alternativeTitleTypes',
   holdingsNoteTypesPath: 'settings/inventory/holdingsNoteTypes',
   holdingsTypes: 'settings/inventory/holdingsTypes',
   // Invoice
