@@ -36,19 +36,19 @@ describe('Consortium manager', () => {
         cy.resetTenant();
         cy.createTempUser([
           Permissions.consortiaSettingsConsortiumManagerEdit.gui,
-          Permissions.consortiaSettingsConsortiumManagerDepartmentsAll.gui,
+          Permissions.departmentsAll.gui,
         ]).then((userProperties) => {
           testData.user = userProperties;
           cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
           cy.setTenant(Affiliations.College);
           cy.assignPermissionsToExistingUser(testData.user.userId, [
-            Permissions.consortiaSettingsConsortiumManagerDepartmentsAll.gui,
+            Permissions.departmentsAll.gui,
           ]);
           cy.resetTenant();
           cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
           cy.setTenant(Affiliations.University);
           cy.assignPermissionsToExistingUser(testData.user.userId, [
-            Permissions.consortiaSettingsConsortiumManagerDepartmentsAll.gui,
+            Permissions.departmentsAll.gui,
           ]);
         });
       });

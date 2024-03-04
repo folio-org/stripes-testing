@@ -1,10 +1,15 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
-import { MultiColumnListHeader } from '../../../../../../interactors';
+import { Button, MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
-import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 
 const id = uuid();
+
+export const typeActions = {
+  edit: 'edit',
+  trash: 'trash',
+};
+const newButton = Button('+ New');
 
 export default {
   createViaApi(type) {
@@ -13,7 +18,7 @@ export default {
         method: REQUEST_METHOD.POST,
         path: `consortia/${consortiaId}/sharing/settings`,
         body: {
-          url: '/classification-types',
+          url: '/holdings-note-types',
           settingId: id,
           payload: {
             id,
@@ -21,7 +26,7 @@ export default {
           },
         },
       }).then(() => {
-        type.url = '/classification-types';
+        type.url = '/holdings-note-types';
         type.settingId = id;
         return type;
       });
@@ -38,12 +43,9 @@ export default {
     });
   },
 
-  waitLoading() {
-    ConsortiaControlledVocabularyPaneset.waitLoading('Classification identifier types');
-  },
-
   choose() {
-    ConsortiumManagerApp.chooseSecondMenuItem('Classification identifier types');
+    ConsortiumManagerApp.chooseSecondMenuItem('Holdings note types');
+    cy.expect(newButton.is({ disabled: false }));
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });
