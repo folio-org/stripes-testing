@@ -208,6 +208,7 @@ describe('MARC', () => {
             cy.visit(TopMenu.exportManagerPath);
             ExportManagerSearchPane.waitLoading();
             ExportManagerSearchPane.searchByAuthorityControl();
+            cy.wait(2000);
             ExportManagerSearchPane.verifyJobDataInResults(expectedJobData);
             ExportManagerSearchPane.verifyResultAndClick(jobID);
             ExportManagerSearchPane.verifyJobDataInDetailView(expectedJobDetails);
