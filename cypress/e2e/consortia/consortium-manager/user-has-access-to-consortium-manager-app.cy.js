@@ -84,7 +84,7 @@ describe('Consortia', () => {
 
         SelectMembers.saveAndClose();
         ConsortiumManager.waitLoading();
-        ConsortiumManager.verifySetingPaneIsDisplayed();
+        ConsortiumManager.verifySettingPaneIsDisplayed();
         ConsortiumManager.verifyPaneIncludesSettings();
         ConsortiumManager.verifyMembersSelected(1);
         ConsortiumManager.verifySelectMembersButton();

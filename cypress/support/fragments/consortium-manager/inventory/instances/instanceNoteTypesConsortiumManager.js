@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
 import { Button, MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
+import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 
 const id = uuid();
 const newButton = Button('+ New');
@@ -13,7 +14,7 @@ export default {
         method: REQUEST_METHOD.POST,
         path: `consortia/${consortiaId}/sharing/settings`,
         body: {
-          url: '/alternative-title-types',
+          url: '/instance-note-types',
           settingId: id,
           payload: {
             id,
@@ -21,7 +22,7 @@ export default {
           },
         },
       }).then(() => {
-        type.url = '/alternative-title-types';
+        type.url = '/instance-note-types';
         type.settingId = id;
         return type;
       });
@@ -38,8 +39,12 @@ export default {
     });
   },
 
+  waitLoading() {
+    ConsortiaControlledVocabularyPaneset.waitLoading('Instance note types');
+  },
+
   choose() {
-    ConsortiumManagerApp.chooseSecondMenuItem('Alternative title types');
+    ConsortiumManagerApp.chooseSecondMenuItem('Instance note types');
     cy.expect(newButton.is({ disabled: false }));
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
