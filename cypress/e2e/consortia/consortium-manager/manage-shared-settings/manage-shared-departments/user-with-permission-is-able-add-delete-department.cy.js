@@ -11,13 +11,13 @@ import Affiliations, { tenantNames } from '../../../../../support/dictionary/aff
 import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 import ConfirmShare from '../../../../../support/fragments/consortium-manager/modal/confirm-share';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import DepartmentsConsortiumManager, {
-  departmentsActions,
-} from '../../../../../support/fragments/consortium-manager/users/departmentsConsortiumManager';
+import DepartmentsConsortiumManager from '../../../../../support/fragments/consortium-manager/users/departmentsConsortiumManager';
 import DeleteCancelReason from '../../../../../support/fragments/consortium-manager/modal/delete-cancel-reason';
 import SettingsMenu from '../../../../../support/fragments/settingsMenu';
 import Departments from '../../../../../support/fragments/settings/users/departments';
-import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
+import ConsortiaControlledVocabularyPaneset, {
+  actionIcons,
+} from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -125,7 +125,7 @@ describe('Consortia', () => {
 
             ConsortiaControlledVocabularyPaneset.performAction(
               sharedDepartment.name,
-              departmentsActions.trash,
+              actionIcons.trash,
             );
             DeleteCancelReason.waitLoadingDeleteModal('department', sharedDepartment.name);
 
@@ -137,7 +137,7 @@ describe('Consortia', () => {
 
             ConsortiaControlledVocabularyPaneset.performAction(
               sharedDepartment.name,
-              departmentsActions.trash,
+              actionIcons.trash,
             );
             DeleteCancelReason.waitLoadingDeleteModal('department', sharedDepartment.name);
             DeleteCancelReason.clickDelete();
