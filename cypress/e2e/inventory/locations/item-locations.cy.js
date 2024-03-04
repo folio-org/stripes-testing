@@ -100,7 +100,7 @@ describe('ui-inventory: location', () => {
       InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
       ItemRecordView.waitLoading();
       ItemRecordView.closeDetailView();
-      InventoryInstance.openHoldings(['']);
+      InventoryHoldings.checkIfExpanded('', true);
       InventoryInstance.openItemByBarcode(ITEM_BARCODE);
 
       // edit instance
@@ -110,7 +110,8 @@ describe('ui-inventory: location', () => {
       InventoryInstance.closeInstancePage();
 
       // verify results
-      InventoryInstance.openHoldings(['']);
+      // Setting false because next method clicks it open
+      InventoryHoldings.checkIfExpanded('', false);
       InventoryInstance.checkHoldingsTable(
         toBeEditedLocationName,
         0,
@@ -135,6 +136,7 @@ describe('ui-inventory: location', () => {
       InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
       ItemRecordView.waitLoading();
       ItemRecordView.closeDetailView();
+      InventoryHoldings.checkIfExpanded('', true);
       InventoryInstance.openItemByBarcode(ITEM_BARCODE);
 
       // edit instance
@@ -144,7 +146,8 @@ describe('ui-inventory: location', () => {
       InventoryInstance.closeInstancePage();
 
       // verify results
-      InventoryInstance.openHoldings(['']);
+      // Setting false because next method clicks it open
+      InventoryHoldings.checkIfExpanded('', false);
       InventoryInstance.checkHoldingsTable(
         editedLocationName,
         0,
