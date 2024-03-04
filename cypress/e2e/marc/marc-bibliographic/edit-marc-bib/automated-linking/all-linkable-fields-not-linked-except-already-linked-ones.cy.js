@@ -188,6 +188,7 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
+            cy.loginAsAdmin();
             cy.visit(TopMenu.inventoryPath).then(() => {
               InventoryInstances.searchByTitle(createdRecordsIDs[0]);
               InventoryInstances.selectInstance();
@@ -230,6 +231,7 @@ describe('MARC', () => {
           { tags: ['extendedPath', 'spitfire'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
+            cy.reload();
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             fields.forEach((matchs) => {
