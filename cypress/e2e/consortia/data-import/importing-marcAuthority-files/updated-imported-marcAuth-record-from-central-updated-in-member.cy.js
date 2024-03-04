@@ -50,6 +50,7 @@ describe('data-import', () => {
       modifiedMarcFile: `C405144 editedMarcFile${getRandomPostfix()}.mrc`,
       uploadModifiedMarcFile: `C405144 testMarcFile${getRandomPostfix()}.mrc`,
     };
+
     const mappingProfile = {
       name: `C405144 Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
     };
@@ -79,6 +80,7 @@ describe('data-import', () => {
       profileName: `C405144 Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
+
     const marcFiles = [
       {
         marc: 'marcAuthFileForC405144.mrc',
@@ -89,11 +91,7 @@ describe('data-import', () => {
         authorityHeading: 'C405144 Dante Alighieri, 1265-1321',
       },
     ];
-    const linkingTagAndValue = {
-      rowIndex: 56,
-      value: 'C405144 Roberts, Julia,',
-      tag: '700',
-    };
+
     const users = {};
 
     before('Create test data and login', () => {
