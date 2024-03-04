@@ -178,7 +178,7 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.newAlternativeTitleType);
           ConsortiaControlledVocabularyPaneset.clickSave();
           ConsortiaControlledVocabularyPaneset.verifyFieldValidatorError({
-            group: messages.notUnique('Name'),
+            name: messages.notUnique('Name'),
           });
           ConsortiaControlledVocabularyPaneset.clickCancel();
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
@@ -198,7 +198,7 @@ describe('Consortium manager', () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           cy.visit(SettingsMenu.alternativeTitleTypes);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [testData.newAlternativeTitleType.name, 'local', ''],
+            [testData.editAlternativeTitleType.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],
           );
         },
