@@ -2216,4 +2216,9 @@ export default {
   checkEmptyDonorList() {
     cy.get('#donorsInformation').contains('The list contains no items');
   },
+
+  clickTitleLookUp() {
+    cy.do(Button('Title look-up').click());
+    SelectInstanceModal.waitLoading();
+  },
 };
