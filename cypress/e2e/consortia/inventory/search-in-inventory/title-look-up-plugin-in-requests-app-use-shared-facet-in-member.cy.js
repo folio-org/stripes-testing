@@ -38,9 +38,9 @@ describe('Inventory', () => {
     const createdRecordsFromUniversity = [];
     const createdRecordsFromCollege = [];
     const sharedFOLIOInstances = [
-      'C410702 Test Shared facet Instance 1 Shared Folio',
-      'C410702 Test Shared facet Instance 2 Shared Folio',
-      'C410702 Test Shared facet Instance 3 Shared Folio',
+      `C410702 Test Shared facet Instance 1 Shared Folio ${getRandomPostfix()}`,
+      `C410702 Test Shared facet Instance 2 Shared Folio ${getRandomPostfix()}`,
+      `C410702 Test Shared facet Instance 3 Shared Folio ${getRandomPostfix()}`,
     ];
     const sharedMARCInstances = [
       'C410702 Test Shared facet Instance 6 Shared MARC',
@@ -51,9 +51,11 @@ describe('Inventory', () => {
       'C410702 Test Shared facet Instance 11 Shared MARC',
     ];
     const localFOLIOInstanceUniversity = [
-      'C410702 Test Shared facet Instance 4 Local Member 1 Folio',
+      `C410702 Test Shared facet Instance 4 Local Member 1 Folio ${getRandomPostfix()}`,
     ];
-    const localFOLIOInstaceCollege = ['C410702 Test Shared facet Instance 5 Local Member 2 Folio'];
+    const localFOLIOInstaceCollege = [
+      `C410702 Test Shared facet Instance 5 Local Member 2 Folio ${getRandomPostfix()}`,
+    ];
     const localMARCInstancesUniversity = [
       'C410702 Test Shared facet Instance 12 Local MARC Member 1',
       'C410702 Test Shared facet Instance 13 Local MARC Member 1',
