@@ -5,8 +5,8 @@ import { getTestEntityValue } from '../../../support/utils/stringTools';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import HoldingsNoteTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/holdingsNoteTypesConsortiumManager';
-import HoldingsTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/holdingsTypesConsortiumManager';
+import HoldingsNoteTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/holdings/holdingsNoteTypesConsortiumManager';
+import HoldingsTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/holdings/holdingsTypesConsortiumManager';
 import HoldingsTypes from '../../../support/fragments/settings/inventory/holdings/holdingsTypes';
 import HoldingsNoteTypes from '../../../support/fragments/settings/inventory/holdings/holdingsNoteTypes';
 
