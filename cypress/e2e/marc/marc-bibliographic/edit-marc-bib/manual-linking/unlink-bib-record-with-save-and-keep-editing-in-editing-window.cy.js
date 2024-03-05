@@ -68,16 +68,6 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
     ]).then((createdUserProperties) => {
       userData = createdUserProperties;
 
-      InventoryInstances.getInstancesViaApi({
-        limit: 100,
-        query: `title="${testData.instanceTitle}"`,
-      }).then((instances) => {
-        if (instances) {
-          instances.forEach(({ id }) => {
-            InventoryInstance.deleteInstanceViaApi(id);
-          });
-        }
-      });
       MarcAuthorities.getMarcAuthoritiesViaApi({
         limit: 100,
         query: `keyword="${testData.authorityTitle}" and (authRefType==("Authorized" or "Auth/Ref"))`,
@@ -90,7 +80,6 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       });
 
       cy.loginAsAdmin().then(() => {
-        cy.visit(TopMenu.dataImportPath);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,

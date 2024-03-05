@@ -1303,7 +1303,7 @@ export default {
   },
 
   openHoldingViewByID: (holdingsID) => {
-    cy.do(viewHoldingsButtonByID(holdingsID).click());
+    cy.do(viewHoldingsButtonByID(`holdings.${holdingsID}`).click());
     cy.expect(Button('Actions').exists());
   },
 

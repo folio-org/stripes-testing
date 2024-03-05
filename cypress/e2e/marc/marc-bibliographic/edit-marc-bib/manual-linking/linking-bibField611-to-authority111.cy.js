@@ -10,6 +10,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -20,7 +21,7 @@ describe('MARC', () => {
           authorityValue:
             'C380764 Vatican Council (2nd : 1962-1965 : Basilica di San Pietro in Vaticano)',
           authorityHeading:
-            'Basilica di San Pietro in Vaticano) C380764 Vatican Council 1962-1965 : (2nd :',
+            'C380764 Vatican Council Basilica di San Pietro in Vaticano) 1962-1965 : (2nd :',
           linkedIconText: 'Linked to MARC authority',
           accordion: 'Subject',
           searchOptionCorporateName: 'Corporate/Conference name',
@@ -57,7 +58,7 @@ describe('MARC', () => {
           testData.tag611,
           '2',
           '7',
-          '$c Basilica di San Pietro in Vaticano) $a C380764 Vatican Council $d 1962-1965 : $n (2nd :',
+          '$a C380764 Vatican Council $c Basilica di San Pietro in Vaticano) $d 1962-1965 : $n (2nd :',
           '',
           '$0 http://id.loc.gov/authorities/names/n79084169',
           '$2 fast $1 http://viaf.org/viaf/133636573/',
@@ -68,7 +69,7 @@ describe('MARC', () => {
           testData.tag611,
           '2',
           '7',
-          '$c Basilica di San Pietro in Vaticano) $a C380764 Vatican Council $d 1962-1965 : $n (2nd : $0 http://id.loc.gov/authorities/names/n79084169 $2 fast $1 http://viaf.org/viaf/133636573/',
+          '$a C380764 Vatican Council $c Basilica di San Pietro in Vaticano) $d 1962-1965 : $n (2nd : $0 http://id.loc.gov/authorities/names/n79084169 $2 fast $1 http://viaf.org/viaf/133636573/',
         ];
 
         before('Creating user and data', () => {
@@ -191,6 +192,7 @@ describe('MARC', () => {
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
             InventoryInstance.waitLoading();
+            InstanceRecordView.verifyInstancePaneExists();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib611AfterLinkingToAuth111);
 
