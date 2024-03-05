@@ -67,7 +67,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
     ]).then((createdUserProperties) => {
       userData = createdUserProperties;
-      
+
       MarcAuthorities.getMarcAuthoritiesViaApi({
         limit: 100,
         query: `keyword="${testData.authorityTitle}" and (authRefType==("Authorized" or "Auth/Ref"))`,
