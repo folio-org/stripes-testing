@@ -5,12 +5,18 @@ import InventoryKeyboardShortcuts from '../../../support/fragments/inventory/inv
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
+
+let user;
+const defaultSearchOption = 'Keyword (title, contributor, identifier, HRID, UUID)';
+const item = {
+  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  itemBarcode: getRandomPostfix(),
+};
 
 describe('inventory', () => {
-  let user;
-  const defaultSearchOption = 'Keyword (title, contributor, identifier, HRID, UUID)';
-
   before('Create test data', () => {
+    InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
     cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
@@ -23,6 +29,7 @@ describe('inventory', () => {
   after('Delete test data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(user.userId);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
   });
 
   it(
@@ -97,6 +104,7 @@ describe('inventory', () => {
       // #11 Select "Holdings" toggle on the "Search & filter" left pane => Search for a Holdings record with "FOLIO" source by selecting "FOLIO" option at the "Source" accordion
       // Result list is populated with instances records associated with Holdings underlying "FOLIO" source
       InventorySearchAndFilter.switchToHoldings();
+      InventorySearchAndFilter.byKeywords(item.instanceName);
       InventorySearchAndFilter.bySource('FOLIO');
 
       // #12 Open any Holdings record in detailed view mode by clicking on the row with Instance record and hitting "View holdings" button at the Holdings accordion

@@ -122,6 +122,7 @@ describe('inventory', () => {
         });
 
         // Both items are now displaying under the second "Holdings"
+        InventoryHoldings.checkIfExpanded(testData.locations[1].name, true);
         InventoryInstance.checkHoldingsTableContent({
           name: testData.locations[1].name,
           records: [

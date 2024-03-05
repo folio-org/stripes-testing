@@ -82,7 +82,9 @@ export default {
     SettingsPane.clickSaveBtn(index);
   },
   createViaUi(manualCharge) {
+    cy.wait(500);
     SettingsPane.clickAddNewBtn();
+    cy.wait(500);
     this.fillInFields(manualCharge);
   },
   editViaUi(manualCharge, newManualCharge) {
