@@ -22,8 +22,9 @@ const testData = {
     sixthQuery: '*33645218',
   },
   authRows: {
-    warsaw: 'Warsaw Council (2nd : 1962-1965 : Basilica di San Pietro in Warsawo)',
-    delaware: 'Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
+    warsaw: 'C380593Warsaw Council (2nd : 1962-1965 : Basilica di San Pietro in Warsawo)',
+    delaware:
+      'C380593Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
   },
   authorizedTypes: {
     AUTHORIZED: 'Authorized',

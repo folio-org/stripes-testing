@@ -17,7 +17,7 @@ const testData = {
   fileName: `testMarcFileC387462.${getRandomPostfix()}.mrc`,
   jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
   propertyName: 'relatedInstanceInfo',
-  instanceTitle: 'The Journal of ecclesiastical history.',
+  instanceTitle: 'C387462The Journal of ecclesiastical history.',
   searchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
 };
 
