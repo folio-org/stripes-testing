@@ -47,10 +47,6 @@ describe('Title Level Request. Request Detail', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
-        cy.loginAsAdmin({
-          path: SettingsMenu.circulationTitleLevelRequestsPath,
-          waiter: TitleLevelRequests.waitLoading,
-        });
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);
@@ -128,7 +124,7 @@ describe('Title Level Request. Request Detail', () => {
         userData.userId,
         testData.userServicePoint.id,
       );
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+      TitleLevelRequests.enableTLRViaApi();
       Requests.createNewRequestViaApi({
         fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         holdingsRecordId: testData.holdingTypeId,
@@ -162,10 +158,7 @@ describe('Title Level Request. Request Detail', () => {
   });
 
   after('Deleting created entities', () => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
+    cy.getAdminToken();
     cy.wrap(requestIds).each((id) => {
       Requests.deleteRequestViaApi(id);
     });
@@ -185,7 +178,6 @@ describe('Title Level Request. Request Detail', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
   it(
     'C350424 Check that user is redirect to Item page, User page and Instance page (vega) (TaaS)',

@@ -25,10 +25,7 @@ describe('Title Level Request', () => {
   before('Create test data', () => {
     cy.getAdminToken()
       .then(() => {
-        cy.loginAsAdmin({
-          path: SettingsMenu.circulationTitleLevelRequestsPath,
-          waiter: TitleLevelRequests.waitLoading,
-        });
+        TitleLevelRequests.enableTLRViaApi();
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);
@@ -75,6 +72,7 @@ describe('Title Level Request', () => {
             query: `"id"=="${instanceData.instanceId}"`,
           }).then((instance) => {
             testData.instanceHRID = instance.hrid;
+            cy.log(testData.instanceHRID);
           });
         });
       });
