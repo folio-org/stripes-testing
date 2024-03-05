@@ -1,12 +1,7 @@
-/* eslint-disable no-unused-vars */
-import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
-import Helper from '../../../support/fragments/finance/financeHelper';
-import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
 
 describe('inventory', () => {
@@ -33,6 +28,15 @@ describe('inventory', () => {
       cy.createTempUser().then((user) => {
         testData.user = user;
         cy.log(JSON.stringify(testData.user));
+
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        InventorySearchAndFilter.instanceTabIsDefault();
+        InventoryInstances.searchByTitle('*');
+        InventoryInstance.selectTopRecord();
+        InventoryInstance.waitInventoryLoading();
       });
       cy.getCapabilitiesApi(10).then((capabs) => {
         cy.getCapabilitySetsApi(10).then((capabSets) => {
