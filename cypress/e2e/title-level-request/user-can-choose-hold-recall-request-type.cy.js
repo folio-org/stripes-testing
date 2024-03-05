@@ -71,7 +71,6 @@ describe('Title Level Request', () => {
             query: `"id"=="${instanceData.instanceId}"`,
           }).then((instance) => {
             testData.instanceHRID = instance.hrid;
-            cy.log(testData.instanceHRID);
           });
         });
       });
