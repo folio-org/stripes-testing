@@ -56,7 +56,10 @@ function fillGeneralInfo(fileName, providerName) {
 }
 
 function saveAndCloseForm() {
-  cy.do([saveAndCloseBtn.click(), saveBtn.click()]);
+  cy.wait(2000);
+  cy.do(saveAndCloseBtn.click());
+  cy.wait(2000);
+  cy.do(saveBtn.click());
   // time for saving on back-end side
   cy.wait(2000);
 }
