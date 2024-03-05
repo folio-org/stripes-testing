@@ -10,6 +10,7 @@ import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marc
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import MarcAuthoritiesSearch from '../../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
+import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -59,7 +60,7 @@ describe('MARC', () => {
           testData.tag600,
           '0',
           '0',
-          '$a C380753 Black Panther $c (Fictitious character) $v Comic books, strips, etc. $4 .prt $2 test $i comics $0 http://id.loc.gov/authorities/names/n2016004081 $0 http://id.loc.gov/authorities/names/no2020004029 $0 2006108277 $0 custom/field/no 00041049 ',
+          '$a C380753 Black Panther $c (Fictitious character) $v Comic books, strips, etc. $4 .prt $2 test $i comics $0 id.loc.gov/authorities/names/n2016004081 $0 id.loc.gov/authorities/names/no2020004029 $0 2006108277 $0 custom/field/no 00041049 ',
         ];
 
         const bib600AfterLinkingToAuth100 = [
@@ -152,6 +153,7 @@ describe('MARC', () => {
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
             InventoryInstance.waitLoading();
+            InstanceRecordView.verifyInstancePaneExists();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkFieldsExist([testData.tag600]);
             QuickMarcEditor.clickUnlinkIconInTagField(46);
