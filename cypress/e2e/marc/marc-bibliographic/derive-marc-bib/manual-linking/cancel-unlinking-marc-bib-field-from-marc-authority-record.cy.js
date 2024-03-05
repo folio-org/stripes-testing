@@ -20,7 +20,7 @@ describe('MARC', () => {
         const testData = {
           tag700: '700',
           tag100: '100',
-          tag100content: 'Sprouse, Chris',
+          tag100content: 'C365603 Sprouse, Chris',
         };
         const marcFiles = [
           {
@@ -48,12 +48,12 @@ describe('MARC', () => {
         const linkingTagAndValues = [
           {
             rowIndex: 75,
-            value: 'Sprouse, Chris',
+            value: 'C365603 Sprouse, Chris',
             tag: 700,
           },
           {
             rowIndex: 78,
-            value: 'Martin, Laura (Comic book artist)',
+            value: 'C365603 Martin, Laura (Comic book artist)',
             tag: 700,
           },
         ];
@@ -62,7 +62,7 @@ describe('MARC', () => {
           testData.tag700,
           '1',
           '\\',
-          '$a Sprouse, Chris',
+          '$a C365603 Sprouse, Chris',
           '$e artist.',
           '$0 1357871',
           '',
@@ -178,7 +178,7 @@ describe('MARC', () => {
               testData.tag700,
               '1',
               '\\',
-              '$a Sprouse, Chris',
+              '$a C365603 Sprouse, Chris',
               '$e artist.',
               '$0 1357871',
               '',

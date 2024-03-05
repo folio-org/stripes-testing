@@ -55,6 +55,7 @@ describe('MARC', () => {
           waiter: DataImport.waitLoading,
         }).then(() => {
           cy.getAdminToken();
+
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,

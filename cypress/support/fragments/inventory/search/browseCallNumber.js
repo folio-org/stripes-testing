@@ -70,6 +70,7 @@ export default {
     cy.expect(instanceDetailsPane.exists());
   },
   clickBrowseBtn() {
+    cy.wait(1000);
     cy.do(browseButton.click());
   },
   valueInResultTableIsHighlighted(value) {

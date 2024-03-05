@@ -100,9 +100,9 @@ describe('bulk-edit', () => {
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.replacePermanentLocation(location, 'item', 1);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.fillPermanentLoanType('Can circulate', 2);
+        BulkEditActions.fillPermanentLoanType('Reading room', 2);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.fillTemporaryLoanType('Can circulate', 3);
+        BulkEditActions.fillTemporaryLoanType('Reading room', 3);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.editSuppressFromDiscovery('true', 4);
         BulkEditActions.addNewBulkEditFilterString();
@@ -111,8 +111,8 @@ describe('bulk-edit', () => {
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyChangesInAreYouSureForm('Item temporary location', ['Online']);
         BulkEditActions.verifyChangesInAreYouSureForm('Item permanent location', ['Online']);
-        BulkEditActions.verifyChangesInAreYouSureForm('Permanent loan type', ['Can circulate']);
-        BulkEditActions.verifyChangesInAreYouSureForm('Temporary loan type', ['Can circulate']);
+        BulkEditActions.verifyChangesInAreYouSureForm('Permanent loan type', ['Reading room']);
+        BulkEditActions.verifyChangesInAreYouSureForm('Temporary loan type', ['Reading room']);
         BulkEditActions.verifyChangesInAreYouSureForm('Suppress from discovery', ['true']);
         BulkEditActions.verifyChangesInAreYouSureForm('Status', ['Available']);
         BulkEditActions.commitChanges();
@@ -120,8 +120,8 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.verifyChangesUnderColumns('Item temporary location', 'Online');
         BulkEditSearchPane.verifyChangesUnderColumns('Item permanent location', 'Online');
-        BulkEditSearchPane.verifyChangesUnderColumns('Permanent loan type', 'Can circulate');
-        BulkEditSearchPane.verifyChangesUnderColumns('Temporary loan type', 'Can circulate');
+        BulkEditSearchPane.verifyChangesUnderColumns('Permanent loan type', 'Reading room');
+        BulkEditSearchPane.verifyChangesUnderColumns('Temporary loan type', 'Reading room');
         BulkEditSearchPane.verifyChangesUnderColumns('Suppress from discovery', 'true');
         BulkEditSearchPane.verifyChangesUnderColumns('Status', 'Checked out');
         BulkEditSearchPane.verifyReasonForError('New status value "Available" is not allowed');

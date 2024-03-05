@@ -42,7 +42,7 @@ describe('MARC', () => {
 
       before('Create test data', () => {
         cy.createTempUser([
-          Permissions.dataImportCanUploadImportAndView.gui,
+          Permissions.moduleDataImportEnabled.gui,
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,

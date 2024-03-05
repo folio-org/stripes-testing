@@ -9,6 +9,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -40,7 +41,13 @@ describe('MARC', () => {
         ];
 
         const createdRecordIDs = [];
-        const bib110InitialFieldValues = [33, testData.tag110, '2', '\\', '$a C374194 The Beatles. $4 prf'];
+        const bib110InitialFieldValues = [
+          33,
+          testData.tag110,
+          '2',
+          '\\',
+          '$a C374194 The Beatles. $4 prf',
+        ];
         const bib110UnlinkedFieldValues = [
           33,
           testData.tag110,
@@ -144,6 +151,7 @@ describe('MARC', () => {
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
             InventoryInstance.waitLoading();
+            InstanceRecordView.verifyInstancePaneExists();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib110LinkedFieldValues);
             QuickMarcEditor.clickUnlinkIconInTagField(bib110UnlinkedFieldValues[0]);
