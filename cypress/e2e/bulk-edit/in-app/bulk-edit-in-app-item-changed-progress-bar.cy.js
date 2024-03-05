@@ -66,7 +66,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.fillPermanentLoanType('Can circulate');
+        BulkEditActions.fillPermanentLoanType('Reading room');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
