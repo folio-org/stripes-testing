@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -16,6 +13,7 @@ describe('inventory', () => {
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const fileNameForC360548 = `testInventoryFile.${getRandomPostfix()}.mrc`;
     const fileNameForC360555 = `testInventoryFile.${getRandomPostfix()}.mrc`;
+    const propertyName = 'relatedInstanceInfo';
     const createdInstanceIDs = [];
 
     before('Creating data', () => {
@@ -58,19 +56,15 @@ describe('inventory', () => {
           'Henri Sauguet 1901-1989',
         ];
 
-        DataImport.uploadFile('Sauguet_Henri_5_Bib_records.mrc', fileNameForC360548);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(jobProfileToRun);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(fileNameForC360548);
-        Logs.checkJobStatus(fileNameForC360548, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(fileNameForC360548);
-        for (let i = 0; i < 5; i++) {
-          Logs.getCreatedItemsID(i).then((link) => {
-            createdInstanceIDs.push(link.split('/')[5]);
+        DataImport.uploadFileViaApi(
+          'Sauguet_Henri_5_Bib_records.mrc',
+          fileNameForC360548,
+          jobProfileToRun,
+        ).then((response) => {
+          response.entries.forEach((record) => {
+            createdInstanceIDs.push(record[propertyName].idList[0]);
           });
-        }
+        });
 
         cy.visit(TopMenu.inventoryPath);
 
@@ -98,22 +92,15 @@ describe('inventory', () => {
       () => {
         const searchQueries = ['978-92-8000-565-9', '978-92-8011-565-9'];
 
-        DataImport.uploadFile(
+        DataImport.uploadFileViaApi(
           'two_bib_records_with_isbn_search_by_keyword.mrc',
           fileNameForC360555,
-        );
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(jobProfileToRun);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(fileNameForC360555);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(fileNameForC360555);
-        for (let i = 0; i < 2; i++) {
-          Logs.getCreatedItemsID(i).then((link) => {
-            createdInstanceIDs.push(link.split('/')[5]);
+          jobProfileToRun,
+        ).then((response) => {
+          response.entries.forEach((record) => {
+            createdInstanceIDs.push(record[propertyName].idList[0]);
           });
-        }
+        });
 
         cy.visit(TopMenu.inventoryPath);
 

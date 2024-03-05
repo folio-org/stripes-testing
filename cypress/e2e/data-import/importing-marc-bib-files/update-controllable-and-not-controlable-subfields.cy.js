@@ -203,8 +203,9 @@ describe('data-import', () => {
 
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);
+        DataImport.waitLoading();
         DataImport.verifyUploadState();
-        DataImport.uploadFile(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
+        DataImport.uploadFileAndRetry(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
@@ -236,7 +237,7 @@ describe('data-import', () => {
           '700',
           '1',
           '\\',
-          '$a Lee, Steve, $d 1922-2018, $e narrator $0 http://id.loc.gov/authorities/names/n2008001084',
+          '$a Lee, Steve, $d 1922-2018, $e narrator $0 id.loc.gov/authorities/names/n2008001084',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
           77,

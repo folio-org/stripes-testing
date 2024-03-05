@@ -65,11 +65,12 @@ describe('MARC', () => {
 
     const twoMarcBibsToLink = [
       {
-        marcBibRecord: 'The other side of paradise : a memoir / Staceyann Chin.',
+        marcBibRecord: 'C369084The other side of paradise : a memoir / Staceyann Chin.',
         linkingFields: linkingTagForFirstMarcBib,
       },
       {
-        marcBibRecord: 'Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin',
+        marcBibRecord:
+          'C369084Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin',
         linkingFields: linkingTagForSecondMarcBib,
       },
     ];
@@ -85,6 +86,7 @@ describe('MARC', () => {
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
+        cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -105,6 +107,7 @@ describe('MARC', () => {
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             marcBib.linkingFields.forEach((linking) => {
+              cy.wait(2000);
               QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
               MarcAuthorities.switchToSearch();
               InventoryInstance.verifySelectMarcAuthorityModal();
@@ -128,9 +131,8 @@ describe('MARC', () => {
     after('Deleting created user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
-      for (let i = 0; i < 2; i++) {
-        InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[i]);
-      }
+      InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
+      InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[1]);
       MarcAuthority.deleteViaAPI(createdAuthorityIDs[2]);
     });
 

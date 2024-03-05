@@ -55,6 +55,7 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Create test data', () => {
+        cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -120,6 +121,7 @@ describe('MARC', () => {
 
           MarcAuthority.edit();
           QuickMarcEditor.checkContent(testData.authority150FieldValue, testData.tag150RpwIndex);
+          cy.wait(2000);
 
           QuickMarcEditor.updateExistingTagName(testData.tag150, testData.tag100);
           QuickMarcEditor.pressSaveAndClose();

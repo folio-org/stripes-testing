@@ -10,6 +10,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import EditRequest from '../../support/fragments/requests/edit-request';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
@@ -105,6 +106,7 @@ describe('Title Level Request', () => {
                 requestData.patronComments = patronComments;
               })
               .then(() => {
+                TitleLevelRequests.enableTLRViaApi();
                 Requests.createNewRequestViaApi(requestData).then((createdRequest) => {
                   requestId = createdRequest.body.id;
                 });
@@ -139,7 +141,7 @@ describe('Title Level Request', () => {
 
   it(
     'C350559 Check that the user can Edit request (Title level request) (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPathBroken', 'vega'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();

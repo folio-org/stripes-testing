@@ -32,6 +32,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -110,14 +111,15 @@ describe('data-import', () => {
       },
       {
         rowIndex: 76,
-        value: 'Lee, Stan, 1922-2018',
+        value: 'C385665Lee, Stan, 1922-2018',
       },
       {
         rowIndex: 77,
-        value: 'Kirby, Jack',
+        value: 'C385665Kirby, Jack',
       },
     ];
     const createdAuthorityIDs = [];
+    const subfield = '$9';
 
     before('Creating user', () => {
       cy.createTempUser([
@@ -233,14 +235,15 @@ describe('data-import', () => {
         DataImport.editMarcFile(
           nameForExportedMarcFile,
           nameForUpdatedMarcFile,
-          ['aKirby, Jack', 'n77020008'],
-          ['aKirby, Steve,', 'n77020008test'],
+          ['aC385665Kirby, Jack', 'n77020008'],
+          ['aC385665Kirby, Steve,', 'n77020008test'],
         );
 
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);
+        DataImport.waitLoading();
         DataImport.verifyUploadState();
-        DataImport.uploadFile(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
+        DataImport.uploadFileAndRetry(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
@@ -268,7 +271,7 @@ describe('data-import', () => {
           '700',
           '1',
           '\\',
-          '$a Lee, Stan, $d 1922-2018',
+          '$a C385665Lee, Stan, $d 1922-2018',
           '$e creator',
           '$0 http://id.loc.gov/authorities/names/n83169267',
           '',
@@ -278,12 +281,17 @@ describe('data-import', () => {
           '700',
           '1',
           '\\',
-          '$a Kirby, Steve, $e creator. $0 http://id.loc.gov/authorities/names/n77020008test',
+          '$a C385665Kirby, Steve, $e creator. $0 http://id.loc.gov/authorities/names/n77020008test',
         );
 
         QuickMarcEditor.closeEditorPane();
         InventoryInstance.viewSource();
-        InventoryInstance.checkAbsenceOfAuthorityIconInMarcViewPane();
+        InventoryViewSource.verifyLinkedToAuthorityIcon(linkingTagAndValues[0].rowIndex);
+        InventoryViewSource.verifyExistanceOfValueInRow(subfield, linkingTagAndValues[0].rowIndex);
+        InventoryViewSource.verifyLinkedToAuthorityIcon(linkingTagAndValues[1].rowIndex);
+        InventoryViewSource.verifyExistanceOfValueInRow(subfield, linkingTagAndValues[1].rowIndex);
+        InventoryViewSource.verifyLinkedToAuthorityIcon(linkingTagAndValues[2].rowIndex, false);
+        InventoryViewSource.verifyAbsenceOfValueInRow(subfield, linkingTagAndValues[2].rowIndex);
       },
     );
   });

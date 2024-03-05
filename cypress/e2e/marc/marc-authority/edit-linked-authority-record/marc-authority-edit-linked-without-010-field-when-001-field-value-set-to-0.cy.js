@@ -121,6 +121,7 @@ describe('MARC', () => {
           MarcAuthorities.verifyMarcViewPaneIsOpened();
 
           MarcAuthority.edit();
+          cy.wait(2000);
           QuickMarcEditor.checkFieldAbsense(testData.tag010);
 
           QuickMarcEditor.updateExistingField(
@@ -148,7 +149,7 @@ describe('MARC', () => {
             '240',
             '1',
             '0',
-            '$m piano, violin, cello, $n op. 44, $r E♭ major $a Variations,',
+            '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
             '',
             `$0 ${testData.authority001FieldValue}`,
             '',

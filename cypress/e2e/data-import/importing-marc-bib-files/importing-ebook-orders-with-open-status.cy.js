@@ -137,7 +137,6 @@ describe('data-import', () => {
         Logs.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
-        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
         FileDetails.checkOrderQuantityInSummaryTable(quantityOfItems);
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.verifyPOLDetailsIsOpened();

@@ -1,3 +1,5 @@
+import { including } from 'bigtest';
+import { Accordion } from '../../../../../interactors';
 import InventoryItems from '../item/inventoryItems';
 
 const getHoldingSources = (searchParams) => cy
@@ -63,5 +65,19 @@ export default {
       path: `holdings-storage/holdings/${holdingsRecordId}`,
       isDefaultSearchParamsRequired: false,
     });
+  },
+  checkIfExpanded(content, expand) {
+    cy.wait(2000);
+    cy.get('[class^="accordion---"]')
+      .contains(`Holdings: ${content}`)
+      .then(($accordion) => {
+        if (expand && !$accordion.attr('aria-expanded')) {
+          cy.wrap($accordion).click();
+          cy.expect(Accordion({ label: including(`Holdings: ${content}`) }).has({ open: expand }));
+        } else if (!expand && $accordion.attr('aria-expanded')) {
+          cy.wrap($accordion).click();
+          cy.expect(Accordion({ label: including(`Holdings: ${content}`) }).has({ open: expand }));
+        }
+      });
   },
 };

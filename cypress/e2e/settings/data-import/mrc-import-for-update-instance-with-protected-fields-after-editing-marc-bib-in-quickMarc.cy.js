@@ -202,7 +202,7 @@ describe('data-import', () => {
             DataImport.editMarcFile(
               'marcFileForC356829.mrc',
               editedMarcFileName,
-              ['srsUuid', 'instanceUuid', 'hrid'],
+              ['instanceUuid', 'srsUuid', 'hrid'],
               [uuid[0], uuid[1], instanceHrid],
             );
           });

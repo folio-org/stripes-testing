@@ -6,13 +6,15 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
+import { getRandomLetters } from '../../../support/utils/stringTools';
 
 describe('eHoldings', () => {
   describe('Title+Package', () => {
+    const randomLetters = getRandomLetters(8);
     const testData = {
       servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('TestSP_1', uuid()),
-      label1Value: 'Lorem ipsum dolor sit amet consectetur adipiscing elit et',
-      label2Value: 'Label: custom',
+      label1Value: `Lorem ipsum dolor sit amet consectetur ${randomLetters}`,
+      label2Value: `Label: custom ${randomLetters}`,
       resourseUrl: '/eholdings/resources/58-473-185972',
     };
 

@@ -111,7 +111,7 @@ describe('Invoices', () => {
               '10',
               '1',
               '10',
-              location.institutionId,
+              location.name,
               'Euro (EUR)',
               '€',
               '2',

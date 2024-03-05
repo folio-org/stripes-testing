@@ -127,14 +127,12 @@ describe('MARC', () => {
         ItemRecordView.closeDetailView();
         InventoryInstance.openMoveItemsWithinAnInstance();
 
-        InventoryInstance.openHoldings([secondHolding]);
         InventoryInstance.moveItemToAnotherHolding({
           fromHolding: firstHolding,
           toHolding: secondHolding,
         });
         InteractorsTools.checkCalloutMessage(successCalloutMessage);
 
-        InventoryInstance.openHoldings([firstHolding]);
         InventoryInstance.returnItemToFirstHolding(firstHolding, secondHolding);
         InteractorsTools.checkCalloutMessage(successCalloutMessage);
       },

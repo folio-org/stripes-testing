@@ -162,11 +162,14 @@ export default {
     return cy.get('*[class^="mclRowContainer"]').contains(listName).should('not.exist');
   },
 
+  selectInactiveLists() {
+    cy.do(Checkbox({ id: 'clickable-filter-status-inactive' }).checkIfNotSelected());
+  },
+
   findResultRowIndexByContent(content) {
     return cy
       .get('*[class^="mclCell"]')
       .contains(content)
-      .parent()
       .parent()
       .invoke('attr', 'data-row-inner');
   },
@@ -188,11 +191,33 @@ export default {
     });
   },
 
+  getTypesViaApi() {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: 'entity-types',
+    });
+  },
+
   deleteViaApi(id) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `lists/${id}`,
       isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  createViaApi(newList) {
+    this.getTypesViaApi().then((response) => {
+      newList.entityTypeId = response.body.find(
+        (entityType) => entityType.label === newList.recordType,
+      ).id;
+      delete newList.recordType;
+      return cy.okapiRequest({
+        method: 'POST',
+        path: 'lists',
+        body: newList,
+        isDefaultSearchParamsRequired: false,
+      });
     });
   },
 
@@ -228,7 +253,7 @@ export default {
       recordTypesAccordion.find(Checkbox('Items')).has({ checked: false }),
       recordTypesAccordion.find(Checkbox('Loans')).has({ checked: false }),
       recordTypesAccordion.find(Checkbox('Users')).has({ checked: false }),
-      recordTypesAccordion.find(Checkbox('Purchase order Lines')).has({ checked: false }),
+      recordTypesAccordion.find(Checkbox('Purchase order lines')).has({ checked: false }),
     ]);
   },
 
@@ -336,7 +361,6 @@ export default {
           .invoke('text')
           .then((cellValue) => {
             cells.push(cellValue);
-            cy.log(cellValue);
           });
       })
       .then(() => {

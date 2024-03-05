@@ -281,7 +281,7 @@ describe('data-import', () => {
             '0id.loc.gov/authorities/names/n83130832',
             'aMusic piano',
             'ewriter of supplementary textual content.',
-            'aLudwig van, Beethoven,d1770-1827iContainer of (work):0id.loc.gov/authorities/names/n79107741',
+            'aLudwig van, Beethoven,d1770-1827iContainer of (work):0http://id.loc.gov/authorities/names/n79107741',
           ],
           [
             'aBeethoven, Ludwig V.d1770-1827eAuthor',
@@ -294,8 +294,9 @@ describe('data-import', () => {
 
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);
+        DataImport.waitLoading();
         DataImport.verifyUploadState();
-        DataImport.uploadFile(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
+        DataImport.uploadFileAndRetry(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
@@ -320,7 +321,7 @@ describe('data-import', () => {
           '240',
           '1',
           '0',
-          '$m piano, violin, cello, $n op. 44, $r E♭ major $a Variations,',
+          '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
           '$c Ludwig Van Beethoven.',
           '$0 http://id.loc.gov/authorities/names/n83130832',
           '',

@@ -97,7 +97,7 @@ describe('Finance: Fiscal Year Rollover', () => {
           '40',
           '1',
           '40',
-          location.institutionId,
+          location.name,
         );
         OrderLines.backToEditingOrder();
         Orders.openOrder();
@@ -120,7 +120,7 @@ describe('Finance: Fiscal Year Rollover', () => {
           '10',
           '1',
           '10',
-          location.institutionId,
+          location.name,
         );
         OrderLines.backToEditingOrder();
         Orders.openOrder();

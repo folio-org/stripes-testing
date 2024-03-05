@@ -69,7 +69,7 @@ describe('data-import', () => {
         DataImport.checkIsLandingPageOpened();
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile('marcBibFileForC356824.mrc', fileName);
+        DataImport.uploadFile('oneThousandMarcBib.mrc', fileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
@@ -79,8 +79,8 @@ describe('data-import', () => {
         InventoryInstances.importWithOclc(oclcForImport);
 
         cy.visit(TopMenu.dataImportPath);
+        cy.wait(15000);
         Logs.openViewAllLogs();
-        cy.wait(20000);
         cy.reload();
         LogsViewAll.openUserIdAccordion();
         LogsViewAll.filterJobsByUser(`${user.firstName} ${user.lastName}`);

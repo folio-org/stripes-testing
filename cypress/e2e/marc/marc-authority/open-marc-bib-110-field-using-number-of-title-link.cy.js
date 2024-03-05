@@ -14,7 +14,7 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       tag: '110',
-      marcValue: 'Beatles',
+      marcValue: 'C375261 Beatles',
       rowIndex: 33,
       searchOption: 'Corporate/Conference name',
       instanceTitle: 'The Beatles in mono.',
@@ -100,8 +100,8 @@ describe('MARC', () => {
         MarcAuthorities.switchToBrowse();
         MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);
         MarcAuthorities.checkRow(testData.marcValue);
-        MarcAuthorities.verifyNumberOfTitles(5, '1');
-        MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
+        MarcAuthorities.verifyNumberOfTitlesForRowWithValue(testData.marcValue, '1');
+        MarcAuthorities.clickNumberOfTitlesByHeading(testData.marcValue);
         InventorySearchAndFilter.verifySearchResult(testData.instanceTitle);
         InventoryInstance.checkPresentedText(testData.instanceTitle);
       },

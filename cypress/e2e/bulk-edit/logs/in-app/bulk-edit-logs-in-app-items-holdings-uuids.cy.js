@@ -141,26 +141,20 @@ describe('Bulk Edit - Logs', () => {
       );
 
       BulkEditSearchPane.downloadFileWithProposedChanges();
-      BulkEditFiles.verifyMatchedResultFileContent(
-        previewOfProposedChangesFileName,
-        ['', ''],
-        'temporaryLocation',
-        true,
-      );
-      BulkEditFiles.verifyMatchedResultFileContent(
-        previewOfProposedChangesFileName,
-        ['', ''],
-        'temporaryLocation',
-        true,
-      );
+      BulkEditFiles.verifyCSVFileRows(previewOfProposedChangesFileName, [
+        '',
+        `${inventoryEntity.locations.permanent.name} > 1,,1,${inventoryEntity.item.barcode}`,
+        `${inventoryEntity.locations.permanent.name} > 1,,1,secondBarcode_${inventoryEntity.item.barcode}`,
+        '',
+      ]);
 
       BulkEditSearchPane.downloadFileWithUpdatedRecords();
-      BulkEditFiles.verifyMatchedResultFileContent(
-        updatedRecordsFileName,
-        ['', ''],
-        'temporaryLocation',
-        true,
-      );
+      BulkEditFiles.verifyCSVFileRows(updatedRecordsFileName, [
+        '',
+        `${inventoryEntity.locations.permanent.name} > 1,,1,${inventoryEntity.item.barcode}`,
+        `${inventoryEntity.locations.permanent.name} > 1,,1,secondBarcode_${inventoryEntity.item.barcode}`,
+        '',
+      ]);
 
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.switchToItem();

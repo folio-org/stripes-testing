@@ -118,7 +118,7 @@ describe('ui-invoices: Cancelling approved invoices', () => {
       Funds.selectTransaction('row-1');
       Funds.checkEncumbrance(orderNumber);
       Funds.selectTransaction('row-2');
-      Funds.checkPendingPayment(invoice.invoiceNumber);
+      Funds.checkPendingPayment(`${orderNumber}-1`);
       cy.visit(TopMenu.invoicesPath);
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
