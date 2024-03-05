@@ -1,4 +1,4 @@
-import { RECORD_STATUSES } from '../../../support/constants';
+import { RECORD_STATUSES, JOB_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -54,16 +54,17 @@ describe('MARC', () => {
 
     before('create test data and login', () => {
       cy.getAdminToken();
-      DataImport.uploadFileViaApi(
-        marcFile.marc,
-        marcFile.fileName,
-        marcFile.jobProfileToRun,
-      ).then((response) => {
-        response.entries.forEach((record) => {
-          testData.instanceID = record[marcFile.propertyName].idList[0];
-        });
-      });
-
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+      DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, marcFile.jobProfileToRun).then(
+        (response) => {
+          response.entries.forEach((record) => {
+            testData.instanceID = record[marcFile.propertyName].idList[0];
+          });
+        },
+      );
+      Logs.waitFileIsImported(marcFile.fileName);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(marcFile.fileName);
       FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
         // edit marc file adding instance hrid

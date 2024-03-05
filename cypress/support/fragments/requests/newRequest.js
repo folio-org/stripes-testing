@@ -278,7 +278,11 @@ export default {
     );
   },
 
-  enterRequesterInfoWithRequestType(newRequest, requestType = REQUEST_TYPES.PAGE, fulfillmentPreference = 'Hold Shelf') {
+  enterRequesterInfoWithRequestType(
+    newRequest,
+    requestType = REQUEST_TYPES.PAGE,
+    fulfillmentPreference = 'Hold Shelf',
+  ) {
     cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
     cy.intercept('/proxiesfor?*').as('getUsers');
     cy.wait(2000);
