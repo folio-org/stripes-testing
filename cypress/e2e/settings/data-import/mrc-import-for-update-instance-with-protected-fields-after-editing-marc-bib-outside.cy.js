@@ -194,7 +194,7 @@ describe('data-import', () => {
             DataImport.editMarcFile(
               'marcFileForC356830_rev.mrc',
               editedMarcFileName,
-              ['instanceHrid', 'srsUuid', 'instanceUuid'],
+              ['instanceHrid', 'instanceUuid', 'srsUuid'],
               [instanceHrid, uuid[0], uuid[1]],
             );
           });
