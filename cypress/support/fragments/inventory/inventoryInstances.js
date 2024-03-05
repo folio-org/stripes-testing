@@ -70,6 +70,7 @@ const searchInstancesOptions = [
   'Identifier (all)',
   'ISBN',
   'ISSN',
+  'LCCN, normalized',
   'OCLC number, normalized',
   'Instance notes (all)',
   'Instance administrative notes',
