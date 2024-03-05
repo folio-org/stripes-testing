@@ -162,6 +162,7 @@ describe('MARC', () => {
             QuickMarcEditor.clickLinkIconInTagField(75);
             MarcAuthorities.switchToBrowse();
             MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);
+            MarcAuthorities.selectTitle(testData.marcValue);
             MarcAuthority.contains(testData.tag010);
             MarcAuthority.contains(testData.tag010content);
             MarcAuthorities.checkRecordDetailPageMarkedValue(testData.marcValue);

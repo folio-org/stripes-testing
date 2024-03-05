@@ -9,6 +9,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -143,6 +144,7 @@ describe('MARC', () => {
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
             InventoryInstance.waitLoading();
+            InstanceRecordView.verifyInstancePaneExists();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib810LinkedFieldValues);
             QuickMarcEditor.clickUnlinkIconInTagField(bib810UnlinkedFieldValues[0]);
