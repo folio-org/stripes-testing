@@ -836,6 +836,10 @@ export default {
     internal: 'ui-inventory.settings.fast-add',
     gui: 'Settings (Inventory): Edit fast add settings',
   },
+  uiCreateEditDeleteLoanTypes: {
+    internal: 'ui-inventory.settings.loantypes',
+    gui: 'Settings (Inventory): Create, edit, delete loan types',
+  },
   uiCreateEditDeleteMaterialTypes: {
     internal: 'ui-inventory.settings.materialtypes',
     gui: 'Settings (Inventory): Create, edit, delete material types',

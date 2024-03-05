@@ -74,7 +74,11 @@ describe('Consortium manager', () => {
           SelectMembers.changeSelectAllCheckbox('check');
           SelectMembers.saveAndClose();
           ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.selectMembers(tenantNames.central, tenantNames.college, tenantNames.university);
+          SelectMembers.selectMembers(
+            tenantNames.central,
+            tenantNames.college,
+            tenantNames.university,
+          );
           SelectMembers.saveAndClose();
           SelectMembers.selectAllMembers();
 
@@ -86,27 +90,25 @@ describe('Consortium manager', () => {
           ConfirmCreate.clickConfirm();
 
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [
-              testData.newDepartment.name,
-              testData.newDepartment.code,
-              tenantNames.central,
-            ],
+            [testData.newDepartment.name, testData.newDepartment.code, tenantNames.central],
             ['edit', 'trash'],
           );
 
-          ConsortiaControlledVocabularyPaneset.performAction(testData.newDepartment.name, actionIcons.edit);
-          ConsortiaControlledVocabularyPaneset.fillInTextField({ name: testData.editDepartment.name, code: testData.editDepartment.code });
+          ConsortiaControlledVocabularyPaneset.performAction(
+            testData.newDepartment.name,
+            actionIcons.edit,
+          );
+          ConsortiaControlledVocabularyPaneset.fillInTextField({
+            name: testData.editDepartment.name,
+            code: testData.editDepartment.code,
+          });
           ConsortiaControlledVocabularyPaneset.clickSave();
 
           ConfirmShare.waitLoadingConfirmShareToAll(testData.editDepartment.name);
           ConfirmShare.clickConfirm();
 
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [
-              testData.editDepartment.name,
-              testData.editDepartment.code,
-              tenantNames.central,
-            ],
+            [testData.editDepartment.name, testData.editDepartment.code, tenantNames.central],
             ['edit', 'trash'],
           );
 
@@ -133,11 +135,7 @@ describe('Consortium manager', () => {
           cy.visit(SettingsMenu.consortiaSettingsDepartmentsPath);
           DepartmentsConsortiumManager.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [
-              testData.newDepartment.name,
-              testData.newDepartment.code,
-              tenantNames.college,
-            ],
+            [testData.newDepartment.name, testData.newDepartment.code, tenantNames.college],
             ['edit', 'trash'],
           );
 
@@ -145,11 +143,7 @@ describe('Consortium manager', () => {
           cy.visit(SettingsMenu.consortiaSettingsDepartmentsPath);
           DepartmentsConsortiumManager.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [
-              testData.newDepartment.name,
-              testData.newDepartment.code,
-              tenantNames.university,
-            ],
+            [testData.newDepartment.name, testData.newDepartment.code, tenantNames.university],
             ['edit', 'trash'],
           );
         },

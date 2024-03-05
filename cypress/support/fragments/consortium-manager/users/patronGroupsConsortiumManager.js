@@ -44,7 +44,10 @@ export default {
           method: REQUEST_METHOD.GET,
           path: `consortia/${consortiaId}/publications/${publicationId}/results`,
         }).then(({ body }) => {
-          const groups = JSON.parse(body.publicationResults.find((publication) => publication.tenantId === tenantId).response).usergroups;
+          const groups = JSON.parse(
+            body.publicationResults.find((publication) => publication.tenantId === tenantId)
+              .response,
+          ).usergroups;
           return groups.find((group) => group.group === groupName);
         });
       });

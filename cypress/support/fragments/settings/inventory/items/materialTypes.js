@@ -12,25 +12,25 @@ export const reasonsActions = {
 };
 
 export default {
-  createNoteTypeViaApi: (body) => {
+  createMaterialTypesViaApi: (body) => {
     return cy
       .okapiRequest({
         method: REQUEST_METHOD.POST,
-        path: 'item-note-types',
+        path: 'material-types',
         body,
       })
       .then((response) => response.body.id);
   },
 
-  deleteNoteTypeViaApi: (noteTypeId) => {
+  deleteMaterialTypesViaApi: (noteTypeId) => {
     return cy.okapiRequest({
       method: REQUEST_METHOD.DELETE,
-      path: `item-note-types/${noteTypeId}`,
+      path: `material-types/${noteTypeId}`,
       isDefaultSearchParamsRequired: false,
     });
   },
 
-  verifyConsortiumItemNoteTypesInTheList({ name, source = 'consortium', actions = [] }) {
+  verifyConsortiumMaterialTypesInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
@@ -51,7 +51,7 @@ export default {
     }
   },
 
-  verifyLocalItemNoteTypesInTheList({ name, source = 'local', actions = [] }) {
+  verifyLocalMaterialTypesInTheList({ name, source = 'local', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
@@ -72,12 +72,12 @@ export default {
     }
   },
 
-  verifyItemNoteTypesAbsentInTheList({ name }) {
+  verifyMaterialTypesAbsentInTheList({ name }) {
     const row = MultiColumnListRow({ content: including(name) });
     cy.expect(row.absent());
   },
 
-  clickTrashButtonForItemNoteTypes(name) {
+  clickTrashButtonForMaterialTypes(name) {
     cy.do([
       MultiColumnListRow({ content: including(name) })
         .find(MultiColumnListCell({ columnIndex: 3 }))

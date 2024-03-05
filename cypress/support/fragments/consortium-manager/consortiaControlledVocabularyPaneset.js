@@ -82,7 +82,7 @@ export default {
 
   verifyRecordInTheList(record, actionButtons = []) {
     cy.then(() => MultiColumnListRow({
-      content: (including(record[0])),
+      content: including(record[0]),
     }).rowIndexInParent()).then((rowIndexInParent) => {
       cy.wrap(record).each((text, columnIndex) => {
         cy.expect(
@@ -111,7 +111,9 @@ export default {
 
   performActionFor(name, tenant, action) {
     // actions are selected by button name: trash(delete) or edit
-    cy.xpath(`.//*[(contains(@class, 'mclRowFormatterContainer')) and (./*[(./*[text()='${name}']) and (./*[text()='${tenant}'])])]`)
+    cy.xpath(
+      `.//*[(contains(@class, 'mclRowFormatterContainer')) and (./*[(./*[text()='${name}']) and (./*[text()='${tenant}'])])]`,
+    )
       .invoke('attr', 'data-row-index')
       .then((rowIndexInParent) => {
         cy.do(
@@ -123,7 +125,9 @@ export default {
   },
 
   verifyRecordIsInTheList(name, tenant, record, actionButtons = []) {
-    cy.xpath(`.//*[(contains(@class, 'mclRowFormatterContainer')) and (./*[(./*[text()='${name}']) and (./*[text()='${tenant}'])])]`)
+    cy.xpath(
+      `.//*[(contains(@class, 'mclRowFormatterContainer')) and (./*[(./*[text()='${name}']) and (./*[text()='${tenant}'])])]`,
+    )
       .invoke('attr', 'data-row-index')
       .then((rowIndexInParent) => {
         cy.wrap(record).each((text, columnIndex) => {
@@ -152,7 +156,9 @@ export default {
   },
 
   verifyRecordIsNotInTheList(name, tenant) {
-    cy.xpath(`.//*[(contains(@class, 'mclRowFormatterContainer')) and (./*[(./*[text()='${name}']) and (./*[text()='${tenant}'])])]`).should('not.exist');
+    cy.xpath(
+      `.//*[(contains(@class, 'mclRowFormatterContainer')) and (./*[(./*[text()='${name}']) and (./*[text()='${tenant}'])])]`,
+    ).should('not.exist');
   },
 
   verifyRecordNotInTheList(name) {
