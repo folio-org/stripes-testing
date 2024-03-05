@@ -145,10 +145,13 @@ describe('data-import', () => {
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
+        cy.pause();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);
         JobProfiles.waitFileIsUploaded();
+        cy.pause();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
+        cy.pause();
         Logs.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(marcFileName);
@@ -167,9 +170,10 @@ describe('data-import', () => {
         });
         FileDetails.openJsonScreen(ordersData[0].title);
         JsonScreenView.verifyJsonScreenIsOpened();
-        JsonScreenView.verifyContentInTab('"recordType": "MARC_BIB",');
         JsonScreenView.openOrderTab();
-        JsonScreenView.verifyContentInTab('org.folio.rest.core.exceptions.HttpException:');
+        JsonScreenView.verifyContentInTab(
+          'org.folio.rest.core.exceptions.HttpException: {"errors":[{"message":"Reference on holding or location must present","code":"locationIdAndHoldingIdAbsentError","parameters":[]}],"total_records":1}',
+        );
       },
     );
   });

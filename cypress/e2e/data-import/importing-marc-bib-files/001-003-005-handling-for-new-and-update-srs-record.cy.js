@@ -166,7 +166,7 @@ describe('data-import', () => {
             DataImport.editMarcFile(
               'marcFilrForC17039With999Field.mrc',
               editedMarcFileName,
-              ['srsUuid', 'instanceUuid'],
+              ['instanceUuid', 'srsUuid'],
               [uuid[0], uuid[1]],
             );
           });
