@@ -92,7 +92,6 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(testData.marcValue);
-            MarcAuthoritiesSearch.selectAuthorityByIndex(0);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag240, 18);
             QuickMarcEditor.pressSaveAndClose();

@@ -477,7 +477,7 @@ export default {
       RepeatableFieldItem({ index: rowIndex })
         .find(Button({ id: 'loanType' }))
         .click(),
-      SelectionOption(including(type)).click(),
+      SelectionOption(type).click(),
     ]);
   },
 
