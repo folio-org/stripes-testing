@@ -231,7 +231,6 @@ describe('MARC', () => {
           { tags: ['extendedPath', 'spitfire'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
-            cy.reload();
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             fields.forEach((matchs) => {
