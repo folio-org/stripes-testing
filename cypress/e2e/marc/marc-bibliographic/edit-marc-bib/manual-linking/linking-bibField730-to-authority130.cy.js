@@ -9,6 +9,7 @@ import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAu
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
+import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -124,6 +125,7 @@ describe('MARC', () => {
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
             InventoryInstance.waitLoading();
+            InstanceRecordView.verifyInstancePaneExists();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkFieldsExist([testData.tag730]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib730AfterLinkingToAuth130);

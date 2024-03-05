@@ -38,11 +38,13 @@ describe('MARC', () => {
           marc: 'marcBibFileForC374142.mrc',
           fileName: `testMarcFileC374142.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          propertyName: 'relatedInstanceInfo',
         },
         {
           marc: 'marcAuthFileForC374142.mrc',
           fileName: `testMarcFileC374142.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
+          propertyName: 'relatedAuthorityInfo',
           authorityHeading:
             'C374142 Conference on Security and Cooperation in Europe (1972-1975 : Helsinki, Finland). Helsinki Final Act',
         },
@@ -56,19 +58,16 @@ describe('MARC', () => {
           waiter: DataImport.waitLoading,
         }).then(() => {
           cy.getAdminToken();
+
           marcFiles.forEach((marcFile) => {
-            cy.visit(TopMenu.dataImportPath);
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitFileIsUploaded();
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(marcFile.fileName);
-            Logs.getCreatedItemsID().then((link) => {
-              createdRecordIDs.push(link.split('/')[5]);
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              });
             });
           });
         });
