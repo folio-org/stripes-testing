@@ -11,6 +11,28 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     const testData = {
       lccnOption: 'LCCN, normalized',
+      lccnSearchQueries: [
+        'n79021425440126',
+        '  n  79021425440126 ',
+        'n 79021425440126',
+        'n  79021425440126',
+        'n79021425440126 ',
+        'n79021425440126  ',
+        ' n79021425440126',
+        '  n79021425440126',
+        '  n  79021425440126  ',
+      ],
+      searchResults: [
+        'Test LCCN normalized C440126Auto record 1 (two leading spaces, one trailing space, two internal spaces)',
+        'Test LCCN normalized C440126Auto record 2 (one space internal)',
+        'Test LCCN normalized C440126Auto record 3 (two spaces internal)',
+        'Test LCCN normalized C440126Auto record 4 (one space trailing)',
+        'Test LCCN normalized C440126Auto record 5 (two spaces trailing)',
+        'Test LCCN normalized C440126Auto record 6 (one space leading)',
+        'Test LCCN normalized C440126Auto record 7 (two spaces leading)',
+        'Test LCCN normalized C440126Auto record 8 (two spaces everywhere)',
+        'Test LCCN normalized C440126Auto record 9 (no spaces)',
+      ],
     };
 
     const marcFile = {
@@ -57,21 +79,16 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
+        InventorySearchAndFilter.selectSearchOptions(testData.lccnOption, '');
 
-        // SelectInstanceModal.clickSearchOptionSelect();
-        // SelectInstanceModal.checkSearchOptionIncluded(lccnOption);
-        // InventorySearchAndFilter.switchToHoldings();
-        // SelectInstanceModal.checkDefaultSearchOptionSelected();
-        // SelectInstanceModal.checkSearchInputFieldValue('');
-        // SelectInstanceModal.checkResultsListEmpty();
-        // SelectInstanceModal.clickSearchOptionSelect();
-        // SelectInstanceModal.checkSearchOptionIncluded(lccnOption, false);
-        // InventorySearchAndFilter.switchToItem();
-        // SelectInstanceModal.checkDefaultSearchOptionSelected();
-        // SelectInstanceModal.checkSearchInputFieldValue('');
-        // SelectInstanceModal.checkResultsListEmpty();
-        // SelectInstanceModal.clickSearchOptionSelect();
-        // SelectInstanceModal.checkSearchOptionIncluded(lccnOption, false);
+        testData.lccnSearchQueries.forEach((query) => {
+          InventorySearchAndFilter.executeSearch(query);
+          testData.searchResults.forEach((expectedResult) => {
+            InventorySearchAndFilter.verifySearchResult(expectedResult);
+          });
+          InventorySearchAndFilter.selectSearchOptions(testData.lccnOption, '');
+          InventorySearchAndFilter.verifyResultPaneEmpty();
+        });
       },
     );
   });
