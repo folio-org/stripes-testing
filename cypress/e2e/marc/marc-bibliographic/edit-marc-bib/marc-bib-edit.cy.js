@@ -329,6 +329,7 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.clickSaveAndCloseThenCheck('2');
           QuickMarcEditor.confirmDeletingFields();
+          InstanceRecordView.waitLoading();
           InstanceRecordView.viewSource();
           InventoryViewSource.notContains(`${fieldData.field010.tag}\t`);
           InventoryViewSource.notContains(fieldData.emptyField.content);

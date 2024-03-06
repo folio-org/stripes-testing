@@ -12,9 +12,9 @@ describe('MARC', () => {
     describe('Edit Authority record', () => {
       const testData = {
         authority: {
-          title: 'DiCaprio, Leonardo',
+          title: 'C375090DiCaprio, Leonardo',
           type: 'Authorized',
-          searchInput: 'Di Caprio',
+          searchInput: 'C375090Di Caprio',
           searchOption: 'Keyword',
         },
         authority2: {

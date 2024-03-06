@@ -55,7 +55,7 @@ describe('MARC', () => {
             '0',
             '$a C388512Chin, Staceyann, $d 1972- $h Spoken word $t Crossfire.',
             '$x Childhood and youth.',
-            '$0 http://id.loc.gov/authorities/names/no2021056177',
+            '$0 http://id.loc.gov/authorities/names/no2021056179',
             '',
           ],
           [

@@ -214,6 +214,7 @@ function deleteRequestViaApi(requestId) {
     method: 'DELETE',
     path: `circulation/requests/${requestId}`,
     isDefaultSearchParamsRequired: false,
+    falseOnStatusCode: false,
   });
 }
 

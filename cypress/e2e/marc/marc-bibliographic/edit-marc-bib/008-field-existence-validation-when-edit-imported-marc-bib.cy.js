@@ -119,13 +119,16 @@ describe('MARC', () => {
           QuickMarcEditor.check008FieldContent();
           QuickMarcEditor.updateValuesIn008Boxes(testData.tag008BoxValues);
           QuickMarcEditor.pressSaveAndClose();
+          cy.intercept(`/inventory/instances/${testData.createdRecordIDs[0]}`).as('recordUpdated');
           QuickMarcEditor.checkAfterSaveAndClose();
-          InventoryInstance.editMarcBibliographicRecord();
-          InventorySteps.verifyHiddenFieldValueIn008(
-            testData.createdRecordIDs[0],
-            'Entered',
-            testData.initial008EnteredValue,
-          );
+          cy.wait('@recordUpdated').then(() => {
+            InventoryInstance.editMarcBibliographicRecord();
+            InventorySteps.verifyHiddenFieldValueIn008(
+              testData.createdRecordIDs[0],
+              'Entered',
+              testData.initial008EnteredValue,
+            );
+          });
         },
       );
     });

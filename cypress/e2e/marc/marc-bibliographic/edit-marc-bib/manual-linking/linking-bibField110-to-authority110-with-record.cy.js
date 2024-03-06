@@ -41,7 +41,13 @@ describe('MARC', () => {
         ];
 
         const createdRecordIDs = [];
-        const bib110InitialFieldValues = [33, testData.tag110, '2', '\\', '$a C374194 The Beatles. $4 prf'];
+        const bib110InitialFieldValues = [
+          33,
+          testData.tag110,
+          '2',
+          '\\',
+          '$a C374194 The Beatles. $4 prf',
+        ];
         const bib110UnlinkedFieldValues = [
           33,
           testData.tag110,
