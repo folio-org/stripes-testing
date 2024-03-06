@@ -245,6 +245,7 @@ describe('data-import', () => {
           const hrid = instanceHrid;
 
           cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(hrid);
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyNotMarkAssuppressFromDiscavery();

@@ -13,17 +13,17 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 describe('data-import', () => {
   describe('Permissions', () => {
     let user;
-    let instanceId;
+    let instanceIds;
     const fileName = `oneMarcBib${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
       cy.getAdminToken();
-      DataImport.uploadFileViaApi(
+      DataImport.uploadFileViaApi1(
         'oneMarcBib.mrc',
         fileName,
         'Default - Create instance and SRS MARC Bib',
       ).then((response) => {
-        instanceId = response.entries[0].relatedInstanceInfo.idList[0];
+        instanceIds = response;
       });
 
       cy.createTempUser([
@@ -42,11 +42,12 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      InventoryInstance.deleteInstanceViaApi(instanceId);
+      instanceIds.forEach((record) => {
+        InventoryInstance.deleteInstanceViaApi(record.instance.id);
+      });
     });
 
     it('C492 Data Import permissions (folijet)', { tags: ['extendedPath', 'folijet'] }, () => {
-      cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(fileName);
       FileDetails.checkStatusInColumn(
