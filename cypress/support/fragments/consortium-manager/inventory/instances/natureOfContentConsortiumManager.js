@@ -1,10 +1,6 @@
-import uuid from 'uuid';
+import { MultiColumnListHeader } from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
-import { Button, MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
-
-const id = uuid();
-const newButton = Button('+ New');
 
 export default {
   getNatureOfContentByNameAndTenant(name, tenantId) {
