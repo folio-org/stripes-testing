@@ -151,7 +151,7 @@ const validOCLC = {
   lastRowNumber: 30,
   // it should be presented in marc bib one time to correct work(applicable in update of record)
   existingTag: '100',
-  ldrValue: '01677cam\\a22003974a\\4500',
+  ldrValue: '01973cam\\\\22004214a\\4500',
   tag008BytesProperties: {
     srce: { interactor: TextField('Srce'), defaultValue: '\\' },
     lang: { interactor: TextField('Lang'), defaultValue: 'rus' },
@@ -1059,7 +1059,7 @@ export default {
       editMARCBibRecordButton.absent(),
     ]);
     cy.do(Button({ id: 'clickable-view-source' }).click());
-    cy.expect(HTML('MARC bibliographic record').exists());
+    cy.expect(HTML('Local MARC bibliographic record').exists());
   },
 
   checkNewRequestAtNewPane() {
