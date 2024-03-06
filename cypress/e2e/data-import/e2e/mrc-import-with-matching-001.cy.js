@@ -167,6 +167,7 @@ describe('data-import', () => {
         );
 
         cy.visit(TopMenu.inventoryPath);
+        cy.wait(2000);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
 
         // ensure the fields created in Field mapping profile exists in inventory

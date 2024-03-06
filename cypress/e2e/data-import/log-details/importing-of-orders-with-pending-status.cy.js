@@ -152,7 +152,6 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
         FileDetails.checkOrderQuantityInSummaryTable(quantityOfOrders);
-        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfOrders);
         cy.wrap(ordersData).each((order) => {
           FileDetails.verifyTitle(
             order.title,

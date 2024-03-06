@@ -24,6 +24,7 @@ describe('Title Level Request', () => {
   before('Create test data', () => {
     cy.getAdminToken()
       .then(() => {
+        TitleLevelRequests.enableTLRViaApi();
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);
