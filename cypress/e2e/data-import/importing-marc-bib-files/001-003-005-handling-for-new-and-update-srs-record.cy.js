@@ -119,6 +119,7 @@ describe('data-import', () => {
       () => {
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
+        cy.reload();
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFilrForC17039.mrc', nameMarcFileForCreate);
@@ -166,7 +167,7 @@ describe('data-import', () => {
             DataImport.editMarcFile(
               'marcFilrForC17039With999Field.mrc',
               editedMarcFileName,
-              ['srsUuid', 'instanceUuid'],
+              ['instanceUuid', 'srsUuid'],
               [uuid[0], uuid[1]],
             );
           });

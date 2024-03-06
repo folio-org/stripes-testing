@@ -951,4 +951,11 @@ export default {
   checkBrowseOptionSelected(option) {
     cy.expect(browseSearchAndFilterInput.has({ checkedOptionText: option }));
   },
+
+  selectYesfilterStaffSuppress: () => {
+    cy.do([
+      stuffSupressAccordion.clickHeader(),
+      stuffSupressAccordion.find(Checkbox({ id: 'clickable-filter-staffSuppress-true' })).click(),
+    ]);
+  },
 };

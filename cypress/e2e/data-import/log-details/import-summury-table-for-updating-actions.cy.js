@@ -461,6 +461,7 @@ describe('data-import', () => {
 
           // download .csv file
           cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
           InventorySearchAndFilter.saveUUIDs();
