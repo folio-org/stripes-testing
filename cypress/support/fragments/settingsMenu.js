@@ -48,6 +48,7 @@ export default {
   instanceNoteTypes: 'settings/inventory/instanceNoteTypes',
   holdingsNoteTypesPath: 'settings/inventory/holdingsNoteTypes',
   holdingsTypes: 'settings/inventory/holdingsTypes',
+  statisticalCodeTypesPath: 'settings/inventory/statisticalCodeTypes',
   // Invoice
   invoiceApprovalsPath: 'settings/invoice/approvals',
   invoiceAdjustmentsPath: 'settings/invoice/adjustments',

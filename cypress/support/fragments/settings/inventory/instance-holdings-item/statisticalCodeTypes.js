@@ -1,56 +1,20 @@
-import { including } from 'bigtest';
 import {
   Button,
+  including,
   MultiColumnListRow,
-  Pane,
-  TextField,
   MultiColumnListCell,
-  Modal,
 } from '../../../../../../interactors';
 
-const urlRelationshipPane = Pane('URL relationship');
-const newButton = Button('+ New');
-const nameTextfield = TextField('Name 0');
-const saveButton = Button('Save');
-const deleteIcon = Button({ icon: 'trash' });
-const deleteButton = Button('Delete');
-const deleteUrlRelationshipModal = Modal('Delete URL relationship term');
 export const reasonsActions = {
   edit: 'edit',
   trash: 'trash',
 };
 export default {
-  waitloading() {
-    cy.expect(urlRelationshipPane.exists());
-  },
-
-  clickNewButton() {
-    cy.do(newButton.click());
-  },
-
-  fillInName(name) {
-    cy.do(nameTextfield.fillIn(name));
-  },
-
-  clickSaveButton() {
-    cy.do(saveButton.click());
-  },
-
-  createNewRelationship(name) {
-    this.clickNewButton();
-    this.fillInName(name);
-    this.clickSaveButton();
-  },
-
-  verifyElectronicAccessNameOnTable(name) {
-    cy.expect(MultiColumnListRow(including(name)).exists());
-  },
-
   createViaApi: (body) => {
     return cy
       .okapiRequest({
         method: 'POST',
-        path: 'electronic-access-relationships',
+        path: 'statistical-code-types',
         body,
         isDefaultSearchParamsRequired: false,
       })
@@ -60,17 +24,10 @@ export default {
   },
   deleteViaApi: (id) => cy.okapiRequest({
     method: 'DELETE',
-    path: `electronic-access-relationships/${id}`,
+    path: `statistical-code-types/${id}`,
     isDefaultSearchParamsRequired: false,
   }),
-
-  deleteUrlRelationship(name) {
-    cy.do([
-      MultiColumnListRow(including(name)).find(deleteIcon).click(),
-      deleteUrlRelationshipModal.find(deleteButton).click(),
-    ]);
-  },
-  verifyUrlRelationshipInTheList({ name, source, actions = [] }) {
+  verifyStatisticalCodeTypesInTheList({ name, source, actions = [] }) {
     const row = MultiColumnListRow({ content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
@@ -91,8 +48,18 @@ export default {
     }
   },
 
-  verifyUrlRelationshipAbsentInTheList({ name }) {
+  verifyStatisticalCodeTypesAbsentInTheList({ name }) {
     const row = MultiColumnListRow({ content: including(name) });
     cy.expect(row.absent());
+  },
+
+  clickTrashButtonForStatisticalCodeTypes(name) {
+    cy.do([
+      MultiColumnListRow({ content: including(name) })
+        .find(MultiColumnListCell({ columnIndex: 3 }))
+        .find(Button({ icon: 'trash' }))
+        .click(),
+      Button('Delete').click(),
+    ]);
   },
 };

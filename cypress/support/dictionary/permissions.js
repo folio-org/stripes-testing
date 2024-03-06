@@ -213,6 +213,10 @@ export default {
     internal: 'ui-inventory.settings.electronic-access-relationships',
     gui: 'Settings (Inventory): Create, edit, delete URL relationships',
   },
+  uiCreateEditDeletestatisticalCodeTypes: {
+    internal: 'ui-inventory.settings.statistical-code-types',
+    gui: 'Settings (Inventory): Create, edit, delete statistical code types',
+  },
   inventoryCRUDHoldings: {
     internal: 'ui-inventory.holdings.delete',
     gui: 'Inventory: View, create, edit, delete holdings',

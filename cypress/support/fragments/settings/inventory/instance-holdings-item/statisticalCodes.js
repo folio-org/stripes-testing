@@ -1,5 +1,15 @@
 import getRandomPostfix from '../../../../utils/stringTools';
+import {
+  Button,
+  including,
+  MultiColumnListRow,
+  MultiColumnListCell,
+} from '../../../../../../interactors';
 
+export const reasonsActions = {
+  edit: 'edit',
+  trash: 'trash',
+};
 const defaultStatisticalCode = {
   source: 'local',
   code: `autotest_code_${getRandomPostfix()}`,
@@ -54,5 +64,41 @@ export default {
       const result = codesFromList.every((element2) => statusesFromInstance.some((element1) => element1.includes(element2)));
       expect(result).to.equal(true);
     });
+  },
+
+  verifyStatisticalCodeInTheList({ name, source, actions = [] }) {
+    const row = MultiColumnListRow({ content: including(name) });
+    const actionsCell = MultiColumnListCell({ columnIndex: 5 });
+    cy.expect([
+      row.exists(),
+      row.find(MultiColumnListCell({ columnIndex: 3, content: source })).exists(),
+    ]);
+    if (actions.length === 0) {
+      cy.expect(row.find(actionsCell).has({ content: source }));
+    } else {
+      Object.values(reasonsActions).forEach((action) => {
+        const buttonSelector = row.find(actionsCell).find(Button({ icon: action }));
+        if (actions.includes(action)) {
+          cy.expect(buttonSelector.exists());
+        } else {
+          cy.expect(buttonSelector.absent());
+        }
+      });
+    }
+  },
+
+  verifyStatisticalCodeAbsentInTheList({ name }) {
+    const row = MultiColumnListRow({ content: including(name) });
+    cy.expect(row.absent());
+  },
+
+  clickTrashButtonForStatisticalCode(name) {
+    cy.do([
+      MultiColumnListRow({ content: including(name) })
+        .find(MultiColumnListCell({ columnIndex: 5 }))
+        .find(Button({ icon: 'trash' }))
+        .click(),
+      Button('Delete').click(),
+    ]);
   },
 };
