@@ -9,7 +9,7 @@ import ConsortiumManagerApp, {
 } from '../../../support/fragments/consortium-manager/consortiumManagerApp';
 import ConfirmCreate from '../../../support/fragments/consortium-manager/modal/confirm-create';
 import SelectMembers from '../../../support/fragments/consortium-manager/modal/select-members';
-import PatronGroupsConsortiumManager from '../../../support/fragments/consortium-manager/users/patronGroupsConsortiumManager';
+import NatureOfContentConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/natureOfContentConsortiumManager';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -17,44 +17,38 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 const testData = {
-  newPatronGroup: {
-    group: getTestEntityValue('C410705_new'),
-    desc: getTestEntityValue('C410705'),
-    expirationOffsetInDays: '5',
+  newNatureOfContent: {
+    name: getTestEntityValue('AC411294_new'),
   },
-  editPatronGroup: {
-    group: getTestEntityValue('C410705_edit'),
-    desc: getTestEntityValue('C410705'),
-    expirationOffsetInDays: '6',
+  editNatureOfContent: {
+    name: getTestEntityValue('AC411294_edit'),
   },
-  tempPatronGroup: {
-    group: getTestEntityValue('C410705'),
-    desc: getTestEntityValue('C410705'),
-    expirationOffsetInDays: '7',
+  tempNatureOfContent: {
+    name: getTestEntityValue('AC411294'),
   },
 };
 
 describe('Consortium manager', () => {
   describe('Manage local settings', () => {
-    describe('Manage local Patron groups', () => {
+    describe('Manage local Nature of content', () => {
       before('Create test data', () => {
         cy.getAdminToken();
         cy.resetTenant();
         cy.createTempUser([
           Permissions.consortiaSettingsConsortiumManagerEdit.gui,
-          Permissions.consortiaSettingsConsortiumManagerPatronGroupsAll.gui,
+          Permissions.crudNatureOfContent.gui,
         ]).then((userProperties) => {
           testData.user = userProperties;
           cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
           cy.setTenant(Affiliations.College);
           cy.assignPermissionsToExistingUser(testData.user.userId, [
-            Permissions.consortiaSettingsConsortiumManagerPatronGroupsAll.gui,
+            Permissions.crudNatureOfContent.gui,
           ]);
           cy.resetTenant();
           cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
           cy.setTenant(Affiliations.University);
           cy.assignPermissionsToExistingUser(testData.user.userId, [
-            Permissions.consortiaSettingsConsortiumManagerPatronGroupsAll.gui,
+            Permissions.crudNatureOfContent.gui,
           ]);
           cy.resetTenant();
         });
@@ -64,26 +58,26 @@ describe('Consortium manager', () => {
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
-        PatronGroupsConsortiumManager.deletePatronGroupByNameAndTenant(
-          testData.newPatronGroup.group,
+        NatureOfContentConsortiumManager.deleteNatureOfContentByNameAndTenant(
+          testData.newNatureOfContent.name,
           Affiliations.Consortia,
         );
-        PatronGroupsConsortiumManager.deletePatronGroupByNameAndTenant(
-          testData.editPatronGroup.group,
+        NatureOfContentConsortiumManager.deleteNatureOfContentByNameAndTenant(
+          testData.editNatureOfContent.name,
           Affiliations.University,
         );
-        PatronGroupsConsortiumManager.deletePatronGroupByNameAndTenant(
-          testData.newPatronGroup.group,
+        NatureOfContentConsortiumManager.deleteNatureOfContentByNameAndTenant(
+          testData.newNatureOfContent.name,
           Affiliations.College,
         );
-        PatronGroupsConsortiumManager.deletePatronGroupByNameAndTenant(
-          testData.newPatronGroup.group,
+        NatureOfContentConsortiumManager.deleteNatureOfContentByNameAndTenant(
+          testData.newNatureOfContent.name,
           Affiliations.University,
         );
       });
 
       it(
-        'C410705 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local patron groups of selected affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
+        'C411294 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local nature of content of selected affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
           cy.login(testData.user.username, testData.user.password, {
@@ -91,8 +85,8 @@ describe('Consortium manager', () => {
             waiter: ConsortiumManagerApp.waitLoading,
           });
 
-          ConsortiumManagerApp.chooseSettingsItem(settingsItems.users);
-          PatronGroupsConsortiumManager.choose();
+          ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
+          NatureOfContentConsortiumManager.choose();
 
           ConsortiumManagerApp.clickSelectMembers();
           SelectMembers.changeSelectAllCheckbox('check');
@@ -108,140 +102,103 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
 
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
-          ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.newPatronGroup);
+          ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.newNatureOfContent);
           ConsortiaControlledVocabularyPaneset.clickSave();
 
-          ConfirmCreate.waitLoadingConfirmCreate(testData.newPatronGroup.group);
+          ConfirmCreate.waitLoadingConfirmCreate(testData.newNatureOfContent.name);
           ConfirmCreate.clickConfirm();
 
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-            testData.newPatronGroup.group,
+            testData.newNatureOfContent.name,
             tenantNames.central,
-            [
-              testData.newPatronGroup.group,
-              testData.newPatronGroup.desc,
-              testData.newPatronGroup.expirationOffsetInDays,
-              '',
-              tenantNames.central,
-            ],
+            [testData.newNatureOfContent.name, 'local', '', tenantNames.central],
             [actionIcons.edit, actionIcons.trash],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-            testData.newPatronGroup.group,
+            testData.newNatureOfContent.name,
             tenantNames.college,
-            [
-              testData.newPatronGroup.group,
-              testData.newPatronGroup.desc,
-              testData.newPatronGroup.expirationOffsetInDays,
-              '',
-              tenantNames.college,
-            ],
+            [testData.newNatureOfContent.name, 'local', '', tenantNames.college],
             [actionIcons.edit, actionIcons.trash],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-            testData.newPatronGroup.group,
+            testData.newNatureOfContent.name,
             tenantNames.university,
-            [
-              testData.newPatronGroup.group,
-              testData.newPatronGroup.desc,
-              testData.newPatronGroup.expirationOffsetInDays,
-              '',
-              tenantNames.university,
-            ],
+            [testData.newNatureOfContent.name, 'local', '', tenantNames.university],
             [actionIcons.edit, actionIcons.trash],
           );
 
           ConsortiaControlledVocabularyPaneset.performActionFor(
-            testData.newPatronGroup.group,
+            testData.newNatureOfContent.name,
             tenantNames.university,
             actionIcons.edit,
           );
 
           ConsortiaControlledVocabularyPaneset.fillInTextField({
-            group: testData.editPatronGroup.group,
-          });
-          ConsortiaControlledVocabularyPaneset.fillInTextField({
-            desc: testData.editPatronGroup.desc,
-          });
-          ConsortiaControlledVocabularyPaneset.fillInTextField({
-            expirationOffsetInDays: testData.editPatronGroup.expirationOffsetInDays,
+            name: testData.editNatureOfContent.name,
           });
           ConsortiaControlledVocabularyPaneset.clickSave();
           ConsortiumManagerApp.checkMessage(
-            `${testData.editPatronGroup.group} was successfully updated for ${tenantNames.university} library.`,
+            `${testData.editNatureOfContent.name} was successfully updated for ${tenantNames.university} library.`,
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-            testData.editPatronGroup.group,
+            testData.editNatureOfContent.name,
             tenantNames.university,
-            [
-              testData.editPatronGroup.group,
-              testData.editPatronGroup.desc,
-              testData.editPatronGroup.expirationOffsetInDays,
-              '',
-              tenantNames.university,
-            ],
+            [testData.editNatureOfContent.name, 'local', '', tenantNames.university],
             [actionIcons.edit, actionIcons.trash],
           );
 
           ConsortiaControlledVocabularyPaneset.performActionFor(
-            testData.newPatronGroup.group,
+            testData.newNatureOfContent.name,
             tenantNames.college,
             actionIcons.trash,
           );
           ConsortiaControlledVocabularyPaneset.confirmDelete();
           ConsortiumManagerApp.checkMessage(
-            messages.deleted('patron group', testData.newPatronGroup.group),
+            messages.deleted('nature of content term', testData.newNatureOfContent.name),
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
-            testData.newPatronGroup.group,
+            testData.newNatureOfContent.name,
             tenantNames.central,
           );
 
-          ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.tempPatronGroup);
+          ConsortiaControlledVocabularyPaneset.createViaUi(
+            false,
+            testData.tempNatureOfContent,
+          );
           ConsortiaControlledVocabularyPaneset.clickSave();
-          ConfirmCreate.waitLoadingConfirmCreate(testData.tempPatronGroup.group);
+          ConfirmCreate.waitLoadingConfirmCreate(testData.tempNatureOfContent.name);
           ConfirmCreate.clickKeepEditing();
           ConsortiaControlledVocabularyPaneset.clickCancel();
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
           ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
-            testData.tempPatronGroup.group,
+            testData.tempNatureOfContent.name,
             tenantNames.central,
           );
 
-          ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.newPatronGroup);
+          ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.newNatureOfContent);
           ConsortiaControlledVocabularyPaneset.clickSave();
           ConsortiaControlledVocabularyPaneset.verifyFieldValidatorError({
-            group: messages.notUnique('Group'),
+            name: messages.notUnique('Name'),
           });
           ConsortiaControlledVocabularyPaneset.clickCancel();
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
-          cy.visit(SettingsMenu.patronGroups);
+          cy.visit(SettingsMenu.natureOfContent);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [
-              testData.newPatronGroup.group,
-              testData.newPatronGroup.desc,
-              testData.newPatronGroup.expirationOffsetInDays,
-              '',
-            ],
+            [testData.newNatureOfContent.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(SettingsMenu.patronGroups);
+          cy.visit(SettingsMenu.natureOfContent);
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
-            testData.newPatronGroup.group,
+            testData.newNatureOfContent.name,
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-          cy.visit(SettingsMenu.patronGroups);
+          cy.visit(SettingsMenu.natureOfContent);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [
-              testData.editPatronGroup.group,
-              testData.editPatronGroup.desc,
-              testData.editPatronGroup.expirationOffsetInDays,
-              '',
-            ],
+            [testData.editNatureOfContent.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],
           );
         },

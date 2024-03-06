@@ -245,6 +245,10 @@ export default {
     internal: 'ui-inventory.settings.instance-note-types',
     gui: 'Settings (Inventory): Create, edit, delete instance note types',
   },
+  crudNatureOfContent: {
+    internal: 'ui-inventory.settings.nature-of-content-terms',
+    gui: 'Settings (Inventory): Create, edit, delete nature of content',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
