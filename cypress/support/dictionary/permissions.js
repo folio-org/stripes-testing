@@ -101,6 +101,10 @@ export default {
     internal: 'ui-quick-marc.quick-marc-authority-records.linkUnlink',
     gui: 'quickMARC: Can Link/unlink authority records to bib records',
   },
+  uiQuickMarcQuickMarcAuthorityCreate: {
+    internal: 'ui-quick-marc.quick-marc-authorities-editor.create',
+    gui: 'quickMARC: Create a new MARC authority record',
+  },
   // Marc Authority record
   uiQuickMarcQuickMarcAuthoritiesEditorAll: {
     internal: 'ui-quick-marc.quick-marc-authorities-editor.all',
@@ -117,6 +121,10 @@ export default {
   uiMarcAuthoritiesAuthorityRecordDelete: {
     internal: 'ui-marc-authorities.authority-record.delete',
     gui: 'MARC Authority: Delete MARC authority record',
+  },
+  uiMarcAuthoritiesAuthorityRecordCreate: {
+    internal: 'ui-marc-authorities.authority-record.create',
+    gui: 'MARC Authority: Create new MARC authority record',
   },
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
