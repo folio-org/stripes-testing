@@ -213,6 +213,7 @@ describe('data-import', () => {
           instanceHrid = initialInstanceHrId;
 
           cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate(itemsForCreateInstance.catalogedDateUi);
@@ -282,6 +283,7 @@ describe('data-import', () => {
           FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
 
           cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();

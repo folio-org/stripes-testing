@@ -34,6 +34,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -384,6 +385,7 @@ describe('data-import', () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyInstancePaneExists();
+        InventoryHoldings.checkIfExpanded(`${permanentLocation} >`, true);
         InventoryInstance.openItemByBarcode('No barcode');
         ItemRecordView.checkItemAdministrativeNote(note);
       },
