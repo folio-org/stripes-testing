@@ -18,13 +18,13 @@ import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 const testData = {
   newAlternativeTitleType: {
-    name: getTestEntityValue('AC410862_new'),
+    name: getTestEntityValue('C410862_new'),
   },
   editAlternativeTitleType: {
-    name: getTestEntityValue('AC410862_edit'),
+    name: getTestEntityValue('C410862_edit'),
   },
   tempAlternativeTitleType: {
-    name: getTestEntityValue('AC410862'),
+    name: getTestEntityValue('C410862'),
   },
 };
 
