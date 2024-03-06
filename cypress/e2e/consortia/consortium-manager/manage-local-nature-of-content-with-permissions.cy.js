@@ -18,13 +18,13 @@ import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 const testData = {
   newNatureOfContent: {
-    name: getTestEntityValue('AC411294_new'),
+    name: getTestEntityValue('C411294_new'),
   },
   editNatureOfContent: {
-    name: getTestEntityValue('AC411294_edit'),
+    name: getTestEntityValue('C411294_edit'),
   },
   tempNatureOfContent: {
-    name: getTestEntityValue('AC411294'),
+    name: getTestEntityValue('C411294'),
   },
 };
 
