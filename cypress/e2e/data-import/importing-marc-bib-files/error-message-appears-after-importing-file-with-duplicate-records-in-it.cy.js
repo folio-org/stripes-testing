@@ -36,7 +36,8 @@ describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let instanceHrid;
-    const errorMessage = 'DuplicateRecordException: Incoming file may contain duplicates';
+    const errorMessage =
+      'Record: Incoming record could be a duplicate, incoming record generation should not be the same as matched record generation and the execution of job should be started after of creating the previous record generation';
     const title = 'Introductory Solid State Physics with MATLAB Applications';
     const firstFilePathForUpload = 'marcBibFileForC410708_file1.mrc';
     const secondFilePathForUpload = 'marcBibFileForC410708_file2.mrc';

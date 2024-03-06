@@ -41,6 +41,7 @@ describe('data-import', () => {
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        cy.reload();
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePath, marcFileName);
         JobProfiles.waitFileIsUploaded();

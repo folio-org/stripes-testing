@@ -273,6 +273,7 @@ describe('data-import', () => {
     });
 
     const openOrder = (number) => {
+      cy.wait(2000);
       Orders.resetFilters();
       Orders.searchByParameter('PO number', number);
       Orders.selectFromResultsList(number);
@@ -281,6 +282,7 @@ describe('data-import', () => {
 
     const checkReceivedPiece = (number, title) => {
       cy.visit(TopMenu.ordersPath);
+      cy.wait(2000);
       Orders.resetFilters();
       Orders.searchByParameter('PO number', number);
       Orders.selectFromResultsList(number);
