@@ -1,6 +1,8 @@
-import { MultiColumnListHeader } from '../../../../../../interactors';
+import { Button, MultiColumnListHeader } from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
+
+const newButton = Button('+ New');
 
 export default {
   getNatureOfContentByNameAndTenant(name, tenantId) {
