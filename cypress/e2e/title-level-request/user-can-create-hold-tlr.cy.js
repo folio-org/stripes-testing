@@ -123,7 +123,7 @@ describe('Create Item or Title level request', () => {
         userData.userId,
         testData.userServicePoint.id,
       );
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+      TitleLevelRequests.enableTLRViaApi();
       cy.getInstance({
         limit: 1,
         expandAll: true,
@@ -146,10 +146,7 @@ describe('Create Item or Title level request', () => {
   });
 
   after('Deleting created entities', () => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
+    cy.getAdminToken();
     CirculationRules.deleteRuleViaApi(testData.addedRule);
     CheckInActions.checkinItemViaApi({
       itemBarcode: testData.itemBarcode,
@@ -174,7 +171,6 @@ describe('Create Item or Title level request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
   it(
     'C350417 Check that user can create "Hold" Title level request (vega)',
