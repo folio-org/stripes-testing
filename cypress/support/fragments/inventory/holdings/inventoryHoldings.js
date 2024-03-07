@@ -71,13 +71,18 @@ export default {
     cy.get('[class^="accordion---"]')
       .contains(`Holdings: ${content}`)
       .then(($accordion) => {
-        if (expand && !$accordion.attr('aria-expanded')) {
-          cy.wrap($accordion).click();
-          cy.expect(Accordion({ label: including(`Holdings: ${content}`) }).has({ open: expand }));
-        } else if (!expand && $accordion.attr('aria-expanded')) {
-          cy.wrap($accordion).click();
-          cy.expect(Accordion({ label: including(`Holdings: ${content}`) }).has({ open: expand }));
+        const ariaExpanded = $accordion.find('button[aria-expanded]').attr('aria-expanded');
+
+        cy.log('Desired expanded state:', expand);
+        cy.log('Current expanded state:', ariaExpanded);
+
+        // Check if the current expanded state matches the desired state
+        if (ariaExpanded !== expand.toString()) {
+          cy.wrap($accordion.find('button[aria-expanded]')).click();
         }
+
+        // Assert the final state of the accordion
+        cy.expect(Accordion({ label: including(`Holdings: ${content}`) }).has({ open: expand }));
       });
   },
 };

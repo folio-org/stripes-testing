@@ -66,7 +66,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckbox('Effective location');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Effective location');
 
         BulkEditActions.openInAppStartBulkEditFrom();
         const newLocation = 'Online';
