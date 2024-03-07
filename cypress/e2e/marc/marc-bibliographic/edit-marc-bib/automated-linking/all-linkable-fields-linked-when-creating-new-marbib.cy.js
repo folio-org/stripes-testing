@@ -170,6 +170,28 @@ describe('MARC', () => {
             type: 'Title data',
           },
         ];
+        const linkableFields = [
+          '100',
+          '110',
+          '111',
+          '130',
+          '240',
+          '600',
+          '610',
+          '611',
+          '630',
+          '650',
+          '651',
+          '655',
+          '700',
+          '710',
+          '711',
+          '730',
+          '800',
+          '810',
+          '811',
+          '830',
+        ];
 
         let userData = {};
 
@@ -196,6 +218,10 @@ describe('MARC', () => {
                 createdAuthorityIDs.push(record.relatedAuthorityInfo.idList[0]);
               });
             });
+          });
+
+          linkableFields.forEach((tag) => {
+            QuickMarcEditor.setRulesForField(tag, true);
           });
 
           cy.createTempUser([
