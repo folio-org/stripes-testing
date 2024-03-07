@@ -116,6 +116,7 @@ const searchInstancesOptionsValues = [
   'identifier',
   'isbn',
   'issn',
+  'lccn',
   'oclc',
   'instanceNotes',
   'instanceAdministrativeNotes',
