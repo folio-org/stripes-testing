@@ -190,7 +190,9 @@ describe('Bulk Edit - Logs', () => {
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.downloadMatchedResults();
-      BulkEditSearchPane.changeShowColumnCheckbox('Instance (Title, Publisher, Publication date)');
+      BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+        'Instance (Title, Publisher, Publication date)',
+      );
       BulkEditSearchPane.verifyResultColumTitles('Instance (Title, Publisher, Publication date)');
 
       BulkEditActions.openInAppStartBulkEditFrom();

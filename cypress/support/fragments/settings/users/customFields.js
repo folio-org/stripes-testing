@@ -31,6 +31,8 @@ export default {
       MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.label2),
       saveAndCloseButton.click(),
     ]);
+    // Wait for changes to be saved and reflected
+    cy.wait(15000);
   },
   clickEditNewButton() {
     cy.do(editNewButton.click());
