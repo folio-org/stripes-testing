@@ -27,6 +27,24 @@ Cypress.Commands.add('getAuthoritySourceFileIdViaAPI', (authorityFileName) => {
   });
 });
 
+Cypress.Commands.add('createAuthoritySourceFileIdViaAPI', (prefix, startWithNumber, sourceName, isActive = true, sourceType = 'Local', baseURL = null) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'authority-source-files',
+    body: {
+      baseUrl: baseURL,
+      code: prefix,
+      hridManagement: {
+        startNumber: startWithNumber,
+      },
+      name: sourceName,
+      selectable: isActive,
+      source: sourceType,
+    },
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => body.id);
+});
+
 Cypress.Commands.add('deleteAuthoritySourceFileViaAPI', (id) => {
   cy.okapiRequest({
     method: 'DELETE',

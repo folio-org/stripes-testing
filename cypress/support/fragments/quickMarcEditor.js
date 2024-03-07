@@ -125,6 +125,10 @@ const cancelButtonInDeleteFieldsModal = Button({ id: 'clickable-quick-marc-confi
 const confirmButtonInDeleteFieldsModal = Button({
   id: 'clickable-quick-marc-confirm-modal-confirm',
 });
+const authorityLookUpButton = Button('Authority file look-up');
+const selectAuthorityFileModal = Modal('Select authority file');
+const selectAuthorityFile = Select({ label: including('Authority file name') });
+const saveAndCloseBtn = Button('Save & close');
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -2186,5 +2190,28 @@ export default {
     }
     checkHoldings();
     return cy.get('@holdings');
+  },
+  verifyAuthorityLookUpButton() {
+    cy.expect(QuickMarcEditorRow({ tagValue: '001' }).find(authorityLookUpButton).exists());
+  },
+  clickAuthorityLookUpButton() {
+    cy.do(QuickMarcEditorRow({ tagValue: '001' }).find(authorityLookUpButton).click());
+    cy.expect(selectAuthorityFileModal.exists());
+  },
+  selectAuthorityFile(authorityFile) {
+    cy.do([
+      selectAuthorityFileModal.find(selectAuthorityFile).click(),
+      selectAuthorityFileModal.find(selectAuthorityFile).choose(authorityFile),
+    ]);
+  },
+  verifyAuthorityFileSelected(authorityFile) {
+    cy.expect([
+      selectAuthorityFile.has({ content: including(authorityFile) }),
+      selectAuthorityFileModal.find(saveAndCloseBtn).has({ disabled: false }),
+    ]);
+  },
+  clickSaveAndCloseInModal() {
+    cy.do(selectAuthorityFileModal.find(saveAndCloseBtn).click());
+    cy.expect(selectAuthorityFileModal.absent());
   },
 };
