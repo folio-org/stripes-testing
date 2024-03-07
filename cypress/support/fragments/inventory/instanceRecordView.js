@@ -300,43 +300,43 @@ export default {
     expect(prev).to.deep.equal(itemsClone);
   },
 
-  sortingColumns: [
-    {
-      title: 'Item: barcode',
-      id: including('clickable-list-column-barcode'),
-      columnIndex: 1,
-    },
-    {
-      title: 'Status',
-      id: 'status',
-      columnIndex: 2,
-    },
-    {
-      title: 'Copy number',
-      id: 'copynumber',
-      columnIndex: 3,
-    },
-    {
-      title: 'Enumeration',
-      id: 'enumeration',
-      columnIndex: 6,
-    },
-    {
-      title: 'Chronology',
-      id: 'chronology',
-      columnIndex: 7,
-    },
-    {
-      title: 'Volume',
-      id: 'chronology',
-      columnIndex: 8,
-    },
-    {
-      title: 'Year, caption',
-      id: 'yearcaption',
-      columnIndex: 9,
-    },
-  ],
+  // sortingColumns: [
+  //   {
+  //     title: 'Item: barcode',
+  //     id: including('clickable-list-column-barcode'),
+  //     columnIndex: 1,
+  //   },
+  //   {
+  //     title: 'Status',
+  //     id: 'status',
+  //     columnIndex: 2,
+  //   },
+  //   {
+  //     title: 'Copy number',
+  //     id: 'copynumber',
+  //     columnIndex: 3,
+  //   },
+  //   {
+  //     title: 'Enumeration',
+  //     id: 'enumeration',
+  //     columnIndex: 6,
+  //   },
+  //   {
+  //     title: 'Chronology',
+  //     id: 'chronology',
+  //     columnIndex: 7,
+  //   },
+  //   {
+  //     title: 'Volume',
+  //     id: 'chronology',
+  //     columnIndex: 8,
+  //   },
+  //   {
+  //     title: 'Year, caption',
+  //     id: 'yearcaption',
+  //     columnIndex: 9,
+  //   },
+  // ],
 
   getSortOrder(title) {
     let order;

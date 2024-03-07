@@ -49,7 +49,9 @@ const search = (jobProfileTitle) => {
   // TODO: clarify with developers what should be waited
   cy.wait(1500);
   cy.do(paneResults.find(searchField).focus());
+  cy.wait(1500);
   cy.expect(paneResults.find(searchField).exists());
+  cy.wait(1500);
   cy.do([paneResults.find(searchField).fillIn(jobProfileTitle), searchButton.click()]);
 };
 

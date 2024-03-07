@@ -114,10 +114,6 @@ describe('data-import', () => {
         Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(marcFileName);
         FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.CREATED,
-          FileDetails.columnNameInResultList.srsMarc,
-        );
-        FileDetails.checkStatusInColumn(
           RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.order,
         );

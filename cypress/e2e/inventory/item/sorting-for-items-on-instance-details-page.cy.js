@@ -1,3 +1,4 @@
+import { including } from '@interactors/html';
 import { MultiColumnListHeader } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
@@ -206,10 +207,28 @@ describe('inventory', () => {
           10,
         );
 
-        InstanceRecordView.sortingColumns.forEach((column) => {
-          if (column.title === 'Enumeration') {
-            InstanceRecordView.scroll();
-          }
+        [
+          {
+            title: 'Item: barcode',
+            id: including('clickable-list-column-barcode'),
+            columnIndex: 1,
+          },
+          {
+            title: 'Status',
+            id: 'status',
+            columnIndex: 2,
+          },
+          {
+            title: 'Copy number',
+            id: 'copynumber',
+            columnIndex: 3,
+          },
+          {
+            title: 'Enumeration',
+            id: 'enumeration',
+            columnIndex: 6,
+          },
+        ].forEach((column) => {
           // Validate sort
           cy.do(MultiColumnListHeader(column.title).click());
           InstanceRecordView.verifySortingOrder({
@@ -223,6 +242,47 @@ describe('inventory', () => {
             title: column.title,
             columnIndex: column.columnIndex,
           });
+          InstanceRecordView.scroll();
+        });
+
+        [
+          {
+            title: 'Chronology',
+            id: 'chronology',
+            columnIndex: 7,
+          },
+          {
+            title: 'Volume',
+            id: 'chronology',
+            columnIndex: 8,
+          },
+          {
+            title: 'Year, caption',
+            id: 'yearcaption',
+            columnIndex: 9,
+          },
+        ].forEach((column) => {
+          InstanceRecordView.scroll();
+
+          // Validate sort
+          cy.do(MultiColumnListHeader(column.title).click());
+          cy.wait(1000);
+          InstanceRecordView.scroll();
+          InstanceRecordView.verifySortingOrder({
+            title: column.title,
+            columnIndex: column.columnIndex,
+          });
+          InstanceRecordView.scroll();
+
+          // Validate reverse sorting
+          cy.do(MultiColumnListHeader(column.title).click());
+          cy.wait(1000);
+          InstanceRecordView.scroll();
+          InstanceRecordView.verifySortingOrder({
+            title: column.title,
+            columnIndex: column.columnIndex,
+          });
+          InstanceRecordView.scroll();
         });
       },
     );

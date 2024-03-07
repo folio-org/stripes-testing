@@ -6,6 +6,7 @@ import {
   PAYMENT_METHOD,
   VENDOR_NAMES,
   RECORD_STATUSES,
+  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import {
   JobProfiles as SettingsJobProfiles,
@@ -115,7 +116,7 @@ describe('data-import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileName);
         Logs.checkImportFile(jobProfile.profileName);
-        Logs.checkStatusOfJobProfile();
+        Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.CREATED,

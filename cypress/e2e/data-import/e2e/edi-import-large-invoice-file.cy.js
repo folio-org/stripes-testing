@@ -4,6 +4,7 @@ import {
   FOLIO_RECORD_TYPE,
   PAYMENT_METHOD,
   VENDOR_NAMES,
+  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import {
   JobProfiles as SettingsJobProfiles,
@@ -93,7 +94,7 @@ describe('data-import', () => {
         cy.wait(60000);
         Logs.waitFileIsImported(fileName);
         Logs.checkImportFile(jobProfile.profileName);
-        Logs.checkStatusOfJobProfile();
+        Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.checkQuantityRecordsInFile(Logs.quantityRecordsInInvoice.firstQuantity);
         Logs.openFileDetails(fileName);
         InvoiceView.checkQuantityInvoiceLinesInRecord(quantityOfInvoiceLines);

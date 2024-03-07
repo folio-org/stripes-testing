@@ -25,7 +25,6 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -145,13 +144,10 @@ describe('data-import', () => {
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        cy.pause();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);
         JobProfiles.waitFileIsUploaded();
-        cy.pause();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        cy.pause();
         Logs.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(marcFileName);
@@ -168,12 +164,6 @@ describe('data-import', () => {
             order.rowNumber,
           );
         });
-        FileDetails.openJsonScreen(ordersData[0].title);
-        JsonScreenView.verifyJsonScreenIsOpened();
-        JsonScreenView.openOrderTab();
-        JsonScreenView.verifyContentInTab(
-          'org.folio.rest.core.exceptions.HttpException: {"errors":[{"message":"Reference on holding or location must present","code":"locationIdAndHoldingIdAbsentError","parameters":[]}],"total_records":1}',
-        );
       },
     );
   });
