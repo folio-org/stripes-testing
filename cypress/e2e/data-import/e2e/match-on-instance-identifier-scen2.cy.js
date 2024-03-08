@@ -119,7 +119,6 @@ describe('data-import', () => {
       'C347829 MODDICORE-231 "Match on Instance identifier match meets both the Identifier type and Data requirements" Scenario 2 (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
         JobProfiles.waitFileIsUploaded();
@@ -178,7 +177,6 @@ describe('data-import', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpdateInstance, fileNameForUpdateInstance);
         JobProfiles.waitFileIsUploaded();

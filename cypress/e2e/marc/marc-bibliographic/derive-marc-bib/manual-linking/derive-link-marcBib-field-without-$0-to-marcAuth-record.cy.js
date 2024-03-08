@@ -85,11 +85,6 @@ describe('MARC', () => {
               });
             });
           });
-          cy.loginAsAdmin({
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          });
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.uploadFileViaApi(
             testData.marcBibFile.marc,
             testData.marcBibFile.fileName,

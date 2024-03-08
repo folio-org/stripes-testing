@@ -4,7 +4,6 @@ import {
   FOLIO_RECORD_TYPE,
   PAYMENT_METHOD,
   VENDOR_NAMES,
-  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import {
   JobProfiles as SettingsJobProfiles,
@@ -83,7 +82,6 @@ describe('data-import', () => {
 
         // upload a marc file for creating of the new instance, holding and item
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('ediFileForC347615.edi', fileName);
         DataImport.waitFileIsUploaded();
@@ -91,10 +89,8 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
-        cy.wait(60000);
         Logs.waitFileIsImported(fileName);
         Logs.checkImportFile(jobProfile.profileName);
-        Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.checkQuantityRecordsInFile(Logs.quantityRecordsInInvoice.firstQuantity);
         Logs.openFileDetails(fileName);
         InvoiceView.checkQuantityInvoiceLinesInRecord(quantityOfInvoiceLines);

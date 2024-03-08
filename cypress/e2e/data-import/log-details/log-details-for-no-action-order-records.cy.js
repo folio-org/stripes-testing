@@ -142,7 +142,6 @@ describe('data-import', () => {
       'C375179 Verify the log details for no action order records (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);
         JobProfiles.waitFileIsUploaded();

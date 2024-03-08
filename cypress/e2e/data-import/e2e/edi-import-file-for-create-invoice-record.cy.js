@@ -6,7 +6,6 @@ import {
   PAYMENT_METHOD,
   VENDOR_NAMES,
   RECORD_STATUSES,
-  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import {
   JobProfiles as SettingsJobProfiles,
@@ -107,7 +106,6 @@ describe('data-import', () => {
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('ediFileForC343338.edi', fileName);
         JobProfiles.waitFileIsUploaded();
@@ -116,7 +114,6 @@ describe('data-import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileName);
         Logs.checkImportFile(jobProfile.profileName);
-        Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.CREATED,

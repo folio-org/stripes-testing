@@ -47,7 +47,6 @@ describe('data-import', () => {
         // You will be brought to the Job profiles view with your file listed in the left pane and available job profiles in the right pane
         TopMenuNavigation.navigateToApp('Data import');
         DataImport.waitLoading();
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
         JobProfiles.waitFileIsUploaded();

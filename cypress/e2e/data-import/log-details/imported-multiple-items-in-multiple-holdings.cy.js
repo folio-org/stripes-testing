@@ -175,7 +175,6 @@ describe('data-import', () => {
 
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWithErrorsPathForUpload, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -253,7 +252,6 @@ describe('data-import', () => {
 
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWithErrorsPathForUpload, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -324,7 +322,6 @@ describe('data-import', () => {
 
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWioutErrorsPathForUpload, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -387,7 +384,6 @@ describe('data-import', () => {
 
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWioutErrorsPathForUpload, marcFileName);
         JobProfiles.waitFileIsUploaded();

@@ -118,7 +118,6 @@ describe.skip('data-import', () => {
       'C345423 Verify the possibility to modify MARC Bibliographic record (folijet)',
       { tags: ['smoke', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         // upload a marc file for creating of the new instance, holding and item
         DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
@@ -184,7 +183,6 @@ describe.skip('data-import', () => {
 
         // upload a marc file for creating of the new instance, holding and item
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(nameMarcFileForUpload);
         JobProfiles.waitFileIsUploaded();

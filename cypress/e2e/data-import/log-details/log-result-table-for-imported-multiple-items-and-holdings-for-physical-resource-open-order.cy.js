@@ -208,7 +208,6 @@ describe('data-import', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreate, marcFileName);
         JobProfiles.waitFileIsUploaded();

@@ -67,7 +67,6 @@ describe('data-import', () => {
         // import a file
         cy.visit(TopMenu.dataImportPath);
         DataImport.checkIsLandingPageOpened();
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneThousandMarcBib.mrc', fileName);
         JobProfiles.waitFileIsUploaded();

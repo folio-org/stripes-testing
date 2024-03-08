@@ -65,7 +65,6 @@ describe('data-import', () => {
       'C11120 Check the default mapping of edition from the MARC record to the Inventory Instance record (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);
         JobProfiles.waitFileIsUploaded();
