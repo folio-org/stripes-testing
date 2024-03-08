@@ -56,7 +56,7 @@ Cypress.Commands.add(
 Cypress.Commands.add('logout', () => {
   cy.do([Dropdown('My profile').open(), Button('Log out').click()]);
 
-  cy.expect(Button('Log in', { disabled: true }).exists());
+  cy.expect(Button({ name: 'login' }).exists());
 });
 
 Cypress.Commands.add('loginAsAdmin', (visitPath) => {

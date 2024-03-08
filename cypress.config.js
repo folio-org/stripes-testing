@@ -24,7 +24,7 @@ module.exports = defineConfig({
     OKAPI_HOST: 'https://kong-pbfe2.int.aws.folio.org',
     OKAPI_TENANT: 'fs09000000',
     diku_login: 'folio',
-    diku_password: 'folio_admin_password',
+    diku_password: 'folio',
     is_kiwi_release: false,
     downloadTimeout: 2000,
     allure: 'true',

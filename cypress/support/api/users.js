@@ -159,7 +159,7 @@ Cypress.Commands.add('createUserRequestPreferencesApi', (data) => {
 });
 
 Cypress.Commands.add('getAdminSourceRecord', () => {
-  cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` })
+  cy.getUsers({ limit: 1, query: `"username"=="${Cypress.env('diku_login')}"` })
     .then((user) => {
       const { lastName, firstName } = user[0].personal;
       return `${lastName}${(firstName && `, ${firstName}`) || ''}`;

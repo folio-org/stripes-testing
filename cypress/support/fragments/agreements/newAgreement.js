@@ -16,7 +16,7 @@ const statusValue = {
 
 const defaultAgreement = {
   name: `autotest_agreement_${getRandomPostfix()}`,
-  status: statusValue.draft,
+  status: statusValue.active,
   startDate: DateTools.getCurrentDate(),
 };
 

@@ -32,7 +32,7 @@ const defaultAgreement = {
       startDate: DateTools.getCurrentDateForFiscalYear(),
     },
   ],
-  name: `Default Agreement ${randomFourDigitNumber()}`,
+  name: `000 AAA Agreement ${randomFourDigitNumber()}`,
   agreementStatus: 'active',
 };
 
@@ -43,7 +43,7 @@ const defaultAgreementWithOrg = ({ organizationId, organizationName }) => {
         startDate: DateTools.getCurrentDateForFiscalYear(),
       },
     ],
-    name: `AutotestAgreement ${randomFourDigitNumber()}`,
+    name: `000 AAA AutotestAgreement ${randomFourDigitNumber()}`,
     agreementStatus: 'active',
     orgs: [
       {
