@@ -17,7 +17,6 @@ import Requests from '../../support/fragments/requests/requests';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -54,10 +53,6 @@ describe('Request Detail. TLR', () => {
     });
     cy.getAdminToken()
       .then(() => {
-        cy.loginAsAdmin({
-          path: SettingsMenu.circulationTitleLevelRequestsPath,
-          waiter: TitleLevelRequests.waitLoading,
-        });
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);
@@ -143,7 +138,7 @@ describe('Request Detail. TLR', () => {
             testData.userServicePoint.id,
           );
         });
-        TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+        TitleLevelRequests.enableTLRViaApi();
       })
       .then(() => {
         cy.get('@items').each((item) => {
@@ -188,10 +183,6 @@ describe('Request Detail. TLR', () => {
 
   after('Deleting created entities', () => {
     cy.getAdminToken();
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
     cy.wrap(requestIds).each((id) => {
       Requests.deleteRequestViaApi(id);
     });
@@ -225,7 +216,7 @@ describe('Request Detail. TLR', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
+    TitleLevelRequests.disableTLRViaApi();
   });
 
   it(

@@ -1,17 +1,18 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
-    let userId = null;
-    let fileNameToUpload = '';
+    let user = null;
+    const instanceIds = [];
     const filePathToUpload = 'oneMarcBib.mrc';
     const numberOfLogsToDelete = 2;
     const numberOfLogsPerPage = 25;
@@ -22,48 +23,47 @@ describe('data-import', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.dataImportDeleteLogs.gui,
-      ])
-        .then((userProperties) => {
-          userId = userProperties.userId;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          });
-        })
-        .then(() => {
-          DataImport.checkIsLandingPageOpened();
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          fileNameToUpload = `C358137autotestFile.${getRandomPostfix()}.mrc`;
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-          DataImport.verifyUploadState();
-          DataImport.waitLoading();
-          DataImport.uploadFile(filePathToUpload, fileNameToUpload);
-          JobProfiles.waitFileIsUploaded();
-          JobProfiles.search(jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(fileNameToUpload);
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
         });
+        for (let i = 0; i < 26; i++) {
+          const fileNameToUpload = `C358137 autotestFile${getRandomPostfix()}.mrc`;
+
+          DataImport.uploadFileViaApi(filePathToUpload, fileNameToUpload, jobProfileToRun).then(
+            (response) => {
+              instanceIds.push(response.entries[0].relatedInstanceInfo.idList[0]);
+            },
+          );
+        }
+      });
     });
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        Logs.selectAllLogs();
-        Logs.actionsButtonClick();
-        Logs.deleteLogsButtonClick();
-        DataImport.confirmDeleteImportLogs();
-        Users.deleteViaApi(userId);
+        instanceIds.forEach((id) => {
+          InventoryInstance.deleteInstanceViaApi(id);
+        });
+        Users.deleteViaApi(user.userId);
       });
     });
 
     it(
       'C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (folijet)',
-      { tags: ['smoke', 'folijet', 'nonParallel'] },
+      { tags: ['smoke', 'folijet'] },
       () => {
-        Logs.openFileDetails(fileNameToUpload);
+        // need to open file for this we find it
+        Logs.openViewAllLogs();
+        LogsViewAll.openUserIdAccordion();
+        LogsViewAll.filterJobsByUser(`${user.firstName} ${user.lastName}`);
+        Logs.openFileDetailsByRowNumber();
         Logs.clickOnHotLink();
         cy.location('pathname').should('include', '/inventory/view');
-        cy.visit(TopMenu.dataImportPath);
 
+        cy.visit(TopMenu.dataImportPath);
         DataImport.getLogsHrIdsFromUI(numberOfLogsToDelete).then((logsHrIdsToBeDeleted) => {
           // verify that user can cancel deletion of logs
           DataImport.selectAllLogs();

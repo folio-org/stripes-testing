@@ -328,7 +328,7 @@ describe('Patron Block: Lost items', () => {
 
   it(
     'C350655 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item renewed (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPathBroken', 'vega'] },
     () => {
       const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum outstanding fee/fine balance', '624');
@@ -352,7 +352,7 @@ describe('Patron Block: Lost items', () => {
 
   it(
     'C350651 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item returned (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPathBroken', 'vega'] },
     () => {
       const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum outstanding fee/fine balance', '624');

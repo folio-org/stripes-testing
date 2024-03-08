@@ -91,7 +91,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.hrid, item2.hrid);
-        cy.pause();
 
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();

@@ -9,6 +9,7 @@ import {
 } from '../../../support/fragments/finance';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import FundDetails from '../../../support/fragments/finance/funds/fundDetails';
 
 describe('Finance', () => {
   const testData = {
@@ -92,7 +93,7 @@ describe('Finance', () => {
       () => {
         // Open Fund B from Preconditions
         FinanceHelper.searchByName(funds.second.name);
-        const FundDetails = Funds.selectFund(funds.second.name);
+        Funds.selectFund(funds.second.name);
         FundDetails.checkFundDetails({
           currentBudget: { name: budgets.second.name, allocated: '$100.00', available: '$100.00' },
         });
@@ -160,7 +161,7 @@ describe('Finance', () => {
       () => {
         // Open Fund B from Preconditions
         FinanceHelper.searchByName(funds.second.name);
-        const FundDetails = Funds.selectFund(funds.second.name);
+        Funds.selectFund(funds.second.name);
         FundDetails.checkFundDetails({
           currentBudget: { name: budgets.second.name, allocated: '$100.00', available: '-$10.00' },
         });
@@ -219,7 +220,7 @@ describe('Finance', () => {
       () => {
         // Open Fund B from Preconditions
         FinanceHelper.searchByName(funds.second.name);
-        const FundDetails = Funds.selectFund(funds.second.name);
+        Funds.selectFund(funds.second.name);
         FundDetails.checkFundDetails({
           currentBudget: { name: budgets.second.name, allocated: '$100.00', available: '$210.00' },
         });
@@ -278,7 +279,7 @@ describe('Finance', () => {
       () => {
         // Open Fund B from Preconditions
         FinanceHelper.searchByName(funds.second.name);
-        const FundDetails = Funds.selectFund(funds.second.name);
+        Funds.selectFund(funds.second.name);
         FundDetails.checkFundDetails({
           currentBudget: { name: budgets.second.name, allocated: '$0.00', available: '$0.00' },
         });

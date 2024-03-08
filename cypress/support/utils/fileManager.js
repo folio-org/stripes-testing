@@ -37,7 +37,11 @@ export default {
   deleteFileFromDownloadsByMask(...fileNameMasks) {
     fileNameMasks.forEach((fileNameMask) => {
       this.findDownloadedFilesByMask(fileNameMask).then((fileName) => {
-        cy.task('deleteFile', fileName[0]);
+        if (fileName !== null) {
+          cy.task('deleteFile', fileName[0]);
+        } else {
+          cy.log(`NO FILE FOUND FOR MASK: ${fileNameMask}`);
+        }
       });
     });
   },

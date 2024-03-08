@@ -51,7 +51,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyActionsAfterConductedCSVUploading();
         BulkEditSearchPane.verifyUsersActionShowColumns();
 
-        BulkEditSearchPane.changeShowColumnCheckbox('Email');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Email');
         BulkEditSearchPane.verifyResultColumTitles('Email');
 
         BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);

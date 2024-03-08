@@ -5,6 +5,7 @@ import {
   Checkbox,
   Dropdown,
   DropdownMenu,
+  MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
   MultiSelect,
@@ -227,6 +228,7 @@ export default {
   },
 
   exportResults() {
+    cy.expect(MultiColumnList().exists());
     cy.do([actionsButton.click(), Button('Export results (CSV)').click()]);
   },
 

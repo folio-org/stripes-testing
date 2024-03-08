@@ -35,7 +35,7 @@ describe('data-import', () => {
       arrayOfHoldingsStatuses: ['Created (KU/CC/DI/M)', 'Created (KU/CC/DI/A)'],
       quantityOfCreatedHoldings: 2,
       jsonHoldingsData: [
-        'Import Log for Record 1 (Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.)',
+        'Import Log for Record 01 (Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.)',
         'KU/CC/DI/M',
         'KU/CC/DI/A',
       ],

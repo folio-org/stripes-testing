@@ -65,7 +65,7 @@ describe('agreements', () => {
 
     it(
       'C1314 Assign a library staff member to an Agreement (erm) (TaaS)',
-      { tags: ['extendedPath', 'erm'] },
+      { tags: ['extendedPathErm', 'erm'] },
       () => {
         AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
         AgreementViewDetails.gotoEdit();

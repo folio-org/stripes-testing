@@ -17,7 +17,7 @@ import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
-describe('Finance: Fiscal Year Rollover', { retries: 3 }, () => {
+describe('Finance: Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
@@ -86,7 +86,7 @@ describe('Finance: Fiscal Year Rollover', { retries: 3 }, () => {
       secondOrder.vendor = organization.name;
       firstOrder.vendor = organization.name;
       cy.visit(TopMenu.ordersPath);
-      Orders.createOrderForRollover(firstOrder, true).then((secondOrderResponse) => {
+      Orders.createApprovedOrderForRollover(firstOrder, true).then((secondOrderResponse) => {
         firstOrder.id = secondOrderResponse.id;
         firstOrderNumber = secondOrderResponse.poNumber;
         Orders.checkCreatedOrder(firstOrder);
@@ -97,7 +97,7 @@ describe('Finance: Fiscal Year Rollover', { retries: 3 }, () => {
           '40',
           '1',
           '40',
-          location.institutionId,
+          location.name,
         );
         OrderLines.backToEditingOrder();
         Orders.openOrder();
@@ -110,7 +110,7 @@ describe('Finance: Fiscal Year Rollover', { retries: 3 }, () => {
       Invoices.approveInvoice();
       Invoices.payInvoice();
       cy.visit(TopMenu.ordersPath);
-      Orders.createOrderForRollover(secondOrder, true).then((firstOrderResponse) => {
+      Orders.createApprovedOrderForRollover(secondOrder, true).then((firstOrderResponse) => {
         secondOrder.id = firstOrderResponse.id;
         Orders.checkCreatedOrder(secondOrder);
         OrderLines.addPOLine();
@@ -120,7 +120,7 @@ describe('Finance: Fiscal Year Rollover', { retries: 3 }, () => {
           '10',
           '1',
           '10',
-          location.institutionId,
+          location.name,
         );
         OrderLines.backToEditingOrder();
         Orders.openOrder();

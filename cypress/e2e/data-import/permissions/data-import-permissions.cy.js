@@ -8,31 +8,46 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('data-import', () => {
   describe('Permissions', () => {
     let user;
-    const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
+    let instanceIds;
+    const fileName = `oneMarcBib${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi1(
+        'oneMarcBib.mrc',
+        fileName,
+        'Default - Create instance and SRS MARC Bib',
+      ).then((response) => {
+        instanceIds = response;
+      });
+
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password);
-        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
       });
     });
 
     after('delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
+      instanceIds.forEach((record) => {
+        InventoryInstance.deleteInstanceViaApi(record.instance.id);
+      });
     });
 
     it('C492 Data Import permissions (folijet)', { tags: ['extendedPath', 'folijet'] }, () => {
-      cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(fileName);
       FileDetails.checkStatusInColumn(

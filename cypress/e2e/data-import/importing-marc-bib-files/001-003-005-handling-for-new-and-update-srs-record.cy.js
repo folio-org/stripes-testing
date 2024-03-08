@@ -81,24 +81,12 @@ describe('data-import', () => {
     };
 
     before('create test data', () => {
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      const fileName = `C17039autotestFile.${getRandomPostfix()}.mrc`;
-
-      cy.visit(TopMenu.dataImportPath);
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      DataImport.uploadFile('oneMarcBib.mrc', fileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfileToRun);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(fileName);
-      Logs.openFileDetails(fileName);
-
-      // open Instance for getting hrid
-      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-        instanceHridForReimport = initialInstanceHrId;
+      const fileName = `C17039 autotestFile${getRandomPostfix()}.mrc`;
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then((response) => {
+        instanceHridForReimport = response.entries[0].relatedInstanceInfo.hridList[0];
       });
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     });
 
     after('delete test data', () => {
@@ -127,10 +115,11 @@ describe('data-import', () => {
 
     it(
       'C17039 Test 001/003/035 handling for New and Updated SRS records (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
+        cy.reload();
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFilrForC17039.mrc', nameMarcFileForCreate);
@@ -138,7 +127,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameMarcFileForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(nameMarcFileForCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForCreate);
         [
           FileDetails.columnNameInResultList.srsMarc,
@@ -178,7 +167,7 @@ describe('data-import', () => {
             DataImport.editMarcFile(
               'marcFilrForC17039With999Field.mrc',
               editedMarcFileName,
-              ['srsUuid', 'instanceUuid'],
+              ['instanceUuid', 'srsUuid'],
               [uuid[0], uuid[1]],
             );
           });
@@ -221,7 +210,7 @@ describe('data-import', () => {
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(fileNameAfterUpload);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.checkJobStatus(fileNameAfterUpload, JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(fileNameAfterUpload);
           FileDetails.checkStatusInColumn(
             RECORD_STATUSES.UPDATED,
@@ -269,7 +258,7 @@ describe('data-import', () => {
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(exportedFileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.checkJobStatus(exportedFileName, JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(exportedFileName);
           [
             FileDetails.columnNameInResultList.srsMarc,

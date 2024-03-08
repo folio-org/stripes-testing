@@ -69,6 +69,7 @@ describe('inventory', () => {
         // Change the Call number -> Click "Save & Close" button
         HoldingsRecordEdit.fillCallNumber(testData.callNumber);
         HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
+        HoldingsRecordView.close();
         InventoryInstance.checkIsHoldingsCreated([
           `${testData.location.name} >  ${testData.callNumber}`,
         ]);

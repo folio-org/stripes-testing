@@ -49,7 +49,7 @@ describe('bulk-edit', () => {
       'C397348 Verify CANCEL uploading file with matched Users (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.checkForUploading(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();

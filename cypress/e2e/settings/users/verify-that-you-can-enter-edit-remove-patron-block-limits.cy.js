@@ -24,7 +24,7 @@ describe('Settings Users', () => {
 
   it(
     'C11079 Verify that you can enter/edit/remove patron block limits (vega) (TaaS)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       Limits.selectGroup(patronGroup.name);
       Limits.verifyLimitTypes();

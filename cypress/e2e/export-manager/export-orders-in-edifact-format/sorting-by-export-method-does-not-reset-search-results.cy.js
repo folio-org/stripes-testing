@@ -129,7 +129,7 @@ describe('orders: export', () => {
             orderForSecondOrganization.id = secondOrderId;
             Orders.createPOLineViaActions();
             OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
-            OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+            OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
             OrderLines.backToEditingOrder();
           });
         },
@@ -140,7 +140,7 @@ describe('orders: export', () => {
         orderForFirstOrganization.id = firstOrderId;
         Orders.createPOLineViaActions();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-        OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+        OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
         OrderLines.backToEditingOrder();
       });
     });
@@ -171,13 +171,14 @@ describe('orders: export', () => {
 
   it(
     'C377045: Sorting by export method does not reset search results (thunderjet) (TaaS)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       ExportManagerSearchPane.selectOrganizationsSearch();
       ExportManagerSearchPane.searchBySuccessful();
       ExportManagerSearchPane.searchByFailed();
       ExportManagerSearchPane.sortByJobID();
       ExportManagerSearchPane.selectJobByIntegrationInList(integrationNameForFirstOrganization);
+      ExportManagerSearchPane.resetAll();
       ExportManagerSearchPane.selectJobByIntegrationInList(integrationNameForSecondOrganization);
     },
   );

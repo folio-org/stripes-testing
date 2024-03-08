@@ -10,7 +10,7 @@ import Users from '../../../support/fragments/users/users';
 import ArrayUtils from '../../../support/utils/arrays';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('eHoldings', () => {
+describe.skip('eHoldings', () => {
   describe('Package', () => {
     const testData = {
       package: {

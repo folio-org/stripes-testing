@@ -29,7 +29,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', { retries: 2 }, () => {
+describe('data-import', () => {
   describe('End to end scenarios', () => {
     let user = {};
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
@@ -167,6 +167,7 @@ describe('data-import', { retries: 2 }, () => {
         );
 
         cy.visit(TopMenu.inventoryPath);
+        cy.wait(2000);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
 
         // ensure the fields created in Field mapping profile exists in inventory

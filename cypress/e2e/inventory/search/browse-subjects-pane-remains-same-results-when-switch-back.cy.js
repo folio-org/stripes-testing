@@ -1,13 +1,10 @@
 import {
-  JOB_STATUS_NAMES,
   LOAN_TYPE_NAMES,
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -25,7 +22,6 @@ const testData = {
   user: {},
   instanceId: '',
   instanceIDs: [],
-  authorityIDs: [],
   newBarCode: getRandomPostfix(),
   item: {
     instanceName: `inventoryC380405_${getRandomPostfix()}`,
@@ -40,6 +36,7 @@ const testData = {
       fileName: `testMarcFileC380405.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numberOfRecords: 1,
+      propertyName: 'relatedInstanceInfo',
     },
   ],
 };
@@ -67,19 +64,15 @@ describe('inventory', () => {
       });
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         testData.marcFiles.forEach((marcFile) => {
-          DataImport.verifyUploadState();
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.search(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(marcFile.fileName);
-          for (let i = 0; i < marcFile.numberOfRecords; i++) {
-            Logs.getCreatedItemsID(i).then((link) => {
-              testData.instanceIDs.push(link.split('/')[5]);
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              testData.instanceIDs.push(record[marcFile.propertyName].idList[0]);
             });
-          }
-          cy.visit(TopMenu.dataImportPath);
+          });
         });
       });
       cy.logout();

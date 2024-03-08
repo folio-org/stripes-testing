@@ -104,7 +104,7 @@ describe('Finance: Funds', () => {
           '100',
           '2',
           '200',
-          location.institutionId,
+          location.name,
         );
         OrderLines.backToEditingOrder();
         Orders.openOrder();

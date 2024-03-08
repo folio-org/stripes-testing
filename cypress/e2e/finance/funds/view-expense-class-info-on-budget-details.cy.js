@@ -5,6 +5,7 @@ import { NewOrganization, Organizations } from '../../../support/fragments/organ
 import { NewOrder, Orders, BasicOrderLine } from '../../../support/fragments/orders';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import FundDetails from '../../../support/fragments/finance/funds/fundDetails';
 
 describe('Finance', () => {
   describe('Funds', () => {
@@ -80,7 +81,7 @@ describe('Finance', () => {
       () => {
         // Open the record with Fund from precondition by clicking on its name
         Funds.searchByName(testData.fund.name);
-        const FundDetails = Funds.selectFund(testData.fund.name);
+        Funds.selectFund(testData.fund.name);
         FundDetails.checkFundDetails({
           information: [{ key: 'Status', value: 'Active' }],
           currentBudget: {

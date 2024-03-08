@@ -5,9 +5,6 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 
 const testData = {
   authorityIDs: [],
@@ -25,8 +22,9 @@ const testData = {
     sixthQuery: '*33645218',
   },
   authRows: {
-    warsaw: 'Warsaw Council (2nd : 1962-1965 : Basilica di San Pietro in Warsawo)',
-    delaware: 'Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
+    warsaw: 'C380593Warsaw Council (2nd : 1962-1965 : Basilica di San Pietro in Warsawo)',
+    delaware:
+      'C380593Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
   },
   authorizedTypes: {
     AUTHORIZED: 'Authorized',
@@ -56,8 +54,8 @@ const testData = {
 describe('MARC', () => {
   describe('MARC Authority', () => {
     before('Create test data', () => {
-      cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
-        (userProperties) => {
+      cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui])
+        .then((userProperties) => {
           testData.user = userProperties;
           Object.values(testData.authRows).forEach((query) => {
             MarcAuthorities.getMarcAuthoritiesViaApi({
@@ -71,28 +69,21 @@ describe('MARC', () => {
               }
             });
           });
-        },
-      );
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })
+        })
         .then(() => {
           testData.marcFiles.forEach((marcFile) => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numberOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                testData.authorityIDs.push(link.split('/')[5]);
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                testData.authorityIDs.push(record.relatedAuthorityInfo.idList[0]);
               });
-            }
-            cy.visit(TopMenu.dataImportPath);
+            });
           });
         })
         .then(() => {
-          cy.logout();
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,

@@ -16,7 +16,6 @@ import TitleLevelRequests from '../../support/fragments/settings/circulation/tit
 import { Locations } from '../../support/fragments/settings/tenant/location-setup';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import RenewConfirmationModal from '../../support/fragments/users/loans/renewConfirmationModal';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
@@ -57,12 +56,7 @@ describe('Title Level Request', () => {
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
-    TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+    TitleLevelRequests.enableTLRViaApi();
 
     cy.createTempUser(
       [

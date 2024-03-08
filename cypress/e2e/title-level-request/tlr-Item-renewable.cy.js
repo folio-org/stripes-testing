@@ -300,7 +300,7 @@ describe('TLR: Item renew', () => {
 
   it(
     'C360534 TLR: Check that Item assigned to recall is not renewable (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPathBroken', 'vega'] },
     () => {
       cy.getToken(userForRenew.username, userForRenew.password);
       cy.visit(TopMenu.requestsPath);

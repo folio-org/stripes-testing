@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -12,7 +9,7 @@ import Users from '../../../support/fragments/users/users';
 import { randomizeArray } from '../../../support/utils/arrays';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('marc', { retries: 2 }, () => {
+describe('MARC', () => {
   describe('MARC Holdings', () => {
     const testData = {
       tagLDR: 'LDR',
@@ -27,6 +24,7 @@ describe('marc', { retries: 2 }, () => {
       marc: 'oneMarcBib.mrc',
       fileName: `testMarcC357063.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      propertyName: 'relatedInstanceInfo',
     };
 
     const recordIDs = [];
@@ -42,33 +40,32 @@ describe('marc', { retries: 2 }, () => {
 
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(marcFile.fileName);
-            Logs.getCreatedItemsID().then((link) => {
-              recordIDs.push(link.split('/')[5]);
-              cy.visit(TopMenu.inventoryPath).then(() => {
-                InventoryInstances.searchByTitle(recordIDs[0]);
-                InventoryInstances.selectInstance();
-                InventoryInstance.goToMarcHoldingRecordAdding();
-                QuickMarcEditor.updateExistingField(
-                  testData.tag852,
-                  QuickMarcEditor.getExistingLocation(),
-                );
-                QuickMarcEditor.pressSaveAndClose();
-                QuickMarcEditor.checkAfterSaveHoldings();
-                HoldingsRecordView.checkHoldingRecordViewOpened();
-                HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
-                  recordIDs.push(holdingsID);
-                  cy.login(createdUserProperties.username, createdUserProperties.password, {
-                    path: `${TopMenu.inventoryPath}/view/${recordIDs[0]}/${recordIDs[1]}`,
-                    waiter: HoldingsRecordView.checkHoldingRecordViewOpened,
-                  });
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                recordIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
+
+            cy.visit(TopMenu.inventoryPath).then(() => {
+              InventoryInstances.searchByTitle(recordIDs[0]);
+              InventoryInstances.selectInstance();
+              InventoryInstance.goToMarcHoldingRecordAdding();
+              QuickMarcEditor.updateExistingField(
+                testData.tag852,
+                QuickMarcEditor.getExistingLocation(),
+              );
+              QuickMarcEditor.pressSaveAndClose();
+              QuickMarcEditor.checkAfterSaveHoldings();
+              HoldingsRecordView.checkHoldingRecordViewOpened();
+              HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
+                recordIDs.push(holdingsID);
+                cy.login(createdUserProperties.username, createdUserProperties.password, {
+                  path: `${TopMenu.inventoryPath}/view/${recordIDs[0]}/${recordIDs[1]}`,
+                  waiter: HoldingsRecordView.checkHoldingRecordViewOpened,
                 });
               });
             });

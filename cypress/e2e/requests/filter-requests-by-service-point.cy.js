@@ -12,7 +12,6 @@ describe('ui-requests: Filter requests by pickup service point', () => {
   let instanceData;
   let servicePointId;
   let servicePointName;
-  const patronGroup = 'staff';
   const newServicePoint = {
     code: `autotest_code_${getRandomPostfix()}`,
     id: uuid(),
@@ -56,7 +55,7 @@ describe('ui-requests: Filter requests by pickup service point', () => {
       RequestDetail.checkRequesterInformation({
         lastName: requestData.requester.lastName,
         barcode: requestData.requester.barcode,
-        group: patronGroup,
+        group: Cypress.env('userGroups')[0].group,
         preference: requestData.fulfillmentPreference,
         pickupSP: servicePointName,
       });

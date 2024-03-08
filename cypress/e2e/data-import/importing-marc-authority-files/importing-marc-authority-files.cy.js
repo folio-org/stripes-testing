@@ -16,9 +16,10 @@ import {
 } from '../../../support/constants';
 
 describe('data-import', () => {
-  describe('Importing MARC Authority files', { retries: 2 }, () => {
+  describe('Importing MARC Authority files', () => {
     const testData = {};
     const jobProfileToRun = 'Default - Create SRS MARC Authority';
+    const propertyName = 'relatedAuthorityInfo';
     const createdJobProfile = {
       profileName: 'Update MARC authority records - 999 ff $s',
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
@@ -69,17 +70,18 @@ describe('data-import', () => {
       'C350666 Create a MARC authority record via data import (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        DataImport.uploadFile('test-auth-file.mrc', fileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(jobProfileToRun);
-        JobProfiles.runImportFile();
+        DataImport.uploadFileViaApi(
+          'test-auth-file.mrc',
+          fileName,
+          jobProfileToRun,
+        ).then((response) => {
+          response.entries.forEach((record) => {
+            createdAuthorityIDs.push(record[propertyName].idList[0]);
+          });
+        });
         Logs.waitFileIsImported(fileName);
         Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
-        Logs.getCreatedItemsID().then((link) => {
-          createdAuthorityIDs.push(link.split('/')[5]);
-        });
         Logs.goToTitleLink(RECORD_STATUSES.CREATED);
         MarcAuthority.contains(ACCEPTED_DATA_TYPE_NAMES.MARC);
       },
@@ -89,17 +91,18 @@ describe('data-import', () => {
       'C350668 Update a MARC authority record via data import. Record match with 999 ff $s (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        DataImport.uploadFile('test-auth-file.mrc', fileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(createdJobProfile.profileName);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(fileName);
-        Logs.getCreatedItemsID().then((link) => {
-          createdAuthorityIDs.push(link.split('/')[5]);
+        DataImport.uploadFileViaApi(
+          'test-auth-file-copy.mrc',
+          fileName,
+          createdJobProfile.profileName,
+        ).then((response) => {
+          response.entries.forEach((record) => {
+            createdAuthorityIDs.push(record[propertyName].idList[0]);
+          });
         });
+        Logs.waitFileIsImported(fileName);
+        Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(fileName);
         Logs.goToTitleLink(RECORD_STATUSES.CREATED);
         MarcAuthority.contains(ACCEPTED_DATA_TYPE_NAMES.MARC);
       },

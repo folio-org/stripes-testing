@@ -103,10 +103,10 @@ describe('inventory', () => {
       });
       InventoryInstance.confirmOrCancel('Continue');
       InteractorsTools.checkCalloutMessage(successCalloutMessage);
-      InventoryInstance.openHoldings([item.secondLocationName]);
+      InventoryHoldings.checkIfExpanded(item.secondLocationName, false);
       InventoryInstancesMovement.verifyHoldingsMoved(item.secondLocationName, '1');
 
-      InventoryInstance.openHoldings([item.firstLocationName]);
+      InventoryHoldings.checkIfExpanded(item.firstLocationName, false);
       InventoryInstance.moveItemToAnotherHolding({
         fromHolding: item.firstLocationName,
         toHolding: item.secondLocationName,

@@ -20,6 +20,8 @@ const getDefaultTemplate = ({ id = uuid(), category = NOTICE_CATEGORIES.loan } =
   templateResolver: 'mustache',
 });
 
+const previewModal = Modal({ id: 'preview-modal' });
+
 export default {
   ...CirculationPane,
   waitLoading() {
@@ -29,8 +31,8 @@ export default {
   checkPreview(previewText) {
     cy.do(Button('Preview').click());
     cy.expect([
-      Modal(including('Preview of patron notice template')).exists(),
-      Modal({ content: including(previewText) }).exists(),
+      previewModal.has({ header: including('Preview of patron notice template') }),
+      previewModal.has({ content: including(previewText) }),
     ]);
     cy.do(Button('Close').click());
   },

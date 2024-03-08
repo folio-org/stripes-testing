@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
@@ -28,47 +26,47 @@ describe('MARC', () => {
           {
             rowIndex: 31,
             tag: '650',
-            aSubfield: '$a Lesbian authors',
-            newContent: '$a Lesbian authors $z Jamaica $v Biography. $0 sh96007532',
+            aSubfield: '$a C388515Lesbian authors',
+            newContent: '$a C388515Lesbian authors $z Jamaica $v Biography. $0 sh96007532',
             isUnlinked: true,
           },
           {
             rowIndex: 32,
             tag: '650',
-            aSubfield: '$a Lesbian activists',
-            newContent: '$a Lesbian activists $z Jamaica $v Biography.',
+            aSubfield: '$a C388515Lesbian activists',
+            newContent: '$a C388515Lesbian activists $z Jamaica $v Biography.',
             isUnlinked: true,
           },
         ];
         const manuallyUnlinkedFields = [
-          { rowIndex: 17, tag: '100', aSubfield: '$a Chin, Staceyann.' },
-          { rowIndex: 28, tag: '600', aSubfield: '$a Chin, Staceyann.' },
+          { rowIndex: 17, tag: '100', aSubfield: '$a C388515Chin, Staceyann.' },
+          { rowIndex: 28, tag: '600', aSubfield: '$a C388515Chin, Staceyann.' },
           {
             rowIndex: 31,
             tag: '650',
-            aSubfield: '$a Lesbian authors',
-            newContent: '$a Lesbian authors $z Jamaica $v Biography. $0 sh96007532',
+            aSubfield: '$a C388515Lesbian authors',
+            newContent: '$a C388515Lesbian authors $z Jamaica $v Biography. $0 sh96007532',
           },
           {
             rowIndex: 32,
             tag: '650',
-            aSubfield: '$a Lesbian activists',
-            newContent: '$a Lesbian activists $z Jamaica $v Biography.',
+            aSubfield: '$a C388515Lesbian activists',
+            newContent: '$a C388515Lesbian activists $z Jamaica $v Biography.',
           },
         ];
         const notLinkedFieldRow = 4;
         const createdRecordIDs = [];
         const naturalIds = [
-          'no2021056177',
-          'n83169267',
+          'no202105618',
+          'n83169268',
           'sh99014708',
           'sh96007532',
-          'n2008052404',
-          'sh85009933',
+          'n2008052405',
+          'sh85009932',
         ];
         const authority = {
           searchOption: 'Identifier (all)',
-          searchInput: 'n83169267',
+          searchInput: 'n83169268',
         };
         const marcFiles = [
           {
@@ -76,42 +74,49 @@ describe('MARC', () => {
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numOfRecords: 1,
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileForC388515-1.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
           {
             marc: 'marcAuthFileForC388515-2.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
           {
             marc: 'marcAuthFileForC388515-3.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
           {
             marc: 'marcAuthFileForC388515-4.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
           {
             marc: 'marcAuthFileForC388515-5.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
           {
             marc: 'marcAuthFileForC388515-6.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
@@ -130,6 +135,19 @@ describe('MARC', () => {
             });
           });
 
+          cy.getAdminToken();
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
+          });
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -139,24 +157,6 @@ describe('MARC', () => {
             userData = createdUserProperties;
 
             linkableFields.forEach((field) => QuickMarcEditor.setRulesForField(field, true));
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdRecordIDs.push(link.split('/')[5]);
-                  });
-                }
-              });
-            });
 
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,
@@ -200,7 +200,7 @@ describe('MARC', () => {
               QuickMarcEditor.verifyRowLinked(field.rowIndex, false);
             });
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
-            // #5 Link first unlinked field to different "MARC authority" record ("$0" value should be changed). For example: link 100 to "n83169267"
+            // #5 Link first unlinked field to different "MARC authority" record ("$0" value should be changed). For example: link 100 to "n83169268"
             QuickMarcEditor.clickLinkIconInTagField(manuallyUnlinkedFields[0].rowIndex);
             InventoryInstance.verifySelectMarcAuthorityModal();
             MarcAuthorities.switchToSearch();
@@ -215,9 +215,9 @@ describe('MARC', () => {
               manuallyUnlinkedFields[0].tag,
               '1',
               '\\',
-              '$a Lee, Stan, $d 1922-2018',
+              '$a C388515Lee, Stan, $d 1922-2018',
               '$e author.',
-              '$0 id.loc.gov/authorities/names/n83169267',
+              '$0 http://id.loc.gov/authorities/names/n83169268',
               '',
             );
             // #6 Edit subfield "$0" value of unlinked field to another valid (matched with "naturalId" of existing "MARC authority" record)

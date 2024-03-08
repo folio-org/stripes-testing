@@ -1,3 +1,5 @@
+import getRandomPostfix, { getRandomLetters } from '../utils/stringTools';
+
 Cypress.Commands.add('getAuthorityHeadingsUpdatesViaAPI', (startDate, endDate, limit = '100') => {
   cy.okapiRequest({
     method: 'GET',
@@ -27,12 +29,39 @@ Cypress.Commands.add('getAuthoritySourceFileIdViaAPI', (authorityFileName) => {
   });
 });
 
-Cypress.Commands.add('deleteAuthoritySourceFileViaAPI', (id) => {
+Cypress.Commands.add('deleteAuthoritySourceFileViaAPI', (id, ignoreErrors = false) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `authority-source-files/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   }).then(({ status }) => {
     return status;
   });
 });
+
+Cypress.Commands.add(
+  'createAuthoritySourceFileViaAPI',
+  ({
+    name = `Test auth source file ${getRandomPostfix()}`,
+    code = getRandomLetters(8),
+    type = 'Test',
+    baseUrl = `http://id.loc.gov/authorities/${getRandomLetters(8)}/`,
+  } = {}) => {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'authority-source-files',
+      body: {
+        name,
+        code,
+        type,
+        baseUrl,
+        source: 'local',
+      },
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      cy.wrap(body).as('body');
+    });
+    return cy.get('@body');
+  },
+);

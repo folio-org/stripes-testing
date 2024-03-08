@@ -62,7 +62,7 @@ describe('agreements', () => {
 
     it(
       'C1311 Unassign a note from an Agreement record (erm) (TaaS)',
-      { tags: ['extendedPath', 'erm'] },
+      { tags: ['extendedPathErm', 'erm'] },
       () => {
         AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
         AgreementViewDetails.openNotesSection();

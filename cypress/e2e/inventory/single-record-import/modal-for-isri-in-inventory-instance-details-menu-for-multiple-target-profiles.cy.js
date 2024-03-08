@@ -1,9 +1,5 @@
 import { Permissions } from '../../../support/dictionary';
-import { RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -40,14 +36,13 @@ describe('inventory', () => {
     const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
 
     before('create test data', () => {
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       cy.getAdminToken().then(() => {
-        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
-        JobProfiles.waitFileIsImported(fileName);
-        Logs.openFileDetails(fileName);
-        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHRID = initialInstanceHrId;
+        DataImport.uploadFileViaApi(
+          'oneMarcBib.mrc',
+          fileName,
+          'Default - Create instance and SRS MARC Bib',
+        ).then((response) => {
+          instanceHRID = response.entries[0].relatedInstanceInfo.hridList[0];
         });
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
         Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(newTargetProfileName).then(
@@ -55,24 +50,25 @@ describe('inventory', () => {
             profileId = initialId;
           },
         );
-        cy.visit(SettingsMenu.targetProfilesPath);
-        Z3950TargetProfiles.openTargetProfile();
-        ViewTargetProfile.verifyTargetProfileForm(
-          targetProfile.name,
-          targetProfile.url,
-          targetProfile.authentification,
-          targetProfile.externalId,
-          targetProfile.internalId,
-        );
-        Z3950TargetProfiles.openTargetProfile(profileId);
-        ViewTargetProfile.verifyTargetProfileForm(
-          targetProfile.name,
-          targetProfile.url,
-          targetProfile.authentification,
-          targetProfile.externalId,
-          targetProfile.internalId,
-        );
       });
+      cy.loginAsAdmin();
+      cy.visit(SettingsMenu.targetProfilesPath);
+      Z3950TargetProfiles.openTargetProfile();
+      ViewTargetProfile.verifyTargetProfileForm(
+        targetProfile.name,
+        targetProfile.url,
+        targetProfile.authentification,
+        targetProfile.externalId,
+        targetProfile.internalId,
+      );
+      Z3950TargetProfiles.openTargetProfile(profileId);
+      ViewTargetProfile.verifyTargetProfileForm(
+        targetProfile.name,
+        targetProfile.url,
+        targetProfile.authentification,
+        targetProfile.externalId,
+        targetProfile.internalId,
+      );
       cy.logout();
 
       cy.createTempUser([

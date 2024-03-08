@@ -6,7 +6,7 @@ import ExportManagerSearchPane from '../../../support/fragments/exportManager/ex
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 
 let user;
 const item = {
@@ -64,13 +64,8 @@ describe('bulk-edit', () => {
         cy.visit(TopMenu.exportManagerPath);
         ExportManagerSearchPane.searchByBulkEdit();
         ExportManagerSearchPane.selectJob(user.username);
-        ExportManagerSearchPane.clickJobIdInThirdPane();
-        BulkEditFiles.verifyMatchedResultFileContent(
-          matchedRecordsFileName,
-          [item.itemBarcode],
-          'barcode',
-          true,
-        );
+        ExportManagerSearchPane.clickJobIdInThirdPane(matchedRecordsFileName);
+        ExportFile.verifyFileIncludes(matchedRecordsFileName, [item.itemBarcode]);
       },
     );
   });

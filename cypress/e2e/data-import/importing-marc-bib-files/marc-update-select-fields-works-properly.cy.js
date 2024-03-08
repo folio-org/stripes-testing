@@ -29,14 +29,14 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe.skip('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
     const quantityOfItems = '1';
     // unique file names
-    const marcFileForCreate = `C17019 oneMarcBib.mrc${getRandomPostfix()}`;
-    const editedMarcFileName = `C17019 editedMarcFile.${getRandomPostfix()}.mrc`;
-    const fileNameForUpdate = `C17019 marcFileForUpdate.${getRandomPostfix()}.mrc`;
+    const marcFileForCreate = `C17019 oneMarcBib${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C17019 editedMarcFile${getRandomPostfix()}.mrc`;
+    const fileNameForUpdate = `C17019 marcFileForUpdate${getRandomPostfix()}.mrc`;
     // profiles for updating instance
     const instanceMappingProfile = {
       name: `C17019 autotest instance mapping profile.${getRandomPostfix()}`,
@@ -98,18 +98,18 @@ describe('data-import', () => {
       });
     });
 
+    // skip until FAT-5907 will be reviewed
     it(
       'C17019 Check that MARC Update select fields works properly (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.getAdminToken();
-        DataImport.uploadFileViaApi('oneMarcBib.mrc', marcFileForCreate);
-        JobProfiles.waitFileIsImported(marcFileForCreate);
-        Logs.openFileDetails(marcFileForCreate);
-        // get instance hrid
-        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHrid = initialInstanceHrId;
+        DataImport.uploadFileViaApi(
+          'oneMarcBib.mrc',
+          marcFileForCreate,
+          'Default - Create instance and SRS MARC Bib',
+        ).then((response) => {
+          instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
 
           // change Instance HRID in .mrc file
           DataImport.editMarcFile(

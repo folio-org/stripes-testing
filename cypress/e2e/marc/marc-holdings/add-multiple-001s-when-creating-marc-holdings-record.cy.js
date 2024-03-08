@@ -2,8 +2,6 @@ import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Users from '../../../support/fragments/users/users';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -18,7 +16,8 @@ const testData = {
   marc: 'marcBibFileC387462.mrc',
   fileName: `testMarcFileC387462.${getRandomPostfix()}.mrc`,
   jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-  instanceTitle: 'The Journal of ecclesiastical history.',
+  propertyName: 'relatedInstanceInfo',
+  instanceTitle: 'C387462The Journal of ecclesiastical history.',
   searchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
 };
 
@@ -48,21 +47,16 @@ describe('MARC', () => {
           );
         });
 
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(testData.marc, testData.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(testData.jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(testData.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(testData.fileName);
-            Logs.getCreatedItemsID().then((link) => {
-              instanceId = link.split('/')[5];
-            });
-          },
-        );
+        cy.getAdminToken();
+        DataImport.uploadFileViaApi(
+          testData.marc,
+          testData.fileName,
+          testData.jobProfileToRun,
+        ).then((response) => {
+          response.entries.forEach((record) => {
+            instanceId = record[testData.propertyName].idList[0];
+          });
+        });
 
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,

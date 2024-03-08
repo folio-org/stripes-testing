@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -26,7 +24,7 @@ describe('MARC', () => {
           authorityMarkedValue: 'Dowland, John',
           tag240rowindex: 29,
           authority100FieldValue:
-            'Dowland, John, num 1 test purpose 1563?-1626. (valery pilko) pass (read only) pass (read only) epass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only)',
+            'C380763Dowland, John, num 1 test purpose 1563?-1626. (valery pilko) pass (read only) pass (read only) epass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only)',
           changesSavedCallout:
             'This record has successfully saved and is in process. Changes may not appear immediately.',
         };
@@ -37,12 +35,14 @@ describe('MARC', () => {
             fileName: `testMarcFileC380763${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numOfRecords: 1,
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileForC380763.mrc',
             fileName: `testMarcFileC380763${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
         const bib240AfterLinkingToAuth100 = [
@@ -52,7 +52,7 @@ describe('MARC', () => {
           '0',
           '$a pass (read only) $f pass (read only) $g pass (read only) $h pass (read only) $k pass (read only) $l epass (read only) $m pass (read only) $n pass (read only) $o pass (read only) $p pass (read only) $r pass (read only) $s pass (read only)',
           '$d PASS (editable) $t test',
-          '$0 id.loc.gov/authorities/names/n80030866',
+          '$0 http://id.loc.gov/authorities/names/n80030866',
           '$1 pass (editable) $2 pass (editable) $6 pass (editable) $7 pass (editable) $8 pass(editable)',
         ];
         const bib110UnlinkedFieldValues = [
@@ -60,7 +60,7 @@ describe('MARC', () => {
           testData.tag240,
           '1',
           '0',
-          '$a pass (read only) $f pass (read only) $g pass (read only) $h pass (read only) $k pass (read only) $l epass (read only) $m pass (read only) $n pass (read only) $o pass (read only) $p pass (read only) $r pass (read only) $s pass (read only) $d PASS (editable) $t test $0 id.loc.gov/authorities/names/n80030866 $1 pass (editable) $2 pass (editable) $6 pass (editable) $7 pass (editable) $8 pass(editable)',
+          '$a pass (read only) $f pass (read only) $g pass (read only) $h pass (read only) $k pass (read only) $l epass (read only) $m pass (read only) $n pass (read only) $o pass (read only) $p pass (read only) $r pass (read only) $s pass (read only) $d PASS (editable) $t test $0 http://id.loc.gov/authorities/names/n80030866 $1 pass (editable) $2 pass (editable) $6 pass (editable) $7 pass (editable) $8 pass(editable)',
         ];
 
         const createdAuthorityIDs = [];
@@ -75,26 +75,19 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
+            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
-              cy.loginAsAdmin({
-                path: TopMenu.dataImportPath,
-                waiter: DataImport.waitLoading,
-              }).then(() => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdAuthorityIDs.push(link.split('/')[5]);
-                  });
-                }
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+                });
               });
             });
+
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -112,10 +105,11 @@ describe('MARC', () => {
 
         it(
           'C380763 Link the "240" of "MARC Bib" field with "1XX" field of "MARC Authority" record (all subfields) (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'nonParallel'] },
+          { tags: ['extendedPath', 'spitfire'] },
           () => {
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
+            cy.wait(1000);
             InventoryInstance.editMarcBibliographicRecord();
             InventoryInstance.verifyAndClickLinkIcon(testData.tag240);
             InventoryInstance.verifySelectMarcAuthorityModal();
@@ -131,14 +125,12 @@ describe('MARC', () => {
             MarcAuthorities.selectTitle(testData.authority100FieldValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
-            QuickMarcEditor.checkUnlinkTooltipText(
-              testData.tag240,
-              'Unlink from MARC Authority record',
-            );
+            QuickMarcEditor.checkUnlinkTooltipText(29, 'Unlink from MARC Authority record');
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(testData.tag240rowindex);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib240AfterLinkingToAuth100);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
+            cy.wait(2000);
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.clickUnlinkIconInTagField(testData.tag240rowindex);
             QuickMarcEditor.confirmUnlinkingField();

@@ -185,12 +185,14 @@ describe('Bulk Edit - Logs', () => {
     'C375300 Verify generated Logs files for Holdings In app -- only valid Item barcodes (firebird)',
     { tags: ['smoke', 'firebird'] },
     () => {
-      BulkEditSearchPane.verifyDragNDropHoldingsItemBarcodesArea();
+      BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Item barcodes');
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.downloadMatchedResults();
-      BulkEditSearchPane.changeShowColumnCheckbox('Instance (Title, Publisher, Publication date)');
+      BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+        'Instance (Title, Publisher, Publication date)',
+      );
       BulkEditSearchPane.verifyResultColumTitles('Instance (Title, Publisher, Publication date)');
 
       BulkEditActions.openInAppStartBulkEditFrom();

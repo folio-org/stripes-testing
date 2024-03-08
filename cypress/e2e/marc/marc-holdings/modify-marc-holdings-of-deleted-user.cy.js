@@ -13,7 +13,7 @@ import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('marc', { retries: 2 }, () => {
+describe('MARC', () => {
   describe('MARC Holdings', () => {
     const testData = {
       calloutMessage:
@@ -22,6 +22,7 @@ describe('marc', { retries: 2 }, () => {
 
     const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const propertyName = 'relatedInstanceInfo';
 
     let instanceID;
 
@@ -41,17 +42,16 @@ describe('marc', { retries: 2 }, () => {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         }).then(() => {
-          DataImport.uploadFile('oneMarcBib.mrc', fileName);
-          JobProfiles.waitFileIsUploaded();
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(jobProfileToRun);
-          JobProfiles.runImportFile();
+          DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
+            (response) => {
+              response.entries.forEach((record) => {
+                instanceID = record[propertyName].idList[0];
+              });
+            },
+          );
           JobProfiles.waitFileIsImported(fileName);
-          Logs.checkStatusOfJobProfile('Completed');
+          Logs.checkJobStatus(fileName, 'Completed');
           Logs.openFileDetails(fileName);
-          Logs.getCreatedItemsID(0).then((link) => {
-            instanceID = link.split('/')[5];
-          });
           Logs.goToTitleLink(RECORD_STATUSES.CREATED);
           InventorySteps.addMarcHoldingRecord();
         });
@@ -84,6 +84,8 @@ describe('marc', { retries: 2 }, () => {
       InventorySearchAndFilter.searchInstanceByTitle(instanceID);
       InventorySearchAndFilter.selectViewHoldings();
       HoldingsRecordView.delete();
+      // need to wait until holding will be deleted
+      cy.wait(3000);
       if (instanceID) InventoryInstance.deleteInstanceViaApi(instanceID);
       Users.deleteViaApi(user.userBProperties.userId);
     });

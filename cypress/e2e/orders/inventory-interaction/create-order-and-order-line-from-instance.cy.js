@@ -51,14 +51,13 @@ describe('Orders', () => {
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken().then(() => {
-      OpenOrder.setOpenOrderValue(false);
-      Orders.getOrdersApi({ query: `"poNumber"=="${testData.poNumber}"` }).then((orders) => {
-        Orders.deleteOrderViaApi(orders[0].id);
-      });
-      InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-      Users.deleteViaApi(testData.user.userId);
+    cy.getAdminToken();
+    OpenOrder.setOpenOrderValue(false);
+    Orders.getOrdersApi({ query: `"poNumber"=="${testData.poNumber}"` }).then((orders) => {
+      Orders.deleteOrderViaApi(orders[0].id);
     });
+    InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+    Users.deleteViaApi(testData.user.userId);
   });
 
   describe('Inventory interaction', () => {
@@ -67,12 +66,13 @@ describe('Orders', () => {
     });
 
     after('Disable "Opening purchase orders"', () => {
+      cy.getAdminToken();
       OpenOrder.setOpenOrderValue(false);
     });
 
     it(
       'C353987 A user can create and open new order and PO line from instance record (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'nonParallel'] },
+      { tags: ['extendedPath', 'thunderjet'] },
       () => {
         // Click on instance from preconditions
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
@@ -137,7 +137,7 @@ describe('Orders', () => {
   describe('Inventory interaction', () => {
     it(
       'C353988 A user can create and save new order and PO line from instance record (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'nonParallel'] },
+      { tags: ['extendedPath', 'thunderjet'] },
       () => {
         // Click on instance from preconditions
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);

@@ -71,15 +71,13 @@ describe('bulk-edit', () => {
       'C399098 Verify Previews for the number of Users records if the record has field with line break (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.checkUsersRadio();
-        BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-        BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
 
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(...testUsersBarcodes);
         BulkEditActions.downloadMatchedResults();
-        BulkEditSearchPane.changeShowColumnCheckbox('Custom fields');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Custom fields');
         BulkEditActions.openInAppStartBulkEditFrom();
 
         BulkEditActions.fillPatronGroup('faculty (Faculty Member)');

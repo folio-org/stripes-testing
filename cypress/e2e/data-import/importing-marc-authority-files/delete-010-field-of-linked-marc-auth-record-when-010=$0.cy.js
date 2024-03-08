@@ -97,6 +97,7 @@ describe('data-import', () => {
         marc: 'marcBibFileForC374182.mrc',
         fileName: `C374182 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        propertyName: 'relatedInstanceInfo',
         numOfRecords: 1,
       },
       {
@@ -104,6 +105,7 @@ describe('data-import', () => {
         fileName: `C374182 testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
+        propertyName: 'relatedAuthorityInfo',
         authorityHeading: 'C374182 Roberts, Julia,',
       },
     ];
@@ -136,17 +138,16 @@ describe('data-import', () => {
       cy.wait(1000);
       NewJobProfile.saveAndClose();
 
+      cy.getAdminToken();
       marcFiles.forEach((marcFile) => {
-        cy.visit(TopMenu.dataImportPath);
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-        JobProfiles.search(marcFile.jobProfileToRun);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(marcFile.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFile.fileName);
-        Logs.getCreatedItemsID().then((link) => {
-          testData.createdRecordIDs.push(link.split('/')[5]);
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.entries.forEach((record) => {
+            testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+          });
         });
       });
 

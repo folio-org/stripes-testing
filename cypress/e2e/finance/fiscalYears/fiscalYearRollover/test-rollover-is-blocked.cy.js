@@ -15,7 +15,7 @@ import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
-describe('ui-finance: Fiscal Year Rollover', { retries: 3 }, () => {
+describe('ui-finance: Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = {
     name: `autotest_2_year_${getRandomPostfix()}`,
@@ -106,7 +106,7 @@ describe('ui-finance: Fiscal Year Rollover', { retries: 3 }, () => {
             '10',
             '1',
             '10',
-            location.institutionId,
+            location.name,
           );
           OrderLines.backToEditingOrder();
           Orders.openOrder();

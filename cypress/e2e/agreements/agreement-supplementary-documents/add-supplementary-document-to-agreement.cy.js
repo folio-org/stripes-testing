@@ -53,7 +53,7 @@ describe('agreements', () => {
 
     it(
       'C1318 Add supplementary document to an agreement (erm) (TaaS)',
-      { tags: ['extendedPath', 'erm'] },
+      { tags: ['extendedPathErm', 'erm'] },
       () => {
         AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
 

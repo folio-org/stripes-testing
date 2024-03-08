@@ -54,7 +54,7 @@ describe('Bulk Edit - Logs', () => {
     'C375244 Verify generated Logs files for Users In app -- only valid (firebird)',
     { tags: ['smoke', 'firebird'] },
     () => {
-      BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
+      BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
       BulkEditSearchPane.uploadFile(validUserBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.downloadMatchedResults();

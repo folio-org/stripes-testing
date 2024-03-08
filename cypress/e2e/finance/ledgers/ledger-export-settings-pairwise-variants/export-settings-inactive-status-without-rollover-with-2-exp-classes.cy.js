@@ -13,7 +13,7 @@ import ServicePoints from '../../../../support/fragments/settings/tenant/service
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 
-describe('Finance: Ledgers', { retries: 3 }, () => {
+describe('Finance: Ledgers', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
@@ -75,7 +75,7 @@ describe('Finance: Ledgers', { retries: 3 }, () => {
             '10',
             '1',
             '10',
-            location.institutionId,
+            location.name,
           );
           OrderLines.backToEditingOrder();
           Orders.openOrder();
@@ -108,7 +108,7 @@ describe('Finance: Ledgers', { retries: 3 }, () => {
 
   it(
     'C350978: Ledger export settings: current year Fund with budget, Economic (Inactive) Class, Export settings-Inactive status (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
