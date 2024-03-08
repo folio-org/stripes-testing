@@ -544,6 +544,7 @@ describe('data-import', () => {
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfileWithoutMatch.profileName);
 
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(testData.secondHrid);
         InstanceRecordView.verifyInstancePaneExists();
