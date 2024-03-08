@@ -115,10 +115,22 @@ describe('ui-invoices: Cancelling approved invoices', () => {
       Funds.selectFund(defaultFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.selectTransaction('row-1');
-      Funds.checkEncumbrance(orderNumber);
-      Funds.selectTransaction('row-2');
-      Funds.checkPendingPayment(`${orderNumber}-1`);
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransaction(
+        defaultFiscalYear.code,
+        '($50.00)',
+        `${orderNumber}-1`,
+        'Encumbrance',
+        `${defaultFund.name} (${defaultFund.code})`,
+      );
+      Funds.selectTransactionInList('Pending payment');
+      Funds.varifyDetailsInTransaction(
+        defaultFiscalYear.code,
+        '$50.00',
+        invoice.invoiceNumber,
+        'Pending payment',
+        `${defaultFund.name} (${defaultFund.code})`,
+      );
       cy.visit(TopMenu.invoicesPath);
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
@@ -128,7 +140,7 @@ describe('ui-invoices: Cancelling approved invoices', () => {
       Funds.selectFund(defaultFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.selectTransaction('row-1');
+      Funds.selectTransactionInList('Pending payment');
       Funds.checkCancelPendingPayment(invoice.invoiceNumber);
     },
   );

@@ -343,7 +343,7 @@ export default {
   unreceiveInEditPieceModal() {
     this.openDropDownInEditPieceModal();
     cy.do(Button('Unreceive').click());
-    InteractorsTools.checkCalloutMessage('The piece was successfully saved');
+    InteractorsTools.checkCalloutMessage('Unreceiving successful');
   },
 
   receiveFromExpectedSectionWithClosePOL: () => {
