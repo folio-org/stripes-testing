@@ -1,29 +1,19 @@
-import { Button, Modal, Select, including } from '../../../../../interactors';
+import { Button, Modal, MultiColumnListCell, TextField } from '../../../../../interactors';
 
-const selectLocationModal = Modal(including('Select'));
-const cancelButton = selectLocationModal.find(Button('Cancel'));
-const saveAndCloseButton = selectLocationModal.find(Button('Save and close'));
+const selectLocationModal = Modal('Select locations');
 
 export default {
   waitLoading() {
     cy.expect(selectLocationModal.exists());
   },
   verifyModalView() {
-    cy.expect([
-      saveAndCloseButton.has({ disabled: true, visible: true }),
-      cancelButton.has({ disabled: false, visible: true }),
+    cy.expect(selectLocationModal.exists());
+  },
+  selectLocation(institutionId) {
+    cy.do([
+      selectLocationModal.find(TextField({ id: 'input-record-search' })).fillIn(institutionId),
+      selectLocationModal.find(Button('Search')).click(),
+      selectLocationModal.find(MultiColumnListCell(institutionId)).click(),
     ]);
-  },
-  selectLocation(value) {
-    cy.do([Select('Institution').choose(including(value))]);
-  },
-  closeModal() {
-    return cy.do(cancelButton.click());
-  },
-  clickSaveButton() {
-    cy.expect(saveAndCloseButton.has({ disabled: false }));
-    cy.do(saveAndCloseButton.click());
-
-    cy.expect(selectLocationModal.absent());
   },
 };

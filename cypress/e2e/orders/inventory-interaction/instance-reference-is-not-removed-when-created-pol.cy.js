@@ -122,7 +122,7 @@ describe('Orders', () => {
       OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName);
       OrderLines.fillInInvalidDataForPublicationDate();
       OrderLines.cancelRemoveInstanceConnectionModal();
-      OrderLines.POLineInfoWithReceiptNotRequiredStatus(location.institutionId);
+      OrderLines.POLineInfoWithReceiptNotRequiredStatus(location.name);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);

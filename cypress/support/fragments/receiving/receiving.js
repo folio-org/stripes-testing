@@ -160,7 +160,7 @@ export default {
 
   deleteItemPiece: () => {
     cy.do([
-      addPieceModal.find(Button('Delete')).click(),
+      Button('Delete').click(),
       Modal({ id: 'delete-piece-confirmation' }).find(Button('Delete item')).click(),
     ]);
   },

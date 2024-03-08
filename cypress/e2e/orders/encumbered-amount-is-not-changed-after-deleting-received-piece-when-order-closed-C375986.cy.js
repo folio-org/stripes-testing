@@ -131,6 +131,7 @@ describe('Orders', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
+    cy.wait(6000);
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
     InventoryHoldings.deleteHoldingRecordByLocationIdViaApi(testData.location.id);

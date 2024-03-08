@@ -120,8 +120,6 @@ describe('Orders', () => {
         // Select permanent location from Precondition, Click "Save and close" button
         SelectLocationModal.selectLocation(testData.location.institutionName);
 
-        // Click "Save and close" button
-        SelectLocationModal.clickSaveButton();
         ReceivingsListEditForm.checkReceivingItemDetails({
           receivedLocation: testData.location.name,
         });
