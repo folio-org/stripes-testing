@@ -73,7 +73,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckbox('Custom fields');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Custom fields');
 
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.fillPatronGroup('staff (Staff Member)');

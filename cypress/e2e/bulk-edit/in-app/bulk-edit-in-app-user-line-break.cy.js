@@ -77,7 +77,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(...testUsersBarcodes);
         BulkEditActions.downloadMatchedResults();
-        BulkEditSearchPane.changeShowColumnCheckbox('Custom fields');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Custom fields');
         BulkEditActions.openInAppStartBulkEditFrom();
 
         BulkEditActions.fillPatronGroup('faculty (Faculty Member)');

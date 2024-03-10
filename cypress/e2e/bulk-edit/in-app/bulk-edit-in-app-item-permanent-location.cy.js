@@ -53,7 +53,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckbox('Item permanent location');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Item permanent location');
 
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.replacePermanentLocation(newLocation, 'item');

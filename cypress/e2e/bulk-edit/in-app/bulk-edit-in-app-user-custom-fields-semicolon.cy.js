@@ -57,6 +57,7 @@ describe('bulk-edit', () => {
         CustomFields.addMultiSelectCustomField(customFieldData);
         cy.visit(TopMenu.usersPath);
         UsersSearchPane.searchByUsername(user.username);
+        cy.reload();
         UserEdit.addMultiSelectCustomField(customFieldData);
         cy.visit(TopMenu.bulkEditPath);
       });
