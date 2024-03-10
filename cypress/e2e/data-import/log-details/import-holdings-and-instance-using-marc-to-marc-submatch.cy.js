@@ -266,7 +266,6 @@ describe('data-import', () => {
           [uniq001Field],
         );
 
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileNameForCreate, fileNameForCreate);
         JobProfiles.waitFileIsUploaded();
@@ -338,7 +337,6 @@ describe('data-import', () => {
         JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileNameForUpdate, fileNameForUpdate);
         JobProfiles.waitFileIsUploaded();
@@ -433,7 +431,6 @@ describe('data-import', () => {
           [uniq001Field],
         );
 
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileNameForCreate, fileNameForCreate);
         JobProfiles.waitFileIsUploaded();
@@ -495,7 +492,6 @@ describe('data-import', () => {
         JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileNameForUpdate, fileNameForUpdate);
         JobProfiles.waitFileIsUploaded();
@@ -624,7 +620,6 @@ describe('data-import', () => {
           [uniq001Field],
         );
 
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileNameForCreate, fileNameForCreate);
         JobProfiles.waitFileIsUploaded();
@@ -722,7 +717,6 @@ describe('data-import', () => {
         JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileNameForUpdate, fileNameForUpdate);
         JobProfiles.waitFileIsUploaded();

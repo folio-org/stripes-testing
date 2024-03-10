@@ -23,35 +23,6 @@ describe('data-import', () => {
     };
 
     before('create test data', () => {
-      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
-        testData.user = userProperties;
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
-        // Create files dynamically with given name and content in fixtures
-        FileManager.createFile(`cypress/fixtures/${testData.fileNameForFailedImport}`);
-        // read contents of static file in fixtures
-        cy.readFile(`cypress/fixtures/${testData.pathToStaticFile}`).then((content) => {
-          // and write its contents to the file which runs successfully and create it
-          FileManager.createFile(
-            `cypress/fixtures/${testData.fileNameForSuccessfulImport}`,
-            content,
-          );
-        });
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        cy.uploadFileWithDefaultJobProfile(testData.fileNameForFailedImport);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        cy.uploadFileWithDefaultJobProfile(testData.fileNameForSuccessfulImport);
-
-        // Remove generated test files from fixtures after uploading
-        FileManager.deleteFile(`cypress/fixtures/${testData.fileNameForSuccessfulImport}`);
-        FileManager.deleteFile(`cypress/fixtures/${testData.fileNameForFailedImport}`);
-      });
-
       cy.getAdminToken();
       cy.loginAsAdmin({
         path: TopMenu.inventoryPath,
@@ -60,6 +31,30 @@ describe('data-import', () => {
       // import with Single record import
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
       InventoryInstances.importWithOclc(testData.oclcNumber);
+
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        testData.user = userProperties;
+
+        // Create file dynamically with given name and content in fixtures
+        FileManager.createFile(`cypress/fixtures/${testData.fileNameForFailedImport}`);
+
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
+        DataImport.verifyUploadState();
+        // remove generated test file from fixtures after uploading
+        cy.uploadFileWithDefaultJobProfile(testData.fileNameForFailedImport);
+        cy.wait(2000);
+        DataImport.uploadFileViaApi(
+          testData.pathToStaticFile,
+          `C11113 autotestFileName ${getRandomPostfix()}`,
+          testData.jobProfileName,
+        );
+
+        // Remove generated test files from fixtures after uploading
+        FileManager.deleteFile(`cypress/fixtures/${testData.fileNameForFailedImport}`);
+      });
     });
 
     it('C11113 Filter the "View all" log screen (folijet)', { tags: ['smoke', 'folijet'] }, () => {

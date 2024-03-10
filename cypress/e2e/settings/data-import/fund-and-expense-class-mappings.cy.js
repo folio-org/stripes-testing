@@ -132,6 +132,7 @@ describe('data-import', () => {
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         cy.wrap(orderNumbers).each((number) => {
           Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
+            cy.wait(2000);
             Orders.deleteOrderViaApi(orderId[0].id);
           });
         });
@@ -159,7 +160,6 @@ describe('data-import', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, firstMarcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -197,7 +197,6 @@ describe('data-import', () => {
         FieldMappingProfileEdit.save();
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, secondMarcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -233,7 +232,6 @@ describe('data-import', () => {
         FieldMappingProfileEdit.save();
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, thirdMarcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -280,7 +278,6 @@ describe('data-import', () => {
         FieldMappingProfileEdit.save();
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, forthMarcFileName);
         JobProfiles.waitFileIsUploaded();

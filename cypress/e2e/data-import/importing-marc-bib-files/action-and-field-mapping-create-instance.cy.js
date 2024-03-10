@@ -104,7 +104,6 @@ describe('data-import', () => {
 
         // upload a marc file for creating of the new instance
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreate);
         JobProfiles.waitFileIsUploaded();

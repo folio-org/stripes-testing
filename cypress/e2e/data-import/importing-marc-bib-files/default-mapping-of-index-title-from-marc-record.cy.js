@@ -74,7 +74,6 @@ describe('data-import', () => {
       'C6690 Check the default mapping of the Index title from the MARC record to the Inventory Instance Index title field (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedFileForUpload, fileName);
         JobProfiles.waitFileIsUploaded();

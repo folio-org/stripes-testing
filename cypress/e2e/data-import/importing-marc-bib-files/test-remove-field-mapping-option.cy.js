@@ -289,7 +289,6 @@ describe('data-import', () => {
 
         // upload a marc file for creating
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(marcFileNameForCreate);
         JobProfiles.waitFileIsUploaded();
@@ -425,7 +424,6 @@ describe('data-import', () => {
 
             // upload a marc file for updating
             cy.visit(TopMenu.dataImportPath);
-            // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
             DataImport.verifyUploadState();
             DataImport.uploadFile(editedMarcFileName);
             JobProfiles.waitFileIsUploaded();
@@ -449,6 +447,10 @@ describe('data-import', () => {
             HoldingsRecordView.checkTemporaryLocation('-');
             HoldingsRecordView.checkDigitizationPolicy('-');
             HoldingsRecordView.close();
+            InventoryInstance.openHoldingsAccordion(
+              collectionOfMappingAndActionProfilesForCreate[1].mappingProfile
+                .permanentLocationInHoldingsAccordion,
+            );
             InventoryInstance.openItemByBarcode(itemBarcode);
             ItemRecordView.checkAccessionNumber('-');
             ItemRecordView.verifyNumberOfPieces('-');

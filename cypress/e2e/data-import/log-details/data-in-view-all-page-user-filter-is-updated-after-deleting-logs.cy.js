@@ -40,7 +40,6 @@ describe('data-import', () => {
         const filesNames = ['marcBibFileForC358546_1.mrc', 'marcBibFileForC358546_2.MRC'];
         const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadBunchOfDifferentFiles(filesNames);
         JobProfiles.waitLoadingList();

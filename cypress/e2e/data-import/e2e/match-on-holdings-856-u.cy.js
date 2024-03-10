@@ -192,7 +192,6 @@ describe('data-import', () => {
       JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfile.profileName);
 
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
       DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);
       JobProfiles.waitFileIsUploaded();
@@ -209,7 +208,6 @@ describe('data-import', () => {
         HoldingsRecordView.checkURIIsNotEmpty();
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC17025.mrc', nameForUpdateCreateMarcFile);
         JobProfiles.waitFileIsUploaded();
