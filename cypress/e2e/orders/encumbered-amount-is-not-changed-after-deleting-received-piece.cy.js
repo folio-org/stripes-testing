@@ -136,6 +136,7 @@ describe('Orders', () => {
       Orders.receiveOrderViaActions();
       Receiving.selectPOLInReceive(orderLineTitle);
       Receiving.selectPieceInReceived(barcode);
+      Receiving.openDropDownInEditPieceModal();
       Receiving.deleteItemPiece();
       Receiving.selectInstanceInReceive(`${orderNumber}-1`);
       OrderLines.openPageCurrentEncumbrance('$0.00');

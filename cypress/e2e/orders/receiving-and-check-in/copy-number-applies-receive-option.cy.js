@@ -40,6 +40,7 @@ describe('orders: Receiving and Check-in', () => {
   let orderNumber;
   let circ2LocationServicePoint;
   let location;
+  let orderLineTitleName;
 
   before(() => {
     cy.getAdminToken();
@@ -67,6 +68,11 @@ describe('orders: Receiving and Check-in', () => {
               '1',
             );
             OrderLines.backToEditingOrder();
+            OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${order.poNumber}*"` }).then(
+              (orderLines) => {
+                orderLineTitleName = orderLines[0];
+              },
+            );
             Orders.openOrder();
           });
         },
@@ -96,7 +102,7 @@ describe('orders: Receiving and Check-in', () => {
       Orders.receiveOrderViaActions();
       Receiving.selectLinkFromResultsList();
       Receiving.receivePieceWithOnlyCopyNumber(0, copyNumber);
-      Receiving.selectInstanceLinkInReceive();
+      Receiving.selectInstanceInReceive(orderLineTitleName);
       InventoryInstance.openHoldingsAccordion(location.name);
       InventoryInstance.openItemByBarcodeAndIndex('No barcode');
       ItemRecordView.verifyEffectiveLocation(location.name);
