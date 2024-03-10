@@ -146,7 +146,6 @@ describe('data-import', () => {
       'C358138 Matching on newly-created 035 does not work (regression) (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         // upload a marc file for creating of the new instance
         DataImport.uploadFile('marcFileForC358138.mrc', fileForCreateFirstName);
@@ -209,7 +208,6 @@ describe('data-import', () => {
 
         // upload a marc file for updating already created instance
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC358138_rev.mrc', fileForUpdateFirstName);
         JobProfiles.waitFileIsUploaded();
@@ -237,7 +235,6 @@ describe('data-import', () => {
 
         // upload a marc file for creating of the new instance
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC358138_with_035.mrc', fileForCreateSecondName);
         JobProfiles.waitFileIsUploaded();
@@ -271,7 +268,6 @@ describe('data-import', () => {
 
         // upload a marc file for updating already created instance
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC358138_with_035_rev.mrc', fileForUpdateSecondName);
         JobProfiles.waitFileIsUploaded();

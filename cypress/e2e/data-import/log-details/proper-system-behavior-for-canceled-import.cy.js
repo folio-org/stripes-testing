@@ -37,7 +37,6 @@ describe('data-import', () => {
       'C353638 Verify proper system behavior for canceled import (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, firstMarcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -56,7 +55,6 @@ describe('data-import', () => {
         FileDetails.verifyLogSummaryTableIsHidden();
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, secondMarcFileName);
         JobProfiles.waitFileIsUploaded();

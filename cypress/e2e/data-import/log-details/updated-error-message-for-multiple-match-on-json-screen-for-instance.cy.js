@@ -217,7 +217,6 @@ describe('data-import', () => {
         const fileName = `C389589 marcFileName${getRandomPostfix()}`;
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(testData.marcFilePath, fileName);
         JobProfiles.waitFileIsUploaded();
@@ -240,7 +239,6 @@ describe('data-import', () => {
         const fileName = `C389590 marcFileName${getRandomPostfix()}`;
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(testData.marcFilePath, fileName);
         JobProfiles.waitFileIsUploaded();

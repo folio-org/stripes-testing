@@ -193,7 +193,6 @@ describe('data-import', () => {
       cy.loginAsAdmin();
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
       DataImport.uploadFile(filePathToUpload, marcFileNameForCreate);
       JobProfiles.waitFileIsUploaded();
@@ -339,7 +338,6 @@ describe('data-import', () => {
 
           // upload the exported marc file
           cy.visit(TopMenu.dataImportPath);
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadExportedFile(exportedFileName);
           JobProfiles.search(jobProfileForUpdate.profileName);
