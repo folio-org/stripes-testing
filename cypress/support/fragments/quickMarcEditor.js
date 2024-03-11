@@ -1502,7 +1502,7 @@ export default {
     function checkBib() {
       cy.okapiRequest({
         path: 'instance-storage/instances',
-        searchParams: { query: `(title all "${marcBibTitle}")` },
+        searchParams: { query: `title=="${marcBibTitle}"` },
         isDefaultSearchParamsRequired: false,
       }).then(({ body }) => {
         if (body.instances[0] || timeCounter >= timeOutSeconds) {
