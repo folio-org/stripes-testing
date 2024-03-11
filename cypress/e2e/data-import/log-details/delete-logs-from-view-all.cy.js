@@ -6,20 +6,30 @@ import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 let user;
 const maxLogsQuantityOnPage = 100;
 
 describe('data-import', () => {
   describe('Log details', () => {
+    const instanceIds = [];
+
     before('create user and login', () => {
       cy.createTempUser([Permissions.dataImportDeleteLogs.gui]).then((userProperties) => {
         user = userProperties;
 
-        for (let i = 0; i < 101; i++) {
-          const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
+        for (let i = 0; i < 70; i++) {
+          const fileName = `C367923 autotestFileName${getRandomPostfix()}.mrc`;
 
-          DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
+          DataImport.uploadFileViaApi(
+            'oneMarcBib.mrc',
+            fileName,
+            'Default - Create instance and SRS MARC Bib',
+          ).then((response) => {
+            instanceIds.push(response.entries[0].relatedInstanceInfo.idList[0]);
+          });
+          cy.wait(2000);
         }
 
         cy.login(userProperties.username, userProperties.password, {
@@ -32,11 +42,14 @@ describe('data-import', () => {
     after('delete user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
+      instanceIds.forEach((id) => {
+        InventoryInstance.deleteInstanceViaApi(id);
+      });
     });
 
     it(
       'C367923 A user can delete logs from the Import app "View all" page (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();

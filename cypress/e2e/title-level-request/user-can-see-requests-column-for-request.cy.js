@@ -166,10 +166,7 @@ describe('Title Level Request. Request Detail', () => {
   });
 
   after('Deleting created entities', () => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
+    cy.getAdminToken();
     cy.wrap(requestIds).each((id) => {
       Requests.deleteRequestViaApi(id);
     });

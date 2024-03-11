@@ -1,6 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  holdingsIdentifiers,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -49,11 +51,6 @@ describe('bulk-edit', () => {
       });
     });
 
-    beforeEach('select holdings', () => {
-      BulkEditSearchPane.checkHoldingsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
-    });
-
     after('delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
@@ -70,39 +67,18 @@ describe('bulk-edit', () => {
       'C360089 Verify "Inventory - holdings" option on "Bulk edit" app (firebird)',
       { tags: ['smoke', 'firebird'] },
       () => {
-        [
-          {
-            identifier: 'Holdings UUIDs',
-            label: 'Select a file with holdings UUIDs',
-            pageText: 'Drag and drop or choose file with holdings UUIDs',
-          },
-          {
-            identifier: 'Holdings HRIDs',
-            label: 'Select a file with holdings HRIDs',
-            pageText: 'Drag and drop or choose file with holdings HRIDs',
-          },
-          {
-            identifier: 'Instance HRIDs',
-            label: 'Select a file with instance HRIDs',
-            pageText: 'Drag and drop or choose file with instance HRIDs',
-          },
-          {
-            identifier: 'Item barcodes',
-            label: 'Select a file with item barcode',
-            pageText: 'Drag and drop or choose file with item barcode',
-          },
-        ].forEach((checker) => {
-          BulkEditSearchPane.selectRecordIdentifier(checker.identifier);
-          BulkEditSearchPane.verifyInputLabel(checker.label);
-          BulkEditSearchPane.verifyInputLabel(checker.pageText);
+        BulkEditSearchPane.verifyRecordTypeIdentifiers('Holdings');
+        holdingsIdentifiers.forEach((identifier) => {
+          BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', identifier);
         });
       },
     );
 
     it(
       'C356810 Verify uploading file with holdings UUIDs (firebird)',
-      { tags: ['smoke', 'firebird'], retries: 1 },
+      { tags: ['smoke', 'firebird'] },
       () => {
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
         BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(hrid);
@@ -124,8 +100,7 @@ describe('bulk-edit', () => {
       'C360120 Verify that User can trigger bulk of holdings with file containing Holdings identifiers (firebird)',
       { tags: ['smoke', 'firebird'] },
       () => {
-        BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
-
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
         BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(hrid);
@@ -162,8 +137,7 @@ describe('bulk-edit', () => {
       'C367975 Verify Bulk edit Holdings records with empty Electronic access Relationship type (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
-
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
         BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(hrid);

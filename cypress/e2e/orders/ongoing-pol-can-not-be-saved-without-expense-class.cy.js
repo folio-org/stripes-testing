@@ -62,15 +62,17 @@ describe('Orders', () => {
     order.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
 
-    cy.createTempUser([permissions.uiOrdersCreate.gui, permissions.uiOrdersEdit.gui]).then(
-      (userProperties) => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
-        });
-      },
-    );
+    cy.createTempUser([
+      permissions.uiOrdersCreate.gui,
+      permissions.uiOrdersEdit.gui,
+      permissions.uiOrdersApprovePurchaseOrders.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
+    });
   });
 
   after(() => {
@@ -83,7 +85,7 @@ describe('Orders', () => {
     'C402774 PO line for "Ongoing" order can not be saved when "Expense class" field is empty (thunderjet) (TaaS)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
-      Orders.createOrderForRollover(order).then((firstOrderResponse) => {
+      Orders.createApprovedOrderForRollover(order, true).then((firstOrderResponse) => {
         order.id = firstOrderResponse.id;
         OrderLines.addPOLine();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
@@ -92,7 +94,7 @@ describe('Orders', () => {
           '20',
           '1',
           '20',
-          location.institutionId,
+          location.name,
         );
       });
     },

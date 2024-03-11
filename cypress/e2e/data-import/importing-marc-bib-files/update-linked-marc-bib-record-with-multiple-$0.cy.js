@@ -44,7 +44,7 @@ describe('data-import', () => {
         '\\',
         '$a C377006 Coates, Ta-Nehisi',
         '$e author.',
-        '$0 id.loc.gov/authorities/names/n2008001084',
+        '$0 http://id.loc.gov/authorities/names/n2008001084',
         '',
       ],
       updated700Field: [
@@ -54,7 +54,7 @@ describe('data-import', () => {
         '\\',
         '$a C377006 Lee, Stan, $d 1922-2018',
         '$e creator.',
-        '$0 id.loc.gov/authorities/names/n83169267',
+        '$0 http://id.loc.gov/authorities/names/n83169267',
         '',
       ],
       accordion: 'Subject',
@@ -125,12 +125,14 @@ describe('data-import', () => {
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numOfRecords: 1,
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'marcAuthFileForC377006.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 2,
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
     const linkingTagAndValues = [
@@ -162,20 +164,15 @@ describe('data-import', () => {
         cy.loginAsAdmin()
           .then(() => {
             marcFiles.forEach((marcFile) => {
-              cy.visit(TopMenu.dataImportPath);
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, 'Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  createdAuthorityIDs.push(link.split('/')[5]);
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
                 });
-              }
+              });
             });
           })
           .then(() => {
@@ -293,10 +290,10 @@ describe('data-import', () => {
 
         InventoryInstance.viewSource();
         InventoryViewSource.contains(
-          `${testData.marcAuthIcon}\n\t${linkingTagAndValues[0].tag}\t1  \t$a C377006 Coates, Ta-Nehisi $e author. $0 id.loc.gov/authorities/names/n2008001084 $9`,
+          `${testData.marcAuthIcon}\n\t${linkingTagAndValues[0].tag}\t1  \t$a C377006 Coates, Ta-Nehisi $e author. $0 http://id.loc.gov/authorities/names/n2008001084 $9`,
         );
         InventoryViewSource.contains(
-          `${testData.marcAuthIcon}\n\t${linkingTagAndValues[1].tag}\t1  \t$a C377006 Lee, Stan, $d 1922-2018 $e creator. $0 id.loc.gov/authorities/names/n83169267 $9`,
+          `${testData.marcAuthIcon}\n\t${linkingTagAndValues[1].tag}\t1  \t$a C377006 Lee, Stan, $d 1922-2018 $e creator. $0 http://id.loc.gov/authorities/names/n83169267 $9`,
         );
         InventoryViewSource.close();
         InventoryInstance.deriveNewMarcBib();

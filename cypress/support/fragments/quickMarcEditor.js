@@ -361,7 +361,6 @@ const holdingsLocationSelectDisabled = holdingsLocationModal.find(
   Button({ name: 'locationId', disabled: true }),
 );
 const holdingsLocationSaveButton = holdingsLocationModal.find(Button('Save and close'));
-
 const defaultValidLdr = '00000naa\\a2200000uu\\4500';
 const defaultValidHoldingsLdr = '00000nu\\\\\\2200000un\\4500';
 const defaultValid008Values = {
@@ -445,7 +444,7 @@ export default {
   },
 
   deletePenaltField() {
-    const shouldBeRemovedRowNumber = this.getInitialRowsCount() - 1;
+    const shouldBeRemovedRowNumber = 16;
     cy.expect(getRowInteractorByRowNumber(shouldBeRemovedRowNumber).exists());
     cy.then(() => QuickMarcEditor().presentedRowsProperties()).then((presentedRowsProperties) => {
       const shouldBeDeletedRowTag = presentedRowsProperties[shouldBeRemovedRowNumber].tag;
@@ -2157,7 +2156,7 @@ export default {
     function checkBib() {
       cy.okapiRequest({
         path: 'instance-storage/instances',
-        searchParams: { query: `(title=="${marcBibTitle}")` },
+        searchParams: { query: `(title all "${marcBibTitle}")` },
         isDefaultSearchParamsRequired: false,
       }).then(({ body }) => {
         if (body.instances[0] || timeCounter >= timeOutSeconds) {

@@ -121,9 +121,7 @@ describe('bulk-edit', () => {
       'C369050 Verify that Errors accordion displays correct identifier on the confirmation screen (instance HRIDs)(firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.checkHoldingsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');
-        BulkEditSearchPane.verifyDragNDropInstanceHRIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Instance HRIDs');
 
         BulkEditSearchPane.uploadFile(instanceHRIDFileName);
         BulkEditSearchPane.checkForUploading(instanceHRIDFileName);

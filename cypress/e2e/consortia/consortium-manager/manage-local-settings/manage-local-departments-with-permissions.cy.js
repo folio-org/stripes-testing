@@ -1,21 +1,21 @@
-import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
-import Permissions from '../../../support/dictionary/permissions';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
+import Permissions from '../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset, {
   actionIcons,
-} from '../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
+} from '../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
   settingsItems,
-} from '../../../support/fragments/consortium-manager/consortiumManagerApp';
-import ConfirmCreate from '../../../support/fragments/consortium-manager/modal/confirm-create';
-import ConfirmShare from '../../../support/fragments/consortium-manager/modal/confirm-share';
-import SelectMembers from '../../../support/fragments/consortium-manager/modal/select-members';
-import DepartmentsConsortiumManager from '../../../support/fragments/consortium-manager/users/departmentsConsortiumManager';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import { getTestEntityValue } from '../../../support/utils/stringTools';
-import DeleteCancelReason from '../../../support/fragments/consortium-manager/modal/delete-cancel-reason';
-import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+} from '../../../../support/fragments/consortium-manager/consortiumManagerApp';
+import ConfirmCreate from '../../../../support/fragments/consortium-manager/modal/confirm-create';
+import ConfirmShare from '../../../../support/fragments/consortium-manager/modal/confirm-share';
+import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
+import DepartmentsConsortiumManager from '../../../../support/fragments/consortium-manager/users/departmentsConsortiumManager';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import { getTestEntityValue } from '../../../../support/utils/stringTools';
+import DeleteCancelReason from '../../../../support/fragments/consortium-manager/modal/delete-cancel-reason';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
 
 const testData = {
   newDepartment: {

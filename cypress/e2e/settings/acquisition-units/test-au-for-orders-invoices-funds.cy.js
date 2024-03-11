@@ -86,7 +86,7 @@ describe('ui-acquisition units: Acquisition Units', () => {
         });
         defaultOrder.vendor = organization.name;
         cy.visit(TopMenu.ordersPath);
-        Orders.createOrderForRollover(defaultOrder).then((orderResponse) => {
+        Orders.createApprovedOrderForRollover(defaultOrder, true).then((orderResponse) => {
           defaultOrder.id = orderResponse.id;
           orderNumber = orderResponse.poNumber;
           Orders.checkCreatedOrder(defaultOrder);
@@ -94,7 +94,7 @@ describe('ui-acquisition units: Acquisition Units', () => {
           OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
           OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
             'Purchase',
-            location.institutionId,
+            location.name,
             '4',
           );
           OrderLines.backToEditingOrder();

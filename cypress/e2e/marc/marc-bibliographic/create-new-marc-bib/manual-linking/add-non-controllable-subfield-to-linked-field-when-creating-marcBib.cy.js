@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorityBrowse from '../../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
@@ -49,7 +47,7 @@ describe('MARC', () => {
             boxFifth: '',
             boxFifthUpdate: '$d test',
             boxFifthAfterSave: '$d test',
-            boxSixth: '$0 id.loc.gov/authorities/names/n99036055',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n99036055',
             boxSeventh: '',
             boxSeventhUpdate: '$1 test',
             boxSeventhAfterSave: '$1 test',
@@ -64,7 +62,7 @@ describe('MARC', () => {
             boxFifth: '',
             boxFifthUpdate: '$v test $v test 2 $z test 3',
             boxFifthAfterSave: '$v test $v test 2 $z test 3 $x test $x test 1',
-            boxSixth: '$0 id.loc.gov/authorities/names/n84801249',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n84801249',
             boxSeventh: '',
             boxSeventhUpdate: '$x test $x test 1 $2 ptf1 $2 ppt3',
             boxSeventhAfterSave: '$2 ptf1 $2 ppt3',
@@ -81,6 +79,7 @@ describe('MARC', () => {
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 2,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
@@ -96,22 +95,16 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdAuthorityIDs.push(link.split('/')[5]);
-                  });
-                }
+            cy.getAdminToken();
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+                });
               });
             });
 

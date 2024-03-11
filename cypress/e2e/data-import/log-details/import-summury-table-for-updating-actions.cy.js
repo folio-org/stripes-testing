@@ -408,7 +408,7 @@ describe('data-import', () => {
 
     it(
       'C356802 Check import summary table with "Updated" actions for instance, holding and item (folijet)',
-      { tags: ['criticalPath', 'folijet', 'parallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create profiles via API
         cy.getAdminToken();
@@ -461,6 +461,7 @@ describe('data-import', () => {
 
           // download .csv file
           cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
           InventorySearchAndFilter.saveUUIDs();

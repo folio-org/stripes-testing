@@ -40,7 +40,7 @@ describe('agreements', () => {
 
     it(
       'C1310 Assign a note to an Agreement record (erm) (TaaS)',
-      { tags: ['extendedPath', 'erm'] },
+      { tags: ['extendedPathErm', 'erm'] },
       () => {
         AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
         AgreementViewDetails.openNotesSection();

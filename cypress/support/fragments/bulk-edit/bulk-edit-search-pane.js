@@ -51,7 +51,7 @@ const resetAllButton = Button('Reset all');
 const logsStatusesAccordion = Accordion('Statuses');
 const logsUsersAccordion = Accordion('User');
 const clearAccordionButton = Button({ icon: 'times-circle-solid' });
-const usersSelectionList = SelectionList({ id: 'sl-container-stripes-selection-18' });
+const usersSelectionList = SelectionList({ placeholder: 'Filter options list' });
 const saveAndClose = Button('Save and close');
 const textFieldTo = TextField('To');
 const textFieldFrom = TextField('From');
@@ -80,6 +80,27 @@ const reviewingChangesCheckbox = Checkbox('Reviewing changes');
 const completedCheckbox = Checkbox('Completed');
 const completedWithErrorsCheckbox = Checkbox('Completed with errors');
 const failedCheckbox = Checkbox('Failed');
+const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' });
+
+export const userIdentifiers = ['User UUIDs', 'User Barcodes', 'External IDs', 'Usernames'];
+
+export const holdingsIdentifiers = [
+  'Holdings UUIDs',
+  'Holdings HRIDs',
+  'Instance HRIDs',
+  'Item barcodes',
+];
+
+export const itemIdentifiers = [
+  'Item barcode',
+  'Item UUIDs',
+  'Item HRIDs',
+  'Item former identifier',
+  'Item accession number',
+  'Holdings UUIDs',
+];
+
+export const instanceIdentifiers = ['Instance UUIDs', 'Instance HRIDs', 'ISBN', 'ISSN'];
 
 export default {
   waitLoading() {
@@ -90,10 +111,12 @@ export default {
     cy.expect(HTML(including(`Uploading ${fileName} and retrieving relevant data`)).exists());
     cy.expect(HTML(including('Retrieving...')));
   },
+
   progresBarIsAbsent() {
     cy.expect(HTML(including('Uploading ... and retrieving relevant data')).absent());
     cy.expect(HTML(including('Retrieving...')).absent());
   },
+
   verifyNoPermissionWarning() {
     cy.expect(HTML("You don't have permission to view this app/record").exists());
   },
@@ -117,6 +140,7 @@ export default {
   verifyPopulatedPreviewPage() {
     cy.expect([errorsAccordion.exists(), resultsAccordion.exists(), actions.exists()]);
   },
+
   logActionsIsAbsent() {
     cy.expect(logsActionButton.absent());
   },
@@ -134,10 +158,7 @@ export default {
   },
 
   verifyBulkEditPaneItems() {
-    cy.expect([
-      bulkEditPane.find(HTML('Set criteria to start bulk edit')).exists(),
-      bulkEditPane.find(HTML('Select a "record identifier" when on the Identifier tab')).exists(),
-    ]);
+    cy.expect(bulkEditPane.find(HTML('Set criteria to start bulk edit')).exists());
   },
 
   verifySetCriteriaPaneItems(query = true) {
@@ -146,9 +167,9 @@ export default {
       setCriteriaPane.find(logsToggle).exists(),
       setCriteriaPane.find(recordIdentifierDropdown).exists(),
       setCriteriaPane.find(recordTypesAccordion).has({ open: true }),
-      setCriteriaPane.find(HTML('Drag and drop')).exists(),
-      fileButton.has({ disabled: true }),
     ]);
+    this.dragAndDropAreaExists(true);
+    this.isDragAndDropAreaDisabled(true);
     if (query) cy.expect(setCriteriaPane.find(queryToggle).exists());
   },
 
@@ -164,10 +185,10 @@ export default {
       this.isHoldingsRadioChecked(false),
       setCriteriaPane.find(recordIdentifierDropdown).exists(),
       recordIdentifierDropdown.has({ disabled: true }),
-      setCriteriaPane.find(HTML('Drag and drop')).exists(),
-      fileButton.has({ disabled: true }),
     ]);
-    cy.expect(HTML('Select a file with record identifiers').exists());
+    this.dragAndDropAreaExists(true);
+    this.isDragAndDropAreaDisabled(true);
+    cy.expect(HTML('Select a record type and then a record identifier.').exists());
   },
 
   verifySetCriteriaPaneSpecificTabs(...tabs) {
@@ -200,239 +221,67 @@ export default {
   },
 
   verifyRecordTypesEmpty() {
-    cy.expect([recordTypesAccordion.find(HTML('')).exists()]);
+    cy.expect(recordTypesAccordion.find(HTML('')).exists());
   },
 
-  verifyRecordIdentifierItems() {
-    this.checkUsersRadio();
-    cy.expect([
-      usersRadio.has({ checked: true }),
-      fileButton.has({ disabled: true }),
-      recordIdentifierDropdown.find(HTML('User UUIDs')).exists(),
-      recordIdentifierDropdown.find(HTML('User Barcodes')).exists(),
-      recordIdentifierDropdown.find(HTML('External IDs')).exists(),
-      recordIdentifierDropdown.find(HTML('Usernames')).exists(),
-      bulkEditPane.find(HTML('Select a "record identifier" when on the Identifier tab')).exists(),
-    ]);
+  verifyRecordIdentifiers(identifiers) {
+    identifiers.forEach((identifier) => {
+      cy.expect(recordIdentifierDropdown.find(HTML(identifier)).exists());
+    });
   },
 
-  verifyHoldingIdentifiers() {
-    this.checkHoldingsRadio();
-    cy.expect([
-      holdingsRadio.has({ checked: true }),
-      fileButton.has({ disabled: true }),
-      recordIdentifierDropdown.find(HTML('Holdings UUIDs')).exists(),
-      recordIdentifierDropdown.find(HTML('Holdings HRIDs')).exists(),
-      recordIdentifierDropdown.find(HTML('Instance HRIDs')).exists(),
-      recordIdentifierDropdown.find(HTML('Item barcodes')).exists(),
-      bulkEditPane.find(HTML('Select a "record identifier" when on the Identifier tab')).exists(),
-    ]);
-  },
-
-  verifyItemIdentifiers() {
-    this.checkItemsRadio();
-    cy.expect([
-      itemsRadio.has({ checked: true }),
-      recordIdentifierDropdown.find(HTML('Item barcode')).exists(),
-      recordIdentifierDropdown.find(HTML('Item UUIDs')).exists(),
-      recordIdentifierDropdown.find(HTML('Item HRIDs')).exists(),
-      recordIdentifierDropdown.find(HTML('Item former identifier')).exists(),
-      recordIdentifierDropdown.find(HTML('Item accession number')).exists(),
-      recordIdentifierDropdown.find(HTML('Holdings UUIDs')).exists(),
-    ]);
-  },
-
-  verifyItemIdentifiersDefaultState() {
-    this.checkItemsRadio();
-    cy.expect([
-      itemsRadio.has({ checked: true }),
-      recordIdentifierDropdown.find(HTML('Item barcode')).exists(),
-      recordIdentifierDropdown.find(HTML('Item UUIDs')).exists(),
-      recordIdentifierDropdown.find(HTML('Item HRIDs')).exists(),
-      recordIdentifierDropdown.find(HTML('Item former identifier')).exists(),
-      recordIdentifierDropdown.find(HTML('Item accession number')).exists(),
-      recordIdentifierDropdown.find(HTML('Holdings UUIDs')).exists(),
-      bulkEditPane.find(HTML('Select a "record identifier" when on the Identifier tab')).exists(),
-    ]);
-  },
-
-  verifyInstanceIdentifiers() {
-    this.checkInstanceRadio();
-    cy.expect([
-      instancesRadio.has({ checked: true }),
-      recordIdentifierDropdown.find(HTML('Instance UUIDs')).exists(),
-      recordIdentifierDropdown.find(HTML('Instance HRIDs')).exists(),
-      recordIdentifierDropdown.find(HTML('ISBN')).exists(),
-      recordIdentifierDropdown.find(HTML('ISSN')).exists(),
-      bulkEditPane.find(HTML('Select a "record identifier" when on the Identifier tab')).exists(),
-    ]);
+  verifyRecordTypeIdentifiers(recordType) {
+    switch (recordType) {
+      case 'Users':
+        this.checkUsersRadio();
+        this.isUsersRadioChecked(true);
+        this.verifyRecordIdentifiers(userIdentifiers);
+        break;
+      case 'Holdings':
+        this.checkHoldingsRadio();
+        this.isHoldingsRadioChecked(true);
+        this.verifyRecordIdentifiers(holdingsIdentifiers);
+        break;
+      case 'Items':
+        this.checkItemsRadio();
+        this.isItemsRadioChecked(true);
+        this.verifyRecordIdentifiers(itemIdentifiers);
+        break;
+      case 'Instances':
+        this.checkInstanceRadio();
+        this.isInstancesRadioChecked(true);
+        this.verifyRecordIdentifiers(instanceIdentifiers);
+        break;
+      default:
+    }
+    this.isDragAndDropAreaDisabled(true);
   },
 
   verifyAfterChoosingIdentifier(identifier) {
-    // If identifier is an abbreviation, leave it as it is
+    // If identifier is an abbreviation or starts with U E, leave it as it is
     // If it's not, change the first letter to lowercase
     let lowercase = identifier;
-    if (identifier.charAt(1).match(/[a-z]/)) {
+    if (!['U', 'E'].includes(identifier.charAt(0)) && identifier.charAt(1).match(/[a-z]/)) {
       lowercase = identifier.charAt(0).toLowerCase() + identifier.slice(1);
     }
     cy.expect([
       HTML(`Select a file with ${lowercase}`).exists(),
-      HTML(`Drag and drop or choose file with ${lowercase}`).exists(),
-      fileButton.has({ disabled: false }),
+      HTML(`Drag and drop or choose file with ${lowercase}.`).exists(),
     ]);
+    this.isDragAndDropAreaDisabled(false);
   },
 
-  verifyDragNDropInstanceIdentifierArea(identifier = 'Instance UUIDs') {
-    this.checkInstanceRadio();
+  verifyDragNDropRecordTypeIdentifierArea(recordType, identifier) {
+    this.openIdentifierSearch();
+    const lowercaseRecordType = recordType === 'Users' ? recordType : recordType.toLowerCase();
+    cy.do(RadioButton(including(lowercaseRecordType)).click());
     this.selectRecordIdentifier(identifier);
-    this.verifyAfterChoosingIdentifier(identifier);
+    const modifiedIdentifier = identifier === 'Item barcodes' ? 'item barcode' : identifier;
+    this.verifyAfterChoosingIdentifier(modifiedIdentifier);
   },
 
-  verifyDragNDropItemBarcodeArea() {
-    this.checkItemsRadio();
-    this.selectRecordIdentifier('Item barcode');
-    cy.expect([
-      HTML('Select a file with item barcode').exists(),
-      HTML('Drag and drop or choose file with item barcode').exists(),
-      fileButton.has({ disabled: false }),
-    ]);
-  },
-
-  verifyDragNDropItemUUIDsArea() {
-    this.checkItemsRadio();
-    this.selectRecordIdentifier('Item UUIDs');
-    cy.expect([
-      HTML('Select a file with item UUIDs').exists(),
-      HTML('Drag and drop or choose file with item UUIDs').exists(),
-      fileButton.has({ disabled: false }),
-    ]);
-  },
-
-  verifyDragNDropItemHRIDsArea() {
-    this.checkItemsRadio();
-    this.selectRecordIdentifier('Item HRIDs');
-    cy.expect([
-      HTML('Select a file with item HRIDs').exists(),
-      HTML('Drag and drop or choose file with item HRIDs').exists(),
-      fileButton.has({ disabled: false }),
-    ]);
-  },
   verifyCheckboxIsSelected(checkbox, isChecked = false) {
     cy.expect(Checkbox({ name: checkbox }).has({ checked: isChecked }));
-  },
-
-  verifyDragNDropItemFormerIdentifierArea() {
-    this.checkItemsRadio();
-    this.selectRecordIdentifier('Item former identifier');
-    cy.expect([
-      HTML('Select a file with item former identifier').exists(),
-      HTML('Drag and drop or choose file with item former identifier').exists(),
-      fileButton.has({ disabled: false }),
-    ]);
-  },
-
-  verifyDragNDropItemHoldingsUUIDsArea() {
-    this.checkItemsRadio();
-    this.selectRecordIdentifier('Holdings UUIDs');
-    cy.expect([
-      HTML('Select a file with holdings UUIDs').exists(),
-      HTML('Drag and drop or choose file with holdings UUIDs').exists(),
-      fileButton.has({ disabled: false }),
-    ]);
-  },
-
-  verifyDragNDropItemAccessionNumberArea() {
-    this.checkItemsRadio();
-    this.selectRecordIdentifier('Item accession number');
-    cy.expect([
-      HTML('Select a file with item accession number').exists(),
-      HTML('Drag and drop or choose file with item accession number').exists(),
-      fileButton.has({ disabled: false }),
-    ]);
-  },
-
-  verifyDragNDropUsersUUIDsArea() {
-    this.checkUsersRadio();
-    this.selectRecordIdentifier('User UUIDs');
-    cy.expect([
-      HTML('Select a file with User UUIDs').exists(),
-      HTML('Drag and drop or choose file with User UUIDs').exists(),
-      fileButton.has({ disabled: false }),
-    ]);
-  },
-
-  verifyDragNDropUsersBarcodesArea() {
-    this.checkUsersRadio();
-    this.selectRecordIdentifier('User Barcodes');
-    cy.expect([
-      HTML('Select a file with User Barcodes').exists(),
-      HTML('Drag and drop or choose file with User Barcodes').exists(),
-      fileButton.has({ disabled: false }),
-    ]);
-  },
-
-  verifyDragNDropExternalIDsArea() {
-    this.checkUsersRadio();
-    this.selectRecordIdentifier('External IDs');
-    cy.expect([
-      HTML('Select a file with External IDs').exists(),
-      HTML('Drag and drop or choose file with External IDs').exists(),
-      fileButton.has({ disabled: false }),
-    ]);
-  },
-
-  verifyDragNDropUsernamesArea() {
-    this.checkUsersRadio();
-    this.selectRecordIdentifier('Usernames');
-    cy.expect([
-      HTML('Select a file with Usernames').exists(),
-      HTML('Drag and drop or choose file with Usernames').exists(),
-      fileButton.has({ disabled: false }),
-    ]);
-  },
-
-  verifyDragNDropUpdateUsersArea() {
-    cy.expect(HTML('Select a file with record identifiers').exists());
-  },
-
-  verifyDragNDropHoldingsUUIDsArea() {
-    this.checkHoldingsRadio();
-    this.selectRecordIdentifier('Holdings UUIDs');
-    cy.expect([
-      HTML('Select a file with holdings UUIDs').exists(),
-      HTML('Drag and drop or choose file with holdings UUIDs').exists(),
-      fileButton.has({ disabled: false }),
-    ]);
-  },
-
-  verifyDragNDropHoldingsHRIDsArea() {
-    this.checkHoldingsRadio();
-    this.selectRecordIdentifier('Holdings HRIDs');
-    cy.expect([
-      HTML('Select a file with holdings HRIDs').exists(),
-      HTML('Drag and drop or choose file with holdings HRIDs').exists(),
-      fileButton.has({ disabled: false }),
-    ]);
-  },
-
-  verifyDragNDropInstanceHRIDsArea() {
-    this.checkHoldingsRadio();
-    this.selectRecordIdentifier('Instance HRIDs');
-    cy.expect([
-      HTML('Select a file with instance HRIDs').exists(),
-      HTML('Drag and drop or choose file with instance HRIDs').exists(),
-      fileButton.has({ disabled: false }),
-    ]);
-  },
-
-  verifyDragNDropHoldingsItemBarcodesArea() {
-    this.checkHoldingsRadio();
-    this.selectRecordIdentifier('Item barcodes');
-    cy.expect([
-      HTML('Select a file with item barcode').exists(),
-      HTML('Drag and drop or choose file with item barcode').exists(),
-      fileButton.has({ disabled: false }),
-    ]);
   },
 
   openIdentifierSearch() {
@@ -550,7 +399,10 @@ export default {
   },
 
   verifyDefaultFilterState() {
-    cy.expect([fileButton.has({ disabled: true }), HTML('Select record identifier').exists()]);
+    cy.expect([
+      fileButton.has({ disabled: true }),
+      HTML('Select a record type and then a record identifier.').exists(),
+    ]);
     this.verifyBulkEditPaneItems();
   },
 
@@ -770,6 +622,7 @@ export default {
       Button('Download matched records (CSV)').exists(),
       Button('Start bulk edit').exists(),
       DropdownMenu().find(HTML('Show columns')).exists(),
+      DropdownMenu().find(searchColumnNameTextfield).exists(),
     ]);
     if (errors) {
       cy.expect(Button('Download errors (CSV)').exists());
@@ -803,6 +656,7 @@ export default {
       DropdownMenu().find(Checkbox('Custom fields')).has({ checked: false }),
     ]);
   },
+
   verifyAllCheckboxesInShowColumnMenuAreDisabled() {
     cy.expect(
       DropdownMenu()
@@ -810,11 +664,27 @@ export default {
         .absent(),
     );
   },
+
   verifyCheckboxesAbsent(...checkboxes) {
     checkboxes.forEach((checkbox) => {
       cy.expect(Checkbox(checkbox).absent());
     });
   },
+
+  verifyCheckedCheckboxesPresentInTheTable() {
+    cy.get('[role=columnheader]').then((headers) => {
+      headers.each((_index, header) => {
+        cy.expect(DropdownMenu().find(Checkbox(header.innerText)).has({ checked: true }));
+      });
+    });
+  },
+
+  verifyActionsDropdownScrollable() {
+    cy.xpath('.//main[@id="ModuleContainer"]//div[contains(@class, "DropdownMenu")]').scrollTo(
+      'bottom',
+    );
+  },
+
   verifyHoldingActionShowColumns() {
     cy.expect([
       DropdownMenu().find(Checkbox('Holdings ID')).has({ checked: false }),
@@ -868,6 +738,17 @@ export default {
       cy.get(`[name='${name}']`).then((element) => {
         const checked = element.attr('checked');
         if (!checked) {
+          cy.do(DropdownMenu().find(Checkbox(name)).click());
+        }
+      });
+    });
+  },
+
+  uncheckShowColumnCheckbox(...names) {
+    names.forEach((name) => {
+      cy.get(`[name='${name}']`).then((element) => {
+        const checked = element.attr('checked');
+        if (checked) {
           cy.do(DropdownMenu().find(Checkbox(name)).click());
         }
       });
@@ -1253,9 +1134,9 @@ export default {
   },
 
   verifyLogsTableHeaders(verification = 'exists') {
-    if (cy.get('div.mclScrollable---JvHuN')) {
-      cy.get('div.mclScrollable---JvHuN').scrollTo('right');
-    }
+    cy.get('div[class^="mclScrollable"]')
+      .should('exist')
+      .scrollTo('right', { ensureScrollable: false });
     cy.expect([
       MultiColumnListHeader('Record type')[verification](),
       MultiColumnListHeader('Status')[verification](),
@@ -1344,6 +1225,10 @@ export default {
     cy.expect(logsResultPane.find(MultiColumnList()).exists());
   },
 
+  dragAndDropAreaExists(exists) {
+    cy.expect(HTML('Drag and drop').has({ visible: exists }));
+  },
+
   isDragAndDropAreaDisabled(isDisabled) {
     cy.expect(fileButton.has({ disabled: isDisabled }));
   },
@@ -1370,5 +1255,36 @@ export default {
 
   verifyFirstOptionRecordIdentifierDropdown(value) {
     cy.expect(recordIdentifierDropdown.has({ checkedOptionText: value }));
+  },
+
+  searchColumnName(text, valid = true) {
+    cy.get('[placeholder="Search column name"]').type(text);
+    cy.wait(500);
+    cy.get('[class^="ActionMenu-"]').within(() => {
+      if (valid) {
+        cy.get('[class^="checkbox-"]')
+          .should('exist')
+          .then(() => {
+            cy.get('[class^="checkbox-"]').each(($checkbox) => {
+              cy.wrap($checkbox).should(($el) => {
+                expect($el.text().toLowerCase()).to.contain(text.toLowerCase());
+              });
+            });
+          });
+      } else {
+        cy.get('[class^="checkbox-"]').should('not.exist');
+      }
+    });
+  },
+
+  clearSearchColumnNameTextfield() {
+    cy.do(searchColumnNameTextfield.clear());
+  },
+
+  searchColumnNameTextfieldDisabled(disabled = true) {
+    cy.expect([
+      searchColumnNameTextfield.has({ disabled }),
+      Checkbox({ disabled: false }).absent(),
+    ]);
   },
 };

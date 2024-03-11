@@ -87,7 +87,7 @@ describe('ui-orders: Orders', () => {
     });
     defaultOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(defaultOrder, true, false).then((orderResponse) => {
+    Orders.createApprovedOrderForRollover(defaultOrder, true, false).then((orderResponse) => {
       defaultOrder.id = orderResponse.id;
       orderNumber = orderResponse.poNumber;
       Orders.checkCreatedOrder(defaultOrder);
@@ -98,7 +98,7 @@ describe('ui-orders: Orders', () => {
         '50',
         '1',
         '50',
-        location.institutionId,
+        location.name,
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();

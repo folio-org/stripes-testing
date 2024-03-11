@@ -26,6 +26,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -79,12 +80,14 @@ describe('data-import', () => {
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numOfRecords: 1,
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'marcFileForC375098.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
 
@@ -110,20 +113,15 @@ describe('data-import', () => {
         cy.loginAsAdmin()
           .then(() => {
             marcFiles.forEach((marcFile) => {
-              cy.visit(TopMenu.dataImportPath);
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, 'Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  createdAuthorityIDs.push(link.split('/')[5]);
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
                 });
-              }
+              });
             });
           })
           .then(() => {
@@ -162,7 +160,7 @@ describe('data-import', () => {
             JobProfiles.openNewJobProfileForm();
             NewJobProfile.fillJobProfile(jobProfile);
             NewJobProfile.linkMatchProfile(matchProfile.profileName);
-            NewJobProfile.linkActionProfileByName(actionProfile.name);
+            NewJobProfile.linkActionProfileForMatches(actionProfile.name);
             // wait for the action profile to be linked
             cy.wait(1000);
             NewJobProfile.saveAndClose();
@@ -222,10 +220,23 @@ describe('data-import', () => {
           ],
         );
 
+        // in case in Settings - Data import - MARC field protection we have 245 field as protected
+        // for this test case purpose it should be removed
+        cy.getAdminToken().then(() => {
+          MarcFieldProtection.getListViaApi({
+            query: '"field"=="245"',
+          }).then((list) => {
+            if (list) {
+              list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+            }
+          });
+        });
+
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);
+        DataImport.waitLoading();
         DataImport.verifyUploadState();
-        DataImport.uploadFile(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
+        DataImport.uploadFileAndRetry(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
@@ -246,7 +257,7 @@ describe('data-import', () => {
           '\\',
           '$a C375098 Chin, Staceyann, $d 1972-',
           '$e Producer $e Narrator $u test',
-          '$0 id.loc.gov/authorities/names/n2008052404',
+          '$0 http://id.loc.gov/authorities/names/n2008052404',
           '$4 prf.',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(

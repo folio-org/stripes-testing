@@ -32,7 +32,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 describe('data-import', () => {
   describe('Log details', () => {
     const testData = {
-      createdRecordIDs: [],
+      instanceIds: [],
       marcFilePath: 'marcBibFileForC389589.mrc',
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
 
@@ -111,19 +111,13 @@ describe('data-import', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin();
       marcFileNames.forEach((name) => {
-        cy.visit(TopMenu.dataImportPath);
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(testData.marcFilePath, name.fileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(testData.jobProfileToRun);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(name.fileName);
-        Logs.checkJobStatus(name.fileName, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(name.fileName);
-        Logs.getCreatedItemsID().then((link) => {
-          testData.createdRecordIDs.push(link.split('/')[5]);
+        DataImport.uploadFileViaApi(
+          testData.marcFilePath,
+          name.fileName,
+          testData.jobProfileToRun,
+        ).then((response) => {
+          testData.instanceIds.push(response.entries[0].relatedInstanceInfo.idList[0]);
         });
       });
 
@@ -210,7 +204,7 @@ describe('data-import', () => {
             profile.mappingProfile.name,
           );
         });
-        testData.createdRecordIDs.forEach((id) => {
+        testData.instanceIds.forEach((id) => {
           InventoryInstance.deleteInstanceViaApi(id);
         });
       });

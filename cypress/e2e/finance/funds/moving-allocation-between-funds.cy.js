@@ -76,7 +76,7 @@ describe('Finance: Funds', () => {
 
   it(
     'C374166 Moving allocation between funds is NOT successful if it results in negative available amount (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       FinanceHelper.searchByName(fromFund.name);
       Funds.selectFund(fromFund.name);

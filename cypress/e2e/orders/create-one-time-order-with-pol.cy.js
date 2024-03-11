@@ -64,7 +64,10 @@ describe('Orders: Inventory interaction', () => {
     firstOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
 
-    cy.createTempUser([permissions.uiOrdersCreate.gui]).then((userProperties) => {
+    cy.createTempUser([
+      permissions.uiOrdersCreate.gui,
+      permissions.uiOrdersApprovePurchaseOrders.gui,
+    ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ordersPath,
@@ -107,7 +110,7 @@ describe('Orders: Inventory interaction', () => {
     'C662: Create an order and at least one order line for a one-time order (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
-      Orders.createOrderForRollover(firstOrder).then((firstOrderResponse) => {
+      Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
         firstOrder.id = firstOrderResponse.id;
         Orders.checkCreatedOrder(firstOrder);
         OrderLines.addPOLine();
@@ -117,7 +120,7 @@ describe('Orders: Inventory interaction', () => {
           '20',
           '1',
           '20',
-          location.institutionId,
+          location.name,
         );
         OrderLines.backToEditingOrder();
       });

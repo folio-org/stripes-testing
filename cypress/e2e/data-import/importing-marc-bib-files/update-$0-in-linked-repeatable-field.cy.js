@@ -79,12 +79,14 @@ describe('data-import', () => {
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numOfRecords: 1,
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'marcAuthFileForC385663.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
     const linkingTagAndValues = {
@@ -105,20 +107,15 @@ describe('data-import', () => {
         cy.loginAsAdmin()
           .then(() => {
             marcFiles.forEach((marcFile) => {
-              cy.visit(TopMenu.dataImportPath);
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, 'Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  createdAuthorityIDs.push(link.split('/')[5]);
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
                 });
-              }
+              });
             });
           })
           .then(() => {
@@ -192,7 +189,7 @@ describe('data-import', () => {
 
     it(
       'C385663 Update "$0" in linked repeatable field (multiple repeatable fields with same indicators) (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
@@ -217,8 +214,9 @@ describe('data-import', () => {
 
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);
+        DataImport.waitLoading();
         DataImport.verifyUploadState();
-        DataImport.uploadFile(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
+        DataImport.uploadFileAndRetry(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
@@ -236,7 +234,7 @@ describe('data-import', () => {
           '700',
           '1',
           '\\',
-          '$a C385663 Lee, Stan, $d 1922-2018 $e author. $0 id.loc.gov/authorities/names/n83169267TEST',
+          '$a C385663 Lee, Stan, $d 1922-2018 $e author. $0 http://id.loc.gov/authorities/names/n83169267TEST',
         );
 
         QuickMarcEditor.closeEditorPane();

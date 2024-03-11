@@ -18,6 +18,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('inventory', () => {
   describe('Item', () => {
@@ -120,7 +121,7 @@ describe('inventory', () => {
         // without this waiter, the user will not be found by username
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(4000);
-        CheckOutActions.checkOutUser(user.barcode, user.username);
+        CheckOutActions.checkOutUser(user.barcode);
         CheckOutActions.checkOutItem(itemData.barcode);
         CheckOutActions.checkItemInfo(itemData.barcode, itemData.instanceTitle);
         CheckOutActions.endCheckOutSession();
@@ -128,7 +129,7 @@ describe('inventory', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
-        InventoryInstance.openHoldingsAccordion(`${holdingsPermanentLocation} >`);
+        InventoryHoldings.checkIfExpanded(`${holdingsPermanentLocation} >`, true);
         InventoryInstance.openItemByBarcode(itemData.barcode);
         ItemRecordView.waitLoading();
         ItemRecordView.verifyItemStatus('Checked out');
@@ -140,6 +141,7 @@ describe('inventory', () => {
         ItemRecordView.verifyCalloutMessage();
         ItemRecordView.closeDetailView();
         InstanceRecordView.verifyInstanceRecordViewOpened();
+        InventoryHoldings.checkIfExpanded(`${holdingsPermanentLocation} >`, true);
         InventoryInstance.openItemByBarcode(newItemBarcode);
         ItemRecordView.checkItemCirculationHistory('-', '-', '-');
       },

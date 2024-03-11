@@ -53,32 +53,26 @@ describe('bulk-edit', () => {
       'C409437 Verify progressbar starting bulk edit by changed identifiers _ Inventory (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.checkItemsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
-        BulkEditSearchPane.verifyDragNDropItemUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
         BulkEditSearchPane.uploadFile(itemUUIDsFileName);
         BulkEditSearchPane.checkForUploading(itemUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
 
-        BulkEditSearchPane.checkItemsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-        BulkEditSearchPane.verifyDragNDropItemBarcodeArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.checkForUploading(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.fillPermanentLoanType('Can circulate');
+        BulkEditActions.fillPermanentLoanType('Reading room');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.verifySuccessBanner(1);
 
-        BulkEditSearchPane.checkItemsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
-        BulkEditSearchPane.verifyDragNDropItemUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
         BulkEditSearchPane.uploadFile(itemUUIDsFileName);
         BulkEditSearchPane.checkForUploading(itemUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();

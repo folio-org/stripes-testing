@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -24,7 +22,7 @@ describe('MARC', () => {
             '$a C380746 Conf on Security & Cooperation in Europe $c H. Finland $0 n88606074',
           filterStateTag111: [
             'advancedSearch',
-            'keyword==C380746 Conf on Security & Cooperation in Europe or identifiers.value==n88606074',
+            'keyword exactPhrase C380746 Conf on Security & Cooperation in Europe or identifiers.value exactPhrase n88606074',
           ],
           markedValue: 'C380746 Conference on Security and Cooperation in Europe',
           authority010FieldValue: 'n  88606074',
@@ -41,12 +39,14 @@ describe('MARC', () => {
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numOfRecords: 1,
             instanceAlternativeTitle: 'Final Act (1972-1975 : English',
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileC380746.mrc',
             fileName: `C380746 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
         const bib240AfterLinkingToAuth111 = [
@@ -56,7 +56,7 @@ describe('MARC', () => {
           '\\',
           '$a Final Act $d (1972-1975 : $l English',
           '$c H. Finland',
-          '$0 id.loc.gov/authorities/names/n88606074',
+          '$0 http://id.loc.gov/authorities/names/n88606074',
           '',
         ];
         const bib240AfterUninkingToAuth111 = [
@@ -64,7 +64,7 @@ describe('MARC', () => {
           testData.tag240,
           '1',
           '\\',
-          '$a Final Act $d (1972-1975 : $l English $c H. Finland $0 id.loc.gov/authorities/names/n88606074',
+          '$a Final Act $d (1972-1975 : $l English $c H. Finland $0 http://id.loc.gov/authorities/names/n88606074',
         ];
 
         before('Creating test data', () => {
@@ -88,24 +88,16 @@ describe('MARC', () => {
           ]).then((userProperties) => {
             testData.user = userProperties;
 
+            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
-              cy.loginAsAdmin({
-                path: TopMenu.dataImportPath,
-                waiter: DataImport.waitLoading,
-              }).then(() => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    testData.createdRecordIDs.push(link.split('/')[5]);
-                  });
-                }
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+                });
               });
             });
 

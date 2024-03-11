@@ -1,9 +1,5 @@
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -20,27 +16,11 @@ describe('data-import', () => {
     const filePath = 'marcFileForC2361.mrc';
     const marcFileName = `C2361 autotestFileName ${getRandomPostfix()}`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const title = "101 things I wish I'd known when I started";
 
     before('login', () => {
-      // upload a mrc file as admin
-      cy.loginAsAdmin({
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
-      });
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(filePath, marcFileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfileToRun);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(jobProfileToRun);
-      Logs.openFileDetails(marcFileName);
-      FileDetails.verifyLogDetailsPageIsOpened();
-      FileDetails.openJsonScreen(title);
-      JsonScreenView.verifyJsonScreenIsOpened();
-      JsonScreenView.openMarcSrsTab();
-      JsonScreenView.getInstanceHrid().then((hrid) => {
-        instanceHrid = hrid;
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi(filePath, marcFileName, jobProfileToRun).then((response) => {
+        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
       });
 
       // create temp user with inventoryAll permissions

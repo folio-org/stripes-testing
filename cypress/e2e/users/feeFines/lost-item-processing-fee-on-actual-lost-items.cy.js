@@ -189,7 +189,7 @@ describe('ui-users-loans: Loans', () => {
 
   it(
     'C365133 Verify ACTUAL COST lost items are being billed the "Lost item processing fee" when declared lost',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       UsersSearchPane.searchByKeywords(testData.userId);
       UsersSearchPane.openUser(testData.userId);

@@ -150,7 +150,6 @@ describe('Title Level Request. Request Detail', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.disableTLRViaApi();
   });
 
   afterEach('deleting request', () => {

@@ -71,7 +71,7 @@ describe('Invoices', () => {
       firstOrder.orderType = 'One-time';
       firstOrder.vendor = organization.name;
       cy.visit(TopMenu.ordersPath);
-      Orders.createOrderForRollover(firstOrder, true).then((secondOrderResponse) => {
+      Orders.createApprovedOrderForRollover(firstOrder, true).then((secondOrderResponse) => {
         firstOrder.id = secondOrderResponse.id;
         firstOrderNumber = secondOrderResponse.poNumber;
         Orders.checkCreatedOrder(firstOrder);
@@ -82,7 +82,7 @@ describe('Invoices', () => {
           '40',
           '1',
           '40',
-          location.institutionId,
+          location.name,
         );
         OrderLines.backToEditingOrder();
         Orders.openOrder();

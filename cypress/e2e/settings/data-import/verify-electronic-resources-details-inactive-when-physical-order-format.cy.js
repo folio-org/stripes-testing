@@ -121,6 +121,13 @@ describe('data-import', () => {
       });
     });
 
+    beforeEach('Login', () => {
+      cy.login(testData.user.username, testData.user.password, {
+        path: SettingsMenu.mappingProfilePath,
+        waiter: FieldMappingProfiles.waitLoading,
+      });
+    });
+
     after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);

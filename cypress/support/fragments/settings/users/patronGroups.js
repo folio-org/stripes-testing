@@ -49,6 +49,7 @@ export default {
       method: 'DELETE',
       path: `groups/${patronGroupId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
 

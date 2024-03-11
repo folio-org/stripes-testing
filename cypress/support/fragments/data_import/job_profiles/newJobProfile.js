@@ -427,6 +427,50 @@ export default {
       });
   },
 
+  createJobProfileWithLinkedMatchAndActionProfilesViaApi: (
+    nameProfile,
+    matchProfileId,
+    actionProfileId,
+  ) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/jobProfiles',
+        body: {
+          profile: {
+            name: nameProfile,
+            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+          },
+          addedRelations: [
+            {
+              masterProfileId: null,
+              masterWrapperId: null,
+              masterProfileType: 'JOB_PROFILE',
+              detailProfileId: matchProfileId,
+              detailWrapperId: null,
+              detailProfileType: 'MATCH_PROFILE',
+              order: 0,
+            },
+            {
+              masterProfileId: matchProfileId,
+              masterWrapperId: null,
+              masterProfileType: 'MATCH_PROFILE',
+              detailProfileId: actionProfileId,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
+              order: 0,
+              reactTo: 'MATCH',
+            },
+          ],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((responce) => {
+        return responce.body.id;
+      });
+  },
+
   unlinkProfile: (number) => {
     cy.get('[id*="branch-ROOT-MATCH-MATCH-MATCH-editable"]')
       .eq(number)

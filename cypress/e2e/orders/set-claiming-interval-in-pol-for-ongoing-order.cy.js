@@ -64,7 +64,7 @@ describe('Orders', () => {
     });
     firstOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(firstOrder).then((firstOrderResponse) => {
+    Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;
       Orders.checkCreatedOrder(firstOrder);
@@ -124,7 +124,7 @@ describe('Orders', () => {
         '20',
         '1',
         '20',
-        location.institutionId,
+        location.name,
       );
       OrderLines.checkClaimingIntervalInPOL('35');
       OrderLines.editPOLInOrder();

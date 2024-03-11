@@ -59,6 +59,7 @@ describe('MARC', () => {
           ManageAuthorityFiles.checkSaveButtonEnabled();
           ManageAuthorityFiles.clickSaveButton();
           ManageAuthorityFiles.checkAfterSave(testData.name);
+          cy.reload();
           ManageAuthorityFiles.checkSourceFileExists(
             testData.name,
             testData.prefix,

@@ -36,7 +36,7 @@ describe('data-import', () => {
         'org.folio.rest.core.exceptions.HttpException: {"errors":[{"message":"Reference on holding or location must present","code":"locationIdAndHoldingIdAbsentError","parameters":[]}],"total_records":1}',
     };
     const filePathForCreateOrder = 'marcBibFileForC375202.mrc';
-    const marcFileName = `C376973 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C375202 autotestFileName ${getRandomPostfix()}`;
     const mappingProfile = {
       name: `C375202 Test Order ${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,

@@ -286,6 +286,7 @@ describe('data-import', () => {
         Logs.checkJobStatus(marcFileNameForUpdate, JOB_STATUS_NAMES.COMPLETED);
 
         cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.selectYesfilterStaffSuppress();
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.openHoldingView();

@@ -5,8 +5,6 @@ import Users from '../../../../support/fragments/users/users';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 
 describe('MARC', () => {
@@ -20,8 +18,12 @@ describe('MARC', () => {
           searchOption2: 'Keyword',
         },
         authority2: {
-          searchInput: 'Gulf Stream',
+          searchInput: 'C350946 Gulf Stream C380553',
           searchOption: 'Geographic name',
+        },
+        authority3: {
+          searchInput: 'C350911 Twain, Mark',
+          searchOption: 'Name-title',
         },
         authorityPostfixes: [
           {
@@ -39,9 +41,9 @@ describe('MARC', () => {
           },
         ],
         editedFields: [
-          { rowIndex: 14, tag: '100', content: 'Twain, Mark - edited 100' },
-          { rowIndex: 27, tag: '400', content: 'Twain, Mark - edited 400' },
-          { rowIndex: 29, tag: '500', content: 'Twain, Mark - edited 500' },
+          { rowIndex: 14, tag: '100', content: 'C350911 Twain, Mark - edited 100', value: 'C350911 Twain, Mark, 1835-1910. Adventures of Huckleberry Finn' },
+          { rowIndex: 27, tag: '400', content: 'C350911 Twain, Mark - edited 400', value: String.raw`C350911 Twain, Mark, 1835-1910. Mark Twain's The adventures of Huckleberry Finn` },
+          { rowIndex: 29, tag: '500', content: 'C350911 Twain, Mark - edited 500' },
         ],
         editedGeographicNameField: {
           tag: '151',
@@ -60,7 +62,7 @@ describe('MARC', () => {
           numOfRecords: 1,
         },
         {
-          marc: 'marcAuthFileC350911.mrc',
+          marc: 'marcAuthFileForC350911.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           numOfRecords: 1,
         },
@@ -73,26 +75,15 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Create test data', () => {
-        cy.loginAsAdmin({
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        }).then(() => {
-          marcFiles.forEach((marcFile) => {
-            cy.visit(TopMenu.dataImportPath);
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                createdAuthorityIDs.push(link.split('/')[5]);
+        cy.getAdminToken();
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
+            (response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityIDs.push(record.relatedAuthorityInfo.idList[0]);
               });
-            }
-          });
+            },
+          );
         });
 
         cy.createTempUser([
@@ -149,14 +140,12 @@ describe('MARC', () => {
         () => {
           MarcAuthorities.switchToBrowse();
           MarcAuthorities.searchByParameter(
-            testData.authority.searchOption,
-            testData.authority.searchInput,
+            testData.authority3.searchOption,
+            testData.authority3.searchInput,
           );
-          testData.editedFields.forEach(({ rowIndex, content }, index) => {
+          testData.editedFields.forEach(({ rowIndex, content, value }, index) => {
             if (index < 2) {
-              MarcAuthorities.select(
-                `${createdAuthorityIDs[1]}${testData.authorityPostfixes[index].postfix}`,
-              );
+              MarcAuthorities.selectTitle(value);
               MarcAuthority.edit();
               QuickMarcEditor.updateExistingFieldContent(
                 rowIndex,
@@ -194,9 +183,7 @@ describe('MARC', () => {
             testData.authority2.searchOption,
             testData.authority2.searchInput,
           );
-          MarcAuthorities.select(
-            `${createdAuthorityIDs[3]}${testData.authorityPostfixes[0].postfix}`,
-          );
+          MarcAuthorities.selectTitle(testData.authority2.searchInput);
           MarcAuthority.edit();
           MarcAuthority.changeField(
             testData.editedGeographicNameField.tag,
