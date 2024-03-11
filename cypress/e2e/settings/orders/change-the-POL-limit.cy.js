@@ -104,7 +104,7 @@ describe('orders: Settings', () => {
       OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
       OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
         'Purchase',
-        location.institutionId,
+        location.name,
         '4',
       );
       OrderLines.backToEditingOrder();
@@ -112,7 +112,7 @@ describe('orders: Settings', () => {
       OrderLines.selectRandomInstanceInTitleLookUP('*', 40);
       OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
         'Purchase',
-        location.institutionId,
+        location.name,
         '4',
       );
       OrderLines.backToEditingOrder();

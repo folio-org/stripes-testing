@@ -4,13 +4,10 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import Users from '../../../../support/fragments/users/users';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 
@@ -28,6 +25,7 @@ describe('MARC', () => {
           marc: 'marcBibFileC374157.mrc',
           fileName: `testMarcFileC374157${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          propertyName: 'relatedInstanceInfo',
           instanceTitle:
             'Runaway bride/ produced by Robert W. Cort, Ted Field, Scott Kroopf, Tom Rosenberg; written by Josann McGibbon, Sara Parriott; directed by Garry Marshall.',
         },
@@ -37,6 +35,7 @@ describe('MARC', () => {
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           authorityHeading: 'C374157 Roberts, Julia, 1967-',
           valueAfterSave: 'C374157 Roberts, Julia, 1967-',
+          propertyName: 'relatedAuthorityInfo',
         },
       ];
       const linkingTagAndValue = {
@@ -58,22 +57,18 @@ describe('MARC', () => {
           testData.userProperties = createdUserProperties;
 
           marcFiles.forEach((marcFile) => {
-            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-              () => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
-                });
-              },
-            );
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
           });
 
+          cy.loginAsAdmin();
           cy.visit(TopMenu.inventoryPath).then(() => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -132,7 +127,7 @@ describe('MARC', () => {
           );
           InventoryInstance.viewSource();
           InventoryViewSource.contains(
-            'Linked to MARC authority\n\t700\t1  \t$a C374157 Roberts, Julia, $d 1967- $e Actor. $0 id.loc.gov/authorities/names/n91074081',
+            'Linked to MARC authority\n\t700\t1  \t$a C374157 Roberts, Julia, $d 1967- $e Actor. $0 http://id.loc.gov/authorities/names/n91074081',
           );
         },
       );

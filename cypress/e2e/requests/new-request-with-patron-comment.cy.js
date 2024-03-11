@@ -2,6 +2,7 @@ import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import EditRequest from '../../support/fragments/requests/edit-request';
 import NewRequest from '../../support/fragments/requests/newRequest';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
@@ -55,6 +56,7 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
         requestUserData.userId,
         testData.servicePoint.id,
       );
+      TitleLevelRequests.enableTLRViaApi();
       cy.login(requestUserData.username, requestUserData.password);
     });
   });

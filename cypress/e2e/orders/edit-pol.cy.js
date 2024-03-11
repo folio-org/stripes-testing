@@ -60,7 +60,7 @@ describe('orders: create', () => {
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-      OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+      OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
     });
 
     cy.createTempUser([permissions.uiOrdersEdit.gui]).then((userProperties) => {
@@ -94,7 +94,7 @@ describe('orders: create', () => {
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-      OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+      OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
       InteractorsTools.checkCalloutMessage(
         `The purchase order line ${orderNumber}-1 was successfully updated`,
       );

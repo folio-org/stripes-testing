@@ -27,7 +27,7 @@ const previewOfProposedChangesFileName = `*-Updates-Preview-${userBarcodesFileNa
 const changedRecordsFileName = `*-Changed-Records-${userBarcodesFileName}`;
 
 describe('bulk-edit', () => {
-  describe('in-app approach', { retries: 1 }, () => {
+  describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditUpdateRecords.gui,
@@ -57,6 +57,7 @@ describe('bulk-edit', () => {
         CustomFields.addMultiSelectCustomField(customFieldData);
         cy.visit(TopMenu.usersPath);
         UsersSearchPane.searchByUsername(user.username);
+        cy.reload();
         UserEdit.addMultiSelectCustomField(customFieldData);
         cy.visit(TopMenu.bulkEditPath);
       });
@@ -74,7 +75,7 @@ describe('bulk-edit', () => {
 
     it(
       "C389568 In app | Verify that User's Custom fields with semicolons are updated correctly (firebird)",
-      { tags: ['criticalPath', 'firebird', 'nonParallel'] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
@@ -130,6 +131,7 @@ describe('bulk-edit', () => {
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         ]);
         BulkEditActions.commitChanges();
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Custom fields');
         BulkEditSearchPane.verifyChangesUnderColumns(
           'Custom fields',
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,

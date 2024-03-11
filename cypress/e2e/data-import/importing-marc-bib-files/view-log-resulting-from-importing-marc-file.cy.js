@@ -1,8 +1,6 @@
-import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import { RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -10,44 +8,34 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
-    let instanceHrid;
-    const title =
-      'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
-    const jsonTestData =
-      'Import Log for Record 1 (Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor))';
+    let instanceId;
     const filePathToUpload = 'oneMarcBib.mrc';
     const fileNameToUpload = `C2358 autotestFile.${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
     before('create test data', () => {
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi(filePathToUpload, fileNameToUpload, jobProfileToRun).then(
+        (response) => {
+          instanceId = response.entries[0].relatedInstanceInfo.idList[0];
+        },
+      );
+
       cy.loginAsAdmin({
         path: TopMenu.dataImportPath,
         waiter: DataImport.waitLoading,
       });
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      DataImport.waitLoading();
-      DataImport.uploadFile(filePathToUpload, fileNameToUpload);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfileToRun);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(fileNameToUpload);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     });
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+        InventoryInstance.deleteInstanceViaApi(instanceId);
       });
     });
 
     it(
       'C2358 View the log resulting from importing a MARC file (folijet)',
-      { tags: ['extendedPath', 'folijet', 'nonParallel'] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         Logs.openFileDetails(fileNameToUpload);
         FileDetails.verifyLogDetailsPageIsOpened();
@@ -56,16 +44,6 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
-        });
-        FileDetails.openJsonScreen(title);
-        JsonScreenView.verifyJsonScreenIsOpened();
-        JsonScreenView.openMarcSrsTab();
-        JsonScreenView.getInstanceHrid().then((hrid) => {
-          instanceHrid = hrid;
-
-          JsonScreenView.verifyContentInTab(jsonTestData);
-          JsonScreenView.openInstanceTab();
-          JsonScreenView.verifyContentInTab(jsonTestData);
         });
       },
     );

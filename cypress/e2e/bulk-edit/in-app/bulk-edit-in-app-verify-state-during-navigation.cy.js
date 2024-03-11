@@ -57,9 +57,7 @@ describe('bulk-edit', () => {
       'C374151 Verify Bulk edit state when navigating to another app and back-Holdings (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.checkHoldingsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
-        BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
 
         BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
         BulkEditSearchPane.checkForUploading(validHoldingUUIDsFileName);

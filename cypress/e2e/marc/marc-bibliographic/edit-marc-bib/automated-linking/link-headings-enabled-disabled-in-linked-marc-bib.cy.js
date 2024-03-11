@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
@@ -34,7 +32,7 @@ describe('MARC', () => {
             emptyContent: '',
             fourthBox: '$a C388533 Roberts, Julia, $d 1967-',
             fifthBox: '$e Actor.',
-            sixthBox: '$0 id.loc.gov/authorities/names/n91074080C388533',
+            sixthBox: '$0 http://id.loc.gov/authorities/names/n91074080C388533',
             seventhBox: '',
           },
         ];
@@ -47,12 +45,14 @@ describe('MARC', () => {
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numOfRecords: 1,
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileForC388533.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 3,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
@@ -74,6 +74,19 @@ describe('MARC', () => {
         const createdRecordIDs = [];
 
         before(() => {
+          cy.getAdminToken();
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
+          });
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -82,42 +95,23 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            cy.loginAsAdmin()
-              .then(() => {
-                marcFiles.forEach((marcFile) => {
-                  cy.visit(TopMenu.dataImportPath);
-                  DataImport.verifyUploadState();
-                  DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                  JobProfiles.waitLoadingList();
-                  JobProfiles.search(marcFile.jobProfileToRun);
-                  JobProfiles.runImportFile();
-                  Logs.waitFileIsImported(marcFile.fileName);
-                  Logs.checkJobStatus(marcFile.fileName, 'Completed');
-                  Logs.openFileDetails(marcFile.fileName);
-                  for (let i = 0; i < marcFile.numOfRecords; i++) {
-                    Logs.getCreatedItemsID(i).then((link) => {
-                      createdRecordIDs.push(link.split('/')[5]);
-                    });
-                  }
-                });
-              })
-              .then(() => {
-                cy.visit(TopMenu.inventoryPath);
-                InventoryInstances.searchByTitle(createdRecordIDs[0]);
-                InventoryInstances.selectInstance();
-                InventoryInstance.editMarcBibliographicRecord();
-                linkingTagAndValues.forEach((linking) => {
-                  QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
-                  MarcAuthorities.switchToSearch();
-                  InventoryInstance.verifySelectMarcAuthorityModal();
-                  InventoryInstance.verifySearchOptions();
-                  InventoryInstance.searchResults(linking.value);
-                  InventoryInstance.clickLinkButton();
-                  QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
-                });
-                QuickMarcEditor.pressSaveAndClose();
-                QuickMarcEditor.checkAfterSaveAndClose();
+            cy.loginAsAdmin().then(() => {
+              cy.visit(TopMenu.inventoryPath);
+              InventoryInstances.searchByTitle(createdRecordIDs[0]);
+              InventoryInstances.selectInstance();
+              InventoryInstance.editMarcBibliographicRecord();
+              linkingTagAndValues.forEach((linking) => {
+                QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
+                MarcAuthorities.switchToSearch();
+                InventoryInstance.verifySelectMarcAuthorityModal();
+                InventoryInstance.verifySearchOptions();
+                InventoryInstance.searchResults(linking.value);
+                InventoryInstance.clickLinkButton();
+                QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
+              QuickMarcEditor.pressSaveAndClose();
+              QuickMarcEditor.checkAfterSaveAndClose();
+            });
 
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,
@@ -161,7 +155,7 @@ describe('MARC', () => {
               `${linkingTagAndValues[1].tag}`,
               '1',
               '\\',
-              '$a C388533 Gere, Richard, $d 1949- $e Actor. $0 id.loc.gov/authorities/names/n86041334C388533',
+              '$a C388533 Gere, Richard, $d 1949- $e Actor. $0 http://id.loc.gov/authorities/names/n86041334C388533',
             );
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.clickLinkHeadingsButton();
@@ -173,7 +167,7 @@ describe('MARC', () => {
               '\\',
               '$a C388533 Gere, Richard, $d 1949-',
               '$e Actor.',
-              '$0 id.loc.gov/authorities/names/n86041334C388533',
+              '$0 http://id.loc.gov/authorities/names/n86041334C388533',
               '',
             );
             QuickMarcEditor.updateExistingFieldContent(
@@ -214,13 +208,13 @@ describe('MARC', () => {
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t130\t0  \t$a C388533 Runaway Bride (Motion picture) $0 id.loc.gov/authorities/names/n2002076264C388533 $9`,
+              `${marcAuthIcon}\n\t130\t0  \t$a C388533 Runaway Bride (Motion picture) $0 http://id.loc.gov/authorities/names/n2002076264C388533 $9`,
             );
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t700\t1  \t$a C388533 Roberts, Julia, $d 1967- $e Actor. $0 id.loc.gov/authorities/names/n91074080C388533 $9`,
+              `${marcAuthIcon}\n\t700\t1  \t$a C388533 Roberts, Julia, $d 1967- $e Actor. $0 http://id.loc.gov/authorities/names/n91074080C388533 $9`,
             );
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t700\t1  \t$a C388533 Gere, Richard, $d 1949- $e Actor. $0 id.loc.gov/authorities/names/n86041334C388533 $9`,
+              `${marcAuthIcon}\n\t700\t1  \t$a C388533 Gere, Richard, $d 1949- $e Actor. $0 http://id.loc.gov/authorities/names/n86041334C388533 $9`,
             );
           },
         );

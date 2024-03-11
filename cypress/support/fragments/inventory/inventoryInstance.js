@@ -419,6 +419,7 @@ export default {
 
   goToEditMARCBiblRecord: () => {
     cy.do(actionsButton.click());
+    cy.expect(actionsButton.has({ ariaExpanded: 'true' }));
     cy.do(editMARCBibRecordButton.click());
   },
 
@@ -904,7 +905,9 @@ export default {
   },
 
   moveItemToAnotherInstance({ fromHolding, toInstance, shouldOpen = true }) {
-    cy.do([actionsButton.click(), moveHoldingsToAnotherInstanceButton.click()]);
+    cy.do(actionsButton.click());
+    cy.wait(1000);
+    cy.do(moveHoldingsToAnotherInstanceButton.click());
     InventoryInstanceSelectInstanceModal.waitLoading();
     InventoryInstanceSelectInstanceModal.searchByTitle(toInstance);
     InventoryInstanceSelectInstanceModal.selectInstance();
@@ -930,7 +933,9 @@ export default {
   },
 
   openMoveItemsWithinAnInstance: () => {
-    return cy.do([actionsButton.click(), moveItemsButton.click()]);
+    cy.do(actionsButton.click());
+    cy.wait(1000);
+    cy.do(moveItemsButton.click());
   },
 
   moveHoldingsToAnotherInstance: (newInstanceHrId) => {
@@ -1010,8 +1015,10 @@ export default {
 
   checkAddedTag: (tagName, instanceTitle) => {
     cy.do(MultiColumnListCell(instanceTitle).click());
+    cy.wait(1500);
     cy.do(tagButton.click());
-    cy.expect(MultiSelect().exists(tagName));
+    cy.wait(1500);
+    cy.expect(MultiSelect({ ariaLabelledby: 'input-tag-label' }).exists(tagName));
   },
 
   deleteTag: (tagName) => {
@@ -1426,7 +1433,7 @@ export default {
   },
 
   openHoldingViewByID: (holdingsID) => {
-    cy.do(viewHoldingsButtonByID(holdingsID).click());
+    cy.do(viewHoldingsButtonByID(`holdings.${holdingsID}`).click());
     cy.expect(Button('Actions').exists());
   },
 

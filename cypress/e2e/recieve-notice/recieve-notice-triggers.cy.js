@@ -10,7 +10,6 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
 import LoansPage from '../../support/fragments/loans/loansPage';
-import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 import NewNoticePolicyTemplate, {
   createNoticeTemplate,
@@ -150,7 +149,6 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
         cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
       });
 
-    OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
     cy.createLoanPolicy({
       loanable: true,
       loansPolicy: {

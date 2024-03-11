@@ -44,7 +44,7 @@ describe('data-import', () => {
     let instanceHrid;
     let exportedFileName;
     const quantityOfItems = '1';
-    const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
+    const fileName = `C368009 autotestFileName${getRandomPostfix()}.mrc`;
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: {
@@ -99,14 +99,12 @@ describe('data-import', () => {
           waiter: DataImport.waitLoading,
         });
         // create Instance with source = MARC
-        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
-        // get hrid of created instance
-        JobProfiles.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(fileName);
-        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHrid = initialInstanceHrId;
+        DataImport.uploadFileViaApi(
+          'oneMarcBib.mrc',
+          fileName,
+          'Default - Create instance and SRS MARC Bib',
+        ).then((response) => {
+          instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
         });
       });
     });

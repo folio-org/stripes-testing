@@ -16,7 +16,7 @@ import PayFeeFine from '../../support/fragments/users/payFeeFaine';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 
-describe('Fee/Fine history ', { retries: 1 }, () => {
+describe('Fee/Fine history ', () => {
   const userData = {};
   const ownerData = {};
   const feeFineType = {};

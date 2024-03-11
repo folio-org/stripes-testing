@@ -6,9 +6,6 @@ import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAut
 import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import Users from '../../../../support/fragments/users/users';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 
 const testData = {
@@ -34,118 +31,118 @@ const testData = {
       fileName: `testMarcFileBib360551.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numberOfRecords: 1,
+      propertyName: 'relatedInstanceInfo',
     },
     {
       marc: 'marcAuthC359142.mrc',
       fileName: `testMarcFileAuthC380587_01.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numberOfRecords: 3,
+      propertyName: 'relatedAuthorityInfo',
     },
   ],
 };
 describe('MARC', () => {
-  describe('plug-in MARC authority | Search', () => {
-    before('Creating test data', () => {
-      cy.createTempUser([
-        Permissions.inventoryAll.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-      ]).then((createdUserProperties) => {
-        testData.user = createdUserProperties;
-        InventoryInstances.getInstancesViaApi({
-          limit: 100,
-          query: `title="${testData.instanceTitle}"`,
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
-        [...testData.searchQueries, ...testData.searchQueriesOneResult].forEach((query) => {
-          MarcAuthorities.getMarcAuthoritiesViaApi({
+  describe('plug-in MARC authority', () => {
+    describe('plug-in MARC authority | Search', () => {
+      before('Creating test data', () => {
+        cy.createTempUser([
+          Permissions.inventoryAll.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+        ]).then((createdUserProperties) => {
+          testData.user = createdUserProperties;
+          InventoryInstances.getInstancesViaApi({
             limit: 100,
-            query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
+            query: `title="${testData.instanceTitle}"`,
+          }).then((instances) => {
+            if (instances) {
+              instances.forEach(({ id }) => {
+                InventoryInstance.deleteInstanceViaApi(id);
               });
             }
           });
+          [...testData.searchQueries, ...testData.searchQueriesOneResult].forEach((query) => {
+            MarcAuthorities.getMarcAuthoritiesViaApi({
+              limit: 100,
+              query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
+            }).then((authorities) => {
+              if (authorities) {
+                authorities.forEach(({ id }) => {
+                  MarcAuthority.deleteViaAPI(id);
+                });
+              }
+            });
+          });
         });
-      });
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })
-        .then(() => {
-          testData.marcFiles.forEach((marcFile) => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numberOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                if (marcFile.jobProfileToRun === 'Default - Create instance and SRS MARC Bib') {
-                  testData.instanceIDs.push(link.split('/')[5]);
-                } else {
-                  testData.authorityIDs.push(link.split('/')[5]);
-                }
+        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })
+          .then(() => {
+            testData.marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  if (marcFile.jobProfileToRun === 'Default - Create instance and SRS MARC Bib') {
+                    testData.instanceIDs.push(record[marcFile.propertyName].idList[0]);
+                  } else {
+                    testData.authorityIDs.push(record[marcFile.propertyName].idList[0]);
+                  }
+                });
               });
-            }
-            cy.visit(TopMenu.dataImportPath);
+            });
+          })
+          .then(() => {
+            cy.logout();
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            InventoryInstances.searchByTitle(testData.instanceTitle);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag700);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
           });
-        })
-        .then(() => {
-          cy.logout();
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
+      });
+
+      after('Delete test data', () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.user.userId);
+        testData.instanceIDs.forEach((id) => {
+          InventoryInstance.deleteInstanceViaApi(id);
+        });
+        testData.authorityIDs.forEach((id) => {
+          MarcAuthority.deleteViaAPI(id);
+        });
+      });
+
+      it(
+        'C359142 MARC Authority plug-in | Support search for "naturalId" field using "Keyword" search option (spitfire) (TaaS)',
+        { tags: ['extendedPath', 'spitfire'] },
+        () => {
+          testData.searchQueries.forEach((query, index) => {
+            MarcAuthorities.searchByParameter(testData.searchOptions.KEYWORD, query);
+            MarcAuthorities.checkAfterSearch(
+              testData.authorizedTypes.AUTHORIZED,
+              testData.searchResults[index],
+            );
           });
-          InventoryInstances.searchByTitle(testData.instanceTitle);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag700);
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.verifySelectMarcAuthorityModal();
-        });
+
+          testData.searchQueriesOneResult.forEach((query, index) => {
+            MarcAuthorities.searchByParameter(testData.searchOptions.KEYWORD, query);
+            MarcAuthorities.closeMarcViewPane();
+            MarcAuthorities.checkAfterSearch(
+              testData.authorizedTypes.AUTHORIZED,
+              testData.searchResultsOneResult[index],
+            );
+          });
+        },
+      );
     });
-
-    after('Delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(testData.user.userId);
-      testData.instanceIDs.forEach((id) => {
-        InventoryInstance.deleteInstanceViaApi(id);
-      });
-      testData.authorityIDs.forEach((id) => {
-        MarcAuthority.deleteViaAPI(id);
-      });
-    });
-
-    it(
-      'C359142 MARC Authority plug-in | Support search for "naturalId" field using "Keyword" search option (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
-      () => {
-        testData.searchQueries.forEach((query, index) => {
-          MarcAuthorities.searchByParameter(testData.searchOptions.KEYWORD, query);
-          MarcAuthorities.checkAfterSearch(
-            testData.authorizedTypes.AUTHORIZED,
-            testData.searchResults[index],
-          );
-        });
-
-        testData.searchQueriesOneResult.forEach((query, index) => {
-          MarcAuthorities.searchByParameter(testData.searchOptions.KEYWORD, query);
-          MarcAuthorities.closeMarcViewPane();
-          MarcAuthorities.checkAfterSearch(
-            testData.authorizedTypes.AUTHORIZED,
-            testData.searchResultsOneResult[index],
-          );
-        });
-      },
-    );
   });
 });

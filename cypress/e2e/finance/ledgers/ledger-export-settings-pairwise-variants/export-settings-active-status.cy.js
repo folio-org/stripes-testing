@@ -15,7 +15,7 @@ import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
-describe('Finance: Ledgers', { retries: 3 }, () => {
+describe('Finance: Ledgers', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
@@ -94,7 +94,7 @@ describe('Finance: Ledgers', { retries: 3 }, () => {
             '10',
             '1',
             '10',
-            location.institutionId,
+            location.name,
           );
           OrderLines.backToEditingOrder();
           Orders.openOrder();

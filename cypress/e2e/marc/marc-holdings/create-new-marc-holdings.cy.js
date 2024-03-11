@@ -1,7 +1,4 @@
 import Permissions from '../../../support/dictionary/permissions';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -57,30 +54,15 @@ describe('MARC', () => {
       tag852callout: 'Record cannot be saved. An 852 is required.',
     };
 
-    const marcFiles = [
-      {
-        marc: 'oneMarcBib.mrc',
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-      },
-      {
-        marc: 'oneMarcBib.mrc',
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-      },
-      {
-        marc: 'oneMarcBib.mrc',
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-      },
-    ];
+    const bibTitlePrefix = `AutoMARC ${getRandomPostfix()}`;
 
     let user;
-    const recordIDs = [];
+    const instanceIds = [];
+    const holdingsIds = [];
     let location;
     let servicePointId;
 
-    before(() => {
+    before('Create user, data', () => {
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
@@ -92,25 +74,30 @@ describe('MARC', () => {
           servicePointId = servicePoint[0].id;
           NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
             location = res;
+
+            for (let i = 0; i < 3; i++) {
+              cy.createSimpleMarcBibViaAPI(`${bibTitlePrefix} ${i}`);
+              QuickMarcEditor.getCreatedMarcBib(`${bibTitlePrefix} ${i}`).then((bib) => {
+                instanceIds.push(bib.id);
+              });
+            }
           });
         });
+      });
+    });
 
-        marcFiles.forEach((marcFile) => {
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, 'Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              Logs.getCreatedItemsID().then((link) => {
-                recordIDs.push(link.split('/')[5]);
-              });
-            },
-          );
+    before('Create first holdings', () => {
+      cy.createSimpleMarcBibViaAPI(`${bibTitlePrefix} Initial`);
+      QuickMarcEditor.getCreatedMarcBib(`${bibTitlePrefix} Initial`).then((bib) => {
+        instanceIds.push(bib.id);
+        cy.createSimpleMarcHoldingsViaAPI(
+          bib.id,
+          bib.hrid,
+          location.code,
+          `${bibTitlePrefix} Initial`,
+        );
+        QuickMarcEditor.getCreatedMarcHoldings(bib.id, `${bibTitlePrefix} Initial`).then((hold) => {
+          holdingsIds.push(hold.id);
         });
       });
     });
@@ -125,12 +112,12 @@ describe('MARC', () => {
     after('Deleting created user, data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      cy.deleteHoldingRecordViaApi(recordIDs[3]);
-      cy.deleteHoldingRecordViaApi(recordIDs[4]);
-      cy.deleteHoldingRecordViaApi(recordIDs[5]);
-      InventoryInstance.deleteInstanceViaApi(recordIDs[0]);
-      InventoryInstance.deleteInstanceViaApi(recordIDs[1]);
-      InventoryInstance.deleteInstanceViaApi(recordIDs[2]);
+      holdingsIds.forEach((holdingsId) => {
+        cy.deleteHoldingRecordViaApi(holdingsId);
+      });
+      instanceIds.forEach((instanceId) => {
+        InventoryInstance.deleteInstanceViaApi(instanceId);
+      });
       NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
         location.institutionId,
         location.campusId,
@@ -143,7 +130,7 @@ describe('MARC', () => {
       'C387450 "008" field existence validation when create new "MARC Holdings" (spitfire)',
       { tags: ['criticalPath', 'spitfire'], retries: 1 },
       () => {
-        InventoryInstances.searchByTitle(recordIDs[0]);
+        InventoryInstances.searchByTitle(instanceIds[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.goToMarcHoldingRecordAdding();
         QuickMarcEditor.updateExistingField('852', QuickMarcEditor.getExistingLocation());
@@ -181,7 +168,7 @@ describe('MARC', () => {
             'Date Ent',
             DateTools.getCurrentDateYYMMDD(),
           );
-          recordIDs.push(holdingsID);
+          holdingsIds.push(holdingsID);
         });
       },
     );
@@ -191,7 +178,7 @@ describe('MARC', () => {
       { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventoryInstances.searchBySource('MARC');
-        InventoryInstances.searchByTitle(recordIDs[1]);
+        InventoryInstances.searchByTitle(instanceIds[1]);
         InventoryInstance.checkExpectedMARCSource();
         InventoryInstance.goToMarcHoldingRecordAdding();
         QuickMarcEditor.waitLoading();
@@ -204,7 +191,7 @@ describe('MARC', () => {
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveHoldings();
         HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
-          recordIDs.push(holdingsID);
+          holdingsIds.push(holdingsID);
           HoldingsRecordView.close();
           InventoryInstance.openHoldingView();
           HoldingsRecordView.viewSource();
@@ -222,7 +209,7 @@ describe('MARC', () => {
       'C350757 MARC fields behavior when creating "MARC Holdings" record (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        InventoryInstances.searchByTitle(recordIDs[0]);
+        InventoryInstances.searchByTitle(instanceIds[0]);
         InventoryInstance.goToMarcHoldingRecordAdding();
         QuickMarcEditor.waitLoading();
         QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);
@@ -240,7 +227,7 @@ describe('MARC', () => {
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveHoldings();
         HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
-          recordIDs.push(holdingsID);
+          holdingsIds.push(holdingsID);
           HoldingsRecordView.close();
           InventoryInstance.openHoldingViewByID(holdingsID);
           HoldingsRecordView.viewSource();

@@ -44,13 +44,13 @@ describe('data-import', () => {
       instanceTitle:
         "Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
       updated700Field: [
-        76,
+        75,
         '700',
         '1',
         '\\',
         '$a C385660 Lee, Stan, $d 1922-2018',
         '$e author.',
-        '$0 id.loc.gov/authorities/names/n83169267',
+        '$0 http://id.loc.gov/authorities/names/n83169267',
         '',
       ],
     };
@@ -89,12 +89,14 @@ describe('data-import', () => {
         fileName: `C385660 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numOfRecords: 1,
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'marcAuthFileC385660.mrc',
         fileName: `C385660 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
     const linkingTagAndValue = {
@@ -116,25 +118,18 @@ describe('data-import', () => {
           },
         );
         marcFiles.forEach((marcFile) => {
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, 'Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  testData.createdRecordIDs.push(link.split('/')[5]);
-                });
-              }
-            },
-          );
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            });
+          });
         });
       });
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       // create Match profile
       NewMatchProfile.createMatchProfileViaApiMarc(matchProfile);
       // create Field mapping profile
@@ -221,21 +216,22 @@ describe('data-import', () => {
           cy.wait(4000);
           ExportFile.downloadExportedMarcFile(testData.exportedFileName);
 
-          // change exported file
-          DataImport.replace999SubfieldsInPreupdatedFile(
+          DataImport.editMarcFile(
             testData.exportedFileName,
-            testData.marcFileForModify,
             testData.modifiedMarcFile,
+            ['Lee, Stan', 'ecreator.'],
+            ['Lee, Stanley', 'eauthor.'],
           );
         });
+
         cy.visit(TopMenu.dataImportPath);
-        DataImport.uploadFile(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);
+        DataImport.uploadFile(testData.modifiedMarcFile, testData.modifiedMarcFile);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(testData.uploadModifiedMarcFile);
-        Logs.checkJobStatus(testData.uploadModifiedMarcFile, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(testData.uploadModifiedMarcFile);
+        Logs.waitFileIsImported(testData.modifiedMarcFile);
+        Logs.checkJobStatus(testData.modifiedMarcFile, JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(testData.modifiedMarcFile);
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
@@ -244,12 +240,13 @@ describe('data-import', () => {
         });
 
         cy.visit(TopMenu.inventoryPath);
+
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated700Field);
-        QuickMarcEditor.openLinkingAuthorityByIndex(76);
+        QuickMarcEditor.openLinkingAuthorityByIndex(75);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.markedValue);
       },
     );

@@ -112,7 +112,7 @@ describe('Orders: Inventory interaction', () => {
       SelectLocationModal.verifyModalView();
 
       // Select permanent location from Preconditions item #1
-      SelectLocationModal.selectLocation(testData.location.institutionName);
+      SelectLocationModal.selectLocation(testData.location.name);
       SelectLocationModal.clickSaveButton();
 
       // Fill the following fields & click "Save"

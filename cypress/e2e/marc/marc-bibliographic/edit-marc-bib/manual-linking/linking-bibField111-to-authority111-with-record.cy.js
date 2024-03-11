@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../../../support/constants';
 import { Permissions } from '../../../../../support/dictionary';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
@@ -12,6 +9,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -30,6 +28,7 @@ describe('MARC', () => {
             marc: 'marcBibFileC374197.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileC374197.mrc',
@@ -37,6 +36,7 @@ describe('MARC', () => {
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             authorityHeading: 'Mediterranean Conference on Medical and Biological Engineering',
             authority111FieldValue: 'n85281584',
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
@@ -53,7 +53,7 @@ describe('MARC', () => {
           testData.tag111,
           '2',
           '\\',
-          '$a Mediterranean Conference on Medical and Biological Engineering $n (13th : $d 2013 : $0 id.loc.gov/authorities/names/n85281584',
+          '$a Mediterranean Conference on Medical and Biological Engineering $n (13th : $d 2013 : $0 http://id.loc.gov/authorities/names/n85281584',
         ];
         const bib111LinkedFieldValues = [
           28,
@@ -62,7 +62,7 @@ describe('MARC', () => {
           '\\',
           '$a Mediterranean Conference on Medical and Biological Engineering',
           '$n (13th : $d 2013 :',
-          `$0 id.loc.gov/authorities/names/${marcFiles[1].authority111FieldValue}`,
+          `$0 http://id.loc.gov/authorities/names/${marcFiles[1].authority111FieldValue}`,
           '',
         ];
 
@@ -75,24 +75,19 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
+            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
-              cy.loginAsAdmin({
-                path: TopMenu.dataImportPath,
-                waiter: DataImport.waitLoading,
-              }).then(() => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
                 });
               });
             });
+
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -112,7 +107,7 @@ describe('MARC', () => {
 
         it(
           'C374197 Link the "111" of "MARC Bib" field with "111" field of "MARC Authority" record. (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'nonParallel'] },
+          { tags: ['extendedPath', 'spitfire'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -156,9 +151,11 @@ describe('MARC', () => {
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
             InventoryInstance.waitLoading();
+            InstanceRecordView.verifyInstancePaneExists();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib111LinkedFieldValues);
             QuickMarcEditor.clickUnlinkIconInTagField(bib111UnlinkedFieldValues[0]);
+            QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib111UnlinkedFieldValues);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib111UnlinkedFieldValues[0]);
             QuickMarcEditor.pressSaveAndClose();

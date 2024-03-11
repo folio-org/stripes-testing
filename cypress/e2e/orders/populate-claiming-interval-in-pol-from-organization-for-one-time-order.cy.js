@@ -66,7 +66,7 @@ describe('Orders', () => {
     });
     firstOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(firstOrder).then((firstOrderResponse) => {
+    Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;
       Orders.checkCreatedOrder(firstOrder);
@@ -114,7 +114,7 @@ describe('Orders', () => {
 
   it(
     'C423438: Populate claiming interval in PO line from Organization record for one-time order (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
@@ -125,7 +125,7 @@ describe('Orders', () => {
         '20',
         '1',
         '20',
-        location.institutionId,
+        location.name,
       );
       OrderLines.checkClaimingIntervalInPOL('20');
       OrderLines.editPOLInOrder();

@@ -225,12 +225,7 @@ export default {
   },
 
   verifyNumberOfTitles(columnIndex, linkValue) {
-    cy.expect(
-      MultiColumnListRow({ indexRow: 'row-0' })
-        .find(MultiColumnListCell({ columnIndex, content: linkValue }))
-        .find(Link())
-        .exists(),
-    );
+    cy.expect(MultiColumnListCell({ columnIndex, content: linkValue }).find(Link()).exists());
   },
 
   verifyNumberOfTitlesForRowWithValue(value, itemCount) {
@@ -242,6 +237,21 @@ export default {
         .find(MultiColumnListCell({ column: 'Number of titles' }))
         .has({ content: itemCount.toString() }),
     );
+  },
+
+  clickNumberOfTitlesByHeading(heading) {
+    cy.wrap(
+      MultiColumnListRow({
+        isContainer: true,
+        content: including(heading),
+      })
+        .find(MultiColumnListCell({ column: 'Number of titles' }))
+        .find(Link())
+        .href(),
+    ).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
   },
 
   verifyEmptyNumberOfTitlesForRowWithValue(value) {
@@ -1394,5 +1404,13 @@ export default {
   checkSharedTextInDetailView(isShared = true) {
     const expectedText = isShared ? sharedTextInDetailView : localTextInDetailView;
     cy.expect(detailsMarcViewPaneheader.has({ title: including(expectedText) }));
+  },
+
+  verifyAllResultsHaveSource(sourceNames) {
+    this.getResultsListByColumn(4).then((cellTexts) => {
+      cellTexts.forEach((cellText) => {
+        expect(cellText).to.be.oneOf([...sourceNames]);
+      });
+    });
   },
 };

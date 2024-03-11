@@ -45,7 +45,7 @@ describe('data-import', () => {
         '\\',
         '$a C380519 Ludwig van, Beethoven, $d 1770-1827',
         '$e composer.',
-        '$0 id.loc.gov/authorities/names/n79107741',
+        '$0 http://id.loc.gov/authorities/names/n79107741',
         '',
       ],
       updated240Field: [
@@ -55,7 +55,7 @@ describe('data-import', () => {
         '0',
         '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
         '$c Ludwig Van Beethoven.',
-        '$0 id.loc.gov/authorities/names/n83130832',
+        '$0 http://id.loc.gov/authorities/names/n83130832',
         '',
       ],
       updated700Field: [
@@ -65,7 +65,7 @@ describe('data-import', () => {
         '\\',
         '$a C380519 Hewitt, Angela, $d 1958-',
         '$e instrumentalist, $e writer of supplementary textual content.',
-        '$0 id.loc.gov/authorities/names/n91099716',
+        '$0 http://id.loc.gov/authorities/names/n91099716',
         '',
       ],
     };
@@ -139,12 +139,14 @@ describe('data-import', () => {
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numOfRecords: 1,
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'marcAuthFileForC380519.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 4,
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
     const linkingTagAndValues = [
@@ -180,20 +182,15 @@ describe('data-import', () => {
         cy.loginAsAdmin()
           .then(() => {
             marcFiles.forEach((marcFile) => {
-              cy.visit(TopMenu.dataImportPath);
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, 'Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  createdAuthorityIDs.push(link.split('/')[5]);
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
                 });
-              }
+              });
             });
           })
           .then(() => {
@@ -290,7 +287,7 @@ describe('data-import', () => {
 
     it(
       'C380519 Cant delete protected and linked fields using update MARC Bib profile (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

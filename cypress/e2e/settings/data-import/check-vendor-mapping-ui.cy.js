@@ -46,6 +46,7 @@ describe('data-import', () => {
         Permissions.uiOrganizationsView.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+
         cy.login(testData.user.username, testData.user.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,

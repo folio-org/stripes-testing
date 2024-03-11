@@ -36,7 +36,7 @@ describe('MARC', () => {
             content: '$0 n9903410883C410883',
             boxFourth: '$a C410883 Hosanna Bible',
             boxFifth: '',
-            boxSixth: '$0 id.loc.gov/authorities/names/n9903410883C410883',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n9903410883C410883',
             boxSeventh: '',
             searchOption: 'Keyword',
             marcValue: 'C410883 Roma Council (2nd : 1962-1965 : Basilica di San Pietro in Roma)',
@@ -48,7 +48,7 @@ describe('MARC', () => {
             boxFourth:
               '$a C410883 Roma Council $c Basilica di San Pietro in Roma) $d 1962-1965 : $n (2nd :',
             boxFifth: '$j something',
-            boxSixth: '$0 id.loc.gov/authorities/names/n7908410883C410883',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n7908410883C410883',
             boxSeventh: '$2 fast',
             searchOption: 'Keyword',
             marcValue: 'C410883 Abraham, Angela, 1958- C410883 Hosanna Bible',
@@ -82,17 +82,15 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdAuthorityIDs.push(record.relatedAuthorityInfo.idList[0]);
+                });
               });
             });
 
@@ -188,10 +186,10 @@ describe('MARC', () => {
 
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              'Linked to MARC authority\n\t240\t   \t$a C410883 Hosanna Bible $0 id.loc.gov/authorities/names/n9903410883C410883 $9',
+              'Linked to MARC authority\n\t240\t   \t$a C410883 Hosanna Bible $0 http://id.loc.gov/authorities/names/n9903410883C410883 $9',
             );
             InventoryViewSource.contains(
-              'Linked to MARC authority\n\t711\t   \t$a C410883 Roma Council $c Basilica di San Pietro in Roma) $d 1962-1965 : $n (2nd : $j something $0 id.loc.gov/authorities/names/n7908410883C410883 $9',
+              'Linked to MARC authority\n\t711\t   \t$a C410883 Roma Council $c Basilica di San Pietro in Roma) $d 1962-1965 : $n (2nd : $j something $0 http://id.loc.gov/authorities/names/n7908410883C410883 $9',
             );
             QuickMarcEditor.closeEditorPane();
 

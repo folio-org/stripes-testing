@@ -190,7 +190,7 @@ export default {
   },
 
   openHoldingsAccordion(holdingId) {
-    cy.do(Button({ id: `accordion-toggle-button-${holdingId}` }).click());
+    cy.do(Button({ id: `accordion-toggle-button-holdings.${holdingId}` }).click());
   },
 
   openItem(itemBarcode) {

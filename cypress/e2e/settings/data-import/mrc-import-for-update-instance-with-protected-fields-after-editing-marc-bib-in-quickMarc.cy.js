@@ -136,7 +136,7 @@ describe('data-import', () => {
 
     it(
       'C356829 Test field protections when importing to update instance, after editing the MARC Bib in quickMARC (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();
@@ -202,7 +202,7 @@ describe('data-import', () => {
             DataImport.editMarcFile(
               'marcFileForC356829.mrc',
               editedMarcFileName,
-              ['srsUuid', 'instanceUuid', 'hrid'],
+              ['instanceUuid', 'srsUuid', 'hrid'],
               [uuid[0], uuid[1], instanceHrid],
             );
           });

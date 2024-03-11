@@ -39,7 +39,7 @@ describe('agreements', () => {
 
     it(
       'C1329 Remove an Organization record from an Agreement record (erm) (TaaS)',
-      { tags: ['extendedPath', 'erm'] },
+      { tags: ['extendedPathErm', 'erm'] },
       () => {
         AgreementViewDetails.agreementListClick(agreement.name);
         AgreementViewDetails.verifyOrganizationsAccordion(true);

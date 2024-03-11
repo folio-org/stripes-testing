@@ -92,14 +92,16 @@ describe('bulk-edit', () => {
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
+        cy.reload();
         BulkEditActions.openActions();
+        BulkEditActions.downloadChangedCSV();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Action note', noteType);
+        BulkEditActions.openActions();
         BulkEditSearchPane.verifyChangesUnderColumns(
           'Action note',
           `${actionNote} | ${newActionNote}`,
         );
         BulkEditSearchPane.verifyChangesUnderColumns(noteType, noteTypeText);
-        BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
           actionNote,
           newActionNote,

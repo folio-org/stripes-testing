@@ -85,7 +85,7 @@ describe('Invoices', () => {
               '15',
               '1',
               '100',
-              location.institutionId,
+              location.name,
             );
             OrderLines.backToEditingOrder();
             Orders.openOrder();

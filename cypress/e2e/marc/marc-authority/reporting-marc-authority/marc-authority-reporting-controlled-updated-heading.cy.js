@@ -1,7 +1,5 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -16,6 +14,7 @@ import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/m
 const testData = {
   marcValue: 'C380531 Beethoven, Ludwig van,',
   tag100: '100',
+  tag240: '240',
   title:
     'Beethoven, Ludwig the Greatest $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
   updatedTag100Value1:
@@ -34,11 +33,13 @@ const marcFiles = [
     marc: 'marcBibFileForC380531.mrc',
     fileName: `testMarcFileC380531.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+    propertyName: 'relatedInstanceInfo',
   },
   {
     marc: 'marcAuthFileForC380531.mrc',
     fileName: `testMarcFileC380531.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create SRS MARC Authority',
+    propertyName: 'relatedAuthorityInfo',
     authorityHeading:
       'C380531 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
     authority010FieldValue: 'n83130007380531',
@@ -59,23 +60,18 @@ describe('MARC', () => {
           testData.userProperties = createdUserProperties;
 
           marcFiles.forEach((marcFile) => {
-            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-              () => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
-                });
-              },
-            );
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
           });
 
+          cy.loginAsAdmin();
           cy.visit(TopMenu.inventoryPath).then(() => {
             InventoryInstances.waitContentLoading();
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
@@ -87,7 +83,6 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(testData.marcValue);
-            MarcAuthoritiesSearch.selectAuthorityByIndex(0);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag240, 18);
             QuickMarcEditor.pressSaveAndClose();
@@ -104,9 +99,9 @@ describe('MARC', () => {
 
       after('Deleting user and data', () => {
         cy.getAdminToken();
+        Users.deleteViaApi(testData.userProperties.userId);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
-        Users.deleteViaApi(testData.userProperties.userId);
       });
 
       it(

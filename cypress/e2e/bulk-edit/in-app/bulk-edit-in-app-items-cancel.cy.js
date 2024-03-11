@@ -65,7 +65,7 @@ describe('bulk-edit', () => {
       'C397354 Verify CANCEL during Bulk edit Items In app (firebird) (TaaS)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifyDragNDropItemUUIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
         BulkEditSearchPane.uploadFile(itemUUIDsFileName);
         BulkEditSearchPane.checkForUploading(itemUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();

@@ -59,7 +59,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   const periodEndForThirdFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
   const adjustmentDescription = `test_description${getRandomPostfix()}`;
   const barcode = FinanceHelp.getRandomBarcode();
-  const caption = 'autotestCaption';
+  const enumeration = 'autotestCaption';
   firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
   let user;
   let orderNumber;
@@ -112,14 +112,14 @@ describe('ui-finance: Fiscal Year Rollover', () => {
               '25',
               '1',
               '25',
-              location.institutionId,
+              location.name,
             );
             OrderLines.backToEditingOrder();
             Orders.openOrder();
             Orders.receiveOrderViaActions();
             Receiving.selectLinkFromResultsList();
-            Receiving.receivePiece(0, caption, barcode);
-            Receiving.checkReceivedPiece(0, caption, barcode);
+            Receiving.receivePiece(0, enumeration, barcode);
+            Receiving.checkReceivedPiece(0, enumeration, barcode);
           },
         );
 

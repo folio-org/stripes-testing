@@ -23,19 +23,24 @@ export default {
   },
 
   addMultiSelectCustomField(data) {
+    this.clickEditNewButton();
     cy.do([
-      editNewButton.click(),
       addCustomFieldDropdown.choose('Multi-select'),
       TextField('Field label*').fillIn(data.fieldLabel),
       MultiColumnListRow({ indexRow: 'row-0' }).find(TextField()).fillIn(data.label1),
       MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.label2),
       saveAndCloseButton.click(),
     ]);
+    // Wait for changes to be saved and reflected
+    cy.wait(15000);
+  },
+  clickEditNewButton() {
+    cy.do(editNewButton.click());
   },
   editMultiSelectCustomField(oldData, newData) {
+    this.clickEditNewButton();
+    cy.get('[class^="accordion---"]').contains(oldData.fieldLabel).click();
     cy.do([
-      editNewButton.click(),
-      Accordion(including(oldData.fieldLabel)).clickHeader(),
       TextField('Field label*').fillIn(newData.fieldLabel),
       MultiColumnListRow({ indexRow: 'row-0' }).find(TextField()).fillIn(newData.label1),
       MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(newData.label2),
@@ -131,7 +136,8 @@ export default {
   editButton() {
     cy.expect(editNewButton.exists());
     // wait needs to fill the fileds
-    cy.do([cy.wait(1000), editNewButton.click()]);
+    cy.wait(1000);
+    this.clickEditNewButton();
     cy.expect(Pane('Edit custom fields').exists());
   },
 

@@ -64,7 +64,8 @@ describe('bulk-edit', () => {
           InventoryInstance.openHoldingView();
           HoldingsRecordView.edit();
           HoldingsRecordEdit.addHoldingsNotes(holdingsNote);
-          HoldingsRecordEdit.saveAndClose();
+          HoldingsRecordEdit.saveAndClose(true);
+          InventoryInstance.closeHoldingsView();
         });
         cy.visit(TopMenu.bulkEditPath);
       });
@@ -88,14 +89,14 @@ describe('bulk-edit', () => {
       'C399093 Verify Previews for the number of Holdings records if the records have fields with line breaks (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditSearchPane.verifyMatchedResults(...holdingsHRIDs);
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [holdingsNote]);
-        BulkEditSearchPane.changeShowColumnCheckbox('Action note');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Action note');
         BulkEditSearchPane.verifySpecificItemsMatched(holdingsNote);
 
         const location = 'Online';

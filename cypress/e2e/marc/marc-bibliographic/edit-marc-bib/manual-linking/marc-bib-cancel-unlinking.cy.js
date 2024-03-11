@@ -1,7 +1,5 @@
 import { Permissions } from '../../../../../support/dictionary';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 import InventoryHotkeys from '../../../../../support/fragments/inventory/inventoryHotkeys';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -28,7 +26,7 @@ describe('MARC', () => {
             '\\',
             '$a C365601 Chin, Staceyann, $d 1972-',
             '$e Author $e Narrator',
-            '$0 id.loc.gov/authorities/names/n2008052404',
+            '$0 http://id.loc.gov/authorities/names/n2008052404',
             '$1 http://viaf.org/viaf/24074052',
           ],
         };
@@ -38,12 +36,14 @@ describe('MARC', () => {
             fileName: `C365601 autotestMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numOfRecords: 1,
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileC365601_1.mrc',
             fileName: `C365601 autotestMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
         const linkingTagAndValues = {
@@ -57,21 +57,17 @@ describe('MARC', () => {
         before('Creating test user and an inventory instance', () => {
           cy.loginAsAdmin()
             .then(() => {
+              cy.getAdminToken();
               marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdAuthorityIDs.push(link.split('/')[5]);
+                DataImport.uploadFileViaApi(
+                  marcFile.marc,
+                  marcFile.fileName,
+                  marcFile.jobProfileToRun,
+                ).then((response) => {
+                  response.entries.forEach((record) => {
+                    createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
                   });
-                }
+                });
               });
             })
             .then(() => {
@@ -124,7 +120,7 @@ describe('MARC', () => {
 
         it(
           'C365601 Cancel unlinking "MARC Bibliographic" field from "MARC Authority" record and use the "Cancel" button in editing window. (Spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'nonParallel'] },
+          { tags: ['extendedPath', 'spitfire'] },
           () => {
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(linkingTagAndValues.rowIndex);
             QuickMarcEditor.checkButtonsDisabled();
