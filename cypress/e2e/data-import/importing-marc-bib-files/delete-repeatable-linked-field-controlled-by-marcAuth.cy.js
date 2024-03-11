@@ -32,6 +32,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -239,6 +240,18 @@ describe('data-import', () => {
           nameForPreUpdatedMarcBibFile,
           nameForUpdatedMarcFile,
         );
+
+        // in case in Settings - Data import - MARC field protection we have 600 field as protected
+        // for this test case purpose it should be removed
+        cy.getAdminToken().then(() => {
+          MarcFieldProtection.getListViaApi({
+            query: '"field"=="600"',
+          }).then((list) => {
+            if (list) {
+              list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+            }
+          });
+        });
 
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);
