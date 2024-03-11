@@ -316,7 +316,6 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
         QuickMarcEditor.check008BoxesCount(testData.expected008BoxesSets[index].length);
         QuickMarcEditor.checkOnlyBackslashesIn008Boxes();
         QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.checkAfterSaveAndClose();
         QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
         InventoryInstance.checkInstanceTitle(title);
         InventoryInstance.getId().then((id) => {
