@@ -1608,4 +1608,14 @@ export default {
 
     return cy.createInstanceNoteTypes(body);
   },
+
+  createModesOfIssuanceViaApi(modesOfIssuanceName, sourceName = 'local', id = uuid()) {
+    const body = {
+      id,
+      name: modesOfIssuanceName,
+      source: sourceName,
+    };
+
+    return cy.createModesOfIssuance(body);
+  },
 };
