@@ -1,3 +1,4 @@
+import moment from 'moment';
 import uuid from 'uuid';
 import permissions from '../../../../../support/dictionary/permissions';
 import Users from '../../../../../support/fragments/users/users';
@@ -38,11 +39,15 @@ describe('Consortium manager', () => {
       before('create test data', () => {
         cy.getAdminToken();
         ModesOfIssuanceConsortiumManager.createViaApi(testData.centralSharedModes).then(
-          (newReason) => {
-            testData.centralSharedModes = newReason;
+          (newModes) => {
+            testData.centralSharedModes = newModes;
           },
         );
-        InventoryInstance.createModesOfIssuanceViaApi(testData.centralLocalModes.name);
+        InventoryInstance.createModesOfIssuanceViaApi(testData.centralLocalModes.name).then(
+          (modesId) => {
+            testData.centralLocalModes.id = modesId;
+          },
+        );
 
         cy.createTempUser([
           permissions.consortiaSettingsConsortiumManagerView.gui,
@@ -57,7 +62,11 @@ describe('Consortium manager', () => {
           cy.assignPermissionsToExistingUser(testData.user.userId, [
             permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui,
           ]);
-          InventoryInstance.createModesOfIssuanceViaApi(testData.collegeLocalModes.name);
+          InventoryInstance.createModesOfIssuanceViaApi(testData.collegeLocalModes.name).then(
+            (modesId) => {
+              testData.collegeLocalModes.id = modesId;
+            },
+          );
 
           cy.resetTenant();
           cy.getAdminToken();
@@ -66,7 +75,11 @@ describe('Consortium manager', () => {
           cy.assignPermissionsToExistingUser(testData.user.userId, [
             permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui,
           ]);
-          InventoryInstance.createModesOfIssuanceViaApi(testData.universityLocalModes.name);
+          InventoryInstance.createModesOfIssuanceViaApi(testData.universityLocalModes.name).then(
+            (modesId) => {
+              testData.universityLocalModes.id = modesId;
+            },
+          );
           cy.resetTenant();
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.consortiumManagerPath,
@@ -76,19 +89,14 @@ describe('Consortium manager', () => {
       });
 
       after('delete test data', () => {
+        cy.getAdminToken();
         cy.setTenant(Affiliations.University);
-        cy.getUniversityAdminToken();
         cy.deleteModesOfIssuance(testData.universityLocalModes.id);
 
-        cy.resetTenant();
-        cy.getAdminToken();
-
         cy.setTenant(Affiliations.College);
-        cy.getCollegeAdminToken();
         cy.deleteModesOfIssuance(testData.collegeLocalModes.id);
 
         cy.setTenant(Affiliations.Consortia);
-        cy.getAdminToken();
         cy.deleteModesOfIssuance(testData.centralLocalModes.id);
         ModesOfIssuanceConsortiumManager.deleteViaApi(testData.centralSharedModes);
         Users.deleteViaApi(testData.user.userId);
@@ -105,21 +113,36 @@ describe('Consortium manager', () => {
 
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
             testData.centralSharedModes.payload.name,
-            '',
-            '',
+            'consortium',
+            `${moment().format('l')} by SystemConsortia`,
             'All',
           ]);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [testData.centralLocalModes.name, '', '', tenantNames.central],
+            [
+              testData.centralLocalModes.name,
+              'local',
+              `${moment().format('l')} by Admin, ECS`,
+              tenantNames.central,
+            ],
             ['edit', 'trash'],
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [testData.collegeLocalModes.name, '', '', tenantNames.college],
+            [
+              testData.collegeLocalModes.name,
+              'local',
+              `${moment().format('l')} by Admin, ECS`,
+              tenantNames.college,
+            ],
             ['edit', 'trash'],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [testData.universityLocalModes.name, '', '', tenantNames.university],
+            [
+              testData.universityLocalModes.name,
+              'local',
+              `${moment().format('l')} by Admin, ECS`,
+              tenantNames.university,
+            ],
             ['edit', 'trash'],
           );
 
@@ -130,8 +153,8 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.verifyMembersSelected(2);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
             testData.centralSharedModes.payload.name,
-            '',
-            '',
+            'consortium',
+            `${moment().format('l')} by SystemConsortia`,
             'All',
           ]);
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
@@ -139,11 +162,21 @@ describe('Consortium manager', () => {
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [testData.collegeLocalModes.name, '', '', tenantNames.college],
+            [
+              testData.collegeLocalModes.name,
+              'local',
+              `${moment().format('l')} by Admin, ECS`,
+              tenantNames.college,
+            ],
             ['edit', 'trash'],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [testData.universityLocalModes.name, '', '', tenantNames.university],
+            [
+              testData.universityLocalModes.name,
+              'local',
+              `${moment().format('l')} by Admin, ECS`,
+              tenantNames.university,
+            ],
             ['edit', 'trash'],
           );
         },
