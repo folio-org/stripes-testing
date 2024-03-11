@@ -29,7 +29,7 @@ Cypress.Commands.add('getAuthoritySourceFileIdViaAPI', (authorityFileName) => {
   });
 });
 
-Cypress.Commands.add('createAuthoritySourceFileIdUsingAPI', (prefix, startWithNumber, sourceName, isActive = true, sourceType = 'Local', baseURL = null) => {
+Cypress.Commands.add('createAuthoritySourceFileUsingAPI', (prefix, startWithNumber, sourceName, isActive = true, sourceType = 'Local', baseURL = null) => {
   cy.okapiRequest({
     method: 'POST',
     path: 'authority-source-files',
