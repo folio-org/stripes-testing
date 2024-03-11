@@ -9,6 +9,7 @@ import {
   TextField,
   including,
 } from '../../../../../interactors';
+import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../constants';
 
 const manageAuthorityFilesPane = Pane('Manage authority files');
 const newButton = manageAuthorityFilesPane.find(
@@ -140,5 +141,21 @@ export default {
       targetRow.find(editButton).exists(),
     ]);
     if (isDeletable) cy.expect(targetRow.find(deleteButton).exists());
+  },
+
+  setAllDefaultFOLIOFilesToActive() {
+    Object.values(DEFAULT_FOLIO_AUTHORITY_FILES).forEach((fileName) => {
+      cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
+        cy.setActiveAuthoritySourceFileViaAPI(body.id, body._version + 1);
+      });
+    });
+  },
+
+  unsetAllDefaultFOLIOFilesAsActive() {
+    Object.values(DEFAULT_FOLIO_AUTHORITY_FILES).forEach((fileName) => {
+      cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
+        cy.setActiveAuthoritySourceFileViaAPI(body.id, body._version + 1, false);
+      });
+    });
   },
 };
