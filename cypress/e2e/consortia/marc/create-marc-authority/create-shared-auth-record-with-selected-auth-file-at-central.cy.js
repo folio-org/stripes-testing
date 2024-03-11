@@ -55,7 +55,7 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.resetTenant();
-            cy.createAuthoritySourceFileIdViaAPI(
+            cy.createAuthoritySourceFileIdUsingAPI(
               testData.prefix,
               testData.startWithNumber,
               testData.sourceName,
