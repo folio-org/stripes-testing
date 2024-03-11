@@ -916,6 +916,10 @@ export default {
     internal: 'ui-marc-authorities.settings.authority-files.all',
     gui: 'Settings (MARC authority): View, create, edit, delete authority files',
   },
+  uiSettingsModesOfIssuanceCreateEditDelete: {
+    internal: 'ui-inventory.settings.modes-of-issuance',
+    gui: 'Settings (Inventory): Create, edit, delete locally defined modes of issuance',
+  },
   // Added the below permissions for custom label creation
 
   uiSettingsEHoldingsViewAccessStatusTypes: {

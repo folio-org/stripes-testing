@@ -32,7 +32,7 @@ const testData = {
 
 describe('Consortium manager', () => {
   describe('View settings', () => {
-    describe('View Alternative title types', () => {
+    describe('View Instance note types', () => {
       before('create test data', () => {
         cy.getAdminToken();
         InstanceNoteTypesConsortiumManager.createViaApi(testData.centralSharedType).then(
