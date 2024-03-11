@@ -15,6 +15,11 @@ describe('MARC', () => {
         sourceName: `Test auth source file ${getRandomPostfix()}`,
         prefix: getRandomLetters(8),
         startWithNumber: '1',
+        searchOption: 'Keyword',
+        marcValue: 'Create a new Shared MARC authority record with Local authority file test',
+        headerText: 'Create a new shared MARC authority record',
+        AUTHORIZED: 'Authorized',
+        sharedIcon: 'Shared',
       };
 
       const users = {};
@@ -70,6 +75,7 @@ describe('MARC', () => {
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
+        MarcAuthority.deleteViaAPI(testData.authorityId);
         cy.deleteAuthoritySourceFileViaAPI(testData.authSourceID);
       });
 
@@ -78,7 +84,7 @@ describe('MARC', () => {
         { tags: ['criticalPathECS', 'spitfire'] },
         () => {
           MarcAuthorities.clickNewAuthorityButton();
-          QuickMarcEditor.checkPaneheaderContains('Create a new shared MARC authority record');
+          QuickMarcEditor.checkPaneheaderContains(testData.headerText);
           QuickMarcEditor.verifyAuthorityLookUpButton();
           QuickMarcEditor.clickAuthorityLookUpButton();
           QuickMarcEditor.selectAuthorityFile(testData.sourceName);
@@ -87,9 +93,29 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag('001', `${testData.prefix}${testData.startWithNumber}`);
           MarcAuthority.addNewField(4, newField.tag, newField.content);
           QuickMarcEditor.pressSaveAndClose();
-
+          MarcAuthority.verifyAfterSaveAndClose();
+          QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);
+          MarcAuthorities.checkRecordDetailPageMarkedValue(testData.marcValue);
+          MarcAuthority.getId().then((id) => {
+            testData.authorityId = id;
+          });
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           MarcAuthorities.waitLoading();
+          MarcAuthorities.searchBy(testData.searchOption, testData.marcValue);
+          MarcAuthorities.checkAfterSearch(
+            testData.AUTHORIZED,
+            `${testData.sharedIcon}${testData.marcValue}`,
+          );
+          MarcAuthorities.checkRecordDetailPageMarkedValue(testData.marcValue);
+
+          MarcAuthorities.chooseAuthoritySourceOption(testData.sourceName);
+          MarcAuthorities.checkResultsSelectedByAuthoritySource([testData.sourceName]);
+          MarcAuthorities.selectTitle(testData.marcValue);
+          MarcAuthorities.checkAfterSearch(
+            testData.AUTHORIZED,
+            `${testData.sharedIcon}${testData.marcValue}`,
+          );
+          MarcAuthorities.checkRecordDetailPageMarkedValue(testData.marcValue);
         },
       );
     });

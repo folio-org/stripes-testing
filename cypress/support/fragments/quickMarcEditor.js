@@ -1663,6 +1663,10 @@ export default {
     cy.expect(PaneHeader({ text: including(text) }).exists());
   },
 
+  verifyPaneheaderWithContentAbsent(text) {
+    cy.expect(PaneHeader({ text: including(text) }).absent());
+  },
+
   checkUpdateLinkedBibModalAbsent() {
     cy.expect(updateLinkedBibFieldsModal.absent());
   },
