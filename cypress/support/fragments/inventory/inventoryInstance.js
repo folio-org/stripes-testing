@@ -1591,4 +1591,31 @@ export default {
 
     return cy.createClassifierIdentifierTypes(body);
   },
+
+  verifyConsortiaHoldingsAccordion(isOpen = false) {
+    cy.expect([
+      instanceDetailsSection.find(Section({ id: 'consortialHoldings' })).exists(),
+      instanceDetailsSection.find(Accordion({ id: 'consortialHoldings' })).has({ open: isOpen }),
+    ]);
+  },
+
+  openConsortiaHoldingsAccordion(isOpen = true) {
+    cy.wait(2000);
+    cy.do(Accordion({ id: 'consortialHoldings' }).clickHeader());
+    cy.expect([
+      instanceDetailsSection.find(Accordion({ id: 'consortialHoldings' })).has({ open: isOpen }),
+      instanceDetailsSection.find(Accordion({ id: 'cs00000int_0005' })).exists(),
+    ]);
+  },
+
+  openMemberHoldingsAccordion(holdingsId, isOpen = true) {
+    cy.wait(2000);
+    cy.do(instanceDetailsSection.find(Accordion({ id: 'cs00000int_0005' })).clickHeader());
+    cy.expect([
+      instanceDetailsSection.find(Accordion({ id: 'cs00000int_0005' })).has({ open: isOpen }),
+      instanceDetailsSection
+        .find(Accordion({ id: `consortialHoldings.cs00000int_0005.${holdingsId}` }))
+        .exists(),
+    ]);
+  },
 };
