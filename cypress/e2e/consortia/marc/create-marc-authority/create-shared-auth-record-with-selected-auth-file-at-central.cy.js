@@ -7,6 +7,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/stringTools';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -61,6 +62,7 @@ describe('MARC', () => {
             ).then((sourceId) => {
               testData.authSourceID = sourceId;
             });
+            ManageAuthorityFiles.setAllDefaultFOLIOFilesToActive();
           })
           .then(() => {
             cy.resetTenant();
