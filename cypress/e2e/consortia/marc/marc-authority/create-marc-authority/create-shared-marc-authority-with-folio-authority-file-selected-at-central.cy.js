@@ -9,11 +9,13 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import InteractorsTools from '../../../../../support/utils/interactorsTools';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
+import ManageAuthorityFiles from '../../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Create MARC Authority ', () => {
       const users = {};
+      let createdMarcAuthorityRecordId;
       const field001 = '001';
       const newField100 = {
         rowIndex: 4,
@@ -29,8 +31,11 @@ describe('MARC', () => {
       const createdRecordTitle = newField100.content.substring(3);
       const paneHeaderCreateNewSharedMarcAuthorityRecord =
         'Create a new shared MARC authority record';
+
       before('Create user, data', () => {
+        cy.resetTenant();
         cy.getAdminToken();
+        ManageAuthorityFiles.setAllDefaultFOLIOFilesToActive();
 
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -62,7 +67,9 @@ describe('MARC', () => {
       after('Delete test data', () => {
         cy.resetTenant();
         cy.getAdminToken();
+        ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActive();
         Users.deleteViaApi(users.userProperties.userId);
+        MarcAuthority.deleteViaAPI(createdMarcAuthorityRecordId);
       });
 
       it(
@@ -87,7 +94,6 @@ describe('MARC', () => {
 
           // 5 Add 1 new field by clicking on "+" icon and fill it as specified:
           // 100 \\ "$a Create a new Shared MARC authority record with FOLIO authority file test"
-
           QuickMarcEditor.addNewField(newField100.tag, newField100.content, newField100.rowIndex);
           QuickMarcEditor.checkContentByTag(newField100.tag, newField100.content);
 
@@ -105,7 +111,11 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag(newField010.tag, newField010.content);
 
           // 8 Click on the "Save & close" button
+          cy.intercept('/records-editor/records/status*').as('createdRecord');
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait('@createdRecord').then((res) => {
+            createdMarcAuthorityRecordId = res.body.externalId;
+          });
           QuickMarcEditor.checkCallout(
             'This record has successfully saved and is in process. Changes may not appear immediately.',
           );

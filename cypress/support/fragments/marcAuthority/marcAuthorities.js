@@ -32,6 +32,7 @@ import {
 } from '../../../../interactors';
 import { MARC_AUTHORITY_BROWSE_OPTIONS, MARC_AUTHORITY_SEARCH_OPTIONS } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
+import QuickMarcEditorWindow from '../quickMarcEditor';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -60,8 +61,8 @@ const marcAuthUpdatesCsvBtn = authorityActionsDropDown.find(
 // auth report modal
 const authReportModal = Modal({ id: 'authorities-report-modal' });
 const exportButton = authReportModal.find(Button('Export'));
-
 const resetButton = Button('Reset all');
+const newAuthorityButton = Button({ id: 'dropdown-clickable-create-authority' });
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
 const headingTypeAccordion = Accordion('Type of heading');
 const nextButton = Button({ id: 'authority-result-list-next-paging-button' });
@@ -104,6 +105,11 @@ const localTextInDetailView = 'Local • ';
 export default {
   waitLoading() {
     cy.expect(PaneHeader('MARC authority').exists());
+  },
+
+  clickNewAuthorityButton() {
+    cy.do([actionsButton.click(), newAuthorityButton.click()]);
+    QuickMarcEditorWindow.waitLoading();
   },
   clickActionsAndReportsButtons() {
     cy.do([actionsButton.click(), marcAuthUpdatesCsvBtn.click()]);
