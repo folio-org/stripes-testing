@@ -78,6 +78,7 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
         MarcAuthority.deleteViaAPI(testData.authorityId);
+        ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActive();
         cy.deleteAuthoritySourceFileViaAPI(testData.authSourceID);
       });
 
