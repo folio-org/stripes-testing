@@ -17,7 +17,7 @@ import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('ui-orders: Orders', () => {
-  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+  const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
@@ -87,7 +87,7 @@ describe('ui-orders: Orders', () => {
     });
     defaultOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(defaultOrder, true, false).then((orderResponse) => {
+    Orders.createApprovedOrderForRollover(defaultOrder, true, false).then((orderResponse) => {
       defaultOrder.id = orderResponse.id;
       orderNumber = orderResponse.poNumber;
       Orders.checkCreatedOrder(defaultOrder);
@@ -98,7 +98,7 @@ describe('ui-orders: Orders', () => {
         '50',
         '1',
         '50',
-        location.institutionId,
+        location.name,
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();

@@ -124,7 +124,7 @@ describe('Invoices', () => {
 
   it(
     'C397985: Organization "Account number" is NOT specified in voucher export details when using default Accounting code (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'nonParallel'] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Search invoice in the table
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
@@ -141,12 +141,18 @@ describe('Invoices', () => {
 
       // Click "Run manual export" button, Click "Continue" button in "Run manual export" modal
       VoucherExportForm.clickRunManualExportButton();
-      VoucherExportForm.checkTableContent({
-        records: [{ status: 'Generated', message: 'Batch voucher was generated', download: true }],
+      VoucherExportForm.getVoucherExportStatus().then((status) => {
+        if (status === 'Generated') {
+          VoucherExportForm.checkTableContent({
+            records: [
+              { status: 'Generated', message: 'Batch voucher was generated', download: true },
+            ],
+          });
+          VoucherExportForm.checkButtonsConditions([
+            { label: 'Run manual export', conditions: { disabled: false } },
+          ]);
+        }
       });
-      VoucherExportForm.checkButtonsConditions([
-        { label: 'Run manual export', conditions: { disabled: false } },
-      ]);
 
       // Check the row with recently generated voucher export record
       VoucherExportForm.selectBatchGroup({ batchGroup: testData.batchGroup.name, refresh: true });

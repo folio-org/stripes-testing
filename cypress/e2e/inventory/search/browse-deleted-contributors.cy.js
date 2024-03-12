@@ -1,7 +1,5 @@
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -21,6 +19,7 @@ describe('inventory', () => {
 
     const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const propertyName = 'relatedInstanceInfo';
 
     const importedInstanceID = [];
 
@@ -34,17 +33,13 @@ describe('inventory', () => {
 
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFile('oneMarcBib.mrc', fileName);
-            JobProfiles.waitFileIsUploaded();
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(fileName);
-            Logs.getCreatedItemsID(0).then((link) => {
-              importedInstanceID.push(link.split('/')[5]);
-            });
+            DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
+              (response) => {
+                response.entries.forEach((record) => {
+                  importedInstanceID.push(record[propertyName].idList[0]);
+                });
+              },
+            );
           },
         );
       });

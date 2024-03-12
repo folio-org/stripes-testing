@@ -41,7 +41,7 @@ describe('inventory', () => {
 
     it(
       'C422098: Call number browse: verify that clicking on "Reset all" button will return focus and cursor to the Search box (spitfire)',
-      { tags: ['extendedlPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();

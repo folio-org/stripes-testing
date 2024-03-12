@@ -1,9 +1,6 @@
 import { including, matching } from '@interactors/html';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -18,8 +15,7 @@ import { escapeRegex, randomFourDigitNumber } from '../../../support/utils/strin
 
 const testData = {
   user: {},
-  instanceIDs: [],
-  authorityIDs: [],
+  createdRecordIDs: [],
   tags: ['600'],
   instanceRecords: [
     "Black Tiger / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
@@ -40,12 +36,14 @@ const testData = {
       fileName: `testMarcFileC375222.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numberOfRecords: 3,
+      propertyName: 'relatedInstanceInfo',
     },
     {
       marc: 'marcAuthC375222.mrc',
       fileName: `testMarcFileAuthC375228.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numberOfRecords: 1,
+      propertyName: 'relatedAuthorityInfo',
     },
   ],
 };
@@ -78,23 +76,15 @@ describe('inventory', () => {
           });
         });
         testData.marcFiles.forEach((marcFile) => {
-          DataImport.verifyUploadState();
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.search(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(marcFile.fileName);
-          for (let i = 0; i < marcFile.numberOfRecords; i++) {
-            Logs.getCreatedItemsID(i).then((link) => {
-              if (marcFile.jobProfileToRun === 'Default - Create instance and SRS MARC Bib') {
-                testData.instanceIDs.push(link.split('/')[5]);
-              } else {
-                testData.authorityIDs.push(link.split('/')[5]);
-              }
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
             });
-          }
-          cy.visit(TopMenu.dataImportPath);
+          });
         });
       });
       cy.visit(TopMenu.inventoryPath);
@@ -123,12 +113,10 @@ describe('inventory', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      testData.instanceIDs.forEach((id) => {
-        InventoryInstance.deleteInstanceViaApi(id);
-      });
-      testData.authorityIDs.forEach((id) => {
-        MarcAuthority.deleteViaAPI(id);
-      });
+      for (let i = 0; i < 3; i++) {
+        InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[i]);
+      }
+      MarcAuthority.deleteViaAPI(testData.createdRecordIDs[3]);
     });
 
     // Test is failing because of an Issue:

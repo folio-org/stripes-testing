@@ -4,14 +4,13 @@ import Users from '../../../../../support/fragments/users/users';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 import MarcAuthorityBrowse from '../../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
+import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -27,7 +26,7 @@ describe('MARC', () => {
             '711',
             '2',
             '\\',
-            '$a C375082 Mostly Mozart Festival. $e Orchestra $t sonet $v version 1 $0 id.loc.gov/authorities/names/n81142344 $4 prf',
+            '$a C375082 Mostly Mozart Festival. $e Orchestra $t sonet $v version 1 $0 http://id.loc.gov/authorities/names/n81142344 $4 prf',
           ],
         };
         const marcFiles = [
@@ -35,6 +34,7 @@ describe('MARC', () => {
             marc: 'marcBibFileC375082.mrc',
             fileName: `testMarcFileC375082.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileC375082.mrc',
@@ -42,6 +42,7 @@ describe('MARC', () => {
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             searchOption: 'Name-title',
             authorityHeading: 'C375082 Mostly Mozart Festival.',
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
         const createdRecordIDs = [];
@@ -60,7 +61,7 @@ describe('MARC', () => {
           '\\',
           '$a C375082 Mostly Mozart Festival. $e Orchestra $t sonet',
           '$v version 1',
-          '$0 id.loc.gov/authorities/names/n81142344',
+          '$0 http://id.loc.gov/authorities/names/n81142344',
           '$4 prf',
         ];
 
@@ -73,22 +74,19 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
+            cy.getAdminToken();
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
                 });
               });
             });
+
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -140,6 +138,7 @@ describe('MARC', () => {
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
             InventoryInstance.waitLoading();
+            InstanceRecordView.verifyInstancePaneExists();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkFieldsExist([testData.tag711]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib711AfterLinkingToAuth111);

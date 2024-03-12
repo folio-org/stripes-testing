@@ -125,6 +125,7 @@ describe('Invoices', () => {
   });
 
   after('Disable "Approve and pay in one click" option', () => {
+    cy.getAdminToken();
     Approvals.setApprovePayValue(false);
   });
 
@@ -160,13 +161,15 @@ describe('Invoices', () => {
     });
 
     afterEach('Delete test data', () => {
-      Organizations.deleteOrganizationViaApi(testData.organization.id);
-      Users.deleteViaApi(testData.user.userId);
+      cy.getAdminToken().then(() => {
+        Organizations.deleteOrganizationViaApi(testData.organization.id);
+        Users.deleteViaApi(testData.user.userId);
+      });
     });
 
     it(
       'C388520: Approve and pay invoice created in current FY for previous FY when related order line was created in previous FY (thunderjet) (TaaS)',
-      { tags: ['criticalPath', 'thunderjet', 'nonParallel'] },
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -375,7 +378,7 @@ describe('Invoices', () => {
 
     it(
       'C388545 Approve and pay invoice created in current FY when related order line was created in previous FY and user does not have "Invoice: Pay invoices in a different fiscal year" permission (thunderjet) (TaaS)',
-      { tags: ['criticalPath', 'thunderjet', 'nonParallel'] },
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

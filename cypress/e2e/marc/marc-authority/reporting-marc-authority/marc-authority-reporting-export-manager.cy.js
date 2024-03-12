@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import ExportManagerSearchPane from '../../../../support/fragments/exportManager/exportManagerSearchPane';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -44,6 +41,7 @@ describe('MARC', () => {
           marc: 'marcBibFileC357996.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          propertyName: 'relatedInstanceInfo',
         },
         {
           marc: 'marcAuthFileC375996.mrc',
@@ -52,6 +50,7 @@ describe('MARC', () => {
           authorityHeading:
             'C357996 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
           authority001FieldValue: 'n83130007357996',
+          propertyName: 'relatedAuthorityInfo',
         },
       ];
 
@@ -70,25 +69,23 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
+          cy.getAdminToken();
           marcFiles.forEach((marcFile) => {
-            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-              () => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
-                });
-              },
-            );
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
           });
 
-          cy.visit(TopMenu.inventoryPath).then(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
             InventoryInstances.waitContentLoading();
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -137,7 +134,7 @@ describe('MARC', () => {
 
       it(
         'C375996 Correct data for "MARC authority headings updates (CSV)" report shown in "Export manager" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+        { tags: ['criticalPath', 'spitfire'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, marcFiles[1].authorityHeading);
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);

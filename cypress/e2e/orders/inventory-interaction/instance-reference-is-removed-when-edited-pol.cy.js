@@ -74,7 +74,7 @@ describe('Orders', () => {
       orderNumber = firstOrderResponse.poNumber;
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName, 0);
-      OrderLines.POLineInfoWithReceiptNotRequiredStatus(location.institutionId);
+      OrderLines.POLineInfoWithReceiptNotRequiredStatus(location.name);
     });
 
     cy.createTempUser([

@@ -1,9 +1,6 @@
 import { including } from '@interactors/html';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -19,8 +16,7 @@ const testData = {
   searchQueryBeforeTest:
     'subjects = "Black Panther (Fictitious character)" OR subjects = "Radio in religion--Catholic Church" OR subjects = "Vatican Council 1962-1965" OR subjects = "Comic books, strips, etc.--United States--Catalogs" OR subjects = "Lincoln, Abraham, 1809-1865--Addresses, sermons, etc" OR subjects = "Topographical surveying" OR subjects = "Titanic (Steamship)--Drama"',
   user: {},
-  instanceIDs: [],
-  authorityIDs: [],
+  recordIDs: [],
   tags: ['600', '610', '611', '630', '650', '651', '655'],
   searchOptions: {
     QUERY_SEARCH: 'Query search',
@@ -63,12 +59,14 @@ const testData = {
       fileName: `testMarcFileC375259.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numberOfRecords: 7,
+      propertyName: 'relatedInstanceInfo',
     },
     {
       marc: 'marcAuthC375259.mrc',
       fileName: `testMarcFileAuth100C375259.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numberOfRecords: 7,
+      propertyName: 'relatedAuthorityInfo',
     },
   ],
 };
@@ -101,23 +99,15 @@ describe('inventory', () => {
           });
         });
         testData.marcFiles.forEach((marcFile) => {
-          DataImport.verifyUploadState();
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.search(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(marcFile.fileName);
-          for (let i = 0; i < marcFile.numberOfRecords; i++) {
-            Logs.getCreatedItemsID(i).then((link) => {
-              if (marcFile.jobProfileToRun === 'Default - Create instance and SRS MARC Bib') {
-                testData.instanceIDs.push(link.split('/')[5]);
-              } else {
-                testData.authorityIDs.push(link.split('/')[5]);
-              }
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              testData.recordIDs.push(record[marcFile.propertyName].idList[0]);
             });
-          }
-          cy.visit(TopMenu.dataImportPath);
+          });
         });
       });
       cy.visit(TopMenu.inventoryPath);
@@ -145,12 +135,12 @@ describe('inventory', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      testData.instanceIDs.forEach((id) => {
-        InventoryInstance.deleteInstanceViaApi(id);
-      });
-      testData.authorityIDs.forEach((id) => {
-        MarcAuthority.deleteViaAPI(id);
-      });
+      for (let i = 0; i < 7; i++) {
+        InventoryInstance.deleteInstanceViaApi(testData.recordIDs[i]);
+      }
+      for (let i = 7; i < 14; i++) {
+        MarcAuthority.deleteViaAPI(testData.recordIDs[i]);
+      }
     });
 
     it(

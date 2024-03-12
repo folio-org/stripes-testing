@@ -1,8 +1,6 @@
-import { ITEM_STATUS_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -49,6 +47,7 @@ const testData = {
     fileName: `testMarcFileC410764.${randomFourDigitNumber()}.mrc`,
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     numberOfRecords: 1,
+    propertyName: 'relatedInstanceInfo',
   },
 };
 
@@ -68,18 +67,15 @@ describe('inventory', () => {
               });
             }
           });
-          DataImport.verifyUploadState();
-          DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
-          JobProfiles.search(testData.marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(testData.marcFile.fileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(testData.marcFile.fileName);
-          for (let i = 0; i < testData.marcFile.numberOfRecords; i++) {
-            Logs.getCreatedItemsID(i).then((link) => {
-              testData.marcInstance.id = link.split('/')[5];
+          DataImport.uploadFileViaApi(
+            testData.marcFile.marc,
+            testData.marcFile.fileName,
+            testData.marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              testData.marcInstance.id = record[testData.marcFile.propertyName].idList[0];
             });
-          }
+          });
         })
         .then(() => {
           ServicePoints.createViaApi(testData.userServicePoint);

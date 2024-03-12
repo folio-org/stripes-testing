@@ -1,21 +1,20 @@
-import permissions from '../../support/dictionary/permissions';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import Requests from '../../support/fragments/requests/requests';
+import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import RequestDetail from '../../support/fragments/requests/requestDetail';
-import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import NewRequest from '../../support/fragments/requests/newRequest';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
+import Requests from '../../support/fragments/requests/requests';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Title level Request', () => {
   const users = {
@@ -32,10 +31,6 @@ describe('Title level Request', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
-        cy.loginAsAdmin({
-          path: SettingsMenu.circulationTitleLevelRequestsPath,
-          waiter: TitleLevelRequests.waitLoading,
-        });
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);
@@ -91,7 +86,7 @@ describe('Title level Request', () => {
         });
       })
       .then(() => {
-        TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+        TitleLevelRequests.enableTLRViaApi();
         cy.login(users.mainUser.username, users.mainUser.password, {
           path: TopMenu.inventoryPath,
           waiter: InventorySearchAndFilter.waitLoading,
@@ -100,10 +95,7 @@ describe('Title level Request', () => {
   });
 
   after('Deleting created entities', () => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
+    cy.getAdminToken();
     Requests.getRequestApi({ query: `(instance.title=="${instanceData.title}")` }).then(
       (requestResponse) => {
         cy.wrap(requestResponse).each((request) => {
@@ -128,7 +120,6 @@ describe('Title level Request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
 
   it(

@@ -4,6 +4,7 @@ import {
   Modal,
   MultiColumnListCell,
   MultiColumnList,
+  MultiColumnListRow,
   Accordion,
   Checkbox,
   MultiSelect,
@@ -28,6 +29,7 @@ const updatedDateAccordion = Accordion({ id: 'updatedDate' });
 const sourceAccordion = Accordion({ id: 'source' });
 const tagsAccordion = Accordion('Tags');
 const searchField = SearchField('Search field index');
+const searchButton = Button('Search');
 const startDateField = TextField({ name: 'startDate' });
 const endDateField = TextField({ name: 'endDate' });
 const applyButton = Button('Apply');
@@ -44,6 +46,15 @@ export default {
     ]);
     cy.expect(selectInstanceModal.find(MultiColumnList()).has({ rowCount: 1 }));
   },
+
+  fillInSearchField(title) {
+    cy.do([selectInstanceModal.find(searchField).fillIn(title)]);
+  },
+
+  clickSearchButton() {
+    cy.do(selectInstanceModal.find(searchButton).click());
+  },
+
   filterByEffectiveLocation(option) {
     cy.do([
       effectiveLocationAccordion.find(MultiSelect()).filter(option),
@@ -201,5 +212,50 @@ export default {
         .find(HTML({ className: including('noResultsMessage-') }))
         .has({ text: 'Choose a filter or enter a search query to show results.' }),
     );
+  },
+
+  verifyAccordionExistance(accordionName) {
+    cy.expect(Accordion(accordionName).exists());
+  },
+
+  clickAccordionByName(accordionName) {
+    cy.do(Accordion(accordionName).clickHeader());
+  },
+
+  verifyCheckboxInAccordion(accordionName, checkboxValue, isChecked = null) {
+    cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).exists());
+    if (isChecked !== null) cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).has({ checked: isChecked }));
+  },
+
+  checkEmptySearchResults(headingReference) {
+    cy.expect(
+      selectInstanceModal
+        .find(
+          HTML(
+            `No results found for "${headingReference}". Please check your spelling and filters.`,
+          ),
+        )
+        .exists(),
+    );
+  },
+
+  selectOptionInExpandedFilter(accordionName, optionName, selected = true) {
+    const checkbox = Accordion(accordionName).find(Checkbox(optionName));
+    cy.do(checkbox.click());
+    // wait for facet options to reload in all facets
+    cy.wait(1000);
+    cy.expect(checkbox.has({ checked: selected }));
+  },
+
+  verifyResultRowContentSharedIcon(heading, isShared) {
+    const sharedIconRow = MultiColumnListRow(including(heading), { isContainer: false }).find(
+      MultiColumnListCell({ innerHTML: including('sharedIcon') }),
+    );
+
+    cy.expect(isShared ? sharedIconRow.exists() : sharedIconRow.absent());
+  },
+
+  clearSourceFilter() {
+    cy.do(sourceAccordion.find(Button({ ariaLabel: including('Clear selected filters') })).click());
   },
 };

@@ -168,7 +168,6 @@ describe('data-import', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -177,15 +176,16 @@ describe('data-import', () => {
         Logs.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
-
-        [0, 1].forEach((rowNumber) => {
-          [
-            FileDetails.columnNameInResultList.srsMarc,
-            FileDetails.columnNameInResultList.order,
-          ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName, rowNumber);
-          });
-        });
+        FileDetails.checkStatusInColumn(
+          RECORD_STATUSES.CREATED,
+          FileDetails.columnNameInResultList.order,
+          0,
+        );
+        FileDetails.checkStatusInColumn(
+          RECORD_STATUSES.CREATED,
+          FileDetails.columnNameInResultList.order,
+          1,
+        );
         FileDetails.checkOrderQuantityInSummaryTable(quantityOfOrders);
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();

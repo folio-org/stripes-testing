@@ -83,7 +83,7 @@ describe('Consortia', () => {
             const createdCIT = [
               classificationIdentifierType1.name,
               'consortium',
-              `${moment().format('l')} by SystemConsortia`,
+              moment().format('l'),
               'All',
             ];
 

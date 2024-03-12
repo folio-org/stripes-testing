@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -27,12 +24,14 @@ describe('MARC', () => {
             marc: 'marcBibFileC377033.mrc',
             fileName: `testMarcFileC377033${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileC377033.mrc',
             fileName: `testMarcFileC377033${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             authorityHeading: 'C377033 Speaking Oratory debating',
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
         const createdRecordIDs = [];
@@ -43,7 +42,7 @@ describe('MARC', () => {
           '7',
           '$a C377033 Speaking Oratory $b debating',
           '$v TestV $x TestX $y TestY $z TestZ',
-          '$0 id.loc.gov/authorities/subjects/sh85095299',
+          '$0 http://id.loc.gov/authorities/subjects/sh85095299',
           '$2 fast',
         ];
 
@@ -56,21 +55,15 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
+            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
-              cy.loginAsAdmin({
-                path: TopMenu.dataImportPath,
-                waiter: DataImport.waitLoading,
-              }).then(() => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
                 });
               });
             });
@@ -108,10 +101,7 @@ describe('MARC', () => {
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag650);
-            QuickMarcEditor.checkUnlinkTooltipText(
-              testData.tag650,
-              'Unlink from MARC Authority record',
-            );
+            QuickMarcEditor.checkUnlinkTooltipText(15, 'Unlink from MARC Authority record');
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(bib630AfterLinkingToAuth150[0]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib630AfterLinkingToAuth150);
             QuickMarcEditor.pressSaveAndClose();

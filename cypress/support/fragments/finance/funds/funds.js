@@ -968,8 +968,6 @@ export default {
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
     cy.wait(4000);
     FundDetails.waitLoading();
-
-    return FundDetails;
   },
 
   closeMenu: () => {
@@ -1022,6 +1020,16 @@ export default {
       transactionDetailSection.find(KeyValue('Source')).has({ value: source }),
       transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
       transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
+    );
+  },
+
+  varifyDetailsInTransactionFundTo: (fiscalYear, amount, source, type, fund) => {
+    cy.expect(
+      transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
+      transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
+      transactionDetailSection.find(KeyValue('Source')).has({ value: source }),
+      transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
+      transactionDetailSection.find(KeyValue('To')).has({ value: fund }),
     );
   },
 

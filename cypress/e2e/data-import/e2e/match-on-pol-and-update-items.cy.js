@@ -273,6 +273,7 @@ describe('data-import', () => {
     });
 
     const openOrder = (number) => {
+      cy.wait(2000);
       Orders.resetFilters();
       Orders.searchByParameter('PO number', number);
       Orders.selectFromResultsList(number);
@@ -281,6 +282,7 @@ describe('data-import', () => {
 
     const checkReceivedPiece = (number, title) => {
       cy.visit(TopMenu.ordersPath);
+      cy.wait(2000);
       Orders.resetFilters();
       Orders.searchByParameter('PO number', number);
       Orders.selectFromResultsList(number);
@@ -291,7 +293,7 @@ describe('data-import', () => {
 
     it(
       'C350590 Match on POL and update related Instance, Holdings, Item (folijet)',
-      { tags: ['smoke', 'folijet', 'nonParallel'] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         // create the first PO with POL
         Orders.createOrderWithOrderLineViaApi(
@@ -401,7 +403,6 @@ describe('data-import', () => {
 
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();
         DataImport.uploadFile(editedMarcFileName);

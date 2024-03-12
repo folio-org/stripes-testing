@@ -1,17 +1,17 @@
 import { HTML, including } from '@interactors/html';
 import {
-  Button,
-  MultiColumnListCell,
   Accordion,
-  Selection,
-  SelectionList,
-  MultiColumnList,
-  MultiColumnListRow,
+  Button,
   Checkbox,
   Link,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Selection,
+  SelectionList,
 } from '../../../../../interactors';
-import FileDetails from './fileDetails';
 import { getLongDelay } from '../../../utils/cypressTools';
+import FileDetails from './fileDetails';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
 const runningAccordion = Accordion('Running');
@@ -58,8 +58,9 @@ export default {
   checkStatusOfJobProfile: (status = 'Completed', rowNumber = 0) => cy.do(MultiColumnListCell({ row: rowNumber, content: status }).exists()),
 
   checkJobStatus: (fileName, status) => {
+    const newFileName = fileName.replace('/.mrc/i', '');
     cy.do(
-      MultiColumnListCell({ content: fileName }).perform((element) => {
+      MultiColumnListCell({ content: newFileName }).perform((element) => {
         const rowNumber = element.parentElement.getAttribute('data-row-inner');
 
         cy.expect(
@@ -71,7 +72,14 @@ export default {
       }),
     );
   },
-
+  openFileDetailsByRowNumber: (rowNumber = 0) => {
+    cy.do(
+      MultiColumnList({ id: 'list-data-import' })
+        .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+        .find(Link({ href: including('/data-import/job-summary') }))
+        .click(),
+    );
+  },
   openFileDetails: (fileName) => {
     cy.do(Link(fileName).click());
     FileDetails.verifyLogDetailsPageIsOpened(fileName);
@@ -129,7 +137,10 @@ export default {
     });
   },
 
-  checkFileIsRunning: (fileName) => cy.expect(runningAccordion.find(HTML(including(fileName))).exists()),
+  checkFileIsRunning: (fileName) => {
+    cy.wait(2000);
+    cy.expect(runningAccordion.find(HTML(including(fileName))).exists());
+  },
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),
   verifyDeleteSelectedLogsButtonAbsent: () => cy.expect(deleteSelectedLogsButton.absent()),
   closePane: () => {
@@ -181,12 +192,11 @@ export default {
   },
 
   waitFileIsImported: (fileName) => {
-    // wait until uploaded file is displayed in the list
-    cy.wait(60000);
-    cy.expect(runningAccordion.find(HTML(including(fileName))).absent(), getLongDelay());
+    const newFileName = fileName.replace('.mrc', '');
+    cy.expect(runningAccordion.find(HTML(including(newFileName))).absent(), getLongDelay(240000));
     cy.expect(
       MultiColumnList({ id: 'job-logs-list' })
-        .find(Button(including(fileName)))
+        .find(Button(including(newFileName)))
         .exists(),
     );
   },

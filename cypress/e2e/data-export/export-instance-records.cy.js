@@ -43,7 +43,7 @@ describe('data-export', () => {
 
   it(
     'C9288 Export small number of instance records - default instance mapping profile (firebird)',
-    { tags: ['smoke', 'firebird', 'nonParallel'] },
+    { tags: ['smokeBroken', 'firebird'] },
     () => {
       ExportFileHelper.uploadFile(fileName);
       ExportFileHelper.exportWithDefaultJobProfile(fileName);

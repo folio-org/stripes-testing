@@ -113,7 +113,6 @@ describe('data-import', () => {
       'C357027 Check that status of instance is updated in the Import log after uploading MARC file for modify (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateInstance, fileNameForCreate);
         JobProfiles.waitFileIsUploaded();
@@ -171,7 +170,6 @@ describe('data-import', () => {
 
             // upload the exported marc file
             cy.visit(TopMenu.dataImportPath);
-            // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
             DataImport.verifyUploadState();
             DataImport.uploadExportedFile(exportedFileName);
             JobProfiles.search(jobProfile.profileName);

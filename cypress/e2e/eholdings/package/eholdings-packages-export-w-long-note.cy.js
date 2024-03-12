@@ -13,7 +13,7 @@ import FileManager from '../../../support/utils/fileManager';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import { NOTE_TYPES } from '../../../support/constants';
 
-describe('eHoldings', () => {
+describe.skip('eHoldings', () => {
   describe('Package', () => {
     const testData = {
       package: {

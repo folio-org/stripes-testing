@@ -95,12 +95,7 @@ describe('Consortia', () => {
 
             ConsortiaControlledVocabularyPaneset.createViaUi(true, classificationType3);
             ConsortiaControlledVocabularyPaneset.clickSave();
-            const createdCIT = [
-              classificationType3.name,
-              'consortium',
-              `${moment().format('l')} by SystemConsortia`,
-              'All',
-            ];
+            let createdCIT = [classificationType3.name, 'consortium', moment().format('l'), 'All'];
 
             ConfirmShare.waitLoadingConfirmShareToAll(classificationType3.name);
             ConfirmShare.clickConfirm();
@@ -120,7 +115,7 @@ describe('Consortia', () => {
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
             TopMenuNavigation.navigateToApp('Consortium manager');
-            ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
+            ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
             ClassificationIdentifierTypesConsortiumManager.choose();
             ConsortiaControlledVocabularyPaneset.performAction(
               classificationType3.name,
@@ -132,6 +127,7 @@ describe('Consortia', () => {
               name: classificationType3.name,
             });
             ConsortiaControlledVocabularyPaneset.clickSave();
+            createdCIT = [classificationType3.name, 'consortium', moment().format('l'), 'All'];
 
             ConfirmShare.waitLoadingConfirmShareToAll(classificationType3.name);
             ConfirmShare.clickConfirm();

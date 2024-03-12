@@ -34,7 +34,7 @@ import FieldMappingProfileView from '../../../support/fragments/data_import/mapp
 describe('data-import', () => {
   describe('Importing MARC Authority files', () => {
     const testData = {
-      authorityTitle: 'Elizabeth II, Queen of Great Britain, 1926-',
+      authorityTitle: 'C374186 Elizabeth II, Queen of Great Britain, 1926-',
       instanseTitle: 'Elizabeth',
 
       csvFile: `exportedCSVFile${getRandomPostfix()}.csv`,
@@ -84,12 +84,14 @@ describe('data-import', () => {
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numOfRecords: 1,
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'marcAuthFileC374186.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
 
@@ -108,24 +110,17 @@ describe('data-import', () => {
         testData.userProperties = createdUserProperties;
       });
 
+      cy.getAdminToken();
       marcFiles.forEach((marcFile) => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                createdAuthorityIDs.push(link.split('/')[5]);
-              });
-            }
-          },
-        );
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.entries.forEach((record) => {
+            createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+          });
+        });
       });
 
       cy.loginAsAdmin().then(() => {
@@ -176,7 +171,7 @@ describe('data-import', () => {
 
     it(
       'C374186 Update "1XX" field value (edit controlling field) of linked "MARC Authority" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'parallel'] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,
@@ -218,7 +213,7 @@ describe('data-import', () => {
         DataImport.uploadFile(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
-        JobProfiles.search(testData.jobProfileName);
+        JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(testData.uploadModifiedMarcFile);
         Logs.checkStatusOfJobProfile('Completed');
@@ -239,7 +234,7 @@ describe('data-import', () => {
           '\\',
           '$a Elizabeth $b II, $c 1926-2022, $q Queen of G. Britain',
           '',
-          '$0 id.loc.gov/authorities/names/n80126296',
+          '$0 http://id.loc.gov/authorities/names/n80126296',
           '',
         );
       },

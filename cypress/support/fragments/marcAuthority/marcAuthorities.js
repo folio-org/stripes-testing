@@ -32,6 +32,7 @@ import {
 } from '../../../../interactors';
 import { MARC_AUTHORITY_BROWSE_OPTIONS, MARC_AUTHORITY_SEARCH_OPTIONS } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
+import QuickMarcEditorWindow from '../quickMarcEditor';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -60,7 +61,7 @@ const marcAuthUpdatesCsvBtn = authorityActionsDropDown.find(
 // auth report modal
 const authReportModal = Modal({ id: 'authorities-report-modal' });
 const exportButton = authReportModal.find(Button('Export'));
-
+const newAuthorityButton = Button({ id: 'dropdown-clickable-create-authority' });
 const resetButton = Button('Reset all');
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
 const headingTypeAccordion = Accordion('Type of heading');
@@ -104,6 +105,10 @@ const localTextInDetailView = 'Local • ';
 export default {
   waitLoading() {
     cy.expect(PaneHeader('MARC authority').exists());
+  },
+  clickNewAuthorityButton() {
+    cy.do([actionsButton.click(), newAuthorityButton.click()]);
+    QuickMarcEditorWindow.waitLoading();
   },
   clickActionsAndReportsButtons() {
     cy.do([actionsButton.click(), marcAuthUpdatesCsvBtn.click()]);
@@ -217,12 +222,7 @@ export default {
   },
 
   verifyNumberOfTitles(columnIndex, linkValue) {
-    cy.expect(
-      MultiColumnListRow({ indexRow: 'row-0' })
-        .find(MultiColumnListCell({ columnIndex, content: linkValue }))
-        .find(Link())
-        .exists(),
-    );
+    cy.expect(MultiColumnListCell({ columnIndex, content: linkValue }).find(Link()).exists());
   },
 
   verifyNumberOfTitlesForRowWithValue(value, itemCount) {
@@ -234,6 +234,21 @@ export default {
         .find(MultiColumnListCell({ column: 'Number of titles' }))
         .has({ content: itemCount.toString() }),
     );
+  },
+
+  clickNumberOfTitlesByHeading(heading) {
+    cy.wrap(
+      MultiColumnListRow({
+        isContainer: true,
+        content: including(heading),
+      })
+        .find(MultiColumnListCell({ column: 'Number of titles' }))
+        .find(Link())
+        .href(),
+    ).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
   },
 
   verifyEmptyNumberOfTitlesForRowWithValue(value) {
@@ -1386,5 +1401,13 @@ export default {
   checkSharedTextInDetailView(isShared = true) {
     const expectedText = isShared ? sharedTextInDetailView : localTextInDetailView;
     cy.expect(detailsMarcViewPaneheader.has({ title: including(expectedText) }));
+  },
+
+  verifyAllResultsHaveSource(sourceNames) {
+    this.getResultsListByColumn(4).then((cellTexts) => {
+      cellTexts.forEach((cellText) => {
+        expect(cellText).to.be.oneOf([...sourceNames]);
+      });
+    });
   },
 };

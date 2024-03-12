@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
@@ -33,11 +31,13 @@ describe('MARC', () => {
             marc: 'marcBibFileForC380766.mrc',
             fileName: `testMarcFileC375070.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileForC380766.mrc',
             fileName: `testMarcFileC375070.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
@@ -58,7 +58,7 @@ describe('MARC', () => {
           '7',
           '$a C380766 Drama',
           '',
-          '$0 id.loc.gov/authorities/genreForms/gf2014026297',
+          '$0 http://id.loc.gov/authorities/genreForms/gf2014026297',
           '$2 fast',
         ];
 
@@ -67,7 +67,7 @@ describe('MARC', () => {
           testData.tag655,
           '\\',
           '7',
-          '$a C380766 Drama $0 id.loc.gov/authorities/genreForms/gf2014026297 $2 fast',
+          '$a C380766 Drama $0 http://id.loc.gov/authorities/genreForms/gf2014026297 $2 fast',
         ];
 
         before('Creating user and data', () => {
@@ -79,19 +79,15 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
+            cy.getAdminToken();
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
                 });
               });
             });
@@ -125,11 +121,11 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
             MarcAuthorities.checkSearchInput(
-              'identifiers.value==(OCoLC)fst01710451 or identifiers.value==(OCoLC)fst01122346',
+              'identifiers.value exactPhrase (OCoLC)fst01710451 or identifiers.value exactPhrase (OCoLC)fst01122346',
             );
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthoritiesDelete.checkEmptySearchResults(
-              'identifiers.value==(OCoLC)fst01710451 or identifiers.value==(OCoLC)fst01122346',
+              'identifiers.value exactPhrase (OCoLC)fst01710451 or identifiers.value exactPhrase (OCoLC)fst01122346',
             );
             MarcAuthorities.closeAuthorityLinkingModal();
 
@@ -138,9 +134,11 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
-            MarcAuthorities.checkSearchInput('identifiers.value==(OCoLC)fst01710451');
+            MarcAuthorities.checkSearchInput('identifiers.value exactPhrase (OCoLC)fst01710451');
             MarcAuthorities.verifyEmptyAuthorityField();
-            MarcAuthoritiesDelete.checkEmptySearchResults('identifiers.value==(OCoLC)fst01710451');
+            MarcAuthoritiesDelete.checkEmptySearchResults(
+              'identifiers.value exactPhrase (OCoLC)fst01710451',
+            );
 
             MarcAuthorities.switchToBrowse();
             MarcAuthorities.verifyDisabledSearchButton();
@@ -176,6 +174,7 @@ describe('MARC', () => {
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
             InventoryInstance.waitLoading();
+            cy.wait(1000);
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib655AfterLinkingToAuth155);
 

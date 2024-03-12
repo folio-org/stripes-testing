@@ -1,9 +1,5 @@
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -24,27 +20,9 @@ describe('data-import', () => {
 
     before('created test data', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
+      DataImport.uploadFileViaApi(filePathToUpload, fileName, jobProfileToRun).then((response) => {
+        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
       });
-      // upload a marc file
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(filePathToUpload, fileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfileToRun);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(jobProfileToRun);
-      Logs.openFileDetails(fileName);
-      FileDetails.verifyLogDetailsPageIsOpened();
-      FileDetails.openJsonScreen(title);
-      JsonScreenView.verifyJsonScreenIsOpened();
-      JsonScreenView.openMarcSrsTab();
-      JsonScreenView.getInstanceHrid().then((hrid) => {
-        instanceHrid = hrid;
-      });
-      cy.logout();
 
       cy.createTempUser([
         Permissions.inventoryAll.gui,

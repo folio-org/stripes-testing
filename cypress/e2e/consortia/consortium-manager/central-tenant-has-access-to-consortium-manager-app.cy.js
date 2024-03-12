@@ -26,7 +26,7 @@ describe('Consortia', () => {
     const checkConsortiumManagerAfterSelectMembersSave = (setting, members) => {
       SelectMembers.saveAndClose();
       ConsortiumManager.waitLoading();
-      ConsortiumManager.verifySetingPaneIsDisplayed();
+      ConsortiumManager.verifySettingPaneIsDisplayed();
       ConsortiumManager.verifySelectedSettingIsDisplayed(setting);
       ConsortiumManager.verifyMembersSelected(members);
       ConsortiumManager.verifySelectMembersButton();

@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -45,6 +42,7 @@ const testData = {
     fileName: `testMarcFileC368475.${randomFourDigitNumber()}.mrc`,
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     numberOfRecords: 3,
+    propertyName: 'relatedInstanceInfo',
   },
 };
 
@@ -52,20 +50,16 @@ describe('inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
-        JobProfiles.search(testData.marcFile.jobProfileToRun);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(testData.marcFile.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(testData.marcFile.fileName);
-        for (let i = 0; i < testData.marcFile.numberOfRecords; i++) {
-          Logs.getCreatedItemsID(i).then((link) => {
-            testData.instanceIDs.push(link.split('/')[5]);
-          });
-        }
+      DataImport.uploadFileViaApi(
+        testData.marcFile.marc,
+        testData.marcFile.fileName,
+        testData.marcFile.jobProfileToRun,
+      ).then((response) => {
+        response.entries.forEach((record) => {
+          testData.instanceIDs.push(record[testData.marcFile.propertyName].idList[0]);
+        });
       });
+
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
         cy.login(testData.user.username, testData.user.password, {

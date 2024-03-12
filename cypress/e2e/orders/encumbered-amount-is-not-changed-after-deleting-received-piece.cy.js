@@ -36,7 +36,7 @@ describe('Orders', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '1000';
   const barcode = FinanceHelp.getRandomBarcode();
-  const caption = 'autotestCaption';
+  const enumeration = 'autotestCaption';
   let user;
   let orderNumber;
   let servicePointId;
@@ -88,7 +88,7 @@ describe('Orders', () => {
         '100',
         '1',
         '100',
-        location.institutionId,
+        location.name,
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
@@ -99,8 +99,8 @@ describe('Orders', () => {
       });
       Orders.receiveOrderViaActions();
       Receiving.selectPOLInReceive(orderLineTitle);
-      Receiving.receivePiece(0, caption, barcode);
-      Receiving.checkReceivedPiece(0, caption, barcode);
+      Receiving.receivePiece(0, enumeration, barcode);
+      Receiving.checkReceivedPiece(0, enumeration, barcode);
       cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLineFromPol(orderNumber);
@@ -136,6 +136,7 @@ describe('Orders', () => {
       Orders.receiveOrderViaActions();
       Receiving.selectPOLInReceive(orderLineTitle);
       Receiving.selectPieceInReceived(barcode);
+      Receiving.openDropDownInEditPieceModal();
       Receiving.deleteItemPiece();
       Receiving.selectInstanceInReceive(`${orderNumber}-1`);
       OrderLines.openPageCurrentEncumbrance('$0.00');

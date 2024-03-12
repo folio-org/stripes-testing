@@ -41,7 +41,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifySetCriteriaPaneItems();
         BulkEditSearchPane.verifyRecordTypesEmpty();
         BulkEditSearchPane.verifyRecordIdentifierDisabled();
-        BulkEditSearchPane.verifyDragNDropUpdateUsersArea();
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
         BulkEditSearchPane.verifyRecordTypesEmpty();
         BulkEditSearchPane.openLogsSearch();

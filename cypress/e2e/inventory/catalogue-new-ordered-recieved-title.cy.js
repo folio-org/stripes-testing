@@ -31,7 +31,6 @@ describe('inventory', () => {
     const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
     const itemQuantity = '1';
     const barcode = Helper.getRandomBarcode();
-    const caption = 'autotestCaption';
     const firstServicePoint = NewServicePoint.getDefaultServicePoint(
       `autotestServicePoint ${Helper.getRandomBarcode()}`,
     );
@@ -122,8 +121,8 @@ describe('inventory', () => {
         );
         Orders.receiveOrderViaActions();
         Receiving.selectFromResultsList(instanceTitle);
-        Receiving.receivePieceWithoutBarcode(0, caption);
-        Receiving.checkReceivedPiece(0, caption, 'No value set-');
+        Receiving.receivePieceWithoutBarcode();
+        Receiving.checkReceivedPiece(0, 'No value set-');
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
       });

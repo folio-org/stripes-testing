@@ -125,6 +125,10 @@ const cancelButtonInDeleteFieldsModal = Button({ id: 'clickable-quick-marc-confi
 const confirmButtonInDeleteFieldsModal = Button({
   id: 'clickable-quick-marc-confirm-modal-confirm',
 });
+const authorityLookUpButton = Button('Authority file look-up');
+const selectAuthorityFileModal = Modal('Select authority file');
+const selectAuthorityFile = Select({ label: including('Authority file name') });
+const saveAndCloseBtn = Button('Save & close');
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -357,7 +361,6 @@ const holdingsLocationSelectDisabled = holdingsLocationModal.find(
   Button({ name: 'locationId', disabled: true }),
 );
 const holdingsLocationSaveButton = holdingsLocationModal.find(Button('Save and close'));
-
 const defaultValidLdr = '00000naa\\a2200000uu\\4500';
 const defaultValidHoldingsLdr = '00000nu\\\\\\2200000un\\4500';
 const defaultValid008Values = {
@@ -441,7 +444,7 @@ export default {
   },
 
   deletePenaltField() {
-    const shouldBeRemovedRowNumber = this.getInitialRowsCount() - 1;
+    const shouldBeRemovedRowNumber = 16;
     cy.expect(getRowInteractorByRowNumber(shouldBeRemovedRowNumber).exists());
     cy.then(() => QuickMarcEditor().presentedRowsProperties()).then((presentedRowsProperties) => {
       const shouldBeDeletedRowTag = presentedRowsProperties[shouldBeRemovedRowNumber].tag;
@@ -1659,6 +1662,10 @@ export default {
     cy.expect(PaneHeader({ text: including(text) }).exists());
   },
 
+  verifyPaneheaderWithContentAbsent(text) {
+    cy.expect(PaneHeader({ text: including(text) }).absent());
+  },
+
   checkUpdateLinkedBibModalAbsent() {
     cy.expect(updateLinkedBibFieldsModal.absent());
   },
@@ -2149,7 +2156,7 @@ export default {
     function checkBib() {
       cy.okapiRequest({
         path: 'instance-storage/instances',
-        searchParams: { query: `(title=="${marcBibTitle}")` },
+        searchParams: { query: `(title all "${marcBibTitle}")` },
         isDefaultSearchParamsRequired: false,
       }).then(({ body }) => {
         if (body.instances[0] || timeCounter >= timeOutSeconds) {
@@ -2186,5 +2193,28 @@ export default {
     }
     checkHoldings();
     return cy.get('@holdings');
+  },
+  verifyAuthorityLookUpButton() {
+    cy.expect(QuickMarcEditorRow({ tagValue: '001' }).find(authorityLookUpButton).exists());
+  },
+  clickAuthorityLookUpButton() {
+    cy.do(QuickMarcEditorRow({ tagValue: '001' }).find(authorityLookUpButton).click());
+    cy.expect(selectAuthorityFileModal.exists());
+  },
+  selectAuthorityFile(authorityFile) {
+    cy.do([
+      selectAuthorityFileModal.find(selectAuthorityFile).click(),
+      selectAuthorityFileModal.find(selectAuthorityFile).choose(authorityFile),
+    ]);
+  },
+  verifyAuthorityFileSelected(authorityFile) {
+    cy.expect([
+      selectAuthorityFile.has({ content: including(authorityFile) }),
+      selectAuthorityFileModal.find(saveAndCloseBtn).has({ disabled: false }),
+    ]);
+  },
+  clickSaveAndCloseInModal() {
+    cy.do(selectAuthorityFileModal.find(saveAndCloseBtn).click());
+    cy.expect(selectAuthorityFileModal.absent());
   },
 };

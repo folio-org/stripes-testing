@@ -24,25 +24,25 @@ describe('Orders: Receiving and Check-in', () => {
     copyNumber: Helper.getRandomBarcode(),
     enumeration: Helper.getRandomBarcode(),
     chronology: Helper.getRandomBarcode(),
-    caption: `autotestCaption-${Helper.getRandomBarcode()}`,
+    displaySummary: `AQA-${Helper.getRandomBarcode()}`,
   };
   const secondPiece = {
     copyNumber: Helper.getRandomBarcode(),
     enumeration: Helper.getRandomBarcode(),
     chronology: Helper.getRandomBarcode(),
-    caption: `autotestCaption-${Helper.getRandomBarcode()}`,
+    displaySummary: `AQA-${Helper.getRandomBarcode()}`,
   };
   const thirdPiece = {
     copyNumber: Helper.getRandomBarcode(),
     enumeration: Helper.getRandomBarcode(),
     chronology: Helper.getRandomBarcode(),
-    caption: `autotestCaption-${Helper.getRandomBarcode()}`,
+    displaySummary: `AQA-${Helper.getRandomBarcode()}`,
   };
   const fourthPiece = {
     copyNumber: Helper.getRandomBarcode(),
     enumeration: Helper.getRandomBarcode(),
     chronology: Helper.getRandomBarcode(),
-    caption: `autotestCaption-${Helper.getRandomBarcode()}`,
+    displaySummary: `AQA-${Helper.getRandomBarcode()}`,
   };
   let orderNumber;
   let user;
@@ -94,39 +94,39 @@ describe('Orders: Receiving and Check-in', () => {
       // Receiving part
       Receiving.selectPOLInReceive(orderLineTitle);
       Receiving.addPiece(
-        firstPiece.caption,
+        firstPiece.displaySummary,
         firstPiece.copyNumber,
         firstPiece.enumeration,
         firstPiece.chronology,
       );
-      Receiving.selectPiece(firstPiece.caption);
+      Receiving.selectPiece(firstPiece.displaySummary);
       Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePiece(firstPiece.enumeration);
       Receiving.addPiece(
-        secondPiece.caption,
+        secondPiece.displaySummary,
         secondPiece.copyNumber,
         secondPiece.enumeration,
         secondPiece.chronology,
       );
-      Receiving.selectPiece(secondPiece.caption);
+      Receiving.selectPiece(secondPiece.displaySummary);
       Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePiece(secondPiece.enumeration);
       Receiving.addPiece(
-        thirdPiece.caption,
+        thirdPiece.displaySummary,
         thirdPiece.copyNumber,
         thirdPiece.enumeration,
         thirdPiece.chronology,
       );
-      Receiving.selectPiece(thirdPiece.caption);
+      Receiving.selectPiece(thirdPiece.displaySummary);
       Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePiece(thirdPiece.enumeration);
       Receiving.addPiece(
-        fourthPiece.caption,
+        fourthPiece.displaySummary,
         fourthPiece.copyNumber,
         fourthPiece.enumeration,
         fourthPiece.chronology,
       );
-      Receiving.selectPiece(fourthPiece.caption);
+      Receiving.selectPiece(fourthPiece.displaySummary);
       Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePiece(fourthPiece.enumeration);
       Receiving.selectInstanceInReceive(orderLineTitle);
@@ -136,14 +136,17 @@ describe('Orders: Receiving and Check-in', () => {
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.verifyItemStatus('In process');
       ItemRecordView.closeDetailView();
+      InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.findRowAndClickLink(secondPiece.enumeration);
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.verifyItemStatus('In process');
       ItemRecordView.closeDetailView();
+      InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.findRowAndClickLink(thirdPiece.chronology);
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.verifyItemStatus('In process');
       ItemRecordView.closeDetailView();
+      InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.findRowAndClickLink(fourthPiece.copyNumber);
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.verifyItemStatus('In process');

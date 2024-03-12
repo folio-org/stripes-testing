@@ -1,7 +1,5 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -25,7 +23,7 @@ describe('MARC', () => {
           '\\',
           '$a C422060 Robinson, Peter, $c Inspector Banks series ; $d 1950-2022',
           '$e author.',
-          '$0 id.loc.gov/authorities/names/n123123',
+          '$0 http://id.loc.gov/authorities/names/n123123',
           '',
         ],
         searchOption: 'Keyword',
@@ -40,12 +38,14 @@ describe('MARC', () => {
           fileName: `C422060 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
           numOfRecords: 1,
+          propertyName: 'relatedInstanceInfo',
         },
         {
           marc: 'marcAuthFileForC422060.mrc',
           fileName: `C422060 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           numOfRecords: 1,
+          propertyName: 'relatedAuthorityInfo',
         },
       ];
       const linkingTagAndValues = {
@@ -67,6 +67,19 @@ describe('MARC', () => {
           );
         });
 
+        cy.getAdminToken();
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            });
+          });
+        });
+
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -77,43 +90,24 @@ describe('MARC', () => {
         ]).then((userProperties) => {
           testData.user = userProperties;
 
-          cy.loginAsAdmin()
-            .then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    testData.createdRecordIDs.push(link.split('/')[5]);
-                  });
-                }
-              });
-            })
-            .then(() => {
-              cy.visit(TopMenu.inventoryPath);
-              InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
-              InventoryInstances.selectInstance();
-              InventoryInstance.editMarcBibliographicRecord();
-              QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
-              MarcAuthorities.switchToSearch();
-              InventoryInstance.verifySelectMarcAuthorityModal();
-              InventoryInstance.verifySearchOptions();
-              InventoryInstance.searchResults(linkingTagAndValues.value);
-              InventoryInstance.clickLinkButton();
-              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
-                linkingTagAndValues.tag,
-                linkingTagAndValues.rowIndex,
-              );
-              QuickMarcEditor.pressSaveAndClose();
-              QuickMarcEditor.checkAfterSaveAndClose();
-            });
+          cy.loginAsAdmin().then(() => {
+            cy.visit(TopMenu.inventoryPath);
+            InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            InventoryInstance.verifySearchOptions();
+            InventoryInstance.searchResults(linkingTagAndValues.value);
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
+              linkingTagAndValues.tag,
+              linkingTagAndValues.rowIndex,
+            );
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
+          });
 
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.marcAuthorities,

@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
@@ -79,12 +77,26 @@ describe('MARC', () => {
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 8,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
         const createdAuthorityIDs = [];
 
         before(() => {
+          cy.getAdminToken();
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
+          });
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -92,25 +104,6 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
-
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdAuthorityIDs.push(link.split('/')[5]);
-                  });
-                }
-              });
-            });
           });
         });
 
@@ -147,9 +140,11 @@ describe('MARC', () => {
             newFields.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
             });
+            cy.getAdminToken();
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
+            cy.wait(1000);
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout(
               'Field 100, 240, 610, 711, 811, and 830 must be set manually by selecting the link icon.',
@@ -202,16 +197,16 @@ describe('MARC', () => {
 
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              'Linked to MARC authority\n\t240\t   \t$a Wakanda Forever $0 id.loc.gov/authorities/names/n2016004081C388568 $9',
+              'Linked to MARC authority\n\t240\t   \t$a Wakanda Forever $0 http://id.loc.gov/authorities/names/n2016004081C388568 $9',
             );
             InventoryViewSource.contains(
               'Linked to MARC authority\n\t100\t   \t$a Robertson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052007C388568 $9',
             );
             InventoryViewSource.contains(
-              'Linked to MARC authority\n\t711\t   \t$a Roma Council $c Basilica di San Pietro in Roma) $d 1962-1965 : $n (2nd : $0 id.loc.gov/authorities/names/n79084169C388568 $9',
+              'Linked to MARC authority\n\t711\t   \t$a Roma Council $c Basilica di San Pietro in Roma) $d 1962-1965 : $n (2nd : $0 http://id.loc.gov/authorities/names/n79084169C388568 $9',
             );
             InventoryViewSource.contains(
-              'Linked to MARC authority\n\t830\t   \t$a Robinson eminent scholar lecture series $0 id.loc.gov/authorities/names/no2011188426C388568 $9',
+              'Linked to MARC authority\n\t830\t   \t$a Robinson eminent scholar lecture series $0 http://id.loc.gov/authorities/names/no2011188426C388568 $9',
             );
           },
         );

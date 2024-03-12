@@ -87,7 +87,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.downloadMatchedResults();
-        BulkEditSearchPane.changeShowColumnCheckbox(
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Instance (Title, Publisher, Publication date)',
         );
         BulkEditSearchPane.verifyChangesUnderColumns(

@@ -139,7 +139,7 @@ describe('Title Level Request', () => {
 
   it(
     'C380544 Verify that the item information is not changed in "Item information" accordion after editing a request. (vega) (TaaS)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPathBroken', 'vega'] },
     () => {
       Requests.waitLoading();
       NewRequest.openNewRequestPane();

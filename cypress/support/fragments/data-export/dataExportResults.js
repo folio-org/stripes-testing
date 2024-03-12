@@ -1,4 +1,10 @@
-import { MultiColumnListCell, MultiColumnListRow, matching } from '../../../../interactors';
+import { including } from 'bigtest';
+import {
+  ListRow,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  matching,
+} from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ row, columnIndex: col });
@@ -23,16 +29,17 @@ export default {
     userName = null,
     jobType = 'instances',
   ) {
+    const row = ListRow({ content: including(resultFileName) });
     const resultRow = {
-      fileName: MultiColumnListCell({ row: 0, columnIndex: 0 }),
-      status: MultiColumnListCell({ row: 0, columnIndex: 1 }),
-      total: MultiColumnListCell({ row: 0, columnIndex: 2 }),
-      exported: MultiColumnListCell({ row: 0, columnIndex: 3 }),
-      failed: MultiColumnListCell({ row: 0, columnIndex: 4 }),
-      jobProfile: MultiColumnListCell({ row: 0, columnIndex: 5 }),
-      endedRunning: MultiColumnListCell({ row: 0, columnIndex: 7 }),
-      runBy: MultiColumnListCell({ row: 0, columnIndex: 8 }),
-      id: MultiColumnListCell({ row: 0, columnIndex: 9 }),
+      fileName: row.find(MultiColumnListCell({ columnIndex: 0 })),
+      status: row.find(MultiColumnListCell({ columnIndex: 1 })),
+      total: row.find(MultiColumnListCell({ columnIndex: 2 })),
+      exported: row.find(MultiColumnListCell({ columnIndex: 3 })),
+      failed: row.find(MultiColumnListCell({ columnIndex: 4 })),
+      jobProfile: row.find(MultiColumnListCell({ columnIndex: 5 })),
+      endedRunning: row.find(MultiColumnListCell({ columnIndex: 7 })),
+      runBy: row.find(MultiColumnListCell({ columnIndex: 8 })),
+      id: row.find(MultiColumnListCell({ columnIndex: 9 })),
     };
     cy.getAdminToken().then(() => {
       cy.getUsers({ limit: 1, query: `username=${userName || Cypress.env('diku_login')}` }).then(
@@ -82,16 +89,17 @@ export default {
     jobType = 'instances',
     invalidQuery = false,
   ) {
+    const row = ListRow({ content: including(resultFileName) });
     const resultRow = {
-      fileName: MultiColumnListCell({ row: 0, columnIndex: 0 }),
-      status: MultiColumnListCell({ row: 0, columnIndex: 1 }),
-      total: MultiColumnListCell({ row: 0, columnIndex: 2 }),
-      exported: MultiColumnListCell({ row: 0, columnIndex: 3 }),
-      failed: MultiColumnListCell({ row: 0, columnIndex: 4 }),
-      jobProfile: MultiColumnListCell({ row: 0, columnIndex: 5 }),
-      endedRunning: MultiColumnListCell({ row: 0, columnIndex: 7 }),
-      runBy: MultiColumnListCell({ row: 0, columnIndex: 8 }),
-      id: MultiColumnListCell({ row: 0, columnIndex: 9 }),
+      fileName: row.find(MultiColumnListCell({ columnIndex: 0 })),
+      status: row.find(MultiColumnListCell({ columnIndex: 1 })),
+      total: row.find(MultiColumnListCell({ columnIndex: 2 })),
+      exported: row.find(MultiColumnListCell({ columnIndex: 3 })),
+      failed: row.find(MultiColumnListCell({ columnIndex: 4 })),
+      jobProfile: row.find(MultiColumnListCell({ columnIndex: 5 })),
+      endedRunning: row.find(MultiColumnListCell({ columnIndex: 7 })),
+      runBy: row.find(MultiColumnListCell({ columnIndex: 8 })),
+      id: row.find(MultiColumnListCell({ columnIndex: 9 })),
     };
     cy.getAdminToken().then(() => {
       cy.getUsers({ limit: 1, query: `username=${userName || Cypress.env('diku_login')}` }).then(

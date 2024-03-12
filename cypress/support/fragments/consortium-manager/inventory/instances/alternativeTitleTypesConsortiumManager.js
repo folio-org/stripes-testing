@@ -2,13 +2,9 @@ import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
 import { Button, MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
+import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 
 const id = uuid();
-
-export const typeActions = {
-  edit: 'edit',
-  trash: 'trash',
-};
 const newButton = Button('+ New');
 
 export default {
@@ -41,6 +37,43 @@ export default {
         body: type,
       });
     });
+  },
+
+  getAlternativeTitleTypeByNameAndTenant(name, tenantId) {
+    return cy.getConsortiaId().then((consortiaId) => {
+      cy.getPublications([tenantId], '/alternative-title-types?limit=2000&offset=0').then(
+        (publicationId) => {
+          cy.okapiRequest({
+            method: REQUEST_METHOD.GET,
+            path: `consortia/${consortiaId}/publications/${publicationId}/results`,
+          }).then(({ body }) => {
+            const alternativeTitleTypes = JSON.parse(
+              body.publicationResults.find((publication) => publication.tenantId === tenantId)
+                .response,
+            ).alternativeTitleTypes;
+            return alternativeTitleTypes.find(
+              (alternativeTitleType) => alternativeTitleType.name === name,
+            );
+          });
+        },
+      );
+    });
+  },
+
+  deleteAlternativeTitleTypeByNameAndTenant(name, tenantId) {
+    this.getAlternativeTitleTypeByNameAndTenant(name, tenantId).then((alternativeTitleType) => {
+      cy.setTenant(tenantId);
+      cy.okapiRequest({
+        method: REQUEST_METHOD.DELETE,
+        path: `alternative-title-types/${alternativeTitleType.id}`,
+        failOnStatusCode: false,
+      });
+      cy.resetTenant();
+    });
+  },
+
+  waitLoading() {
+    ConsortiaControlledVocabularyPaneset.waitLoading('Alternative title types');
   },
 
   choose() {

@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
@@ -28,7 +26,7 @@ describe('MARC', () => {
             emptyContent: '',
             fourthBox: '$a C387524 Roberts, Julia, $d 1967-',
             fifthBox: '$e Actor.',
-            sixthBox: '$0 id.loc.gov/authorities/names/n91074080C387524',
+            sixthBox: '$0 http://id.loc.gov/authorities/names/n91074080C387524',
             seventhBox: '',
             valueAfterSave: 'C387524 Roberts, Julia, 1967-',
           },
@@ -42,18 +40,33 @@ describe('MARC', () => {
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numOfRecords: 1,
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileForC387524.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
         const createdAuthorityIDs = [];
 
         before(() => {
+          cy.getAdminToken();
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
+          });
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -61,25 +74,6 @@ describe('MARC', () => {
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
-
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdAuthorityIDs.push(link.split('/')[5]);
-                  });
-                }
-              });
-            });
 
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,
@@ -162,7 +156,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.updateExistingFieldContent(
               fieldsToUpdate[1].rowIndex,
-              '$a C387524 Roberts, Julia, $d 1967- $e Actor. $0 id.loc.gov/authorities/names/n91074080C387524',
+              '$a C387524 Roberts, Julia, $d 1967- $e Actor. $0 http://id.loc.gov/authorities/names/n91074080C387524',
             );
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.updateExistingTagValue(fieldsToUpdate[1].rowIndex, '701');

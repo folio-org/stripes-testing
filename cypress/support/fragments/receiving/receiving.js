@@ -77,14 +77,14 @@ export default {
       ExportSettingsModal.clickExportButton();
     }
   },
-  receivePiece: (rowNumber, caption, barcode) => {
+  receivePiece: (rowNumber, enumeration, barcode) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
       Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
       receiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
-      TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
+      TextField({ name: `${recievingFieldName}.enumeration` }).fillIn(enumeration),
       TextField({ name: `${recievingFieldName}.barcode` }).fillIn(barcode),
       receiveButton.click(),
     ]);
@@ -104,12 +104,12 @@ export default {
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
-  addPiece: (caption, copyNumber, enumeration, chronology) => {
+  addPiece: (displaySummary, copyNumber, enumeration, chronology) => {
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
       Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
       addPieceButton.click(),
-      addPieceModal.find(TextField('Caption')).fillIn(caption),
+      addPieceModal.find(TextField('Display summary')).fillIn(displaySummary),
       addPieceModal.find(TextField('Copy number')).fillIn(copyNumber),
       addPieceModal.find(TextField('Enumeration')).fillIn(enumeration),
       addPieceModal.find(TextField('Chronology')).fillIn(chronology),
@@ -160,25 +160,24 @@ export default {
 
   deleteItemPiece: () => {
     cy.do([
-      addPieceModal.find(Button('Delete')).click(),
+      Button('Delete').click(),
       Modal({ id: 'delete-piece-confirmation' }).find(Button('Delete item')).click(),
     ]);
   },
 
-  receivePieceWithoutBarcode: (rowNumber, caption) => {
+  receivePieceWithoutBarcode: (rowNumber = 0) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
       Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
       receiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
-      TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
       receiveButton.click(),
     ]);
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
-  receivePieceWithBarcode: (rowNumber, caption) => {
+  receivePieceWithBarcode: (rowNumber, displaySummary) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
@@ -191,28 +190,29 @@ export default {
     ]);
     cy.do([
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
-      TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
+      TextField({ name: `${recievingFieldName}.displaySummary` }).fillIn(displaySummary),
     ]);
     cy.expect(receiveButton.has({ disabled: false, visible: true }));
     cy.do(receiveButton.click());
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
-  receiveAndChangeLocation: (rowNumber, caption, institutionId) => {
+  receiveAndChangeLocation: (rowNumber, displaySummary, institutionId) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
       Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
       receiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
-      TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
+      TextField({ name: `${recievingFieldName}.displaySummary` }).fillIn(displaySummary),
       MultiColumnListRow({ indexRow: `row-${rowNumber}` })
         .find(Button('Assign a different location'))
         .click(),
     ]);
-    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
     cy.do([
-      Modal('Select permanent location').find(Button('Save and close')).click(),
+      TextField({ id: 'input-record-search' }).fillIn(institutionId),
+      Button('Search').click(),
+      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
       receiveButton.click(),
     ]);
     // Need to wait, while data will be loaded
@@ -229,7 +229,7 @@ export default {
     );
   },
 
-  checkReceivedPiece: (rowNumber, caption, barcode) => {
+  checkReceivedPiece: (rowNumber = 0, barcode) => {
     // Need to wait, while data will be loaded before start checking
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
@@ -237,10 +237,6 @@ export default {
       Accordion({ id: receivedPiecesAccordionId })
         .find(MultiColumnListRow({ index: rowNumber }))
         .find(MultiColumnListCell({ content: barcode }))
-        .exists(),
-      Accordion({ id: receivedPiecesAccordionId })
-        .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: caption }))
         .exists(),
       Accordion({ id: expectedPiecesAccordionId })
         .find(MultiColumnListCell({ content: barcode }))
@@ -347,7 +343,7 @@ export default {
   unreceiveInEditPieceModal() {
     this.openDropDownInEditPieceModal();
     cy.do(Button('Unreceive').click());
-    InteractorsTools.checkCalloutMessage('The piece was successfully saved');
+    InteractorsTools.checkCalloutMessage('Unreceiving successful');
   },
 
   receiveFromExpectedSectionWithClosePOL: () => {
@@ -406,7 +402,7 @@ export default {
   verifyRequestIsCreated: () => {
     cy.expect(
       Accordion({ id: expectedPiecesAccordionId })
-        .find(MultiColumnListCell({ columnIndex: 7, content: 'Yes' }))
+        .find(MultiColumnListCell({ columnIndex: 8, content: 'Yes' }))
         .exists(),
     );
   },

@@ -57,9 +57,7 @@ describe('Bulk Edit - Logs', () => {
     'C380546 Verify that selected filters persist on Logs tab (firebird) (TaaS)',
     { tags: ['extendedPath', 'firebird'] },
     () => {
-      BulkEditSearchPane.checkUsersRadio();
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-      BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
+      BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
 
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
@@ -79,9 +77,7 @@ describe('Bulk Edit - Logs', () => {
       BulkEditSearchPane.verifyLogResultsFound();
 
       BulkEditSearchPane.openIdentifierSearch();
-      BulkEditSearchPane.checkItemsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
-      BulkEditSearchPane.verifyDragNDropItemUUIDsArea();
+      BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
       BulkEditSearchPane.uploadFile(itemUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
       const newLocation = 'Online';

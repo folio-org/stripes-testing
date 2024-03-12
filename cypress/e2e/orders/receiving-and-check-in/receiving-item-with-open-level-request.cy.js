@@ -29,7 +29,7 @@ describe('Orders: Receiving and Check-in', () => {
     integrationName: '',
     location: {},
     user: {},
-    caption: 'autotestCaption',
+    displaySummary: 'autotestCaption',
     itemBarcode: uuid(),
   };
 
@@ -169,10 +169,10 @@ describe('Orders: Receiving and Check-in', () => {
       Receiving.selectReceivingItem();
       Receiving.verifyDetailsOpened();
       Receiving.verifyRequestIsCreated();
-      Receiving.receivePieceWithBarcode(0, testData.caption);
+      Receiving.receivePieceWithBarcode(0, testData.displaySummary);
       Receiving.verifyOpenedRequestsModal(testData.orderLine.titleOrPackage, testData.itemBarcode);
       Receiving.closeOpenedRequestModal();
-      Receiving.checkReceivedPiece(0, testData.caption, testData.itemBarcode);
+      Receiving.checkReceivedPiece(0, testData.displaySummary, testData.itemBarcode);
     },
   );
 });

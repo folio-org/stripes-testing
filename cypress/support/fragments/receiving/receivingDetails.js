@@ -103,7 +103,7 @@ export default {
   openEditPieceModal({ row = 0, section = 'Expected' } = {}) {
     const isExpected = section === 'Expected';
     const itemEdit = isExpected
-      ? expectedSection.find(MultiColumnListCell({ row, column: 'Caption' }))
+      ? expectedSection.find(MultiColumnListCell({ row, column: 'Display summary' }))
       : receivedSection.find(MultiColumnListCell({ row, column: 'Barcode' }));
 
     cy.do(itemEdit.click());

@@ -49,7 +49,6 @@ describe('data-import', () => {
       'C6692 Check the default mapping of Subject headings from the MARC record to the Inventory Instance Subjects field (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);
         JobProfiles.waitFileIsUploaded();

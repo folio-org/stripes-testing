@@ -4,13 +4,10 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import Users from '../../../../support/fragments/users/users';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import InventoryKeyboardShortcuts from '../../../../support/fragments/inventory/inventoryKeyboardShortcuts';
 import InventoryHotkeys from '../../../../support/fragments/inventory/inventoryHotkeys';
@@ -33,6 +30,7 @@ describe('MARC', () => {
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
           instanceTitle: 'Variations / Ludwig Van Beethoven.',
           instanceAlternativeTitle: 'Variation:, op. 44, E♭ major ver. 5',
+          propertyName: 'relatedInstanceInfo',
         },
         {
           marc: 'marcAuthFileC374156.mrc',
@@ -42,6 +40,7 @@ describe('MARC', () => {
             'Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
           updatedAuthorityHeading:
             'C374156 Beethoven, Ludwig van, 1770-1827. Variation:, op. 44, E♭ major ver. 5',
+          propertyName: 'relatedAuthorityInfo',
         },
       ];
       const linkingTagAndValue = {
@@ -53,6 +52,19 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Creating user, importing and linking records', () => {
+        cy.getAdminToken();
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            });
+          });
+        });
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -63,23 +75,7 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          marcFiles.forEach((marcFile) => {
-            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-              () => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
-                });
-              },
-            );
-          });
-
+          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
           cy.visit(TopMenu.inventoryPath).then(() => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -122,6 +118,7 @@ describe('MARC', () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
           MarcAuthority.edit();
+          cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedValue);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.checkContent(testData.updatedValue, 7);
@@ -151,7 +148,7 @@ describe('MARC', () => {
             '0',
             '$a Variation:, $n op. 44, $r E♭ major $s ver. 5',
             '',
-            '$0 id.loc.gov/authorities/names/n83130832',
+            '$0 http://id.loc.gov/authorities/names/n83130832',
             '',
           );
         },

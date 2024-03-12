@@ -175,7 +175,7 @@ describe('data-import', () => {
 
     it(
       'C350591 Match on VRN and update related Instance, Holdings, Item (folijet)',
-      { tags: ['smoke', 'folijet', 'nonParallel'] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         // create order with POL
         Orders.createOrderWithOrderLineViaApi(
@@ -268,7 +268,6 @@ describe('data-import', () => {
 
         // import a file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();
         DataImport.uploadFile(editedMarcFileName);

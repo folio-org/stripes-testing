@@ -54,7 +54,7 @@ describe('data-import', () => {
         '0',
         '$a C374184 Marvel comics',
         '$v Catalogs.',
-        '$0 id.loc.gov/authorities/names/n80026980',
+        '$0 http://id.loc.gov/authorities/names/n80026980',
         '',
       ],
       instanceTitle: 'Marvel comics direct distributors meeting / Marvel Comics Group.',

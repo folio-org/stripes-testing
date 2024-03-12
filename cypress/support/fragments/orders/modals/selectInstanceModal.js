@@ -6,6 +6,8 @@ import {
   MultiColumnListRow,
   TextField,
   including,
+  Select,
+  not,
 } from '../../../../../interactors';
 import ChangeInstanceModal from './changeInstanceModal';
 
@@ -17,6 +19,9 @@ const resetAllButton = selectInstanceModal.find(Button('Reset all'));
 const closeButton = selectInstanceModal.find(Button('Close'));
 
 const resultsList = selectInstanceModal.find(HTML({ id: 'list-plugin-find-records' }));
+
+const searchOptionSelect = Select('Search field index');
+const defaultSearchOptionValue = 'all';
 
 export default {
   waitLoading() {
@@ -76,5 +81,21 @@ export default {
     cy.expect(closeButton.has({ disabled: false }));
     cy.do(closeButton.click());
     cy.expect(selectInstanceModal.absent());
+  },
+  clickSearchOptionSelect() {
+    cy.do(searchOptionSelect.click());
+  },
+  checkSearchOptionIncluded(searchOption, optionShown = true) {
+    if (optionShown) cy.expect(searchOptionSelect.has({ content: including(searchOption) }));
+    else cy.expect(searchOptionSelect.has({ content: not(including(searchOption)) }));
+  },
+  checkDefaultSearchOptionSelected() {
+    cy.expect(searchOptionSelect.has({ value: defaultSearchOptionValue }));
+  },
+  checkSearchInputFieldValue(query) {
+    cy.expect(searchInput.has({ value: query }));
+  },
+  checkResultsListEmpty() {
+    cy.expect(resultsList.absent());
   },
 };

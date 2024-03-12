@@ -59,13 +59,12 @@ describe('MARC', () => {
         });
       });
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+      DataImport.uploadFileViaApi(
+        marcFiles[0].marc,
+        marcFiles[0].fileName,
+        marcFiles[0].jobProfileToRun,
+      );
       // upload a marc file for creating new instance
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(marcFiles[0].marc, marcFiles[0].fileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(marcFiles[0].jobProfileToRun);
-      JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFiles[0].fileName);
       Logs.openFileDetails(marcFiles[0].fileName);
       FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
@@ -80,13 +79,13 @@ describe('MARC', () => {
           [initialInstanceHrId],
         );
         cy.visit(TopMenu.dataImportPath);
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(marcFiles[1].editedFileName, marcFiles[1].fileName);
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(marcFiles[1].jobProfileToRun);
-        JobProfiles.runImportFile();
+        DataImport.uploadFileViaApi(
+          marcFiles[1].marc,
+          marcFiles[1].fileName,
+          marcFiles[1].jobProfileToRun,
+        );
         JobProfiles.waitFileIsImported(marcFiles[1].fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(marcFiles[1].fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFiles[1].fileName);
         Logs.getCreatedItemsID().then((link) => {
           testData.createdRecordIDs.push(link.split('/')[5]);

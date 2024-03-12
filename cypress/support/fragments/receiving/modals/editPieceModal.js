@@ -24,7 +24,7 @@ const quickReceiveButton = Button('Quick receive');
 const saveAndCloseButton = editPieceModal.find(Button('Save & close'));
 
 const editPieceFields = {
-  Caption: editPieceModal.find(TextField({ name: 'caption' })),
+  Caption: editPieceModal.find(TextField({ name: 'displaySummary' })),
   'Copy number': editPieceModal.find(TextField({ name: 'copyNumber' })),
   Enumeration: editPieceModal.find(TextField({ name: 'enumeration' })),
   Chronology: editPieceModal.find(TextField({ name: 'chronology' })),

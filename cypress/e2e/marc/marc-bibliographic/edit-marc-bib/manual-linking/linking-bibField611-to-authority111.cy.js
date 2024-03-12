@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
@@ -12,6 +10,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -22,7 +21,7 @@ describe('MARC', () => {
           authorityValue:
             'C380764 Vatican Council (2nd : 1962-1965 : Basilica di San Pietro in Vaticano)',
           authorityHeading:
-            'Basilica di San Pietro in Vaticano) C380764 Vatican Council 1962-1965 : (2nd :',
+            'C380764 Vatican Council Basilica di San Pietro in Vaticano) 1962-1965 : (2nd :',
           linkedIconText: 'Linked to MARC authority',
           accordion: 'Subject',
           searchOptionCorporateName: 'Corporate/Conference name',
@@ -34,11 +33,13 @@ describe('MARC', () => {
             marc: 'marcBibFileForC380764.mrc',
             fileName: `testMarcFileC380764.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileForC380764.mrc',
             fileName: `testMarcFileC380764.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
@@ -57,9 +58,9 @@ describe('MARC', () => {
           testData.tag611,
           '2',
           '7',
-          '$c Basilica di San Pietro in Vaticano) $a C380764 Vatican Council $d 1962-1965 : $n (2nd :',
+          '$a C380764 Vatican Council $c Basilica di San Pietro in Vaticano) $d 1962-1965 : $n (2nd :',
           '',
-          '$0 id.loc.gov/authorities/names/n79084169',
+          '$0 http://id.loc.gov/authorities/names/n79084169',
           '$2 fast $1 http://viaf.org/viaf/133636573/',
         ];
 
@@ -68,7 +69,7 @@ describe('MARC', () => {
           testData.tag611,
           '2',
           '7',
-          '$c Basilica di San Pietro in Vaticano) $a C380764 Vatican Council $d 1962-1965 : $n (2nd : $0 id.loc.gov/authorities/names/n79084169 $2 fast $1 http://viaf.org/viaf/133636573/',
+          '$a C380764 Vatican Council $c Basilica di San Pietro in Vaticano) $d 1962-1965 : $n (2nd : $0 http://id.loc.gov/authorities/names/n79084169 $2 fast $1 http://viaf.org/viaf/133636573/',
         ];
 
         before('Creating user and data', () => {
@@ -80,19 +81,15 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
+            cy.getAdminToken();
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
                 });
               });
             });
@@ -126,7 +123,21 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
             MarcAuthorities.checkSearchInput(
-              'keyword==V.Council 1960 ValueT or identifiers.value==fst01405122',
+              'keyword exactPhrase V.Council 1960 ValueT or identifiers.value exactPhrase fst01405122',
+            );
+            MarcAuthorities.verifyEmptyAuthorityField();
+            MarcAuthorities.closeAuthorityLinkingModal();
+
+            QuickMarcEditor.updateExistingField(
+              testData.tag611,
+              '$a V.Council $2 fast $0 http://id.worldcat.org/fast/fst01405122 $1 http://viaf.org/viaf/133636573/ $c San Pietro $t ValueT',
+            );
+            InventoryInstance.verifyAndClickLinkIcon(testData.tag611);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            InventoryInstance.verifySearchOptions();
+            MarcAuthorities.checkSearchInput(
+              'keyword exactPhrase V.Council ValueT or identifiers.value exactPhrase fst01405122',
             );
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthorities.closeAuthorityLinkingModal();
@@ -139,7 +150,9 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
-            MarcAuthorities.checkSearchInput('keyword==ValueT or identifiers.value==fst01405122');
+            MarcAuthorities.checkSearchInput(
+              'keyword exactPhrase ValueT or identifiers.value exactPhrase fst01405122',
+            );
             MarcAuthorities.verifyEmptyAuthorityField();
 
             MarcAuthorities.switchToBrowse();
@@ -179,6 +192,7 @@ describe('MARC', () => {
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
             InventoryInstance.waitLoading();
+            InstanceRecordView.verifyInstancePaneExists();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib611AfterLinkingToAuth111);
 

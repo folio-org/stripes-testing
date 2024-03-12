@@ -27,21 +27,14 @@ describe('data-import', () => {
       "Chosen job profile 'Default - Create instance and SRS MARC Bib' does not support 'MARC_HOLDING' record type";
 
     before('create test data', () => {
-      cy.loginAsAdmin({
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi(
+        filePathForUpload,
+        fileNameForCreateInstance,
+        jobProfileToRun,
+      ).then((response) => {
+        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
       });
-      DataImport.uploadFile(filePathForUpload, fileNameForCreateInstance);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfileToRun);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(fileNameForCreateInstance);
-      Logs.openFileDetails(fileNameForCreateInstance);
-      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-        instanceHrid = initialInstanceHrId;
-      });
-      cy.logout();
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
@@ -62,6 +55,11 @@ describe('data-import', () => {
     after('delete user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+        (instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        },
+      );
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     });
 
@@ -70,7 +68,6 @@ describe('data-import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, fileNameForImportForMarcAuthority);
         JobProfiles.waitFileIsUploaded();
@@ -96,7 +93,6 @@ describe('data-import', () => {
         JsonScreenView.verifyContentInTab(errorMessageForMarcAuthorityProfile);
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
         JobProfiles.waitFileIsUploaded();

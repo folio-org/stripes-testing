@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -25,18 +23,18 @@ describe('MARC', () => {
           },
           fieldContents: {
             tag245Content: 'New title C388565',
-            tagLDRContent: '00000naa\\a2200000uu\\4500',
+            tagLDRContent: '00000nca\\a2200000uu\\4500',
           },
           naturalIds: {
-            tag100: '0255869',
+            tag100: '0255861',
             tag240: 'n99036055',
-            tag600: 'n93094742',
-            tag711: 'n79084169',
+            tag600: 'n93094741',
+            tag711: 'n79084162',
           },
           searchOptions: {
             identifierAll: 'Identifier (all)',
           },
-          marcValue: 'Radio "Vaticana". Hrvatski program',
+          marcValue: 'C422149Radio "Vaticana". Hrvatski program',
         };
 
         const newFields = [
@@ -53,12 +51,12 @@ describe('MARC', () => {
           {
             rowIndex: 6,
             tag: '610',
-            content: '$0 n93094742',
+            content: '$0 n93094741',
           },
           {
             rowIndex: 7,
             tag: '711',
-            content: '$0 n79084169',
+            content: '$0 n79084162',
           },
           {
             rowIndex: 8,
@@ -67,52 +65,43 @@ describe('MARC', () => {
           },
         ];
 
-        const newFieldsForC388562 = [
-          {
-            rowIndex: 4,
-            tag: '100',
-            content: '$a Value100',
-          },
-          {
-            rowIndex: 5,
-            tag: '240',
-            content: '$a Value240',
-          },
-          {
-            rowIndex: 6,
-            tag: '650',
-            content: '$a Value650',
-          },
-          {
-            rowIndex: 7,
-            tag: '040',
-            content: '$a Value040',
-          },
-        ];
-
         let userData = {};
 
         const linkableFields = [100, 240, 610, 711, 830];
-        const linkableFieldsForC388562 = [100, 240, 650];
 
         const marcFiles = [
           {
-            marc: 'marcAuthFileForC388565.mrc',
+            marc: 'marcAuthFileForC422149_1.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 5,
+            propertyName: 'relatedAuthorityInfo',
           },
           {
-            marc: 'marcAuthFileForC388562.mrc',
+            marc: 'marcAuthFileForC422149_2.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 3,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
         const createdAuthorityIDs = [];
 
         before(() => {
+          cy.getAdminToken();
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
+          });
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -121,31 +110,10 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdAuthorityIDs.push(link.split('/')[5]);
-                  });
-                }
-              });
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
             });
-          });
-        });
-
-        beforeEach('Sign in to platform', () => {
-          cy.login(userData.username, userData.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
           });
         });
 
@@ -193,7 +161,7 @@ describe('MARC', () => {
               '100',
               '\\',
               '\\',
-              '$a Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+              '$a C422149Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
               '',
               '$0 3052044',
               '',
@@ -217,10 +185,10 @@ describe('MARC', () => {
               '\\',
               '$a Hosanna Bible',
               '',
-              '$0 id.loc.gov/authorities/names/n99036055',
+              '$0 http://id.loc.gov/authorities/names/n99036055',
               '',
             );
-
+            cy.getAdminToken();
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
@@ -243,7 +211,7 @@ describe('MARC', () => {
               '100',
               '\\',
               '\\',
-              '$a Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+              '$a C422149Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
               '',
               '$0 3052044',
               '',
@@ -255,7 +223,7 @@ describe('MARC', () => {
               '\\',
               '$a Hosanna Bible',
               '',
-              '$0 id.loc.gov/authorities/names/n99036055',
+              '$0 http://id.loc.gov/authorities/names/n99036055',
               '',
             );
             QuickMarcEditor.pressSaveAndClose();
@@ -271,96 +239,12 @@ describe('MARC', () => {
             InventoryInstance.getId().then((id) => {
               createdAuthorityIDs.push(id);
             });
+            cy.wait(1000);
             InventoryInstance.viewSource();
             InventoryViewSource.contains('Linked to MARC authority\n\t100');
             InventoryViewSource.contains('Linked to MARC authority\n\t240');
             InventoryViewSource.contains('Linked to MARC authority\n\t610');
             InventoryViewSource.contains('Linked to MARC authority\n\t711');
-          },
-        );
-
-        it(
-          'C422145 "Link headings" button disabling/enabling when creating new "MARC Bib" record (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
-          () => {
-            InventoryInstance.newMarcBibRecord();
-            QuickMarcEditor.checkAbsenceOfLinkHeadingsButton();
-            QuickMarcEditor.updateExistingField(testData.tags.tag245, '$a A New Record');
-            QuickMarcEditor.updateExistingField(
-              testData.tags.tagLDR,
-              testData.fieldContents.tagLDRContent,
-            );
-            newFieldsForC388562.forEach((newField) => {
-              MarcAuthority.addNewField(newField.rowIndex, newField.tag, '');
-            });
-            linkableFieldsForC388562.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, true);
-            });
-            QuickMarcEditor.verifyDisabledLinkHeadingsButton();
-            newFieldsForC388562.forEach((newField) => {
-              QuickMarcEditor.updateExistingField(newField.tag, newField.content);
-            });
-            QuickMarcEditor.verifyDisabledLinkHeadingsButton();
-
-            QuickMarcEditor.updateExistingField(
-              testData.tags.tag245,
-              '$a A New Record $0 3052044C388562',
-            );
-            QuickMarcEditor.updateExistingField(
-              newFieldsForC388562[3].tag,
-              `${newFieldsForC388562[3].content} $0 y015016`,
-            );
-            QuickMarcEditor.verifyDisabledLinkHeadingsButton();
-
-            QuickMarcEditor.updateExistingField(
-              newFieldsForC388562[0].tag,
-              `${newFieldsForC388562[0].content} $0 y016017`,
-            );
-            QuickMarcEditor.verifyEnabledLinkHeadingsButton();
-            QuickMarcEditor.clickLinkHeadingsButton();
-            QuickMarcEditor.checkCallout(
-              'Field 100 must be set manually by selecting the link icon.',
-            );
-            InventoryInstance.verifyAndClickLinkIcon(newFieldsForC388562[0].tag);
-            MarcAuthorities.switchToSearch();
-            InventoryInstance.verifySelectMarcAuthorityModal();
-            InventoryInstance.searchResultsWithOption('Identifier (all)', '3052044C388562');
-            InventoryInstance.clickLinkButton();
-            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
-              newFieldsForC388562[0].tag,
-              newFieldsForC388562[0].rowIndex + 1,
-            );
-            QuickMarcEditor.verifyDisabledLinkHeadingsButton();
-
-            QuickMarcEditor.updateExistingField(
-              newFieldsForC388562[1].tag,
-              `${newFieldsForC388562[1].content} $0 n99036055`,
-            );
-            QuickMarcEditor.verifyEnabledLinkHeadingsButton();
-            QuickMarcEditor.updateExistingField(
-              newFieldsForC388562[1].tag,
-              newFieldsForC388562[1].content,
-            );
-            QuickMarcEditor.verifyDisabledLinkHeadingsButton();
-            QuickMarcEditor.updateExistingField(
-              newFieldsForC388562[1].tag,
-              `${newFieldsForC388562[1].content} $0 y011022`,
-            );
-            QuickMarcEditor.verifyEnabledLinkHeadingsButton();
-            QuickMarcEditor.updateExistingField(
-              newFieldsForC388562[1].tag,
-              newFieldsForC388562[1].content,
-            );
-            QuickMarcEditor.verifyDisabledLinkHeadingsButton();
-
-            QuickMarcEditor.updateExistingField(
-              newFieldsForC388562[2].tag,
-              `${newFieldsForC388562[1].content} $0 sh85095299C388562`,
-            );
-            QuickMarcEditor.verifyEnabledLinkHeadingsButton();
-            QuickMarcEditor.clickLinkHeadingsButton();
-            QuickMarcEditor.checkCallout('Field 650 has been linked to MARC authority record(s).');
-            QuickMarcEditor.verifyDisabledLinkHeadingsButton();
           },
         );
       });

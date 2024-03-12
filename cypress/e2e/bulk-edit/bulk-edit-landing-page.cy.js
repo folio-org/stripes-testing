@@ -1,6 +1,11 @@
 import TopMenu from '../../support/fragments/topMenu';
 import permissions from '../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  userIdentifiers,
+  itemIdentifiers,
+  instanceIdentifiers,
+  holdingsIdentifiers,
+} from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import Users from '../../support/fragments/users/users';
 
 let user;
@@ -51,31 +56,28 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyRecordTypesAccordion();
 
       // verify identifier items
-      BulkEditSearchPane.verifyRecordIdentifierItems();
-      BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
-      BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
-      BulkEditSearchPane.verifyDragNDropExternalIDsArea();
-      BulkEditSearchPane.verifyDragNDropUsernamesArea();
+      BulkEditSearchPane.verifyRecordTypeIdentifiers('Users');
+      userIdentifiers.forEach((identifier) => {
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', identifier);
+      });
 
-      BulkEditSearchPane.verifyItemIdentifiersDefaultState();
+      BulkEditSearchPane.verifyRecordTypeIdentifiers('Items');
       BulkEditSearchPane.clickRecordTypesAccordion();
       BulkEditSearchPane.verifyRecordTypesAccordionCollapsed();
       BulkEditSearchPane.clickRecordTypesAccordion();
-      BulkEditSearchPane.verifyDragNDropItemBarcodeArea();
-      BulkEditSearchPane.verifyDragNDropItemUUIDsArea();
-      BulkEditSearchPane.verifyDragNDropItemHRIDsArea();
-      BulkEditSearchPane.verifyDragNDropItemFormerIdentifierArea();
-      BulkEditSearchPane.verifyDragNDropItemAccessionNumberArea();
-      BulkEditSearchPane.verifyDragNDropItemHoldingsUUIDsArea();
+      itemIdentifiers.forEach((identifier) => {
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', identifier);
+      });
 
-      BulkEditSearchPane.verifyInstanceIdentifiers();
-      ['Instance UUIDs', 'Instance HRIDs', 'ISBN', 'ISSN'].forEach((identifier) => BulkEditSearchPane.verifyDragNDropInstanceIdentifierArea(identifier));
+      BulkEditSearchPane.verifyRecordTypeIdentifiers('Instances');
+      instanceIdentifiers.forEach((identifier) => {
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instances', identifier);
+      });
 
-      BulkEditSearchPane.verifyHoldingIdentifiers();
-      BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
-      BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
-      BulkEditSearchPane.verifyDragNDropInstanceHRIDsArea();
-      BulkEditSearchPane.verifyDragNDropHoldingsItemBarcodesArea();
+      BulkEditSearchPane.verifyRecordTypeIdentifiers('Holdings');
+      holdingsIdentifiers.forEach((identifier) => {
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', identifier);
+      });
 
       // verify logs items
       BulkEditSearchPane.openLogsSearch();

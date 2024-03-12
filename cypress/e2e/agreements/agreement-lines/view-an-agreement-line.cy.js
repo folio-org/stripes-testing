@@ -33,7 +33,7 @@ describe('agreements', () => {
       Agreements.deleteViaApi(agreementId);
     });
 
-    it('C761 View an Agreement line (erm) (TaaS)', { tags: ['extendedPath', 'erm'] }, () => {
+    it('C761 View an Agreement line (erm) (TaaS)', { tags: ['extendedPathErm', 'erm'] }, () => {
       AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
       AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(
         Agreements.defaultAgreement.name,
