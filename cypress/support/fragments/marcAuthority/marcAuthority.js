@@ -387,7 +387,7 @@ export default {
       .as('authorityId');
     return cy.get('@authorityId');
   },
-  
+
   getRecordsViaAPI: (deleted = false, idOnly = false, acceptHeader = null, query = null) => {
     cy.okapiRequest({
       method: 'GET',
