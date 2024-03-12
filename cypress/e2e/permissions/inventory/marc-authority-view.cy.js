@@ -32,11 +32,7 @@ describe('Permissions', () => {
         userData.password = createdUserProperties.password;
 
         cy.getAdminToken();
-        DataImport.uploadFileViaApi(
-          marcFile,
-          fileName,
-          jobProfileToRun,
-        ).then((response) => {
+        DataImport.uploadFileViaApi(marcFile, fileName, jobProfileToRun).then((response) => {
           response.entries.forEach((record) => {
             instanceID = record[propertyName].idList[0];
           });

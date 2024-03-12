@@ -70,15 +70,13 @@ describe('data-import', () => {
       'C350666 Create a MARC authority record via data import (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        DataImport.uploadFileViaApi(
-          'test-auth-file.mrc',
-          fileName,
-          jobProfileToRun,
-        ).then((response) => {
-          response.entries.forEach((record) => {
-            createdAuthorityIDs.push(record[propertyName].idList[0]);
-          });
-        });
+        DataImport.uploadFileViaApi('test-auth-file.mrc', fileName, jobProfileToRun).then(
+          (response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityIDs.push(record[propertyName].idList[0]);
+            });
+          },
+        );
         Logs.waitFileIsImported(fileName);
         Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);

@@ -21,11 +21,7 @@ describe('MARC', () => {
       // required with special tests, but when step into test I see 403 some time in /metadata-provider/jobExecutions request
       cy.getAdminToken();
 
-      DataImport.uploadFileViaApi(
-        marcFile,
-        fileName,
-        jobProfileToRun,
-      ).then((response) => {
+      DataImport.uploadFileViaApi(marcFile, fileName, jobProfileToRun).then((response) => {
         response.entries.forEach((record) => {
           createdInstanceID = record[propertyName].idList[0];
         });
@@ -62,7 +58,7 @@ describe('MARC', () => {
         HoldingsRecordView.duplicate();
         InventoryNewHoldings.checkSource();
         // TODO: clarify what is "Verify that you are able to add or access an item" and "Behavior is no different than what FOLIO currently supports" in TestRail
-      }
+      },
     );
   });
 });

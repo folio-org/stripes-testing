@@ -147,6 +147,10 @@ export default {
     );
   },
 
+  verifyEffectiveLocationForItemInDetails: (location) => {
+    cy.get('div[data-testid="item-effective-location"]').first().should('contain', location);
+  },
+
   verifyEffectiveLocation: (location) => {
     cy.expect(
       Accordion('Location').find(KeyValue('Effective location for item')).has({ value: location }),
@@ -307,6 +311,17 @@ export default {
     cy.get('div[data-testid="item-permanent-location"]')
       .find('div[class*=kvValue]')
       .should('have.text', value);
+  },
+  verifyHoldingsPermanentLocation: (value) => {
+    cy.get('div[data-testid="holding-permanent-location"]')
+      .find('div[class*=kvValue]')
+      .should('have.text', value);
+  },
+  verifyItemEffectiveLocation: (value) => {
+    cy.get('div[data-testid="item-effective-location"]')
+      .last()
+      .find('div[class*=kvValue]')
+      .should('contain', value);
   },
   verifyItemMetadata: (updatedHoldingsDate, updatedItemData, userId) => {
     const convertedHoldingsDate = new Date(updatedHoldingsDate).getTime();

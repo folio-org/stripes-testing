@@ -230,7 +230,10 @@ describe('eHoldings', () => {
             EHoldingsPackage.editProxyActions();
             EHoldingsPackages.fillDateCoverage(yesterday, today);
             EHoldingsPackage.saveAndClose();
-            EHoldingsPackages.verifyCustomCoverageDates(yesterdayPaddingZero, todayWithoutPaddingZero);
+            EHoldingsPackages.verifyCustomCoverageDates(
+              yesterdayPaddingZero,
+              todayWithoutPaddingZero,
+            );
           });
         });
       },

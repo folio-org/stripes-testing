@@ -41,15 +41,20 @@ export default {
 
   getInstanceNoteTypeByNameAndTenant(name, tenantId) {
     return cy.getConsortiaId().then((consortiaId) => {
-      cy.getPublications([tenantId], '/instance-note-types?limit=2000&offset=0').then((publicationId) => {
-        cy.okapiRequest({
-          method: REQUEST_METHOD.GET,
-          path: `consortia/${consortiaId}/publications/${publicationId}/results`,
-        }).then(({ body }) => {
-          const instanceNoteTypes = JSON.parse(body.publicationResults.find((publication) => publication.tenantId === tenantId).response).instanceNoteTypes;
-          return instanceNoteTypes.find((instanceNoteType) => instanceNoteType.name === name);
-        });
-      });
+      cy.getPublications([tenantId], '/instance-note-types?limit=2000&offset=0').then(
+        (publicationId) => {
+          cy.okapiRequest({
+            method: REQUEST_METHOD.GET,
+            path: `consortia/${consortiaId}/publications/${publicationId}/results`,
+          }).then(({ body }) => {
+            const instanceNoteTypes = JSON.parse(
+              body.publicationResults.find((publication) => publication.tenantId === tenantId)
+                .response,
+            ).instanceNoteTypes;
+            return instanceNoteTypes.find((instanceNoteType) => instanceNoteType.name === name);
+          });
+        },
+      );
     });
   },
 

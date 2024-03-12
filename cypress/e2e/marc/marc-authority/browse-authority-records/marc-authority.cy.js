@@ -68,15 +68,13 @@ describe('MARC', () => {
           NewJobProfile.linkActionProfileByName('Default - Create MARC Authority');
           NewJobProfile.saveAndClose();
 
-          DataImport.uploadFileViaApi(
-            'oneMarcAuthority.mrc',
-            fileName,
-            jobProfileToRun,
-          ).then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityID = record[propertyName].idList[0];
-            });
-          });
+          DataImport.uploadFileViaApi('oneMarcAuthority.mrc', fileName, jobProfileToRun).then(
+            (response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityID = record[propertyName].idList[0];
+              });
+            },
+          );
         });
       });
 
