@@ -483,8 +483,11 @@ export default {
   },
 
   editMarcBibliographicRecord: () => {
+    cy.wait(1000);
     cy.do(actionsButton.click());
+    cy.wait(1000);
     cy.do(editMARCBibRecordButton.click());
+    cy.wait(1000);
     cy.expect(QuickMarcEditorRow({ tagValue: '999' }).exists());
   },
 
@@ -929,7 +932,7 @@ export default {
   checkAddItem: (holdingsRecordId) => {
     cy.expect(
       instanceDetailsSection
-        .find(Section({ id: holdingsRecordId }))
+        .find(Section({ id: `holdings.${holdingsRecordId}` }))
         .find(Button({ id: `clickable-new-item-${holdingsRecordId}` }))
         .exists(),
     );
