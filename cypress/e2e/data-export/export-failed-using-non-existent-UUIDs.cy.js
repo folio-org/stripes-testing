@@ -20,7 +20,7 @@ describe('data-export', () => {
       marc: 'Genre_1_record_C353209.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
     };
-    const searchHeading = 'Peplum films';
+    const searchHeading = 'C353209 Peplum films';
     let createdRecordIDs;
 
     before(() => {
@@ -60,7 +60,7 @@ describe('data-export', () => {
 
     it(
       'C353209 Export failed when using ".csv" file with non-existent UUIDs (Spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPathBroken', 'spitfire'] },
       () => {
         MarcAuthorities.searchBy('Keyword', searchHeading);
         MarcAuthorities.downloadSelectedRecordWithRowIdx();
