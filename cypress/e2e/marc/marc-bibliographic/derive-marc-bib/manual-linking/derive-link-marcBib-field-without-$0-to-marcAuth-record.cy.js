@@ -70,7 +70,7 @@ describe('MARC', () => {
         ];
 
         before('Creating test data', () => {
-          // make sure there are no duplicate authority records in the system
+          // Make sure there are no duplicate authority records in the system
           cy.getAdminToken().then(() => {
             MarcAuthorities.getMarcAuthoritiesViaApi({
               limit: 100,
