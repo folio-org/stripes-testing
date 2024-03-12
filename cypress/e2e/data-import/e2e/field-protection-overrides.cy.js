@@ -293,7 +293,6 @@ describe('data-import', () => {
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC17018-BeforeOverride.mrc', fileNameForCreatingInstance);
         JobProfiles.waitFileIsUploaded();
@@ -330,7 +329,6 @@ describe('data-import', () => {
 
           // upload a marc file
           cy.visit(TopMenu.dataImportPath);
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
           JobProfiles.waitFileIsUploaded();
@@ -380,7 +378,6 @@ describe('data-import', () => {
 
           // upload a marc file
           cy.visit(TopMenu.dataImportPath);
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(editedFileNameRev2, fileNameForOverride);
           JobProfiles.waitFileIsUploaded();

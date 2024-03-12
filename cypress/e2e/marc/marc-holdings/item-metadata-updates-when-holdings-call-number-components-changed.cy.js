@@ -65,7 +65,6 @@ describe('MARC', () => {
         marcFiles[0].jobProfileToRun,
       );
       // upload a marc file for creating new instance
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       JobProfiles.waitFileIsImported(marcFiles[0].fileName);
       Logs.openFileDetails(marcFiles[0].fileName);
       FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);

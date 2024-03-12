@@ -20,7 +20,6 @@ describe('data-import', () => {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         cy.wait(2000);
         DataImport.uploadBunchOfFiles(filePathForUpload, quantityOfFiles, fileName);

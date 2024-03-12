@@ -53,6 +53,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Username');
         BulkEditSearchPane.changeShowColumnCheckbox('Username');
         BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Username');
         BulkEditActions.openInAppStartBulkEditFrom();

@@ -34,7 +34,7 @@ import FieldMappingProfileView from '../../../support/fragments/data_import/mapp
 describe('data-import', () => {
   describe('Importing MARC Authority files', () => {
     const testData = {
-      authorityTitle: 'Elizabeth II, Queen of Great Britain, 1926-',
+      authorityTitle: 'C374186 Elizabeth II, Queen of Great Britain, 1926-',
       instanseTitle: 'Elizabeth',
 
       csvFile: `exportedCSVFile${getRandomPostfix()}.csv`,
@@ -213,7 +213,7 @@ describe('data-import', () => {
         DataImport.uploadFile(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
-        JobProfiles.search(testData.jobProfileName);
+        JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(testData.uploadModifiedMarcFile);
         Logs.checkStatusOfJobProfile('Completed');

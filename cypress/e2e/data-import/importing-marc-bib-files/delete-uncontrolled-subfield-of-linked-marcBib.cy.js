@@ -25,6 +25,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -55,6 +56,7 @@ describe('data-import', () => {
       ],
       tag250: '250',
     };
+    const fields = ['100', '245', '250'];
     function replace999SubfieldsInPreupdatedFile(
       exportedFileName,
       preUpdatedFileName,
@@ -251,6 +253,20 @@ describe('data-import', () => {
           nameForPreUpdatedMarcBibFile,
           nameForUpdatedMarcFile,
         );
+
+        // in case in Settings - Data import - MARC field protection we have these fields as protected
+        // for this test case purpose they should be removed
+        fields.forEach((field) => {
+          cy.getAdminToken().then(() => {
+            MarcFieldProtection.getListViaApi({
+              query: `"field"=="${field}"`,
+            }).then((list) => {
+              if (list) {
+                list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+              }
+            });
+          });
+        });
 
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);

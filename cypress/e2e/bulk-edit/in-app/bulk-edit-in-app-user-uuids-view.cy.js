@@ -63,10 +63,11 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyUserBarcodesResultAccordion();
         BulkEditSearchPane.verifyUsersActionShowColumns();
 
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Last name');
         BulkEditSearchPane.changeShowColumnCheckbox('Last name');
         BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Last name');
 
-        BulkEditSearchPane.changeShowColumnCheckbox('Email');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Email');
         BulkEditSearchPane.verifyResultColumTitles('Email');
       },
     );

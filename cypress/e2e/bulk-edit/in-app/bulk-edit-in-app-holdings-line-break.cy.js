@@ -96,7 +96,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(...holdingsHRIDs);
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [holdingsNote]);
-        BulkEditSearchPane.changeShowColumnCheckbox('Action note');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Action note');
         BulkEditSearchPane.verifySpecificItemsMatched(holdingsNote);
 
         const location = 'Online';

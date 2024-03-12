@@ -689,6 +689,7 @@ export default {
     method: 'DELETE',
     path: `orders/composite-orders/${orderId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   }),
 
   deleteOrderByOrderNumberViaApi(orderNumber) {
