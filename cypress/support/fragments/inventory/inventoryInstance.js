@@ -149,7 +149,7 @@ const itemStatusKeyValue = KeyValue('Item status');
 const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(viewHoldingsButton);
 const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
 const detailsViewPaneheader = PaneHeader({ id: 'paneHeaderpane-instancedetails' });
-const expandConsortiaHoldingsButton = Button({ id: 'accordion-toggle-button-consortial-holdings' });
+const consortiaHoldingsAccordion = Accordion({ id: 'consortialHoldings' });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -810,11 +810,22 @@ export default {
   },
 
   expandConsortiaHoldings() {
-    cy.do(expandConsortiaHoldingsButton.click());
+    cy.wait(2000);
+    cy.do(consortiaHoldingsAccordion.clickHeader());
+    cy.wait(2000);
+    cy.expect(consortiaHoldingsAccordion.has({ open: true }));
   },
 
-  expandMemberHoldings(memberName) {
-    cy.do(Button({ id: `accordion-toggle-button-${memberName}-holdings` }).click());
+  expandMemberSubHoldings(memberId) {
+    cy.wait(2000);
+    cy.do(Accordion({ id: memberId }).clickHeader());
+    cy.wait(1000);
+    cy.expect(Accordion({ id: memberId }).has({ open: true }));
+  },
+
+  expandMemberSubSubHoldings(memberId, holdingsId) {
+    cy.wait(2000);
+    cy.do(Accordion({ id: `consortialHoldings.${memberId}.${holdingsId}` }).clickHeader());
   },
 
   createHoldingsRecord: (permanentLocation) => {
@@ -1594,28 +1605,24 @@ export default {
 
   verifyConsortiaHoldingsAccordion(isOpen = false) {
     cy.expect([
-      instanceDetailsSection.find(Section({ id: 'consortialHoldings' })).exists(),
-      instanceDetailsSection.find(Accordion({ id: 'consortialHoldings' })).has({ open: isOpen }),
+      Section({ id: 'consortialHoldings' }).exists(),
+      Accordion({ id: 'consortialHoldings' }).has({ open: isOpen }),
     ]);
   },
 
-  openConsortiaHoldingsAccordion(isOpen = true) {
+  verifyMemberSubHoldingsAccordion(memberId, isOpen = true) {
     cy.wait(2000);
-    cy.do(Accordion({ id: 'consortialHoldings' }).clickHeader());
     cy.expect([
-      instanceDetailsSection.find(Accordion({ id: 'consortialHoldings' })).has({ open: isOpen }),
-      instanceDetailsSection.find(Accordion({ id: 'cs00000int_0005' })).exists(),
+      Accordion({ id: 'consortialHoldings' }).has({ open: isOpen }),
+      Accordion({ id: memberId }).exists(),
     ]);
   },
 
-  openMemberHoldingsAccordion(holdingsId, isOpen = true) {
+  verifyMemberSubSubHoldingsAccordion(memberId, holdingsId, isOpen = true) {
     cy.wait(2000);
-    cy.do(instanceDetailsSection.find(Accordion({ id: 'cs00000int_0005' })).clickHeader());
     cy.expect([
-      instanceDetailsSection.find(Accordion({ id: 'cs00000int_0005' })).has({ open: isOpen }),
-      instanceDetailsSection
-        .find(Accordion({ id: `consortialHoldings.cs00000int_0005.${holdingsId}` }))
-        .exists(),
+      Accordion({ id: memberId }).has({ open: isOpen }),
+      Accordion({ id: `consortialHoldings.cs00000int_0005.${holdingsId}` }).exists(),
     ]);
   },
 };

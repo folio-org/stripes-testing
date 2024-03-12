@@ -7,11 +7,15 @@ import ConsortiumManager from '../../../../support/fragments/settings/consortium
 import TopMenu from '../../../../support/fragments/topMenu';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
+import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
+import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
   describe('Instance', () => {
     let user;
-    const testData = {};
+    const testData = {
+      itemBarcode: uuid(),
+    };
 
     before('Create test data', () => {
       cy.getAdminToken();
@@ -38,6 +42,7 @@ describe('Inventory', () => {
             testData.holdingTypeId = res[0].id;
           });
           cy.getLocations({ limit: 1 }).then((locations) => {
+            testData.locationName = locations.name;
             testData.locationId = locations.id;
           });
           cy.getLoanTypes({ limit: 1 }).then((res) => {
@@ -61,7 +66,7 @@ describe('Inventory', () => {
             ],
             items: [
               {
-                barcode: uuid(),
+                barcode: testData.itemBarcode,
                 status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                 permanentLoanType: { id: testData.loanTypeId },
                 materialType: { id: testData.materialTypeId },
@@ -87,13 +92,15 @@ describe('Inventory', () => {
         });
     });
 
-    // after('Delete test data', () => {
-    //   cy.resetTenant();
-    //   cy.getAdminToken();
-    //   Users.deleteViaApi(user.userId);
-    //   cy.setTenant(Affiliations.College);
-    //   InventoryInstance.deleteInstanceViaApi(C402760testData.instanceIds[0]);
-    // });
+    after('Delete test data', () => {
+      cy.resetTenant();
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+      cy.setTenant(Affiliations.University);
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
+        testData.instanceIds.instanceId,
+      );
+    });
 
     it(
       'C423392 (CONSORTIA) User can see the the name of locations from Member tenant when he is on the second Member tenant (consortia) (folijet)',
@@ -102,11 +109,25 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instanceIds.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.verifyConsortiaHoldingsAccordion();
-        InventoryInstance.openConsortiaHoldingsAccordion();
-        InventoryInstance.openMemberHoldingsAccordion(testData.instanceIds.holdings[0].id);
+        InventoryInstance.expandConsortiaHoldings();
+        InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.University);
+        InventoryInstance.expandMemberSubHoldings(Affiliations.University);
+        InventoryInstance.verifyMemberSubSubHoldingsAccordion(
+          Affiliations.University,
+          testData.instanceIds.holdings[0].id,
+        );
         InventoryInstance.openHoldingView();
         HoldingsRecordView.waitLoading();
-        // HoldingsRecordView
+        HoldingsRecordView.checkTitle(`Holdings • ${testData.locationName}`);
+        HoldingsRecordView.close();
+        InventoryInstance.expandMemberSubSubHoldings(
+          Affiliations.University,
+          testData.instanceIds.holdings[0].id,
+        );
+        InventoryInstance.openItemByBarcode(testData.itemBarcode);
+        ItemRecordView.verifyEffectiveLocationForItemInDetails(testData.locationName);
+        ItemRecordView.verifyHoldingsPermanentLocation(testData.locationName);
+        ItemRecordView.verifyItemEffectiveLocation(testData.locationName);
       },
     );
   });
