@@ -88,11 +88,11 @@ describe('orders: create an order', () => {
         order.id = orderId;
         Orders.createPOLineViaActions();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-        OrderLines.fillPolWithEuroCurrency(defaultFund, '100', '1', location.institutionId);
+        OrderLines.fillPolWithEuroCurrency(defaultFund, '100', '1', location.name);
         OrderLines.backToEditingOrder();
         Orders.createPOLineViaActions();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-        OrderLines.fillPolWithPLNCurrency(defaultFund, '100', '1', location.institutionId);
+        OrderLines.fillPolWithPLNCurrency(defaultFund, '100', '1', location.name);
         OrderLines.backToEditingOrder();
         Orders.openOrder();
         OrderLines.selectPOLInOrder(0);

@@ -96,7 +96,7 @@ describe('Orders', () => {
     defaultOrder.vendor = organization.name;
 
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(defaultOrder).then((orderResponse) => {
+    Orders.createApprovedOrderForRollover(defaultOrder, true).then((orderResponse) => {
       defaultOrder.id = orderResponse.id;
       orderNumber = orderResponse.poNumber;
     });
@@ -146,7 +146,7 @@ describe('Orders', () => {
         '90',
         '1',
         '90',
-        location.institutionId,
+        location.name,
       );
       OrderLines.backToEditingOrder();
     },

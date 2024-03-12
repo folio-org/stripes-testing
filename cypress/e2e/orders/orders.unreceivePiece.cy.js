@@ -41,10 +41,10 @@ describe('orders: Unreceive piece from Order', () => {
 
   it(
     'C10925 Unreceive piece using "Actions" button (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'nonParallel'] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       const barcode = Helper.getRandomBarcode();
-      const caption = 'autotestCaption';
+      const enumeration = 'autotestCaption';
       Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', poNumber);
@@ -56,11 +56,11 @@ describe('orders: Unreceive piece from Order', () => {
         Orders.receiveOrderViaActions();
         // Receive piece
         Receiving.selectPOLInReceive(orderLine.titleOrPackage);
-        Receiving.receivePiece(0, caption, barcode);
-        Receiving.checkReceivedPiece(0, caption, barcode);
+        Receiving.receivePiece(0, enumeration, barcode);
+        Receiving.checkReceivedPiece(0, enumeration, barcode);
         // Unreceive piece
         Receiving.unreceivePiece();
-        Receiving.checkUnreceivedPiece(caption);
+        Receiving.checkUnreceivedPiece(enumeration);
         // inventory part
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToItem();

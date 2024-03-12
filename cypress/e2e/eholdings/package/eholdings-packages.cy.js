@@ -15,16 +15,10 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('eHoldings', () => {
   describe('Package', () => {
     let userId;
-    const defaultPackage = { ...EHoldingsPackages.getdefaultPackage() };
 
     afterEach(() => {
       cy.getAdminToken();
       Users.deleteViaApi(userId);
-    });
-
-    after(() => {
-      cy.getAdminToken();
-      EHoldingsPackages.deletePackageViaAPI(defaultPackage.data.attributes.name);
     });
 
     it(
@@ -43,7 +37,9 @@ describe('eHoldings', () => {
               waiter: () => EHoldingsPackage.waitLoading(specialPackage.name),
             });
             EHoldingsPackage.addToHoldings();
+            cy.wait(1000);
             EHoldingsPackage.verifyHoldingStatus();
+            cy.wait(1000);
             EHoldingsPackage.filterTitles();
             EHoldingsPackage.checkEmptyTitlesList();
             // reset test data
@@ -81,26 +77,30 @@ describe('eHoldings', () => {
       },
     );
 
-    it('C3464 Update package proxy (spitfire)', { tags: ['criticalPath', 'spitfire'] }, () => {
-      cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
-        userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.eholdingsPath,
-          waiter: EHoldingsPackages.waitLoading,
-        });
+    it(
+      'C3464 Update package proxy (spitfire)',
+      { tags: ['criticalPathBroken', 'spitfire'] },
+      () => {
+        cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
+          userId = userProperties.userId;
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: EHoldingsPackages.waitLoading,
+          });
 
-        EHoldingSearch.switchToPackages();
-        UHoldingsProvidersSearch.byProvider('Edinburgh Scholarship Online');
-        EHoldingsPackages.openPackage();
-        EHoldingsPackage.editProxyActions();
-        EHoldingsPackages.changePackageRecordProxy().then((newProxy) => {
-          EHoldingsPackage.saveAndClose();
-          // additional delay related with update of proxy information in ebsco services
-          cy.wait(10000);
-          EHoldingsPackages.verifyPackageRecordProxy(newProxy);
+          EHoldingSearch.switchToPackages();
+          UHoldingsProvidersSearch.byProvider('Edinburgh Scholarship Online');
+          EHoldingsPackages.openPackage();
+          EHoldingsPackage.editProxyActions();
+          EHoldingsPackages.changePackageRecordProxy().then((newProxy) => {
+            EHoldingsPackage.saveAndClose();
+            // additional delay related with update of proxy information in ebsco services
+            cy.wait(10000);
+            EHoldingsPackages.verifyPackageRecordProxy(newProxy);
+          });
         });
-      });
-    });
+      },
+    );
 
     it(
       'C690 Remove a package from your holdings (spitfire)',
@@ -117,9 +117,13 @@ describe('eHoldings', () => {
               path: `${TopMenu.eholdingsPath}/packages/${specialPackage.id}`,
               waiter: () => EHoldingsPackage.waitLoading(specialPackage.name),
             });
+            cy.wait(1000);
             EHoldingsPackage.removeFromHoldings();
+            cy.wait(1000);
             EHoldingsPackage.verifyHoldingStatus(FILTER_STATUSES.NOT_SELECTED);
+            cy.wait(1000);
             EHoldingsPackage.filterTitles(FILTER_STATUSES.NOT_SELECTED);
+            cy.wait(1000);
             EHoldingsPackage.checkEmptyTitlesList();
             // reset test data
             EHoldingsPackage.addToHoldings();
@@ -149,6 +153,23 @@ describe('eHoldings', () => {
         });
       },
     );
+  });
+});
+
+describe('eHoldings', () => {
+  describe('Package', () => {
+    let userId;
+    const defaultPackage = { ...EHoldingsPackages.getdefaultPackage() };
+
+    afterEach(() => {
+      cy.getAdminToken();
+      Users.deleteViaApi(userId);
+    });
+
+    after(() => {
+      cy.getAdminToken();
+      EHoldingsPackages.deletePackageViaAPI(defaultPackage.data.attributes.name);
+    });
 
     it(
       'C756 Remove a tag from a package record (spitfire)',
@@ -198,16 +219,21 @@ describe('eHoldings', () => {
             });
 
             const yesterday = DateTools.getPreviousDayDate();
+            const yesterdayPaddingZero = DateTools.clearPaddingZero(yesterday);
             const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
+            const todayWithoutPaddingZero = DateTools.clearPaddingZero(today);
             EHoldingSearch.switchToPackages();
             // wait until package is created via API
-            cy.wait(10000);
+            cy.wait(15000);
             UHoldingsProvidersSearch.byProvider(defaultPackage.data.attributes.name);
             EHoldingsPackages.openPackage();
             EHoldingsPackage.editProxyActions();
             EHoldingsPackages.fillDateCoverage(yesterday, today);
             EHoldingsPackage.saveAndClose();
-            EHoldingsPackages.verifyCustomCoverageDates(yesterday, today);
+            EHoldingsPackages.verifyCustomCoverageDates(
+              yesterdayPaddingZero,
+              todayWithoutPaddingZero,
+            );
           });
         });
       },

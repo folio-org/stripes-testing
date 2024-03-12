@@ -98,7 +98,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
         BulkEditSearchPane.verifyRecordTypesAccordion();
 
-        BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);

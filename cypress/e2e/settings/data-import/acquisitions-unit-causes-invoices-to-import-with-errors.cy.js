@@ -27,7 +27,8 @@ import AcquisitionUnits from '../../../support/fragments/settings/acquisitionUni
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import FileManager from '../../../support/utils/fileManager';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -35,8 +36,9 @@ describe('data-import', () => {
     const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.gobi;
     const filePathForUpload = 'ediFileForC345356.edi';
+    const editedFileForUpload = `C345356 autotestFile.${getRandomPostfix()}.edi`;
     const fileName = `C345356 autotestFile.${getRandomPostfix()}.edi`;
-    const invoiceNumber = '19353';
+    const invoiceNumber = `${randomFourDigitNumber()}3`;
     const quantityOfItems = '1';
     const mappingProfile = {
       name: `C345356 GOBI invoice - Acq Units.${getRandomPostfix()}`,
@@ -73,23 +75,23 @@ describe('data-import', () => {
           path: SettingsMenu.acquisitionUnitsPath,
           waiter: AcquisitionUnits.waitLoading,
         });
+        // need to edit file for creating unique invoice number
+        DataImport.editMarcFile(filePathForUpload, editedFileForUpload, ['19353'], [invoiceNumber]);
       });
     });
 
     after('delete test data', () => {
+      cy.loginAsAdmin();
+      cy.visit(SettingsMenu.acquisitionUnitsPath);
+      AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
+      AcquisitionUnits.delete(defaultAcquisitionUnit.name);
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-        cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => {
-          cy.deleteInvoiceFromStorageViaApi(id);
-        });
-        cy.loginAsAdmin();
-        cy.visit(SettingsMenu.acquisitionUnitsPath);
-        AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-        AcquisitionUnits.delete(defaultAcquisitionUnit.name);
         Users.deleteViaApi(user.userId);
       });
+      FileManager.deleteFile(`cypress/fixtures/${editedFileForUpload}`);
     });
 
     it(
@@ -122,9 +124,8 @@ describe('data-import', () => {
 
         // upload a marc file for creating of the new instance, holding and item
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile(filePathForUpload, fileName);
+        DataImport.uploadFile(editedFileForUpload, fileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();

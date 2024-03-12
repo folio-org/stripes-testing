@@ -141,7 +141,7 @@ describe('data-import', () => {
 
     it(
       'C380474 Import to create open orders: Physical resource with Instances, Holdings, Items (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.createOrderMappingProfile(
@@ -205,7 +205,6 @@ describe('data-import', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);
         JobProfiles.waitFileIsUploaded();

@@ -126,7 +126,7 @@ describe('data-import', () => {
 
     it(
       'C345353 Check EDIFACT mapping syntax for multiple fields mapping into 1 invoice field (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // create Field mapping profiles
         FieldMappingProfiles.waitLoading();
@@ -167,7 +167,6 @@ describe('data-import', () => {
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, fileNameForFirstImport);
         JobProfiles.waitFileIsUploaded();
@@ -191,7 +190,6 @@ describe('data-import', () => {
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, fileNameForSecondImport);
         JobProfiles.waitFileIsUploaded();

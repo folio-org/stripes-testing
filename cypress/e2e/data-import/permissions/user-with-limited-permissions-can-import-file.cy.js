@@ -100,7 +100,7 @@ describe('data-import', () => {
 
     it(
       'C356841 Confirm a user with limited Data Import permissions can import a file (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.login(firstUser.username, firstUser.password, {
           path: SettingsMenu.mappingProfilePath,
@@ -174,7 +174,6 @@ describe('data-import', () => {
         FileExtensions.verifyActionMenuAbsent();
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', nameMarcFile);
         JobProfiles.waitFileIsUploaded();

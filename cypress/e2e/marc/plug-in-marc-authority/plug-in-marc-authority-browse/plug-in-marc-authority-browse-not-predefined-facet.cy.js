@@ -5,8 +5,6 @@ import Users from '../../../../support/fragments/users/users';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -15,38 +13,41 @@ import getRandomStringCode from '../../../../support/utils/genereteTextCode';
 describe('MARC', () => {
   describe('plug-in MARC authority', () => {
     describe('plug-in MARC authority | Browse', () => {
-      const randomCode = getRandomStringCode(4);
+      const randomCode = getRandomStringCode(8);
       const testData = {
         authoritySourceFile: {
           id: uuid(),
           name: `Source option created by USER 6${getRandomPostfix()}`,
           code: randomCode,
           type: 'names',
-          baseUrl: `id.loc.gov/authorities/pv6/${getRandomPostfix()}`,
+          baseUrl: `http://id.loc.gov/authorities/pv6/${getRandomPostfix()}`,
           selectable: false,
           hridManagement: { startNumber: 112 },
         },
       };
       const createdAuthorityIDs = [];
-      const marcFileToEdit = 'Auth_1_record_C365110.mrc';
+      const marcFileToEdit = 'Auth_1_record_original_C365110.mrc';
       const marcFiles = [
         {
           marc: 'oneMarcBib.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
           numOfRecords: 1,
+          propertyName: 'relatedInstanceInfo',
         },
         {
           marc: 'Auth_2_records_C365110.mrc',
           fileName: `marcFileGenreC365110.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
-          numOfRecords: 2,
+          numOfRecords: 4,
+          propertyName: 'relatedAuthorityInfo',
         },
         {
-          marc: 'Auth_1_C365110.mrc',
+          marc: 'Auth_1_record_C365110.mrc',
           fileName: `marcFileGenreC365110.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           numOfRecords: 1,
+          propertyName: 'relatedAuthorityInfo',
         },
       ];
       const predefinedPrefixes = [
@@ -85,38 +86,32 @@ describe('MARC', () => {
         cy.createTempUser([
           Permissions.moduleDataImportEnabled.gui,
           Permissions.inventoryAll.gui,
+          Permissions.inventoryAll.internal,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
+
           marcFiles.slice(0, 2).forEach((marcFile) => {
-            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-              () => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdAuthorityIDs.push(link.split('/')[5]);
-                  });
-                }
-              },
-            );
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
           });
         });
       });
 
       beforeEach('Login to the application', () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
         });
       });
 
@@ -125,6 +120,7 @@ describe('MARC', () => {
         createdAuthorityIDs.slice(1).forEach((id) => {
           MarcAuthority.deleteViaAPI(id);
         });
+        InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
@@ -133,62 +129,73 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire'] },
         () => {
           // #1 Create autority source
+          cy.getAdminToken();
           MarcAuthority.createAuthoritySource(testData.authoritySourceFile).then(() => {
             // #2 - #6 Upload marc authority file with the created "code"
             DataImport.editMarcFile(
               marcFileToEdit,
               marcFiles[2].marc,
-              ['PLKV'],
+              ['PLKVPLKV'],
               [testData.authoritySourceFile.code],
             );
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFiles[2].marc, marcFiles[2].fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFiles[2].jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFiles[2].fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(marcFiles[2].fileName);
-            Logs.getCreatedItemsID().then((link) => {
-              createdAuthorityIDs.push(link.split('/')[5]);
+            DataImport.uploadFileViaApi(
+              marcFiles[2].marc,
+              marcFiles[2].fileName,
+              marcFiles[2].jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFiles[2].propertyName].idList[0]);
+
+                InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
+                InventoryInstances.selectInstance();
+                InventoryInstance.editMarcBibliographicRecord();
+                InventoryInstance.verifyAndClickLinkIcon('700');
+                MarcAuthorities.switchToBrowse();
+                // #7- #8 Select "Personal name" browse option. Fill in the input field  with the query which will return records to the result list
+                MarcAuthorities.searchByParameter('Personal name', 'C365110Canady, Robert Lynn');
+                // #9 - #10 Select facet option which you created at step 1 (e.g.: "Test_source_browse") from "Authority source" dropdown.
+                MarcAuthorities.chooseAuthoritySourceOption(testData.authoritySourceFile.name);
+                MarcAuthorities.closeMarcViewPane();
+                MarcAuthorities.verifyAllResultsHaveSource([testData.authoritySourceFile.name]);
+                MarcAuthorities.selectItem('C365110Canady, Robert Lynn');
+                // #11 Verify that the prefix value from "010 $a" field matched to selected "Authority source" facet option which you created by API request at step 1.
+                MarcAuthority.contains(testData.authoritySourceFile.code);
+
+                // #12 Select "LC Name Authority file (LCNAF)" facet option from pre-defined list:
+                MarcAuthorities.chooseAuthoritySourceOption('LC Name Authority file (LCNAF)');
+                MarcAuthorities.verifyAllResultsHaveSource([
+                  testData.authoritySourceFile.name,
+                  'LC Name Authority file (LCNAF)',
+                ]);
+                // #13 - 14 Update the search box with a new query: "Bechhöfer, Susi, 1936-" and click "Search"
+                MarcAuthorities.searchByParameter('Personal name', 'C365110Bechhöfer, Susi, 1936-');
+                // #15 Click on the higlighted in bold "Heading/Reference" value from the browse result pane.
+                MarcAuthorities.selectTitle('C365110Bechhöfer, Susi, 1936-');
+
+                // #16 Verify that the prefix value from "010 $a" ("001") field matched to selected "Authority source" facet option.
+                // eslint-disable-next-line no-tabs
+                MarcAuthority.contains('010	   	$a n');
+                // #17 Select "Not specified" facet option.
+                MarcAuthorities.chooseAuthoritySourceOption('Not specified');
+                MarcAuthorities.verifyAllResultsHaveSource([
+                  testData.authoritySourceFile.name,
+                  'LC Name Authority file (LCNAF)',
+                  'Not specified',
+                ]);
+                // #18 - #19 Update the search box with a new query: "Stone, Robert B (not from pre-defined list)". Click on the "Search" button.
+                MarcAuthorities.searchByParameter(
+                  'Personal name',
+                  'C365110Stone, Robert B (not from pre-defined list)',
+                );
+                // #20 Click on the higlighted in bold "Heading/Reference" value from the browse result pane.
+                MarcAuthorities.selectTitle('C365110Stone, Robert B (not from pre-defined list)');
+                // #21 Verify that there is no prefix value displayed in the "010 $a" ("001") field, which matched to the prefix values from predefined.
+                predefinedPrefixes.forEach((prefix) => {
+                  // eslint-disable-next-line no-tabs
+                  MarcAuthority.notContains(`010	   	$a ${prefix}`);
+                });
+              });
             });
-          });
-          cy.visit(TopMenu.inventoryPath);
-          InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          InventoryInstance.verifyAndClickLinkIcon('700');
-          MarcAuthorities.switchToBrowse();
-          // #7- #8 Select "Personal name" browse option. Fill in the input field  with the query which will return records to the result list
-          MarcAuthorities.searchByParameter('Personal name', 'C365110Canady, Robert Lynn');
-          // #9 - #10 Select facet option which you created at step 1 (e.g.: "Test_source_browse") from "Authority source" dropdown.
-          MarcAuthorities.chooseAuthoritySourceOption(testData.authoritySourceFile.name);
-          // #11 Verify that the prefix value from "010 $a" field matched to selected "Authority source" facet option which you created by API request at step 1.
-          MarcAuthority.contains(testData.authoritySourceFile.code);
-
-          // #12 Select "LC Name Authority file (LCNAF)" facet option from pre-defined list:
-          MarcAuthorities.chooseAuthoritySourceOption('LC Name Authority file (LCNAF)');
-          // #13 - 14 Update the search box with a new query: "Bechhöfer, Susi, 1936-" and click "Search"
-          MarcAuthorities.searchByParameter('Personal name', 'C365110Bechhöfer, Susi, 1936-');
-          // #15 Click on the higlighted in bold "Heading/Reference" value from the browse result pane.
-          MarcAuthorities.selectTitle('C365110Bechhöfer, Susi, 1936-');
-
-          // #16 Verify that the prefix value from "010 $a" ("001") field matched to selected "Authority source" facet option.
-          // eslint-disable-next-line no-tabs
-          MarcAuthority.contains('010	   	$a n');
-          // #17 Select "Not specified" facet option.
-          MarcAuthorities.chooseAuthoritySourceOption('Not specified');
-          // #18 - #19 Update the search box with a new query: "Stone, Robert B (not from pre-defined list)". Click on the "Search" button.
-          MarcAuthorities.searchByParameter(
-            'Personal name',
-            'C365110Stone, Robert B (not from pre-defined list)',
-          );
-          // #20 Click on the higlighted in bold "Heading/Reference" value from the browse result pane.
-          MarcAuthorities.selectTitle('C365110Stone, Robert B (not from pre-defined list)');
-          // #21 Verify that there is no prefix value displayed in the "010 $a" ("001") field, which matched to the prefix values from predefined.
-          predefinedPrefixes.forEach((prefix) => {
-            // eslint-disable-next-line no-tabs
-            MarcAuthority.notContains(`010	   	$a ${prefix}`);
           });
         },
       );

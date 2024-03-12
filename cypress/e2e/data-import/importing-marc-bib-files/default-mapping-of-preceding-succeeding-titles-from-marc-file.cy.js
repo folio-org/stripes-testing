@@ -27,7 +27,6 @@ describe('data-import', () => {
       'C10923 Check the default mapping of Preceding/Succeeding titles from the MARC record to the Inventory Instance record (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);
         JobProfiles.waitFileIsUploaded();

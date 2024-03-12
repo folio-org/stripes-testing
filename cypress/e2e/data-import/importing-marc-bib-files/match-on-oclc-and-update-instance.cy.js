@@ -189,7 +189,6 @@ describe('data-import', () => {
 
         // upload a marc file for creating of the new instance
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForCreate);
         JobProfiles.waitFileIsUploaded();
@@ -213,6 +212,7 @@ describe('data-import', () => {
           instanceHrid = initialInstanceHrId;
 
           cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate(itemsForCreateInstance.catalogedDateUi);
@@ -263,7 +263,6 @@ describe('data-import', () => {
 
           // upload a marc file for updating instance
           cy.visit(TopMenu.dataImportPath);
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForUpdate);
           JobProfiles.waitFileIsUploaded();
@@ -282,6 +281,7 @@ describe('data-import', () => {
           FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
 
           cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();

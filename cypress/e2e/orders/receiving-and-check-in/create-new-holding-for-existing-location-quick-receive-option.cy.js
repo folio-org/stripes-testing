@@ -125,7 +125,6 @@ describe('Orders', () => {
         SelectLocationModal.selectLocation(testData.location.institutionName);
 
         // Click "Save and close" button
-        SelectLocationModal.clickSaveButton();
         EditPieceModal.checkFieldsConditions([
           {
             label: 'Order line locations',

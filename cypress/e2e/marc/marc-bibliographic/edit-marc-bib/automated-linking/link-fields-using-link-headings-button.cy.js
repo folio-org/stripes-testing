@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -23,12 +21,14 @@ describe('MARC', () => {
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numOfRecords: 1,
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileForC388536.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 25,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
@@ -174,6 +174,19 @@ describe('MARC', () => {
         ];
 
         before('Creating user and data', () => {
+          cy.getAdminToken();
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
+          });
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -183,27 +196,7 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            marcFiles.forEach((marcFile) => {
-              cy.loginAsAdmin({
-                path: TopMenu.dataImportPath,
-                waiter: DataImport.waitLoading,
-              }).then(() => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdAuthorityIDs.push(link.split('/')[5]);
-                  });
-                }
-              });
-            });
-
+            cy.loginAsAdmin();
             cy.visit(TopMenu.inventoryPath).then(() => {
               InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
               InventoryInstances.selectInstance();
@@ -257,7 +250,7 @@ describe('MARC', () => {
               '\\',
               '$a C388536 Stelfreeze, Brian',
               '$e artist.',
-              '$0 id.loc.gov/authorities/names/n91065740C388536',
+              '$0 http://id.loc.gov/authorities/names/n91065740C388536',
               '',
             );
             QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -267,7 +260,7 @@ describe('MARC', () => {
               '\\',
               '$a C388536 Sprouse, Chris',
               '$e artist.',
-              '$0 id.loc.gov/authorities/names/nb98017694',
+              '$0 http://id.loc.gov/authorities/names/nb98017694',
               '',
             );
             QuickMarcEditor.checkLinkHeadingsButton();
@@ -280,9 +273,11 @@ describe('MARC', () => {
             QuickMarcEditor.afterDeleteNotification('700');
 
             QuickMarcEditor.clickLinkHeadingsButton();
+            cy.wait(1000);
             QuickMarcEditor.checkCallout(
               'Field 100, 240, 600, 630, 655, 700, 710, 711, 800, and 830 has been linked to MARC authority record(s).',
             );
+            cy.wait(1000);
             QuickMarcEditor.checkCallout(
               'Field 110, 111, 130, 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.',
             );
@@ -295,7 +290,7 @@ describe('MARC', () => {
               '\\',
               '$a C388536 Stelfreeze, Brian',
               '$e artist.',
-              '$0 id.loc.gov/authorities/names/n91065740C388536',
+              '$0 http://id.loc.gov/authorities/names/n91065740C388536',
               '',
             );
             matchingNaturalIds.forEach((matchs) => {
@@ -323,7 +318,7 @@ describe('MARC', () => {
               '\\',
               '$a C388536 Sprouse, Chris',
               '$e artist.',
-              '$0 id.loc.gov/authorities/names/nb98017694',
+              '$0 http://id.loc.gov/authorities/names/nb98017694',
               '',
             );
             QuickMarcEditor.verifyTagFieldAfterUnlinking(
@@ -335,7 +330,9 @@ describe('MARC', () => {
             );
 
             QuickMarcEditor.clickLinkHeadingsButton();
+            cy.wait(1000);
             QuickMarcEditor.checkCallout('Field 700 has been linked to MARC authority record(s).');
+            cy.wait(1000);
             QuickMarcEditor.checkCallout(
               'Field 110, 111, 130, 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.',
             );
@@ -358,7 +355,7 @@ describe('MARC', () => {
               '\\',
               '$a C388536 Sprouse, Chris',
               '$e artist.',
-              '$0 id.loc.gov/authorities/names/nb98017694',
+              '$0 http://id.loc.gov/authorities/names/nb98017694',
               '',
             );
             QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -368,7 +365,7 @@ describe('MARC', () => {
               '\\',
               '$a C388536 Stelfreeze, Brian',
               '$e artist.',
-              '$0 id.loc.gov/authorities/names/n91065740C388536',
+              '$0 http://id.loc.gov/authorities/names/n91065740C388536',
               '',
             );
             // Wait for requests to be finished.

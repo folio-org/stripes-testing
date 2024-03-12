@@ -25,7 +25,7 @@ describe('agreements', () => {
       );
     });
 
-    it('C757 Create an Agreement (erm)', { tags: ['smoke', 'erm'] }, () => {
+    it('C757 Create an Agreement (erm)', { tags: ['smokeErm', 'erm'] }, () => {
       Agreements.create(defaultAgreement);
       InteractorsTools.checkCalloutMessage(calloutMessage);
       Agreements.checkAgreementPresented(defaultAgreement.name);

@@ -354,51 +354,6 @@ export default {
       });
   },
 
-  createJobProfileWithLinkedMatchAndActionProfilesViaApi: (
-    nameProfile,
-    matchProfileId,
-    actProfileId,
-  ) => {
-    return cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'data-import-profiles/jobProfiles',
-        body: {
-          profile: {
-            name: nameProfile,
-            description: '',
-            dataType: 'MARC',
-          },
-          addedRelations: [
-            {
-              masterProfileId: null,
-              masterWrapperId: null,
-              masterProfileType: 'JOB_PROFILE',
-              detailProfileId: matchProfileId,
-              detailWrapperId: null,
-              detailProfileType: 'MATCH_PROFILE',
-              order: 0,
-            },
-            {
-              masterProfileId: matchProfileId,
-              masterWrapperId: null,
-              masterProfileType: 'MATCH_PROFILE',
-              detailProfileId: actProfileId,
-              detailWrapperId: null,
-              detailProfileType: 'ACTION_PROFILE',
-              order: 0,
-              reactTo: 'MATCH',
-            },
-          ],
-          deletedRelations: [],
-        },
-        isDefaultSearchParamsRequired: false,
-      })
-      .then((responce) => {
-        return responce.body.id;
-      });
-  },
-
   createJobProfileWithLinkedMatchProfileViaApi: (nameProfile, matchProfileId) => {
     return cy
       .okapiRequest({
@@ -416,6 +371,50 @@ export default {
               detailProfileId: matchProfileId,
               detailProfileType: PROFILE_TYPE_NAMES.MATCH_PROFILE,
               order: 0,
+            },
+          ],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((responce) => {
+        return responce.body.id;
+      });
+  },
+
+  createJobProfileWithLinkedMatchAndActionProfilesViaApi: (
+    nameProfile,
+    matchProfileId,
+    actionProfileId,
+  ) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/jobProfiles',
+        body: {
+          profile: {
+            name: nameProfile,
+            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+          },
+          addedRelations: [
+            {
+              masterProfileId: null,
+              masterWrapperId: null,
+              masterProfileType: 'JOB_PROFILE',
+              detailProfileId: matchProfileId,
+              detailWrapperId: null,
+              detailProfileType: 'MATCH_PROFILE',
+              order: 0,
+            },
+            {
+              masterProfileId: matchProfileId,
+              masterWrapperId: null,
+              masterProfileType: 'MATCH_PROFILE',
+              detailProfileId: actionProfileId,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
+              order: 0,
+              reactTo: 'MATCH',
             },
           ],
           deletedRelations: [],

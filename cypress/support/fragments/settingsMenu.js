@@ -34,6 +34,9 @@ export default {
   exportFundPath: 'settings/finance/export-fund',
   // Inventory
   inventoryPath: 'settings/inventory',
+  classificationTypes: 'settings/inventory/classificationTypes',
+  itemNoteTypesPath: '/settings/inventory/itemNoteTypes',
+  loanTypesPath: '/settings/inventory/loantypes',
   materialTypePath: '/settings/inventory/materialtypes',
   targetProfilesPath: 'settings/inventory/targetProfiles',
   urlRelationshipPath: 'settings/inventory/URLrelationship',
@@ -41,6 +44,11 @@ export default {
   statisticalCodesPath: 'settings/inventory/StatisticalCodeSettings',
   hridHandlingPath: 'settings/inventory/hridHandling',
   loantypesPath: 'settings/inventory/loantypes',
+  alternativeTitleTypes: 'settings/inventory/alternativeTitleTypes',
+  natureOfContent: 'settings/inventory/natureOfContentTerms',
+  instanceNoteTypes: 'settings/inventory/instanceNoteTypes',
+  holdingsNoteTypesPath: 'settings/inventory/holdingsNoteTypes',
+  holdingsTypes: 'settings/inventory/holdingsTypes',
   // Invoice
   invoiceApprovalsPath: 'settings/invoice/approvals',
   invoiceAdjustmentsPath: 'settings/invoice/adjustments',

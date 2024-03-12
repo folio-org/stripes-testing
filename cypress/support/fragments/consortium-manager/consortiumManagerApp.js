@@ -7,11 +7,23 @@ import {
   including,
   Spinner,
   Section,
+  calloutTypes,
 } from '../../../../interactors';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const selectMembersButton = Button('Select members');
 const collapseAllButton = Button('Collapse all');
 const expandAllButton = Button('Expand all');
+
+export const messages = {
+  created: (name, members) => `${name} was successfully created for ${members} libraries.`,
+  updated: (name, members) => `${name} was successfully updated for ${members} libraries.`,
+  deleted: (settingName, entityName) => `The ${settingName} ${entityName} was successfully deleted`,
+  noPermission: (members) => `You do not have permissions at one or more members: ${members}`,
+  pleaseFillIn: 'Please fill this in to continue',
+  codeRequired: 'Code is required',
+  notUnique: (fieldName) => `${fieldName} is already in use at one or more member libraries.`,
+};
 
 export const settingsItems = {
   circulation: 'Circulation',
@@ -30,7 +42,7 @@ export default {
     );
   },
 
-  verifySetingPaneIsDisplayed() {
+  verifySettingPaneIsDisplayed() {
     cy.expect(Section({ id: 'settings-nav-pane' }).exists());
   },
 
@@ -80,11 +92,10 @@ export default {
 
   verifyStatusOfConsortiumManager(members) {
     this.waitLoading();
-    this.verifySetingPaneIsDisplayed();
+    this.verifySettingPaneIsDisplayed();
     this.verifyPaneIncludesSettings();
     this.verifyMembersSelected(members);
     this.verifySelectMembersButton();
-    this.verifyChooseSettingsIsDisplayed();
   },
 
   clickSelectMembers() {
@@ -143,5 +154,14 @@ export default {
 
   clickActionsInPermissionSets() {
     cy.do([Pane('Permission sets').find(Button('Actions')).click(), Button('Compare').exists()]);
+  },
+
+  verifyListIsEmpty() {
+    cy.expect(HTML(including('The list contains no items')).exists());
+  },
+
+  checkMessage(message, calloutType = calloutTypes.success) {
+    InteractorsTools.checkCalloutMessage(including(message), calloutType);
+    InteractorsTools.closeCalloutMessage();
   },
 };

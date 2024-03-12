@@ -1,7 +1,5 @@
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
@@ -26,12 +24,14 @@ describe('MARC', () => {
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numOfRecords: 2,
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'marcAuthFileForC369084.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 2,
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
 
@@ -65,11 +65,12 @@ describe('MARC', () => {
 
     const twoMarcBibsToLink = [
       {
-        marcBibRecord: 'The other side of paradise : a memoir / Staceyann Chin.',
+        marcBibRecord: 'C369084The other side of paradise : a memoir / Staceyann Chin.',
         linkingFields: linkingTagForFirstMarcBib,
       },
       {
-        marcBibRecord: 'Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin',
+        marcBibRecord:
+          'C369084Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin',
         linkingFields: linkingTagForSecondMarcBib,
       },
     ];
@@ -85,26 +86,20 @@ describe('MARC', () => {
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
+        cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkStatusOfJobProfile('Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  createdAuthorityIDs.push(link.split('/')[5]);
-                });
-              }
-            },
-          );
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+            });
+          });
         });
 
+        cy.loginAsAdmin();
         cy.visit(TopMenu.inventoryPath).then(() => {
           InventoryInstances.waitContentLoading();
           twoMarcBibsToLink.forEach((marcBib) => {
@@ -112,6 +107,7 @@ describe('MARC', () => {
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             marcBib.linkingFields.forEach((linking) => {
+              cy.wait(2000);
               QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
               MarcAuthorities.switchToSearch();
               InventoryInstance.verifySelectMarcAuthorityModal();
@@ -135,9 +131,8 @@ describe('MARC', () => {
     after('Deleting created user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
-      for (let i = 0; i < 2; i++) {
-        InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[i]);
-      }
+      InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
+      InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[1]);
       MarcAuthority.deleteViaAPI(createdAuthorityIDs[2]);
     });
 
@@ -176,7 +171,7 @@ describe('MARC', () => {
           '100',
           '1',
           '\\',
-          '$a Chin, Staceyann, $d 1972- C369084 $e Author $e Narrator $0 id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052',
+          '$a Chin, Staceyann, $d 1972- C369084 $e Author $e Narrator $0 http://id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
           19,
@@ -185,7 +180,7 @@ describe('MARC', () => {
           '0',
           '$a Feminist poetry C369084',
           '',
-          '$0 id.loc.gov/authorities/subjects/sh85047755',
+          '$0 http://id.loc.gov/authorities/subjects/sh85047755',
           '',
         );
         QuickMarcEditor.checkLinkButtonExist('100');
@@ -201,14 +196,14 @@ describe('MARC', () => {
           '100',
           '1',
           '\\',
-          '$a Chin, Staceyann, $d 1972- C369084 $e author. $0 id.loc.gov/authorities/names/n2008052404',
+          '$a Chin, Staceyann, $d 1972- C369084 $e author. $0 http://id.loc.gov/authorities/names/n2008052404',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
           28,
           '600',
           '1',
           '0',
-          '$a Chin, Staceyann, $d 1972- C369084 $x Childhood and youth. $0 id.loc.gov/authorities/names/n2008052404',
+          '$a Chin, Staceyann, $d 1972- C369084 $x Childhood and youth. $0 http://id.loc.gov/authorities/names/n2008052404',
         );
         QuickMarcEditor.pressCancel();
 

@@ -44,7 +44,7 @@ describe('bulk-edit', () => {
         path: TopMenu.bulkEditPath,
         waiter: BulkEditSearchPane.waitLoading,
       });
-      BulkEditSearchPane.verifyDragNDropItemBarcodeArea();
+      BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
     });
 
     after('delete test data', () => {

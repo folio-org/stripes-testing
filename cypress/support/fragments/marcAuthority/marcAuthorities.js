@@ -32,6 +32,7 @@ import {
 } from '../../../../interactors';
 import { MARC_AUTHORITY_BROWSE_OPTIONS, MARC_AUTHORITY_SEARCH_OPTIONS } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
+import QuickMarcEditorWindow from '../quickMarcEditor';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -46,6 +47,7 @@ const marcViewSection = Section({ id: 'marc-view-pane' });
 const editorSection = Section({ id: 'quick-marc-editor-pane' });
 const typeOfHeadingSelect = MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' });
 const findAuthorityModal = Modal({ id: 'find-authority-modal' });
+const detailsMarcViewPaneheader = PaneHeader({ id: 'paneHeadermarc-view-pane' });
 
 // actions dropdown window
 const authorityActionsDropDown = DropdownMenu();
@@ -59,7 +61,7 @@ const marcAuthUpdatesCsvBtn = authorityActionsDropDown.find(
 // auth report modal
 const authReportModal = Modal({ id: 'authorities-report-modal' });
 const exportButton = authReportModal.find(Button('Export'));
-
+const newAuthorityButton = Button({ id: 'dropdown-clickable-create-authority' });
 const resetButton = Button('Reset all');
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
 const headingTypeAccordion = Accordion('Type of heading');
@@ -97,10 +99,16 @@ const authoritySourceOptions = [
   'Not specified',
 ];
 const thesaurusAccordion = Accordion('Thesaurus');
+const sharedTextInDetailView = 'Shared • ';
+const localTextInDetailView = 'Local • ';
 
 export default {
   waitLoading() {
     cy.expect(PaneHeader('MARC authority').exists());
+  },
+  clickNewAuthorityButton() {
+    cy.do([actionsButton.click(), newAuthorityButton.click()]);
+    QuickMarcEditorWindow.waitLoading();
   },
   clickActionsAndReportsButtons() {
     cy.do([actionsButton.click(), marcAuthUpdatesCsvBtn.click()]);
@@ -214,12 +222,7 @@ export default {
   },
 
   verifyNumberOfTitles(columnIndex, linkValue) {
-    cy.expect(
-      MultiColumnListRow({ indexRow: 'row-0' })
-        .find(MultiColumnListCell({ columnIndex, content: linkValue }))
-        .find(Link())
-        .exists(),
-    );
+    cy.expect(MultiColumnListCell({ columnIndex, content: linkValue }).find(Link()).exists());
   },
 
   verifyNumberOfTitlesForRowWithValue(value, itemCount) {
@@ -231,6 +234,21 @@ export default {
         .find(MultiColumnListCell({ column: 'Number of titles' }))
         .has({ content: itemCount.toString() }),
     );
+  },
+
+  clickNumberOfTitlesByHeading(heading) {
+    cy.wrap(
+      MultiColumnListRow({
+        isContainer: true,
+        content: including(heading),
+      })
+        .find(MultiColumnListCell({ column: 'Number of titles' }))
+        .find(Link())
+        .href(),
+    ).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
   },
 
   verifyEmptyNumberOfTitlesForRowWithValue(value) {
@@ -440,8 +458,20 @@ export default {
     ]);
   },
 
+  checkHeadlineInBoldExistsInMarkViewPaneContent(heading) {
+    cy.expect(
+      marcViewSectionContent
+        .find(HTML({ className: including('font-weight-bold--'), text: heading }))
+        .exists(),
+    );
+  },
+
   verifyViewPaneContent(value) {
     cy.expect([marcViewSection.exists(), marcViewSectionContent.has({ text: including(value) })]);
+  },
+
+  verifyViewPaneContentExists() {
+    cy.expect(marcViewSection.exists());
   },
 
   getViewPaneContent() {
@@ -1314,5 +1344,70 @@ export default {
 
   checkSelectOptionFieldContent(option) {
     cy.expect(selectField.has({ checkedOptionText: option }));
+  },
+
+  checkRecordInBold(heading) {
+    cy.expect(
+      MultiColumnListCell(including(heading)).has({ innerHTML: including('anchorLink--') }),
+    );
+  },
+
+  searchButtonClick() {
+    cy.do(searchButton.click());
+  },
+
+  checkRecordsResultListIsAbsent() {
+    cy.expect(
+      rootSection
+        .find(HTML(including('Choose a filter or enter a search query to show results')))
+        .exists(),
+    );
+  },
+
+  checkRecordsCountExistsInSharedFacet() {
+    this.getRecordsCountInOptionsInSharedFacet('Yes').then((count) => {
+      // eslint-disable-next-line no-unused-expressions
+      cy.expect(count).to.exist;
+    });
+    this.getRecordsCountInOptionsInSharedFacet('No').then((count) => {
+      // eslint-disable-next-line no-unused-expressions
+      cy.expect(count).to.exist;
+    });
+  },
+
+  getRecordsCountInOptionsInSharedFacet(optionName) {
+    return cy.then(() => {
+      return accordionShared
+        .find(Checkbox({ name: optionName }))
+        .find(HTML({ className: including('checkBoxLabelInfo--') }))
+        .perform((element) => element.textContent);
+    });
+  },
+
+  checkTypeOfHeadingFacetCleared() {
+    cy.expect(typeOfHeadingSelect.has({ selectedCount: 0 }));
+  },
+
+  checkPreviousAndNextPaginationButtonsShown() {
+    cy.expect([previousButton.visible(), nextButton.visible()]);
+  },
+
+  verifySharedIcon(row = 0) {
+    cy.expect(
+      rootSection.find(MultiColumnListCell({ row, innerHTML: including('sharedIcon') })).exists(),
+    );
+  },
+
+  checkSharedTextInDetailView(isShared = true) {
+    const expectedText = isShared ? sharedTextInDetailView : localTextInDetailView;
+    cy.expect(detailsMarcViewPaneheader.has({ title: including(expectedText) }));
+  },
+
+  verifyAllResultsHaveSource(sourceNames) {
+    this.getResultsListByColumn(4).then((cellTexts) => {
+      cellTexts.forEach((cellText) => {
+        expect(cellText).to.be.oneOf([...sourceNames]);
+      });
+    });
   },
 };

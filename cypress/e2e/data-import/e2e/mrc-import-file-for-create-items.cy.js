@@ -128,7 +128,7 @@ describe('data-import', () => {
 
     it(
       'C343334 MARC file import with creating a new mapping profiles, action profiles and job profile (folijet)',
-      { tags: ['smoke', 'folijet', 'nonParallel'] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         // create mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -160,7 +160,6 @@ describe('data-import', () => {
         JobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', fileName);
         JobProfiles.waitFileIsUploaded();

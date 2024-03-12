@@ -36,7 +36,8 @@ describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let instanceHrid;
-    const errorMessage = 'DuplicateRecordException: Incoming file may contain duplicates';
+    const errorMessage =
+      'Record: Incoming record could be a duplicate, incoming record generation should not be the same as matched record generation and the execution of job should be started after of creating the previous record generation';
     const title = 'Introductory Solid State Physics with MATLAB Applications';
     const firstFilePathForUpload = 'marcBibFileForC410708_file1.mrc';
     const secondFilePathForUpload = 'marcBibFileForC410708_file2.mrc';
@@ -104,7 +105,7 @@ describe('data-import', () => {
 
     it(
       'C410708 Verify that clear error message appears after importing a file with duplicate records in it (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         DataImport.uploadFile(firstFilePathForUpload, firstFileName);
         JobProfiles.waitFileIsUploaded();
@@ -153,7 +154,6 @@ describe('data-import', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, secondFileName);
         JobProfiles.waitFileIsUploaded();

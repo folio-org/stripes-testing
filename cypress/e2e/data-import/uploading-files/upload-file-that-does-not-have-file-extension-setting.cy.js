@@ -34,7 +34,6 @@ describe('data-import', () => {
         const fileNameWithBlockedFileExtension = `C2356 autotestFile.${getRandomPostfix()}.mrk`;
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(
           filePathWithNotExistingFileExtension,
@@ -44,7 +43,6 @@ describe('data-import', () => {
         DataImport.verifyFileIsImported(fileNameWithNotExistingFileExtension);
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathWithBlockedFileExtension, fileNameWithBlockedFileExtension);
         DataImport.verifyImportBlockedModal();

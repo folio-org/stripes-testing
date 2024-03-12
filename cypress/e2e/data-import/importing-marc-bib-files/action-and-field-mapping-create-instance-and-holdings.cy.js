@@ -222,7 +222,6 @@ describe('data-import', () => {
 
         // upload a marc file for creating
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -238,6 +237,7 @@ describe('data-import', () => {
           instanceHrid = hrid;
 
           cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.openHoldingView();

@@ -108,10 +108,6 @@ describe('Orders: Inventory interaction', () => {
     InventoryHoldings.deleteHoldingRecordViaApi(testData.instance.holdingId);
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Orders.deleteOrderByOrderNumberViaApi(testData.orderNumber);
-    // InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-    // testData.locations.forEach((location) => {
-    //   Locations.deleteViaApi(location);
-    // });
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(testData.user.userId);
   });
@@ -124,12 +120,7 @@ describe('Orders: Inventory interaction', () => {
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
       OrderLines.selectRandomInstanceInTitleLookUP(`${testData.instance.instanceTitle}`, 0);
-      OrderLines.editPOLineInfoAndChangeLocation(
-        `${testData.organization.accounts[0].name} (${testData.organization.accounts[0].accountNo})`,
-        'Purchase',
-        testData.locations[1].institutionId,
-        '2',
-      );
+      OrderLines.editPOLineInfoAndChangeLocation(testData.locations[1].name, '2');
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       OrderLines.selectPOLInOrder(0);
@@ -144,6 +135,7 @@ describe('Orders: Inventory interaction', () => {
       // Need to wait,while instance will be saved
       cy.wait(7000);
       InventoryItems.closeItem();
+      InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
       InventoryInstance.openItemByBarcodeAndIndex('No barcode');
       InventoryItems.edit();
       ItemRecordEdit.addBarcode(barcodeForSecondItem);
@@ -151,6 +143,7 @@ describe('Orders: Inventory interaction', () => {
       // Need to wait,while instance will be saved
       cy.wait(7000);
       InventoryItems.closeItem();
+      InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForFirstItem);
       ItemRecordView.checkItemDetails(
         testData.locations[1].name,
@@ -158,6 +151,7 @@ describe('Orders: Inventory interaction', () => {
         ITEM_STATUS_NAMES.ON_ORDER,
       );
       InventoryItems.closeItem();
+      InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForSecondItem);
       ItemRecordView.checkItemDetails(
         testData.locations[1].name,

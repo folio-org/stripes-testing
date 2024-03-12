@@ -40,6 +40,7 @@ describe('orders: Receiving and Check-in', () => {
   let orderNumber;
   let circ2LocationServicePoint;
   let location;
+  let orderLineTitleName;
 
   before(() => {
     cy.getAdminToken();
@@ -63,10 +64,15 @@ describe('orders: Receiving and Check-in', () => {
             OrderLines.selectRandomInstanceInTitleLookUP('*', 17);
             OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
               'Purchase',
-              locationResponse.institutionId,
+              locationResponse.name,
               '1',
             );
             OrderLines.backToEditingOrder();
+            OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${order.poNumber}*"` }).then(
+              (orderLines) => {
+                orderLineTitleName = orderLines[0];
+              },
+            );
             Orders.openOrder();
           });
         },
@@ -89,14 +95,14 @@ describe('orders: Receiving and Check-in', () => {
 
   it(
     'C374133: Copy number applies to the item when receiving through "Receive" option (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'nonParallel'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.receiveOrderViaActions();
       Receiving.selectLinkFromResultsList();
       Receiving.receivePieceWithOnlyCopyNumber(0, copyNumber);
-      Receiving.selectInstanceLinkInReceive();
+      Receiving.selectInstanceInReceive(orderLineTitleName);
       InventoryInstance.openHoldingsAccordion(location.name);
       InventoryInstance.openItemByBarcodeAndIndex('No barcode');
       ItemRecordView.verifyEffectiveLocation(location.name);

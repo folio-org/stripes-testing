@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
@@ -28,9 +26,9 @@ describe('MARC', () => {
             newContent: '$a test $0 n83169267',
             secondBox: '2',
             thirdBox: '\\',
-            fourthBox: '$a Lee, Stan, $d 1922-2018',
+            fourthBox: '$a C388519Lee, Stan, $d 1922-2018',
             fifthBox: '',
-            sixthBox: '$0 id.loc.gov/authorities/names/n83169267',
+            sixthBox: '$0 http://id.loc.gov/authorities/names/n83169267',
             seventhBox: '',
             isLinked: true,
           },
@@ -40,9 +38,9 @@ describe('MARC', () => {
             content: '$0 nb98017694 $2 tst $e author',
             secondBox: '2',
             thirdBox: '\\',
-            fourthBox: '$a Sprouse, Chris',
+            fourthBox: '$a C388519Sprouse, Chris',
             fifthBox: '$e author',
-            sixthBox: '$0 id.loc.gov/authorities/names/nb98017694',
+            sixthBox: '$0 http://id.loc.gov/authorities/names/nb98017694',
             seventhBox: '$2 tst',
             isLinked: true,
           },
@@ -52,9 +50,9 @@ describe('MARC', () => {
             content: '$0 no2021056177 $a Chin S. $d unknown',
             secondBox: '2',
             thirdBox: '\\',
-            fourthBox: '$a Chin, Staceyann, $d 1972- $h Spoken word $t Crossfire.',
+            fourthBox: '$a C388519Chin, Staceyann, $d 1972- $h Spoken word $t Crossfire.',
             fifthBox: '',
-            sixthBox: '$0 id.loc.gov/authorities/names/no2021056177',
+            sixthBox: '$0 http://id.loc.gov/authorities/names/no2021056177',
             seventhBox: '',
             isLinked: true,
           },
@@ -72,7 +70,7 @@ describe('MARC', () => {
             secondBox: '2',
             thirdBox: '\\',
             content: '$a test 2 $0 nt4433',
-            newContent: '$a test 2 $0 id.loc.gov/authorities/names/no2021056177',
+            newContent: '$a test 2 $0 http://id.loc.gov/authorities/names/no2021056177',
             isLinked: false,
           },
         ];
@@ -92,24 +90,28 @@ describe('MARC', () => {
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numOfRecords: 1,
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileForC388519-1.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
           {
             marc: 'marcAuthFileForC388519-2.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
           {
             marc: 'marcAuthFileForC388519-3.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
@@ -128,6 +130,19 @@ describe('MARC', () => {
             });
           });
 
+          cy.getAdminToken();
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
+          });
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -137,24 +152,6 @@ describe('MARC', () => {
             userData = createdUserProperties;
 
             linkableFields.forEach((field) => QuickMarcEditor.setRulesForField(field, true));
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdRecordIDs.push(link.split('/')[5]);
-                  });
-                }
-              });
-            });
 
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,

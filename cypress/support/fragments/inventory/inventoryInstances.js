@@ -70,6 +70,7 @@ const searchInstancesOptions = [
   'Identifier (all)',
   'ISBN',
   'ISSN',
+  'LCCN, normalized',
   'OCLC number, normalized',
   'Instance notes (all)',
   'Instance administrative notes',
@@ -115,6 +116,7 @@ const searchInstancesOptionsValues = [
   'identifier',
   'isbn',
   'issn',
+  'lccn',
   'oclc',
   'instanceNotes',
   'instanceAdministrativeNotes',
@@ -972,13 +974,14 @@ export default {
     cy.do(Checkbox(source).click());
   },
 
-  importWithOclc: (oclc) => {
+  importWithOclc: (
+    oclc,
+    profile = 'Inventory Single Record - Default Create Instance (Default)',
+  ) => {
     cy.do([
       actionsButton.click(),
       Button({ id: 'dropdown-clickable-import-record' }).click(),
-      Select({ name: 'selectedJobProfileId' }).choose(
-        'Inventory Single Record - Default Create Instance (Default)',
-      ),
+      Select({ name: 'selectedJobProfileId' }).choose(profile),
       singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
       singleRecordImportModal.find(Button('Import')).click(),
     ]);

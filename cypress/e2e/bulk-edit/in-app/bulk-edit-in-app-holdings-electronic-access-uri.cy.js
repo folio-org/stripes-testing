@@ -84,7 +84,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.downloadMatchedResults();
-        ExportFile.verifyFileIncludes(matchedRecordsFileName, [`,${item.uri};`]);
+        ExportFile.verifyFileIncludes(matchedRecordsFileName, [`;${item.uri};`]);
         BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
         BulkEditActions.openInAppStartBulkEditFrom();
@@ -102,13 +102,13 @@ describe('bulk-edit', () => {
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyChangesInAreYouSureForm('Electronic access', [item.lastUri]);
         BulkEditActions.downloadPreview();
-        ExportFile.verifyFileIncludes(previewFileName, [`,${item.lastUri};`]);
+        ExportFile.verifyFileIncludes(previewFileName, [`;${item.lastUri};`]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyChangesUnderColumns('Electronic access', item.lastUri);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [`,${item.lastUri};`]);
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [`;${item.lastUri};`]);
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToHoldings();

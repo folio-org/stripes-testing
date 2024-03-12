@@ -12,12 +12,10 @@ describe('data-import', () => {
   describe('Log details', () => {
     let user;
     // checking of deleting window needs more time that import of 150 records
-    const firstFilePathForUpload = 'oneThousandMarcBib.mrc';
-    const firstMarcFileName = `C353638 autotestFileName_${getRandomPostfix()}`;
+    const filePathForUpload = 'marcBibFileForC353638.mrc';
+    const firstMarcFileName = `C353638 autotestFileName${getRandomPostfix()}.mrc`;
+    const secondMarcFileName = `C353638 autotestFileName${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    // use the file with 150 records for quick import
-    const secondFilePathForUpload = 'marcBibFileForC353638.mrc';
-    const secondMarcFileName = `C353638 autotestFileName_${getRandomPostfix()}`;
 
     before('login', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
@@ -37,11 +35,10 @@ describe('data-import', () => {
 
     it(
       'C353638 Verify proper system behavior for canceled import (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'nonParallel'] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile(firstFilePathForUpload, firstMarcFileName);
+        DataImport.uploadFile(filePathForUpload, firstMarcFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
@@ -51,16 +48,15 @@ describe('data-import', () => {
         DataImport.cancelDeleteImportJob();
         DataImport.deleteImportJob(firstMarcFileName);
         DataImport.confirmDeleteImportJob();
-        Logs.checkStatusOfJobProfile('Stopped by user');
+        Logs.checkJobStatus(firstMarcFileName, 'Stopped by user');
         Logs.openFileDetails(firstMarcFileName);
         FileDetails.verifyLogDetailsPageIsOpened(firstMarcFileName);
         FileDetails.filterRecordsWithError(FileDetails.visibleColumnsInSummaryTable.ERROR);
         FileDetails.verifyLogSummaryTableIsHidden();
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile(secondFilePathForUpload, secondMarcFileName);
+        DataImport.uploadFile(filePathForUpload, secondMarcFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();

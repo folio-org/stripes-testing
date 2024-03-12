@@ -101,6 +101,10 @@ export default {
     internal: 'ui-quick-marc.quick-marc-authority-records.linkUnlink',
     gui: 'quickMARC: Can Link/unlink authority records to bib records',
   },
+  uiQuickMarcQuickMarcAuthorityCreate: {
+    internal: 'ui-quick-marc.quick-marc-authorities-editor.create',
+    gui: 'quickMARC: Create a new MARC authority record',
+  },
   // Marc Authority record
   uiQuickMarcQuickMarcAuthoritiesEditorAll: {
     internal: 'ui-quick-marc.quick-marc-authorities-editor.all',
@@ -117,6 +121,10 @@ export default {
   uiMarcAuthoritiesAuthorityRecordDelete: {
     internal: 'ui-marc-authorities.authority-record.delete',
     gui: 'MARC Authority: Delete MARC authority record',
+  },
+  uiMarcAuthoritiesAuthorityRecordCreate: {
+    internal: 'ui-marc-authorities.authority-record.create',
+    gui: 'MARC Authority: Create new MARC authority record',
   },
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
@@ -221,6 +229,10 @@ export default {
     internal: 'ui-inventory.settings.holdings-note-types',
     gui: 'Settings (Inventory): Create, edit, delete holdings note types',
   },
+  inventoryCRUDHoldingsTypes: {
+    internal: 'ui-inventory.settings.holdings-types',
+    gui: 'Settings (Inventory): Create, edit, delete holdings types',
+  },
   inventoryCRUDItemNoteTypes: {
     internal: 'ui-inventory.settings.item-note-types',
     gui: 'Settings (Inventory): Create, edit, delete item note types',
@@ -228,6 +240,22 @@ export default {
   notesSettingsViewGeneralSettings: {
     internal: 'ui-notes.settings.view',
     gui: 'Settings (Notes): View General settings',
+  },
+  crudAlternativeTitleTypes: {
+    internal: 'ui-inventory.settings.alternative-title-types',
+    gui: 'Settings (Inventory): Create, edit, delete alternative title types',
+  },
+  crudClassificationIdentifierTypes: {
+    internal: 'ui-inventory.settings.classification-types',
+    gui: 'Settings (Inventory): Create, edit, delete classification identifier types',
+  },
+  crudInstanceNoteTypes: {
+    internal: 'ui-inventory.settings.instance-note-types',
+    gui: 'Settings (Inventory): Create, edit, delete instance note types',
+  },
+  crudNatureOfContent: {
+    internal: 'ui-inventory.settings.nature-of-content-terms',
+    gui: 'Settings (Inventory): Create, edit, delete nature of content',
   },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
@@ -820,6 +848,10 @@ export default {
     internal: 'ui-inventory.settings.fast-add',
     gui: 'Settings (Inventory): Edit fast add settings',
   },
+  uiCreateEditDeleteLoanTypes: {
+    internal: 'ui-inventory.settings.loantypes',
+    gui: 'Settings (Inventory): Create, edit, delete loan types',
+  },
   uiCreateEditDeleteMaterialTypes: {
     internal: 'ui-inventory.settings.materialtypes',
     gui: 'Settings (Inventory): Create, edit, delete material types',
@@ -892,6 +924,10 @@ export default {
     internal: 'ui-marc-authorities.settings.authority-files.all',
     gui: 'Settings (MARC authority): View, create, edit, delete authority files',
   },
+  uiSettingsModesOfIssuanceCreateEditDelete: {
+    internal: 'ui-inventory.settings.modes-of-issuance',
+    gui: 'Settings (Inventory): Create, edit, delete locally defined modes of issuance',
+  },
   // Added the below permissions for custom label creation
 
   uiSettingsEHoldingsViewAccessStatusTypes: {
@@ -937,6 +973,10 @@ export default {
     gui: 'Bursar exports: Bursar admin',
   },
   // OAI-PMH
+  oaipmhView: {
+    internal: 'ui-oai-pmh.view',
+    gui: 'Settings (OAI-PMH): Can view',
+  },
   oaipmhViewLogs: {
     internal: 'ui-oai-pmh.logs',
     gui: 'Settings (OAI-PMH): Can view logs',
@@ -990,6 +1030,14 @@ export default {
   consortiaSettingsConsortiumManagerView: {
     internal: 'ui-consortia-settings.consortium-manager.view',
     gui: 'Consortium manager: Can view existing settings',
+  },
+  consortiaSettingsConsortiumManagerDepartmentsCreateEditView: {
+    internal: 'ui-users.settings.departments.create.edit.view',
+    gui: 'Settings (Users): Can create, edit, and view department',
+  },
+  consortiaSettingsConsortiumManagerPatronGroupsAll: {
+    internal: 'ui-users.settings.usergroups.all',
+    gui: 'Settings (Users): Can create, edit and remove patron groups',
   },
   // Lists
   listsAll: {

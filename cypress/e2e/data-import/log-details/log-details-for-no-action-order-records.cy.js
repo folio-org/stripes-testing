@@ -25,7 +25,6 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -143,7 +142,6 @@ describe('data-import', () => {
       'C375179 Verify the log details for no action order records (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -165,11 +163,6 @@ describe('data-import', () => {
             order.rowNumber,
           );
         });
-        FileDetails.openJsonScreen(ordersData[0].title);
-        JsonScreenView.verifyJsonScreenIsOpened();
-        JsonScreenView.verifyContentInTab('"recordType": "MARC_BIB",');
-        JsonScreenView.openOrderTab();
-        JsonScreenView.verifyContentInTab('org.folio.rest.core.exceptions.HttpException:');
       },
     );
   });

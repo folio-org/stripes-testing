@@ -157,7 +157,7 @@ describe('data-import', () => {
 
     it(
       'C17017 Check that field protection settings work properly during data import (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -176,7 +176,6 @@ describe('data-import', () => {
 
         // upload a marc file for creating of the new instance
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC17017.mrc', nameMarcFileForCreate);
         JobProfiles.waitFileIsUploaded();
@@ -238,7 +237,6 @@ describe('data-import', () => {
 
         // upload a marc file for updating already created instance
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
         JobProfiles.waitFileIsUploaded();

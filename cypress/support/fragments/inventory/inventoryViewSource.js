@@ -17,9 +17,9 @@ function extructDataFrom999Field() {
     .get('tbody tr')
     .last()
     .then(($el) => {
-      const srsUuid = $el[0].innerText.split('\t')[3].trim().split(' ')[1];
-      const instanceUuid = $el[0].innerText.split('\t')[3].trim().split(' ')[3];
-      return [srsUuid, instanceUuid];
+      const instanceUuid = $el[0].innerText.split('\t')[3].trim().split(' ')[1];
+      const srsUuid = $el[0].innerText.split('\t')[3].trim().split(' ')[3];
+      return [instanceUuid, srsUuid];
     });
 }
 
@@ -53,6 +53,12 @@ export default {
   verifyAbsenceOfValueInRow(expectedText, rowIndex) {
     cy.expect(
       rootSection.find(TableRow({ index: rowIndex, innerText: including(expectedText) })).absent(),
+    );
+  },
+
+  verifyExistanceOfValueInRow(expectedText, rowIndex) {
+    cy.expect(
+      rootSection.find(TableRow({ index: rowIndex, innerText: including(expectedText) })).exists(),
     );
   },
 

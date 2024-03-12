@@ -131,7 +131,7 @@ describe('data-import', () => {
 
     it(
       'C356830 Test field protections when importing to update instance, after editing the MARC Bib outside of FOLIO (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         MarcFieldProtection.createViaApi(firstProtectedFieldsData);
         MarcFieldProtection.createViaApi(secondProtectedFieldData);
@@ -165,7 +165,6 @@ describe('data-import', () => {
 
         // upload a marc file for creating of the new instance
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC356830.mrc', nameMarcFileForCreate);
         JobProfiles.waitFileIsUploaded();
@@ -194,7 +193,7 @@ describe('data-import', () => {
             DataImport.editMarcFile(
               'marcFileForC356830_rev.mrc',
               editedMarcFileName,
-              ['instanceHrid', 'srsUuid', 'instanceUuid'],
+              ['instanceHrid', 'instanceUuid', 'srsUuid'],
               [instanceHrid, uuid[0], uuid[1]],
             );
           });
@@ -202,7 +201,6 @@ describe('data-import', () => {
 
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();
         DataImport.uploadFile(editedMarcFileName);

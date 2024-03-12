@@ -314,17 +314,18 @@ export default {
     description,
     clearField = false,
   }) {
-    [
-      { textField: summaryFields.name, fieldValue: name },
-      { textField: summaryFields.description, fieldValue: description },
-    ].forEach(({ textField, fieldValue }) => {
-      InteractorsTools.setTextFieldValue({
-        textField,
-        clearField,
-        fieldValue: fieldValue && `"${fieldValue}"`,
-      });
+    InteractorsTools.setTextFieldValue({
+      textField: summaryFields.name,
+      clearField,
+      fieldValue: name,
     });
-
+    if (description) {
+      InteractorsTools.setTextFieldValue({
+        textField: summaryFields.description,
+        clearField,
+        fieldValue: `"${description}"`,
+      });
+    }
     if (incomingRecordType) {
       cy.do(summaryFields.incomingRecordType.choose(incomingRecordType));
       cy.expect(

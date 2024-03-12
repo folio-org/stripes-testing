@@ -408,7 +408,7 @@ describe('data-import', () => {
 
     it(
       'C356802 Check import summary table with "Updated" actions for instance, holding and item (folijet)',
-      { tags: ['criticalPath', 'folijet', 'parallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create profiles via API
         cy.getAdminToken();
@@ -430,7 +430,6 @@ describe('data-import', () => {
 
         // upload a marc file for creating of the new instance, holding and item
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
         JobProfiles.waitFileIsUploaded();
@@ -461,6 +460,7 @@ describe('data-import', () => {
 
           // download .csv file
           cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
           InventorySearchAndFilter.saveUUIDs();
@@ -580,7 +580,6 @@ describe('data-import', () => {
 
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
         JobProfiles.search(jobProfileForUpdate.profileName);

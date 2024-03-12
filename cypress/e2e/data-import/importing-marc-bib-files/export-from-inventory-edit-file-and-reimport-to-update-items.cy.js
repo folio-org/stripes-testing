@@ -34,6 +34,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -47,7 +48,7 @@ describe('data-import', () => {
       holdingsLocation: `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
       itemStatus: ITEM_STATUS_NAMES.AVAILABLE,
     };
-    const permanentLocation = LOCATION_NAMES.MAIN_LIBRARY;
+    const permanentLocation = LOCATION_NAMES.MAIN_LIBRARY_UI;
     const recordType = 'MARC_BIBLIOGRAPHIC';
     const note = 'Test administrative note for item';
     // unique file name
@@ -251,26 +252,14 @@ describe('data-import', () => {
         [uniqSubject],
       );
 
-      cy.loginAsAdmin();
-      // upload a marc file for creating of the new instance, holding and item
-      cy.visit(TopMenu.dataImportPath);
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(editedMarcFileNameForCreate, marcFileForCreate);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(testData.jobProfileForCreate.profile.name);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(marcFileForCreate);
-      Logs.openFileDetails(marcFileForCreate);
-      [
-        FileDetails.columnNameInResultList.srsMarc,
-        FileDetails.columnNameInResultList.instance,
-        FileDetails.columnNameInResultList.holdings,
-        FileDetails.columnNameInResultList.item,
-      ].forEach((columnName) => {
-        FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
+      DataImport.uploadFileViaApi(
+        editedMarcFileNameForCreate,
+        marcFileForCreate,
+        testData.jobProfileForCreate.profile.name,
+      ).then((response) => {
+        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
       });
-      FileDetails.checkItemsQuantityInSummaryTable(0, quantityOfItems);
+      cy.loginAsAdmin();
     });
 
     after('delete test data', () => {
@@ -316,91 +305,88 @@ describe('data-import', () => {
       'C11123 Export from Inventory, edit file, and re-import to update items (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHrid = initialInstanceHrId;
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+        InventoryInstance.checkIsInstancePresented(
+          instance.instanceTitle,
+          instance.holdingsLocation,
+          instance.itemStatus,
+        );
+        InventoryInstance.openItemByBarcode('No barcode');
+        ItemRecordView.getAssignedHRID().then((initialItemHrId) => {
+          const itemHrid = initialItemHrId;
 
-          InventoryInstance.checkIsInstancePresented(
-            instance.instanceTitle,
-            instance.holdingsLocation,
-            instance.itemStatus,
+          ItemRecordView.closeDetailView();
+          InventorySearchAndFilter.searchByParameter('Subject', instance.instanceSubject);
+          InventorySearchAndFilter.selectResultCheckboxes(1);
+          InventorySearchAndFilter.saveUUIDs();
+          ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+
+          // download exported marc file
+          cy.visit(TopMenu.dataExportPath);
+          cy.getAdminToken();
+          ExportFile.uploadFile(nameForCSVFile);
+          ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
+          ExportFile.downloadExportedMarcFile(nameMarcFileForUpload);
+
+          // change file using item hrid for 945 field
+          DataImport.editMarcFile(
+            nameMarcFileForUpload,
+            editedMarcFileName,
+            ['testHrid'],
+            [itemHrid],
           );
-          InventoryInstance.openItemByBarcode('No barcode');
-          ItemRecordView.getAssignedHRID().then((initialItemHrId) => {
-            const itemHrid = initialItemHrId;
-
-            ItemRecordView.closeDetailView();
-            InventorySearchAndFilter.searchByParameter('Subject', instance.instanceSubject);
-            InventorySearchAndFilter.selectResultCheckboxes(1);
-            InventorySearchAndFilter.saveUUIDs();
-            ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-
-            // download exported marc file
-            cy.visit(TopMenu.dataExportPath);
-            cy.getAdminToken();
-            ExportFile.uploadFile(nameForCSVFile);
-            ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
-            ExportFile.downloadExportedMarcFile(nameMarcFileForUpload);
-
-            // change file using item hrid for 945 field
-            DataImport.editMarcFile(
-              nameMarcFileForUpload,
-              editedMarcFileName,
-              ['testHrid'],
-              [itemHrid],
-            );
-          });
-
-          // create mapping profile for update
-          cy.visit(SettingsMenu.mappingProfilePath);
-          FieldMappingProfiles.openNewMappingProfileForm();
-          NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfileForUpdate);
-          NewFieldMappingProfile.addAdministrativeNote(note, 7);
-          NewFieldMappingProfile.save();
-          FieldMappingProfileView.closeViewMode(itemMappingProfileForUpdate.name);
-          FieldMappingProfiles.checkMappingProfilePresented(itemMappingProfileForUpdate.name);
-
-          // create action profile for update
-          cy.visit(SettingsMenu.actionProfilePath);
-          ActionProfiles.create(itemActionProfileForUpdate, itemMappingProfileForUpdate.name);
-          ActionProfiles.checkActionProfilePresented(itemActionProfileForUpdate.name);
-
-          // create match profile for update
-          cy.visit(SettingsMenu.matchProfilePath);
-          MatchProfiles.createMatchProfile(matchProfile);
-          MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
-
-          // create job profile for update
-          cy.visit(SettingsMenu.jobProfilePath);
-          JobProfiles.createJobProfileWithLinkingProfiles(
-            jobProfileForUpdate,
-            itemActionProfileForUpdate.name,
-            matchProfile.profileName,
-          );
-          JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
-
-          // upload a marc file for creating of the new instance, holding and item
-          cy.visit(TopMenu.dataImportPath);
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-          DataImport.verifyUploadState();
-          DataImport.uploadFile(editedMarcFileName, nameMarcFileForUpdate);
-          JobProfiles.waitFileIsUploaded();
-          JobProfiles.search(jobProfileForUpdate.profileName);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(nameMarcFileForUpdate);
-          Logs.openFileDetails(nameMarcFileForUpdate);
-          FileDetails.checkStatusInColumn(
-            RECORD_STATUSES.UPDATED,
-            FileDetails.columnNameInResultList.item,
-          );
-          FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 1);
-
-          cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-          InstanceRecordView.verifyInstancePaneExists();
-          InventoryInstance.openItemByBarcode('No barcode');
-          ItemRecordView.checkItemAdministrativeNote(note);
         });
+
+        // create mapping profile for update
+        cy.visit(SettingsMenu.mappingProfilePath);
+        FieldMappingProfiles.openNewMappingProfileForm();
+        NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfileForUpdate);
+        NewFieldMappingProfile.addAdministrativeNote(note, 7);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(itemMappingProfileForUpdate.name);
+        FieldMappingProfiles.checkMappingProfilePresented(itemMappingProfileForUpdate.name);
+
+        // create action profile for update
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(itemActionProfileForUpdate, itemMappingProfileForUpdate.name);
+        ActionProfiles.checkActionProfilePresented(itemActionProfileForUpdate.name);
+
+        // create match profile for update
+        cy.visit(SettingsMenu.matchProfilePath);
+        MatchProfiles.createMatchProfile(matchProfile);
+        MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
+
+        // create job profile for update
+        cy.visit(SettingsMenu.jobProfilePath);
+        JobProfiles.createJobProfileWithLinkingProfiles(
+          jobProfileForUpdate,
+          itemActionProfileForUpdate.name,
+          matchProfile.profileName,
+        );
+        JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
+
+        // upload a marc file for creating of the new instance, holding and item
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(editedMarcFileName, nameMarcFileForUpdate);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.search(jobProfileForUpdate.profileName);
+        JobProfiles.runImportFile();
+        Logs.waitFileIsImported(nameMarcFileForUpdate);
+        Logs.openFileDetails(nameMarcFileForUpdate);
+        FileDetails.checkStatusInColumn(
+          RECORD_STATUSES.UPDATED,
+          FileDetails.columnNameInResultList.item,
+        );
+        FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 1);
+
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+        InstanceRecordView.verifyInstancePaneExists();
+        InventoryHoldings.checkIfExpanded(`${permanentLocation} >`, true);
+        InventoryInstance.openItemByBarcode('No barcode');
+        ItemRecordView.checkItemAdministrativeNote(note);
       },
     );
   });

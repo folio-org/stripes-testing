@@ -23,6 +23,7 @@ describe('MARC', () => {
     const testData = {};
     const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const propertyName = 'relatedInstanceInfo';
     let instanceID;
 
     before(() => {
@@ -35,17 +36,16 @@ describe('MARC', () => {
       });
 
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.uploadFile('oneMarcBib.mrc', fileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(jobProfileToRun);
-        JobProfiles.runImportFile();
+        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
+          (response) => {
+            response.entries.forEach((record) => {
+              instanceID = record[propertyName].idList[0];
+            });
+          },
+        );
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkJobStatus(fileName, 'Completed');
         Logs.openFileDetails(fileName);
-        Logs.getCreatedItemsID(0).then((link) => {
-          instanceID = link.split('/')[5];
-        });
         Logs.goToTitleLink(RECORD_STATUSES.CREATED);
         InventorySteps.addMarcHoldingRecord();
       });

@@ -61,7 +61,7 @@ describe('inventory', () => {
 
     it(
       'C343349 Overlay existing Source = FOLIO Instance by import of single MARC Bib record from OCLC (folijet)',
-      { tags: ['smoke', 'folijet', 'nonParallel'] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter(
@@ -74,7 +74,7 @@ describe('inventory', () => {
         InventoryInstance.checkCalloutMessage(
           `Record ${oclcRecordData.oclc} updated. Results may take a few moments to become visible in Inventory`,
         );
-
+        cy.wait(15000);
         cy.reload();
         InventoryInstance.waitInstanceRecordViewOpened(oclcRecordData.title);
         InventoryInstance.verifyLastUpdatedDate();

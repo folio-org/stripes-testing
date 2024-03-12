@@ -20,7 +20,6 @@ describe('data-import', () => {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         cy.wait(2000);
         DataImport.uploadBunchOfFiles(filePathForUpload, quantityOfFiles, fileName);
@@ -34,7 +33,7 @@ describe('data-import', () => {
 
     it(
       'C2377 Delete an uploaded (but not yet imported) file (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'nonParallel'] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.clickResumeButton();

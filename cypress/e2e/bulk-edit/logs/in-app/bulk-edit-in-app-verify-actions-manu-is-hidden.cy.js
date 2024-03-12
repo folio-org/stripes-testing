@@ -39,14 +39,11 @@ describe('Bulk Edit - Logs', () => {
     () => {
       BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
       BulkEditSearchPane.verifyPanesBeforeImport();
-      BulkEditSearchPane.verifyRecordIdentifierItems();
+      BulkEditSearchPane.verifyRecordTypeIdentifiers('Users');
       BulkEditSearchPane.verifyBulkEditPaneItems();
       BulkEditSearchPane.actionsIsAbsent();
 
-      BulkEditSearchPane.checkUsersRadio();
-      BulkEditSearchPane.isDragAndDropAreaDisabled(true);
-      BulkEditSearchPane.verifyDragNDropUpdateUsersArea();
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+      BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
       BulkEditSearchPane.checkForUploading(userBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();

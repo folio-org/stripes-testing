@@ -167,7 +167,7 @@ describe('data-import', () => {
 
     it(
       'C375109 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details WITH instance match item (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         const marcFileNameForUpdate = `C375109 firstmarcFile.${getRandomPostfix()}.mrc`;
         const csvFileName = `C375109 firstautotestFile${getRandomPostfix()}.csv`;
@@ -336,7 +336,6 @@ describe('data-import', () => {
 
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(marcFileNameForUpdate);
         JobProfiles.search(jobProfileWithMatch.profileName);
@@ -408,7 +407,7 @@ describe('data-import', () => {
 
     it(
       'C422064 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details WITHOUT instance match item (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         const marcFileNameForUpdate = `C422064 secondmarcFile.${getRandomPostfix()}.mrc`;
         const csvFileName = `C422064 secondAutotestFile${getRandomPostfix()}.csv`;
@@ -544,6 +543,7 @@ describe('data-import', () => {
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfileWithoutMatch.profileName);
 
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(testData.secondHrid);
         InstanceRecordView.verifyInstancePaneExists();
@@ -559,7 +559,6 @@ describe('data-import', () => {
 
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(marcFileNameForUpdate);
         JobProfiles.search(jobProfileWithoutMatch.profileName);

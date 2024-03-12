@@ -28,7 +28,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', { retries: 3 }, () => {
+describe('data-import', () => {
   describe('End to end scenarios', () => {
     // unique file name to upload
     const nameForMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
@@ -104,7 +104,7 @@ describe('data-import', { retries: 3 }, () => {
 
     it(
       'C343343 MARC file import with matching for 999 ff field (folijet)',
-      { tags: ['smoke', 'folijet', 'nonParallel'] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         // create Field mapping profile for export
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -126,7 +126,6 @@ describe('data-import', { retries: 3 }, () => {
 
         // upload a marc file for export
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
         JobProfiles.waitFileIsUploaded();
@@ -187,7 +186,6 @@ describe('data-import', { retries: 3 }, () => {
 
           // upload the exported marc file with 999.f.f.s fields
           cy.visit(TopMenu.dataImportPath);
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadExportedFile(nameForExportedMarcFile);
           JobProfiles.search(jobProfile.profileName);

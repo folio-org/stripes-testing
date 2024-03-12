@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -29,7 +27,7 @@ describe('MARC', () => {
             '\\',
             '$a C366580 Chin, Staceyann, $d 1972-',
             '$e Author $e Narrator',
-            '$0 id.loc.gov/authorities/names/n2008052404',
+            '$0 http://id.loc.gov/authorities/names/n2008052404',
             '$1 http://viaf.org/viaf/24074052',
           ],
           bib700AfterUnlinking: [
@@ -37,7 +35,7 @@ describe('MARC', () => {
             '100',
             '1',
             '\\',
-            '$a C366580 Chin, Staceyann, $d 1972- $e Author $e Narrator $0 id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052',
+            '$a C366580 Chin, Staceyann, $d 1972- $e Author $e Narrator $0 http://id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052',
           ],
           contributorName: 'C366580 Chin, Staceyann, 1972-',
         };
@@ -48,12 +46,14 @@ describe('MARC', () => {
             fileName: `C366580 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numOfRecords: 1,
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileForC366580.mrc',
             fileName: `C366580 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
@@ -79,20 +79,15 @@ describe('MARC', () => {
           });
           cy.loginAsAdmin();
           marcFiles.forEach((marcFile) => {
-            cy.visit(TopMenu.dataImportPath);
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                testData.createdRecordIDs.push(link.split('/')[5]);
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
               });
-            }
+            });
           });
 
           cy.createTempUser([

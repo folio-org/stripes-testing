@@ -17,6 +17,17 @@ export default {
     ]);
   },
 
+  waitLoadingConfirmShareToMemberLibraries(name) {
+    cy.expect([
+      Modal({ id: 'create-controlled-vocab-entry-confirmation' }).has({
+        header: 'Confirm member libraries',
+        content: including(`${name} will be saved for the member libraries`),
+      }),
+      keepEditingButton.is({ disabled: false }),
+      confirmButton.is({ disabled: false }),
+    ]);
+  },
+
   clickConfirm() {
     cy.do(confirmButton.click());
     cy.expect(confirmShareToAllModal.absent());

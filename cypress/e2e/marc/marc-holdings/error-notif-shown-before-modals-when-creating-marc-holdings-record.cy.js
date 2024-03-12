@@ -1,9 +1,6 @@
 import { calloutTypes } from '../../../../interactors';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -28,6 +25,7 @@ describe('MARC', () => {
       marc: 'oneMarcBib.mrc',
       fileName: `testMarcFileC375206${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      propertyName: 'relatedInstanceInfo',
     };
 
     before('create test data and login', () => {
@@ -41,20 +39,15 @@ describe('MARC', () => {
           );
         });
       });
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(marcFile.jobProfileToRun);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(marcFile.fileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(marcFile.fileName);
-      Logs.getCreatedItemsID(0).then((link) => {
-        testData.instanceID = link.split('/')[5];
-      });
-      cy.logout();
+
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, marcFile.jobProfileToRun).then(
+        (response) => {
+          response.entries.forEach((record) => {
+            testData.instanceID = record[marcFile.propertyName].idList[0];
+          });
+        },
+      );
 
       cy.createTempUser([
         Permissions.inventoryAll.gui,

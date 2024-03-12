@@ -88,10 +88,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
 
         // #7 Select the "Inventory-holdings" radio button from the "Record types" accordion => Select the "Holdings HRIDs" option from the "Record identifier" dropdown
-        BulkEditSearchPane.checkHoldingsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
-        BulkEditSearchPane.isDragAndDropAreaDisabled(false);
-        BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
 
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
         BulkEditSearchPane.waitFileUploading();

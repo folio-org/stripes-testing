@@ -430,9 +430,8 @@ describe('data-import', () => {
 
     it(
       'C343335 MARC file upload with the update of instance, holding, and items (folijet)',
-      { tags: ['smoke', 'folijet', 'nonParallel'] },
+      { tags: ['smoke', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         // upload a marc file for creating of the new instance, holding and item
         DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
@@ -460,6 +459,7 @@ describe('data-import', () => {
 
           // download .csv file
           cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           InventorySearchAndFilter.saveUUIDs();
           ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
@@ -527,7 +527,6 @@ describe('data-import', () => {
 
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
         JobProfiles.search(jobProfileForUpdate.profileName);

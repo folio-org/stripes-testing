@@ -158,7 +158,7 @@ describe('data-import', () => {
 
     it(
       'C388506 Check the log result table for imported multiple items with errors in multiple holdings (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         let instanceHRID;
         const marcFileName = `C388506 multipleAutotestFileName.${getRandomPostfix()}`;
@@ -175,14 +175,13 @@ describe('data-import', () => {
 
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWithErrorsPathForUpload, marcFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(marcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(marcFileName);
         [
           FileDetails.columnNameInResultList.srsMarc,
@@ -238,7 +237,7 @@ describe('data-import', () => {
         const quantityOfCreatedItems = 8;
         const quantityOfErrors = 5;
         const jsonHoldingsTestData = [
-          'Import Log for Record 1 (Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.)',
+          'Import Log for Record 01 (Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.)',
           'KU/CC/DI/M',
           'KU/CC/DI/A',
           'E',
@@ -246,14 +245,13 @@ describe('data-import', () => {
           '{"key":"permanentLocationId","value":"null"}',
         ];
         const jsonItemTestData = [
-          'Import Log for Record 1 (Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.)',
+          'Import Log for Record 01 (Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.)',
           "Mapped Item is invalid: [Field 'materialType.id' is a required field and can not be null]",
           'ERROR: invalid input syntax for type uuid: "arch" (22P02)',
         ];
 
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWithErrorsPathForUpload, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -311,7 +309,7 @@ describe('data-import', () => {
 
     it(
       'C388505 Check the log result table for imported multiple items in multiple holdings (folijet)',
-      { tags: ['smoke', 'folijet', 'nonParallel'] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         const arrayOfHoldingsStatuses = [
           'Created (KU/CC/DI/M)',
@@ -324,7 +322,6 @@ describe('data-import', () => {
 
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWioutErrorsPathForUpload, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -373,7 +370,7 @@ describe('data-import', () => {
 
     it(
       'C389587 Check the JSON screen for imported multiple items in multiple holdings (folijet)',
-      { tags: ['smoke', 'folijet', 'nonParallel'] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         let instanceHrid;
         const arrayOfHoldingsStatuses = [
@@ -387,7 +384,6 @@ describe('data-import', () => {
 
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWioutErrorsPathForUpload, marcFileName);
         JobProfiles.waitFileIsUploaded();

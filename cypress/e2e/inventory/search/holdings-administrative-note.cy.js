@@ -74,6 +74,7 @@ describe('inventory', () => {
         HoldingsRecordEdit.waitLoading();
         HoldingsRecordEdit.addAdministrativeNote(admNote1);
         HoldingsRecordEdit.saveAndClose();
+        HoldingsRecordView.close();
         InventorySearchAndFilter.resetAll();
         InventorySearchAndFilter.searchByParameter(
           'Keyword (title, contributor, identifier, HRID, UUID)',
@@ -86,6 +87,7 @@ describe('inventory', () => {
         HoldingsRecordEdit.waitLoading();
         HoldingsRecordEdit.addAdministrativeNote(admNote2);
         HoldingsRecordEdit.saveAndClose();
+        HoldingsRecordView.close();
       });
     });
 

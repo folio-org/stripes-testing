@@ -83,6 +83,7 @@ describe('data-import', () => {
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         instanceTitle: 'The other side of paradise : a memoir / Staceyann Chin. C376946',
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'C376946MarcAuth.mrc',
@@ -90,6 +91,7 @@ describe('data-import', () => {
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         authorityHeading: 'Chin, Staceyann, 1972- C376946',
         authority010FieldValue: 'n2008052404376946',
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
     const createdRecordIDs = [];
@@ -104,22 +106,18 @@ describe('data-import', () => {
         Permissions.dataExportEnableApp.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
+
+        cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, 'Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              Logs.getCreatedItemsID().then((link) => {
-                createdRecordIDs.push(link.split('/')[5]);
-              });
-            },
-          );
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            });
+          });
         });
 
         cy.loginAsAdmin().then(() => {
@@ -196,7 +194,7 @@ describe('data-import', () => {
 
     it(
       'C376946 Delete non-repeatable linked field which is controlled by "MARC Authority" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventoryInstances.searchByTitle(createdRecordIDs[0]);
         // download .csv file
@@ -220,7 +218,9 @@ describe('data-import', () => {
 
         // upload the updated MARC file with 999 subfields and without 100 field
         cy.visit(TopMenu.dataImportPath);
-        DataImport.uploadFile(nameForUpdatedMarcBibFile, nameForUpdatedMarcBibFile);
+        DataImport.waitLoading();
+        DataImport.verifyUploadState();
+        DataImport.uploadFileAndRetry(nameForUpdatedMarcBibFile, nameForUpdatedMarcBibFile);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);

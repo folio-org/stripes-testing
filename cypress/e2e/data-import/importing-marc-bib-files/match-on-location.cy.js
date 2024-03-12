@@ -1,4 +1,3 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
@@ -265,7 +264,6 @@ describe('data-import', () => {
 
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
       DataImport.uploadFile('marcFileForC17027.mrc', marcFileForCreate);
       JobProfiles.waitFileIsUploaded();
@@ -414,7 +412,6 @@ describe('data-import', () => {
 
       // upload a marc file
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
       DataImport.uploadFile(editedMarcFileName, fileNameAfterUpdate);
       JobProfiles.waitFileIsUploaded();

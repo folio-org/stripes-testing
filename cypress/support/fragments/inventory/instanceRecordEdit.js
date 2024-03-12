@@ -190,6 +190,10 @@ export default {
     cy.do(TextArea({ id: 'input_instance_title' }).fillIn(title));
   },
 
+  checkInstanceHeader(header) {
+    cy.get('#paneHeaderinstance-form-pane-title > h2').should('have.text', header);
+  },
+
   deleteContributor(rowIndex) {
     cy.do(
       Section({ id: 'instanceSection04' })

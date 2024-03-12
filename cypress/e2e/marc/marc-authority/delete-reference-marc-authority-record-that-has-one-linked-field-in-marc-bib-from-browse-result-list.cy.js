@@ -1,8 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
@@ -28,7 +26,7 @@ describe('MARC', () => {
         '240',
         '1',
         '0',
-        '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major $0 id.loc.gov/authorities/names/n83130832423379',
+        '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major $0 http://id.loc.gov/authorities/names/n83130832423379',
       ],
     };
     const marcFiles = [
@@ -37,12 +35,14 @@ describe('MARC', () => {
         fileName: `C423379 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numOfRecords: 1,
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'marcAuthFileForC423379.mrc',
         fileName: `C423379 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
     const linkingTagAndValues = {
@@ -74,25 +74,19 @@ describe('MARC', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
-        cy.loginAsAdmin().then(() => {
-          marcFiles.forEach((marcFile) => {
-            cy.visit(TopMenu.dataImportPath);
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                testData.createdRecordIDs.push(link.split('/')[5]);
-              });
-            }
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            });
           });
         });
 
+        cy.loginAsAdmin();
         cy.visit(TopMenu.inventoryPath).then(() => {
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
           InventoryInstances.selectInstance();
@@ -142,7 +136,7 @@ describe('MARC', () => {
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
-        QuickMarcEditor.verifyTagFieldAfterUnlinking(testData.bib240UnlinkedFieldValue);
+        QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib240UnlinkedFieldValue);
         QuickMarcEditor.verifyIconsAfterUnlinking(linkingTagAndValues.rowIndex);
         QuickMarcEditor.pressCancel();
         InventoryInstance.waitInventoryLoading();
