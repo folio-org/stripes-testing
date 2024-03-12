@@ -32,6 +32,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -42,6 +43,8 @@ describe('data-import', () => {
       the811Field: [16, '811', '\\', '0', '$a Wangaratta, Victoria, 1994.'],
       the245Field: [10, '245', '1', '0', '$a Welcome home Olympians Added subfields 9'],
     };
+    const fields = ['130', '240', '800', '811', '245'];
+
     function replace999SubfieldsInPreupdatedFile(
       exportedFileName,
       preUpdatedFileName,
@@ -212,6 +215,20 @@ describe('data-import', () => {
           nameForPreUpdatedMarcBibFile,
           nameForUpdatedMarcFile,
         );
+
+        // in case in Settings - Data import - MARC field protection we have these fields as protected
+        // for this test case purpose they should be removed
+        fields.forEach((field) => {
+          cy.getAdminToken().then(() => {
+            MarcFieldProtection.getListViaApi({
+              query: `"field"=="${field}"`,
+            }).then((list) => {
+              if (list) {
+                list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+              }
+            });
+          });
+        });
 
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);
