@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
 import { Button, MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
+import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 
 const id = uuid();
 const newButton = Button('+ New');
@@ -69,6 +70,10 @@ export default {
       });
       cy.resetTenant();
     });
+  },
+
+  waitLoading() {
+    ConsortiaControlledVocabularyPaneset.waitLoading('Alternative title types');
   },
 
   choose() {
