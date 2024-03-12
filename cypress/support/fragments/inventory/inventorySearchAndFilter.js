@@ -828,7 +828,6 @@ export default {
       formatAccordion.has({ open: false }),
       modeOfIssuanceAccordion.has({ open: false }),
       natureOfContentAccordion.has({ open: false }),
-      stuffSupressAccordion.has({ open: false }),
       supressFromDiscoveryAccordion.has({ open: false }),
       statisticalCodeAccordionInstanceToggle.has({ open: false }),
       dateCreatedAccordion.has({ open: false }),
