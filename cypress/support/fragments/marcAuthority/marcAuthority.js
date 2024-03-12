@@ -377,6 +377,17 @@ export default {
     );
   },
 
+  verifyAfterSaveAndClose() {
+    cy.expect([calloutUpdatedRecordSuccess.exists(), rootSection.exists()]);
+  },
+
+  getId() {
+    cy.url()
+      .then((url) => cy.wrap(url.split('?')[0].split('/').at(-1)))
+      .as('authorityId');
+    return cy.get('@authorityId');
+  },
+
   getRecordsViaAPI: (deleted = false, idOnly = false, acceptHeader = null, query = null) => {
     cy.okapiRequest({
       method: 'GET',
