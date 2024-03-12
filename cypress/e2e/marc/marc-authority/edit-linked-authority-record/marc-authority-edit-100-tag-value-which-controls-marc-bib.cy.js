@@ -111,7 +111,7 @@ describe('MARC', () => {
 
       it(
         'C374136 Edit tag value ("100") in the "MARC Authority" record which controls "MARC Bib(s)" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPathBroken', 'spitfire'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, testData.searchValue);
 
