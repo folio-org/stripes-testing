@@ -56,6 +56,7 @@ describe('data-import', () => {
       ],
       tag250: '250',
     };
+    const fields = ['100', '245', '250'];
     function replace999SubfieldsInPreupdatedFile(
       exportedFileName,
       preUpdatedFileName,
@@ -253,15 +254,17 @@ describe('data-import', () => {
           nameForUpdatedMarcFile,
         );
 
-        // in case in Settings - Data import - MARC field protection we have 245 field as protected
-        // for this test case purpose it should be removed
-        cy.getAdminToken().then(() => {
-          MarcFieldProtection.getListViaApi({
-            query: '"field"=="245"',
-          }).then((list) => {
-            if (list) {
-              list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
-            }
+        // in case in Settings - Data import - MARC field protection we have these fields as protected
+        // for this test case purpose they should be removed
+        fields.forEach((field) => {
+          cy.getAdminToken().then(() => {
+            MarcFieldProtection.getListViaApi({
+              query: `"field"=="${field}"`,
+            }).then((list) => {
+              if (list) {
+                list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+              }
+            });
           });
         });
 

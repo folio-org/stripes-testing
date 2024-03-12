@@ -18,12 +18,12 @@ import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('ui-finance: Fiscal Year Rollover', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCode(2000, 9999),
-    periodStart: `${DateTools.getDayTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.get2DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
+    code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
+    periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
     series: 'FY',
   };
@@ -171,63 +171,67 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C186156 Rollover Fiscal Year (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
-    FinanceHelp.searchByName(defaultLedger.name);
-    Ledgers.selectLedger(defaultLedger.name);
-    Ledgers.rollover();
-    Ledgers.fillInRolloverInfo(secondFiscalYear.code);
-    Ledgers.closeRolloverInfo();
-    Ledgers.selectFundInLedger(firstFund.name);
-    Funds.selectPlannedBudgetDetails();
-    Funds.viewTransactions();
-    Funds.selectTransactionInList('Encumbrance');
-    Funds.varifyDetailsInTransaction(
-      secondFiscalYear.code,
-      '($100.00)',
-      `${firstOrderNumber}-1`,
-      'Encumbrance',
-      `${firstFund.name} (${firstFund.code})`,
-    );
-    Funds.closeTransactionDetails();
-    Funds.closeMenu();
-    cy.wait(1000);
-    Funds.closeMenu();
-    Funds.selectBudgetDetails();
-    Funds.viewTransactions();
-    Funds.selectTransactionInList('Encumbrance');
-    Funds.varifyDetailsInTransaction(
-      firstFiscalYear.code,
-      '($0.00)',
-      `${firstOrderNumber}-1`,
-      'Encumbrance',
-      `${firstFund.name} (${firstFund.code})`,
-    );
-    cy.visit(TopMenu.fundPath);
-    FinanceHelp.searchByName(secondFund.name);
-    Funds.selectFund(secondFund.name);
-    Funds.selectPlannedBudgetDetails();
-    Funds.viewTransactions();
-    Funds.selectTransactionInList('Encumbrance');
-    Funds.varifyDetailsInTransaction(
-      secondFiscalYear.code,
-      '($200.00)',
-      `${secondOrderNumber}-1`,
-      'Encumbrance',
-      `${secondFund.name} (${secondFund.code})`,
-    );
-    Funds.closeTransactionDetails();
-    Funds.closeMenu();
-    cy.wait(1000);
-    Funds.closeMenu();
-    Funds.selectBudgetDetails();
-    Funds.viewTransactions();
-    Funds.selectTransactionInList('Encumbrance');
-    Funds.varifyDetailsInTransaction(
-      firstFiscalYear.code,
-      '($200.00)',
-      `${secondOrderNumber}-1`,
-      'Encumbrance',
-      `${secondFund.name} (${secondFund.code})`,
-    );
-  });
+  it(
+    'C186156 Rollover Fiscal Year (thunderjet)',
+    { tags: ['criticalPathBroken', 'thunderjet'] },
+    () => {
+      FinanceHelp.searchByName(defaultLedger.name);
+      Ledgers.selectLedger(defaultLedger.name);
+      Ledgers.rollover();
+      Ledgers.fillInRolloverInfo(secondFiscalYear.code);
+      Ledgers.closeRolloverInfo();
+      Ledgers.selectFundInLedger(firstFund.name);
+      Funds.selectPlannedBudgetDetails();
+      Funds.viewTransactions();
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransaction(
+        secondFiscalYear.code,
+        '($100.00)',
+        `${firstOrderNumber}-1`,
+        'Encumbrance',
+        `${firstFund.name} (${firstFund.code})`,
+      );
+      Funds.closeTransactionDetails();
+      Funds.closeMenu();
+      cy.wait(1000);
+      Funds.closeMenu();
+      Funds.selectBudgetDetails();
+      Funds.viewTransactions();
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransaction(
+        firstFiscalYear.code,
+        '($0.00)',
+        `${firstOrderNumber}-1`,
+        'Encumbrance',
+        `${firstFund.name} (${firstFund.code})`,
+      );
+      cy.visit(TopMenu.fundPath);
+      FinanceHelp.searchByName(secondFund.name);
+      Funds.selectFund(secondFund.name);
+      Funds.selectPlannedBudgetDetails();
+      Funds.viewTransactions();
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransaction(
+        secondFiscalYear.code,
+        '($200.00)',
+        `${secondOrderNumber}-1`,
+        'Encumbrance',
+        `${secondFund.name} (${secondFund.code})`,
+      );
+      Funds.closeTransactionDetails();
+      Funds.closeMenu();
+      cy.wait(1000);
+      Funds.closeMenu();
+      Funds.selectBudgetDetails();
+      Funds.viewTransactions();
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransaction(
+        firstFiscalYear.code,
+        '($200.00)',
+        `${secondOrderNumber}-1`,
+        'Encumbrance',
+        `${secondFund.name} (${secondFund.code})`,
+      );
+    },
+  );
 });

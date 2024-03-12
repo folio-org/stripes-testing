@@ -26,6 +26,10 @@ describe('inventory', () => {
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
         (userProperties) => {
           user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         },
       );
     });
@@ -45,7 +49,6 @@ describe('inventory', () => {
       'C402775 (NON-CONSORTIA) Verify the Source of a MARC Instance on non-consortial tenant (folijet) (TaaS)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.verifyPanesExist();
         InventorySearchAndFilter.instanceTabIsDefault();
         InventoryInstances.searchBySource(instanceSource);

@@ -336,7 +336,6 @@ describe('data-import', () => {
 
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(marcFileNameForUpdate);
         JobProfiles.search(jobProfileWithMatch.profileName);
@@ -544,6 +543,7 @@ describe('data-import', () => {
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfileWithoutMatch.profileName);
 
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(testData.secondHrid);
         InstanceRecordView.verifyInstancePaneExists();
@@ -559,7 +559,6 @@ describe('data-import', () => {
 
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(marcFileNameForUpdate);
         JobProfiles.search(jobProfileWithoutMatch.profileName);

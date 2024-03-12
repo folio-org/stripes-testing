@@ -44,7 +44,6 @@ describe('data-import', () => {
       'C359012 Checking the import of the MARC Bib file, that has records with 999 ff and without the 999 ff field (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC359012.mrc', nameMarcFileForCreate);
         JobProfiles.waitFileIsUploaded();

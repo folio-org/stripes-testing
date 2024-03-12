@@ -259,7 +259,6 @@ describe('data-import', () => {
 
         // upload a marc file for creating of the new instance, holding and item
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC350944.mrc', nameMarcFileForCreate);
         JobProfiles.waitFileIsUploaded();
@@ -307,7 +306,6 @@ describe('data-import', () => {
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
         DataImport.checkIsLandingPageOpened();
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, marcFileName);
         JobProfiles.waitFileIsUploaded();

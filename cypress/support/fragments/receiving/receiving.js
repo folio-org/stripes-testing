@@ -160,7 +160,7 @@ export default {
 
   deleteItemPiece: () => {
     cy.do([
-      addPieceModal.find(Button('Delete')).click(),
+      Button('Delete').click(),
       Modal({ id: 'delete-piece-confirmation' }).find(Button('Delete item')).click(),
     ]);
   },
@@ -343,7 +343,7 @@ export default {
   unreceiveInEditPieceModal() {
     this.openDropDownInEditPieceModal();
     cy.do(Button('Unreceive').click());
-    InteractorsTools.checkCalloutMessage('The piece was successfully saved');
+    InteractorsTools.checkCalloutMessage('Unreceiving successful');
   },
 
   receiveFromExpectedSectionWithClosePOL: () => {

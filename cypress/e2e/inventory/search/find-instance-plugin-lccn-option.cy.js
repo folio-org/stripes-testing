@@ -9,7 +9,7 @@ import Organizations from '../../../support/fragments/organizations/organization
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Search in Inventory', () => {
     const organization = {
       ...NewOrganization.defaultUiOrganizations,

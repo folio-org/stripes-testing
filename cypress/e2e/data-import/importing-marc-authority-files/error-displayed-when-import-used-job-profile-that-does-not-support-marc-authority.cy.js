@@ -49,7 +49,6 @@ describe('data-import', () => {
       'C359246 Checking the error displayed when the import used a "Job Profile" that does not support the "MARC Authority" record (folijet)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, marcFiles[0].fileName);
         JobProfiles.waitFileIsUploaded();
@@ -72,7 +71,6 @@ describe('data-import', () => {
         JsonScreenView.verifyContentInTab(marcFiles[0].errorMessage);
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, marcFiles[1].fileName);
         JobProfiles.waitFileIsUploaded();

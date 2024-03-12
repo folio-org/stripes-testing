@@ -49,7 +49,6 @@ describe('data-import', () => {
         FileExtensions.verifyCreatedFileExtension(testData.fileExtension, 'Block import');
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePath, fileName);
         DataImport.verifyImportBlockedModal();
@@ -81,7 +80,6 @@ describe('data-import', () => {
         FileExtensions.verifyCreateFileExtensionPresented(testData.fileExtension);
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePath, fileName);
         DataImport.verifyFileIsImported(fileName);

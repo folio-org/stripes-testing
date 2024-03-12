@@ -98,7 +98,6 @@ describe('data-import', () => {
       'C358998 Data Import Updates should add 035 field from 001/003, if HRID already exists (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         // upload the first .mrc file
         DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
@@ -163,7 +162,6 @@ describe('data-import', () => {
 
           // upload a marc file for updating already created first instance
           cy.visit(TopMenu.dataImportPath);
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
           JobProfiles.waitFileIsUploaded();

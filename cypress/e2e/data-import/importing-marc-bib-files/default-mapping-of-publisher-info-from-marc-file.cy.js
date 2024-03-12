@@ -53,7 +53,6 @@ describe('data-import', () => {
           place: 'Carmarthen, Wales ; Bethel, Conn.',
           date: 'c2009',
         };
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);
         JobProfiles.waitFileIsUploaded();

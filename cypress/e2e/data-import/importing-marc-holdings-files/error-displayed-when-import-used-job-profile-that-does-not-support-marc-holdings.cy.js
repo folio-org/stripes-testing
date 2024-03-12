@@ -68,7 +68,6 @@ describe('data-import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, fileNameForImportForMarcAuthority);
         JobProfiles.waitFileIsUploaded();
@@ -94,7 +93,6 @@ describe('data-import', () => {
         JsonScreenView.verifyContentInTab(errorMessageForMarcAuthorityProfile);
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
         JobProfiles.waitFileIsUploaded();

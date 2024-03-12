@@ -41,7 +41,6 @@ describe('data-import', () => {
       'C350750 Error records not processed or saved for invalid MARC Bibs (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC350750.mrc', nameMarcFileForImportCreate);
         JobProfiles.waitFileIsUploaded();
