@@ -34,7 +34,7 @@ import FieldMappingProfileView from '../../../support/fragments/data_import/mapp
 describe('data-import', () => {
   describe('Importing MARC Authority files', () => {
     const testData = {
-      authorityTitle: 'Elizabeth II, Queen of Great Britain, 1926-',
+      authorityTitle: 'C374186 Elizabeth II, Queen of Great Britain, 1926-',
       instanseTitle: 'Elizabeth',
 
       csvFile: `exportedCSVFile${getRandomPostfix()}.csv`,
