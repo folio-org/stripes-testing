@@ -96,8 +96,7 @@ describe('MARC', () => {
           QuickMarcEditor.addNewField('700', '$a Sabino, J.', 13);
           QuickMarcEditor.clickLinkIconInTagField(13);
           MarcAuthorities.switchToSearch();
-          MarcAuthorities.searchBy('Keyword', 'Sprouse, Chris');
-          InventoryInstance.selectRecord();
+          MarcAuthorities.searchBy('Keyword', 'C366554 Sprouse, Chris');
           MarcAuthorities.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(13, 700);
           QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -105,15 +104,14 @@ describe('MARC', () => {
             '700',
             '\\',
             '\\',
-            '$a Sprouse, Chris',
+            '$a C366554 Sprouse, Chris',
             '',
             '$0 http://id.loc.gov/authorities/names/nb98017694',
             '',
           );
           QuickMarcEditor.clickLinkIconInTagField(14);
           MarcAuthorities.switchToSearch();
-          MarcAuthorities.searchBy('Keyword', 'Sabino, Joe');
-          InventoryInstance.selectRecord();
+          MarcAuthorities.searchBy('Keyword', 'C366554 Sabino, Joe');
           MarcAuthorities.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(14, 700);
           QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -121,7 +119,7 @@ describe('MARC', () => {
             '700',
             '\\',
             '\\',
-            '$a Sabino, Joe',
+            '$a C366554 Sabino, Joe',
             '',
             '$0 http://id.loc.gov/authorities/names/no2011137752',
             '',

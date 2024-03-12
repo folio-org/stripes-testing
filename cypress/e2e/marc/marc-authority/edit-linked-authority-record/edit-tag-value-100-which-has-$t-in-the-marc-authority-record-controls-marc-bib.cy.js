@@ -125,6 +125,7 @@ describe('MARC', () => {
           MarcAuthorities.selectTitle(linkingTagAndValues.value);
           MarcAuthorities.checkRecordDetailPageMarkedValue(marcFiles[1].authorityHeading);
           MarcAuthority.edit();
+          cy.wait(2000);
           QuickMarcEditor.updateExistingTagName(testData.tag100, testData.tag110);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.closeCallout();

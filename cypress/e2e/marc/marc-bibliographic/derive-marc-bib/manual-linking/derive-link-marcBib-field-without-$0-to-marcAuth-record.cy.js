@@ -134,19 +134,14 @@ describe('MARC', () => {
                 [testData.authoritySourceFile.code],
               );
             });
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(
+            DataImport.uploadFileViaApi(
               testData.marcAuthFile.editedFileName,
               testData.marcAuthFile.fileName,
-            );
-            JobProfiles.waitFileIsUploaded();
-            JobProfiles.search(testData.marcAuthFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(testData.marcAuthFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(testData.marcAuthFile.fileName);
-            Logs.getCreatedItemsID().then((link) => {
-              testData.createdRecordIDs.push(link.split('/')[5]);
+              testData.marcAuthFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                testData.createdRecordIDs.push(record[testData.marcAuthFile.propertyName].idList[0]);
+              });
             });
 
             cy.visit(TopMenu.inventoryPath);
