@@ -342,6 +342,7 @@ export default {
         .find(Button({ text: including(value) }))
         .exists(),
     );
+    cy.wait(1000);
     cy.expect(marcViewSection.exists());
   },
 

@@ -65,7 +65,7 @@ describe('MARC', () => {
             '0',
             '$a C388512Authors, Jamaican',
             '$y 21st century $v Biography.',
-            '$0 http://id.loc.gov/authorities/subjects/sh85009933',
+            '$0 http://id.loc.gov/authorities/subjects/sh85009934',
             '',
           ],
           [
@@ -75,7 +75,7 @@ describe('MARC', () => {
             '0',
             '$a C388512Lesbian authors',
             '$z Jamaica $v Biography.',
-            '$0 http://id.loc.gov/authorities/subjects/sh99014708',
+            '$0 http://id.loc.gov/authorities/subjects/sh99014709',
             '',
           ],
           [
@@ -85,7 +85,7 @@ describe('MARC', () => {
             '0',
             '$a C388512Lesbian activists',
             '$z Jamaica $v Biography.',
-            '$0 http://id.loc.gov/authorities/subjects/sh96007532',
+            '$0 http://id.loc.gov/authorities/subjects/sh96007531',
             '',
           ],
         ];
