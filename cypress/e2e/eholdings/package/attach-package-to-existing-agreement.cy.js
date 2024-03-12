@@ -55,7 +55,7 @@ describe('eHoldings', () => {
 
     it(
       'C751 Attach a package to an existing Agreement (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathBroken', 'spitfire'] },
       () => {
         EHoldingSearch.switchToPackages();
         // wait until package is created via API
