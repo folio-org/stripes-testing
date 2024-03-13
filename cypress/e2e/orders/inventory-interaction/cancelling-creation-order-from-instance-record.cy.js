@@ -39,7 +39,7 @@ describe('Orders', () => {
 
     it(
       'C353992 Cancelling creation an order from instance record (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet'] },
+      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
         // Navigate to the instance from preconditions
         InventorySearchAndFilter.searchInstanceByTitle(instance.instanceName);

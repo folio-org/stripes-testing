@@ -24,7 +24,7 @@ describe('Organizations: Settings (Organizations)', () => {
 
   it(
     'C407766: A user with "Settings (Organizations): View settings" permission can only view appropriate settings (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       SettingsOrganizations.selectCategories();
       SettingsOrganizations.checkButtonNewInCategoriesIsDisabled();

@@ -47,7 +47,7 @@ describe('Permisions -> Inventory', () => {
 
   it(
     'C375076 User with "Inventory: View, create, edit instances" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       InventorySearchAndFilter.verifySearchAndFilterPane();
       InventorySearchAndFilter.switchToBrowseTab();

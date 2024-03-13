@@ -35,7 +35,7 @@ describe('ui-finance: Funds', () => {
 
   it(
     'C357528 Warning message for already existing field appears when after filling duplicated field user clicks on the dropdown with filter options list (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Funds.createFundForWarningMessage(defaultFund);
       Funds.checkWarningMessageFundCodeUsed();

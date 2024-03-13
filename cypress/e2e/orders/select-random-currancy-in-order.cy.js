@@ -82,7 +82,7 @@ describe('orders: create an order', () => {
 
   it(
     'C8357 Create purchase order in foreign currency (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.createOrder(order).then((orderId) => {
         order.id = orderId;

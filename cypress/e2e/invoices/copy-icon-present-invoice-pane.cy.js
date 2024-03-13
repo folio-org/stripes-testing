@@ -81,7 +81,7 @@ describe('Invoices', () => {
 
   it(
     'C353944 "Copy" icon is added to invoice number (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       // Search for Invoice number from precondition
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

@@ -90,7 +90,7 @@ describe('Orders', () => {
   describe('Receiving and Check-in', () => {
     it(
       'C375242 Create new holdings for already existing location when receiving item by "Quick receive" option (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet'] },
+      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
         // Click on the Order
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

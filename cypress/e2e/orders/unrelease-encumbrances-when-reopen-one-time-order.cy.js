@@ -68,7 +68,7 @@ describe('Orders', () => {
 
   it(
     'C354279 Unrelease encumbrances when reopen one-time order without related invoices and receiving (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       // Click on the Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

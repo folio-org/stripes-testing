@@ -58,7 +58,7 @@ describe('ui-finance: Ledgers', () => {
 
   it(
     'C4061 Test the search and filter options for ledgers (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.checkZeroSearchResultsMessage();
 

@@ -100,7 +100,7 @@ describe('ui-orders: Orders', () => {
 
   it(
     'C16984 Edit cost/fund distribution of POL on an "Open" order (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

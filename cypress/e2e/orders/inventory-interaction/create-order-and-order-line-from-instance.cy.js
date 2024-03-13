@@ -72,7 +72,7 @@ describe('Orders', () => {
 
     it(
       'C353987 A user can create and open new order and PO line from instance record (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet'] },
+      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
         // Click on instance from preconditions
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
@@ -137,7 +137,7 @@ describe('Orders', () => {
   describe('Inventory interaction', () => {
     it(
       'C353988 A user can create and save new order and PO line from instance record (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet'] },
+      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
         // Click on instance from preconditions
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);

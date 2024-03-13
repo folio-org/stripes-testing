@@ -71,45 +71,49 @@ describe('Settings: Tenant', () => {
     Users.deleteViaApi(testData.user.userId);
   });
 
-  it('C374179 Delete Campus (thunderjet) (TaaS)', { tags: ['extendedPath', 'thunderjet'] }, () => {
-    TenantPane.goToTenantTab();
-    cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
-    TenantPane.selectTenant(TENANTS.CAMPUSES);
+  it(
+    'C374179 Delete Campus (thunderjet) (TaaS)',
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    () => {
+      TenantPane.goToTenantTab();
+      cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
+      TenantPane.selectTenant(TENANTS.CAMPUSES);
 
-    // #1 Select Institution from Preconditions item #1 in "Institution" dropdown on "Campuses" pane
-    Campuses.selectOption('Institution', testData.institutions[0]);
-    Campuses.checkResultsTableContent([testData.campuses[0], testData.campuses[1]]);
-    // #2 Click "Delete" icon for **"Campus A"** record
-    const DeleteModal = Campuses.clickDeleteBtn({ record: testData.campuses[0].name });
-    DeleteModal.verifyModalView(`The campus ${testData.campuses[0].name} will be deleted.`);
+      // #1 Select Institution from Preconditions item #1 in "Institution" dropdown on "Campuses" pane
+      Campuses.selectOption('Institution', testData.institutions[0]);
+      Campuses.checkResultsTableContent([testData.campuses[0], testData.campuses[1]]);
+      // #2 Click "Delete" icon for **"Campus A"** record
+      const DeleteModal = Campuses.clickDeleteBtn({ record: testData.campuses[0].name });
+      DeleteModal.verifyModalView(`The campus ${testData.campuses[0].name} will be deleted.`);
 
-    // #3 Click "Delete" button
-    DeleteModal.confirm();
-    ExceptionModal.verifyExceptionMessage(
-      'This campus cannot be deleted, as it is in use by one or more records.',
-    );
+      // #3 Click "Delete" button
+      DeleteModal.confirm();
+      ExceptionModal.verifyExceptionMessage(
+        'This campus cannot be deleted, as it is in use by one or more records.',
+      );
 
-    // #4 Click "Okay" button
-    ExceptionModal.clickOkayButton();
-    Campuses.checkResultsTableContent([testData.campuses[0], testData.campuses[1]]);
+      // #4 Click "Okay" button
+      ExceptionModal.clickOkayButton();
+      Campuses.checkResultsTableContent([testData.campuses[0], testData.campuses[1]]);
 
-    // #5 Click "Delete" icon for **"Campus B"** record
-    Campuses.clickDeleteBtn({ record: testData.campuses[1].name });
-    DeleteModal.verifyModalView(`The campus ${testData.campuses[1].name} will be deleted.`);
+      // #5 Click "Delete" icon for **"Campus B"** record
+      Campuses.clickDeleteBtn({ record: testData.campuses[1].name });
+      DeleteModal.verifyModalView(`The campus ${testData.campuses[1].name} will be deleted.`);
 
-    // #6 Click "Cancel" button
-    DeleteModal.cancel();
-    Campuses.checkResultsTableContent([testData.campuses[0], testData.campuses[1]]);
+      // #6 Click "Cancel" button
+      DeleteModal.cancel();
+      Campuses.checkResultsTableContent([testData.campuses[0], testData.campuses[1]]);
 
-    // #7 Click "Delete" icon for **"Campus B"** record one more time
-    Campuses.clickDeleteBtn({ record: testData.campuses[1].name });
-    // #8 Click "Delete" button
-    DeleteModal.confirm();
-    InteractorsTools.checkCalloutMessage(
-      `The campus ${testData.campuses[1].name} was successfully deleted`,
-    );
-    Campuses.checkResultsTableContent([testData.campuses[0]]);
-    Campuses.checkRecordIsAbsent(testData.campuses[1]);
-    testData.campuses.pop();
-  });
+      // #7 Click "Delete" icon for **"Campus B"** record one more time
+      Campuses.clickDeleteBtn({ record: testData.campuses[1].name });
+      // #8 Click "Delete" button
+      DeleteModal.confirm();
+      InteractorsTools.checkCalloutMessage(
+        `The campus ${testData.campuses[1].name} was successfully deleted`,
+      );
+      Campuses.checkResultsTableContent([testData.campuses[0]]);
+      Campuses.checkRecordIsAbsent(testData.campuses[1]);
+      testData.campuses.pop();
+    },
+  );
 });
