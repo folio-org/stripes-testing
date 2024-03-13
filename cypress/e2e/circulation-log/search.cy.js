@@ -85,6 +85,10 @@ describe('Circulation log', () => {
             userBarcode: Cypress.env('users')[0].barcode,
             servicePointId,
           });
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.circulationLogPath,
+            waiter: SearchPane.waitLoading,
+          });
         });
     });
   });
@@ -126,7 +130,7 @@ describe('Circulation log', () => {
 
   it(
     'C16979 Check item details from filtering Circulation log by checked-out (firebird)',
-    { tags: ['criticalPath', 'firebird5'] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       SearchPane.searchByItemBarcode(ITEM_BARCODE);
       SearchResults.clickOnCell(ITEM_BARCODE, 0);

@@ -3,8 +3,6 @@ import getRandomPostfix from '../../../../../support/utils/stringTools';
 import getRandomStringCode from '../../../../../support/utils/genereteTextCode';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -72,7 +70,7 @@ describe('MARC', () => {
         ];
 
         before('Creating test data', () => {
-          // make sure there are no duplicate authority records in the system
+          // Make sure there are no duplicate authority records in the system
           cy.getAdminToken().then(() => {
             MarcAuthorities.getMarcAuthoritiesViaApi({
               limit: 100,
@@ -134,19 +132,14 @@ describe('MARC', () => {
                 [testData.authoritySourceFile.code],
               );
             });
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(
+            DataImport.uploadFileViaApi(
               testData.marcAuthFile.editedFileName,
               testData.marcAuthFile.fileName,
-            );
-            JobProfiles.waitFileIsUploaded();
-            JobProfiles.search(testData.marcAuthFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(testData.marcAuthFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(testData.marcAuthFile.fileName);
-            Logs.getCreatedItemsID().then((link) => {
-              testData.createdRecordIDs.push(link.split('/')[5]);
+              testData.marcAuthFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                testData.createdRecordIDs.push(record[testData.marcAuthFile.propertyName].idList[0]);
+              });
             });
 
             cy.visit(TopMenu.inventoryPath);

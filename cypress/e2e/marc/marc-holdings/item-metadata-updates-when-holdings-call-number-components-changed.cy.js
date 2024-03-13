@@ -79,13 +79,13 @@ describe('MARC', () => {
           [initialInstanceHrId],
         );
         cy.visit(TopMenu.dataImportPath);
-        DataImport.uploadFileViaApi(
-          marcFiles[1].marc,
-          marcFiles[1].fileName,
-          marcFiles[1].jobProfileToRun,
-        );
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(marcFiles[1].editedFileName, marcFiles[1].fileName);
+        JobProfiles.waitLoadingList();
+        JobProfiles.search(marcFiles[1].jobProfileToRun);
+        JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFiles[1].fileName);
-        Logs.checkJobStatus(marcFiles[1].fileName, JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFiles[1].fileName);
         Logs.getCreatedItemsID().then((link) => {
           testData.createdRecordIDs.push(link.split('/')[5]);

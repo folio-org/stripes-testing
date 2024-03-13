@@ -131,6 +131,7 @@ describe('MARC', () => {
           );
           MarcAuthority.edit();
           QuickMarcEditor.checkContent(marcAuthRecordData.tag010Value, marcAuthRecordData.rowIndex);
+          cy.wait(2000);
           QuickMarcEditor.updateExistingFieldContent(
             marcAuthRecordData.rowIndex,
             marcAuthRecordData.newTag010Value,
