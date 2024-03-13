@@ -183,8 +183,7 @@ const pressAddHoldingsButton = () => {
 
   return HoldingsRecordEdit;
 };
-
-const waitLoading = () => cy.expect(instanceDetailsSection.find(actionsButton).exists());
+const waitLoading = () => cy.expect(actionsButton.exists());
 
 const openHoldings = (...holdingToBeOpened) => {
   const openActions = [];
