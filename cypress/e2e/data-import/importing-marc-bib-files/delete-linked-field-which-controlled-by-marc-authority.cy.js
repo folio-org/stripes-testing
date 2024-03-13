@@ -33,6 +33,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -230,6 +231,7 @@ describe('data-import', () => {
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
+        cy.pause();
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
@@ -248,6 +250,19 @@ describe('data-import', () => {
           nameForPreUpdatedMarcBibFile,
           nameForUpdatedMarcFile,
         );
+
+        // in case in Settings - Data import - MARC field protection we have these fields as protected
+        // for this test case purpose they should be removed
+
+        cy.getAdminToken().then(() => {
+          MarcFieldProtection.getListViaApi({
+            query: '"field"=="830"',
+          }).then((list) => {
+            if (list) {
+              list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+            }
+          });
+        });
 
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);

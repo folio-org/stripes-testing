@@ -76,7 +76,7 @@ export default {
         cy.log('Desired expanded state:', expand);
         cy.log('Current expanded state:', ariaExpanded);
         if (ariaExpanded !== expand.toString()) {
-          cy.wrap($accordion.find('button[aria-expanded]')).click();
+          cy.wrap($accordion.find('button[class^="defaultCollapseButton---"]')).click();
         }
         cy.expect(Accordion({ label: including(`Holdings: ${content}`) }).has({ open: expand }));
       });
