@@ -178,6 +178,7 @@ describe('MARC', () => {
           const holdingsUpdateDate = date;
 
           HoldingsRecordView.close();
+          InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ANNEX_UI} >`);
           InventoryInstance.openItemByBarcode(testData.itemBarcode);
           cy.getItems({ query: `"barcode"=="${testData.itemBarcode}"` }).then((item) => {
             const updatedItemData = item;
@@ -208,6 +209,7 @@ describe('MARC', () => {
           const holdingsUpdateDate = date;
 
           HoldingsRecordView.close();
+          InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ANNEX_UI} >`);
           InventoryInstance.openItemByBarcode(testData.itemBarcode);
           cy.getItems({ query: `"barcode"=="${testData.itemBarcode}"` }).then((item) => {
             const updatedItemData = item;
