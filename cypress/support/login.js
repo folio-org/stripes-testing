@@ -47,3 +47,15 @@ Cypress.Commands.add('logout', () => {
 Cypress.Commands.add('loginAsAdmin', (visitPath) => {
   cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'), visitPath);
 });
+
+Cypress.Commands.add('loginAsCollegeAdmin', (visitPath) => {
+  cy.login('ECS0001Admin', Cypress.env('diku_password'), visitPath);
+});
+
+Cypress.Commands.add('loginAsUniversityAdmin', (visitPath) => {
+  cy.login('ECS0005Admin', Cypress.env('diku_password'), visitPath);
+});
+
+Cypress.Commands.add('loginAsConsortiumAdmin', (visitPath) => {
+  cy.login('consortium_admin', Cypress.env('diku_password'), visitPath);
+});

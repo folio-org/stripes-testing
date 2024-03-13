@@ -25,15 +25,13 @@ describe('inventory', () => {
 
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFileViaApi(
-              'marcFileForC350387.mrc',
-              fileName,
-              jobProfileToRun,
-            ).then((response) => {
-              response.entries.forEach((record) => {
-                createdInstanceIDs.push(record[propertyName].idList[0]);
-              });
-            });
+            DataImport.uploadFileViaApi('marcFileForC350387.mrc', fileName, jobProfileToRun).then(
+              (response) => {
+                response.entries.forEach((record) => {
+                  createdInstanceIDs.push(record[propertyName].idList[0]);
+                });
+              },
+            );
           },
         );
 

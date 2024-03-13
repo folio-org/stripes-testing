@@ -20,7 +20,7 @@ describe('data-export', () => {
       marc: 'Genre_1_record_C353209.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
     };
-    const searchHeading = 'Peplum films';
+    const searchHeading = 'C353209 Peplum films';
     let createdRecordIDs;
 
     before(() => {
@@ -32,15 +32,13 @@ describe('data-export', () => {
         user.userProperties = createdUserProperties;
       });
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.uploadFileViaApi(
-          marcFile.marc,
-          marcFile.fileName,
-          jobProfileToRun,
-        ).then((response) => {
-          response.entries.forEach((record) => {
-            createdRecordIDs = record[propertyName].idList[0];
-          });
-        });
+        DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
+          (response) => {
+            response.entries.forEach((record) => {
+              createdRecordIDs = record[propertyName].idList[0];
+            });
+          },
+        );
         cy.login(user.userProperties.username, user.userProperties.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
@@ -60,7 +58,7 @@ describe('data-export', () => {
 
     it(
       'C353209 Export failed when using ".csv" file with non-existent UUIDs (Spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPathBroken', 'spitfire'] },
       () => {
         MarcAuthorities.searchBy('Keyword', searchHeading);
         MarcAuthorities.downloadSelectedRecordWithRowIdx();

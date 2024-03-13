@@ -1,22 +1,22 @@
 import {
-  Section,
   Button,
-  HTML,
-  including,
-  TextField,
-  QuickMarcEditorRow,
-  TextArea,
-  MultiColumnListHeader,
   Callout,
-  Modal,
-  TableRow,
   DropdownMenu,
+  HTML,
+  Modal,
+  MultiColumnListHeader,
   PaneHeader,
+  TableRow,
+  QuickMarcEditorRow,
+  Section,
   TableCell,
+  TextArea,
+  TextField,
+  including,
   matching,
 } from '../../../../interactors';
-import QuickMarcEditorWindow from '../quickMarcEditor';
 import DateTools from '../../utils/dateTools';
+import QuickMarcEditorWindow from '../quickMarcEditor';
 
 const defaultCreateJobProfile = 'Default - Create SRS MARC Authority';
 const defaultUpdateJobProfile = 'Update authority by matching 010';
@@ -93,6 +93,8 @@ const defaultAuthority = {
   // 24 symbols
   ldrValue: '00846cz\\\\a2200241n\\\\4500',
 };
+
+const detailsPaneHeader = PaneHeader({ id: 'paneHeadermarc-view-pane' });
 
 export default {
   defaultAuthority,
@@ -299,6 +301,22 @@ export default {
     cy.expect(Callout('Field 655 has been linked to a MARC authority record.').exists());
   },
 
+  verifySharedAuthorityDetailsHeading(heading) {
+    cy.expect(detailsPaneHeader.has({ title: `Shared • ${heading}` }));
+  },
+
+  verifyLocalAuthorityDetailsHeading(heading) {
+    cy.expect(detailsPaneHeader.has({ title: `Local • ${heading}` }));
+  },
+
+  verifyFieldPositionInView(index, tag, content) {
+    cy.expect(
+      rootSection
+        .find(TableRow({ index, innerText: including(content) }))
+        .has({ innerText: including(`${tag}  `) }),
+    );
+  },
+
   createAuthoritySource: (body) => {
     return cy.okapiRequest({
       method: 'POST',
@@ -357,6 +375,17 @@ export default {
         .find(TableCell({ innerText: matching(/^[0-9]{8}[0-9]{6}\.[0-9]$/) }))
         .exists(),
     );
+  },
+
+  verifyAfterSaveAndClose() {
+    cy.expect([calloutUpdatedRecordSuccess.exists(), rootSection.exists()]);
+  },
+
+  getId() {
+    cy.url()
+      .then((url) => cy.wrap(url.split('?')[0].split('/').at(-1)))
+      .as('authorityId');
+    return cy.get('@authorityId');
   },
 
   getRecordsViaAPI: (deleted = false, idOnly = false, acceptHeader = null, query = null) => {

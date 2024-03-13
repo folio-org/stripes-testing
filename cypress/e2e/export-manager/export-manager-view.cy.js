@@ -5,7 +5,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import ExportDetails from '../../support/fragments/exportManager/exportDetails';
 
-
 import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../support/constants';
 import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
 import {

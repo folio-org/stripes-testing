@@ -1,43 +1,59 @@
-import { v4 as uuidv4 } from 'uuid';
 import { HTML, including } from '@interactors/html';
+import { v4 as uuidv4 } from 'uuid';
 import {
-  Pane,
-  Button,
   Accordion,
-  TextField,
-  MultiColumnListRow,
+  Button,
   Checkbox,
   Modal,
   MultiColumnList,
-  Select,
-  Section,
-  MultiSelect,
-  TextArea,
-  RadioButtonGroup,
-  RadioButton,
-  SearchField,
   MultiColumnListCell,
+  SelectionOption,
+  MultiColumnListRow,
+  MultiSelect,
+  Pane,
+  RadioButton,
+  RadioButtonGroup,
+  SearchField,
+  Section,
+  Select,
+  TextArea,
+  TextField,
 } from '../../../../interactors';
+import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
-import SelectUser from '../check-out-actions/selectUser';
 
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const saveAndCloseBtn = Button('Save & close');
 const actionsButton = Button('Actions');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const editButton = Button('Edit');
-const extendedInformationAccordion = Accordion('Extended information');
 const externalSystemIdTextfield = TextField('External system ID');
-const customFieldsAccordion = Accordion('Custom fields');
 const selectPermissionsModal = Modal('Select Permissions');
 const permissionsAccordion = Accordion({ id: 'permissions' });
+const userInformationAccordion = Accordion('User information');
+const affiliationsAccordion = Accordion('Affiliations');
+const extendedInformationAccordion = Accordion('Extended information');
+const contactInformationAccordion = Accordion('Contact information');
+const customFieldsAccordion = Accordion('Custom fields');
+const userPermissionsAccordion = Accordion('User permissions');
+const servicePointsAccordion = Accordion('Service points');
+const patronBlocksAccordion = Accordion('Patron blocks');
+const proxySponsorAccordion = Accordion('Proxy/sponsor');
+const feesFinesAccordion = Accordion('Fees/fines');
+const loansAccordion = Accordion('Loans');
+const requestsAccordion = Accordion('Requests');
+const notesAccordion = Accordion('Notes');
+const createRequestActionsButton = Button('Create request');
+const createFeeFineActionsButton = Button('Create fee/fine');
+const createPatronBlockActionsButton = Button('Create block');
 const addPermissionsButton = Button({ id: 'clickable-add-permission' });
 const permissionsSearch = selectPermissionsModal.find(SearchField());
 const searchButton = Button('Search');
 const resetAllButton = Button('Reset all');
 const selectRequestType = Select({ id: 'type' });
 const cancelButton = Button('Cancel');
+const userSearch = TextField('User search');
 let totalRows;
 
 // servicePointIds is array of ids
@@ -65,6 +81,10 @@ export default {
 
   changePreferredFirstName(prefName) {
     cy.do(TextField({ id: 'adduser_preferredname' }).fillIn(prefName));
+  },
+
+  changeUserType(type = 'Patron') {
+    cy.do(Select({ id: 'type' }).choose(type));
   },
 
   searchForPermission(permission) {
@@ -102,6 +122,54 @@ export default {
     cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
   },
 
+  addPermissions1(permissions) {
+    cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
+    cy.wait(5000);
+    cy.do([permissionsAccordion.clickHeader(), addPermissionsButton.click()]);
+    permissions.forEach((permission) => {
+      cy.do(userSearch.fillIn(permission));
+      cy.expect(userSearch.is({ value: permission }));
+      // wait is needed to avoid so fast robot clicks
+      cy.wait(1000);
+      cy.do(Button('Search').click());
+      cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
+      cy.wait(2000);
+    });
+    cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
+  },
+
+  assignAllPermissionsToTenant(tenant, permission) {
+    cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
+    cy.wait(5000);
+    cy.do([
+      permissionsAccordion.clickHeader(),
+      Button({ id: 'user-assigned-affiliations-select' }).click(),
+      SelectionOption(tenant).click(),
+      addPermissionsButton.click(),
+    ]);
+
+    cy.do(userSearch.fillIn(permission));
+    cy.expect(userSearch.is({ value: permission }));
+    // wait is needed to avoid so fast robot clicks
+    cy.wait(1000);
+    cy.do(Button('Search').click());
+    cy.do(
+      Modal({ id: 'permissions-modal' })
+        .find(Checkbox({ name: 'selected-selectAll' }))
+        .click(),
+    );
+    cy.wait(2000);
+    cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
+  },
+
+  verifyPermissionDoesNotExist(permission) {
+    cy.do([addPermissionsButton.click(), userSearch.fillIn(permission)]);
+    cy.expect(userSearch.is({ value: permission }));
+    // wait is needed to avoid so fast robot clicks
+    cy.wait(1000);
+    cy.do(Button('Search').click());
+  },
+
   verifyPermissionDoesNotExistInSelectPermissions(permission) {
     this.searchForPermission(permission);
     cy.expect(selectPermissionsModal.find(HTML('The list contains no items')).exists());
@@ -122,6 +190,68 @@ export default {
     });
 
     cy.do(Modal().find(saveAndCloseBtn).click());
+  },
+
+  selectPreferableServicePoint(point) {
+    cy.do(Select({ id: 'servicePointPreference' }).choose(point));
+  },
+
+  openServicePointsAccordion() {
+    cy.do(Button({ id: 'accordion-toggle-button-servicePointsSection' }).click());
+  },
+
+  checkServicePoints(...points) {
+    points.forEach((point) => {
+      cy.expect(servicePointsAccordion.find(HTML(including(point))).exists());
+    });
+  },
+
+  checkAccordionsForShadowUser() {
+    cy.expect([
+      userInformationAccordion.exists(),
+      affiliationsAccordion.exists(),
+      extendedInformationAccordion.exists(),
+      contactInformationAccordion.exists(),
+      customFieldsAccordion.exists(),
+      userPermissionsAccordion.exists(),
+      servicePointsAccordion.exists(),
+    ]);
+    cy.expect([
+      patronBlocksAccordion.absent(),
+      proxySponsorAccordion.absent(),
+      feesFinesAccordion.absent(),
+      loansAccordion.absent(),
+      requestsAccordion.absent(),
+      notesAccordion.absent(),
+    ]);
+  },
+
+  checkAccordionsForShadowUserInEditMode() {
+    cy.expect([
+      userInformationAccordion.exists(),
+      extendedInformationAccordion.exists(),
+      contactInformationAccordion.exists(),
+      userPermissionsAccordion.exists(),
+      servicePointsAccordion.exists(),
+    ]);
+    cy.expect([
+      patronBlocksAccordion.absent(),
+      proxySponsorAccordion.absent(),
+      feesFinesAccordion.absent(),
+      loansAccordion.absent(),
+      requestsAccordion.absent(),
+      notesAccordion.absent(),
+    ]);
+  },
+
+  checkActionsForShadowUser() {
+    cy.do(userDetailsPane.find(actionsButton).click());
+    cy.expect([
+      createRequestActionsButton.absent(),
+      createFeeFineActionsButton.absent(),
+      createPatronBlockActionsButton.absent(),
+    ]);
+    cy.do(userDetailsPane.find(actionsButton).click());
   },
 
   addProxySponsor(users, type = 'sponsor') {
@@ -151,6 +281,12 @@ export default {
 
   saveAndClose() {
     cy.do(saveAndCloseBtn.click());
+  },
+
+  saveEditedUser() {
+    cy.intercept('PUT', '/users/*').as('updateUser');
+    this.saveAndClose();
+    cy.wait('@updateUser', { timeout: 100000 });
   },
 
   addServicePointViaApi: (servicePointId, userId, defaultServicePointId) => addServicePointsViaApi([servicePointId], userId, defaultServicePointId),
@@ -362,5 +498,9 @@ export default {
 
   addAddress(type = 'Home') {
     cy.do([Button('Add address').click(), Select('Address Type*').choose(type)]);
+  },
+
+  editUsername(username) {
+    cy.do(TextField({ id: 'adduser_username' }).fillIn(username));
   },
 };
