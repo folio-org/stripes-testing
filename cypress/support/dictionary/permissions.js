@@ -265,6 +265,22 @@ export default {
     internal: 'ui-inventory.settings.nature-of-content-terms',
     gui: 'Settings (Inventory): Create, edit, delete nature of content',
   },
+  crudContributorTypes: {
+    internal: 'ui-inventory.settings.contributor-types',
+    gui: 'Settings (Inventory): Create, edit, delete contributor types',
+  },
+  crudFormats: {
+    internal: 'ui-inventory.settings.instance-formats',
+    gui: 'Settings (Inventory): Create, edit, delete formats',
+  },
+  crudDefinedResourceTypes: {
+    internal: 'ui-inventory.settings.nature-of-content-terms',
+    gui: 'Settings (Inventory): Create, edit, delete locally defined resource types',
+  },
+  crudResourceIdentifierTypes: {
+    internal: 'ui-inventory.settings.identifier-types',
+    gui: 'Settings (Inventory): Create, edit, delete resource identifier types',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
