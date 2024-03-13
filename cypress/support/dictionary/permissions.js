@@ -105,6 +105,10 @@ export default {
     internal: 'ui-quick-marc.quick-marc-authorities-editor.create',
     gui: 'quickMARC: Create a new MARC authority record',
   },
+  uiQuickMarcQuickMarcAuthorityCreate: {
+    internal: 'ui-quick-marc.quick-marc-authorities-editor.create',
+    gui: 'quickMARC: Create a new MARC authority record',
+  },
   // Marc Authority record
   uiQuickMarcQuickMarcAuthoritiesEditorAll: {
     internal: 'ui-quick-marc.quick-marc-authorities-editor.all',
@@ -121,6 +125,10 @@ export default {
   uiMarcAuthoritiesAuthorityRecordDelete: {
     internal: 'ui-marc-authorities.authority-record.delete',
     gui: 'MARC Authority: Delete MARC authority record',
+  },
+  uiMarcAuthoritiesAuthorityRecordCreate: {
+    internal: 'ui-marc-authorities.authority-record.create',
+    gui: 'MARC Authority: Create new MARC authority record',
   },
   uiMarcAuthoritiesAuthorityRecordCreate: {
     internal: 'ui-marc-authorities.authority-record.create',
@@ -228,6 +236,10 @@ export default {
   inventoryCRUDHoldingsNoteTypes: {
     internal: 'ui-inventory.settings.holdings-note-types',
     gui: 'Settings (Inventory): Create, edit, delete holdings note types',
+  },
+  inventoryCRUDHoldingsTypes: {
+    internal: 'ui-inventory.settings.holdings-types',
+    gui: 'Settings (Inventory): Create, edit, delete holdings types',
   },
   inventoryCRUDHoldingsTypes: {
     internal: 'ui-inventory.settings.holdings-types',
@@ -425,6 +437,10 @@ export default {
   uiUsersCreatePatronTamplate: {
     internal: 'ui-users.settings.patron-block-templates',
     gui: 'Settings (Users): Can create, edit and remove patron blocks templates',
+  },
+  uiUsersViewPatronGroups: {
+    internal: 'ui-users.settings.usergroups.view',
+    gui: 'Settings (Users): Can view patron groups',
   },
   uiUsersViewPatronGroups: {
     internal: 'ui-users.settings.usergroups.view',
@@ -852,6 +868,10 @@ export default {
     internal: 'ui-inventory.settings.loantypes',
     gui: 'Settings (Inventory): Create, edit, delete loan types',
   },
+  uiCreateEditDeleteLoanTypes: {
+    internal: 'ui-inventory.settings.loantypes',
+    gui: 'Settings (Inventory): Create, edit, delete loan types',
+  },
   uiCreateEditDeleteMaterialTypes: {
     internal: 'ui-inventory.settings.materialtypes',
     gui: 'Settings (Inventory): Create, edit, delete material types',
@@ -923,6 +943,10 @@ export default {
   uiSettingsManageAuthorityFiles: {
     internal: 'ui-marc-authorities.settings.authority-files.all',
     gui: 'Settings (MARC authority): View, create, edit, delete authority files',
+  },
+  uiSettingsModesOfIssuanceCreateEditDelete: {
+    internal: 'ui-inventory.settings.modes-of-issuance',
+    gui: 'Settings (Inventory): Create, edit, delete locally defined modes of issuance',
   },
   uiSettingsModesOfIssuanceCreateEditDelete: {
     internal: 'ui-inventory.settings.modes-of-issuance',
@@ -1039,6 +1063,48 @@ export default {
     internal: 'ui-users.settings.usergroups.all',
     gui: 'Settings (Users): Can create, edit and remove patron groups',
   },
+  // Consortia
+  consortiaSettingsConsortiaAffiliationsEdit: {
+    internal: 'ui-consortia-settings.consortia.affiliations.edit',
+    gui: 'Consortia: Assign and unassign affiliations',
+  },
+  consortiaSettingsConsortiaAffiliationsView: {
+    internal: 'ui-consortia-settings.consortia.affiliations.view',
+    gui: 'Consortia: View affiliations',
+  },
+  consortiaInventoryShareLocalInstance: {
+    internal: 'consortia.inventory.share.local.instance',
+    gui: 'Inventory: Share local instance with consortium',
+  },
+  consortiaSettingsSettingsMembershipEdit: {
+    internal: 'ui-consortia-settings.settings.membership.edit',
+    gui: 'Settings (Consortia): Can view and edit consortia membership',
+  },
+  consortiaSettingsSettingsMembershipView: {
+    internal: 'ui-consortia-settings.settings.membership.view',
+    gui: 'Settings (Consortia): Can view consortia membership',
+  },
+  // Consortium manager
+  consortiaSettingsConsortiumManagerEdit: {
+    internal: 'ui-consortia-settings.consortium-manager.edit',
+    gui: 'Consortium manager: Can create, edit and remove settings',
+  },
+  consortiaSettingsConsortiumManagerShare: {
+    internal: 'ui-consortia-settings.consortium-manager.share',
+    gui: 'Consortium manager: Can share settings to all members',
+  },
+  consortiaSettingsConsortiumManagerView: {
+    internal: 'ui-consortia-settings.consortium-manager.view',
+    gui: 'Consortium manager: Can view existing settings',
+  },
+  consortiaSettingsConsortiumManagerDepartmentsCreateEditView: {
+    internal: 'ui-users.settings.departments.create.edit.view',
+    gui: 'Settings (Users): Can create, edit, and view department',
+  },
+  consortiaSettingsConsortiumManagerPatronGroupsAll: {
+    internal: 'ui-users.settings.usergroups.all',
+    gui: 'Settings (Users): Can create, edit and remove patron groups',
+  },
   // Lists
   listsAll: {
     internal: 'module.lists.all',
@@ -1059,6 +1125,15 @@ export default {
   coursesReadAll: {
     internal: 'ui-courses.read-all',
     gui: 'Courses: Read all',
+  },
+  // Departments
+  createEditViewDepartments: {
+    internal: 'ui-users.settings.departments.create.edit.view',
+    gui: 'Settings (Users): Can create, edit, and view departments',
+  },
+  departmentsAll: {
+    internal: 'ui-users.settings.departments.all',
+    gui: 'Settings (Users): Can create, edit, view, and delete departments',
   },
   // Departments
   createEditViewDepartments: {
