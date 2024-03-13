@@ -130,6 +130,10 @@ export default {
     internal: 'ui-marc-authorities.authority-record.create',
     gui: 'MARC Authority: Create new MARC authority record',
   },
+  uiMarcAuthoritiesAuthorityRecordCreate: {
+    internal: 'ui-marc-authorities.authority-record.create',
+    gui: 'MARC Authority: Create new MARC authority record',
+  },
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: {
@@ -264,22 +268,6 @@ export default {
   crudNatureOfContent: {
     internal: 'ui-inventory.settings.nature-of-content-terms',
     gui: 'Settings (Inventory): Create, edit, delete nature of content',
-  },
-  crudContributorTypes: {
-    internal: 'ui-inventory.settings.contributor-types',
-    gui: 'Settings (Inventory): Create, edit, delete contributor types',
-  },
-  crudFormats: {
-    internal: 'ui-inventory.settings.instance-formats',
-    gui: 'Settings (Inventory): Create, edit, delete formats',
-  },
-  crudDefinedResourceTypes: {
-    internal: 'ui-inventory.settings.nature-of-content-terms',
-    gui: 'Settings (Inventory): Create, edit, delete locally defined resource types',
-  },
-  crudResourceIdentifierTypes: {
-    internal: 'ui-inventory.settings.identifier-types',
-    gui: 'Settings (Inventory): Create, edit, delete resource identifier types',
   },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
@@ -449,6 +437,10 @@ export default {
   uiUsersCreatePatronTamplate: {
     internal: 'ui-users.settings.patron-block-templates',
     gui: 'Settings (Users): Can create, edit and remove patron blocks templates',
+  },
+  uiUsersViewPatronGroups: {
+    internal: 'ui-users.settings.usergroups.view',
+    gui: 'Settings (Users): Can view patron groups',
   },
   uiUsersViewPatronGroups: {
     internal: 'ui-users.settings.usergroups.view',
@@ -876,6 +868,10 @@ export default {
     internal: 'ui-inventory.settings.loantypes',
     gui: 'Settings (Inventory): Create, edit, delete loan types',
   },
+  uiCreateEditDeleteLoanTypes: {
+    internal: 'ui-inventory.settings.loantypes',
+    gui: 'Settings (Inventory): Create, edit, delete loan types',
+  },
   uiCreateEditDeleteMaterialTypes: {
     internal: 'ui-inventory.settings.materialtypes',
     gui: 'Settings (Inventory): Create, edit, delete material types',
@@ -947,6 +943,10 @@ export default {
   uiSettingsManageAuthorityFiles: {
     internal: 'ui-marc-authorities.settings.authority-files.all',
     gui: 'Settings (MARC authority): View, create, edit, delete authority files',
+  },
+  uiSettingsModesOfIssuanceCreateEditDelete: {
+    internal: 'ui-inventory.settings.modes-of-issuance',
+    gui: 'Settings (Inventory): Create, edit, delete locally defined modes of issuance',
   },
   uiSettingsModesOfIssuanceCreateEditDelete: {
     internal: 'ui-inventory.settings.modes-of-issuance',
