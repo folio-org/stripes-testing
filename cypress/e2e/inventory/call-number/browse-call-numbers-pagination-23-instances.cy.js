@@ -70,7 +70,7 @@ describe('inventory', () => {
 
     it(
       'C423492 Use pagination button browsing for call number which do not have the first 10 characters of the shelving order and 23 instances with call numbers "test + unique number" (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);

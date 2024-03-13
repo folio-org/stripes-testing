@@ -29,7 +29,7 @@ describe('Notes', () => {
 
   it(
     'C1205 Settings (Notes): Edit and View General settings (spitfire) (TaaS)',
-    { tags: ['criticalPath', 'spitfire'] },
+    { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
     () => {
       NoteTypes.checkNewNoteButtonEnabled();
       NoteTypes.checkNoteTypeIsDisplayed(generalNote);

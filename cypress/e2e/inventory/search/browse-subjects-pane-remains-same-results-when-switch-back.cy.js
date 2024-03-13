@@ -85,7 +85,7 @@ describe('inventory', () => {
 
     it(
       'C380405 Browse subjects pane remains same results when user switches to search pane and back (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

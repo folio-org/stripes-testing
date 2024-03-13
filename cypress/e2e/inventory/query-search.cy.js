@@ -61,7 +61,7 @@ describe('ui-inventory: query search', () => {
   ].forEach((searcher) => {
     it(
       'C9202 Test search field working for Query Search in Instance, Holdings and Item segment (spitfire)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         searcher.searchTab();
         InventorySearchAndFilter.searchByParameter('Query search', searcher.value);

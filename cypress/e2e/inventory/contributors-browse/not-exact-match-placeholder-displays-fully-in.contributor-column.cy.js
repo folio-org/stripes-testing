@@ -49,7 +49,7 @@ describe('inventory', () => {
 
     it(
       'C357577 Verify that not-exact match placeholder displays fully in the "Contributor" column (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         // Select "Browse", Click on the browse option dropdown and select “Contributors” option
         InventorySearchAndFilter.selectBrowseContributors();

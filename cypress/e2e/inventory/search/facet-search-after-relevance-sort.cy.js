@@ -126,7 +126,7 @@ describe('inventory', () => {
 
     it(
       'C422216 Verify that facets options are available after "Relevance" sort was applied to the result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         InventoryInstances.searchByTitle(testData.searchQuery);
         InventorySearchAndFilter.switchToInstance();

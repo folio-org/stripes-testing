@@ -130,7 +130,7 @@ describe('inventory', () => {
 
     it(
       'C400619 Search Holdings using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         // #1 Select "Holdings" toggle on "Search & filter" pane
         InventorySearchAndFilter.switchToHoldings();

@@ -116,7 +116,7 @@ describe('inventory', () => {
 
     it(
       'C422018 Search Items using advanced search with a combination of operators (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToItem();
         InventoryInstances.clickAdvSearchButton();

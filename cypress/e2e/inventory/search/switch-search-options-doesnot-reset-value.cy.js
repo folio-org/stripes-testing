@@ -41,7 +41,7 @@ describe('inventory', () => {
 
     it(
       'C353942 Verify that switching between search options doesnot reset its value to default (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToInstance();
         InventorySearchAndFilter.verifySpecificTabHighlighted('Instance');

@@ -46,14 +46,14 @@ describe('Note creation', () => {
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
-  it('C1296 Create a note (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
+  it('C1296 Create a note (spitfire)', { tags: ['smoke', 'spitfire', 'eurekaPhase1'] }, () => {
     NotesEholdings.createNote(note.title, note.details);
     NotesEholdings.verifyNoteTitle(note.title);
     NotesEholdings.openNoteView(note.title);
     NotesEholdings.deleteNote();
   });
 
-  it('C1299 Edit a note (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
+  it('C1299 Edit a note (spitfire)', { tags: ['smoke', 'spitfire', 'eurekaPhase1'] }, () => {
     const newNote = {
       title: `Changed Title ${getRandomPostfix()}`,
       details: `Changed details ${getRandomPostfix()}`,
@@ -65,7 +65,7 @@ describe('Note creation', () => {
     NotesEholdings.deleteNote();
   });
 
-  it('C16992 View a note (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
+  it('C16992 View a note (spitfire)', { tags: ['smoke', 'spitfire', 'eurekaPhase1'] }, () => {
     NotesEholdings.createNote(note.title, note.details);
     NotesEholdings.verifyNoteTitle(note.title);
     NotesEholdings.openNoteView(note.title);
@@ -96,7 +96,7 @@ describe('Note creation', () => {
 
   it(
     'C16993 Able to sort Notes accordion column headings (spitfire)',
-    { tags: ['criticalPath', 'spitfire'] },
+    { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
     () => {
       note.titleFirst = '1 Title';
       note.titleSecond = '2 Title';
@@ -115,7 +115,7 @@ describe('Note creation', () => {
     },
   );
 
-  it('C1300 Delete a note (spitfire)', { tags: ['criticalPath', 'spitfire'] }, () => {
+  it('C1300 Delete a note (spitfire)', { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] }, () => {
     note.addDetails = `Test details ${getRandomPostfix()}`;
 
     NotesEholdings.createNote(note.title, note.addDetails);

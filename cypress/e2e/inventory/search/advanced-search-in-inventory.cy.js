@@ -108,7 +108,7 @@ describe('inventory', () => {
 
     it(
       'C400610 Search Instances using advanced search with "AND" operator (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.checkAdvSearchInstancesModalFields(0);
@@ -153,7 +153,7 @@ describe('inventory', () => {
 
     it(
       'C400616 Search Instances using advanced search with a combination of operators (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
@@ -220,7 +220,7 @@ describe('inventory', () => {
 
     it(
       'C414977 Searching Instances using advanced search with "Exact phrase" option returns correct results (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(

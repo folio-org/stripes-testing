@@ -141,7 +141,7 @@ describe('inventory', () => {
 
     it(
       'C358140 Verify that browsing for "call number" with "space" value will get the correct result (spitfire)',
-      { tags: ['spitfire', 'smoke'] },
+      { tags: ['spitfire', 'smoke', 'eurekaPhase1'] },
       () => {
         search(testData.exactSearch);
         BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
@@ -156,7 +156,7 @@ describe('inventory', () => {
 
     it(
       'C359589 Verify that "Browse call numbers" result list displays all unique call numbers from one “Instance” record (spitfire)',
-      { tags: ['spitfire', 'criticalPath'] },
+      { tags: ['spitfire', 'criticalPath', 'eurekaPhase1'] },
       () => {
         BrowseCallNumber.clickBrowseBtn();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
@@ -170,7 +170,7 @@ describe('inventory', () => {
 
     it(
       'C405529 Verify that clicking on "Call number" value execute search for "Instance" record by "Shelving order" value (spitfire)',
-      { tags: ['spitfire', 'criticalPath'] },
+      { tags: ['spitfire', 'criticalPath', 'eurekaPhase1'] },
       () => {
         searchAndOpenInstance(testData.parameter, item.instanceName);
         InventoryInstance.addItem();
@@ -194,7 +194,7 @@ describe('inventory', () => {
 
     it(
       'C347906 Verify that look and list of available facets change according to search option (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();
@@ -209,7 +209,7 @@ describe('inventory', () => {
 
     it(
       'C347910 Verify that "Actions" menu is displayed when searching by any search option except "Call numbers" (spitfire)',
-      { tags: ['spitfire', 'criticalPath'] },
+      { tags: ['spitfire', 'criticalPath', 'eurekaPhase1'] },
       () => {
         BrowseCallNumber.clickBrowseBtn();
         InventorySearchAndFilter.selectBrowseCallNumbers();
@@ -224,7 +224,7 @@ describe('inventory', () => {
 
     it(
       'C347909 Verify browse call numbers function and result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();
@@ -242,7 +242,7 @@ describe('inventory', () => {
 
     it(
       'C347916 Verify Browse with non-existent call number (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();
@@ -256,7 +256,7 @@ describe('inventory', () => {
 
     it(
       'C347918 Verify selecting row from browse result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();

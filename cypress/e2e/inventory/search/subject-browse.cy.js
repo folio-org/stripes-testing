@@ -52,7 +52,7 @@ describe('inventory', () => {
 
     it(
       'C350387 Verify the "Browse subjects" result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseSubjects.searchBrowseSubjects(testData.testValue);

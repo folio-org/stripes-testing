@@ -54,7 +54,7 @@ describe('inventory', () => {
 
     it(
       'C353639 Browse contributors with exact match query (spitfire)',
-      { tags: ['smoke', 'spitfire'] },
+      { tags: ['smoke', 'spitfire', 'eurekaPhase1'] },
       () => {
         BrowseContributors.clickBrowseBtn();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
