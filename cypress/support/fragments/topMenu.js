@@ -35,6 +35,7 @@ const permissionSetPath = '/settings/users/perms?layer=add';
 const lostItemsRequiringActualCost = '/users/lost-items';
 const listsPath = '/lists';
 const coursesPath = '/cr/courses';
+const consortiumManagerPath = '/consortia-settings';
 const settingsAuthorityFilesPath = '/settings/marc-authorities/manage-authority-files';
 
 export default {
@@ -74,6 +75,7 @@ export default {
   settingsUserPath,
   lostItemsRequiringActualCost,
   listsPath,
+  consortiumManagerPath,
   coursesPath,
   settingsAuthorityFilesPath,
 

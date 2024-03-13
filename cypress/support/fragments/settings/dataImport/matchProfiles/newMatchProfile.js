@@ -1,19 +1,19 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { not } from 'bigtest';
 import { HTML, including } from '@interactors/html';
+import { not } from 'bigtest';
 import {
-  Button,
-  Select,
-  TextField,
-  SelectionList,
   Accordion,
-  SelectionOption,
-  Dropdown,
+  Button,
   Callout,
-  Section,
+  Dropdown,
   DropdownMenu,
   Pane,
+  Section,
+  Select,
+  SelectionList,
+  SelectionOption,
   TextArea,
+  TextField,
 } from '../../../../../../interactors';
 import { EXISTING_RECORDS_NAMES } from '../../../../constants';
 

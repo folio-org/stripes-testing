@@ -32,15 +32,13 @@ describe('data-export', () => {
         user.userProperties = createdUserProperties;
       });
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.uploadFileViaApi(
-          marcFile.marc,
-          marcFile.fileName,
-          jobProfileToRun,
-        ).then((response) => {
-          response.entries.forEach((record) => {
-            createdRecordIDs = record[propertyName].idList[0];
-          });
-        });
+        DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
+          (response) => {
+            response.entries.forEach((record) => {
+              createdRecordIDs = record[propertyName].idList[0];
+            });
+          },
+        );
         cy.login(user.userProperties.username, user.userProperties.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,

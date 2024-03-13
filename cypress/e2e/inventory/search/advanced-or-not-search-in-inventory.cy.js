@@ -35,11 +35,7 @@ describe('inventory', () => {
     before('Creating data', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       cy.getAdminToken();
-      DataImport.uploadFileViaApi(
-        marcFile.marc,
-        marcFile.fileName,
-        marcFile.jobProfileToRun,
-      );
+      DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, marcFile.jobProfileToRun);
       Logs.waitFileIsImported(marcFile.fileName);
       Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFile.fileName);

@@ -24,14 +24,15 @@ import {
   Select,
   TextArea,
   TextField,
+  Tooltip,
   ValueChipRoot,
   including,
   not,
   or,
-  Tooltip,
 } from '../../../../interactors';
+import { MARC_AUTHORITY_BROWSE_OPTIONS, MARC_AUTHORITY_SEARCH_OPTIONS } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
-import { MARC_AUTHORITY_SEARCH_OPTIONS, MARC_AUTHORITY_BROWSE_OPTIONS } from '../../constants';
+import QuickMarcEditorWindow from '../quickMarcEditor';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -46,6 +47,7 @@ const marcViewSection = Section({ id: 'marc-view-pane' });
 const editorSection = Section({ id: 'quick-marc-editor-pane' });
 const typeOfHeadingSelect = MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' });
 const findAuthorityModal = Modal({ id: 'find-authority-modal' });
+const detailsMarcViewPaneheader = PaneHeader({ id: 'paneHeadermarc-view-pane' });
 
 // actions dropdown window
 const authorityActionsDropDown = DropdownMenu();
@@ -59,7 +61,7 @@ const marcAuthUpdatesCsvBtn = authorityActionsDropDown.find(
 // auth report modal
 const authReportModal = Modal({ id: 'authorities-report-modal' });
 const exportButton = authReportModal.find(Button('Export'));
-
+const newAuthorityButton = Button({ id: 'dropdown-clickable-create-authority' });
 const resetButton = Button('Reset all');
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
 const headingTypeAccordion = Accordion('Type of heading');
@@ -79,6 +81,7 @@ const sourceFileAccordion = Section({ id: 'sourceFileId' });
 const cancelButton = Button('Cancel');
 const closeLinkAuthorityModal = Button({ ariaLabel: 'Dismiss modal' });
 const exportSelectedRecords = Button('Export selected records (CSV/MARC)');
+const accordionShared = Accordion('Shared');
 const authoritySourceAccordion = Accordion({ id: 'sourceFileId' });
 const authoritySourceOptions = [
   'LC Name Authority file (LCNAF)',
@@ -96,10 +99,16 @@ const authoritySourceOptions = [
   'Not specified',
 ];
 const thesaurusAccordion = Accordion('Thesaurus');
+const sharedTextInDetailView = 'Shared • ';
+const localTextInDetailView = 'Local • ';
 
 export default {
   waitLoading() {
     cy.expect(PaneHeader('MARC authority').exists());
+  },
+  clickNewAuthorityButton() {
+    cy.do([actionsButton.click(), newAuthorityButton.click()]);
+    QuickMarcEditorWindow.waitLoading();
   },
   clickActionsAndReportsButtons() {
     cy.do([actionsButton.click(), marcAuthUpdatesCsvBtn.click()]);
@@ -450,8 +459,20 @@ export default {
     ]);
   },
 
+  checkHeadlineInBoldExistsInMarkViewPaneContent(heading) {
+    cy.expect(
+      marcViewSectionContent
+        .find(HTML({ className: including('font-weight-bold--'), text: heading }))
+        .exists(),
+    );
+  },
+
   verifyViewPaneContent(value) {
     cy.expect([marcViewSection.exists(), marcViewSectionContent.has({ text: including(value) })]);
+  },
+
+  verifyViewPaneContentExists() {
+    cy.expect(marcViewSection.exists());
   },
 
   getViewPaneContent() {
@@ -524,6 +545,37 @@ export default {
 
   clickActionsButton() {
     cy.do(actionsButton.click());
+  },
+
+  verifyAbsenceOfSharedAccordion: () => {
+    cy.expect(accordionShared.absent());
+  },
+
+  verifyExistanceOfSharedAccordion() {
+    cy.expect(accordionShared.exists());
+  },
+
+  verifySharedAccordionOpen(isOpened) {
+    cy.expect(accordionShared.has({ open: isOpened }));
+  },
+
+  clickAccordionByName(accordionName) {
+    cy.do(Accordion(accordionName).clickHeader());
+  },
+
+  verifyCheckboxInAccordion(accordionName, checkboxValue, isChecked = null) {
+    cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).exists());
+    if (isChecked !== null) cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).has({ checked: isChecked }));
+  },
+
+  verifyFilterOptionCount(accordionName, optionName, expectedCount) {
+    cy.expect(
+      Accordion(accordionName)
+        .find(
+          HTML({ className: including('checkbox---'), text: `${optionName}\n${expectedCount}` }),
+        )
+        .exists(),
+    );
   },
 
   actionsSortBy(value) {
@@ -883,6 +935,14 @@ export default {
     }
   },
 
+  verifyResultRowContentSharedIcon(heading, isShared) {
+    const sharedIconRow = MultiColumnListRow(including(heading), { isContainer: false }).find(
+      MultiColumnListCell({ innerHTML: including('sharedIcon') }),
+    );
+
+    cy.expect(isShared ? sharedIconRow.exists() : sharedIconRow.absent());
+  },
+
   verifyTextOfPaneHeaderMarcAuthority(text) {
     cy.expect(
       PaneHeader('MARC authority')
@@ -915,6 +975,18 @@ export default {
     cy.expect([
       rootSection.exists(),
       MultiColumnListCell({ columnIndex, content: value }).exists(),
+    ]);
+  },
+
+  checkMarcViewSectionIsVisible(isVisible) {
+    cy.expect(marcViewSection.has({ visible: isVisible }));
+  },
+
+  checkDefaultSearchOptions: (searchValue) => {
+    cy.expect([
+      marcViewSection.absent(),
+      SearchField({ id: 'textarea-authorities-search', value: searchValue }).absent(),
+      selectField.has({ content: including('Keyword') }),
     ]);
   },
 
@@ -1273,6 +1345,63 @@ export default {
 
   checkSelectOptionFieldContent(option) {
     cy.expect(selectField.has({ checkedOptionText: option }));
+  },
+
+  checkRecordInBold(heading) {
+    cy.expect(
+      MultiColumnListCell(including(heading)).has({ innerHTML: including('anchorLink--') }),
+    );
+  },
+
+  searchButtonClick() {
+    cy.do(searchButton.click());
+  },
+
+  checkRecordsResultListIsAbsent() {
+    cy.expect(
+      rootSection
+        .find(HTML(including('Choose a filter or enter a search query to show results')))
+        .exists(),
+    );
+  },
+
+  checkRecordsCountExistsInSharedFacet() {
+    this.getRecordsCountInOptionsInSharedFacet('Yes').then((count) => {
+      // eslint-disable-next-line no-unused-expressions
+      cy.expect(count).to.exist;
+    });
+    this.getRecordsCountInOptionsInSharedFacet('No').then((count) => {
+      // eslint-disable-next-line no-unused-expressions
+      cy.expect(count).to.exist;
+    });
+  },
+
+  getRecordsCountInOptionsInSharedFacet(optionName) {
+    return cy.then(() => {
+      return accordionShared
+        .find(Checkbox({ name: optionName }))
+        .find(HTML({ className: including('checkBoxLabelInfo--') }))
+        .perform((element) => element.textContent);
+    });
+  },
+
+  checkTypeOfHeadingFacetCleared() {
+    cy.expect(typeOfHeadingSelect.has({ selectedCount: 0 }));
+  },
+
+  checkPreviousAndNextPaginationButtonsShown() {
+    cy.expect([previousButton.visible(), nextButton.visible()]);
+  },
+
+  verifySharedIcon(row = 0) {
+    cy.expect(
+      rootSection.find(MultiColumnListCell({ row, innerHTML: including('sharedIcon') })).exists(),
+    );
+  },
+
+  checkSharedTextInDetailView(isShared = true) {
+    const expectedText = isShared ? sharedTextInDetailView : localTextInDetailView;
+    cy.expect(detailsMarcViewPaneheader.has({ title: including(expectedText) }));
   },
 
   verifyAllResultsHaveSource(sourceNames) {

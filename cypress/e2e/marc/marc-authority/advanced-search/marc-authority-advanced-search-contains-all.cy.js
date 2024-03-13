@@ -192,15 +192,13 @@ describe('MARC', () => {
           },
         );
 
-        DataImport.uploadFileViaApi(
-          marcFile.marc,
-          marcFile.fileName,
-          jobProfileToRun,
-        ).then((response) => {
-          response.entries.forEach((record) => {
-            createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
-          });
-        });
+        DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
+          (response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+            });
+          },
+        );
       });
 
       beforeEach(() => {
