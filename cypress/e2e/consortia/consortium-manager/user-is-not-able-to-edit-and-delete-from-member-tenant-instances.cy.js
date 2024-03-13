@@ -163,6 +163,7 @@ describe('Consortium manager', () => {
             permissions.crudFormats.gui,
           ]);
           InstanceNoteTypes.createViaApi(testData.collegeLocalInstanceNoteTypes);
+
           cy.resetTenant();
           cy.getAdminToken();
           cy.assignAffiliationToUser(Affiliations.University, testData.user400671.userId);
