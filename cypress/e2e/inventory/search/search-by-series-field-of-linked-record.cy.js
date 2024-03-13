@@ -37,7 +37,7 @@ const testData = {
     'series == "Robinson eminent scholar lecture series"',
   ],
   seriesStatement: [
-    'Robinson, Peter, 1950-2022 Inspector Banks series ; 24.',
+    'Robinson, Peter, Inspector Banks series ; 1950-2022 24.',
     'Robinson & Associates, Inc.',
     '1938-1988 Jubilee Conference of the Institution of Agricultural Engineers Robinson College, Cambridge)',
     'Robinson eminent scholar lecture series',

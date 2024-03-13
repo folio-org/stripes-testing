@@ -17,7 +17,7 @@ describe('MARC', () => {
           tag611: '611',
           subjectAccordion: 'Subject',
           subjectValue:
-            'C377027 Roma Council 1962-1965 : Basilica di San Pietro in Roma) (2nd :--TestV--TestX--TestY--TestZ',
+            'C377027 Roma Council Basilica di San Pietro in Roma) 1962-1965 : (2nd :--TestV--TestX--TestY--TestZ',
           authorityIconText: 'Linked to MARC authority',
         };
 
