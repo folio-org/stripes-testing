@@ -1,17 +1,17 @@
 import { HTML, including } from '@interactors/html';
 import {
-  Button,
-  MultiColumnListCell,
   Accordion,
-  Selection,
-  SelectionList,
-  MultiColumnList,
-  MultiColumnListRow,
+  Button,
   Checkbox,
   Link,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Selection,
+  SelectionList,
 } from '../../../../../interactors';
-import FileDetails from './fileDetails';
 import { getLongDelay } from '../../../utils/cypressTools';
+import FileDetails from './fileDetails';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
 const runningAccordion = Accordion('Running');
@@ -123,6 +123,20 @@ export default {
     .find(Link('Created'))
     .href()),
 
+  getCreatedItemID(rowIndex = 0) {
+    return cy.then(() => {
+      searchResultList
+        .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+        .find(Link('Created'))
+        .href()
+        .then((link) => {
+          return cy.wrap(
+            link.substring(link.indexOf('/inventory/view/') + '/inventory/view/'.length),
+          );
+        });
+    });
+  },
+
   checkFileIsRunning: (fileName) => {
     cy.wait(2000);
     cy.expect(runningAccordion.find(HTML(including(fileName))).exists());
@@ -179,7 +193,6 @@ export default {
 
   waitFileIsImported: (fileName) => {
     const newFileName = fileName.replace('.mrc', '');
-
     cy.expect(runningAccordion.find(HTML(including(newFileName))).absent(), getLongDelay(240000));
     cy.expect(
       MultiColumnList({ id: 'job-logs-list' })
@@ -187,4 +200,9 @@ export default {
         .exists(),
     );
   },
+
+  getCreatedItemsTitle: (rowIndex = 0) => cy.then(() => searchResultList
+    .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+    .find(Link({ href: including('/data-import/log/') }))
+    .text()),
 };

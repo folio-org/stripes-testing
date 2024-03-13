@@ -24,6 +24,7 @@ export default {
         method: 'POST',
         path: 'holdings-storage/holdings',
         body: holdingsRecord,
+        isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => body);
   },

@@ -46,7 +46,7 @@ Cypress.Commands.add('getFirstUserGroupId', (searchParams, patronGroupName) => {
       userGroupIdx =
         response.body.usergroups.findIndex(({ group }) => group === patronGroupName) || 0;
     }
-    return response.body.usergroups[userGroupIdx];
+    return response.body.usergroups[userGroupIdx].id;
   });
 });
 
@@ -77,13 +77,13 @@ Cypress.Commands.add('updateUser', (userData) => {
 Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userType = 'staff') => {
   const userProperties = {
     username: `cypressTestUser${getRandomPostfix()}`,
-    password: `Password${getRandomPostfix()}`,
+    password: 'password',
   };
 
   cy.getAdminToken();
 
   cy.getFirstUserGroupId({ limit: patronGroupName ? 100 : 1 }, patronGroupName).then(
-    ({ id, group }) => {
+    (userGroupdId) => {
       const queryField = 'displayName';
       cy.getPermissionsApi({
         query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
@@ -93,7 +93,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
         // cy.log('internalPermissions=' + [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]);
         Users.createViaApi({
           ...Users.defaultUser,
-          patronGroup: id,
+          patronGroup: userGroupdId,
           type: userType,
           username: userProperties.username,
           barcode: uuid(),
@@ -103,8 +103,6 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
           userProperties.barcode = newUserProperties.barcode;
           userProperties.firstName = newUserProperties.firstName;
           userProperties.lastName = newUserProperties.lastName;
-          userProperties.patronGroup = group;
-          userProperties.patronGroupId = id;
           cy.createRequestPreference({
             defaultDeliveryAddressTypeId: null,
             defaultServicePointId: null,
@@ -130,6 +128,19 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
     },
   );
   return cy.get('@userProperties');
+});
+
+Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = []) => {
+  const queryField = 'displayName';
+  cy.getPermissionsApi({
+    query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
+  }).then((permissionsResponse) => {
+    cy.getUserPermissions(userId).then((permissionId) => {
+      cy.addPermissionsToExistingUserApi(permissionId, userId, [
+        ...permissionsResponse.body.permissions.map((permission) => permission.permissionName),
+      ]);
+    });
+  });
 });
 
 Cypress.Commands.add('getAddressTypesApi', (searchParams) => {

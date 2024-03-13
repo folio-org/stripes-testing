@@ -1,52 +1,55 @@
+import { recurse } from 'cypress-recurse';
 import uuid from 'uuid';
 import {
-  MultiColumnList,
-  Select,
+  Accordion,
+  Button,
+  Callout,
+  Checkbox,
+  Dropdown,
   Form,
   HTML,
-  including,
-  Button,
-  Section,
-  QuickMarcEditor,
-  QuickMarcEditorRow,
   KeyValue,
-  MultiColumnListHeader,
-  MultiColumnListCell,
-  Accordion,
-  Dropdown,
-  Checkbox,
-  MultiColumnListRow,
   Link,
+  Modal,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListHeader,
+  MultiColumnListRow,
   MultiSelect,
   Pane,
-  TextField,
-  TextArea,
-  SearchField,
-  Callout,
-  calloutTypes,
-  Modal,
-  PaneHeader,
-  or,
   PaneContent,
+  PaneHeader,
+  QuickMarcEditor,
+  QuickMarcEditorRow,
+  SearchField,
+  Section,
+  Select,
+  TextArea,
+  TextField,
+  calloutTypes,
+  including,
   matching,
+  or,
 } from '../../../../interactors';
+import Badge from '../../../../interactors/badge';
+import { REQUEST_METHOD } from '../../constants';
+import DateTools from '../../utils/dateTools';
+import InteractorsTools from '../../utils/interactorsTools';
+import getRandomPostfix from '../../utils/stringTools';
+import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
+import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
 import HoldingsRecordEdit from './holdingsRecordEdit';
 import HoldingsRecordView from './holdingsRecordView';
 import InstanceRecordEdit from './instanceRecordEdit';
-import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
-import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
-import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
+import InventoryViewSource from './inventoryViewSource';
 import ItemRecordEdit from './item/itemRecordEdit';
 import ItemRecordView from './item/itemRecordView';
-import InteractorsTools from '../../utils/interactorsTools';
-import DateTools from '../../utils/dateTools';
-import getRandomPostfix from '../../utils/stringTools';
-import Badge from '../../../../interactors/badge';
 import NewOrderModal from './modals/newOrderModal';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const actionsButton = instanceDetailsSection.find(Button('Actions'));
+const shareInstanceModal = Modal(including('Are you sure you want to share this instance?'));
 const identifiers = MultiColumnList({ id: 'list-identifiers' });
 const editMARCBibRecordButton = Button({ id: 'edit-instance-marc' });
 const editInstanceButton = Button({ id: 'edit-instance' });
@@ -145,6 +148,8 @@ const itemBarcodeField = TextField({ name: 'barcode' });
 const itemStatusKeyValue = KeyValue('Item status');
 const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(viewHoldingsButton);
 const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
+const detailsViewPaneheader = PaneHeader({ id: 'paneHeaderpane-instancedetails' });
+const consortiaHoldingsAccordion = Accordion({ id: 'consortialHoldings' });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -169,6 +174,9 @@ const validOCLC = {
   },
 };
 
+const sharedTextInDetailView = 'Shared instance • ';
+const localTextInDetailView = 'Local instance • ';
+
 const pressAddHoldingsButton = () => {
   cy.do(addHoldingButton.click());
   HoldingsRecordEdit.waitLoading();
@@ -176,7 +184,7 @@ const pressAddHoldingsButton = () => {
   return HoldingsRecordEdit;
 };
 
-const waitLoading = () => cy.expect(actionsButton.exists());
+const waitLoading = () => cy.expect(instanceDetailsSection.find(actionsButton).exists());
 
 const openHoldings = (...holdingToBeOpened) => {
   const openActions = [];
@@ -545,6 +553,14 @@ export default {
     );
   },
 
+  verifyRecordAndMarcAuthIconAbsence(accordion, expectedText) {
+    cy.expect(
+      Accordion(accordion)
+        .find(HTML(including(expectedText)))
+        .absent(),
+    );
+  },
+
   checkExistanceOfAuthorityIconInInstanceDetailPane(accordion) {
     cy.expect(Accordion(accordion).find(Link()).exists());
   },
@@ -679,6 +695,10 @@ export default {
     ]);
   },
 
+  verifyNoResultFoundMessage(absenceMessage) {
+    cy.expect(paneResultsSection.find(HTML(including(absenceMessage))).exists());
+  },
+
   selectRecord() {
     cy.do(
       MultiColumnListRow({ index: 0 })
@@ -731,7 +751,10 @@ export default {
 
   getAssignedHRID: () => cy.then(() => KeyValue(instanceHRID).value()),
   checkUpdatedHRID: (oldHRID) => cy.expect(KeyValue(instanceHRID, { value: oldHRID }).absent()),
-  checkPresentedText: (expectedText) => cy.expect(instanceDetailsSection.find(HTML(including(expectedText))).exists()),
+  checkPresentedText: (expectedText, isPresent = true) => {
+    if (isPresent) cy.expect(instanceDetailsSection.find(HTML(including(expectedText))).exists());
+    else cy.expect(instanceDetailsSection.find(HTML(including(expectedText))).absent());
+  },
 
   goToMarcHoldingRecordAdding: () => {
     cy.do(actionsButton.click());
@@ -789,6 +812,26 @@ export default {
 
     return HoldingsRecordView;
   },
+
+  expandConsortiaHoldings() {
+    cy.wait(2000);
+    cy.do(consortiaHoldingsAccordion.clickHeader());
+    cy.wait(2000);
+    cy.expect(consortiaHoldingsAccordion.has({ open: true }));
+  },
+
+  expandMemberSubHoldings(memberId) {
+    cy.wait(2000);
+    cy.do(Accordion({ id: memberId }).clickHeader());
+    cy.wait(1000);
+    cy.expect(Accordion({ id: memberId }).has({ open: true }));
+  },
+
+  expandMemberSubSubHoldings(memberId, holdingsId) {
+    cy.wait(2000);
+    cy.do(Accordion({ id: `consortialHoldings.${memberId}.${holdingsId}` }).clickHeader());
+  },
+
   createHoldingsRecord: (permanentLocation) => {
     pressAddHoldingsButton();
     InventoryNewHoldings.fillRequiredFields(permanentLocation);
@@ -1040,8 +1083,44 @@ export default {
   },
   deleteInstanceViaApi: (id) => {
     cy.okapiRequest({
-      method: 'DELETE',
+      method: REQUEST_METHOD.DELETE,
       path: `instance-storage/instances/${id}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  shareInstanceViaApi(instanceIdentifier, consortiaId, sourceTenantId, targetTenantId) {
+    cy.okapiRequest({
+      method: REQUEST_METHOD.POST,
+      path: `consortia/${consortiaId}/sharing/instances`,
+      body: {
+        id: uuid(),
+        instanceIdentifier,
+        sourceTenantId,
+        targetTenantId,
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+
+    recurse(
+      () => this.getInstanceViaApi(instanceIdentifier, consortiaId, sourceTenantId),
+      (response) => response.body.sharingInstances[0].status === 'COMPLETE',
+      {
+        limit: 12,
+        timeout: 60000,
+        delay: 5000,
+      },
+    );
+  },
+
+  getInstanceViaApi: (instanceIdentifier, consortiaId, sourceTenantId) => {
+    const queryString = new URLSearchParams({
+      instanceIdentifier,
+      sourceTenantId,
+    });
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.GET,
+      path: `consortia/${consortiaId}/sharing/instances?${queryString}`,
       isDefaultSearchParamsRequired: false,
     });
   },
@@ -1185,6 +1264,54 @@ export default {
     cy.do(Button('New request').click());
   },
 
+  checkShareLocalInstanceButtonIsAbsent() {
+    cy.do(actionsButton.click());
+    cy.expect([Button({ id: 'share-local-instance' }).absent()]);
+  },
+
+  checkInstanceHeader(header) {
+    cy.get('#paneHeaderpane-instancedetails-pane-title > h2').should('have.text', header);
+  },
+
+  checkEditInstanceButtonIsAbsent() {
+    cy.do(actionsButton.click());
+    cy.expect([Button('Edit instance').absent()]);
+  },
+
+  clickShareLocalInstanceButton() {
+    cy.do(actionsButton.click());
+    cy.do(Button({ id: 'share-local-instance' }).click());
+  },
+
+  verifyShareInstanceModal(message) {
+    cy.expect(shareInstanceModal.exists());
+    cy.expect(
+      shareInstanceModal
+        .find(
+          HTML(
+            including(
+              `You have chosen to share the local instance ${message} with other member libraries in your consortium`,
+            ),
+          ),
+        )
+        .exists(),
+    );
+    cy.expect(shareInstanceModal.find(Button('Cancel')).exists());
+    cy.expect(shareInstanceModal.find(Button('Share')).exists());
+  },
+
+  closeShareInstanceModal() {
+    cy.do(shareInstanceModal.find(Button('Cancel')).click());
+  },
+
+  shareInstance() {
+    cy.do(shareInstanceModal.find(Button('Share')).click());
+  },
+
+  verifyCalloutMessage(message) {
+    cy.expect(Callout({ type: calloutTypes.success }).is({ textContent: message }));
+  },
+
   openCreateNewOrderModal() {
     cy.do([actionsButton.click(), Button('New order').click()]);
     NewOrderModal.waitLoading();
@@ -1195,14 +1322,15 @@ export default {
 
   singleOverlaySourceBibRecordModalIsPresented: () => cy.expect(singleRecordImportModal.exists()),
 
-  overlayWithOclc: (oclc) => {
-    cy.do(
-      Select({ name: 'selectedJobProfileId' }).choose(
-        'Inventory Single Record - Default Update Instance (Default)',
-      ),
-    );
-    cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
-    cy.do(singleRecordImportModal.find(Button('Import')).click());
+  overlayWithOclc: (
+    oclc,
+    defaultJobProfile = 'Inventory Single Record - Default Update Instance (Default)',
+  ) => {
+    cy.do([
+      Select({ name: 'selectedJobProfileId' }).choose(defaultJobProfile),
+      singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
+      singleRecordImportModal.find(Button('Import')).click(),
+    ]);
   },
 
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
@@ -1219,14 +1347,27 @@ export default {
     );
   },
 
-  checkContributor: (text) => {
+  checkContributor: (name, index = 0, contributorType) => {
     cy.expect(instanceDetailsSection.find(Button(including('Contributor'))).exists());
-    cy.expect(
-      Accordion('Contributor')
-        .find(contributorsList)
-        .find(MultiColumnListCell(including(text)))
-        .exists(),
-    );
+    if (contributorType) {
+      cy.expect([
+        Accordion('Contributor')
+          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: name }),
+        Accordion('Contributor')
+          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: contributorType }),
+      ]);
+    } else {
+      cy.expect(
+        Accordion('Contributor')
+          .find(contributorsList)
+          .find(MultiColumnListCell(including(name)))
+          .exists(),
+      );
+    }
   },
 
   checkDetailViewOfInstance(accordion, value) {
@@ -1342,6 +1483,40 @@ export default {
     cy.expect(MultiColumnListCell({ content: itemStatus }).exists());
   },
 
+  verifySharedIcon(row = 0) {
+    cy.expect(
+      paneResultsSection
+        .find(MultiColumnListCell({ row, innerHTML: including('sharedIcon') }))
+        .exists(),
+    );
+  },
+
+  verifySharedIconAbsent(row = 0) {
+    cy.expect(
+      paneResultsSection
+        .find(MultiColumnListCell({ row, innerHTML: including('sharedIcon') }))
+        .absent(),
+    );
+  },
+
+  verifyLastUpdatedSource: (userFirsttName, userLastName) => {
+    cy.do(Accordion('Administrative data').click());
+    cy.get('div[data-test-updated-by="true"]')
+      .find('a')
+      .should('include.text', `${userLastName}, ${userFirsttName}`);
+  },
+
+  verifyRecordCreatedSource: (userFirsttName, userLastName) => {
+    cy.get('div[data-test-created-by="true"]')
+      .find('a')
+      .should('include.text', `${userLastName}, ${userFirsttName}`);
+  },
+
+  checkSharedTextInDetailView(isShared = true) {
+    const expectedText = isShared ? sharedTextInDetailView : localTextInDetailView;
+    cy.expect(detailsViewPaneheader.has({ title: including(expectedText) }));
+  },
+
   verifyContributorAbsent: (text) => {
     cy.expect(instanceDetailsSection.find(Button(including('Contributor'))).exists());
     cy.expect(
@@ -1397,5 +1572,87 @@ export default {
         );
       }
     });
+  },
+  checkInstanceHrId: (expectedInstanceHrId) => cy.expect(
+    instanceDetailsSection.find(KeyValue('Instance HRID')).has({ value: expectedInstanceHrId }),
+  ),
+
+  verifySharedIconByTitle(title) {
+    cy.expect(
+      paneResultsSection
+        .find(MultiColumnListCell(title, { innerHTML: including('sharedIcon') }))
+        .exists(),
+    );
+  },
+
+  verifySharedIconAbsentByTitle(title) {
+    cy.expect(
+      paneResultsSection
+        .find(MultiColumnListCell(title, { innerHTML: including('sharedIcon') }))
+        .absent(),
+    );
+  },
+
+  createAlternativeTitleTypeViaAPI(alternativeTitleTypeName, sourceName = 'local', id = uuid()) {
+    const body = {
+      id,
+      name: alternativeTitleTypeName,
+      source: sourceName,
+    };
+
+    return cy.createAlternativeTitleTypes(body);
+  },
+
+  createClassificationTypeViaApi(classificationTypeName, sourceName = 'local', id = uuid()) {
+    const body = {
+      id,
+      name: classificationTypeName,
+      source: sourceName,
+    };
+
+    return cy.createClassifierIdentifierTypes(body);
+  },
+
+  createInstanceNoteTypeViaApi(instanceNoteTypeName, sourceName = 'local', id = uuid()) {
+    const body = {
+      id,
+      name: instanceNoteTypeName,
+      source: sourceName,
+    };
+
+    return cy.createInstanceNoteTypes(body);
+  },
+
+  createModesOfIssuanceViaApi(modesOfIssuanceName, sourceName = 'local', id = uuid()) {
+    const body = {
+      id,
+      name: modesOfIssuanceName,
+      source: sourceName,
+    };
+
+    return cy.createModesOfIssuance(body);
+  },
+
+  verifyConsortiaHoldingsAccordion(isOpen = false) {
+    cy.expect([
+      Section({ id: 'consortialHoldings' }).exists(),
+      Accordion({ id: 'consortialHoldings' }).has({ open: isOpen }),
+    ]);
+  },
+
+  verifyMemberSubHoldingsAccordion(memberId, isOpen = true) {
+    cy.wait(2000);
+    cy.expect([
+      Accordion({ id: 'consortialHoldings' }).has({ open: isOpen }),
+      Accordion({ id: memberId }).exists(),
+    ]);
+  },
+
+  verifyMemberSubSubHoldingsAccordion(memberId, holdingsId, isOpen = true) {
+    cy.wait(2000);
+    cy.expect([
+      Accordion({ id: memberId }).has({ open: isOpen }),
+      Accordion({ id: `consortialHoldings.cs00000int_0005.${holdingsId}` }).exists(),
+    ]);
   },
 };

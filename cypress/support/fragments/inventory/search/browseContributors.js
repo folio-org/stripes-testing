@@ -368,4 +368,24 @@ export default {
   checkBrowseContributorsResulstListVisible(isVisible) {
     cy.expect(browseContributorsResultsList.has({ visible: isVisible }));
   },
+
+  getContributorTypes({ searchParams = { limit: 1 } } = {}) {
+    return cy
+      .okapiRequest({
+        path: 'contributor-types',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.contributorTypes);
+  },
+
+  checkNonExactMatchPlaceholder(contributorName) {
+    cy.expect(
+      MultiColumnListRow({ content: including(`${contributorName}would be here`) }).exists(),
+    );
+  },
+
+  checkValueAbsentInResults(contributorName) {
+    cy.expect(browseContributorsResultsList.find(MultiColumnListCell(contributorName)).absent());
+  },
 };

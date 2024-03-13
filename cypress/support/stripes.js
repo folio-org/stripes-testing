@@ -1,3 +1,5 @@
+import Tenant from './tenant';
+
 const DEFAULT_SEARCH_PARAMS = {
   limit: 1000,
   query: 'cql.allRecords=1',
@@ -22,7 +24,7 @@ Cypress.Commands.add(
     }
     const queryString = initialParams.toString();
     const headersToSet = {
-      'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
+      'x-okapi-tenant': Tenant.get(),
       'Content-type': contentTypeHeader,
     };
     if (additionalHeaders) Object.assign(headersToSet, additionalHeaders);

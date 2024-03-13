@@ -238,4 +238,16 @@ export default {
         .click(),
     );
   },
+
+  checkSearchResultRecord(record) {
+    cy.expect(
+      MultiColumnListCell(record).has({ innerHTML: including(`<strong>${record}</strong>`) }),
+    );
+  },
+
+  checkResultIsAbsent(subjectValue) {
+    cy.expect(
+      inventorySearchResultsPane.find(MultiColumnListRow({ content: subjectValue })).absent(),
+    );
+  },
 };

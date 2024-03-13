@@ -78,7 +78,7 @@ describe('MARC', () => {
             testData.editedField.tag,
             `${testData.editedField.contentBefore} ${testData.editedField.editedContent}`,
           );
-          QuickMarcEditor.checkContentByTag(
+          QuickMarcEditor.checkContentByTag1(
             `${testData.editedField.contentBefore} ${testData.editedField.editedContent}`,
             testData.editedField.tag,
           );

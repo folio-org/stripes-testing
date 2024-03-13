@@ -65,15 +65,13 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
     });
     cy.loginAsAdmin();
     marcFiles.forEach((marcFile) => {
-      DataImport.uploadFileViaApi(
-        marcFile.marc,
-        marcFile.fileName,
-        marcFile.jobProfileToRun,
-      ).then((response) => {
-        response.entries.forEach((record) => {
-          testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
-        });
-      });
+      DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, marcFile.jobProfileToRun).then(
+        (response) => {
+          response.entries.forEach((record) => {
+            testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+          });
+        },
+      );
     });
 
     cy.createTempUser([

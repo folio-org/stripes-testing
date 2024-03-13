@@ -140,16 +140,16 @@ export default {
       });
   },
 
-  createActionProfileViaApiMarc: (name, actionToCreate, folioRecordType, mapProfileId) => {
+  createActionProfileViaApiMarc: (profile, mapProfileId) => {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'data-import-profiles/actionProfiles',
         body: {
           profile: {
-            name,
-            actionToCreate,
-            folioRecord: folioRecordType,
+            name: profile.name,
+            action: profile.action,
+            folioRecord: profile.folioRecordType,
           },
           addedRelations: [
             {

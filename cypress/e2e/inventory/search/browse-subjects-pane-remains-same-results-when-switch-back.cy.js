@@ -1,8 +1,4 @@
-import {
-  LOAN_TYPE_NAMES,
-  LOCATION_NAMES,
-  MATERIAL_TYPE_NAMES,
-} from '../../../support/constants';
+import { LOAN_TYPE_NAMES, LOCATION_NAMES, MATERIAL_TYPE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
