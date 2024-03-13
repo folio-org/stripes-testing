@@ -105,6 +105,10 @@ export default {
     internal: 'ui-quick-marc.quick-marc-authorities-editor.create',
     gui: 'quickMARC: Create a new MARC authority record',
   },
+  uiQuickMarcQuickMarcAuthorityCreate: {
+    internal: 'ui-quick-marc.quick-marc-authorities-editor.create',
+    gui: 'quickMARC: Create a new MARC authority record',
+  },
   // Marc Authority record
   uiQuickMarcQuickMarcAuthoritiesEditorAll: {
     internal: 'ui-quick-marc.quick-marc-authorities-editor.all',
@@ -233,6 +237,10 @@ export default {
     internal: 'ui-inventory.settings.holdings-types',
     gui: 'Settings (Inventory): Create, edit, delete holdings types',
   },
+  inventoryCRUDHoldingsTypes: {
+    internal: 'ui-inventory.settings.holdings-types',
+    gui: 'Settings (Inventory): Create, edit, delete holdings types',
+  },
   inventoryCRUDItemNoteTypes: {
     internal: 'ui-inventory.settings.item-note-types',
     gui: 'Settings (Inventory): Create, edit, delete item note types',
@@ -256,22 +264,6 @@ export default {
   crudNatureOfContent: {
     internal: 'ui-inventory.settings.nature-of-content-terms',
     gui: 'Settings (Inventory): Create, edit, delete nature of content',
-  },
-  crudContributorTypes: {
-    internal: 'ui-inventory.settings.contributor-types',
-    gui: 'Settings (Inventory): Create, edit, delete contributor types',
-  },
-  crudFormats: {
-    internal: 'ui-inventory.settings.instance-formats',
-    gui: 'Settings (Inventory): Create, edit, delete formats',
-  },
-  crudDefinedResourceTypes: {
-    internal: 'ui-inventory.settings.nature-of-content-terms',
-    gui: 'Settings (Inventory): Create, edit, delete locally defined resource types',
-  },
-  crudResourceIdentifierTypes: {
-    internal: 'ui-inventory.settings.identifier-types',
-    gui: 'Settings (Inventory): Create, edit, delete resource identifier types',
   },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
@@ -1055,6 +1047,48 @@ export default {
     internal: 'ui-users.settings.usergroups.all',
     gui: 'Settings (Users): Can create, edit and remove patron groups',
   },
+  // Consortia
+  consortiaSettingsConsortiaAffiliationsEdit: {
+    internal: 'ui-consortia-settings.consortia.affiliations.edit',
+    gui: 'Consortia: Assign and unassign affiliations',
+  },
+  consortiaSettingsConsortiaAffiliationsView: {
+    internal: 'ui-consortia-settings.consortia.affiliations.view',
+    gui: 'Consortia: View affiliations',
+  },
+  consortiaInventoryShareLocalInstance: {
+    internal: 'consortia.inventory.share.local.instance',
+    gui: 'Inventory: Share local instance with consortium',
+  },
+  consortiaSettingsSettingsMembershipEdit: {
+    internal: 'ui-consortia-settings.settings.membership.edit',
+    gui: 'Settings (Consortia): Can view and edit consortia membership',
+  },
+  consortiaSettingsSettingsMembershipView: {
+    internal: 'ui-consortia-settings.settings.membership.view',
+    gui: 'Settings (Consortia): Can view consortia membership',
+  },
+  // Consortium manager
+  consortiaSettingsConsortiumManagerEdit: {
+    internal: 'ui-consortia-settings.consortium-manager.edit',
+    gui: 'Consortium manager: Can create, edit and remove settings',
+  },
+  consortiaSettingsConsortiumManagerShare: {
+    internal: 'ui-consortia-settings.consortium-manager.share',
+    gui: 'Consortium manager: Can share settings to all members',
+  },
+  consortiaSettingsConsortiumManagerView: {
+    internal: 'ui-consortia-settings.consortium-manager.view',
+    gui: 'Consortium manager: Can view existing settings',
+  },
+  consortiaSettingsConsortiumManagerDepartmentsCreateEditView: {
+    internal: 'ui-users.settings.departments.create.edit.view',
+    gui: 'Settings (Users): Can create, edit, and view department',
+  },
+  consortiaSettingsConsortiumManagerPatronGroupsAll: {
+    internal: 'ui-users.settings.usergroups.all',
+    gui: 'Settings (Users): Can create, edit and remove patron groups',
+  },
   // Lists
   listsAll: {
     internal: 'module.lists.all',
@@ -1075,6 +1109,15 @@ export default {
   coursesReadAll: {
     internal: 'ui-courses.read-all',
     gui: 'Courses: Read all',
+  },
+  // Departments
+  createEditViewDepartments: {
+    internal: 'ui-users.settings.departments.create.edit.view',
+    gui: 'Settings (Users): Can create, edit, and view departments',
+  },
+  departmentsAll: {
+    internal: 'ui-users.settings.departments.all',
+    gui: 'Settings (Users): Can create, edit, view, and delete departments',
   },
   // Departments
   createEditViewDepartments: {

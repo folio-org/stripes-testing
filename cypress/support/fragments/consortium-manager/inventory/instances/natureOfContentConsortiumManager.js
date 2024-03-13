@@ -1,10 +1,8 @@
-import uuid from 'uuid';
 import { Button, MultiColumnListHeader } from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 
 const newButton = Button('+ New');
-const id = uuid();
 
 export default {
   getNatureOfContentByNameAndTenant(name, tenantId) {
@@ -45,37 +43,6 @@ export default {
     cy.expect(newButton.is({ disabled: false }));
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
-    });
-  },
-
-  createViaApi(type) {
-    return cy.getConsortiaId().then((consortiaId) => {
-      cy.okapiRequest({
-        method: REQUEST_METHOD.POST,
-        path: `consortia/${consortiaId}/sharing/settings`,
-        body: {
-          url: '/nature-of-content-terms',
-          settingId: id,
-          payload: {
-            id,
-            name: type.payload.name,
-          },
-        },
-      }).then(() => {
-        type.url = '/nature-of-content-terms';
-        type.settingId = id;
-        return type;
-      });
-    });
-  },
-
-  deleteViaApi(type) {
-    cy.getConsortiaId().then((consortiaId) => {
-      cy.okapiRequest({
-        method: REQUEST_METHOD.DELETE,
-        path: `consortia/${consortiaId}/sharing/settings/${type.settingId}`,
-        body: type,
-      });
     });
   },
 };
