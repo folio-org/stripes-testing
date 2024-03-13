@@ -8,25 +8,23 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import ContributorTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/contributorTypesConsortiumManager';
 import AlternativeTitleTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/alternativeTitleTypesConsortiumManager';
 import ClassificationIdentifierTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/classificationIdentifierTypesConsortiumManager';
-// import FormatsConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/formatsConsortiumManager';
+import FormatsConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/formatsConsortiumManager';
 import InstanceNoteTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/instanceNoteTypesConsortiumManager';
 import AlternativeTitleTypes from '../../../support/fragments/settings/inventory/instances/alternativeTitleTypes';
 import ClassificationIdentifierTypes from '../../../support/fragments/settings/inventory/instances/classificationIdentifierTypes';
 import ContributorTypes from '../../../support/fragments/settings/inventory/instances/contributorTypes';
-// import Formats from '../../../support/fragments/settings/inventory/instances/formats';
+import Formats from '../../../support/fragments/settings/inventory/instances/formats';
 import InstanceNoteTypes from '../../../support/fragments/settings/inventory/instances/instanceNoteTypes';
-// import InstanceStatusTypeConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/instanceStatusTypeConsortiumManager';
+import InstanceStatusTypeConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/instanceStatusTypeConsortiumManager';
 import ModesOfIssuanceConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/modesOfIssuanceConsortiumManager';
 import NatureOfContentConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/natureOfContentConsortiumManager';
 import ResourceIdentifierTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/resourceIdentifierTypesConsortiumManager';
-// import ResourceTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/resourceTypesConsortiumManager';
+import ResourceTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/instances/resourceTypesConsortiumManager';
 import InstanceStatusTypes from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/instanceStatusTypes';
 import ModesOfIssuance from '../../../support/fragments/settings/inventory/instances/modesOfIssuance';
 import NatureOfContent from '../../../support/fragments/settings/inventory/instances/natureOfContent';
 import ResourceIdentifierTypes from '../../../support/fragments/settings/inventory/instances/resourceIdentifierTypes';
-// import ResourceTypes from '../../../support/fragments/settings/inventory/instances/resourceTypes';
-
-// To do: Fix 'POST' Method in FormatsConsortiumManager, ResourceTypesConsortiumManager and InstanceStatusTypeConsortiumManager
+import ResourceTypes from '../../../support/fragments/settings/inventory/instances/resourceTypes';
 
 const testData = {
   centralSharedContributorTypes: {
@@ -116,21 +114,19 @@ describe('Consortium manager', () => {
         ).then((newAlternativeTitleTypes) => {
           testData.centralSharedAlternativeTitleTypes = newAlternativeTitleTypes;
         });
-        // FormatsConsortiumManager.createViaApi(testData.centralSharedFormats).then(
-        //   (newHFormats) => {
-        //     testData.centralSharedFormats = newHFormats;
-        //   },
-        // );
+        FormatsConsortiumManager.createViaApi(testData.centralSharedFormats).then((newHFormats) => {
+          testData.centralSharedFormats = newHFormats;
+        });
         InstanceNoteTypesConsortiumManager.createViaApi(
           testData.centralSharedInstanceNoteTypes,
         ).then((newInstanceNoteTypes) => {
           testData.centralSharedInstanceNoteTypes = newInstanceNoteTypes;
         });
-        // InstanceStatusTypeConsortiumManager.createViaApi(testData.centralSharedInstanceStatusTypes).then(
-        //   (newInstanceStatusTypes) => {
-        //     testData.centralSharedInstanceStatusTypes = newInstanceStatusTypes;
-        //   },
-        // );
+        InstanceStatusTypeConsortiumManager.createViaApi(
+          testData.centralSharedInstanceStatusTypes,
+        ).then((newInstanceStatusTypes) => {
+          testData.centralSharedInstanceStatusTypes = newInstanceStatusTypes;
+        });
         ModesOfIssuanceConsortiumManager.createViaApi(testData.centralSharedModesOfIssuance).then(
           (newModesOfIssuance) => {
             testData.centralSharedModesOfIssuance = newModesOfIssuance;
@@ -146,11 +142,11 @@ describe('Consortium manager', () => {
         ).then((newResourceIdentifierTypes) => {
           testData.centralSharedResourceIdentifierTypes = newResourceIdentifierTypes;
         });
-        // ResourceTypesConsortiumManager.createViaApi(testData.centralSharedResourceTypes).then(
-        //   (newResourceTypes) => {
-        //     testData.centralSharedResourceTypes = newResourceTypes;
-        //   },
-        // );
+        ResourceTypesConsortiumManager.createViaApi(testData.centralSharedResourceTypes).then(
+          (newResourceTypes) => {
+            testData.centralSharedResourceTypes = newResourceTypes;
+          },
+        );
         cy.createTempUser([]).then((userProperties) => {
           // User for test C400671
           testData.user400671 = userProperties;
@@ -195,15 +191,15 @@ describe('Consortium manager', () => {
         AlternativeTitleTypesConsortiumManager.deleteViaApi(
           testData.centralSharedAlternativeTitleTypes,
         );
-        // FormatsConsortiumManager.deleteViaApi(testData.centralSharedFormats);
+        FormatsConsortiumManager.deleteViaApi(testData.centralSharedFormats);
         InstanceNoteTypesConsortiumManager.deleteViaApi(testData.centralSharedInstanceNoteTypes);
-        //   InstanceStatusTypeConsortiumManager.deleteViaApi(testData.centralSharedInstanceStatusTypes);
+        InstanceStatusTypeConsortiumManager.deleteViaApi(testData.centralSharedInstanceStatusTypes);
         ModesOfIssuanceConsortiumManager.deleteViaApi(testData.centralSharedModesOfIssuance);
         NatureOfContentConsortiumManager.deleteViaApi(testData.centralSharedNatureOfContent);
         ResourceIdentifierTypesConsortiumManager.deleteViaApi(
           testData.centralSharedResourceIdentifierTypes,
         );
-        // ResourceTypesConsortiumManager.deleteViaApi(testData.centralSharedResourceTypes);
+        ResourceTypesConsortiumManager.deleteViaApi(testData.centralSharedResourceTypes);
         Users.deleteViaApi(testData.user400671.userId);
       });
 
@@ -224,8 +220,8 @@ describe('Consortium manager', () => {
           ContributorTypes.verifyConsortiumContributorTypesInTheList(
             testData.centralSharedContributorTypes.payload,
           );
-          //   Formats.choose();
-          //   Formats.verifyConsortiumFormatsInTheList(testData.centralSharedFormats.payload);
+          Formats.choose();
+          Formats.verifyConsortiumFormatsInTheList(testData.centralSharedFormats.payload);
           InstanceNoteTypes.choose();
           InstanceNoteTypes.verifyConsortiumInstanceNoteTypesInTheList(
             testData.centralSharedInstanceNoteTypes.payload,
@@ -242,7 +238,9 @@ describe('Consortium manager', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           cy.visit(SettingsMenu.instanceStatusTypesPath);
-          //   InstanceStatusTypes.verifyConsortiumInstanceStatusTypesInTheList(testData.centralSharedInstanceStatusTypes.payload);
+          InstanceStatusTypes.verifyConsortiumInstanceStatusTypesInTheList(
+            testData.centralSharedInstanceStatusTypes.payload,
+          );
           InstanceStatusTypes.verifyInstanceStatusTypesAbsentInTheList(
             testData.collegeLocalInstanceNoteTypes,
           );
@@ -267,8 +265,10 @@ describe('Consortium manager', () => {
           ResourceIdentifierTypes.verifyConsortiumResourceIdentifierTypesInTheList(
             testData.centralSharedResourceIdentifierTypes.payload,
           );
-          //   ResourceTypes.choose();
-          //   ResourceTypes.verifyConsortiumResourceTypesInTheList(testData.centralSharedResourceTypes.payload);
+          ResourceTypes.choose();
+          ResourceTypes.verifyConsortiumResourceTypesInTheList(
+            testData.centralSharedResourceTypes.payload,
+          );
         },
       );
     });

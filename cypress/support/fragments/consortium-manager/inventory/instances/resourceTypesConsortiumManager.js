@@ -14,7 +14,7 @@ export default {
         method: REQUEST_METHOD.POST,
         path: `consortia/${consortiaId}/sharing/settings`,
         body: {
-          url: '/resource-types',
+          url: '/instance-types',
           settingId: id,
           payload: {
             id,
@@ -23,7 +23,7 @@ export default {
           },
         },
       }).then(() => {
-        type.url = '/resource-types';
+        type.url = '/instance-types';
         type.settingId = id;
         return type;
       });
@@ -42,7 +42,7 @@ export default {
 
   getResourceTypesByNameAndTenant(name, tenantId) {
     return cy.getConsortiaId().then((consortiaId) => {
-      cy.getPublications([tenantId], '/resource-types?limit=2000&offset=0').then(
+      cy.getPublications([tenantId], '/instance-types?limit=2000&offset=0').then(
         (publicationId) => {
           cy.okapiRequest({
             method: REQUEST_METHOD.GET,

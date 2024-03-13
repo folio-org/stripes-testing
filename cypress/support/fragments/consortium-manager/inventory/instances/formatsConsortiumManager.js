@@ -14,7 +14,7 @@ export default {
         method: REQUEST_METHOD.POST,
         path: `consortia/${consortiaId}/sharing/settings`,
         body: {
-          url: '/formats',
+          url: '/instance-formats',
           settingId: id,
           payload: {
             id,
@@ -23,7 +23,7 @@ export default {
           },
         },
       }).then(() => {
-        type.url = '/formats';
+        type.url = '/instance-formats';
         type.settingId = id;
         return type;
       });
@@ -42,20 +42,22 @@ export default {
 
   getFormatsByNameAndTenant(name, tenantId) {
     return cy.getConsortiaId().then((consortiaId) => {
-      cy.getPublications([tenantId], '/formats?limit=2000&offset=0').then((publicationId) => {
-        cy.okapiRequest({
-          method: REQUEST_METHOD.GET,
-          path: `consortia/${consortiaId}/publications/${publicationId}/results`,
-        }).then(({ body }) => {
-          const alternativeTitleTypes = JSON.parse(
-            body.publicationResults.find((publication) => publication.tenantId === tenantId)
-              .response,
-          ).alternativeTitleTypes;
-          return alternativeTitleTypes.find(
-            (alternativeTitleType) => alternativeTitleType.name === name,
-          );
-        });
-      });
+      cy.getPublications([tenantId], '/instance-formats?limit=2000&offset=0').then(
+        (publicationId) => {
+          cy.okapiRequest({
+            method: REQUEST_METHOD.GET,
+            path: `consortia/${consortiaId}/publications/${publicationId}/results`,
+          }).then(({ body }) => {
+            const alternativeTitleTypes = JSON.parse(
+              body.publicationResults.find((publication) => publication.tenantId === tenantId)
+                .response,
+            ).alternativeTitleTypes;
+            return alternativeTitleTypes.find(
+              (alternativeTitleType) => alternativeTitleType.name === name,
+            );
+          });
+        },
+      );
     });
   },
 
@@ -64,7 +66,7 @@ export default {
       cy.setTenant(tenantId);
       cy.okapiRequest({
         method: REQUEST_METHOD.DELETE,
-        path: `formats/${alternativeTitleType.id}`,
+        path: `instance-formats/${alternativeTitleType.id}`,
         failOnStatusCode: false,
       });
       cy.resetTenant();

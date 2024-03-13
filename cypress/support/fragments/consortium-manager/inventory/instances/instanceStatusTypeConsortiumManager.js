@@ -14,7 +14,7 @@ export default {
         method: REQUEST_METHOD.POST,
         path: `consortia/${consortiaId}/sharing/settings`,
         body: {
-          url: '/instance-status-types',
+          url: '/instance-statuses',
           settingId: id,
           payload: {
             id,
@@ -23,7 +23,7 @@ export default {
           },
         },
       }).then(() => {
-        type.url = '/instance-status-types';
+        type.url = '/instance-statuses';
         type.settingId = id;
         return type;
       });
@@ -42,7 +42,7 @@ export default {
 
   getInstanceStatusTypeByNameAndTenant(name, tenantId) {
     return cy.getConsortiaId().then((consortiaId) => {
-      cy.getPublications([tenantId], '/instance-status-types?limit=2000&offset=0').then(
+      cy.getPublications([tenantId], '/instance-statuses?limit=2000&offset=0').then(
         (publicationId) => {
           cy.okapiRequest({
             method: REQUEST_METHOD.GET,
@@ -66,7 +66,7 @@ export default {
       cy.setTenant(tenantId);
       cy.okapiRequest({
         method: REQUEST_METHOD.DELETE,
-        path: `instance-status-types/${alternativeTitleType.id}`,
+        path: `instance-statuses/${alternativeTitleType.id}`,
         failOnStatusCode: false,
       });
       cy.resetTenant();
