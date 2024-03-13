@@ -8,6 +8,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const validHoldingHRIDsFileName = `validHoldingHRIDs_${getRandomPostfix()}.csv`;
@@ -120,10 +121,7 @@ describe('bulk-edit', () => {
       'C368481 Verify that there no errors during bulk editing Holdings with special characters (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
+        TopMenuNavigation.navigateToApp('Bulk edit');
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
 

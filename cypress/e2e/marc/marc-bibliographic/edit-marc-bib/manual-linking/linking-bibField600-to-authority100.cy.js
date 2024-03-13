@@ -17,7 +17,7 @@ describe('MARC', () => {
           tag600: '600',
           linkedIconText: 'Linked to MARC authority',
           subjectValue:
-            'Black Panther (Fictitious character) Wakanda Forever--TestV--TestX--TestY--TestZ',
+            'C377026Black Panther (Fictitious character) Wakanda Forever--TestV--TestX--TestY--TestZ',
         };
 
         const marcFiles = [
@@ -31,7 +31,7 @@ describe('MARC', () => {
             marc: 'marcAuthFileForC377026.mrc',
             fileName: `testMarcFile377026.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
-            authorityHeading: 'Black Panther (Fictitious character) Wakanda Forever',
+            authorityHeading: 'C377026Black Panther (Fictitious character) Wakanda Forever',
             propertyName: 'relatedAuthorityInfo',
           },
         ];
@@ -51,7 +51,7 @@ describe('MARC', () => {
           testData.tag600,
           '0',
           '0',
-          '$a Black Panther $c (Fictitious character) $t Wakanda Forever',
+          '$a C377026Black Panther $c (Fictitious character) $t Wakanda Forever',
           '$i comics $v TestV $x TestX $y TestY $z TestZ',
           '$0 http://id.loc.gov/authorities/names/n2016004081',
           '$4 .prt $2 test',
