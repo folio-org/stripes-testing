@@ -1,21 +1,21 @@
 {
-  "extends": "@folio/eslint-config-stripes",
-  "env": {
-    "cypress/globals": true,
-    "jest": true,
-    "mocha": true
-  },
-  "parser": "@babel/eslint-parser",
-  "parserOptions": {
-    "ecmaVersion": 6,
-    "sourceType": "module"
-  },
-  "plugins": ["cypress", "import"],
-  "rules": {
-    "no-unused-vars": "error",
-    "cypress/no-assigning-return-values": "error",
-    "cypress/assertion-before-screenshot": "warn",
-    "cypress/no-force": "warn",
-    "no-duplicate-imports": "error"
+    "extends": "@folio/eslint-config-stripes",
+    "env": {
+      "cypress/globals": true,
+      "jest": true,
+      "mocha": true
+    },
+    "parser": "@babel/eslint-parser",
+    "parserOptions": {
+      "ecmaVersion": 6,
+      "sourceType": "module"
+    },
+    "plugins": ["cypress", "import"],
+    "rules": {
+      "no-unused-vars": "error",
+      "cypress/no-assigning-return-values": "error",
+      "cypress/assertion-before-screenshot": "warn",
+      "cypress/no-force": "warn",
+      "no-duplicate-imports": "error"
+    }
   }
-}

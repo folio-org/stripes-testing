@@ -5,45 +5,31 @@ import {
   MultiColumnListCell,
   NavListItem,
   Pane,
-} from '../../../../../../../interactors';
+} from '../../../../../../interactors';
 
 export const reasonsActions = {
   edit: 'edit',
   trash: 'trash',
 };
-function getListOfStatusTypes() {
-  const cells = [];
-
-  cy.wait(2000);
-  return cy
-    .get('div[class^="mclRowContainer--"]')
-    .find('[data-row-index]')
-    .each(($row) => {
-      // from each row, choose specific cell
-      cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
-        // extract its text content
-        .invoke('text')
-        .then((cellValue) => {
-          cells.push(cellValue);
-        });
-    })
-    .then(() => cells);
-}
-
 export default {
-  getListOfStatusTypes,
+  createViaApi: (body) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'formats',
+        body,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
   deleteViaApi: (id) => cy.okapiRequest({
     method: 'DELETE',
-    path: `instance-statuses/${id}`,
+    path: `formats/${id}`,
     isDefaultSearchParamsRequired: false,
   }),
-
-  verifyListOfStatusTypesIsIdenticalToListInInstance(statusesFromInstance) {
-    getListOfStatusTypes().then((statusTypes) => {
-      cy.expect(statusTypes.join(' ')).to.eq(...statusesFromInstance);
-    });
-  },
-  verifyConsortiumInstanceStatusTypesInTheList({ name, source = 'consortium', actions = [] }) {
+  verifyConsortiumFormatsInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.expect([
@@ -64,7 +50,7 @@ export default {
     }
   },
 
-  verifyLocalInstanceStatusTypesInTheList({ name, source = 'local', actions = [] }) {
+  verifyLocalFormatsInTheList({ name, source = 'local', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.expect([
@@ -85,12 +71,12 @@ export default {
     }
   },
 
-  verifyInstanceStatusTypesAbsentInTheList({ name }) {
+  verifyFormatsAbsentInTheList({ name }) {
     const row = MultiColumnListRow({ content: including(name) });
     cy.expect(row.absent());
   },
 
-  clickTrashButtonForInstanceStatusTypes(name) {
+  clickTrashButtonForFormats(name) {
     cy.do([
       MultiColumnListRow({ content: including(name) })
         .find(MultiColumnListCell({ columnIndex: 4 }))
@@ -100,18 +86,6 @@ export default {
     ]);
   },
   choose() {
-    cy.do([NavListItem('Instance status types').click(), Pane('Instance status types').exists()]);
-  },
-  createViaApi: (body) => {
-    return cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'instance-statuses',
-        body,
-        isDefaultSearchParamsRequired: false,
-      })
-      .then(({ response }) => {
-        return response;
-      });
+    cy.do([NavListItem('Formats').click(), Pane('Formats').exists()]);
   },
 };
