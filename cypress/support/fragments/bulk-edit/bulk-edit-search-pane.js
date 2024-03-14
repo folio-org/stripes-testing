@@ -69,7 +69,6 @@ const errorsCommittingBtn = DropdownMenu().find(
   Button('File with errors encountered when committing the changes'),
 );
 const buildQueryButton = Button('Build query');
-const buildQueryModal = Modal('Build query');
 const logsActionButton = Button({ icon: 'ellipsis' });
 
 const newCheckbox = Checkbox('New');
@@ -1247,10 +1246,6 @@ export default {
 
   clickBuildQueryButton() {
     cy.do(buildQueryButton.click());
-  },
-
-  verifyBuildQueryModal() {
-    cy.expect(buildQueryModal.exists());
   },
 
   verifyFirstOptionRecordIdentifierDropdown(value) {

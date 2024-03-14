@@ -10,7 +10,6 @@ import QueryModal, {
 import DateTools from '../../../support/utils/dateTools';
 
 let user;
-// const expirationUserDate = DateTools.getTomorrowDay();
 
 describe('Bulk Edit - Query', () => {
   before('create test data', () => {
@@ -133,6 +132,7 @@ describe('Bulk Edit - Query', () => {
       QueryModal.verifyPreviewOfRecordsMatched();
       QueryModal.clickRunQuery();
       QueryModal.verifyClosed();
+      BulkEditSearchPane.verifySpecificTabHighlighted('Query');
     },
   );
 });
