@@ -25,6 +25,9 @@ const deleteYesButton = Button({ id: 'delete-user-button' });
 const zeroResultsFoundText = '0 records found';
 const numberOfSearchResultsHeader = '//p[@id="paneHeaderusers-search-results-pane-subtitle"]';
 
+const usersApiPath = Cypress.env('eureka') ? 'users-keycloak/users' : 'users';
+const deleteUsersApiPath = Cypress.env('eureka') ? 'users-keycloak/users' : 'bl-users/by-id';
+
 const defaultUser = {
   username: defaultUserName,
   active: true,
@@ -47,7 +50,7 @@ export default {
   createViaApi: (user) => cy
     .okapiRequest({
       method: 'POST',
-      path: 'users',
+      path: usersApiPath,
       body: user,
       isDefaultSearchParamsRequired: false,
     })
@@ -62,7 +65,7 @@ export default {
 
   deleteViaApi: (userId) => cy.okapiRequest({
     method: 'DELETE',
-    path: `bl-users/by-id/${userId}`,
+    path: `${deleteUsersApiPath}/${userId}`,
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: false,
   }),
@@ -70,7 +73,7 @@ export default {
   getUsers: (searchParams) => {
     return cy
       .okapiRequest({
-        path: 'users',
+        path: usersApiPath,
         searchParams,
         isDefaultSearchParamsRequired: false,
       })

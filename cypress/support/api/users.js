@@ -3,6 +3,8 @@ import Users from '../fragments/users/users';
 import getRandomPostfix from '../utils/stringTools';
 import { FULFILMENT_PREFERENCES } from '../constants';
 
+const systemRoleName = 'System admin role';
+
 Cypress.Commands.add('getUsers', (searchParams) => {
   cy.okapiRequest({
     path: 'users',
@@ -36,7 +38,8 @@ Cypress.Commands.add('getUserGroups', (searchParams) => {
   });
 });
 
-Cypress.Commands.add('getFirstUserGroupId', (searchParams, patronGroupName) => {
+Cypress.Commands.add('getFirstUserGroup', (searchParams, patronGroupName) => {
+  if (patronGroupName) searchParams.query = `group=="${patronGroupName}"`;
   cy.okapiRequest({
     path: 'groups',
     searchParams,
@@ -46,7 +49,7 @@ Cypress.Commands.add('getFirstUserGroupId', (searchParams, patronGroupName) => {
       userGroupIdx =
         response.body.usergroups.findIndex(({ group }) => group === patronGroupName) || 0;
     }
-    return response.body.usergroups[userGroupIdx].id;
+    return response.body.usergroups[userGroupIdx];
   });
 });
 
@@ -80,10 +83,12 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
     password: 'password',
   };
 
-  cy.getAdminToken();
+  if (!Cypress.env('ecsEnabled')) {
+    cy.getAdminToken();
+  }
 
-  cy.getFirstUserGroupId({ limit: patronGroupName ? 100 : 1 }, patronGroupName).then(
-    (userGroupdId) => {
+  cy.getFirstUserGroup({ limit: patronGroupName ? 1000 : 1 }, patronGroupName).then(
+    ({ id, group }) => {
       const queryField = 'displayName';
       cy.getPermissionsApi({
         query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
@@ -93,7 +98,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
         // cy.log('internalPermissions=' + [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]);
         Users.createViaApi({
           ...Users.defaultUser,
-          patronGroup: userGroupdId,
+          patronGroup: id,
           type: userType,
           username: userProperties.username,
           barcode: uuid(),
@@ -103,6 +108,8 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
           userProperties.barcode = newUserProperties.barcode;
           userProperties.firstName = newUserProperties.firstName;
           userProperties.lastName = newUserProperties.lastName;
+          userProperties.patronGroup = group;
+          userProperties.patronGroupId = id;
           cy.createRequestPreference({
             defaultDeliveryAddressTypeId: null,
             defaultServicePointId: null,
@@ -113,14 +120,20 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
             userId: newUserProperties.id,
           });
           cy.setUserPassword(userProperties);
-          cy.addPermissionsToNewUserApi({
-            userId: userProperties.userId,
-            permissions: [
-              ...permissionsResponse.body.permissions.map(
-                (permission) => permission.permissionName,
-              ),
-            ],
-          });
+          if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
+            cy.getUserRoleIdByNameApi(systemRoleName).then((roleId) => {
+              cy.addRolesToNewUserApi(userProperties.userId, [roleId]);
+            });
+          } else {
+            cy.addPermissionsToNewUserApi({
+              userId: userProperties.userId,
+              permissions: [
+                ...permissionsResponse.body.permissions.map(
+                  (permission) => permission.permissionName,
+                ),
+              ],
+            });
+          }
           cy.overrideLocalSettings(userProperties.userId);
           cy.wrap(userProperties).as('userProperties');
         });
@@ -163,7 +176,7 @@ Cypress.Commands.add('createUserRequestPreferencesApi', (data) => {
 });
 
 Cypress.Commands.add('getAdminSourceRecord', () => {
-  cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` })
+  cy.getUsers({ limit: 1, query: `"username"=="${Cypress.env('diku_login')}"` })
     .then((user) => {
       const { lastName, firstName } = user[0].personal;
       return `${lastName}${(firstName && `, ${firstName}`) || ''}`;

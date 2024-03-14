@@ -28,7 +28,7 @@ Cypress.Commands.add(
       'Content-type': contentTypeHeader,
     };
     if (additionalHeaders) Object.assign(headersToSet, additionalHeaders);
-    if (!Cypress.env('rtrAuth')) {
+    if (!Cypress.env('rtrAuth') && !Cypress.env('eureka')) {
       headersToSet['x-okapi-token'] = Cypress.env('token');
     }
     cy.request({

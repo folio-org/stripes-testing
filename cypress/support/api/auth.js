@@ -6,23 +6,46 @@ Cypress.Commands.add('getToken', (username, password) => {
   if (!Cypress.env('rtrAuth')) {
     pathToSet = 'bl-users/login';
   }
-  cy.okapiRequest({
-    method: 'POST',
-    path: pathToSet,
-    body: { username, password },
-    isDefaultSearchParamsRequired: false,
-    headers: {
-      'x-okapi-tenant': Tenant.get(),
-    },
-  }).then(({ body, headers }) => {
-    const defaultServicePoint = body.servicePointsUser.servicePoints.find(
-      ({ id }) => id === body.servicePointsUser.defaultServicePointId,
-    );
-    if (!Cypress.env('rtrAuth')) {
-      Cypress.env('token', headers['x-okapi-token']);
-    }
-    Cypress.env('defaultServicePoint', defaultServicePoint);
-  });
+  if (Cypress.env('eureka')) {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'authn/login',
+      body: { username, password },
+      isDefaultSearchParamsRequired: false,
+    }).then(() => {
+      //   // cy.wait(5000);
+      //   // cy.okapiRequest({
+      //   //   path: 'users-keycloak/_self',
+      //   //   headers: {
+      //   //     'x-okapi-token': cy.getCookie('folioAccessToken'),
+      //   //   },
+      //   //   isDefaultSearchParamsRequired: false,
+      //   // }).then(({ body }) => {
+      //   //   const defaultServicePoint = body.servicePointsUser.servicePoints.find(
+      //   //     ({ id }) => id === body.servicePointsUser.defaultServicePointId,
+      //   //   );
+      //   //   Cypress.env('defaultServicePoint', defaultServicePoint);
+      //   // });
+    });
+  } else {
+    cy.okapiRequest({
+      method: 'POST',
+      path: pathToSet,
+      body: { username, password },
+      isDefaultSearchParamsRequired: false,
+      headers: {
+        'x-okapi-tenant': Tenant.get(),
+      },
+    }).then(({ body, headers }) => {
+      const defaultServicePoint = body.servicePointsUser.servicePoints.find(
+        ({ id }) => id === body.servicePointsUser.defaultServicePointId,
+      );
+      if (!Cypress.env('rtrAuth')) {
+        Cypress.env('token', headers['x-okapi-token']);
+      }
+      Cypress.env('defaultServicePoint', defaultServicePoint);
+    });
+  }
 });
 
 Cypress.Commands.add('setUserPassword', (userCredentials) => {
@@ -50,14 +73,26 @@ Cypress.Commands.add('getUserToken', (username, password) => {
   if (!Cypress.env('rtrAuth')) {
     pathToSet = 'bl-users/login';
   }
+  if (Cypress.env('eureka')) {
+    pathToSet = 'authn/login';
+  }
   cy.okapiRequest({
     method: 'POST',
     path: pathToSet,
     body: { username, password },
     isDefaultSearchParamsRequired: false,
   }).then(({ headers }) => {
-    if (!Cypress.env('rtrAuth')) {
+    if (!Cypress.env('rtrAuth') && !Cypress.env('eureka')) {
       Cypress.env('token', headers['x-okapi-token']);
     }
+  });
+});
+
+Cypress.Commands.add('logoutViaApi', () => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'authn/logout',
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   });
 });
