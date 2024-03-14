@@ -391,6 +391,22 @@ export const MARC_AUTHORITY_BROWSE_OPTIONS = {
   GENRE: 'Genre',
 };
 
+export const DEFAULT_FOLIO_AUTHORITY_FILES = {
+  LC_NAME_AUTHORITY_FILE: 'LC Name Authority file (LCNAF)',
+  LC_SUBJECT_HEADINGS: 'LC Subject Headings (LCSH)',
+  LC_CHILDREN_SUBJECT_HEADINGS: "LC Children's Subject Headings",
+  LC_GENRE_FORM_TERMS: 'LC Genre/Form Terms (LCGFT)',
+  LC_DEMOGRAPHIC_GROUP_TERMS: 'LC Demographic Group Terms (LCFGT)',
+  LC_MEDIUM_OF_PERFORMANCE_THESAURUS_FOR_MUSIC:
+    'LC Medium of Performance Thesaurus for Music (LCMPT)',
+  FACETED_APPLICATION_OF_SUBJECT_TERMINOLOGY: 'Faceted Application of Subject Terminology (FAST)',
+  MEDICAL_SUBJECT_HEADINGS: 'Medical Subject Headings (MeSH)',
+  THESAURUS_FOR_GRAPHIC_MATERIALS: 'Thesaurus for Graphic Materials (TGM)',
+  RARE_BOOKS_AND_MANUSCRIPTS_SECTION: 'Rare Books and Manuscripts Section (RBMS)',
+  ART_AND_ARCHITECTURE_THESAURUS: 'Art & architecture thesaurus (AAT)',
+  GSAFD_GENRE_TERMS: 'GSAFD Genre Terms (GSAFD)',
+};
+
 export const ACTION_NAMES_IN_ACTION_PROFILE = {
   CREATE: 'Create (all record types except MARC Bibliographic, MARC Authority, or MARC Holdings)',
   MODIFY: 'Modify (MARC Bibliographic record type only)',
