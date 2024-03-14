@@ -38,7 +38,8 @@ Cypress.Commands.add('getUserGroups', (searchParams) => {
   });
 });
 
-Cypress.Commands.add('getFirstUserGroupId', (searchParams, patronGroupName) => {
+Cypress.Commands.add('getFirstUserGroup', (searchParams, patronGroupName) => {
+  if (patronGroupName) searchParams.query = `group=="${patronGroupName}"`;
   cy.okapiRequest({
     path: 'groups',
     searchParams,
@@ -48,7 +49,7 @@ Cypress.Commands.add('getFirstUserGroupId', (searchParams, patronGroupName) => {
       userGroupIdx =
         response.body.usergroups.findIndex(({ group }) => group === patronGroupName) || 0;
     }
-    return response.body.usergroups[userGroupIdx].id;
+    return response.body.usergroups[userGroupIdx];
   });
 });
 
@@ -83,7 +84,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
   };
 
   cy.getAdminToken().then(() => {
-    cy.getFirstUserGroupId({ limit: patronGroupName ? 1000 : 1 }, patronGroupName).then(
+    cy.getFirstUserGroup({ limit: patronGroupName ? 1000 : 1 }, patronGroupName).then(
       ({ id, group }) => {
         const queryField = 'displayName';
         cy.getPermissionsApi({
