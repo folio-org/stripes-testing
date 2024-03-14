@@ -31,6 +31,7 @@ module.exports = defineConfig({
     grepFilterSpecs: true,
     grepOmitFiltered: true,
     rtrAuth: true,
+    ecsEnabled: false,
     eureka: true,
     runAsAdmin: true,
   },

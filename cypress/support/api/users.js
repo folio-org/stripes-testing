@@ -83,62 +83,64 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
     password: 'password',
   };
 
-  cy.getAdminToken().then(() => {
-    cy.getFirstUserGroup({ limit: patronGroupName ? 1000 : 1 }, patronGroupName).then(
-      ({ id, group }) => {
-        const queryField = 'displayName';
-        cy.getPermissionsApi({
-          query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
-        }).then((permissionsResponse) => {
-          // Can be used to collect pairs of ui and backend permission names
-          // cy.log('Initial permissions=' + permissions);
-          // cy.log('internalPermissions=' + [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]);
-          Users.createViaApi({
-            ...Users.defaultUser,
-            patronGroup: id,
-            type: userType,
-            username: userProperties.username,
-            barcode: uuid(),
-            personal: { ...Users.defaultUser.personal, lastName: userProperties.username },
-          }).then((newUserProperties) => {
-            userProperties.userId = newUserProperties.id;
-            userProperties.barcode = newUserProperties.barcode;
-            userProperties.firstName = newUserProperties.firstName;
-            userProperties.lastName = newUserProperties.lastName;
-            userProperties.patronGroup = group;
-            userProperties.patronGroupId = id;
-            cy.createRequestPreference({
-              defaultDeliveryAddressTypeId: null,
-              defaultServicePointId: null,
-              delivery: false,
-              fulfillment: FULFILMENT_PREFERENCES.HOLD_SHELF,
-              holdShelf: true,
-              id: uuid(),
-              userId: newUserProperties.id,
-            });
-            cy.setUserPassword(userProperties);
-            if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
-              cy.getUserRoleIdByNameApi(systemRoleName).then((roleId) => {
-                cy.addRolesToNewUserApi(userProperties.userId, [roleId]);
-              });
-            } else {
-              cy.addPermissionsToNewUserApi({
-                userId: userProperties.userId,
-                permissions: [
-                  ...permissionsResponse.body.permissions.map(
-                    (permission) => permission.permissionName,
-                  ),
-                ],
-              });
-            }
-            cy.overrideLocalSettings(userProperties.userId);
-            cy.wrap(userProperties).as('userProperties');
+  if (!Cypress.env('ecsEnabled')) {
+    cy.getAdminToken();
+  }
+
+  cy.getFirstUserGroup({ limit: patronGroupName ? 1000 : 1 }, patronGroupName).then(
+    ({ id, group }) => {
+      const queryField = 'displayName';
+      cy.getPermissionsApi({
+        query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
+      }).then((permissionsResponse) => {
+        // Can be used to collect pairs of ui and backend permission names
+        // cy.log('Initial permissions=' + permissions);
+        // cy.log('internalPermissions=' + [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]);
+        Users.createViaApi({
+          ...Users.defaultUser,
+          patronGroup: id,
+          type: userType,
+          username: userProperties.username,
+          barcode: uuid(),
+          personal: { ...Users.defaultUser.personal, lastName: userProperties.username },
+        }).then((newUserProperties) => {
+          userProperties.userId = newUserProperties.id;
+          userProperties.barcode = newUserProperties.barcode;
+          userProperties.firstName = newUserProperties.firstName;
+          userProperties.lastName = newUserProperties.lastName;
+          userProperties.patronGroup = group;
+          userProperties.patronGroupId = id;
+          cy.createRequestPreference({
+            defaultDeliveryAddressTypeId: null,
+            defaultServicePointId: null,
+            delivery: false,
+            fulfillment: FULFILMENT_PREFERENCES.HOLD_SHELF,
+            holdShelf: true,
+            id: uuid(),
+            userId: newUserProperties.id,
           });
+          cy.setUserPassword(userProperties);
+          if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
+            cy.getUserRoleIdByNameApi(systemRoleName).then((roleId) => {
+              cy.addRolesToNewUserApi(userProperties.userId, [roleId]);
+            });
+          } else {
+            cy.addPermissionsToNewUserApi({
+              userId: userProperties.userId,
+              permissions: [
+                ...permissionsResponse.body.permissions.map(
+                  (permission) => permission.permissionName,
+                ),
+              ],
+            });
+          }
+          cy.overrideLocalSettings(userProperties.userId);
+          cy.wrap(userProperties).as('userProperties');
         });
-      },
-    );
-    return cy.get('@userProperties');
-  });
+      });
+    },
+  );
+  return cy.get('@userProperties');
 });
 
 Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = []) => {
