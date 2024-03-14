@@ -107,7 +107,10 @@ export default {
     cy.expect(PaneHeader('MARC authority').exists());
   },
   clickNewAuthorityButton() {
-    cy.do([actionsButton.click(), newAuthorityButton.click()]);
+    cy.do([
+      actionsButton.click(),
+      newAuthorityButton.click(),
+    ]);
     QuickMarcEditorWindow.waitLoading();
   },
   clickActionsAndReportsButtons() {
