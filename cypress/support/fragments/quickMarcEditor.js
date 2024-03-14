@@ -2194,6 +2194,7 @@ export default {
     checkHoldings();
     return cy.get('@holdings');
   },
+
   verifyAuthorityLookUpButton() {
     cy.expect(QuickMarcEditorRow({ tagValue: '001' }).find(authorityLookUpButton).exists());
   },

@@ -31,7 +31,7 @@ module.exports = defineConfig({
     grepFilterSpecs: true,
     grepOmitFiltered: true,
     rtrAuth: true,
-    ecsEnabled: true,
+    ecsEnabled: false,
   },
   e2e: {
     async setupNodeEvents(on, config) {

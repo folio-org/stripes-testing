@@ -1,11 +1,5 @@
 import { ACCEPTED_DATA_TYPE_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
@@ -13,6 +7,12 @@ import JobProfileView from '../../../support/fragments/data_import/job_profiles/
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
@@ -25,17 +25,14 @@ describe('data-import', () => {
       {
         typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `C11116 autotest action profile1 ${getRandomPostfix()}`,
-        action: 'Create (all record types except MARC Authority or MARC Holdings)',
       },
       {
         typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `C11116 autotest action profile2 ${getRandomPostfix()}`,
-        action: 'Create (all record types except MARC Authority or MARC Holdings)',
       },
       {
         typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `C11116 autotest action profile3 ${getRandomPostfix()}`,
-        action: 'Create (all record types except MARC Authority or MARC Holdings)',
       },
     ];
     const matchProfile = {
