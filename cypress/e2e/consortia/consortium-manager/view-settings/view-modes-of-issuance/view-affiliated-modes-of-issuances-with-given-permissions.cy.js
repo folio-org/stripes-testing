@@ -9,6 +9,7 @@ import ConsortiumManagerApp, {
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ModesOfIssuanceConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/modesOfIssuanceConsortiumManager';
@@ -55,20 +56,19 @@ describe('Consortium manager', () => {
         ]).then((userProperties) => {
           // User for test C410939
           testData.user939 = userProperties;
+          cy.wait(20000);
 
           cy.resetTenant();
-          cy.getAdminToken();
           cy.assignAffiliationToUser(Affiliations.College, testData.user939.userId);
           cy.setTenant(Affiliations.College);
           cy.assignPermissionsToExistingUser(testData.user939.userId, [
             permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui,
           ]);
-          cy.createTempUser([permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui])
-            .then((secondUser) => {
+          cy.createTempUser([permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui]).then(
+            (secondUser) => {
               // User for test C410940
               testData.user940 = secondUser;
-            })
-            .then(() => {
+              cy.wait(20000);
               InventoryInstance.createModesOfIssuanceViaApi(testData.collegeLocalModes.name).then(
                 (modesId) => {
                   testData.collegeLocalModes.id = modesId;
@@ -82,7 +82,6 @@ describe('Consortium manager', () => {
               ]);
 
               cy.resetTenant();
-              cy.getAdminToken();
               cy.assignAffiliationToUser(Affiliations.University, testData.user939.userId);
               cy.assignAffiliationToUser(Affiliations.University, testData.user940.userId);
               cy.setTenant(Affiliations.University);
@@ -97,7 +96,8 @@ describe('Consortium manager', () => {
               ).then((modesId) => {
                 testData.universityLocalModes.id = modesId;
               });
-            });
+            },
+          );
         });
       });
 
@@ -121,10 +121,10 @@ describe('Consortium manager', () => {
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
           cy.resetTenant();
-          cy.login(testData.user939.username, testData.user939.password, {
-            path: TopMenu.consortiumManagerPath,
-            waiter: ConsortiumManagerApp.waitLoading,
-          });
+          cy.login(testData.user939.username, testData.user939.password);
+          // Without waiter, permissions aren't loading
+          cy.wait(10000);
+          TopMenuNavigation.navigateToApp('Consortium manager');
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
