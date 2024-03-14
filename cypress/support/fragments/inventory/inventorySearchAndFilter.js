@@ -31,6 +31,7 @@ const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
 const sourceAccordion = Accordion('Source');
+const sharedAccordion = Accordion({ id: 'shared' });
 const languageInput = Accordion({ id: 'language' });
 const resourceTypeAccordion = Accordion({ id: 'resource' });
 const formatAccordion = Accordion({ id: 'format' });
@@ -76,7 +77,9 @@ const actionsButton = Button('Actions');
 const editInstanceButton = Button('Edit instance');
 const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
 const nextButton = Button({ id: 'browse-results-list-callNumbers-next-paging-button' });
+const listInventoryNextPagingButton = Button({ id: 'list-inventory-next-paging-button' });
 const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
+const listInventoryPreviousPagingButton = Button({ id: 'list-inventory-prev-paging-button' });
 const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-inventory' }));
 
 const searchToggleButton = Button({ id: 'mode-navigation-search' });
@@ -84,6 +87,7 @@ const itemStatusSearchField = TextField('itemStatus-field');
 const holdingsToggleButton = Button({ id: 'segment-navigation-holdings' });
 const itemToggleButton = Button({ id: 'segment-navigation-items' });
 const searchTypeDropdown = Select('Search field index');
+const nameTypeAccordion = Accordion({ id: 'nameType' });
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -238,6 +242,16 @@ export default {
   bySource(source) {
     cy.do([sourceAccordion.clickHeader(), sourceAccordion.find(Checkbox(source)).click()]);
     cy.expect(MultiColumnListRow().exists());
+  },
+
+  byShared(condititon) {
+    cy.wait(1000);
+    cy.do(sharedAccordion.clickHeader());
+    if (condititon === 'Yes') {
+      cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-true' })).click());
+    } else {
+      cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-false' })).click());
+    }
   },
 
   byKeywords(kw = '*') {
@@ -435,11 +449,19 @@ export default {
   },
 
   verifySelectedRecords(selected) {
-    cy.expect(
-      Pane('Inventory').is({
-        subtitle: including(`records found${selected} records selected`),
-      }),
-    );
+    if (selected === 1) {
+      cy.expect(
+        Pane('Inventory').is({
+          subtitle: including(`record found${selected} record selected`),
+        }),
+      );
+    } else {
+      cy.expect(
+        Pane('Inventory').is({
+          subtitle: including(`records found${selected} records selected`),
+        }),
+      );
+    }
   },
 
   searchByParameter: (parameter, value) => {
@@ -469,7 +491,11 @@ export default {
     cy.expect(Pane({ id: 'browse-inventory-results-pane' }).find(MultiColumnListHeader()).exists());
   },
 
-  verifySearchResult: (cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).exists()),
+  verifySearchResult: (cellContent, isFound = true) => {
+    if (isFound) cy.expect(MultiColumnListCell({ content: cellContent }).exists());
+    else cy.expect(MultiColumnListCell({ content: cellContent }).absent());
+  },
+
   verifyContentNotExistInSearchResult: (cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).absent()),
 
   getInstancesByIdentifierViaApi(identifier, limit = 100) {
@@ -559,8 +585,16 @@ export default {
     cy.do(inventorySearchResultsPane.find(nextButton).click());
   },
 
+  clickListInventoryNextPaginationButton() {
+    cy.do(listInventoryNextPagingButton.click());
+  },
+
   clickPreviousPaginationButton() {
     cy.do(inventorySearchResultsPane.find(previousButton).click());
+  },
+
+  clickListInventoryPreviousPaginationButton() {
+    cy.do(listInventoryPreviousPagingButton.click());
   },
 
   checkContributorsColumResult(cellContent) {
@@ -774,6 +808,10 @@ export default {
     ]);
   },
 
+  verifyResultListExists(isExist = true) {
+    cy.expect(isExist ? instancesList.exists() : instancesList.absent());
+  },
+
   verifyInstanceDetailsViewAbsent() {
     cy.expect(instanceDetailsSection.absent());
   },
@@ -856,6 +894,10 @@ export default {
     cy.expect(keywordInput.has({ value: '' }));
   },
 
+  verifyAccordionExistance(accordionName) {
+    cy.expect(Accordion(accordionName).exists());
+  },
+
   verifyAccordionByNameExpanded(accordionName, status = true) {
     cy.expect(Accordion(accordionName).has({ open: status }));
   },
@@ -872,6 +914,24 @@ export default {
         )
         .exists(),
     );
+  },
+
+  verifyCheckboxInAccordion(accordionName, checkboxValue, isChecked = null) {
+    cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).exists());
+    if (isChecked !== null) cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).has({ checked: isChecked }));
+  },
+
+  verifyTextFieldInAccordion(accordionName, textFieldValue) {
+    cy.expect(
+      Accordion(accordionName)
+        .find(TextField({ value: including(textFieldValue) }))
+        .exists(),
+    );
+  },
+
+  verifyNameTypeOption(option) {
+    cy.do(nameTypeAccordion.find(Button({ ariaLabel: 'open menu' })).click());
+    cy.expect(nameTypeAccordion.find(MultiSelectOption(including(option))).exists());
   },
 
   selectOptionInExpandedFilter(accordionName, optionName, selected = true) {
@@ -949,6 +1009,39 @@ export default {
 
   checkBrowseOptionSelected(option) {
     cy.expect(browseSearchAndFilterInput.has({ checkedOptionText: option }));
+  },
+
+  clearFilter(accordionName) {
+    cy.do(Button({ ariaLabel: `Clear selected filters for "${accordionName}"` }).click());
+  },
+
+  checkSharedInstancesInResultList() {
+    return cy
+      .get('div[class^="mclRowContainer--"]')
+      .find('[class*="mclCell-"]:nth-child(2)')
+      .each(($cell) => {
+        cy.wrap($cell).find('span[class*="sharedIcon"]').should('exist');
+      });
+  },
+
+  checkNoSharedInstancesInResultList() {
+    cy.expect(MultiColumnListCell(including('sharedIcon')).absent());
+  },
+
+  checkSharedAndLocalInstancesInResultList() {
+    return cy
+      .get('div[class^="mclRowContainer--"]')
+      .find('[class*="mclCell-"]:nth-child(2)')
+      .then(($allInstances) => {
+        const totalNumberOfInstances = $allInstances.length;
+        cy.wrap($allInstances)
+          .find('span[class*="sharedIcon"]')
+          .then(($sharedInstances) => {
+            const numberOfSharedInstances = $sharedInstances.length;
+
+            expect(totalNumberOfInstances).not.to.eq(numberOfSharedInstances);
+          });
+      });
   },
 
   selectYesfilterStaffSuppress: () => {

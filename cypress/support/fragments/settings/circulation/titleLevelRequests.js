@@ -101,12 +101,18 @@ export default {
   },
 
   updateTLRSettingViaApi(allow = true) {
-    cy.getConfigByName('TLR').then(body => {
+    cy.getConfigByName('TLR').then((body) => {
       const config = body.configs[0];
       if (allow) {
-        config.value = config.value.replace('"titleLevelRequestsFeatureEnabled":false,', '"titleLevelRequestsFeatureEnabled":true,');
+        config.value = config.value.replace(
+          '"titleLevelRequestsFeatureEnabled":false,',
+          '"titleLevelRequestsFeatureEnabled":true,',
+        );
       } else {
-        config.value = config.value.replace('"titleLevelRequestsFeatureEnabled":true,', '"titleLevelRequestsFeatureEnabled":false,');
+        config.value = config.value.replace(
+          '"titleLevelRequestsFeatureEnabled":true,',
+          '"titleLevelRequestsFeatureEnabled":false,',
+        );
       }
       cy.okapiRequest({
         method: 'PUT',

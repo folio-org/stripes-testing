@@ -138,7 +138,9 @@ describe('MARC', () => {
               testData.marcAuthFile.jobProfileToRun,
             ).then((response) => {
               response.entries.forEach((record) => {
-                testData.createdRecordIDs.push(record[testData.marcAuthFile.propertyName].idList[0]);
+                testData.createdRecordIDs.push(
+                  record[testData.marcAuthFile.propertyName].idList[0],
+                );
               });
             });
 

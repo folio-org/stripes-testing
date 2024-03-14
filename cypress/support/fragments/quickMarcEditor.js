@@ -328,7 +328,7 @@ const tag008DefaultValuesHoldings = [
 
 const tagBox = TextField({ name: including('.tag') });
 const firstIndicatorBox = TextField({ name: including('.indicators[0]') });
-const secondIndicatorBox = TextField({ name: including('.indicators[0]') });
+const secondIndicatorBox = TextField({ name: including('.indicators[1]') });
 const fourthBox = TextArea({ name: including('.content') });
 const fourthBoxInLinkedField = TextArea({ name: including('.subfieldGroups.controlled') });
 const fifthBoxInLinkedField = TextArea({ name: including('.subfieldGroups.uncontrolledAlpha') });
@@ -857,11 +857,19 @@ export default {
     );
   },
 
-  checkContentByTag(content, tag) {
+  checkContentByTag1(content, tag) {
     cy.expect(
       QuickMarcEditorRow({ tagValue: tag })
         .find(TextArea())
         .has({ value: content ?? defaultFieldValues.contentWithSubfield }),
+    );
+  },
+
+  checkContentByTag(tagName, content) {
+    cy.expect(
+      getRowInteractorByTagName(tagName)
+        .find(TextArea({ name: including('.content') }))
+        .has({ value: content }),
     );
   },
 
@@ -1981,13 +1989,24 @@ export default {
 
   verifyUpdateLinkedBibsKeepEditingModal(linkedRecordsNumber) {
     cy.expect(updateLinkedBibFieldsModal.exists());
-    cy.expect(
-      updateLinkedBibFieldsModal.has({
-        content: including(
-          `${linkedRecordsNumber} bibliographic record is linked to this authority record and will be updated by clicking the Save button.`,
-        ),
-      }),
-    );
+    if (linkedRecordsNumber === 1) {
+      cy.expect(
+        updateLinkedBibFieldsModal.has({
+          content: including(
+            `${linkedRecordsNumber} bibliographic record is linked to this authority record and will be updated by clicking the Save button.`,
+          ),
+        }),
+      );
+    } else {
+      cy.expect(
+        updateLinkedBibFieldsModal.has({
+          content: including(
+            `${linkedRecordsNumber} bibliographic records are linked to this authority record and will be updated by clicking the Save button.`,
+          ),
+        }),
+      );
+    }
+
     cy.expect(saveButton.exists());
     cy.expect(keepEditingButton.exists());
   },
@@ -2117,6 +2136,19 @@ export default {
     cy.get('@link').then((link) => {
       cy.visit(link);
     });
+  },
+
+  checkSourceValue(firstName, lastName) {
+    cy.expect(
+      PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' })
+        .find(HTML(including(`Source: ${lastName}, ${firstName}`)))
+        .exists(),
+    );
+  },
+
+  checkAfterSaveAndKeepEditing() {
+    cy.expect(calloutAfterSaveAndClose.exists());
+    cy.expect(rootSection.exists());
   },
 
   getCreatedMarcBib(marcBibTitle, timeOutSeconds = 120) {

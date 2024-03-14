@@ -48,15 +48,13 @@ describe('MARC', () => {
 
     before('create test data and login', () => {
       cy.getAdminToken();
-      DataImport.uploadFileViaApi(
-        marcFile.marc,
-        marcFile.fileName,
-        marcFile.jobProfileToRun,
-      ).then((response) => {
-        response.entries.forEach((record) => {
-          testData.instanceID = record[marcFile.propertyName].idList[0];
-        });
-      });
+      DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, marcFile.jobProfileToRun).then(
+        (response) => {
+          response.entries.forEach((record) => {
+            testData.instanceID = record[marcFile.propertyName].idList[0];
+          });
+        },
+      );
 
       cy.createTempUser([
         Permissions.inventoryAll.gui,

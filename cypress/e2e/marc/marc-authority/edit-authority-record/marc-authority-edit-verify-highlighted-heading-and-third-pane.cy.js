@@ -41,8 +41,18 @@ describe('MARC', () => {
           },
         ],
         editedFields: [
-          { rowIndex: 14, tag: '100', content: 'C350911 Twain, Mark - edited 100', value: 'C350911 Twain, Mark, 1835-1910. Adventures of Huckleberry Finn' },
-          { rowIndex: 27, tag: '400', content: 'C350911 Twain, Mark - edited 400', value: String.raw`C350911 Twain, Mark, 1835-1910. Mark Twain's The adventures of Huckleberry Finn` },
+          {
+            rowIndex: 14,
+            tag: '100',
+            content: 'C350911 Twain, Mark - edited 100',
+            value: 'C350911 Twain, Mark, 1835-1910. Adventures of Huckleberry Finn',
+          },
+          {
+            rowIndex: 27,
+            tag: '400',
+            content: 'C350911 Twain, Mark - edited 400',
+            value: String.raw`C350911 Twain, Mark, 1835-1910. Mark Twain's The adventures of Huckleberry Finn`,
+          },
           { rowIndex: 29, tag: '500', content: 'C350911 Twain, Mark - edited 500' },
         ],
         editedGeographicNameField: {

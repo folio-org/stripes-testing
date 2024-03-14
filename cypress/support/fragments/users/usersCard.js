@@ -1,24 +1,24 @@
 import { HTML, including, Link } from '@interactors/html';
 import {
   Accordion,
+  and,
+  Badge,
   Button,
   Checkbox,
   KeyValue,
+  ListItem,
+  Modal,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
+  MultiSelect,
+  MultiSelectOption,
   Pane,
   Section,
   Selection,
   SelectionList,
   TextArea,
   TextField,
-  and,
-  Badge,
-  ListItem,
-  Modal,
-  MultiSelect,
-  MultiSelectOption,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
@@ -31,6 +31,8 @@ const returnedLoansSpan = loansSection.find(HTML({ id: 'claimed-returned-count' 
 const userInformationSection = Accordion({ id: 'userInformationSection' });
 const patronBlocksSection = Accordion({ id: 'patronBlocksSection' });
 const permissionAccordion = Accordion({ id: 'permissionsSection' });
+const affiliationsSection = Section({ id: 'affiliationsSection' });
+const affiliationsButton = Button({ id: 'accordion-toggle-button-affiliationsSection' });
 const requestsAccordion = Accordion({ id: 'requestsSection' });
 const openedRequestsLink = requestsAccordion.find(Link({ id: 'clickable-viewopenrequests' }));
 const closedRequestsLink = requestsAccordion.find(HTML({ id: 'clickable-viewclosedrequests' }));
@@ -65,6 +67,48 @@ export default {
         .find(Button({ id: 'accordion-toggle-button-patronBlocksSection' }))
         .has({ ariaExpanded: 'false' }),
     ]);
+  },
+
+  affiliationsAccordionCovered() {
+    cy.expect([affiliationsSection.find(affiliationsButton).has({ ariaExpanded: 'false' })]);
+  },
+
+  verifyAffiliationsDetails(primaryAffiliations, count, ...details) {
+    cy.get('#affiliationsSection')
+      .find('li')
+      .then(($liElements) => {
+        const liCount = $liElements.length;
+        expect(liCount).to.be.gte(count);
+
+        const primaryLiElement = $liElements.filter('[class^="primary-"]');
+        expect(primaryLiElement).to.have.lengthOf(1);
+
+        const text = primaryLiElement.text().trim();
+        expect(text).to.equal(primaryAffiliations);
+
+        details.forEach((detail) => {
+          const detailElement = $liElements.filter(`:contains("${detail}")`);
+          expect(detailElement).to.have.lengthOf.at.least(1);
+        });
+      });
+    cy.wait(4000);
+  },
+
+  verifyAffiliationsQuantity(quantity) {
+    cy.expect(affiliationsSection.find(Badge()).has({ value: quantity }));
+  },
+
+  varifyUserCardOpened() {
+    cy.expect(Section({ id: 'pane-userdetails' }).exists());
+    cy.wait(6000);
+  },
+
+  expandAffiliationsAccordion() {
+    cy.do(affiliationsSection.find(affiliationsButton).click());
+  },
+
+  affiliationsAccordionIsAbsent() {
+    cy.expect(affiliationsSection.absent());
   },
 
   expandLoansSection(openLoans, returnedLoans) {
@@ -472,11 +516,9 @@ export default {
 
   verifyOpenedFeeFines(count, totalAmount) {
     cy.expect(
-      feesFinesAccordion
-        .find(ListItem(including('open')))
-        .has({
-          text: including(`${count.toString()} open` && `Total: $${totalAmount.toString()}`),
-        }),
+      feesFinesAccordion.find(ListItem(including('open'))).has({
+        text: including(`${count.toString()} open` && `Total: $${totalAmount.toString()}`),
+      }),
     );
   },
 

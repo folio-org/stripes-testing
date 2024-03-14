@@ -1,35 +1,35 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import {
-  TextField,
-  Button,
-  Select,
-  TextArea,
-  Modal,
-  HTML,
-  including,
-  MultiColumnListCell,
-  MultiColumnListRow,
-  SearchField,
   Accordion,
+  Button,
+  Callout,
   Checkbox,
   Dropdown,
   DropdownMenu,
-  Callout,
-  Pane,
   Form,
-  Option,
+  HTML,
   IconButton,
-  Popover,
   Label,
   ListItem,
+  Modal,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Option,
+  Pane,
+  Popover,
+  SearchField,
+  Select,
+  TextArea,
+  TextField,
+  including,
 } from '../../../../../interactors';
-import getRandomPostfix from '../../../utils/stringTools';
 import {
+  ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES,
+  EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
-  EXISTING_RECORDS_NAMES,
-  ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES,
 } from '../../../constants';
+import getRandomPostfix from '../../../utils/stringTools';
 
 const saveButton = Button('Save as profile & Close');
 const searchButton = Button('Search');
@@ -1191,6 +1191,7 @@ export default {
   checkNewMatchProfileFormIsOpened: () => {
     cy.expect(Pane('New field mapping profile').exists());
   },
+
   checkPreviouslyPopulatedDataIsDisplayed: (profile) => {
     cy.expect([
       nameField.has({ value: profile.name }),

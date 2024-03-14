@@ -36,15 +36,13 @@ describe('MARC', () => {
       });
 
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.uploadFileViaApi(
-          'oneMarcBib.mrc',
-          fileName,
-          jobProfileToRun,
-        ).then((response) => {
-          response.entries.forEach((record) => {
-            instanceID = record[propertyName].idList[0];
-          });
-        });
+        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
+          (response) => {
+            response.entries.forEach((record) => {
+              instanceID = record[propertyName].idList[0];
+            });
+          },
+        );
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkJobStatus(fileName, 'Completed');
         Logs.openFileDetails(fileName);
