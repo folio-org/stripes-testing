@@ -47,6 +47,9 @@ describe('MARC', () => {
           '',
         ];
 
+        const field245Value =
+          '$a Crossfire DERIVED : $b a litany for survival : poems 1998-2019 / $c Staceyann Chin ; foreword by Jacqueline Woodson.';
+
         before('Creating user and test data', () => {
           cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
           cy.getAdminToken().then(() => {
@@ -107,9 +110,10 @@ describe('MARC', () => {
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(testData.rowIndex);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib700AfterLinkingToAuth100);
             QuickMarcEditor.deleteField(testData.rowIndex);
+            QuickMarcEditor.updateExistingFieldContent(12, field245Value);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndCloseDerive();
-            cy.wait(1500);
+            InventoryInstance.checkInstanceTitle('Crossfire DERIVED');
             InventoryInstance.verifyContributorAbsent('C380760 Coates, Ta-Nehisi');
           },
         );
