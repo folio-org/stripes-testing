@@ -71,7 +71,7 @@ describe('Finance', () => {
 
     it(
       'C360956 Rollover for one ledger and same fiscal year can be started just once (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet'] },
+      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
         // Click on Ledger name link from preconditions
         FinanceHelper.searchByName(ledger.name);

@@ -82,7 +82,7 @@ describe('Invoices', () => {
 
   it(
     'C399084 Invoice can be approved when balance is close to the encumbrance available balance (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       // Click invoice line record on invoice
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

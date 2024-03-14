@@ -27,7 +27,7 @@ describe('ui-organizations: Filtering organization', () => {
   ].forEach((filter) => {
     it(
       'C6713: Test the Organizations app filters (except Tags) (thunderjet)',
-      { tags: ['smoke', 'thunderjet'] },
+      { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
       () => {
         // cy.visit(TopMenu.organizationsPath);
         filter.filterActions();

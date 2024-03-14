@@ -27,7 +27,7 @@ describe('ui-organizations: View organization', () => {
 
   it(
     'C672 View existing organization record (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Organizations.selectActiveStatus();
       Organizations.checkOrganizationFilter();

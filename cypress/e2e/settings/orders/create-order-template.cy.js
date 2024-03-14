@@ -44,19 +44,23 @@ describe('orders: Settings', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C6725 Create order template (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
-    OrderTemplate.clickNewOrderTemplateButton();
-    OrderTemplate.fillTemplateInformationWithAcquisitionMethod(
-      orderTemplateName,
-      organization.name,
-      acquisitionMethod.value,
-    );
-    OrderTemplate.saveTemplate();
-    OrderTemplate.checkTemplateCreated(orderTemplateName);
-    cy.visit(TopMenu.ordersPath);
-    Orders.createOrderByTemplate(orderTemplateName);
-    Orders.checkCreatedOrderFromTemplate(organization.name);
-    cy.visit(SettingsMenu.ordersOrderTemplatesPath);
-    OrderTemplate.deleteTemplate(orderTemplateName);
-  });
+  it(
+    'C6725 Create order template (thunderjet)',
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    () => {
+      OrderTemplate.clickNewOrderTemplateButton();
+      OrderTemplate.fillTemplateInformationWithAcquisitionMethod(
+        orderTemplateName,
+        organization.name,
+        acquisitionMethod.value,
+      );
+      OrderTemplate.saveTemplate();
+      OrderTemplate.checkTemplateCreated(orderTemplateName);
+      cy.visit(TopMenu.ordersPath);
+      Orders.createOrderByTemplate(orderTemplateName);
+      Orders.checkCreatedOrderFromTemplate(organization.name);
+      cy.visit(SettingsMenu.ordersOrderTemplatesPath);
+      OrderTemplate.deleteTemplate(orderTemplateName);
+    },
+  );
 });

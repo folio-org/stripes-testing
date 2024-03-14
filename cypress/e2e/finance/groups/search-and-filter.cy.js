@@ -45,7 +45,7 @@ describe('ui-finance: Groups', () => {
 
   it(
     'C4060 Test the search and filter options for fund groups  (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       // Search Groups by all
       FinanceHelp.searchByAll(defaultGroup.name);

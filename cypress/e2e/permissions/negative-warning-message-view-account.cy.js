@@ -78,7 +78,7 @@ describe('Permissions', () => {
 
     it(
       'C353617 - Negative: warning message appears when user without View invoices permission is trying to view invoice (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet'] },
+      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
         Orders.verifyActiveBtnOrdersFilters(btnOrderLines);
 

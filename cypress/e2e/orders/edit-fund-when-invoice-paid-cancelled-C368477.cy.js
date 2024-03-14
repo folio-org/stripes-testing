@@ -135,7 +135,7 @@ describe('Orders', () => {
 
   it(
     'C368477 Editing fund distribution in PO line when related Paid invoice exists (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       // Click on the Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

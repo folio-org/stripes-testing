@@ -59,7 +59,7 @@ describe('Export Manager', () => {
 
     it(
       'C378884 "EDIFACT orders export" option is added to job type filter in "Export manager" app (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet'] },
+      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
         // Check default page view
         ExportManagerSearchPane.checkDefaultView();

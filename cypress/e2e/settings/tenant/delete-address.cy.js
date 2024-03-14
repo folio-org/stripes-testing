@@ -30,17 +30,21 @@ describe('Settings', () => {
     });
   });
 
-  it('C374196 Delete Address (thunderjet) (TaaS)', { tags: ['extendedPath', 'thunderjet'] }, () => {
-    TenantPane.selectTenant(TENANTS.ADDRESSES);
-    Addresses.waitLoading();
-    Addresses.clickDeleteButtonForAddressValue(testData.newAddress.name);
-    Addresses.verifyDeleteModalDisplayed();
-    Addresses.clickCancelButtonInDeleteModal();
-    Addresses.verifyDeleteModalIsNotDisplayed();
-    Addresses.clickDeleteButtonForAddressValue(testData.newAddress.name);
-    Addresses.clickDeleteButtonInDeleteModal();
-    Addresses.verifyCalloutForAddressDeletionAppears();
-    Addresses.verifyDeleteModalIsNotDisplayed();
-    Addresses.addressRowWithValueIsAbsent(testData.newAddress.address);
-  });
+  it(
+    'C374196 Delete Address (thunderjet) (TaaS)',
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    () => {
+      TenantPane.selectTenant(TENANTS.ADDRESSES);
+      Addresses.waitLoading();
+      Addresses.clickDeleteButtonForAddressValue(testData.newAddress.name);
+      Addresses.verifyDeleteModalDisplayed();
+      Addresses.clickCancelButtonInDeleteModal();
+      Addresses.verifyDeleteModalIsNotDisplayed();
+      Addresses.clickDeleteButtonForAddressValue(testData.newAddress.name);
+      Addresses.clickDeleteButtonInDeleteModal();
+      Addresses.verifyCalloutForAddressDeletionAppears();
+      Addresses.verifyDeleteModalIsNotDisplayed();
+      Addresses.addressRowWithValueIsAbsent(testData.newAddress.address);
+    },
+  );
 });

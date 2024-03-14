@@ -33,7 +33,7 @@ describe('ui-inventory: Keyboard shortcut (NEW)', () => {
 
   it(
     'C345297 Keyboard Shortcut. Access to drop down menu (folijet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
     () => {
       InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
 
