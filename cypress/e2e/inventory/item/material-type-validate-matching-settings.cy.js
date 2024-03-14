@@ -94,7 +94,7 @@ describe('inventory', () => {
 
     it(
       'C628 Item Data --> Material Type --> (Validate matching settings) (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
         InventoryInstance.openHoldingsAccordion(location.name);

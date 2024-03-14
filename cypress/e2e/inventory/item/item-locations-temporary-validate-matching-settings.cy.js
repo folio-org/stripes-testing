@@ -110,7 +110,7 @@ describe('inventory', () => {
     it(
       'C634 - Locations --> Temporary Location --> (Validate matching settings) (Folijet)(TaaS)',
       {
-        tags: ['extendedPath', 'folijet'],
+        tags: ['extendedPath', 'folijet', 'eurekaPhase1'],
       },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);

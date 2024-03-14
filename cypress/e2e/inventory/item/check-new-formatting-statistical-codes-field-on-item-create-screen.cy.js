@@ -76,7 +76,7 @@ describe('inventory', () => {
 
     it(
       'C400654 Check the new formatting of Statistical codes field on Item create/edit screen (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'eurekaPhase1'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceData.instanceTitle);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceData.instanceTitle);

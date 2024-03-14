@@ -26,14 +26,18 @@ describe('inventory', () => {
       });
     });
 
-    it('C598 Create new instance with add "New" (folijet)', { tags: ['smoke', 'folijet'] }, () => {
-      const InventoryNewInstance = InventoryInstances.addNewInventory();
-      InventoryNewInstance.fillRequiredValues(instanceTitle);
-      InventoryNewInstance.clickSaveAndCloseButton();
+    it(
+      'C598 Create new instance with add "New" (folijet)',
+      { tags: ['smoke', 'folijet', 'eurekaPhase1'] },
+      () => {
+        const InventoryNewInstance = InventoryInstances.addNewInventory();
+        InventoryNewInstance.fillRequiredValues(instanceTitle);
+        InventoryNewInstance.clickSaveAndCloseButton();
 
-      InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
+        InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
 
-      cy.expect(MultiColumnListCell({ row: 0, content: instanceTitle }).exists());
-    });
+        cy.expect(MultiColumnListCell({ row: 0, content: instanceTitle }).exists());
+      },
+    );
   });
 });

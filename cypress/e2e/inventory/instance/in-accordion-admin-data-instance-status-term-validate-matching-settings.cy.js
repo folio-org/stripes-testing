@@ -43,7 +43,7 @@ describe('inventory', () => {
 
     it(
       'C602 In Accordion Administrative Data --> Instance status term --> (Validate matching settings) (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'eurekaPhase1'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
