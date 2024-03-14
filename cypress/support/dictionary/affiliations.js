@@ -1,17 +1,17 @@
 export default {
-  Consortia: 'cs00000int',
-  University: 'cs00000int_0005',
-  School: 'cs00000int_0003',
-  College: 'cs00000int_0001',
+  Consortia: 'cs01000001',
+  University: 'cs01000001m0001',
+  // School: 'cs00000int_0003',
+  College: 'cs01000001m0005',
 };
 
 export const tenantNames = {
-  central: 'Central Office',
-  college: 'College',
-  university: 'University',
-  professional: 'Professional',
-  school: 'School',
-  special: 'Special,',
+  central: 'Central Tenant',
+  college: 'Congressonal',
+  university: 'General Collections',
+  // professional: 'Professional',
+  // school: 'School',
+  // special: 'Special,',
 };
 
 export const tenantCodes = {
@@ -29,6 +29,6 @@ export const tenantErrors = {
 };
 
 export const adminUsernames = {
-  college: 'ECS0001Admin',
-  university: 'ECS0005Admin',
+  // college: 'ECS0001Admin',
+  // university: 'ECS0005Admin',
 };
