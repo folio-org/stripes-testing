@@ -58,7 +58,7 @@ describe('orders: Settings', () => {
 
   it(
     'C6726 Edit existing order template (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       OrderTemplate.selectTemplate(orderTemplateName);
       OrderTemplate.editTemplate(`${orderTemplateName}-edited`);

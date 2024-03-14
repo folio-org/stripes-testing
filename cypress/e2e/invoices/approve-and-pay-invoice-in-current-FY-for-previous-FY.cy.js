@@ -159,7 +159,7 @@ describe('Invoices', () => {
 
   it(
     'C388526 Approve and pay invoice created in current FY for previous FY when related order line was created in current FY (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

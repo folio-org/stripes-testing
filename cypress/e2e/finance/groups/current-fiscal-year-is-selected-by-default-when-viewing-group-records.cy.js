@@ -83,7 +83,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
   it(
     'C367939 Current fiscal year is selected by default when viewing group records (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(defaultGroup.name);
       Groups.selectGroup(defaultGroup.name);

@@ -62,7 +62,7 @@ describe('Orders', () => {
 
   it(
     'C380409 Search for order title with special characters (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       // Enter full title name from Preconditions item #2 in "Search" field on "Search & filter" pane
       // Click "Search" button

@@ -127,7 +127,7 @@ describe('Orders: Receiving and Check-in', () => {
 
   it(
     'C378899 Encumbrance releases when receive piece for order with payment status "Payment Not Required" (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

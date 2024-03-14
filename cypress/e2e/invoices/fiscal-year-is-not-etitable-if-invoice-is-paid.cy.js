@@ -83,7 +83,7 @@ describe('Invoices', () => {
 
   it(
     'C387536 "Fiscal year" field is not editable for paid invoice (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);

@@ -63,7 +63,7 @@ describe('ui-finance: Transactions', () => {
 
   it(
     'C6649 Add allocation to a budget by creating an allocation transaction (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(defaultfund.name);
       Funds.selectFund(defaultfund.name);

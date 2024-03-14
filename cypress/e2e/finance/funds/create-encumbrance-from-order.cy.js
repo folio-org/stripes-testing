@@ -90,7 +90,7 @@ describe('ui-finance: Transactions', () => {
 
   it(
     'C6705 Create encumbrance from Order  (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.createPOLineViaActions();
       OrderLines.fillInPOLineInfoWithFund(defaultFund);

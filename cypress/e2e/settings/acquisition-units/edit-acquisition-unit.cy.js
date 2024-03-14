@@ -40,7 +40,7 @@ describe('Acquisition Units: Settings (ACQ Units)', () => {
 
   it(
     'C6729 Update existing acquisition unit (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       AcquisitionUnits.edit(defaultAcquisitionUnit.name);
       AcquisitionUnits.fillInAUInfo(`${defaultAcquisitionUnit.name}-edited`);

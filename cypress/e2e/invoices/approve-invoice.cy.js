@@ -67,23 +67,27 @@ describe('ui-invoices: Approve invoice', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C10945 Approve invoice (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
-    Invoices.searchByNumber(invoice.invoiceNumber);
-    Invoices.selectInvoice(invoice.invoiceNumber);
-    Invoices.approveInvoice();
-    // check transactions after approve
-    cy.visit(TopMenu.fundPath);
-    Helper.searchByName(defaultFund.name);
-    Funds.selectFund(defaultFund.name);
-    Funds.openBudgetDetails(defaultFund.code, DateTools.getCurrentFiscalYearCode());
-    Funds.openTransactions();
-    Funds.selectTransactionInList('Pending payment');
-    Funds.varifyDetailsInTransaction(
-      DateTools.getCurrentFiscalYearCode(),
-      '$100.00',
-      invoice.invoiceNumber,
-      'Pending payment',
-      `${defaultFund.name} (${defaultFund.code})`,
-    );
-  });
+  it(
+    'C10945 Approve invoice (thunderjet)',
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    () => {
+      Invoices.searchByNumber(invoice.invoiceNumber);
+      Invoices.selectInvoice(invoice.invoiceNumber);
+      Invoices.approveInvoice();
+      // check transactions after approve
+      cy.visit(TopMenu.fundPath);
+      Helper.searchByName(defaultFund.name);
+      Funds.selectFund(defaultFund.name);
+      Funds.openBudgetDetails(defaultFund.code, DateTools.getCurrentFiscalYearCode());
+      Funds.openTransactions();
+      Funds.selectTransactionInList('Pending payment');
+      Funds.varifyDetailsInTransaction(
+        DateTools.getCurrentFiscalYearCode(),
+        '$100.00',
+        invoice.invoiceNumber,
+        'Pending payment',
+        `${defaultFund.name} (${defaultFund.code})`,
+      );
+    },
+  );
 });

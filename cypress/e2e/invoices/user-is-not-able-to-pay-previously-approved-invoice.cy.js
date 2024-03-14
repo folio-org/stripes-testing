@@ -125,7 +125,7 @@ describe('Invoices', () => {
 
   it(
     'C397330 User is not able to pay previously approved invoice when related order was unopened (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);

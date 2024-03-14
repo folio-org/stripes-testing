@@ -147,7 +147,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
   it(
     'C407710: Consecutive rollovers within three fiscal years (Thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);

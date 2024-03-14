@@ -69,7 +69,7 @@ describe('Orders', () => {
 
   it(
     'C353627 "Renewal date" and "Renewal interval" are not required for opening, unopening, closing, reopening ongoing order (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
