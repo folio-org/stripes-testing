@@ -406,3 +406,9 @@ export const DEFAULT_FOLIO_AUTHORITY_FILES = {
   ART_AND_ARCHITECTURE_THESAURUS: 'Art & architecture thesaurus (AAT)',
   GSAFD_GENRE_TERMS: 'GSAFD Genre Terms (GSAFD)',
 };
+
+export const ACTION_NAMES_IN_ACTION_PROFILE = {
+  CREATE: 'Create (all record types except MARC Bibliographic, MARC Authority, or MARC Holdings)',
+  MODIFY: 'Modify (MARC Bibliographic record type only)',
+  UPDATE: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+};
