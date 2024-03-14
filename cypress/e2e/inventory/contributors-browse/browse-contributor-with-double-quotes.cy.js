@@ -57,7 +57,7 @@ describe('inventory', () => {
 
     it(
       'C397324 Browse contributor which has double quotes (spitfire)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         BrowseContributors.searchRecordByName(notExactSearchName);
         BrowseContributors.checkBrowseContributorsResulstListVisible(true);

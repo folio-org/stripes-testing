@@ -84,7 +84,7 @@ describe('inventory', () => {
 
     it(
       'C359149 Search "Item" by administrative note using query search (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         searchQueries.forEach((query) => {
           // Fill in the input field at the " Search & filter " pane with the following search query => Click on the "Search" button.

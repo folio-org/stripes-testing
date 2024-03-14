@@ -336,7 +336,7 @@ describe('Inventory', () => {
 
       it(
         'C402777 Apply "Shared" facet when Browse for same Call number existing in different tenants (exact match) (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire'] },
+        { tags: ['criticalPathECS', 'spitfire', 'eurekaPhase1'] },
         () => {
           InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
           InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);

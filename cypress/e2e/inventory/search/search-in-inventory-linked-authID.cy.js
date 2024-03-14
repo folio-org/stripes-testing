@@ -117,7 +117,7 @@ describe('inventory', () => {
 
     it(
       'C367974 Search for two "Instance" records by "Authority UUID" value of linked "MARC Authority" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         InventoryInstances.verifyInstanceSearchOptions();
         InventoryInstances.searchInstancesWithOption(

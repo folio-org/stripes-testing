@@ -181,7 +181,7 @@ describe('inventory', () => {
 
     it(
       'C400621 Search Holdings using advanced search with a combination of operators (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
         InventoryInstances.clickAdvSearchButton();
