@@ -79,8 +79,9 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
     username: `cypressTestUser${getRandomPostfix()}`,
     password: 'password',
   };
-
-  cy.getAdminToken();
+  if (!Cypress.env('ecsEnabled')) {
+    cy.getAdminToken();
+  }
 
   cy.getFirstUserGroupId({ limit: patronGroupName ? 100 : 1 }, patronGroupName).then(
     (userGroupdId) => {
