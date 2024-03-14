@@ -18,12 +18,17 @@ import {
   SelectionOption,
   TextField,
 } from '../../../../interactors';
+import {
+  ACTION_NAMES_IN_ACTION_PROFILE,
+  ITEM_STATUS_NAMES,
+  ORDER_FORMAT_NAMES_IN_PROFILE,
+  RECORD_STATUSES,
+} from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
-import NewJobProfile from './job_profiles/newJobProfile';
-import InventoryViewSource from '../inventory/inventoryViewSource';
 import DateTools from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
-import { ITEM_STATUS_NAMES, ORDER_FORMAT_NAMES_IN_PROFILE, RECORD_STATUSES } from '../../constants';
+import InventoryViewSource from '../inventory/inventoryViewSource';
+import NewJobProfile from './job_profiles/newJobProfile';
 
 const poLineData = {
   title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
@@ -244,9 +249,7 @@ function createActionProfileForVRN(name, recordType, mappingProfile, action) {
     actionProfilesPaneHeader.find(actionButton).click(),
     newActionProfileButton.click(),
     nameField.fillIn(name),
-    actionSelect.choose(
-      action || 'Update (all record types except Orders, Invoices, or MARC Holdings)',
-    ),
+    actionSelect.choose(action || ACTION_NAMES_IN_ACTION_PROFILE.UPDATE),
     folioRecordTypeSelect.choose(recordType),
     linkProfileButton.click(),
     selectMappingProfilesModal.find(queryField).fillIn(mappingProfile),
