@@ -52,7 +52,7 @@ describe('Consortia', () => {
           cy.getModesOfIssuance({
             limit: 1,
             query: `name=="${modesIssuance3.name}"`,
-          }).then((id) => {
+          }).then(({ id }) => {
             ModesOfIssuanceConsortiumManager.deleteViaApi({
               payload: {
                 name: modesIssuance3.name,
