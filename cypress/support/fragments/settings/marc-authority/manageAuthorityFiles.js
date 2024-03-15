@@ -156,4 +156,16 @@ export default {
       });
     });
   },
+
+  setAuthorityFileToActiveViaApi(fileName) {
+    cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
+      cy.setActiveAuthoritySourceFileViaAPI(body.id, body._version + 1);
+    });
+  },
+
+  unsetAuthorityFileAsActiveViaApi(fileName) {
+    cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
+      cy.setActiveAuthoritySourceFileViaAPI(body.id, body._version + 1, false);
+    });
+  },
 };
