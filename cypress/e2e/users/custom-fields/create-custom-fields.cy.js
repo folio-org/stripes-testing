@@ -28,7 +28,7 @@ describe('ui-users: Custom Fields', () => {
 
   it(
     'C15693 Create a text field custom field (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
     () => {
       const fieldData = {
         fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
@@ -49,7 +49,7 @@ describe('ui-users: Custom Fields', () => {
 
   it(
     'C15694 Create a text area custom field and add help text (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
     () => {
       const fieldData = {
         fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
@@ -70,7 +70,7 @@ describe('ui-users: Custom Fields', () => {
 
   it(
     'C15695 Create a checkbox custom field (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
     () => {
       const checkboxData = {
         fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
@@ -90,7 +90,7 @@ describe('ui-users: Custom Fields', () => {
 
   it(
     'C15696 Create a radio button custom field (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
     () => {
       const radioButtonData = {
         data: {
@@ -115,7 +115,7 @@ describe('ui-users: Custom Fields', () => {
 
   it(
     'C15697 Create a single select custom field (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
     () => {
       const singleSelectData = {
         data: {

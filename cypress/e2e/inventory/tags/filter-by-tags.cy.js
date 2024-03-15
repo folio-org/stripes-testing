@@ -111,33 +111,41 @@ describe('inventory', () => {
       );
     });
 
-    it('C343216 Filter Holdings by Tags (volaris)', { tags: ['extendedPath', 'volaris'] }, () => {
-      const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
-      InventorySearchAndFilter.switchToHoldings();
-      InventorySearchAndFilter.byKeywords(instanceData.title);
-      InventoryInstance.openHoldingView();
-      HoldingsRecordEdit.openTags();
-      HoldingsRecordEdit.addTag(tagName);
+    it(
+      'C343216 Filter Holdings by Tags (volaris)',
+      { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
+      () => {
+        const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
+        InventorySearchAndFilter.switchToHoldings();
+        InventorySearchAndFilter.byKeywords(instanceData.title);
+        InventoryInstance.openHoldingView();
+        HoldingsRecordEdit.openTags();
+        HoldingsRecordEdit.addTag(tagName);
 
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.switchToHoldings();
-      InventorySearchAndFilter.byKeywords(instanceData.title);
-      InventorySearchAndFilter.resetAll();
-      InventorySearchAndFilter.filterByTag(tagName);
-      InventorySearchAndFilter.checkRowsCount(1);
-    });
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.switchToHoldings();
+        InventorySearchAndFilter.byKeywords(instanceData.title);
+        InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.filterByTag(tagName);
+        InventorySearchAndFilter.checkRowsCount(1);
+      },
+    );
 
-    it('C343217 Filter Items by Tags (volaris)', { tags: ['extendedPath', 'volaris'] }, () => {
-      const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', testData.itemBarcode);
-      HoldingsRecordEdit.openTags();
-      HoldingsRecordEdit.addTag(tagName);
+    it(
+      'C343217 Filter Items by Tags (volaris)',
+      { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
+      () => {
+        const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter('Barcode', testData.itemBarcode);
+        HoldingsRecordEdit.openTags();
+        HoldingsRecordEdit.addTag(tagName);
 
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.filterByTag(tagName);
-      InventorySearchAndFilter.checkRowsCount(1);
-    });
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.filterByTag(tagName);
+        InventorySearchAndFilter.checkRowsCount(1);
+      },
+    );
   });
 });

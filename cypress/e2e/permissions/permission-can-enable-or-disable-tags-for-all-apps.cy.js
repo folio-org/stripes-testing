@@ -54,7 +54,7 @@ describe('Permissions Tags', () => {
 
   it(
     'C397329 Verify that permission: "Settings (Tags): Can enable or disable tags for all apps" works as expected (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'eurekaPhase1'] },
     () => {
       TagsGeneral.changeEnableTagsStatus('disable');
       cy.visit(TopMenu.invoicesPath);

@@ -49,7 +49,7 @@ describe('Permissions --> My Profile', () => {
 
   it(
     'C410871 Verify that my profile page title follows correct format (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
     () => {
       cy.visit(SettingsMenu.myProfilePath);
       MyProfile.waitLoading();
@@ -60,7 +60,7 @@ describe('Permissions --> My Profile', () => {
 
   it(
     'C375097 Verify that "Save" button is disabled in case of validation errors on "My profile" form (volaris)',
-    { tags: ['extendedPath', 'volaris'], retries: 2 },
+    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'], retries: 2 },
     () => {
       ChangePassword.openChangePasswordViaUserProfile();
       ChangePassword.checkInitialState();

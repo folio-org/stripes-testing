@@ -109,8 +109,8 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
   );
 
   it(
-    'C2268: Add notice policy to circulation rules (vega)',
-    { tags: ['smoke', 'vega', 'system'] },
+    'C2268: Add notice policy to circulation rules (volaris)',
+    { tags: ['smoke', 'volaris', 'system', 'eurekaPhase1'] },
     () => {
       CirculationRules.clearCirculationRules();
       CirculationRules.fillInPriority();

@@ -101,7 +101,7 @@ describe('Permission Sets', () => {
 
   it(
     'C396393 Verify that new permission to view all user settings are added (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
     () => {
       cy.visit(SettingsMenu.permissionSets);
       PermissionSets.waitLoading();
@@ -160,7 +160,7 @@ describe('Permission Sets', () => {
 
   it(
     'C407702 User with "Settings (Users): View all settings" permission only can view "Manual Charges" page on "Users > Settings" - when system has no configured Fee/Fine owners (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
     () => {
       cy.visit(SettingsMenu.manualCharges);
       ManualCharges.waitLoading();
@@ -170,7 +170,7 @@ describe('Permission Sets', () => {
 
   it(
     'C402342 Verify that Creating and Editing options are disabled for users with "Setting (Users): View all settings" permission scenario 1 (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
     () => {
       cy.visit(SettingsMenu.permissionSets);
       PermissionSets.waitLoading();
@@ -190,7 +190,7 @@ describe('Permission Sets', () => {
 
   it(
     'C402752 Verify that "Settings (Users): View all settings" works as expected Scenario 2 (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
     () => {
       cy.visit(SettingsMenu.usersOwnersPath);
       UsersSettingsGeneral.checkEntityInTable({
@@ -221,7 +221,7 @@ describe('Permission Sets', () => {
 
   it(
     'C404380 Verify that "Settings (Users): View all settings" works as expected Scenario 4 (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
     () => {
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup('undergrad');
@@ -231,7 +231,7 @@ describe('Permission Sets', () => {
 
   it(
     'C404383 Verify that "Settings (Users): View all settings" works as expected Scenario 5 (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
     () => {
       cy.visit(SettingsMenu.conditionsPath);
       Conditions.waitLoading();
@@ -242,7 +242,7 @@ describe('Permission Sets', () => {
 
   it(
     'C405545 Verify that "Settings (Users): View all settings" works as expected Scenario 6 (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
     () => {
       cy.visit(SettingsMenu.patronGroups);
       UsersSettingsGeneral.checkEntityInTable({
