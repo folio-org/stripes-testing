@@ -38,7 +38,6 @@ describe('data-import', () => {
           instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
         },
       );
-      Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
