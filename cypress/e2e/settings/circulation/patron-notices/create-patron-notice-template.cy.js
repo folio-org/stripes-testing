@@ -14,13 +14,17 @@ describe('ui-circulation-settings: create patron notice template', () => {
     });
   });
 
-  it('C199656 Create notice template (vega)', { tags: ['smoke', 'volaris'] }, () => {
-    NewNoticePolicyTemplate.startAdding();
-    NewNoticePolicyTemplate.checkInitialState();
-    NewNoticePolicyTemplate.addToken('item.title');
-    NewNoticePolicyTemplate.create(patronNoticeTemplate);
-    NewNoticePolicyTemplate.checkAfterSaving(patronNoticeTemplate);
-    NewNoticePolicyTemplate.checkTemplateActions(patronNoticeTemplate);
-    NewNoticePolicyTemplate.delete();
-  });
+  it(
+    'C199656 Create notice template (volaris)',
+    { tags: ['smoke', 'volaris', 'eurekaPhase1'] },
+    () => {
+      NewNoticePolicyTemplate.startAdding();
+      NewNoticePolicyTemplate.checkInitialState();
+      NewNoticePolicyTemplate.addToken('item.title');
+      NewNoticePolicyTemplate.create(patronNoticeTemplate);
+      NewNoticePolicyTemplate.checkAfterSaving(patronNoticeTemplate);
+      NewNoticePolicyTemplate.checkTemplateActions(patronNoticeTemplate);
+      NewNoticePolicyTemplate.delete();
+    },
+  );
 });

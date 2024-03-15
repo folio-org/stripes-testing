@@ -32,7 +32,7 @@ describe('Permissions --> My Profile', () => {
 
   it(
     'C388654 permission insufficient to view custom fields on user settings (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
     () => {
       cy.visit(TopMenu.customFieldsPath);
       CustomFields.waitLoading();

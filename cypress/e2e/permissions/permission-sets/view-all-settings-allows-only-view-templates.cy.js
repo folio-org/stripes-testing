@@ -55,7 +55,7 @@ describe('Permission Sets', () => {
 
   it(
     'C402779 Verify that "Settings(users):View all settings " allows to only view Templates (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
     () => {
       cy.visit(SettingsMenu.patronBlockTemplates);
       PatronBlockTemplates.findPatronTemlate(patronBlockTemplate.name);

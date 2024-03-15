@@ -45,7 +45,7 @@ describe('Permissions', () => {
 
   it(
     'C208822 Add Create, edit, delete remote storage permission to user (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
     () => {
       UsersSearchPane.searchByUsername(userData.username);
       UsersSearchPane.waitLoading();
