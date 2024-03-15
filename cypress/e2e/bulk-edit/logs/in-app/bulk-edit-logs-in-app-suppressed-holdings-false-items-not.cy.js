@@ -54,13 +54,9 @@ describe('Bulk Edit - Logs', () => {
       cy.getInstanceById(item.instanceId).then((body) => {
         body.discoverySuppress = true;
         cy.updateInstance(body);
+        item.instanceHRID = body.hrid;
+        FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, item.instanceHRID);
       });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${item.instanceId}"` }).then(
-        (instance) => {
-          item.instanceHRID = instance.hrid;
-          FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, item.instanceHRID);
-        },
-      );
       cy.login(user.username, user.password, {
         path: TopMenu.bulkEditPath,
         waiter: BulkEditSearchPane.waitLoading,

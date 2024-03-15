@@ -9,7 +9,6 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -25,6 +24,7 @@ describe('MARC', () => {
     let firstHolding = '';
     let secondHolding = '';
     let ITEM_BARCODE;
+    const instanceTitle = `Barcode search test ${Number(new Date())}`;
 
     before(() => {
       cy.getAdminToken().then(() => {
@@ -71,7 +71,7 @@ describe('MARC', () => {
             cy.createInstance({
               instance: {
                 instanceTypeId: Cypress.env('instanceTypes')[0].id,
-                title: `Barcode search test ${Number(new Date())}`,
+                title: instanceTitle,
               },
               holdings: [
                 {
@@ -98,6 +98,9 @@ describe('MARC', () => {
                 ],
               ],
             });
+            cy.wait(5000);
+            cy.login(userProperties.username, userProperties.password);
+            cy.visit(TopMenu.inventoryPath);
           });
       });
     });
@@ -122,9 +125,7 @@ describe('MARC', () => {
       { tags: ['smoke', 'firebird'] },
       () => {
         InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
-        InventorySearchAndFilter.selectSearchResultItem();
-        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.byKeywords(instanceTitle);
         InventoryInstance.openMoveItemsWithinAnInstance();
 
         InventoryInstance.moveItemToAnotherHolding({
