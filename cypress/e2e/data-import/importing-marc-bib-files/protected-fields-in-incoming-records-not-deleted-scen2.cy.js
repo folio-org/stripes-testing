@@ -85,8 +85,6 @@ describe('data-import', () => {
         user = userProperties;
 
         cy.login(user.username, user.password);
-
-        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
       });
     });
 

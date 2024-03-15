@@ -7,6 +7,7 @@ import {
   ORDER_STATUSES,
   VENDOR_NAMES,
   RECORD_STATUSES,
+  LOCATION_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import {
@@ -296,6 +297,7 @@ describe('data-import', () => {
         MatchOnVRN.verifyInstanceUpdated();
         MatchOnVRN.verifyHoldingsUpdated();
         MatchOnVRN.verifyItemUpdated(itemBarcode);
+        InventoryInstance.openHoldingsAccordion(LOCATION_NAMES.MAIN_LIBRARY_UI);
         MatchOnVRN.verifyMARCBibSource(itemBarcode);
       },
     );
