@@ -1,12 +1,12 @@
-import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import Permissions from '../../../../support/dictionary/permissions';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Users from '../../../../support/fragments/users/users';
-import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/stringTools';
-import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
+import Permissions from '../../../../../support/dictionary/permissions';
+import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
+import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import TopMenu from '../../../../../support/fragments/topMenu';
+import Users from '../../../../../support/fragments/users/users';
+import getRandomPostfix, { getRandomLetters } from '../../../../../support/utils/stringTools';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 // TODO: uncomment after functionality will be added
 // import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
 

@@ -1,0 +1,221 @@
+import {
+  Button,
+  HTML,
+  Keyboard,
+  Modal,
+  MultiColumnList,
+  RepeatableFieldItem,
+  Select,
+  Selection,
+  Spinner,
+  TextField,
+  including,
+} from '../../../../interactors';
+
+const buildQueryModal = Modal('Build query');
+const testQueryButton = Button('Test query');
+const cancelButton = Button('Cancel');
+const runQueryButton = Button('Run query');
+const xButton = Button({ icon: 'times' });
+const plusButton = Button({ icon: 'plus-sign' });
+const trashButton = Button({ icon: 'trash' });
+
+const booleanValues = ['AND'];
+export const usersFieldValues = {
+  expirationDate: 'User expiration date',
+  firstName: 'User first name',
+  lastName: 'User last name',
+};
+export const dateTimeOperators = [
+  'Select operator',
+  '==',
+  '!=',
+  '>',
+  '<',
+  '>=',
+  '<=',
+  'is null/empty',
+];
+export const stringOperators = [
+  'Select operator',
+  '==',
+  '!=',
+  'contains',
+  'starts with',
+  'is null/empty',
+];
+
+export default {
+  verify(firstline = true) {
+    cy.expect([
+      buildQueryModal.exists(),
+      testQueryButton.has({ disabled: true }),
+      cancelButton.has({ disabled: false }),
+      runQueryButton.has({ disabled: true }),
+      xButton.has({ disabled: false }),
+    ]);
+    this.verifyModalContent(firstline);
+  },
+
+  verifyModalContent(firstline) {
+    cy.get('[class^="headline"]').contains('Query');
+    cy.get('[class^="queryArea"]').should('exist');
+    cy.get('[class^="col-sm-4"][class*="headerCell"]').should('have.text', 'Field');
+    cy.get('[class^="col-sm-1"][class*="headerCell"]').should('have.text', 'Actions');
+    this.verifyEmptyField();
+    cy.get('[class^="col-sm-1-"] [icon="plus-sign"]:not([disabled])');
+    cy.get(`[class^="col-sm-1-"] [icon="trash"]${firstline ? '[disabled]' : ':not([disabled])'}`);
+  },
+
+  verifyEmptyField(row = 0) {
+    cy.get(
+      `[data-testid="row-${row}"] [class^="col-sm-4"] [class^="selectionControl"] [class^="singleValue"]`,
+    ).should('have.text', 'Select field');
+  },
+
+  verifyEmptyOperator(row = 0) {
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-2"]`).children().should('not.exist');
+  },
+
+  verifyEmptyValue(row = 0) {
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-4"]`).eq(1).children().should('not.exist');
+  },
+
+  verifyFieldsSortedAlphabetically() {
+    cy.get('[class^="col-sm-4"] [role="listbox"] [role="option"]')
+      .children()
+      .then((optionsText) => {
+        const textArray = optionsText.get().map((el) => el.innerText);
+        const sortedArray = [...textArray].sort((a, b) => a - b);
+        expect(sortedArray).to.eql(textArray);
+      });
+  },
+
+  selectField(selection, row = 0) {
+    cy.do(RepeatableFieldItem({ index: row }).find(Selection()).choose(selection));
+  },
+
+  typeInAndSelectField(string, row = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: row }).find(Selection()).open(),
+      RepeatableFieldItem({ index: row }).find(Selection()).filterOptions(string),
+      cy.wait(1000),
+      Keyboard.enter(),
+    ]);
+  },
+
+  verifySelectedField(selection, row = 0) {
+    cy.get(
+      `[data-testid="row-${row}"] [class^="col-sm-4"] [class^="selectionControl"] [class^="singleValue"]`,
+    ).should('have.text', selection);
+  },
+
+  verifyOperatorColumn() {
+    cy.get('[class^="col-sm-2"][class*="headerCell"]').should('have.text', 'Operator');
+    cy.get(
+      '[class^="col-sm-2"] [class^="selectControl"] option:contains("Select operator"):disabled',
+    );
+  },
+
+  selectOperator(selection, row = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: row })
+        .find(Select({ dataTestID: including('operator-option') }))
+        .choose(selection),
+    );
+  },
+
+  verifyOperatorsList(operators, row = 0) {
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-2"] [class^="selectControl"] option`).then(
+      (options) => {
+        const textArray = options.get().map((el) => el.label);
+        expect(textArray).to.eql(operators);
+      },
+    );
+  },
+
+  verifyQueryAreaContent(content) {
+    cy.get('[class^="queryArea"]').should('have.text', content);
+  },
+
+  verifyValueColumn() {
+    cy.get('[class^="col-sm-4"][class*="headerCell"]').contains('Value');
+  },
+
+  pickDate(date, row = 0) {
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-4"] [placeholder="MM/DD/YYYY"]`).should(
+      'exist',
+    );
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-4"] [icon="calendar"]`).should('exist');
+    cy.do(RepeatableFieldItem({ index: row }).find(TextField()).fillIn(date));
+  },
+
+  fillInValueTextfield(text, row = 0) {
+    cy.do(RepeatableFieldItem({ index: row }).find(TextField()).fillIn(text));
+  },
+
+  cancelDisabled(disabled = true) {
+    cancelButton.has({ disabled });
+  },
+
+  testQueryDisabled(disabled = true) {
+    cy.expect(testQueryButton.has({ disabled }));
+  },
+
+  runQueryDisabled(disabled = true) {
+    cy.expect(runQueryButton.has({ disabled }));
+  },
+
+  addNewRow(row = 0) {
+    cy.do(RepeatableFieldItem({ index: row }).find(plusButton).click());
+  },
+
+  verifyBooleanColumn(row = 1) {
+    cy.get('[class^="col-sm-1"][class*="headerCell"]').contains('Boolean');
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-1"] [class^="selectControl"]`)
+      .find('option')
+      .should('have.length', 1)
+      .and('have.text', ...booleanValues);
+  },
+
+  verifyPlusAndTrashButtonsDisabled(row = 0, plusDisabled = true, trashDisabled = true) {
+    cy.expect([
+      RepeatableFieldItem({ index: row }).find(plusButton).has({ disabled: plusDisabled }),
+      RepeatableFieldItem({ index: row }).find(trashButton).has({ disabled: trashDisabled }),
+    ]);
+  },
+
+  clickTestQuery() {
+    cy.do(testQueryButton.click());
+    cy.expect([HTML('Test query in progress').exists(), Spinner().exists()]);
+    this.runQueryDisabled();
+    this.cancelDisabled(false);
+  },
+
+  verifyPreviewOfRecordsMatched() {
+    cy.expect([MultiColumnList().exists(), Button('Show columns').exists()]);
+    this.testQueryDisabled(false);
+    this.cancelDisabled(false);
+    this.runQueryDisabled(false);
+    cy.get('[class^="col-xs-10"]').then(($element) => {
+      cy.wrap($element)
+        .invoke('text')
+        .then((text) => {
+          const [totalRecords, previewRecords] = text.match(/\d+/g).map(Number);
+          const previewLabel = `Preview of first ${Math.min(previewRecords, 100)} records.`;
+          expect(text.startsWith(`Query would return ${totalRecords} records.`)).to.equal(true);
+          expect(previewLabel).to.equal(
+            `Preview of first ${Math.min(previewRecords, 100)} records.`,
+          );
+        });
+    });
+  },
+
+  clickRunQuery() {
+    cy.do(runQueryButton.click());
+  },
+
+  verifyClosed() {
+    cy.do(buildQueryModal.absent());
+  },
+};

@@ -1,37 +1,38 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { Permissions } from '../../../support/dictionary';
 import {
-  LOCATION_NAMES,
-  FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
+  ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORDS_NAMES,
-  JOB_STATUS_NAMES,
+  FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
+  JOB_STATUS_NAMES,
+  LOCATION_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
-import TopMenu from '../../../support/fragments/topMenu';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import FileManager from '../../../support/utils/fileManager';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -76,7 +77,7 @@ describe('data-import', () => {
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C401727 Update ER holdings ${getRandomPostfix()}`,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+          action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
         },
       },
       {
@@ -91,7 +92,7 @@ describe('data-import', () => {
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C401727 Update Call number holdings ${getRandomPostfix()}`,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+          action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
         },
       },
       {
@@ -107,7 +108,7 @@ describe('data-import', () => {
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C401727 Update Electronic access holdings ${getRandomPostfix()}`,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+          action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
         },
       },
     ];

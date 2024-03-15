@@ -1,32 +1,33 @@
-import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import FileManager from '../../../support/utils/fileManager';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import {
-  JOB_STATUS_NAMES,
-  FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
+  ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import Permissions from '../../../support/dictionary/permissions';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import { getLongDelay } from '../../../support/utils/cypressTools';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Authority files', () => {
@@ -49,7 +50,7 @@ describe('data-import', () => {
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.MARCAUTHORITY,
       name: `C415367 Action profile 1 - MODSOURCE-642 - MARC Authority${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const matchProfile = {
       profileName: `C415367 Match profile 1 - MODSOURCE-642 - MARC Authority${getRandomPostfix()}`,

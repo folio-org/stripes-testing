@@ -1,4 +1,10 @@
+import { ACTION_NAMES_IN_ACTION_PROFILE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
+import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -6,11 +12,6 @@ import {
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
-import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -47,8 +48,8 @@ describe('data-import', () => {
       'C421995 - (NON-CONSORTIA) Verify the action profile options (Folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const actionCreate = 'Create (all record types except MARC Authority or MARC Holdings)';
-        const actionModify = 'Modify (MARC Bibliographic record type only)';
+        const actionCreate = ACTION_NAMES_IN_ACTION_PROFILE.CREATE;
+        const actionModify = ACTION_NAMES_IN_ACTION_PROFILE.MODIFY;
         const recordTypeBibliographic = 'MARC Bibliographic';
 
         ActionProfiles.openNewActionProfileForm();

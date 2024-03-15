@@ -1,40 +1,41 @@
 import {
+  ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
-  RECORD_STATUSES,
   JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../../support/constants';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../../support/fragments/settings/dataImport';
-import Permissions from '../../../../support/dictionary/permissions';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import Users from '../../../../support/fragments/users/users';
-import TopMenu from '../../../../support/fragments/topMenu';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
-import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import Permissions from '../../../../support/dictionary/permissions';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
-import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
 import ActionProfiles from '../../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import MatchProfiles from '../../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import NewFieldMappingProfile from '../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../../support/fragments/settings/dataImport';
+import MatchProfiles from '../../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -48,7 +49,7 @@ describe('Inventory', () => {
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C411726 Update instance adding stat code${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const matchProfile = {
       profileName: `C411726 Update instance adding stat code${getRandomPostfix()}`,
