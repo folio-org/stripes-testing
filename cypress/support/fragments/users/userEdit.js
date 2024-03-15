@@ -106,7 +106,12 @@ export default {
   },
 
   openSelectPermissionsModal() {
-    cy.do(permissionsAccordion.clickHeader());
+    cy.get('#permissions').then(($accordion) => {
+      if ($accordion.attr('expanded') !== 'true') {
+        cy.wait(2000);
+        cy.do(permissionsAccordion.clickHeader());
+      }
+    });
     cy.do(addPermissionsButton.click());
     cy.expect(selectPermissionsModal.exists());
   },
