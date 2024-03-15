@@ -117,7 +117,6 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
-            InventoryInstance.selectRecord();
             MarcAuthorities.checkFieldAndContentExistence(
               testData.tag110,
               `$a ${marcFiles[1].authorityHeading}`,
@@ -140,7 +139,6 @@ describe('MARC', () => {
             InventoryInstance.goToPreviousPage();
             // Wait for the content to be loaded.
             cy.wait(6000);
-            InventoryInstance.waitLoading();
             InventoryInstance.viewSource();
             InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
             InventoryInstance.clickViewAuthorityIconDisplayedInMarcViewPane();
@@ -150,7 +148,6 @@ describe('MARC', () => {
             cy.wait(6000);
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
-            InventoryInstance.waitLoading();
             InstanceRecordView.verifyInstancePaneExists();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib110LinkedFieldValues);

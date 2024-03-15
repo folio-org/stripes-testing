@@ -1,4 +1,5 @@
 import getRandomPostfix, { getRandomLetters } from '../utils/stringTools';
+import { REQUEST_METHOD } from '../constants';
 
 Cypress.Commands.add('getAuthorityHeadingsUpdatesViaAPI', (startDate, endDate, limit = '100') => {
   cy.okapiRequest({
@@ -26,6 +27,19 @@ Cypress.Commands.add('getAuthoritySourceFileIdViaAPI', (authorityFileName) => {
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
     return body.authoritySourceFiles[0].id;
+  });
+});
+
+Cypress.Commands.add('getAuthoritySourceFileDataViaAPI', (authorityFileName) => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: 'authority-source-files',
+    searchParams: {
+      query: `name="${authorityFileName}"`,
+    },
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return cy.wrap(body.authoritySourceFiles[0]);
   });
 });
 
@@ -60,6 +74,22 @@ Cypress.Commands.add('deleteAuthoritySourceFileViaAPI', (id, ignoreErrors = fals
     return status;
   });
 });
+
+Cypress.Commands.add(
+  'setActiveAuthoritySourceFileViaAPI',
+  (authorityFileId, version, isActive = true) => {
+    cy.okapiRequest({
+      method: REQUEST_METHOD.PATCH,
+      path: `authority-source-files/${authorityFileId}`,
+      body: {
+        id: authorityFileId,
+        selectable: isActive,
+        _version: version,
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+);
 
 Cypress.Commands.add(
   'createAuthoritySourceFileViaAPI',
