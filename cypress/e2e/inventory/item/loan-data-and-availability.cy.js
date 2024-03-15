@@ -98,7 +98,7 @@ describe('inventory', () => {
     it(
       'C632 - Loan Data and Availability (incl. validate Loan type settings) (Folijet)(TaaS)',
       {
-        tags: ['extendedPath', 'folijet'],
+        tags: ['extendedPath', 'folijet', 'eurekaPhase1'],
       },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);

@@ -73,7 +73,7 @@ describe('inventory', () => {
 
     it(
       'C397327 Verify that no error appears after switch from Holdings Edit screen to another app and back (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(testData.instanceTitle);
         InventorySearchAndFilter.selectViewHoldings();

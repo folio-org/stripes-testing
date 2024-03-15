@@ -149,7 +149,7 @@ describe('inventory', () => {
 
     it(
       'C374176 Verify the view mode of ISRI profiles (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'eurekaPhase1'] },
       () => {
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.verifyTargetProfileFormOpened();

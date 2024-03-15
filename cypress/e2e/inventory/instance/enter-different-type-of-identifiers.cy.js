@@ -49,7 +49,7 @@ describe('inventory', () => {
     ['ASIN', 'BNB'].forEach((identifier) => {
       it(
         'C609 In Accordion Identifiers --> enter different type of identifiers (folijet)',
-        { tags: ['smoke', 'folijet'] },
+        { tags: ['smoke', 'folijet', 'eurekaPhase1'] },
         () => {
           resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
 

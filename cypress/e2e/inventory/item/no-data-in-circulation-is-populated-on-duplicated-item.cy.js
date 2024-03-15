@@ -109,7 +109,7 @@ describe('inventory', () => {
 
     it(
       'C397325 Verify that no data in circulation is populated on duplicated Item (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'eurekaPhase1'] },
       () => {
         CheckInActions.checkInItemGui(itemData.barcode);
         ConfirmItemInModal.confirmInTransitModal();

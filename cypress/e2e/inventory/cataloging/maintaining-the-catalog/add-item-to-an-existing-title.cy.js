@@ -56,7 +56,7 @@ describe('inventory', () => {
 
     it(
       'C3493 Add an item to an existing title. There is already a copy at the same library branch. (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'eurekaPhase1'] },
       () => {
         // Find the instance from precondition
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);

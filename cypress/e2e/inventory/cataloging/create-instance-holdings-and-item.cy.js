@@ -38,7 +38,7 @@ describe('inventory', () => {
 
     it(
       'C3505 Create instance, holdings, and item records for a print resource which has not been acquired through Orders (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'eurekaPhase1'] },
       () => {
         // Click on "New" in the "Actions" menu
         const InventoryNewInstance = InventoryInstances.addNewInventory();

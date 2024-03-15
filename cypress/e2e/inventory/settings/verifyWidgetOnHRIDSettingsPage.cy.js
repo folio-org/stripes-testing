@@ -26,7 +26,7 @@ describe('inventory', () => {
 
     it(
       'C369055 Verify created/updated by widget on HRID Settings page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'eurekaPhase1'] },
       () => {
         cy.visit(SettingsMenu.hridHandlingPath);
         HridHandling.waitloading();

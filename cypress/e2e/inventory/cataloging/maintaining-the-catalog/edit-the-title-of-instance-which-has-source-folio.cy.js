@@ -46,7 +46,7 @@ describe('inventory', () => {
 
     it(
       'C3495 Edit the title of an instance which has source FOLIO (record which do not have an underlying MARC record stored in SRS) (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();

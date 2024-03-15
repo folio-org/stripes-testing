@@ -52,7 +52,7 @@ describe('inventory', () => {
 
     it(
       'C15850 Create a fast add record from Inventory. Monograph. (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'eurekaPhase1'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventoryActions.openNewFastAddRecordForm();
