@@ -124,6 +124,8 @@ describe('data-import', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
+            console.log(response);
+            cy.pause();
             response.entries.forEach((record) => {
               createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
             });
