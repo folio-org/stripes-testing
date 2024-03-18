@@ -184,6 +184,7 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
     });
 
+    // https://folio-org.atlassian.net/browse/MODSOURCE-755
     it(
       'C411795 User can update "MARC Bib" in Central tenant via import and check updated in member tenant (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet'] },
@@ -239,11 +240,10 @@ describe('Data Import', () => {
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.searchByTitle(testData.updatedInstanceTitle);
         InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
-        // TO DO: fix this check failure - 'Unknown user' is shown, possibly due to the way users are created in test
-        // InventoryInstance.verifyLastUpdatedSource(
-        //   users.userAProperties.firstName,
-        //   users.userAProperties.lastName,
-        // );
+        InventoryInstance.verifyLastUpdatedSource(
+          users.userAProperties.firstName,
+          users.userAProperties.lastName,
+        );
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkContentByTag(testData.field245.tag, testData.field245.content);
         QuickMarcEditor.checkContentByTag(testData.field500.tag, testData.field500.content);
