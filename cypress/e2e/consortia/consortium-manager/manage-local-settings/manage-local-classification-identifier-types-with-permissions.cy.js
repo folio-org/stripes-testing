@@ -102,7 +102,10 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
 
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
-          ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.newClassificationIdentifierType);
+          ConsortiaControlledVocabularyPaneset.createViaUi(
+            false,
+            testData.newClassificationIdentifierType,
+          );
           ConsortiaControlledVocabularyPaneset.clickSave();
 
           ConfirmCreate.waitLoadingConfirmCreate(testData.newClassificationIdentifierType.name);
@@ -154,14 +157,20 @@ describe('Consortium manager', () => {
           );
           ConsortiaControlledVocabularyPaneset.confirmDelete();
           ConsortiumManagerApp.checkMessage(
-            messages.deleted('classification identifier type', testData.newClassificationIdentifierType.name),
+            messages.deleted(
+              'classification identifier type',
+              testData.newClassificationIdentifierType.name,
+            ),
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
             testData.newClassificationIdentifierType.name,
             tenantNames.central,
           );
 
-          ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.tempClassificationIdentifierType);
+          ConsortiaControlledVocabularyPaneset.createViaUi(
+            false,
+            testData.tempClassificationIdentifierType,
+          );
           ConsortiaControlledVocabularyPaneset.clickSave();
           ConfirmCreate.waitLoadingConfirmCreate(testData.tempClassificationIdentifierType.name);
           ConfirmCreate.clickKeepEditing();
@@ -172,7 +181,10 @@ describe('Consortium manager', () => {
             tenantNames.central,
           );
 
-          ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.newClassificationIdentifierType);
+          ConsortiaControlledVocabularyPaneset.createViaUi(
+            false,
+            testData.newClassificationIdentifierType,
+          );
           ConsortiaControlledVocabularyPaneset.clickSave();
           ConsortiaControlledVocabularyPaneset.verifyFieldValidatorError({
             name: messages.notUnique('Name'),

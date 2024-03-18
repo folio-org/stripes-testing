@@ -149,7 +149,6 @@ const itemStatusKeyValue = KeyValue('Item status');
 const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(viewHoldingsButton);
 const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
 const detailsViewPaneheader = PaneHeader({ id: 'paneHeaderpane-instancedetails' });
-const consortiaHoldingsAccordion = Accordion({ id: 'consortialHoldings' });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -816,26 +815,6 @@ export default {
 
     return HoldingsRecordView;
   },
-
-  expandConsortiaHoldings() {
-    cy.wait(2000);
-    cy.do(consortiaHoldingsAccordion.clickHeader());
-    cy.wait(2000);
-    cy.expect(consortiaHoldingsAccordion.has({ open: true }));
-  },
-
-  expandMemberSubHoldings(memberId) {
-    cy.wait(2000);
-    cy.do(Accordion({ id: memberId }).clickHeader());
-    cy.wait(1000);
-    cy.expect(Accordion({ id: memberId }).has({ open: true }));
-  },
-
-  expandMemberSubSubHoldings(memberId, holdingsId) {
-    cy.wait(2000);
-    cy.do(Accordion({ id: `consortialHoldings.${memberId}.${holdingsId}` }).clickHeader());
-  },
-
   createHoldingsRecord: (permanentLocation) => {
     pressAddHoldingsButton();
     InventoryNewHoldings.fillRequiredFields(permanentLocation);
@@ -1151,6 +1130,35 @@ export default {
       cy.expect(instanceDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
     });
   },
+  checkInstanceDetails2(
+    instanceInformation,
+    statisticalCode,
+    adminNote,
+    instanceTitle,
+    // identifiers,
+    contributor,
+    publication,
+    edition,
+  ) {
+    instanceInformation.forEach(({ key, value }) => {
+      cy.expect(instanceDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
+    cy.expect(
+      MultiColumnList({ id: 'list-statistical-codes' })
+        .find(MultiColumnListCell({ content: statisticalCode }))
+        .exists(),
+    );
+    cy.expect(
+      MultiColumnList({ id: 'administrative-note-list' })
+        .find(MultiColumnListCell({ content: adminNote }))
+        .exists(),
+    );
+    cy.expect(Pane({ titleLabel: including(instanceTitle) }).exists());
+    // identifiers
+    this.verifyContributor(0, 0, contributor);
+    verifyInstancePublisher(publication);
+    cy.expect(KeyValue('Edition').has({ edition }));
+  },
   getId() {
     cy.url()
       .then((url) => cy.wrap(url.split('?')[0].split('/').at(-1)))
@@ -1326,15 +1334,14 @@ export default {
 
   singleOverlaySourceBibRecordModalIsPresented: () => cy.expect(singleRecordImportModal.exists()),
 
-  overlayWithOclc: (
-    oclc,
-    defaultJobProfile = 'Inventory Single Record - Default Update Instance (Default)',
-  ) => {
-    cy.do([
-      Select({ name: 'selectedJobProfileId' }).choose(defaultJobProfile),
-      singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
-      singleRecordImportModal.find(Button('Import')).click(),
-    ]);
+  overlayWithOclc: (oclc) => {
+    cy.do(
+      Select({ name: 'selectedJobProfileId' }).choose(
+        'Inventory Single Record - Default Update Instance (Default)',
+      ),
+    );
+    cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
+    cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
 
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
@@ -1576,87 +1583,5 @@ export default {
         );
       }
     });
-  },
-  checkInstanceHrId: (expectedInstanceHrId) => cy.expect(
-    instanceDetailsSection.find(KeyValue('Instance HRID')).has({ value: expectedInstanceHrId }),
-  ),
-
-  verifySharedIconByTitle(title) {
-    cy.expect(
-      paneResultsSection
-        .find(MultiColumnListCell(title, { innerHTML: including('sharedIcon') }))
-        .exists(),
-    );
-  },
-
-  verifySharedIconAbsentByTitle(title) {
-    cy.expect(
-      paneResultsSection
-        .find(MultiColumnListCell(title, { innerHTML: including('sharedIcon') }))
-        .absent(),
-    );
-  },
-
-  createAlternativeTitleTypeViaAPI(alternativeTitleTypeName, sourceName = 'local', id = uuid()) {
-    const body = {
-      id,
-      name: alternativeTitleTypeName,
-      source: sourceName,
-    };
-
-    return cy.createAlternativeTitleTypes(body);
-  },
-
-  createClassificationTypeViaApi(classificationTypeName, sourceName = 'local', id = uuid()) {
-    const body = {
-      id,
-      name: classificationTypeName,
-      source: sourceName,
-    };
-
-    return cy.createClassifierIdentifierTypes(body);
-  },
-
-  createInstanceNoteTypeViaApi(instanceNoteTypeName, sourceName = 'local', id = uuid()) {
-    const body = {
-      id,
-      name: instanceNoteTypeName,
-      source: sourceName,
-    };
-
-    return cy.createInstanceNoteTypes(body);
-  },
-
-  createModesOfIssuanceViaApi(modesOfIssuanceName, sourceName = 'local', id = uuid()) {
-    const body = {
-      id,
-      name: modesOfIssuanceName,
-      source: sourceName,
-    };
-
-    return cy.createModesOfIssuance(body);
-  },
-
-  verifyConsortiaHoldingsAccordion(isOpen = false) {
-    cy.expect([
-      Section({ id: 'consortialHoldings' }).exists(),
-      Accordion({ id: 'consortialHoldings' }).has({ open: isOpen }),
-    ]);
-  },
-
-  verifyMemberSubHoldingsAccordion(memberId, isOpen = true) {
-    cy.wait(2000);
-    cy.expect([
-      Accordion({ id: 'consortialHoldings' }).has({ open: isOpen }),
-      Accordion({ id: memberId }).exists(),
-    ]);
-  },
-
-  verifyMemberSubSubHoldingsAccordion(memberId, holdingsId, isOpen = true) {
-    cy.wait(2000);
-    cy.expect([
-      Accordion({ id: memberId }).has({ open: isOpen }),
-      Accordion({ id: `consortialHoldings.cs00000int_0005.${holdingsId}` }).exists(),
-    ]);
   },
 };

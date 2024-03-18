@@ -50,7 +50,9 @@ export default {
               body.publicationResults.find((publication) => publication.tenantId === tenantId)
                 .response,
             ).classificationTypes;
-            return classificationIdentifierTypes.find((classificationIdentifierType) => classificationIdentifierType.name === name);
+            return classificationIdentifierTypes.find(
+              (classificationIdentifierType) => classificationIdentifierType.name === name,
+            );
           });
         },
       );
@@ -58,15 +60,17 @@ export default {
   },
 
   deleteClassificationIdentifierTypeByNameAndTenant(name, tenantId) {
-    this.getClassificationIdentifierTypeByNameAndTenant(name, tenantId).then((classificationIdentifierType) => {
-      cy.setTenant(tenantId);
-      cy.okapiRequest({
-        method: REQUEST_METHOD.DELETE,
-        path: `classification-types/${classificationIdentifierType.id}`,
-        failOnStatusCode: false,
-      });
-      cy.resetTenant();
-    });
+    this.getClassificationIdentifierTypeByNameAndTenant(name, tenantId).then(
+      (classificationIdentifierType) => {
+        cy.setTenant(tenantId);
+        cy.okapiRequest({
+          method: REQUEST_METHOD.DELETE,
+          path: `classification-types/${classificationIdentifierType.id}`,
+          failOnStatusCode: false,
+        });
+        cy.resetTenant();
+      },
+    );
   },
 
   waitLoading() {
