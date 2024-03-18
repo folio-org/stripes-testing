@@ -1,37 +1,38 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -60,7 +61,7 @@ describe('data-import', () => {
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       name: `C385660 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const matchProfile = {
       profileName: `C385660 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,

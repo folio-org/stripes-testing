@@ -50,7 +50,7 @@ describe('bulk-edit', () => {
             FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, item.hrid);
           },
         );
-        ItemNoteTypes.createNoteTypeViaApi(noteType).then((noteId) => {
+        ItemNoteTypes.createItemNoteTypeViaApi(noteType).then((noteId) => {
           noteTypeId = noteId;
         });
         cy.login(user.username, user.password, {
@@ -104,7 +104,7 @@ describe('bulk-edit', () => {
         ItemRecordView.checkItemNote(itemNote, 'No', noteType);
 
         cy.getAdminToken();
-        ItemNoteTypes.deleteNoteTypeViaApi(noteTypeId);
+        ItemNoteTypes.deleteItemNoteTypeViaApi(noteTypeId);
 
         cy.getToken(user.username, user.password);
         cy.visit(TopMenu.bulkEditPath);

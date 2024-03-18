@@ -63,6 +63,16 @@ Cypress.Commands.add('deleteInstanceNoteTypes', (noteTypeId) => {
   });
 });
 
+Cypress.Commands.add('getModesOfIssuance', (searchParams) => {
+  cy.okapiRequest({
+    path: 'modes-of-issuance',
+    searchParams,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body.issuanceModes[0];
+  });
+});
+
 Cypress.Commands.add('createModesOfIssuance', (modesOfIssuance) => {
   cy.okapiRequest({
     method: REQUEST_METHOD.POST,
