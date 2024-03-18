@@ -8,20 +8,17 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix from '../../support/utils/stringTools';
-import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 
 describe('data-export', () => {
   describe('Authority records export', () => {
     const user = {};
     const downloadedFile = 'C_353209.csv';
     const jobProfileToRun = 'Default - Create SRS MARC Authority';
-    const propertyName = 'relatedAuthorityInfo';
     const marcFile = {
       marc: 'Genre_1_record_C353209.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
     };
     const searchHeading = 'C353209 Peplum films';
-    let createdRecordIDs;
 
     before(() => {
       cy.createTempUser([
@@ -32,13 +29,8 @@ describe('data-export', () => {
         user.userProperties = createdUserProperties;
       });
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
-          (response) => {
-            response.entries.forEach((record) => {
-              createdRecordIDs = record[propertyName].idList[0];
-            });
-          },
-        );
+        DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun);
+
         cy.login(user.userProperties.username, user.userProperties.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
@@ -53,7 +45,6 @@ describe('data-export', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userProperties.userId);
       });
-      MarcAuthority.deleteViaAPI(createdRecordIDs);
     });
 
     it(
