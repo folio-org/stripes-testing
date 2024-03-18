@@ -50,6 +50,7 @@ export default {
   instanceNoteTypes: 'settings/inventory/instanceNoteTypes',
   holdingsNoteTypesPath: 'settings/inventory/holdingsNoteTypes',
   holdingsTypes: 'settings/inventory/holdingsTypes',
+  formats: 'settings/inventory/formats',
   // Invoice
   invoiceApprovalsPath: 'settings/invoice/approvals',
   invoiceAdjustmentsPath: 'settings/invoice/adjustments',

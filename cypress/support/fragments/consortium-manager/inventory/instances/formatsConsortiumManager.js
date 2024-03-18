@@ -40,7 +40,7 @@ export default {
     });
   },
 
-  getFormatsByNameAndTenant(name, tenantId) {
+  getFormatByNameAndTenant(name, tenantId) {
     return cy.getConsortiaId().then((consortiaId) => {
       cy.getPublications([tenantId], '/instance-formats?limit=2000&offset=0').then(
         (publicationId) => {
@@ -48,12 +48,12 @@ export default {
             method: REQUEST_METHOD.GET,
             path: `consortia/${consortiaId}/publications/${publicationId}/results`,
           }).then(({ body }) => {
-            const alternativeTitleTypes = JSON.parse(
+            const formats = JSON.parse(
               body.publicationResults.find((publication) => publication.tenantId === tenantId)
                 .response,
-            ).alternativeTitleTypes;
-            return alternativeTitleTypes.find(
-              (alternativeTitleType) => alternativeTitleType.name === name,
+            ).instanceFormats;
+            return formats.find(
+              (format) => format.name === name,
             );
           });
         },
@@ -62,11 +62,11 @@ export default {
   },
 
   deleteFormatByNameAndTenant(name, tenantId) {
-    this.getFormatByNameAndTenant(name, tenantId).then((alternativeTitleType) => {
+    this.getFormatByNameAndTenant(name, tenantId).then((format) => {
       cy.setTenant(tenantId);
       cy.okapiRequest({
         method: REQUEST_METHOD.DELETE,
-        path: `instance-formats/${alternativeTitleType.id}`,
+        path: `instance-formats/${format.id}`,
         failOnStatusCode: false,
       });
       cy.resetTenant();
