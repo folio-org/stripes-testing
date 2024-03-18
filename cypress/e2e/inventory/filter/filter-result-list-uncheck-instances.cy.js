@@ -48,7 +48,7 @@ describe('inventory', () => {
 
   it(
     'C366530 Verify that User can filter the result list and uncheck instances (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'eurekaPhase1'] },
     () => {
       InventorySearchAndFilter.executeSearch('*');
       InventoryInstances.verifySelectAllInstancesCheckbox();

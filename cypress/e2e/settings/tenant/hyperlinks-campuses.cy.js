@@ -63,7 +63,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C398009 Verify that hyperlink "# of Campuses" navigates to a list of Campuses (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'eurekaPhase1'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
 
