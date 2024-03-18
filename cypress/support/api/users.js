@@ -144,16 +144,22 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
 });
 
 Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = []) => {
-  const queryField = 'displayName';
-  cy.getPermissionsApi({
-    query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
-  }).then((permissionsResponse) => {
-    cy.getUserPermissions(userId).then((permissionId) => {
-      cy.addPermissionsToExistingUserApi(permissionId, userId, [
-        ...permissionsResponse.body.permissions.map((permission) => permission.permissionName),
-      ]);
+  if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
+    cy.getUserRoleIdByNameApi(systemRoleName).then((roleId) => {
+      cy.addRolesToNewUserApi(userId, [roleId]);
     });
-  });
+  } else {
+    const queryField = 'displayName';
+    cy.getPermissionsApi({
+      query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
+    }).then((permissionsResponse) => {
+      cy.getUserPermissions(userId).then((permissionId) => {
+        cy.addPermissionsToExistingUserApi(permissionId, userId, [
+          ...permissionsResponse.body.permissions.map((permission) => permission.permissionName),
+        ]);
+      });
+    });
+  }
 });
 
 Cypress.Commands.add('getAddressTypesApi', (searchParams) => {
