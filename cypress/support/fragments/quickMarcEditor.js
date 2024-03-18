@@ -2194,6 +2194,7 @@ export default {
     checkHoldings();
     return cy.get('@holdings');
   },
+
   verifyAuthorityLookUpButton() {
     cy.expect(QuickMarcEditorRow({ tagValue: '001' }).find(authorityLookUpButton).exists());
   },
@@ -2216,5 +2217,31 @@ export default {
   clickSaveAndCloseInModal() {
     cy.do(selectAuthorityFileModal.find(saveAndCloseBtn).click());
     cy.expect(selectAuthorityFileModal.absent());
+  },
+
+  verifySelectAuthorityFileModalDefaultView() {
+    cy.expect([
+      selectAuthorityFileModal
+        .find(selectAuthorityFile)
+        .has({ checkedOptionText: 'Select authority file' }),
+      selectAuthorityFileModal.find(cancelButton).has({ disabled: false }),
+      selectAuthorityFileModal.find(saveAndCloseBtn).has({ disabled: true }),
+    ]);
+  },
+
+  clickAuthorityFileNameDropdown() {
+    cy.do(selectAuthorityFileModal.find(selectAuthorityFile).click());
+  },
+
+  verifyOptionInAuthorityFileNameDropdown(option, isPresent = true) {
+    if (isPresent) {
+      cy.wrap(selectAuthorityFile.optionsText()).should((arrayOfOptions) => {
+        expect(arrayOfOptions).to.include(option);
+      });
+    } else {
+      cy.wrap(selectAuthorityFile.optionsText()).should((arrayOfOptions) => {
+        expect(arrayOfOptions).to.not.include(option);
+      });
+    }
   },
 };
