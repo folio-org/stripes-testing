@@ -1,17 +1,12 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -21,9 +16,15 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
@@ -52,12 +53,12 @@ describe.skip('data-import', () => {
     const instanceActionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C17019 autotest instance action profile.${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const marcBibActionProfile = {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       name: `C17019 autotest marc bib action profile.${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const matchProfile = {
       profileName: `C17019 autotest match profile.${getRandomPostfix()}`,

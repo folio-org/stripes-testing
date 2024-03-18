@@ -1,13 +1,14 @@
 import { including } from '@interactors/html';
 import {
   Button,
+  Form,
   MultiColumnList,
   MultiColumnListCell,
-  Form,
+  Option,
   Select,
   TextField,
-  Option,
 } from '../../../../../interactors';
+import { ACTION_NAMES_IN_ACTION_PROFILE } from '../../../constants';
 
 const selectActionProfile = Select({ name: 'profile.action' });
 const recordTypeSelect = Select({ name: 'profile.folioRecord' });
@@ -26,7 +27,7 @@ export default {
 
   fieldMappingProfileAbsent: () => cy.expect(Button('Link Profile').exists()),
   verifyScreenName: (profileName) => cy.expect(Form(including(`Edit ${profileName}`)).exists()),
-  changeAction: (action = 'Update (all record types except Orders, Invoices, or MARC Holdings)') => cy.do(selectActionProfile.choose(action)),
+  changeAction: (action = ACTION_NAMES_IN_ACTION_PROFILE.UPDATE) => cy.do(selectActionProfile.choose(action)),
 
   changesNotSaved: () => {
     cy.expect(TextField({ name: 'profile.name' }).exists());

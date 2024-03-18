@@ -1,17 +1,19 @@
 import { including } from '@interactors/html';
 import {
-  TextField,
   Button,
-  Select,
-  Section,
-  Pane,
   Callout,
   Option,
+  Pane,
+  Section,
+  Select,
+  TextField,
 } from '../../../../../interactors';
+import {
+  ACTION_NAMES_IN_ACTION_PROFILE,
+  FOLIO_RECORD_TYPE,
+  PROFILE_TYPE_NAMES,
+} from '../../../constants';
 import SelectMappingProfile from '../../settings/dataImport/modals/selectProfileModal';
-import { FOLIO_RECORD_TYPE, PROFILE_TYPE_NAMES } from '../../../constants';
-
-const action = 'Create (all record types except MARC Authority or MARC Holdings)';
 
 const nameField = TextField({ name: 'profile.name' });
 const actionSelect = Select({ name: 'profile.action' });
@@ -90,7 +92,7 @@ export default {
   fill: (specialActionProfile = defaultActionProfile) => {
     cy.do([
       nameField.fillIn(specialActionProfile.name),
-      actionSelect.choose(specialActionProfile.action || action),
+      actionSelect.choose(specialActionProfile.action || ACTION_NAMES_IN_ACTION_PROFILE.CREATE),
       recordTypeselect.choose(
         specialActionProfile.typeValue || FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       ),
@@ -99,7 +101,7 @@ export default {
 
   fillName: (profileName = defaultActionProfile.name) => cy.do(nameField.fillIn(profileName)),
 
-  chooseAction: (profileAction = action) => cy.do(actionSelect.choose(profileAction)),
+  chooseAction: (profileAction = ACTION_NAMES_IN_ACTION_PROFILE.CREATE) => cy.do(actionSelect.choose(profileAction)),
 
   saveProfile: () => cy.do(Button('Save as profile & Close').click()),
 

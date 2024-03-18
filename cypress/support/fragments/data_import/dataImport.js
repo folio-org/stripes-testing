@@ -758,7 +758,7 @@ export default {
     cy.expect(deleteLogsButton.is({ disabled: true }));
   },
 
-  verifyUploadState: (maxRetries = 10) => {
+  verifyUploadState: (maxRetries = 30) => {
     // multiple users to be running Data Import in the same Tenant at the same time
     // because this is possible by design
     // that's why we need waiting until previous file will be uploaded or reload page
