@@ -13,7 +13,6 @@ let user;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
-  accessionNumber: getRandomPostfix(),
 };
 const invalidItemBarcodesFileName = `invalidItemBarcodes_${getRandomPostfix()}.csv`;
 const validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
@@ -30,23 +29,24 @@ describe('bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        InventoryInstances.createInstanceViaApi(
-          item.instanceName,
-          item.itemBarcode,
-          null,
-          '1',
-          '2',
-          item.accessionNumber,
-        );
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
 
         FileManager.createFile(
           `cypress/fixtures/${invalidItemBarcodesFileName}`,
           `${item.itemBarcode}\r\n${invalidBarcode}`,
         );
         FileManager.createFile(`cypress/fixtures/${validItemBarcodesFileName}`, item.itemBarcode);
-        FileManager.createFile(
-          `cypress/fixtures/${validItemAccessionNumbersFileName}`,
-          item.accessionNumber,
+
+        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.itemBarcode}"` }).then(
+          (res) => {
+            const itemData = res;
+            itemData.accessionNumber = `testBulkEditAccessionNumber_${getRandomPostfix()}`;
+            cy.updateItemViaApi(itemData);
+            FileManager.createFile(
+              `cypress/fixtures/${validItemAccessionNumbersFileName}`,
+              itemData.accessionNumber,
+            );
+          },
         );
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,

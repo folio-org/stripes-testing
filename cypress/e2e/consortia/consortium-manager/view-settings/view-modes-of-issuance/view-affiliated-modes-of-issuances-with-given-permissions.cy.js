@@ -68,34 +68,48 @@ describe('Consortium manager', () => {
             (secondUser) => {
               // User for test C410940
               testData.user940 = secondUser;
-              cy.wait(20000);
-              InventoryInstance.createModesOfIssuanceViaApi(testData.collegeLocalModes.name).then(
-                (modesId) => {
-                  testData.collegeLocalModes.id = modesId;
+              cy.createTempUser([permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui]).then(
+                (thirdUser) => {
+                  // User for test C410942
+                  testData.user942 = thirdUser;
+                  cy.wait(20000);
+                  InventoryInstance.createModesOfIssuanceViaApi(
+                    testData.collegeLocalModes.name,
+                  ).then((modesId) => {
+                    testData.collegeLocalModes.id = modesId;
+                  });
+                  cy.resetTenant();
+                  cy.getAdminToken();
+                  cy.assignPermissionsToExistingUser(testData.user940.userId, [
+                    permissions.consortiaSettingsConsortiumManagerEdit.gui,
+                    permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui,
+                  ]);
+                  cy.assignPermissionsToExistingUser(testData.user942.userId, [
+                    permissions.consortiaSettingsConsortiumManagerShare.gui,
+                    permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui,
+                  ]);
+
+                  cy.resetTenant();
+                  cy.assignAffiliationToUser(Affiliations.University, testData.user939.userId);
+                  cy.assignAffiliationToUser(Affiliations.University, testData.user940.userId);
+                  cy.assignAffiliationToUser(Affiliations.University, testData.user942.userId);
+                  cy.setTenant(Affiliations.University);
+                  cy.assignPermissionsToExistingUser(testData.user939.userId, [
+                    permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui,
+                  ]);
+                  cy.assignPermissionsToExistingUser(testData.user940.userId, [
+                    permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui,
+                  ]);
+                  cy.assignPermissionsToExistingUser(testData.user942.userId, [
+                    permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui,
+                  ]);
+                  InventoryInstance.createModesOfIssuanceViaApi(
+                    testData.universityLocalModes.name,
+                  ).then((modesId) => {
+                    testData.universityLocalModes.id = modesId;
+                  });
                 },
               );
-              cy.resetTenant();
-              cy.getAdminToken();
-              cy.assignPermissionsToExistingUser(testData.user940.userId, [
-                permissions.consortiaSettingsConsortiumManagerEdit.gui,
-                permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui,
-              ]);
-
-              cy.resetTenant();
-              cy.assignAffiliationToUser(Affiliations.University, testData.user939.userId);
-              cy.assignAffiliationToUser(Affiliations.University, testData.user940.userId);
-              cy.setTenant(Affiliations.University);
-              cy.assignPermissionsToExistingUser(testData.user939.userId, [
-                permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui,
-              ]);
-              cy.assignPermissionsToExistingUser(testData.user940.userId, [
-                permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui,
-              ]);
-              InventoryInstance.createModesOfIssuanceViaApi(
-                testData.universityLocalModes.name,
-              ).then((modesId) => {
-                testData.universityLocalModes.id = modesId;
-              });
             },
           );
         });
@@ -114,6 +128,7 @@ describe('Consortium manager', () => {
         ModesOfIssuanceConsortiumManager.deleteViaApi(testData.centralSharedModes);
         Users.deleteViaApi(testData.user939.userId);
         Users.deleteViaApi(testData.user940.userId);
+        Users.deleteViaApi(testData.user942.userId);
       });
 
       it(
@@ -223,6 +238,60 @@ describe('Consortium manager', () => {
             '',
             'All',
           ]);
+          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+            [testData.centralLocalModes.name, 'local', '', tenantNames.central],
+            ['edit', 'trash'],
+          );
+
+          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
+            testData.collegeLocalModes.name,
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
+            testData.universityLocalModes.name,
+          );
+        },
+      );
+
+      it(
+        'C410942 User with "Consortium manager: Can share settings to all members" permission is able to view the list of modes of issuance of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
+        { tags: ['criticalPathECS', 'thunderjet'] },
+        () => {
+          cy.resetTenant();
+          cy.login(testData.user942.username, testData.user942.password);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+          cy.visit(TopMenu.consortiumManagerPath);
+          SelectMembers.selectAllMembers();
+          ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
+          ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
+          ModesOfIssuanceConsortiumManager.choose();
+          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+            [testData.centralSharedModes.payload.name, 'consortium', '', 'All'],
+            ['edit', 'trash'],
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+            [testData.centralLocalModes.name, 'local', '', tenantNames.central],
+            ['edit', 'trash'],
+          );
+
+          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+            [testData.collegeLocalModes.name, 'local', '', tenantNames.college],
+            ['edit', 'trash'],
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+            [testData.universityLocalModes.name, 'local', '', tenantNames.university],
+            ['edit', 'trash'],
+          );
+
+          ConsortiumManagerApp.clickSelectMembers();
+          SelectMembers.verifyStatusOfSelectMembersModal(3, 3);
+          SelectMembers.selectMembers(tenantNames.college);
+          SelectMembers.selectMembers(tenantNames.university);
+          SelectMembers.saveAndClose();
+          ConsortiumManagerApp.verifyMembersSelected(1);
+          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+            [testData.centralSharedModes.payload.name, 'consortium', '', 'All'],
+            ['edit', 'trash'],
+          );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.centralLocalModes.name, 'local', '', tenantNames.central],
             ['edit', 'trash'],
