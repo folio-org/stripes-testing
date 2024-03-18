@@ -56,7 +56,7 @@ describe('Consortium manager', () => {
           cy.resetTenant();
         });
       });
-/*
+
       after('Delete test data', () => {
         cy.resetTenant();
         cy.getAdminToken();
@@ -78,7 +78,7 @@ describe('Consortium manager', () => {
           Affiliations.University,
         );
       });
-*/
+
       it(
         'C410725 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local formats of selected affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
