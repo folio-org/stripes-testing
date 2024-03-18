@@ -92,7 +92,6 @@ describe('MARC', () => {
           MarcAuthorities.closeMarcViewPane();
           MarcAuthorities.verifyMarcViewPaneIsOpened(false);
           MarcAuthorities.checkRecordsResultListIsAbsent();
-
           MarcAuthorities.searchBy(testData.searchOption, testData.marcValue);
           MarcAuthorities.checkAfterSearch(testData.AUTHORIZED, testData.marcValue);
           MarcAuthorities.checkRecordDetailPageMarkedValue(testData.marcValue);
