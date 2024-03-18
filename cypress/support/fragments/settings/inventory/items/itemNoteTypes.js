@@ -1,10 +1,11 @@
-import { REQUEST_METHOD } from '../../../../constants';
+import uuid from 'uuid';
 import {
   Button,
-  including,
-  MultiColumnListRow,
   MultiColumnListCell,
+  MultiColumnListRow,
+  including,
 } from '../../../../../../interactors';
+import { REQUEST_METHOD } from '../../../../constants';
 
 export const reasonsActions = {
   edit: 'edit',
@@ -12,17 +13,31 @@ export const reasonsActions = {
 };
 
 export default {
-  createNoteTypeViaApi: (body) => {
-    return cy
-      .okapiRequest({
-        method: REQUEST_METHOD.POST,
-        path: 'item-note-types',
-        body,
-      })
-      .then((response) => response.body.id);
+  createItemNoteTypeViaApi: (bodyOrName) => {
+    if (Cypress.env('ecsEnabled')) {
+      return cy
+        .okapiRequest({
+          method: REQUEST_METHOD.POST,
+          path: 'item-note-types',
+          bodyOrName,
+        })
+        .then((response) => response.body.id);
+    } else {
+      return cy
+        .okapiRequest({
+          method: REQUEST_METHOD.POST,
+          path: 'item-note-types',
+          body: {
+            id: uuid(),
+            name: bodyOrName,
+            source: 'local',
+          },
+        })
+        .then((response) => response.body.id);
+    }
   },
 
-  deleteNoteTypeViaApi: (noteTypeId) => {
+  deleteItemNoteTypeViaApi: (noteTypeId) => {
     return cy.okapiRequest({
       method: REQUEST_METHOD.DELETE,
       path: `item-note-types/${noteTypeId}`,

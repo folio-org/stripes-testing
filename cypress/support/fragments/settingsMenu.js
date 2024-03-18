@@ -41,6 +41,7 @@ export default {
   targetProfilesPath: 'settings/inventory/targetProfiles',
   urlRelationshipPath: 'settings/inventory/URLrelationship',
   instanceStatusTypesPath: 'settings/inventory/instanceStatusTypes',
+  modesOfIssuancePath: 'settings/inventory/modesOfIssuance',
   statisticalCodesPath: 'settings/inventory/StatisticalCodeSettings',
   hridHandlingPath: 'settings/inventory/hridHandling',
   loantypesPath: 'settings/inventory/loantypes',
@@ -49,6 +50,7 @@ export default {
   instanceNoteTypes: 'settings/inventory/instanceNoteTypes',
   holdingsNoteTypesPath: 'settings/inventory/holdingsNoteTypes',
   holdingsTypes: 'settings/inventory/holdingsTypes',
+  formats: 'settings/inventory/formats',
   // Invoice
   invoiceApprovalsPath: 'settings/invoice/approvals',
   invoiceAdjustmentsPath: 'settings/invoice/adjustments',

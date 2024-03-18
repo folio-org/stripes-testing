@@ -111,7 +111,6 @@ describe('inventory', () => {
           // Waiter required for the pane to be loaded.
           cy.wait(1000);
           FilterItems.toggleAccordionItemsButton(holdingId);
-          FilterItems.toggleAccordionItemsButton(holdingId);
           cy.wait('@getItems');
           FilterItems.verifyItemWithStatusExists(holdingId, status);
 

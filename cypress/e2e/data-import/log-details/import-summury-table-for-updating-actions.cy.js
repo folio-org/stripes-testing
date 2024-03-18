@@ -1,5 +1,6 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  ACTION_NAMES_IN_ACTION_PROFILE,
   CALL_NUMBER_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
   EXPORT_TRANSFORMATION_NAMES,
@@ -14,12 +15,6 @@ import {
   PROFILE_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
@@ -32,13 +27,19 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
-import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import DateTools from '../../../support/utils/dateTools';
@@ -264,7 +265,7 @@ describe('data-import', () => {
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
           name: `C356802 update instance action profile ${getRandomPostfix()}`,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+          action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
         },
       },
       {
@@ -282,7 +283,7 @@ describe('data-import', () => {
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C356802 update holdings action profile ${getRandomPostfix()}`,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+          action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
         },
       },
       {
@@ -300,7 +301,7 @@ describe('data-import', () => {
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C356802 update item action profile ${getRandomPostfix()}`,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+          action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
         },
       },
     ];

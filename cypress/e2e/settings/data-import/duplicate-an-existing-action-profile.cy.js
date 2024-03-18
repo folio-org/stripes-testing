@@ -1,9 +1,9 @@
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { ACTION_NAMES_IN_ACTION_PROFILE, FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import { ActionProfiles as SettingsActionProfiles } from '../../../support/fragments/settings/dataImport';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import { ActionProfiles as SettingsActionProfiles } from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
@@ -15,7 +15,6 @@ describe('data-import', () => {
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C2345 autotest action profile ${getRandomStringCode(8)}`,
-      action: 'Create (all record types except MARC Authority or MARC Holdings)',
     };
 
     const calloutErrorMessage = `New record not created: Action profile '${actionProfile.name}' already exists`;
@@ -23,7 +22,7 @@ describe('data-import', () => {
 
     const duplicatedActionProfile = {
       name: `C2345 autotest duplicate action profile ${getRandomStringCode(8)}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
 
     before('create user and profile', () => {
