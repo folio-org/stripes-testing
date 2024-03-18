@@ -296,6 +296,7 @@ describe('data-import', () => {
         InventoryInstance.waitInstanceRecordViewOpened(item.title);
         MatchOnVRN.verifyInstanceUpdated();
         MatchOnVRN.verifyHoldingsUpdated();
+        InventoryInstance.openHoldingsAccordion(LOCATION_NAMES.MAIN_LIBRARY_UI);
         MatchOnVRN.verifyItemUpdated(itemBarcode);
         InventoryInstance.openHoldingsAccordion(LOCATION_NAMES.MAIN_LIBRARY_UI);
         MatchOnVRN.verifyMARCBibSource(itemBarcode);
