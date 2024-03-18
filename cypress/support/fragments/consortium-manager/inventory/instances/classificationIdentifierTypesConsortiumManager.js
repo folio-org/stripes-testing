@@ -38,6 +38,37 @@ export default {
     });
   },
 
+  getClassificationIdentifierTypeByNameAndTenant(name, tenantId) {
+    return cy.getConsortiaId().then((consortiaId) => {
+      cy.getPublications([tenantId], '/classification-types?limit=2000&offset=0').then(
+        (publicationId) => {
+          cy.okapiRequest({
+            method: REQUEST_METHOD.GET,
+            path: `consortia/${consortiaId}/publications/${publicationId}/results`,
+          }).then(({ body }) => {
+            const classificationIdentifierTypes = JSON.parse(
+              body.publicationResults.find((publication) => publication.tenantId === tenantId)
+                .response,
+            ).classificationTypes;
+            return classificationIdentifierTypes.find((classificationIdentifierType) => classificationIdentifierType.name === name);
+          });
+        },
+      );
+    });
+  },
+
+  deleteClassificationIdentifierTypeByNameAndTenant(name, tenantId) {
+    this.getClassificationIdentifierTypeByNameAndTenant(name, tenantId).then((classificationIdentifierType) => {
+      cy.setTenant(tenantId);
+      cy.okapiRequest({
+        method: REQUEST_METHOD.DELETE,
+        path: `classification-types/${classificationIdentifierType.id}`,
+        failOnStatusCode: false,
+      });
+      cy.resetTenant();
+    });
+  },
+
   waitLoading() {
     ConsortiaControlledVocabularyPaneset.waitLoading('Classification identifier types');
   },
