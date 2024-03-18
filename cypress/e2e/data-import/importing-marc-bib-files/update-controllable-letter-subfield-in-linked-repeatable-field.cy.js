@@ -1,37 +1,38 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -44,13 +45,13 @@ describe('data-import', () => {
       instanceTitle:
         "Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
       updated700Field: [
-        76,
+        75,
         '700',
         '1',
         '\\',
         '$a C385660 Lee, Stan, $d 1922-2018',
         '$e author.',
-        '$0 id.loc.gov/authorities/names/n83169267',
+        '$0 http://id.loc.gov/authorities/names/n83169267',
         '',
       ],
     };
@@ -60,7 +61,7 @@ describe('data-import', () => {
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       name: `C385660 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const matchProfile = {
       profileName: `C385660 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
@@ -89,12 +90,14 @@ describe('data-import', () => {
         fileName: `C385660 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numOfRecords: 1,
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'marcAuthFileC385660.mrc',
         fileName: `C385660 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
     const linkingTagAndValue = {
@@ -116,25 +119,18 @@ describe('data-import', () => {
           },
         );
         marcFiles.forEach((marcFile) => {
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, 'Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  testData.createdRecordIDs.push(link.split('/')[5]);
-                });
-              }
-            },
-          );
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            });
+          });
         });
       });
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       // create Match profile
       NewMatchProfile.createMatchProfileViaApiMarc(matchProfile);
       // create Field mapping profile
@@ -221,21 +217,22 @@ describe('data-import', () => {
           cy.wait(4000);
           ExportFile.downloadExportedMarcFile(testData.exportedFileName);
 
-          // change exported file
-          DataImport.replace999SubfieldsInPreupdatedFile(
+          DataImport.editMarcFile(
             testData.exportedFileName,
-            testData.marcFileForModify,
             testData.modifiedMarcFile,
+            ['Lee, Stan', 'ecreator.'],
+            ['Lee, Stanley', 'eauthor.'],
           );
         });
+
         cy.visit(TopMenu.dataImportPath);
-        DataImport.uploadFile(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);
+        DataImport.uploadFile(testData.modifiedMarcFile, testData.modifiedMarcFile);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(testData.uploadModifiedMarcFile);
-        Logs.checkJobStatus(testData.uploadModifiedMarcFile, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(testData.uploadModifiedMarcFile);
+        Logs.waitFileIsImported(testData.modifiedMarcFile);
+        Logs.checkJobStatus(testData.modifiedMarcFile, JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(testData.modifiedMarcFile);
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
@@ -244,12 +241,13 @@ describe('data-import', () => {
         });
 
         cy.visit(TopMenu.inventoryPath);
+
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated700Field);
-        QuickMarcEditor.openLinkingAuthorityByIndex(76);
+        QuickMarcEditor.openLinkingAuthorityByIndex(75);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.markedValue);
       },
     );

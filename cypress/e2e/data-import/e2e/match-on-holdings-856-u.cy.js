@@ -1,5 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import {
+  ACTION_NAMES_IN_ACTION_PROFILE,
   CALL_NUMBER_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
@@ -7,12 +8,6 @@ import {
   LOCATION_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -22,12 +17,18 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
-import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -68,7 +69,7 @@ describe('data-import', () => {
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C17025 updateEHoldingsActionProf${getRandomPostfix()}`,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+          action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
         },
       },
     ];
@@ -151,83 +152,78 @@ describe('data-import', () => {
       FieldMappingProfileView.closeViewMode(profile.name);
     };
 
-    it(
-      'C17025 Match on Holdings 856 $u (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
-      () => {
-        createInstanceMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
-        );
-        createHoldingsMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
-        );
-        updateHoldingsMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.name,
-        );
+    it('C17025 Match on Holdings 856 $u (folijet)', { tags: ['criticalPath', 'folijet'] }, () => {
+      createInstanceMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(
+        collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+      );
+      createHoldingsMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(
+        collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+      );
+      updateHoldingsMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(
+        collectionOfMappingAndActionProfiles[2].mappingProfile.name,
+      );
 
-        collectionOfMappingAndActionProfiles.forEach((profile) => {
-          cy.visit(SettingsMenu.actionProfilePath);
-          ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-        });
+      collectionOfMappingAndActionProfiles.forEach((profile) => {
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+        ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+      });
 
-        cy.visit(SettingsMenu.matchProfilePath);
-        MatchProfiles.createMatchProfile(matchProfile);
+      cy.visit(SettingsMenu.matchProfilePath);
+      MatchProfiles.createMatchProfile(matchProfile);
 
-        cy.visit(SettingsMenu.jobProfilePath);
-        JobProfiles.createJobProfile(createInstanceAndEHoldingsJobProfile);
-        NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
-        NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
-        NewJobProfile.saveAndClose();
-        JobProfiles.checkJobProfilePresented(createInstanceAndEHoldingsJobProfile.profileName);
+      cy.visit(SettingsMenu.jobProfilePath);
+      JobProfiles.createJobProfile(createInstanceAndEHoldingsJobProfile);
+      NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
+      NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
+      NewJobProfile.saveAndClose();
+      JobProfiles.checkJobProfilePresented(createInstanceAndEHoldingsJobProfile.profileName);
 
-        // need to wait until the first job profile will be created
-        cy.wait(2500);
-        JobProfiles.createJobProfile(updateEHoldingsJobProfile);
-        NewJobProfile.linkMatchProfile(matchProfile.profileName);
-        NewJobProfile.linkActionProfileForMatches(
-          collectionOfMappingAndActionProfiles[2].actionProfile.name,
-        );
-        NewJobProfile.saveAndClose();
-        JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfile.profileName);
+      // need to wait until the first job profile will be created
+      cy.wait(2500);
+      JobProfiles.createJobProfile(updateEHoldingsJobProfile);
+      NewJobProfile.linkMatchProfile(matchProfile.profileName);
+      NewJobProfile.linkActionProfileForMatches(
+        collectionOfMappingAndActionProfiles[2].actionProfile.name,
+      );
+      NewJobProfile.saveAndClose();
+      JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfile.profileName);
+
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.verifyUploadState();
+      DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);
+      JobProfiles.waitFileIsUploaded();
+      JobProfiles.search(createInstanceAndEHoldingsJobProfile.profileName);
+      JobProfiles.runImportFile();
+      Logs.waitFileIsImported(nameForCreateMarcFile);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(nameForCreateMarcFile);
+      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
+      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+        instanceHRID = initialInstanceHrId;
+
+        InventoryInstance.openHoldingView();
+        HoldingsRecordView.checkURIIsNotEmpty();
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);
+        DataImport.uploadFile('marcFileForC17025.mrc', nameForUpdateCreateMarcFile);
         JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(createInstanceAndEHoldingsJobProfile.profileName);
+        JobProfiles.search(updateEHoldingsJobProfile.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(nameForCreateMarcFile);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(nameForCreateMarcFile);
-        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHRID = initialInstanceHrId;
+        Logs.waitFileIsImported(nameForUpdateCreateMarcFile);
+        Logs.checkStatusOfJobProfile();
 
-          InventoryInstance.openHoldingView();
-          HoldingsRecordView.checkURIIsNotEmpty();
-
-          cy.visit(TopMenu.dataImportPath);
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-          DataImport.verifyUploadState();
-          DataImport.uploadFile('marcFileForC17025.mrc', nameForUpdateCreateMarcFile);
-          JobProfiles.waitFileIsUploaded();
-          JobProfiles.search(updateEHoldingsJobProfile.profileName);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(nameForUpdateCreateMarcFile);
-          Logs.checkStatusOfJobProfile();
-
-          cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
-          InstanceRecordView.verifyInstancePaneExists();
-          InstanceRecordView.openHoldingView();
-          HoldingsRecordView.checkCallNumber('ONLINE');
-        });
-      },
-    );
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.selectYesfilterStaffSuppress();
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+        InstanceRecordView.verifyInstancePaneExists();
+        InstanceRecordView.openHoldingView();
+        HoldingsRecordView.checkCallNumber('ONLINE');
+      });
+    });
   });
 });

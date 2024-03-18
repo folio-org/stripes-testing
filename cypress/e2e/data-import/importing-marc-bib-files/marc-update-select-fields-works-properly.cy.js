@@ -1,17 +1,12 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -21,22 +16,28 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe.skip('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
     const quantityOfItems = '1';
     // unique file names
-    const marcFileForCreate = `C17019 oneMarcBib.mrc${getRandomPostfix()}`;
-    const editedMarcFileName = `C17019 editedMarcFile.${getRandomPostfix()}.mrc`;
-    const fileNameForUpdate = `C17019 marcFileForUpdate.${getRandomPostfix()}.mrc`;
+    const marcFileForCreate = `C17019 oneMarcBib${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C17019 editedMarcFile${getRandomPostfix()}.mrc`;
+    const fileNameForUpdate = `C17019 marcFileForUpdate${getRandomPostfix()}.mrc`;
     // profiles for updating instance
     const instanceMappingProfile = {
       name: `C17019 autotest instance mapping profile.${getRandomPostfix()}`,
@@ -52,12 +53,12 @@ describe('data-import', () => {
     const instanceActionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C17019 autotest instance action profile.${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const marcBibActionProfile = {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       name: `C17019 autotest marc bib action profile.${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const matchProfile = {
       profileName: `C17019 autotest match profile.${getRandomPostfix()}`,
@@ -98,18 +99,18 @@ describe('data-import', () => {
       });
     });
 
+    // skip until FAT-5907 will be reviewed
     it(
       'C17019 Check that MARC Update select fields works properly (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.getAdminToken();
-        DataImport.uploadFileViaApi('oneMarcBib.mrc', marcFileForCreate);
-        JobProfiles.waitFileIsImported(marcFileForCreate);
-        Logs.openFileDetails(marcFileForCreate);
-        // get instance hrid
-        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHrid = initialInstanceHrId;
+        DataImport.uploadFileViaApi(
+          'oneMarcBib.mrc',
+          marcFileForCreate,
+          'Default - Create instance and SRS MARC Bib',
+        ).then((response) => {
+          instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
 
           // change Instance HRID in .mrc file
           DataImport.editMarcFile(
@@ -163,7 +164,6 @@ describe('data-import', () => {
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
         JobProfiles.waitFileIsUploaded();

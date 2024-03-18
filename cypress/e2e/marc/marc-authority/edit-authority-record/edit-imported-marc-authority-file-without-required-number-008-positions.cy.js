@@ -4,7 +4,6 @@ import Permissions from '../../../../support/dictionary/permissions';
 import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import Users from '../../../../support/fragments/users/users';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
@@ -22,6 +21,9 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Edit Authority record', () => {
       before('Creating data', () => {
+        cy.getAdminToken();
+        DataImport.uploadFileViaApi(fileName, updatedFileName, jobProfileToRun);
+
         cy.createTempUser([
           Permissions.moduleDataImportEnabled.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -29,22 +31,10 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-          cy.loginAsAdmin({
+
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.dataImportPath,
             waiter: DataImport.waitLoading,
-          }).then(() => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(fileName, updatedFileName);
-            JobProfiles.waitFileIsUploaded();
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(jobProfileToRun);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(updatedFileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.dataImportPath,
-              waiter: DataImport.waitLoading,
-            });
           });
         });
       });

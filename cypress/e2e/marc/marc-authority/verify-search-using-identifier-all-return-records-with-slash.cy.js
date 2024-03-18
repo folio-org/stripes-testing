@@ -1,8 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import Users from '../../../support/fragments/users/users';
@@ -49,22 +47,16 @@ describe('MARC', () => {
         });
       });
 
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(testData.marcFile.jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.marcFile.fileName);
-        Logs.checkStatusOfJobProfile('Completed');
-        Logs.openFileDetails(testData.marcFile.fileName);
-      });
-      for (let i = 0; i < testData.marcFile.numberOfRecords; i++) {
-        Logs.getCreatedItemsID(i).then((link) => {
-          createdAuthorityID.push(link.split('/')[5]);
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi(
+        testData.marcFile.marc,
+        testData.marcFile.fileName,
+        testData.marcFile.jobProfileToRun,
+      ).then((response) => {
+        response.entries.forEach((record) => {
+          createdAuthorityID.push(record.relatedAuthorityInfo.idList[0]);
         });
-      }
+      });
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

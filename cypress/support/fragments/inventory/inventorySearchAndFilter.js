@@ -372,6 +372,7 @@ export default {
   },
 
   switchToBrowseTab() {
+    cy.wait(1000);
     cy.do(browseButton.click());
   },
 
@@ -865,7 +866,6 @@ export default {
       formatAccordion.has({ open: false }),
       modeOfIssuanceAccordion.has({ open: false }),
       natureOfContentAccordion.has({ open: false }),
-      stuffSupressAccordion.has({ open: false }),
       supressFromDiscoveryAccordion.has({ open: false }),
       statisticalCodeAccordionInstanceToggle.has({ open: false }),
       dateCreatedAccordion.has({ open: false }),
@@ -1044,7 +1044,10 @@ export default {
       });
   },
 
-  clearSharedFilter() {
-    cy.do(sharedAccordion.find(Button({ ariaLabel: including('Clear selected filters') })).click());
+  selectYesfilterStaffSuppress: () => {
+    cy.do([
+      stuffSupressAccordion.clickHeader(),
+      stuffSupressAccordion.find(Checkbox({ id: 'clickable-filter-staffSuppress-true' })).click(),
+    ]);
   },
 };

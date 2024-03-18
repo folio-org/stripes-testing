@@ -263,4 +263,11 @@ export default {
     checkCallNumberPrefix(callNumberPrefix);
     checkCallNumberSuffix(callNumberSuffix);
   },
+  checkTitle: (title) => {
+    cy.expect(
+      Pane({ id: 'ui-inventory.holdingsRecordView' })
+        .find(HTML(including(title)))
+        .exists(),
+    );
+  },
 };

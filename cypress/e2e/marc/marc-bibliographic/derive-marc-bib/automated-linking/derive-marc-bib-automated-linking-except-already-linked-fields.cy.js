@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
@@ -25,12 +23,14 @@ describe('MARC', () => {
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numOfRecords: 1,
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileForC388641.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 20,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
@@ -60,7 +60,7 @@ describe('MARC', () => {
             tag: 700,
             boxFourth: '$a C388641 Lee, Stan, $d 1922-2018',
             boxFifth: '$e creator.',
-            boxSixth: '$0 id.loc.gov/authorities/names/n83169267C388641',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n83169267C388641',
             boxSeventh: '',
           },
           {
@@ -69,7 +69,7 @@ describe('MARC', () => {
             tag: 710,
             boxFourth: '$a C388641 Robinson & Associates, Inc.',
             boxFifth: '',
-            boxSixth: '$0 id.loc.gov/authorities/names/no2008081921C388641',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/no2008081921C388641',
             boxSeventh: '',
           },
           {
@@ -80,7 +80,7 @@ describe('MARC', () => {
             boxFourth:
               '$a C388641 Delaware Symposium on Language Studies. $f 1985 $t Delaware symposia on language studies',
             boxFifth: '',
-            boxSixth: '$0 id.loc.gov/authorities/names/n84745425C388641',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n84745425C388641',
             boxSeventh: '',
           },
           {
@@ -89,7 +89,7 @@ describe('MARC', () => {
             tag: 730,
             boxFourth: '$a C388641 Gone with the wind $f 1939) $g (Motion picture :',
             boxFifth: '',
-            boxSixth: '$0 id.loc.gov/authorities/names/n79066095C388641',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n79066095C388641',
             boxSeventh: '',
           },
         ];
@@ -219,25 +219,19 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdRecordsIDs.push(link.split('/')[5]);
-                  });
-                }
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdRecordsIDs.push(record[marcFile.propertyName].idList[0]);
+                });
               });
             });
 
+            cy.loginAsAdmin();
             cy.visit(TopMenu.inventoryPath).then(() => {
               InventoryInstances.searchByTitle(createdRecordsIDs[0]);
               InventoryInstances.selectInstance();

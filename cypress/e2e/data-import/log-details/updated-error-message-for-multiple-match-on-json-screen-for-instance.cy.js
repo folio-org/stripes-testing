@@ -1,38 +1,39 @@
-import { Permissions } from '../../../support/dictionary';
 import {
+  ACCEPTED_DATA_TYPE_NAMES,
+  ACTION_NAMES_IN_ACTION_PROFILE,
+  EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
-  EXISTING_RECORDS_NAMES,
-  ACCEPTED_DATA_TYPE_NAMES,
 } from '../../../support/constants';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
+import { Permissions } from '../../../support/dictionary';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Log details', () => {
     const testData = {
-      createdRecordIDs: [],
+      instanceIds: [],
       marcFilePath: 'marcBibFileForC389589.mrc',
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
 
@@ -85,7 +86,7 @@ describe('data-import', () => {
         },
         actionProfile: {
           name: `C389589/C389590 Modifying 500 record${getRandomPostfix()}`,
-          action: 'Modify (MARC Bibliographic record type only)',
+          action: ACTION_NAMES_IN_ACTION_PROFILE.MODIFY,
           typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
         },
       },
@@ -98,7 +99,7 @@ describe('data-import', () => {
         },
         actionProfile: {
           name: `C389589/C389590 Updating Instance with ADM note${getRandomPostfix()}`,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+          action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
       },
@@ -111,19 +112,13 @@ describe('data-import', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin();
       marcFileNames.forEach((name) => {
-        cy.visit(TopMenu.dataImportPath);
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(testData.marcFilePath, name.fileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(testData.jobProfileToRun);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(name.fileName);
-        Logs.checkJobStatus(name.fileName, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(name.fileName);
-        Logs.getCreatedItemsID().then((link) => {
-          testData.createdRecordIDs.push(link.split('/')[5]);
+        DataImport.uploadFileViaApi(
+          testData.marcFilePath,
+          name.fileName,
+          testData.jobProfileToRun,
+        ).then((response) => {
+          testData.instanceIds.push(response.entries[0].relatedInstanceInfo.idList[0]);
         });
       });
 
@@ -210,7 +205,7 @@ describe('data-import', () => {
             profile.mappingProfile.name,
           );
         });
-        testData.createdRecordIDs.forEach((id) => {
+        testData.instanceIds.forEach((id) => {
           InventoryInstance.deleteInstanceViaApi(id);
         });
       });
@@ -223,7 +218,6 @@ describe('data-import', () => {
         const fileName = `C389589 marcFileName${getRandomPostfix()}`;
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(testData.marcFilePath, fileName);
         JobProfiles.waitFileIsUploaded();
@@ -246,7 +240,6 @@ describe('data-import', () => {
         const fileName = `C389590 marcFileName${getRandomPostfix()}`;
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(testData.marcFilePath, fileName);
         JobProfiles.waitFileIsUploaded();

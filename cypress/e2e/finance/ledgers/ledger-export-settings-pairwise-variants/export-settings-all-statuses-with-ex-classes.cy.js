@@ -15,7 +15,7 @@ import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
-describe('Finance: Ledgers', { retries: 3 }, () => {
+describe('Finance: Ledgers', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
@@ -100,7 +100,7 @@ describe('Finance: Ledgers', { retries: 3 }, () => {
             '10',
             '1',
             '10',
-            location.institutionId,
+            location.name,
           );
           OrderLines.backToEditingOrder();
           Orders.openOrder();
@@ -116,7 +116,7 @@ describe('Finance: Ledgers', { retries: 3 }, () => {
             '10',
             '1',
             '10',
-            location.institutionId,
+            location.name,
           );
           OrderLines.backToEditingOrder();
           Orders.openOrder();
@@ -173,7 +173,7 @@ describe('Finance: Ledgers', { retries: 3 }, () => {
 
   it(
     'C350975: Ledger export settings: last year Fund with budget, Print (Active) and Electronic (Inactive) Classes, Export settings- All statuses (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
@@ -201,9 +201,9 @@ describe('Finance: Ledgers', { retries: 3 }, () => {
         '0',
         '100',
         '80',
-        'Electronic',
-        'Elec',
-        'Active',
+        'Print',
+        'Prn',
+        'Inactive',
         '10',
         '0',
         '0',
@@ -229,9 +229,9 @@ describe('Finance: Ledgers', { retries: 3 }, () => {
         '0',
         '100',
         '80',
-        'Print',
-        'Prn',
-        'Inactive',
+        'Electronic',
+        'Elec',
+        'Active',
         '10',
         '0',
         '0',

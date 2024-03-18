@@ -1,3 +1,6 @@
+import getRandomPostfix, { getRandomLetters } from '../utils/stringTools';
+import { REQUEST_METHOD } from '../constants';
+
 Cypress.Commands.add('getAuthorityHeadingsUpdatesViaAPI', (startDate, endDate, limit = '100') => {
   cy.okapiRequest({
     method: 'GET',
@@ -27,12 +30,89 @@ Cypress.Commands.add('getAuthoritySourceFileIdViaAPI', (authorityFileName) => {
   });
 });
 
-Cypress.Commands.add('deleteAuthoritySourceFileViaAPI', (id) => {
+Cypress.Commands.add('getAuthoritySourceFileDataViaAPI', (authorityFileName) => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: 'authority-source-files',
+    searchParams: {
+      query: `name="${authorityFileName}"`,
+    },
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return cy.wrap(body.authoritySourceFiles[0]);
+  });
+});
+
+Cypress.Commands.add(
+  'createAuthoritySourceFileUsingAPI',
+  (prefix, startWithNumber, sourceName, isActive = true, sourceType = 'Local', baseURL = null) => {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'authority-source-files',
+      body: {
+        baseUrl: baseURL,
+        code: prefix,
+        hridManagement: {
+          startNumber: startWithNumber,
+        },
+        name: sourceName,
+        selectable: isActive,
+        source: sourceType,
+      },
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => body.id);
+  },
+);
+
+Cypress.Commands.add('deleteAuthoritySourceFileViaAPI', (id, ignoreErrors = false) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `authority-source-files/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   }).then(({ status }) => {
     return status;
   });
 });
+
+Cypress.Commands.add(
+  'setActiveAuthoritySourceFileViaAPI',
+  (authorityFileId, version, isActive = true) => {
+    cy.okapiRequest({
+      method: REQUEST_METHOD.PATCH,
+      path: `authority-source-files/${authorityFileId}`,
+      body: {
+        id: authorityFileId,
+        selectable: isActive,
+        _version: version,
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+);
+
+Cypress.Commands.add(
+  'createAuthoritySourceFileViaAPI',
+  ({
+    name = `Test auth source file ${getRandomPostfix()}`,
+    code = getRandomLetters(8),
+    type = 'Test',
+    baseUrl = `http://id.loc.gov/authorities/${getRandomLetters(8)}/`,
+  } = {}) => {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'authority-source-files',
+      body: {
+        name,
+        code,
+        type,
+        baseUrl,
+        source: 'local',
+      },
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      cy.wrap(body).as('body');
+    });
+    return cy.get('@body');
+  },
+);

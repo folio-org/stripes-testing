@@ -45,7 +45,7 @@ describe('Bulk Edit - Logs', () => {
     'C380562 Verify generated Logs files for Users CSV are hidden without "Users: Can view user profile" permission (firebird)',
     { tags: ['criticalPath', 'firebird'] },
     () => {
-      BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
+      BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.verifyMatchedResults(user.username);

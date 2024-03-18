@@ -54,6 +54,7 @@ describe('Invoices', () => {
               }).then((invoice) => {
                 testData.invoice = invoice;
 
+                Invoices.approveInvoiceViaApi({ invoice: testData.invoice });
                 Invoices.changeInvoiceStatusViaApi({ invoice: testData.invoice, status });
               });
             },

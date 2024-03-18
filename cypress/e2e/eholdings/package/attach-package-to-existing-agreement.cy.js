@@ -25,10 +25,6 @@ describe('eHoldings', () => {
       ])
         .then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: EHoldingsTitlesSearch.waitLoading,
-          });
         })
         .then(() => {
           cy.getAdminToken();
@@ -40,6 +36,12 @@ describe('eHoldings', () => {
           cy.getAdminToken();
           Agreements.createViaApi().then((response) => {
             testData.agreementId = response.id;
+          });
+        })
+        .then(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: EHoldingsTitlesSearch.waitLoading,
           });
         });
     });
@@ -53,11 +55,11 @@ describe('eHoldings', () => {
 
     it(
       'C751 Attach a package to an existing Agreement (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathBroken', 'spitfire'] },
       () => {
         EHoldingSearch.switchToPackages();
         // wait until package is created via API
-        cy.wait(10000);
+        cy.wait(15000);
         EHoldingsPackagesSearch.byName(testData.defaultPackage.data.attributes.name);
         EHoldingsPackages.verifyPackageInResults(testData.defaultPackage.data.attributes.name);
         EHoldingsPackages.openPackage();

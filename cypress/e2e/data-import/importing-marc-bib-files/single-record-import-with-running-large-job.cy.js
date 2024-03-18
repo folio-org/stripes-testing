@@ -1,6 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { calloutTypes } from '../../../../interactors';
-import { TARGET_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import { RECORD_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -8,7 +8,6 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
@@ -50,7 +49,6 @@ describe('data-import', () => {
         user = userProperties;
 
         cy.login(user.username, user.password);
-        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
       });
     });
 
@@ -64,20 +62,13 @@ describe('data-import', () => {
       'C356824 Inventory single record import is not delayed when large data import jobs are running (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        cy.visit(SettingsMenu.targetProfilesPath);
-        Z3950TargetProfiles.openTargetProfile();
-        Z3950TargetProfiles.editOclcWorldCat(
-          OCLCAuthentication,
-          TARGET_PROFILE_NAMES.OCLC_WORLDCAT,
-        );
-        Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(OCLCAuthentication);
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
 
         // import a file
         cy.visit(TopMenu.dataImportPath);
         DataImport.checkIsLandingPageOpened();
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile('marcBibFileForC356824.mrc', fileName);
+        DataImport.uploadFile('oneThousandMarcBib.mrc', fileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
@@ -87,7 +78,9 @@ describe('data-import', () => {
         InventoryInstances.importWithOclc(oclcForImport);
 
         cy.visit(TopMenu.dataImportPath);
+        cy.wait(25000);
         Logs.openViewAllLogs();
+        cy.reload();
         LogsViewAll.openUserIdAccordion();
         LogsViewAll.filterJobsByUser(`${user.firstName} ${user.lastName}`);
         LogsViewAll.openFileDetails('No file name');
@@ -100,7 +93,6 @@ describe('data-import', () => {
           `Record ${oclcForUpdating} updated. Results may take a few moments to become visible in Inventory`,
           calloutTypes.success,
         );
-
         cy.reload();
         // check instance is updated
         InventoryInstance.verifyInstanceTitle(updatedInstanceData.title);

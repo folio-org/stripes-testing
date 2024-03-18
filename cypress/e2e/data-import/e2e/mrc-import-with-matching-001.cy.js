@@ -1,17 +1,12 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -20,16 +15,22 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', { retries: 2 }, () => {
+describe('data-import', () => {
   describe('End to end scenarios', () => {
     let user = {};
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
@@ -57,7 +58,7 @@ describe('data-import', { retries: 2 }, () => {
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `autoTestActionProf.${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -96,7 +97,6 @@ describe('data-import', { retries: 2 }, () => {
     });
 
     it('C17044: MARC-MARC matching for 001 field (folijet)', { tags: ['smoke', 'folijet'] }, () => {
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
       // upload a marc file for export
       DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
@@ -154,7 +154,6 @@ describe('data-import', { retries: 2 }, () => {
 
         // upload the exported marc file with 001 field
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(nameForExportedMarcFile);
         JobProfiles.search(jobProfile.profileName);
@@ -167,6 +166,7 @@ describe('data-import', { retries: 2 }, () => {
         );
 
         cy.visit(TopMenu.inventoryPath);
+        cy.wait(2000);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
 
         // ensure the fields created in Field mapping profile exists in inventory

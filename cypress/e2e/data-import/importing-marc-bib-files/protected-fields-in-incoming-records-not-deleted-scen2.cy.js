@@ -85,8 +85,6 @@ describe('data-import', () => {
         user = userProperties;
 
         cy.login(user.username, user.password);
-
-        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
       });
     });
 
@@ -101,7 +99,7 @@ describe('data-import', () => {
 
     it(
       'C359189 Check that protected fields in incoming records are not deleted during import: Scenario 2 (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();

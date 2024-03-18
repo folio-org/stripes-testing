@@ -74,9 +74,9 @@ describe('inventory', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
-        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
-          itemData.testInstanceIds.instanceId,
-        );
+        cy.deleteHoldingRecordViaApi(itemData.testInstanceIds.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(itemData.testInstanceIds.instanceId);
+
         Location.deleteViaApiIncludingInstitutionCampusLibrary(
           defaultLocation.institutionId,
           defaultLocation.campusId,

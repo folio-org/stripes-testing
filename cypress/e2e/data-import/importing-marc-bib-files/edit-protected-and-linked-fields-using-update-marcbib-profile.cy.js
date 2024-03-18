@@ -1,17 +1,12 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -20,14 +15,20 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -53,7 +54,7 @@ describe('data-import', () => {
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       name: `C380511 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const matchProfile = {
       profileName: `C380511 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
@@ -88,12 +89,14 @@ describe('data-import', () => {
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numOfRecords: 1,
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'marcFileForC380511.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 4,
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
     const linkingTagAndValues = [
@@ -139,24 +142,17 @@ describe('data-import', () => {
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
+        cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, 'Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  createdAuthorityIDs.push(link.split('/')[5]);
-                });
-              }
-            },
-          );
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+            });
+          });
         });
 
         cy.loginAsAdmin().then(() => {
@@ -249,7 +245,7 @@ describe('data-import', () => {
 
     it(
       'C380511 Edit protected and linked fields using update MARC Bib profile (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
@@ -286,7 +282,7 @@ describe('data-import', () => {
             '0id.loc.gov/authorities/names/n83130832',
             'aMusic piano',
             'ewriter of supplementary textual content.',
-            'aLudwig van, Beethoven,d1770-1827iContainer of (work):0id.loc.gov/authorities/names/n79107741',
+            'aLudwig van, Beethoven,d1770-1827iContainer of (work):0http://id.loc.gov/authorities/names/n79107741',
           ],
           [
             'aBeethoven, Ludwig V.d1770-1827eAuthor',
@@ -299,8 +295,9 @@ describe('data-import', () => {
 
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);
+        DataImport.waitLoading();
         DataImport.verifyUploadState();
-        DataImport.uploadFile(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
+        DataImport.uploadFileAndRetry(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
@@ -317,7 +314,7 @@ describe('data-import', () => {
           '\\',
           '$a Ludwig van, Beethoven, $d 1770-1827',
           '$e composer.',
-          '$0 id.loc.gov/authorities/names/n79107741',
+          '$0 http://id.loc.gov/authorities/names/n79107741',
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -327,7 +324,7 @@ describe('data-import', () => {
           '0',
           '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
           '$c Ludwig Van Beethoven.',
-          '$0 id.loc.gov/authorities/names/n83130832',
+          '$0 http://id.loc.gov/authorities/names/n83130832',
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -337,7 +334,7 @@ describe('data-import', () => {
           '0',
           '$a Music piano',
           '$c Test environment',
-          '$0 id.loc.gov/authorities/childrensSubjects/sj2021056711',
+          '$0 http://id.loc.gov/authorities/childrensSubjects/sj2021056711',
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -347,7 +344,7 @@ describe('data-import', () => {
           '\\',
           '$a Hewitt, Angela, $d 1958-',
           '$e instrumentalist, $e writer of supplementary textual content.',
-          '$0 id.loc.gov/authorities/names/n91099716',
+          '$0 http://id.loc.gov/authorities/names/n91099716',
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -357,7 +354,7 @@ describe('data-import', () => {
           '2',
           '$a Ludwig van, Beethoven, $d 1770-1827',
           '$i Container of (work):',
-          '$0 id.loc.gov/authorities/names/n79107741',
+          '$0 http://id.loc.gov/authorities/names/n79107741',
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
@@ -365,7 +362,7 @@ describe('data-import', () => {
           '700',
           '1',
           '\\',
-          '$a Hewitt, Angela, $d 1958- $e instrumentalist, $e author of supplementary textual content. $0 id.loc.gov/authorities/names/n91099716',
+          '$a Hewitt, Angela, $d 1958- $e instrumentalist, $e author of supplementary textual content. $0 http://id.loc.gov/authorities/names/n91099716',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
           53,

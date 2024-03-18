@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
@@ -59,7 +57,7 @@ describe('MARC', () => {
             tag: 650,
             boxFourth: '$a C380738 Good and evil',
             boxFifth: '',
-            boxSixth: '$0 id.loc.gov/authorities/subjects/sh2009125989',
+            boxSixth: '$0 http://id.loc.gov/authorities/subjects/sh2009125989',
             boxSeventh: '',
           },
           {
@@ -68,7 +66,7 @@ describe('MARC', () => {
             tag: 650,
             boxFourth: '$a C380738 Oratory',
             boxFifth: '',
-            boxSixth: '$0 id.loc.gov/authorities/subjects/sh85095299',
+            boxSixth: '$0 http://id.loc.gov/authorities/subjects/sh85095299',
             boxSeventh: '',
           },
         ];
@@ -81,6 +79,7 @@ describe('MARC', () => {
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 2,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
@@ -96,22 +95,16 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdAuthorityIDs.push(link.split('/')[5]);
-                  });
-                }
+            cy.getAdminToken();
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+                });
               });
             });
 
@@ -194,7 +187,7 @@ describe('MARC', () => {
             InventoryInstance.viewSource();
             InventoryViewSource.verifyAbsenceOfValue(linkingTagAndValues[1].value);
             InventoryViewSource.contains(
-              'Linked to MARC authority\n\t650\t   \t$a C380738 Good and evil $0 id.loc.gov/authorities/subjects/sh2009125989 $9',
+              'Linked to MARC authority\n\t650\t   \t$a C380738 Good and evil $0 http://id.loc.gov/authorities/subjects/sh2009125989 $9',
             );
           },
         );

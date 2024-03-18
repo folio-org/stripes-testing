@@ -1,20 +1,10 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
-import {
-  Button,
-  MultiColumnListCell,
-  MultiColumnListRow,
-  including,
-  MultiColumnListHeader,
-} from '../../../../../../interactors';
+import { Button, MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
+import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 
 const id = uuid();
-
-export const typeActions = {
-  edit: 'edit',
-  trash: 'trash',
-};
 const newButton = Button('+ New');
 
 export default {
@@ -49,30 +39,41 @@ export default {
     });
   },
 
-  verifyTypeInTheList(name, source, members, ...actions) {
-    const row = MultiColumnListRow({ content: including(name) });
-    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
-    cy.expect([
-      row.exists(),
-      row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
-      row.find(MultiColumnListCell({ columnIndex: 3, content: members })).exists(),
-    ]);
-    if (actions.length === 0) {
-      cy.expect(row.find(actionsCell).has({ content: '' }));
-    } else {
-      Object.values(typeActions).forEach((action) => {
-        const buttonSelector = row.find(actionsCell).find(Button({ icon: action }));
-        if (actions.includes(action)) {
-          cy.expect(buttonSelector.exists());
-        } else {
-          cy.expect(buttonSelector.absent());
-        }
-      });
-    }
+  getAlternativeTitleTypeByNameAndTenant(name, tenantId) {
+    return cy.getConsortiaId().then((consortiaId) => {
+      cy.getPublications([tenantId], '/alternative-title-types?limit=2000&offset=0').then(
+        (publicationId) => {
+          cy.okapiRequest({
+            method: REQUEST_METHOD.GET,
+            path: `consortia/${consortiaId}/publications/${publicationId}/results`,
+          }).then(({ body }) => {
+            const alternativeTitleTypes = JSON.parse(
+              body.publicationResults.find((publication) => publication.tenantId === tenantId)
+                .response,
+            ).alternativeTitleTypes;
+            return alternativeTitleTypes.find(
+              (alternativeTitleType) => alternativeTitleType.name === name,
+            );
+          });
+        },
+      );
+    });
   },
 
-  verifyNoTypeInTheList(name) {
-    cy.expect(MultiColumnListRow({ content: including(name) }).absent());
+  deleteAlternativeTitleTypeByNameAndTenant(name, tenantId) {
+    this.getAlternativeTitleTypeByNameAndTenant(name, tenantId).then((alternativeTitleType) => {
+      cy.setTenant(tenantId);
+      cy.okapiRequest({
+        method: REQUEST_METHOD.DELETE,
+        path: `alternative-title-types/${alternativeTitleType.id}`,
+        failOnStatusCode: false,
+      });
+      cy.resetTenant();
+    });
+  },
+
+  waitLoading() {
+    ConsortiaControlledVocabularyPaneset.waitLoading('Alternative title types');
   },
 
   choose() {

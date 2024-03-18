@@ -1,9 +1,5 @@
-import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -21,9 +17,9 @@ describe('MARC', () => {
     let user;
     let instanceHrid;
     const testData = {
-      fileNameForCreateInstance: `C359241 autotestFileName.${getRandomPostfix()}`,
-      fileNameForCreateHoldings: `C359241 autotestFileName.${getRandomPostfix()}`,
-      fileName: `C359241 autotestFileName.${getRandomPostfix()}`,
+      fileNameForCreateInstance: `C359241 autotestFileName${getRandomPostfix()}`,
+      fileNameForCreateHoldings: `C359241 autotestFileName${getRandomPostfix()}`,
+      fileName: `C359241 autotestFileName${getRandomPostfix()}`,
       filePath: 'marcBibFileForC359241.mrc',
       jobProfileForRun: 'Default - Create Holdings and SRS MARC Holdings',
     };
@@ -43,34 +39,25 @@ describe('MARC', () => {
 
     before('create test data and login', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      DataImport.uploadFileViaApi('oneMarcBib.mrc', testData.fileNameForCreateInstance);
-      JobProfiles.waitFileIsImported(testData.fileNameForCreateInstance);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(testData.fileNameForCreateInstance);
-      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-      InstanceRecordView.verifyInstancePaneExists();
-      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-        instanceHrid = initialInstanceHrId;
+      DataImport.uploadFileViaApi(
+        'oneMarcBib.mrc',
+        testData.fileNameForCreateInstance,
+        'Default - Create instance and SRS MARC Bib',
+      ).then((response) => {
+        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
 
         DataImport.editMarcFile(
           testData.filePath,
           testData.fileName,
           ['in11887186'],
-          [initialInstanceHrId],
+          [instanceHrid],
         );
       });
-      // upload a marc file for creating holdings
-      cy.visit(TopMenu.dataImportPath);
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(testData.fileName, testData.fileNameForCreateHoldings);
-      JobProfiles.waitLoadingList();
-      JobProfiles.search(testData.jobProfileForRun);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(testData.fileNameForCreateHoldings);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      cy.logout();
+      DataImport.uploadFileViaApi(
+        testData.fileName,
+        testData.fileNameForCreateHoldings,
+        'Default - Create Holdings and SRS MARC Holdings',
+      );
 
       cy.createTempUser([
         Permissions.inventoryAll.gui,

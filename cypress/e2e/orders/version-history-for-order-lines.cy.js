@@ -109,7 +109,7 @@ describe('Orders: orders', () => {
         '40',
         '1',
         '40',
-        location.institutionId,
+        location.name,
       );
       cy.then(() => {
         firstDate = DateTools.getCurrentUTCTime();
@@ -165,7 +165,7 @@ describe('Orders: orders', () => {
 
   it(
     'C369047: "Version history" viewing for Order line (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPathBroken', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

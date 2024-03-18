@@ -7,6 +7,7 @@ import {
   ORDER_STATUSES,
   VENDOR_NAMES,
   RECORD_STATUSES,
+  LOCATION_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import {
@@ -175,7 +176,7 @@ describe('data-import', () => {
 
     it(
       'C350591 Match on VRN and update related Instance, Holdings, Item (folijet)',
-      { tags: ['smoke', 'folijet', 'nonParallel'] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         // create order with POL
         Orders.createOrderWithOrderLineViaApi(
@@ -268,7 +269,6 @@ describe('data-import', () => {
 
         // import a file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();
         DataImport.uploadFile(editedMarcFileName);
@@ -296,7 +296,9 @@ describe('data-import', () => {
         InventoryInstance.waitInstanceRecordViewOpened(item.title);
         MatchOnVRN.verifyInstanceUpdated();
         MatchOnVRN.verifyHoldingsUpdated();
+        InventoryInstance.openHoldingsAccordion(LOCATION_NAMES.MAIN_LIBRARY_UI);
         MatchOnVRN.verifyItemUpdated(itemBarcode);
+        InventoryInstance.openHoldingsAccordion(LOCATION_NAMES.MAIN_LIBRARY_UI);
         MatchOnVRN.verifyMARCBibSource(itemBarcode);
       },
     );

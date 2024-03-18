@@ -1,7 +1,5 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -64,21 +62,12 @@ describe('MARC', () => {
           },
         );
 
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkJobStatus(marcFile.fileName, 'Completed');
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < 5; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                createdAuthorityID.push(link.split('/')[5]);
-              });
-            }
+        cy.getAdminToken();
+        DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
+          (response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityID.push(record.relatedAuthorityInfo.idList[0]);
+            });
           },
         );
       });

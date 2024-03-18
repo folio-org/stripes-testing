@@ -17,7 +17,7 @@ describe('data-import', () => {
 
     it(
       'C6707 Import a bunch of MARC files at once (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         [
           {
@@ -34,7 +34,6 @@ describe('data-import', () => {
           },
         ].forEach((upload) => {
           cy.visit(TopMenu.dataImportPath);
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadBunchOfFiles(filePathForUpload, upload.quantityOfFiles, upload.fileName);
           DataImport.waitFileIsUploaded();

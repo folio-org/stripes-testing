@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
@@ -37,10 +35,10 @@ describe('MARC', () => {
           {
             rowIndex: 5,
             tag: '240',
-            content: '$0 n99036055',
+            content: '$0 n99036051',
             boxFourth: '$a Hosanna Bible',
             boxFifth: '',
-            boxSixth: '$0 id.loc.gov/authorities/names/n99036055',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n99036051',
             boxSeventh: '',
             status: 'linked',
           },
@@ -55,19 +53,19 @@ describe('MARC', () => {
             tag: '711',
             content: '$j something $0 n79084169C388560 $2 fast',
             boxFourth:
-              '$a Roma Council $c Basilica di San Pietro in Roma) $d 1962-1965 : $n (2nd :',
+              '$a C388560Roma Council $c Basilica di San Pietro in Roma) $d 1962-1965 : $n (2nd :',
             boxFifth: '$j something',
-            boxSixth: '$0 id.loc.gov/authorities/names/n79084169C388560',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n79084169C388560',
             boxSeventh: '$2 fast',
             status: 'linked',
           },
           {
             rowIndex: 8,
             tag: '830',
-            content: '$a something $d 1900-2000 $0 no2011188426',
-            boxFourth: '$a Robinson eminent scholar lecture series',
+            content: '$a something $d 1900-2000 $0 no2011188423',
+            boxFourth: '$a C388560Robinson eminent scholar lecture series',
             boxFifth: '',
-            boxSixth: '$0 id.loc.gov/authorities/names/no2011188426',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/no2011188423',
             boxSeventh: '',
             status: 'linked',
           },
@@ -114,6 +112,16 @@ describe('MARC', () => {
         let createdInstanceID;
 
         before(() => {
+          cy.getAdminToken();
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              createdAuthorityIDs.push(response.entries[0].relatedAuthorityInfo.idList[0]);
+            });
+          });
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -122,25 +130,6 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
-
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdAuthorityIDs.push(link.split('/')[5]);
-                  });
-                }
-              });
-            });
 
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);

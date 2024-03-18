@@ -124,11 +124,12 @@ export default {
         .exists(),
     );
   },
-  deleteViaAPI: (internalAuthorityId) => {
+  deleteViaAPI: (internalAuthorityId, ignoreErrors = false) => {
     cy.okapiRequest({
       method: 'DELETE',
       isDefaultSearchParamsRequired: false,
       path: `authority-storage/authorities/${internalAuthorityId}`,
+      failOnStatusCode: !ignoreErrors,
     });
   },
   addNewField: (rowIndex, tag, content, indicator0 = '\\', indicator1 = '\\') => {
@@ -223,16 +224,7 @@ export default {
     cy.expect(Callout('Record cannot be saved. Cannot have multiple 1XXs').exists());
   },
 
-  checkRemoved1XXTag: (rowIndex) => {
-    cy.do([
-      QuickMarcEditorRow({ index: rowIndex })
-        .find(TextField({ name: `records[${rowIndex}].tag` }))
-        .fillIn(''),
-      QuickMarcEditorRow({ index: rowIndex })
-        .find(TextArea({ name: `records[${rowIndex}].content` }))
-        .fillIn('Test'),
-      saveAndCloseButton.click(),
-    ]);
+  checkRemoved1XXTag: () => {
     cy.expect(Callout('Record cannot be saved without 1XX field.').exists());
   },
 
@@ -383,5 +375,34 @@ export default {
         .find(TableCell({ innerText: matching(/^[0-9]{8}[0-9]{6}\.[0-9]$/) }))
         .exists(),
     );
+  },
+
+  verifyAfterSaveAndClose() {
+    cy.expect([calloutUpdatedRecordSuccess.exists(), rootSection.exists()]);
+  },
+
+  getId() {
+    cy.url()
+      .then((url) => cy.wrap(url.split('?')[0].split('/').at(-1)))
+      .as('authorityId');
+    return cy.get('@authorityId');
+  },
+
+  getRecordsViaAPI: (deleted = false, idOnly = false, acceptHeader = null, query = null) => {
+    cy.okapiRequest({
+      method: 'GET',
+      isDefaultSearchParamsRequired: false,
+      path: 'authority-storage/authorities',
+      searchParams: {
+        limit: 1000,
+        deleted,
+        idOnly,
+        query: query || '',
+      },
+      additionalHeaders: acceptHeader ? { accept: acceptHeader } : {},
+    }).then(({ body }) => {
+      cy.wrap(body).as('records');
+    });
+    return cy.get('@records');
   },
 };

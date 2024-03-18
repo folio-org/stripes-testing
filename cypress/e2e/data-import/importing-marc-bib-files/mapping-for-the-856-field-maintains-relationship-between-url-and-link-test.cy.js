@@ -138,7 +138,7 @@ describe('data-import', () => {
 
     it(
       'C400649 Verify that mapping for the 856 field maintains relationship between URL and link text (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create Field mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -197,7 +197,6 @@ describe('data-import', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(testData.filePath, testData.fileName);
         JobProfiles.waitFileIsUploaded();

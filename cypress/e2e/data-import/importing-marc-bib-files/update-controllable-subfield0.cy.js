@@ -1,17 +1,12 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -20,13 +15,20 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -49,7 +51,7 @@ describe('data-import', () => {
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       name: `C385665 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const matchProfile = {
       profileName: `C385665 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
@@ -79,24 +81,28 @@ describe('data-import', () => {
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numOfRecords: 1,
+        propertyName: 'relatedInstanceInfo',
       },
       {
         marc: 'marcAuthFileC385665_1.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
+        propertyName: 'relatedAuthorityInfo',
       },
       {
         marc: 'marcAuthFileC385665_2.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
+        propertyName: 'relatedAuthorityInfo',
       },
       {
         marc: 'marcAuthFileC385665_3.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
+        propertyName: 'relatedAuthorityInfo',
       },
     ];
     const linkingTagAndValues = [
@@ -106,14 +112,15 @@ describe('data-import', () => {
       },
       {
         rowIndex: 76,
-        value: 'Lee, Stan, 1922-2018',
+        value: 'C385665Lee, Stan, 1922-2018',
       },
       {
         rowIndex: 77,
-        value: 'Kirby, Jack',
+        value: 'C385665Kirby, Jack',
       },
     ];
     const createdAuthorityIDs = [];
+    const subfield = '$9';
 
     before('Creating user', () => {
       cy.createTempUser([
@@ -127,24 +134,18 @@ describe('data-import', () => {
         Permissions.dataExportEnableApp.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
+
+        cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, 'Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  createdAuthorityIDs.push(link.split('/')[5]);
-                });
-              }
-            },
-          );
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+            });
+          });
         });
 
         cy.loginAsAdmin().then(() => {
@@ -200,7 +201,7 @@ describe('data-import', () => {
 
     it(
       'C385665 Update controllable subfield, "$0" in one of the linked repeatable fields (multiple repeatable fields with same indicators) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
@@ -235,14 +236,15 @@ describe('data-import', () => {
         DataImport.editMarcFile(
           nameForExportedMarcFile,
           nameForUpdatedMarcFile,
-          ['aKirby, Jack', 'n77020008'],
-          ['aKirby, Steve,', 'n77020008test'],
+          ['aC385665Kirby, Jack', 'n77020008'],
+          ['aC385665Kirby, Steve,', 'n77020008test'],
         );
 
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);
+        DataImport.waitLoading();
         DataImport.verifyUploadState();
-        DataImport.uploadFile(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
+        DataImport.uploadFileAndRetry(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
@@ -262,7 +264,7 @@ describe('data-import', () => {
           '\\',
           '$a Chin, Staceyann C385665',
           '$e letterer.',
-          '$0 id.loc.gov/authorities/names/n2008052404',
+          '$0 http://id.loc.gov/authorities/names/n2008052404',
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -270,9 +272,9 @@ describe('data-import', () => {
           '700',
           '1',
           '\\',
-          '$a Lee, Stan, $d 1922-2018',
+          '$a C385665Lee, Stan, $d 1922-2018',
           '$e creator',
-          '$0 id.loc.gov/authorities/names/n83169267',
+          '$0 http://id.loc.gov/authorities/names/n83169267',
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
@@ -280,12 +282,17 @@ describe('data-import', () => {
           '700',
           '1',
           '\\',
-          '$a Kirby, Steve, $e creator. $0 id.loc.gov/authorities/names/n77020008test',
+          '$a C385665Kirby, Steve, $e creator. $0 http://id.loc.gov/authorities/names/n77020008test',
         );
 
         QuickMarcEditor.closeEditorPane();
         InventoryInstance.viewSource();
-        InventoryInstance.checkAbsenceOfAuthorityIconInMarcViewPane();
+        InventoryViewSource.verifyLinkedToAuthorityIcon(linkingTagAndValues[0].rowIndex);
+        InventoryViewSource.verifyExistanceOfValueInRow(subfield, linkingTagAndValues[0].rowIndex);
+        InventoryViewSource.verifyLinkedToAuthorityIcon(linkingTagAndValues[1].rowIndex);
+        InventoryViewSource.verifyExistanceOfValueInRow(subfield, linkingTagAndValues[1].rowIndex);
+        InventoryViewSource.verifyLinkedToAuthorityIcon(linkingTagAndValues[2].rowIndex, false);
+        InventoryViewSource.verifyAbsenceOfValueInRow(subfield, linkingTagAndValues[2].rowIndex);
       },
     );
   });

@@ -1,21 +1,22 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import Users from '../../../../../support/fragments/users/users';
 import ConsortiumManagerApp, {
+  messages,
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
-import RequestCancellationReasonsConsortiumManager, {
-  messages,
-  reasonsActions,
-} from '../../../../../support/fragments/consortium-manager/circulation/requestCancellationReasonsConsortiumManager';
+import RequestCancellationReasonsConsortiumManager from '../../../../../support/fragments/consortium-manager/circulation/requestCancellationReasonsConsortiumManager';
 import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 import ConfirmShare from '../../../../../support/fragments/consortium-manager/modal/confirm-share';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import CancellationReason from '../../../../../support/fragments/settings/circulation/cancellationReason';
 import SettingsMenu from '../../../../../support/fragments/settingsMenu';
 import DeleteCancelReason from '../../../../../support/fragments/consortium-manager/modal/delete-cancel-reason';
+import ConsortiaControlledVocabularyPaneset, {
+  actionIcons,
+} from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -26,16 +27,12 @@ describe('Consortia', () => {
           name: getTestEntityValue('Shared_reason_1'),
           description: getTestEntityValue('SR1'),
           publicDescription: '',
-          shared: true,
-          members: 'All',
         };
 
         const cancelReason2 = {
           name: getTestEntityValue('Shared_reason_2'),
           description: '',
           publicDescription: '',
-          shared: true,
-          members: 'All',
         };
 
         before('Create users data', () => {
@@ -77,86 +74,84 @@ describe('Consortia', () => {
           { tags: ['criticalPathECS', 'thunderjet'] },
           () => {
             TopMenuNavigation.navigateToApp('Consortium manager');
+            ConsortiumManagerApp.waitLoading();
             SelectMembers.selectAllMembers();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
 
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
-
             RequestCancellationReasonsConsortiumManager.choose();
-            RequestCancellationReasonsConsortiumManager.waitLoading();
-            RequestCancellationReasonsConsortiumManager.verifyNewButtonDisabled(false);
+            ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
-            RequestCancellationReasonsConsortiumManager.createViaUi(cancelReason);
-            RequestCancellationReasonsConsortiumManager.clickSave();
+            ConsortiaControlledVocabularyPaneset.createViaUi(true, cancelReason);
+            ConsortiaControlledVocabularyPaneset.clickSave();
 
             ConfirmShare.waitLoadingConfirmShareToAll(cancelReason.name);
             ConfirmShare.clickConfirm();
             RequestCancellationReasonsConsortiumManager.waitLoading();
-            RequestCancellationReasonsConsortiumManager.checkMessage(
-              messages.created(cancelReason),
+            ConsortiumManagerApp.checkMessage(messages.created(cancelReason.name, 'All'));
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+              [...Object.values(cancelReason), 'All'],
+              ['edit', 'trash'],
             );
-            RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
-              ...cancelReason,
-              actions: ['edit', 'trash'],
-            });
 
-            RequestCancellationReasonsConsortiumManager.createViaUi(cancelReason2);
-            RequestCancellationReasonsConsortiumManager.clickSave();
+            ConsortiaControlledVocabularyPaneset.createViaUi(true, cancelReason2);
+            ConsortiaControlledVocabularyPaneset.clickSave();
 
             ConfirmShare.waitLoadingConfirmShareToAll(cancelReason2.name);
             ConfirmShare.clickKeepEditing();
-            RequestCancellationReasonsConsortiumManager.verifyEditModeElementsIsActive();
-            RequestCancellationReasonsConsortiumManager.clickCancel();
+            RequestCancellationReasonsConsortiumManager.waitLoading();
+            ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive();
+            ConsortiaControlledVocabularyPaneset.clickCancel();
 
-            RequestCancellationReasonsConsortiumManager.createViaUi(cancelReason);
-            RequestCancellationReasonsConsortiumManager.clickSave();
-            RequestCancellationReasonsConsortiumManager.verifyCancelReasonNameFailure(
-              messages.notUnique,
-            );
-            RequestCancellationReasonsConsortiumManager.clickCancel();
-
-            RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
-              ...cancelReason,
-              actions: ['edit', 'trash'],
+            ConsortiaControlledVocabularyPaneset.createViaUi(true, { name: cancelReason.name });
+            ConsortiaControlledVocabularyPaneset.clickSave();
+            ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive();
+            ConsortiaControlledVocabularyPaneset.verifyFieldValidatorError({
+              name: messages.notUnique('Name'),
             });
 
-            RequestCancellationReasonsConsortiumManager.performAction(
-              cancelReason.name,
-              reasonsActions.trash,
+            ConsortiaControlledVocabularyPaneset.clickCancel();
+            ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+              [...Object.values(cancelReason), 'All'],
+              ['edit', 'trash'],
             );
-            DeleteCancelReason.waitLoadingDeleteCancelReason(cancelReason.name);
+
+            ConsortiaControlledVocabularyPaneset.performAction(
+              cancelReason.name,
+              actionIcons.trash,
+            );
+            DeleteCancelReason.waitLoadingDeleteModal('cancel reason', cancelReason.name);
 
             DeleteCancelReason.clickCancel();
-            RequestCancellationReasonsConsortiumManager.verifyReasonInTheList({
-              ...cancelReason,
-              actions: ['edit', 'trash'],
-            });
-
-            RequestCancellationReasonsConsortiumManager.performAction(
-              cancelReason.name,
-              reasonsActions.trash,
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+              [...Object.values(cancelReason), 'All'],
+              ['edit', 'trash'],
             );
-            DeleteCancelReason.waitLoadingDeleteCancelReason(cancelReason.name);
+
+            ConsortiaControlledVocabularyPaneset.performAction(
+              cancelReason.name,
+              actionIcons.trash,
+            );
+            DeleteCancelReason.waitLoadingDeleteModal('cancel reason', cancelReason.name);
             DeleteCancelReason.clickDelete();
             RequestCancellationReasonsConsortiumManager.waitLoading();
-            RequestCancellationReasonsConsortiumManager.checkMessage(
-              messages.deleted(cancelReason),
-            );
-            RequestCancellationReasonsConsortiumManager.verifyNoReasonInTheList(cancelReason.name);
+            ConsortiumManagerApp.checkMessage(messages.deleted('cancel reason', cancelReason.name));
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(cancelReason.name);
 
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
             CancellationReason.waitLoading();
-            CancellationReason.verifyNoReasonInTheList(cancelReason.name);
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(cancelReason.name);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
             CancellationReason.waitLoading();
-            CancellationReason.verifyNoReasonInTheList(cancelReason.name);
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(cancelReason.name);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
             CancellationReason.waitLoading();
-            CancellationReason.verifyNoReasonInTheList(cancelReason.name);
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(cancelReason.name);
           },
         );
       });

@@ -10,8 +10,6 @@ describe('lists', () => {
     const listData = {
       name: getTestEntityValue('test_list'),
       recordType: 'Loans',
-      status: ['Active', 'Inactive'],
-      visibility: ['Private', 'Shared'],
     };
 
     beforeEach('Create a user', () => {
@@ -37,6 +35,9 @@ describe('lists', () => {
       'C411704 Create new lists: Private list (corsair)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
+        listData.status = 'Active';
+        listData.visibility = 'Private';
+
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
@@ -44,14 +45,14 @@ describe('lists', () => {
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
         Lists.selectRecordType(listData.recordType);
-        Lists.selectVisibility(listData.visibility[0]);
-        Lists.selectStatus(listData.status[0]);
+        Lists.selectVisibility(listData.visibility);
+        Lists.selectStatus(listData.status);
         Lists.saveList();
         cy.contains(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
         cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
-          Lists.checkResultSearch(listData.visibility[0], rowIndex);
+          Lists.checkResultSearch(listData, rowIndex);
         });
       },
     );
@@ -60,6 +61,9 @@ describe('lists', () => {
       'C411706 Create new lists: Shared lists (corsair)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
+        listData.status = 'Active';
+        listData.visibility = 'Shared';
+
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
@@ -67,14 +71,14 @@ describe('lists', () => {
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
         Lists.selectRecordType(listData.recordType);
-        Lists.selectVisibility(listData.visibility[1]);
-        Lists.selectStatus(listData.status[0]);
+        Lists.selectVisibility(listData.visibility);
+        Lists.selectStatus(listData.status);
         Lists.saveList();
         cy.contains(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
         cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
-          Lists.checkResultSearch(listData.visibility[1], rowIndex);
+          Lists.checkResultSearch(listData, rowIndex);
         });
       },
     );
@@ -83,6 +87,9 @@ describe('lists', () => {
       'C411707 Create new lists: Active lists (corsair)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
+        listData.status = 'Active';
+        listData.visibility = 'Shared';
+
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
@@ -90,14 +97,14 @@ describe('lists', () => {
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
         Lists.selectRecordType(listData.recordType);
-        Lists.selectVisibility(listData.visibility[0]);
-        Lists.selectStatus(listData.status[0]);
+        Lists.selectVisibility(listData.visibility);
+        Lists.selectStatus(listData.status);
         Lists.saveList();
         cy.contains(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
         cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
-          Lists.checkResultSearch(listData.status[0], rowIndex);
+          Lists.checkResultSearch(listData, rowIndex);
         });
       },
     );
@@ -106,6 +113,9 @@ describe('lists', () => {
       'C411708 Create new lists: Inactive lists (corsair)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
+        listData.status = 'Inactive';
+        listData.visibility = 'Shared';
+
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
@@ -113,14 +123,16 @@ describe('lists', () => {
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
         Lists.selectRecordType(listData.recordType);
-        Lists.selectVisibility(listData.visibility[0]);
-        Lists.selectStatus(listData.status[1]);
+        Lists.selectVisibility(listData.visibility);
+        Lists.selectStatus(listData.status);
         Lists.saveList();
         cy.contains(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
+        Lists.waitLoading();
         cy.reload();
+        Lists.selectInactiveLists();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
-          Lists.checkResultSearch(listData.status[1], rowIndex);
+          Lists.checkResultSearch(listData, rowIndex);
         });
       },
     );

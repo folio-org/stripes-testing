@@ -16,7 +16,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
 describe('ui-invoices: Cancelling approved invoices', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
 
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
@@ -83,7 +83,7 @@ describe('ui-invoices: Cancelling approved invoices', () => {
         '20',
         '1',
         '20',
-        location.institutionId,
+        location.name,
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
@@ -124,10 +124,14 @@ describe('ui-invoices: Cancelling approved invoices', () => {
       Funds.selectBudgetDetails();
       Funds.checkFinancialActivityAndOverages('$10.00', '$10.00', '$0.00', '$20.00');
       Funds.viewTransactions();
-      Funds.checkOrderInTransactionList(defaultFund.code, '($10.00)');
-      Funds.checkInvoiceInTransactionList(2, 'Pending payment', '($10.00)', 'Invoice');
-      Funds.checkInvoiceInTransactionList(3, 'Pending payment', '$10.00', 'Invoice');
-      Funds.checkInvoiceInTransactionList(4, 'Pending payment', '($10.00)', 'Invoice');
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransaction(
+        firstFiscalYear.code,
+        '($10.00)',
+        `${firstOrderNumber}-1`,
+        'Encumbrance',
+        `${defaultFund.name} (${defaultFund.code})`,
+      );
       cy.visit(TopMenu.invoicesPath);
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
@@ -138,9 +142,14 @@ describe('ui-invoices: Cancelling approved invoices', () => {
       Funds.selectBudgetDetails();
       Funds.checkFinancialActivityAndOverages('$10.00', '$0.00', '$10.00', '$20.00');
       Funds.viewTransactions();
-      Funds.checkInvoiceInTransactionList(2, 'Payment', '($10.00)', 'Invoice');
-      Funds.checkInvoiceInTransactionList(3, 'Credit', '$10.00', 'Invoice');
-      Funds.checkInvoiceInTransactionList(4, 'Payment', '($10.00)', 'Invoice');
+      Funds.selectTransactionInList('Credit');
+      Funds.varifyDetailsInTransactionFundTo(
+        firstFiscalYear.code,
+        '$10.00',
+        invoice.invoiceNumber,
+        'Credit',
+        `${defaultFund.name} (${defaultFund.code})`,
+      );
     },
   );
 });

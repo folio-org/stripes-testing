@@ -51,7 +51,6 @@ describe('data-import', () => {
       'C6689 Check the default mapping of control/product numbers from the MARC record to the Inventory Instance Identifier fields (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);
         JobProfiles.waitFileIsUploaded();

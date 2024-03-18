@@ -1,5 +1,6 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
@@ -7,12 +8,6 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -21,11 +16,17 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
-import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -55,7 +56,7 @@ describe('data-import', () => {
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C358998 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
 
     const matchProfile = {
@@ -98,7 +99,6 @@ describe('data-import', () => {
       'C358998 Data Import Updates should add 035 field from 001/003, if HRID already exists (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         // upload the first .mrc file
         DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
@@ -128,7 +128,7 @@ describe('data-import', () => {
             DataImport.editMarcFile(
               'marcFileForC358998ForUpdate_1.mrc',
               firstMarcFileNameForUpdate,
-              ['srsUuid', 'instanceUuid', '303845'],
+              ['instanceUuid', 'srsUuid', '303845'],
               [uuid[0], uuid[1], instanceHrId],
             );
           });
@@ -163,7 +163,6 @@ describe('data-import', () => {
 
           // upload a marc file for updating already created first instance
           cy.visit(TopMenu.dataImportPath);
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
           JobProfiles.waitFileIsUploaded();
@@ -274,22 +273,22 @@ describe('data-import', () => {
               'marcFileForC358998ForUpdate_2.mrc',
               secondMarcFileNameForUpdate,
               [
-                'firstSrsUuid',
                 'firstInstanceUuid',
-                'secondSrsUuid',
+                'firstSrsUuid',
                 'secondInstanceUuid',
-                'thirdSrsUuid',
+                'secondSrsUuid',
                 'thirdInstanceUuid',
-                'forthSrsUuid',
+                'thirdSrsUuid',
                 'forthInstanceUuid',
-                'fifthSrsUuid',
+                'forthSrsUuid',
                 'fifthInstanceUuid',
-                'sixthSrsUuid',
+                'fifthSrsUuid',
                 'sixthInstanceUuid',
-                'seventhSrsUuid',
+                'sixthSrsUuid',
                 'seventhInstanceUuid',
-                'eighthSrsUuid',
+                'seventhSrsUuid',
                 'eighthInstanceUuid',
+                'eighthSrsUuid',
               ],
               [...arrayOf999Fields],
             );

@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
@@ -43,12 +41,14 @@ describe('MARC', () => {
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numOfRecords: 1,
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileForC388552.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 6,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
@@ -67,6 +67,18 @@ describe('MARC', () => {
             });
           });
 
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.entries.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              });
+            });
+          });
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -76,23 +88,8 @@ describe('MARC', () => {
             userData = createdUserProperties;
 
             linkableFields.forEach((field) => QuickMarcEditor.setRulesForField(field, true));
+
             cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdRecordIDs.push(link.split('/')[5]);
-                  });
-                }
-              });
               cy.visit(TopMenu.inventoryPath).then(() => {
                 InventoryInstances.searchByTitle(createdRecordIDs[0]);
                 InventoryInstances.selectInstance();
@@ -186,16 +183,16 @@ describe('MARC', () => {
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t650\t  0\t$a Normal authors $z Jamaica $v Biography. $0 id.loc.gov/authorities/subjects/sh99014708C388552 $9`,
+              `${marcAuthIcon}\n\t650\t  0\t$a Normal authors $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh99014708C388552 $9`,
             );
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t650\t  0\t$a Normal activists $z Jamaica $v Biography. $0 id.loc.gov/authorities/subjects/sh96007532C388552 $9`,
+              `${marcAuthIcon}\n\t650\t  0\t$a Normal activists $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh96007532C388552 $9`,
             );
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t655\t  2\t$a AutobiographyC388552 $0 id.loc.gov/authorities/subjects/sh85010050 $9`,
+              `${marcAuthIcon}\n\t655\t  2\t$a AutobiographyC388552 $0 http://id.loc.gov/authorities/subjects/sh85010050 $9`,
             );
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t655\t  7\t$a BiographiesC388552 $0 id.loc.gov/authorities/genreForms/gf2014026049 $9`,
+              `${marcAuthIcon}\n\t655\t  7\t$a BiographiesC388552 $0 http://id.loc.gov/authorities/genreForms/gf2014026049 $9`,
             );
             InventoryViewSource.contains('$2 fast');
           },

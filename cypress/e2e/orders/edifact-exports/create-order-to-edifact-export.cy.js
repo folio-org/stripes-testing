@@ -113,7 +113,7 @@ describe('orders: export', () => {
         OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
         OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
           'Purchase',
-          location.institutionId,
+          location.name,
           '3',
         );
         OrderLines.backToEditingOrder();

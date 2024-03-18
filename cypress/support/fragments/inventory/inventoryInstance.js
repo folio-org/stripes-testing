@@ -149,7 +149,6 @@ const itemStatusKeyValue = KeyValue('Item status');
 const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(viewHoldingsButton);
 const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
 const detailsViewPaneheader = PaneHeader({ id: 'paneHeaderpane-instancedetails' });
-const expandConsortiaHoldingsButton = Button({ id: 'accordion-toggle-button-consortial-holdings' });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -184,7 +183,11 @@ const pressAddHoldingsButton = () => {
   return HoldingsRecordEdit;
 };
 
-const waitLoading = () => cy.expect(actionsButton.exists());
+const waitLoading = () => {
+  cy.get('#pane-instancedetails').within(() => {
+    cy.contains('button', 'Action').should('exist');
+  });
+};
 
 const openHoldings = (...holdingToBeOpened) => {
   const openActions = [];
@@ -419,6 +422,7 @@ export default {
 
   goToEditMARCBiblRecord: () => {
     cy.do(actionsButton.click());
+    cy.expect(actionsButton.has({ ariaExpanded: 'true' }));
     cy.do(editMARCBibRecordButton.click());
   },
 
@@ -490,8 +494,11 @@ export default {
   },
 
   editMarcBibliographicRecord: () => {
+    cy.wait(1000);
     cy.do(actionsButton.click());
+    cy.wait(1000);
     cy.do(editMARCBibRecordButton.click());
+    cy.wait(1000);
     cy.expect(QuickMarcEditorRow({ tagValue: '999' }).exists());
   },
 
@@ -546,6 +553,14 @@ export default {
       Accordion(accordion)
         .find(HTML(including(expectedText)))
         .exists(),
+    );
+  },
+
+  verifyRecordAndMarcAuthIconAbsence(accordion, expectedText) {
+    cy.expect(
+      Accordion(accordion)
+        .find(HTML(including(expectedText)))
+        .absent(),
     );
   },
 
@@ -800,15 +815,6 @@ export default {
 
     return HoldingsRecordView;
   },
-
-  expandConsortiaHoldings() {
-    cy.do(expandConsortiaHoldingsButton.click());
-  },
-
-  expandMemberHoldings(memberName) {
-    cy.do(Button({ id: `accordion-toggle-button-${memberName}-holdings` }).click());
-  },
-
   createHoldingsRecord: (permanentLocation) => {
     pressAddHoldingsButton();
     InventoryNewHoldings.fillRequiredFields(permanentLocation);
@@ -896,7 +902,9 @@ export default {
   },
 
   moveItemToAnotherInstance({ fromHolding, toInstance, shouldOpen = true }) {
-    cy.do([actionsButton.click(), moveHoldingsToAnotherInstanceButton.click()]);
+    cy.do(actionsButton.click());
+    cy.wait(1000);
+    cy.do(moveHoldingsToAnotherInstanceButton.click());
     InventoryInstanceSelectInstanceModal.waitLoading();
     InventoryInstanceSelectInstanceModal.searchByTitle(toInstance);
     InventoryInstanceSelectInstanceModal.selectInstance();
@@ -922,7 +930,9 @@ export default {
   },
 
   openMoveItemsWithinAnInstance: () => {
-    return cy.do([actionsButton.click(), moveItemsButton.click()]);
+    cy.do(actionsButton.click());
+    cy.wait(1000);
+    cy.do(moveItemsButton.click());
   },
 
   moveHoldingsToAnotherInstance: (newInstanceHrId) => {
@@ -948,7 +958,7 @@ export default {
   checkAddItem: (holdingsRecordId) => {
     cy.expect(
       instanceDetailsSection
-        .find(Section({ id: holdingsRecordId }))
+        .find(Section({ id: `holdings.${holdingsRecordId}` }))
         .find(Button({ id: `clickable-new-item-${holdingsRecordId}` }))
         .exists(),
     );
@@ -1002,8 +1012,10 @@ export default {
 
   checkAddedTag: (tagName, instanceTitle) => {
     cy.do(MultiColumnListCell(instanceTitle).click());
+    cy.wait(1500);
     cy.do(tagButton.click());
-    cy.expect(MultiSelect().exists(tagName));
+    cy.wait(1500);
+    cy.expect(MultiSelect({ ariaLabelledby: 'input-tag-label' }).exists(tagName));
   },
 
   deleteTag: (tagName) => {
@@ -1322,15 +1334,14 @@ export default {
 
   singleOverlaySourceBibRecordModalIsPresented: () => cy.expect(singleRecordImportModal.exists()),
 
-  overlayWithOclc: (oclc, identifierType = 'OCLC WorldCat') => {
-    cy.do([
-      Select({ name: 'externalIdentifierType' }).choose(identifierType),
+  overlayWithOclc: (oclc) => {
+    cy.do(
       Select({ name: 'selectedJobProfileId' }).choose(
         'Inventory Single Record - Default Update Instance (Default)',
       ),
-      singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
-      singleRecordImportModal.find(Button('Import')).click(),
-    ]);
+    );
+    cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
+    cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
 
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
@@ -1447,7 +1458,7 @@ export default {
   },
 
   openHoldingViewByID: (holdingsID) => {
-    cy.do(viewHoldingsButtonByID(holdingsID).click());
+    cy.do(viewHoldingsButtonByID(`holdings.${holdingsID}`).click());
     cy.expect(Button('Actions').exists());
   },
 
@@ -1572,34 +1583,5 @@ export default {
         );
       }
     });
-  },
-  checkInstanceHrId: (expectedInstanceHrId) => cy.expect(
-    instanceDetailsSection.find(KeyValue('Instance HRID')).has({ value: expectedInstanceHrId }),
-  ),
-
-  verifySharedIconByTitle(title) {
-    cy.expect(
-      paneResultsSection
-        .find(MultiColumnListCell(title, { innerHTML: including('sharedIcon') }))
-        .exists(),
-    );
-  },
-
-  verifySharedIconAbsentByTitle(title) {
-    cy.expect(
-      paneResultsSection
-        .find(MultiColumnListCell(title, { innerHTML: including('sharedIcon') }))
-        .absent(),
-    );
-  },
-
-  createAlternativeTitleTypeViaAPI(alternativeTitleTypeName, sourceName = 'local', id = uuid()) {
-    const body = {
-      id,
-      name: alternativeTitleTypeName,
-      source: sourceName,
-    };
-
-    return cy.createAlternativeTitleTypes(body);
   },
 };

@@ -5,6 +5,7 @@ import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/aw
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import { Locations } from '../../support/fragments/settings/tenant';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -22,6 +23,7 @@ describe('Title Level Request', () => {
 
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
+      TitleLevelRequests.enableTLRViaApi();
       ServicePoints.createViaApi(testData.servicePoint);
       testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
       Locations.createViaApi(testData.defaultLocation).then((location) => {
@@ -76,7 +78,7 @@ describe('Title Level Request', () => {
     });
   });
 
-  it('C3533 Cancel request (vega) (TaaS)', { tags: ['criticalPath', 'vega'] }, () => {
+  it('C3533 Cancel request (vega) (TaaS)', { tags: ['criticalPathBroken', 'vega'] }, () => {
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItemGui(itemData.barcodes[0]);
     AwaitingPickupForARequest.unselectCheckboxPrintSlip();

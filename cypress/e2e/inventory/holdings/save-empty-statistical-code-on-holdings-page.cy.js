@@ -119,6 +119,7 @@ describe('inventory', () => {
         HoldingsRecordEdit.checkErrorMessageForStatisticalCode(false);
 
         HoldingsRecordEdit.saveAndClose();
+        HoldingsRecordView.close();
         InventoryInstance.checkCalloutMessage(including(testData.calloutMessage));
         InventoryInstance.openHoldingView();
         HoldingsRecordView.checkStatisticalCode(testData.secondStatisticalCode);

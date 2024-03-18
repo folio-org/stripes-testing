@@ -30,21 +30,12 @@ describe('data-import', () => {
       'This record has successfully saved and is in process. Changes may not appear immediately.';
 
     before('create test data', () => {
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      // upload a marc file for creating of the new instance, holding and item
-      DataImport.uploadFile(filePathForUpload, fileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfileForCreatingInstance);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(fileName);
-      Logs.openFileDetails(fileName);
-      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-        instanceHrid = initialInstanceHrId;
-      });
-      cy.logout();
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileForCreatingInstance).then(
+        (response) => {
+          instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+        },
+      );
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -91,7 +82,6 @@ describe('data-import', () => {
 
         // upload a marc file for creating holdings
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
         JobProfiles.waitFileIsUploaded();

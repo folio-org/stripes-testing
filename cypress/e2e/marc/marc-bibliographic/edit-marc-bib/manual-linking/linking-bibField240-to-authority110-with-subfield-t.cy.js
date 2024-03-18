@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -31,15 +29,17 @@ describe('MARC', () => {
             marc: 'marcBibFileC374111.mrc',
             fileName: `testMarcFileC374111${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            propertyName: 'relatedInstanceInfo',
             numOfRecords: 1,
             instanceAlternativeTitle:
-              'Treaties, etc. Israel, 1978 September 17 (Framework for Peace in the Middle East)',
+              'Treaties, etc. 1978 September 17 (Framework for Peace in the Middle East) Israel',
           },
           {
             marc: 'marcAuthFileC374111.mrc',
             fileName: `testMarcFileC374111${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
         const bib240AfterLinkingToAuth110 = [
@@ -47,9 +47,9 @@ describe('MARC', () => {
           testData.tag240,
           '1',
           '0',
-          '$a Treaties, etc. $g Israel, $d 1978 September 17 (Framework for Peace in the Middle East)',
+          '$a Treaties, etc. $d 1978 September 17 (Framework for Peace in the Middle East) $g Israel,',
           '',
-          '$0 id.loc.gov/authorities/names/n91006627',
+          '$0 http://id.loc.gov/authorities/names/n91006627',
           '',
         ];
         const bib240AfterUninkingToAuth110 = [
@@ -57,7 +57,7 @@ describe('MARC', () => {
           testData.tag240,
           '1',
           '0',
-          '$a Treaties, etc. $g Israel, $d 1978 September 17 (Framework for Peace in the Middle East) $0 id.loc.gov/authorities/names/n91006627',
+          '$a Treaties, etc. $d 1978 September 17 (Framework for Peace in the Middle East) $g Israel, $0 http://id.loc.gov/authorities/names/n91006627',
         ];
 
         const createdAuthorityIDs = [];
@@ -72,26 +72,19 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
+            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
-              cy.loginAsAdmin({
-                path: TopMenu.dataImportPath,
-                waiter: DataImport.waitLoading,
-              }).then(() => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdAuthorityIDs.push(link.split('/')[5]);
-                  });
-                }
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+                });
               });
             });
+
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -125,10 +118,7 @@ describe('MARC', () => {
             InventoryInstance.searchResults(testData.authority110FieldValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
-            QuickMarcEditor.checkUnlinkTooltipText(
-              testData.tag240,
-              'Unlink from MARC Authority record',
-            );
+            QuickMarcEditor.checkUnlinkTooltipText(11, 'Unlink from MARC Authority record');
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(bib240AfterLinkingToAuth110[0]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib240AfterLinkingToAuth110);
             QuickMarcEditor.pressSaveAndClose();

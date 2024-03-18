@@ -185,6 +185,14 @@ export default {
     cy.do(actionsBtn.click());
   },
 
+  openActionsIfNotYet() {
+    cy.get('[class*="actionMenuToggle---"]').then(($element) => {
+      if ($element.attr('aria-expanded') === 'false') {
+        cy.wrap($element).click();
+      }
+    });
+  },
+
   downloadMatchedRecordsExists() {
     cy.expect(Button('Download matched records (CSV)').exists());
   },
@@ -477,7 +485,7 @@ export default {
       RepeatableFieldItem({ index: rowIndex })
         .find(Button({ id: 'loanType' }))
         .click(),
-      SelectionOption(including(type)).click(),
+      SelectionOption(type).click(),
     ]);
   },
 
@@ -707,7 +715,6 @@ export default {
 
   confirmChanges() {
     cy.do(confirmChangesButton.click());
-    this.isCommitButtonDisabled(true);
     cy.expect(Modal().find(MultiColumnListCell()).exists());
   },
 

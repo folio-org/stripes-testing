@@ -4,9 +4,6 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import Users from '../../../../support/fragments/users/users';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
@@ -31,12 +28,14 @@ describe('MARC', () => {
             fileName: `testMarcFileBibC380548.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numberOfRecords: 1,
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthC380548.mrc',
             fileName: `testMarcFileAuthC380548.${randomFourDigitNumber()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numberOfRecords: 1,
+            propertyName: 'relatedAuthorityInfo',
           },
         ],
       };
@@ -74,23 +73,19 @@ describe('MARC', () => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })
           .then(() => {
             testData.marcFiles.forEach((marcFile) => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numberOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
                   if (marcFile.jobProfileToRun === 'Default - Create instance and SRS MARC Bib') {
-                    testData.instanceIDs.push(link.split('/')[5]);
+                    testData.instanceIDs.push(record[marcFile.propertyName].idList[0]);
                   } else {
-                    testData.authorityIDs.push(link.split('/')[5]);
+                    testData.authorityIDs.push(record[marcFile.propertyName].idList[0]);
                   }
                 });
-              }
-              cy.visit(TopMenu.dataImportPath);
+              });
             });
           })
           .then(() => {

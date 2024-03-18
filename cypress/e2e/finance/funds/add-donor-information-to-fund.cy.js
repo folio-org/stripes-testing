@@ -3,6 +3,8 @@ import { FiscalYears, Funds, Ledgers } from '../../../support/fragments/finance'
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import FundEditForm from '../../../support/fragments/finance/funds/fundEditForm';
+import FundDetails from '../../../support/fragments/finance/funds/fundDetails';
 
 describe('Finance', () => {
   const fiscalYear = FiscalYears.getDefaultFiscalYear();
@@ -62,7 +64,7 @@ describe('Finance', () => {
       { tags: ['criticalPath', 'thunderjet'] },
       () => {
         // On "Fund" page of "Finance" app click on "New" button
-        const FundEditForm = Funds.clickCreateNewFundButton();
+        Funds.clickCreateNewFundButton();
 
         // Fill all mandatory fields in "Fund information" accordion
         FundEditForm.fillFundFields({
@@ -133,10 +135,10 @@ describe('Finance', () => {
       () => {
         // Open Fund from Preconditions
         Funds.searchByName(testData.fund.name);
-        const FundDetails = Funds.selectFund(testData.fund.name);
+        Funds.selectFund(testData.fund.name);
 
         // Click on "Actions" button, Select "Edit" option
-        const FundEditForm = FundDetails.openFundEditForm();
+        FundDetails.openFundEditForm();
 
         // Click on "Add donor" button, Check the checkbox next to a donor organization, Click "Save" button
         FundEditForm.fillDonorInfoSectionFields({ donorName: testData.organization.name });
@@ -183,10 +185,10 @@ describe('Finance', () => {
       () => {
         // Open Fund from Preconditions
         Funds.searchByName(testData.fund.name);
-        const FundDetails = Funds.selectFund(testData.fund.name);
+        Funds.selectFund(testData.fund.name);
 
         // Click on "Actions" button, Select "Edit" option
-        const FundEditForm = FundDetails.openFundEditForm();
+        FundDetails.openFundEditForm();
 
         // Click on "Add donor" button, Check the checkbox next to a donor organization, Click "Save" button
         FundEditForm.fillDonorInfoSectionFields({ donorName: testData.organization.name });

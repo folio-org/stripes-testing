@@ -42,7 +42,6 @@ describe('data-import', () => {
       'C353957 When new Data Import log summary is opened, old UI from previous log summary is displayed (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload[1], fileNames[1]);
         JobProfiles.waitFileIsUploaded();
@@ -54,7 +53,6 @@ describe('data-import', () => {
         FileDetails.verifyHeader(fileNames[1], numberOfRecords[1]);
         FileDetails.paginateThroughAllPages(2);
         FileDetails.close();
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload[0], fileNames[0]);
         JobProfiles.waitFileIsUploaded();

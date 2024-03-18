@@ -52,7 +52,6 @@ describe('data-import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         // upload a marc file
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);
         JobProfiles.waitFileIsUploaded();

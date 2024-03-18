@@ -1,9 +1,6 @@
 import { including } from '@interactors/html';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -17,8 +14,7 @@ import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 const testData = {
   user: {},
-  instanceIDs: [],
-  authorityIDs: [],
+  recordIDs: [],
   tags: ['800', '810', '811', '830'],
   searchOptions: {
     QUERY_SEARCH: 'Query search',
@@ -41,7 +37,7 @@ const testData = {
     'series == "Robinson eminent scholar lecture series"',
   ],
   seriesStatement: [
-    'Robinson, Peter, 1950-2022 Inspector Banks series ; 24.',
+    'Robinson, Peter, Inspector Banks series ; 1950-2022 24.',
     'Robinson & Associates, Inc.',
     '1938-1988 Jubilee Conference of the Institution of Agricultural Engineers Robinson College, Cambridge)',
     'Robinson eminent scholar lecture series',
@@ -58,30 +54,35 @@ const testData = {
       fileName: `testMarcFileC375258.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numberOfRecords: 4,
+      propertyName: 'relatedInstanceInfo',
     },
     {
       marc: 'marcAuth100C375258.mrc',
       fileName: `testMarcFileAuth100C375258.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numberOfRecords: 1,
+      propertyName: 'relatedAuthorityInfo',
     },
     {
       marc: 'marcAuth110C375258.mrc',
       fileName: `testMarcFileAuth110C375258.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numberOfRecords: 1,
+      propertyName: 'relatedAuthorityInfo',
     },
     {
       marc: 'marcAuth111C375258.mrc',
       fileName: `testMarcFileAuth111C375258.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numberOfRecords: 1,
+      propertyName: 'relatedAuthorityInfo',
     },
     {
       marc: 'marcAuth130C375258.mrc',
       fileName: `testMarcFileAuth130C375258.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numberOfRecords: 1,
+      propertyName: 'relatedAuthorityInfo',
     },
   ],
 };
@@ -114,23 +115,15 @@ describe('inventory', () => {
           });
         });
         testData.marcFiles.forEach((marcFile) => {
-          DataImport.verifyUploadState();
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.search(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(marcFile.fileName);
-          for (let i = 0; i < marcFile.numberOfRecords; i++) {
-            Logs.getCreatedItemsID(i).then((link) => {
-              if (marcFile.jobProfileToRun === 'Default - Create instance and SRS MARC Bib') {
-                testData.instanceIDs.push(link.split('/')[5]);
-              } else {
-                testData.authorityIDs.push(link.split('/')[5]);
-              }
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              testData.recordIDs.push(record[marcFile.propertyName].idList[0]);
             });
-          }
-          cy.visit(TopMenu.dataImportPath);
+          });
         });
       });
       cy.visit(TopMenu.inventoryPath);
@@ -158,12 +151,12 @@ describe('inventory', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      testData.instanceIDs.forEach((id) => {
-        InventoryInstance.deleteInstanceViaApi(id);
-      });
-      testData.authorityIDs.forEach((id) => {
-        MarcAuthority.deleteViaAPI(id);
-      });
+      for (let i = 0; i < 4; i++) {
+        InventoryInstance.deleteInstanceViaApi(testData.recordIDs[i]);
+      }
+      for (let i = 4; i < 8; i++) {
+        MarcAuthority.deleteViaAPI(testData.recordIDs[i]);
+      }
     });
 
     it(

@@ -40,7 +40,6 @@ describe('data-import', () => {
       { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneThousandMarcBib.mrc', bigFileName);
         JobProfiles.waitFileIsUploaded();
@@ -48,7 +47,7 @@ describe('data-import', () => {
         JobProfiles.runImportFile();
         Logs.checkFileIsRunning(bigFileName);
         // TODO wait until at least 1% of the file will be processed
-        cy.wait(15000);
+        cy.wait(25000);
         DataImport.deleteImportJob(bigFileName);
         DataImport.verifyCancelImportJobModal();
         DataImport.confirmDeleteImportJob();
@@ -59,8 +58,6 @@ describe('data-import', () => {
         InteractorsTools.checkCalloutMessage(
           `${numberOfLogsToDelete} data import logs have been successfully deleted.`,
         );
-        cy.reload();
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', smallFileName);
         JobProfiles.waitFileIsUploaded();

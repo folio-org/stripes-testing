@@ -1,7 +1,5 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
@@ -12,7 +10,6 @@ import InstanceRecordView from '../../../../../support/fragments/inventory/insta
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import { JOB_STATUS_NAMES } from '../../../../../support/constants';
 
 describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => {
   let userData = {};
@@ -30,7 +27,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       '\\',
       '$a Chin, Staceyann, $d 1972-',
       '$e Author $e Narrator',
-      '$0 id.loc.gov/authorities/names/n2008052404',
+      '$0 http://id.loc.gov/authorities/names/n2008052404',
       '$1 http://viaf.org/viaf/24074052',
     ],
     bib100AfterUnlinking: [
@@ -38,7 +35,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       '100',
       '1',
       '\\',
-      '$a Chin, Staceyann, $d 1972- $e Author $e Narrator $0 id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052',
+      '$a Chin, Staceyann, $d 1972- $e Author $e Narrator $0 http://id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052',
     ],
     linkedIconText: 'Linked to MARC authority',
     unlinkIconText: 'Unlink from MARC Authority record',
@@ -49,11 +46,13 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       marc: 'marcBibFileForC365599.mrc',
       fileName: `testMarcFileC365599.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      propertyName: 'relatedInstanceInfo',
     },
     {
       marc: 'marcAuthFileForC365599.mrc',
       fileName: `testMarcFileC365599.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
+      propertyName: 'relatedAuthorityInfo',
     },
   ];
 
@@ -69,16 +68,6 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
     ]).then((createdUserProperties) => {
       userData = createdUserProperties;
 
-      InventoryInstances.getInstancesViaApi({
-        limit: 100,
-        query: `title="${testData.instanceTitle}"`,
-      }).then((instances) => {
-        if (instances) {
-          instances.forEach(({ id }) => {
-            InventoryInstance.deleteInstanceViaApi(id);
-          });
-        }
-      });
       MarcAuthorities.getMarcAuthoritiesViaApi({
         limit: 100,
         query: `keyword="${testData.authorityTitle}" and (authRefType==("Authorized" or "Auth/Ref"))`,
@@ -91,20 +80,16 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       });
 
       cy.loginAsAdmin().then(() => {
-        cy.visit(TopMenu.dataImportPath);
         marcFiles.forEach((marcFile) => {
-          DataImport.verifyUploadState();
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(marcFile.fileName);
-          Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(marcFile.fileName);
-          Logs.getCreatedItemsID().then((link) => {
-            createdRecordIDs.push(link.split('/')[5]);
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.entries.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            });
           });
-          JobProfiles.closeJobProfile(marcFile.fileName);
         });
       });
 

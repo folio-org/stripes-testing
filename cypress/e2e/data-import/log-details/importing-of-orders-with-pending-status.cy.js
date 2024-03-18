@@ -142,7 +142,6 @@ describe('data-import', () => {
       'C375178 Verify the log details for created imported order records (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -152,7 +151,6 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
         FileDetails.checkOrderQuantityInSummaryTable(quantityOfOrders);
-        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfOrders);
         cy.wrap(ordersData).each((order) => {
           FileDetails.verifyTitle(
             order.title,

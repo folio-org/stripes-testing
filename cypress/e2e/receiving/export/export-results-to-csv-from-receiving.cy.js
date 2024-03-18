@@ -70,7 +70,7 @@ describe('Receiving', () => {
       'Rush',
     ];
     const pieceFields = [
-      'Caption',
+      'Display summary',
       'Copy number',
       'Enumeration',
       'Chronology',
@@ -135,7 +135,7 @@ describe('Receiving', () => {
 
   describe('Export', () => {
     const titleFields = ['Title', 'Publisher'];
-    const pieceFields = ['Caption', 'Copy number'];
+    const pieceFields = ['Display summary', 'Copy number'];
 
     before('Create test order', () => {
       cy.getAdminToken();

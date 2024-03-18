@@ -278,13 +278,20 @@ export default {
     );
   },
 
-  enterRequesterInfoWithRequestType(newRequest, requestType = REQUEST_TYPES.PAGE) {
+  enterRequesterInfoWithRequestType(
+    newRequest,
+    requestType = REQUEST_TYPES.PAGE,
+    fulfillmentPreference = 'Hold Shelf',
+  ) {
     cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
     cy.intercept('/proxiesfor?*').as('getUsers');
     cy.wait(2000);
     cy.do(enterRequesterBarcodeButton.click());
     cy.wait(1000);
     this.chooseRequestType(requestType);
+    cy.wait(1000);
+    cy.do(Select({ name: 'fulfillmentPreference' }).choose(fulfillmentPreference));
+    cy.wait(1000);
     cy.expect(selectServicePoint.exists());
     cy.wait('@getUsers');
     this.choosePickupServicePoint(newRequest.pickupServicePoint);

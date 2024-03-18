@@ -25,7 +25,7 @@ describe('Orders: Receiving and Check-in', () => {
   const copyNumber = Helper.getRandomBarcode();
   const enumeration = Helper.getRandomBarcode();
   const chronology = Helper.getRandomBarcode();
-  const caption = Helper.getRandomBarcode();
+  const displaySummary = `AQA_${Helper.getRandomBarcode()}`;
   let orderNumber;
   let user;
 
@@ -78,8 +78,8 @@ describe('Orders: Receiving and Check-in', () => {
       Orders.receiveOrderViaActions();
       // Receiving part
       Receiving.selectPOLInReceive(orderLineTitle);
-      Receiving.addPiece(caption, copyNumber, enumeration, chronology);
-      Receiving.selectPiece(caption);
+      Receiving.addPiece(displaySummary, copyNumber, enumeration, chronology);
+      Receiving.selectPiece(displaySummary);
       Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePiece(enumeration);
       Receiving.selectInstanceInReceive(orderLineTitle);

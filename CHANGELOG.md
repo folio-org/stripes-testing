@@ -1,6 +1,10 @@
 # Change history for stripes-testing
 
-## 4.7.0 IN PROGRESS
+## 4.8.0 IN PROGRESS
+
+## [4.7.0](https://github.com/folio-org/stripes-testing/tree/v4.7.0) (2024-03-12)
+
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.6.0...v4.7.0)
 
 - Updated `<AdvancedSearch>` interactor for search match support. Updated e2e tests. Refs UITEST-111.
 - Added support for `shiftKey` in keyboard presses. Refs UITEST-116.

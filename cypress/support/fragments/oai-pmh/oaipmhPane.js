@@ -34,7 +34,15 @@ export default {
       SECTIONS.BEHAVIOR,
       ...(canViewLogs ? [SECTIONS.LOGS] : []),
     ].forEach((section) => {
-      cy.expect(navPaneSection.find(NavListItem(section)).exists());
+      if (section === SECTIONS.LOGS) {
+        if (canViewLogs) {
+          cy.expect(navPaneSection.find(NavListItem(section)).exists());
+        } else {
+          cy.expect(navPaneSection.find(NavListItem(section)).absent());
+        }
+      } else {
+        cy.expect(navPaneSection.find(NavListItem(section)).exists());
+      }
     });
   },
   selectSection(section) {

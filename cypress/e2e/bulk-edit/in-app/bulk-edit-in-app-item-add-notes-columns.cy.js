@@ -33,7 +33,7 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
         permissions.uiInventoryViewCreateEditItems.gui,
       ]).then((userProperties) => {
-        ItemNoteTypes.createNoteTypeViaApi(noteType).then((noteId) => {
+        ItemNoteTypes.createItemNoteTypeViaApi(noteType).then((noteId) => {
           noteTypeId = noteId;
         });
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
@@ -61,7 +61,7 @@ describe('bulk-edit', () => {
 
     after('delete test data', () => {
       cy.getAdminToken();
-      ItemNoteTypes.deleteNoteTypeViaApi(noteTypeId);
+      ItemNoteTypes.deleteItemNoteTypeViaApi(noteTypeId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
@@ -92,14 +92,16 @@ describe('bulk-edit', () => {
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
+        cy.reload();
         BulkEditActions.openActions();
+        BulkEditActions.downloadChangedCSV();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Action note', noteType);
+        BulkEditActions.openActions();
         BulkEditSearchPane.verifyChangesUnderColumns(
           'Action note',
           `${actionNote} | ${newActionNote}`,
         );
         BulkEditSearchPane.verifyChangesUnderColumns(noteType, noteTypeText);
-        BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
           actionNote,
           newActionNote,

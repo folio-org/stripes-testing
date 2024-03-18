@@ -71,6 +71,8 @@ describe('Settings: Tenant', () => {
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
       createLocations();
+      // Need for changes to reflect on UI
+      cy.wait(10000);
     });
 
     cy.createTempUser([

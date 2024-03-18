@@ -12,6 +12,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('inventory', () => {
   describe('Item', () => {
@@ -163,7 +164,6 @@ describe('inventory', () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();
         cy.wait(1000);
-        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
       });
     });
 
@@ -199,6 +199,7 @@ describe('inventory', () => {
           'Missing',
           'Paged',
         ].forEach((itemStatus) => {
+          InventoryHoldings.checkIfExpanded(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`, true);
           InventoryInstance.openItemByStatus(itemStatus);
           InventoryItems.openActions();
           InventoryItems.clickNewRequestButton();
@@ -218,6 +219,7 @@ describe('inventory', () => {
             cy.visit(TopMenu.inventoryPath);
             InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
             InstanceRecordView.verifyInstanceRecordViewOpened();
+            InventoryHoldings.checkIfExpanded(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`, true);
             InventoryInstance.openItemByStatus(itemStatus);
             InventoryItems.openActions();
             InventoryItems.verifyNewRequestButtonIsAbsent();

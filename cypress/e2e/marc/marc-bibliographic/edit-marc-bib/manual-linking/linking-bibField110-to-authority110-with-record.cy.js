@@ -1,8 +1,5 @@
-import { JOB_STATUS_NAMES } from '../../../../../support/constants';
 import { Permissions } from '../../../../../support/dictionary';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
@@ -12,6 +9,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -19,7 +17,7 @@ describe('MARC', () => {
       describe('Manual linking', () => {
         const testData = {
           tag110: '110',
-          authorityMarkedValue: 'Beatles',
+          authorityMarkedValue: 'C374194 Beatles',
           subjectValue: 'C374194 Speaking Oratory--debating',
           linkedIconText: 'Linked to MARC authority',
           accordion: 'Contributor',
@@ -30,33 +28,41 @@ describe('MARC', () => {
             marc: 'marcBibFileC374194.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileC374194.mrc',
             fileName: `testMarcFileC374194.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
-            authorityHeading: 'Beatles',
+            authorityHeading: 'C374194 Beatles',
             authority110FieldValue: 'n79018119',
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
         const createdRecordIDs = [];
-        const bib110InitialFieldValues = [33, testData.tag110, '2', '\\', '$a The Beatles. $4 prf'];
+        const bib110InitialFieldValues = [
+          33,
+          testData.tag110,
+          '2',
+          '\\',
+          '$a C374194 The Beatles. $4 prf',
+        ];
         const bib110UnlinkedFieldValues = [
           33,
           testData.tag110,
           '2',
           '\\',
-          '$a Beatles $0 id.loc.gov/authorities/names/n79018119 $4 prf',
+          '$a C374194 Beatles $0 http://id.loc.gov/authorities/names/n79018119 $4 prf',
         ];
         const bib110LinkedFieldValues = [
           33,
           testData.tag110,
           '2',
           '\\',
-          '$a Beatles',
+          '$a C374194 Beatles',
           '',
-          `$0 id.loc.gov/authorities/names/${marcFiles[1].authority110FieldValue}`,
+          `$0 http://id.loc.gov/authorities/names/${marcFiles[1].authority110FieldValue}`,
           '$4 prf',
         ];
 
@@ -69,24 +75,19 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
+            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
-              cy.loginAsAdmin({
-                path: TopMenu.dataImportPath,
-                waiter: DataImport.waitLoading,
-              }).then(() => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
                 });
               });
             });
+
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -106,7 +107,7 @@ describe('MARC', () => {
 
         it(
           'C374194 Link the "110" of "MARC Bib" field with "110" field of "MARC Authority" record (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'nonParallel'] },
+          { tags: ['extendedPath', 'spitfire'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -116,7 +117,6 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
-            InventoryInstance.selectRecord();
             MarcAuthorities.checkFieldAndContentExistence(
               testData.tag110,
               `$a ${marcFiles[1].authorityHeading}`,
@@ -139,7 +139,6 @@ describe('MARC', () => {
             InventoryInstance.goToPreviousPage();
             // Wait for the content to be loaded.
             cy.wait(6000);
-            InventoryInstance.waitLoading();
             InventoryInstance.viewSource();
             InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
             InventoryInstance.clickViewAuthorityIconDisplayedInMarcViewPane();
@@ -149,10 +148,11 @@ describe('MARC', () => {
             cy.wait(6000);
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
-            InventoryInstance.waitLoading();
+            InstanceRecordView.verifyInstancePaneExists();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib110LinkedFieldValues);
             QuickMarcEditor.clickUnlinkIconInTagField(bib110UnlinkedFieldValues[0]);
+            QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib110UnlinkedFieldValues);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib110UnlinkedFieldValues[0]);
             QuickMarcEditor.pressSaveAndClose();

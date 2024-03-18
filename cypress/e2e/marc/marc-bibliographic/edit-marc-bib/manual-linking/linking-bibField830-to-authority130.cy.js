@@ -1,7 +1,5 @@
 import { Permissions } from '../../../../../support/dictionary';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
@@ -11,6 +9,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -30,12 +29,14 @@ describe('MARC', () => {
             marc: 'marcBibFileForC375088.mrc',
             fileName: `testMarcBibFileC375071.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            propertyName: 'relatedInstanceInfo',
           },
           {
             marc: 'marcAuthFileForC375088.mrc',
             fileName: `testMarcAuthFileC375071.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             authorityHeading: 'C375088 Cambridge tracts in mathematics and mathematical physics',
+            propertyName: 'relatedAuthorityInfo',
           },
         ];
 
@@ -52,7 +53,7 @@ describe('MARC', () => {
           testData.tag830,
           '\\',
           '0',
-          '$a C375088 Cambridge tracts in mathematics and mathematical physics $l english $v no. 19. $0 id.loc.gov/authorities/names/n84801249',
+          '$a C375088 Cambridge tracts in mathematics and mathematical physics $l english $v no. 19. $0 http://id.loc.gov/authorities/names/n84801249',
         ];
         const bib830LinkedFieldValues = [
           21,
@@ -61,7 +62,7 @@ describe('MARC', () => {
           '0',
           '$a C375088 Cambridge tracts in mathematics and mathematical physics $l english',
           '$v no. 19.',
-          '$0 id.loc.gov/authorities/names/n84801249',
+          '$0 http://id.loc.gov/authorities/names/n84801249',
           '',
         ];
 
@@ -74,19 +75,15 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.verifyUploadState();
-                DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
+            cy.getAdminToken();
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.entries.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
                 });
               });
             });
@@ -147,6 +144,7 @@ describe('MARC', () => {
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
             InventoryInstance.waitLoading();
+            InstanceRecordView.verifyInstancePaneExists();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib830LinkedFieldValues);
             QuickMarcEditor.clickUnlinkIconInTagField(bib830UnlinkedFieldValues[0]);

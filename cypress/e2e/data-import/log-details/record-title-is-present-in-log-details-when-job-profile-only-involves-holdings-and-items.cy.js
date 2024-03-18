@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
@@ -8,12 +9,6 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
@@ -26,14 +21,20 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
-import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -167,7 +168,7 @@ describe('data-import', () => {
 
     it(
       'C375109 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details WITH instance match item (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         const marcFileNameForUpdate = `C375109 firstmarcFile.${getRandomPostfix()}.mrc`;
         const csvFileName = `C375109 firstautotestFile${getRandomPostfix()}.csv`;
@@ -184,7 +185,7 @@ describe('data-import', () => {
             actionProfile: {
               typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
               name: `C375109 WITH instance match holdings.${getRandomPostfix()}`,
-              action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+              action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
             },
           },
           {
@@ -199,7 +200,7 @@ describe('data-import', () => {
             actionProfile: {
               typeValue: FOLIO_RECORD_TYPE.ITEM,
               name: `C375109 WITH instance match item.${getRandomPostfix()}`,
-              action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+              action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
             },
           },
         ];
@@ -336,7 +337,6 @@ describe('data-import', () => {
 
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(marcFileNameForUpdate);
         JobProfiles.search(jobProfileWithMatch.profileName);
@@ -408,7 +408,7 @@ describe('data-import', () => {
 
     it(
       'C422064 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details WITHOUT instance match item (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         const marcFileNameForUpdate = `C422064 secondmarcFile.${getRandomPostfix()}.mrc`;
         const csvFileName = `C422064 secondAutotestFile${getRandomPostfix()}.csv`;
@@ -425,7 +425,7 @@ describe('data-import', () => {
             actionProfile: {
               typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
               name: `C422064 WITHOUT instance match holdings.${getRandomPostfix()}`,
-              action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+              action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
             },
           },
           {
@@ -440,7 +440,7 @@ describe('data-import', () => {
             actionProfile: {
               typeValue: FOLIO_RECORD_TYPE.ITEM,
               name: `C422064 WITHOUT instance match item.${getRandomPostfix()}`,
-              action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+              action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
             },
           },
         ];
@@ -544,6 +544,7 @@ describe('data-import', () => {
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfileWithoutMatch.profileName);
 
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(testData.secondHrid);
         InstanceRecordView.verifyInstancePaneExists();
@@ -559,7 +560,6 @@ describe('data-import', () => {
 
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(marcFileNameForUpdate);
         JobProfiles.search(jobProfileWithoutMatch.profileName);
