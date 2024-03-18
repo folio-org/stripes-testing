@@ -1,5 +1,6 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
 } from '../../../support/constants';
@@ -42,7 +43,7 @@ describe('data-import', () => {
     };
     const actionProfile = {
       name: 'Default - Create instance',
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     };
     const mappingProfile = {
