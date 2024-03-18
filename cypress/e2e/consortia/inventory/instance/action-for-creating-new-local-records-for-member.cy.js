@@ -12,6 +12,7 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 describe('Inventory', () => {
   describe('Instance', () => {
     let user;
+    let instanceHRID;
     const testData = {
       instanceTitle: `C405563 autoTestInstanceTitle${getRandomPostfix()}`,
     };
@@ -43,12 +44,13 @@ describe('Inventory', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      cy.getInstance({
-        limit: 1,
-        expandAll: true,
-        query: `"title"=="${testData.instanceTitle}"`,
-      }).then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
+      cy.setTenant(Affiliations.College).then(() => {
+        cy.getCollegeAdminToken();
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
     });
 
@@ -69,6 +71,9 @@ describe('Inventory', () => {
         InventoryInstance.checkInstanceDetails([
           { key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO },
         ]);
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+          instanceHRID = initialInstanceHrId;
+        });
       },
     );
   });
