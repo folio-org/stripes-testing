@@ -10,7 +10,7 @@ describe('ui-inventory: browse call numbers', () => {
 
   it(
     'C347902 Verify "Browse call numbers" option on the Instances tab (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    { tags: ['smoke', 'firebird', 'eurekaPhase1'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifyKeywordsAsDefault();
@@ -23,7 +23,7 @@ describe('ui-inventory: browse call numbers', () => {
 
   it(
     'C347903 Verify "Browse call numbers" option on Holdings tab (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    { tags: ['smoke', 'firebird', 'eurekaPhase1'] },
     () => {
       InventorySearchAndFilter.switchToHoldings();
       InventorySearchAndFilter.browseCallNumberIsAbsent();
@@ -34,7 +34,7 @@ describe('ui-inventory: browse call numbers', () => {
 
   it(
     'C347923 Verify "Browse call numbers" option on Item tab (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    { tags: ['smoke', 'firebird', 'eurekaPhase1'] },
     () => {
       InventorySearchAndFilter.instanceTabIsDefault();
       InventorySearchAndFilter.switchToItem();

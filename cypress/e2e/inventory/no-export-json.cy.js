@@ -36,7 +36,7 @@ describe('ui-inventory: query search', () => {
 
   it(
     'C375963 Verify "Export instances (JSON)" option is hidden in "Actions" menu of "Inventory" pane (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'eurekaPhase1'] },
     () => {
       InventorySearchAndFilter.verifyNoExportJsonOption();
       InventorySearchAndFilter.searchByParameter('Title (all)', item.instanceName);

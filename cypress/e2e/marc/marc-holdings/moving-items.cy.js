@@ -119,7 +119,7 @@ describe('MARC', () => {
 
     it(
       'C15185 Move multiple items from one holdings to another holdings within an instance (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
