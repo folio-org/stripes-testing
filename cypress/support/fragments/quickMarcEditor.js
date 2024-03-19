@@ -1163,6 +1163,14 @@ export default {
     return newContent;
   },
 
+  selectFieldsDropdownOption(tag, dropdownLabel, option) {
+    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(Select({ label: dropdownLabel })).choose(option));
+  },
+
+  verifyFieldsDropdownOptoin(tag, dropdownLabel, option) {
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(Select({ label: dropdownLabel })).has({ content: including(option) }));
+  },
+
   updateExistingTagName(currentTagName = validRecord.existingTag, newTagName) {
     cy.then(() => QuickMarcEditorRow({ tagValue: currentTagName }).index()).then((index) => {
       cy.do(
