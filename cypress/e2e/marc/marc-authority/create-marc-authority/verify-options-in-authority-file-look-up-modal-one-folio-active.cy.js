@@ -14,7 +14,7 @@ describe('MARC', () => {
       const randomPostfix = getRandomPostfix();
       const paneHeaderCreateNewSharedMarcAuthorityRecord = 'Create a new MARC authority record';
       const localAuthFile = {
-        name: `C422244 auth source file active ${randomPostfix}`,
+        name: `C422244 auth source file ${randomPostfix}`,
         prefix: getRandomLetters(8),
         startWithNumber: '1',
         isActive: false,
