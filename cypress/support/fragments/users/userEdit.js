@@ -18,6 +18,7 @@ import {
   Select,
   TextArea,
   TextField,
+  Spinner,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
@@ -524,10 +525,11 @@ export default {
   },
 
   checkUserEditPaneOpened: (isOpened = true) => {
+    cy.expect(Spinner().absent());
     if (isOpened) {
-      cy.expect([userEditPane.exists(), saveAndCloseBtn.exists()]);
+      cy.expect(userEditPane.exists(), userInformationAccordion.exists());
     } else {
-      cy.expect([userEditPane.absent(), saveAndCloseBtn.absent()]);
+      cy.expect(userEditPane.absent(), userInformationAccordion.absent());
     }
   },
 

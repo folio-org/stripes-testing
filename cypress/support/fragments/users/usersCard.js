@@ -540,6 +540,8 @@ export default {
   },
 
   verifyUserPermissionsAccordion(isShown = false) {
+    // wait until accordions loaded
+    cy.wait(1000);
     if (isShown) {
       cy.expect(permissionAccordion.exists());
       cy.expect(permissionAccordion.has({ open: false }));

@@ -12,6 +12,7 @@ import {
   TextField,
   Callout,
   HTML,
+  Spinner,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -266,7 +267,8 @@ export default {
     .then(({ body }) => body),
 
   checkCreateUserPaneOpened: (isOpened = true) => {
-    if (isOpened) cy.expect(createUserPane.exists());
+    cy.expect(Spinner().absent());
+    if (isOpened) cy.expect([createUserPane.exists(), contactInformationAccordion.exists()]);
     else cy.expect(createUserPane.absent());
   },
 };
