@@ -24,7 +24,7 @@ describe('ui-inventory: actions', () => {
 
   it(
     'C196752 verifies action menu options before any search is conducted (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    { tags: ['smoke', 'firebird', 'eurekaPhase1'] },
     () => {
       InventoryActions.open();
 
@@ -40,7 +40,7 @@ describe('ui-inventory: actions', () => {
 
   it(
     'C196753 Verify Action menu options - search results pane populated (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    { tags: ['smoke', 'firebird', 'eurekaPhase1'] },
     () => {
       InventorySearchAndFilter.byKeywords(item.instanceName);
       InventorySearchAndFilter.selectResultCheckboxes(1);

@@ -35,7 +35,7 @@ import NewMatchProfile from '../../../../support/fragments/settings/dataImport/m
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {
-      instanceIds: [],
+      sharedInstanceId: [],
       marcFile: {
         marc: 'marcBibFileForC405531.mrc',
         fileName: `C405531 testMarcFile${getRandomPostfix()}.mrc`,
@@ -126,11 +126,15 @@ describe('Data Import', () => {
       JobProfiles.waitLoadingList();
       JobProfiles.search(testData.marcFile.jobProfileToRun);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(testData.marcFile.fileName);
+      JobProfiles.waitFileIsImported(
+        testData.marcFile.fileName.substring(0, testData.marcFile.fileName.length - 4) + '_1.mrc',
+      );
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(testData.marcFile.fileName);
+      Logs.openFileDetails(
+        testData.marcFile.fileName.substring(0, testData.marcFile.fileName.length - 4) + '_1.mrc',
+      );
       Logs.getCreatedItemsID().then((link) => {
-        testData.instanceIds.push(link.split('/')[5]);
+        testData.sharedInstanceId.push(link.split('/')[5]);
       });
 
       cy.createTempUser([
@@ -145,12 +149,12 @@ describe('Data Import', () => {
         .then(() => {
           cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
           cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(testData.user.userId, [
-            Permissions.moduleDataImportEnabled.gui,
-            Permissions.inventoryAll.gui,
-            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-            Permissions.dataExportEnableApp.gui,
-          ]);
+          // cy.assignPermissionsToExistingUser(testData.user.userId, [
+          //   Permissions.moduleDataImportEnabled.gui,
+          //   Permissions.inventoryAll.gui,
+          //   Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          //   Permissions.dataExportEnableApp.gui,
+          // ]);
 
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
