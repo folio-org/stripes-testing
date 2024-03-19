@@ -538,4 +538,11 @@ export default {
   verifyUserInformationPresence() {
     cy.expect(userInformationSection.exists());
   },
+
+  verifyUserPermissionsAccordion(isShown = false) {
+    if (isShown) {
+      cy.expect(permissionAccordion.exists());
+      cy.expect(permissionAccordion.has({ open: false }));
+    } else cy.expect(permissionAccordion.absent());
+  },
 };
