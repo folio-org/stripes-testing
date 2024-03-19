@@ -8,13 +8,23 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import InteractorsTools from '../../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import {
+  INVENTORY_LDR_FIELD_TYPE_DROPDOWN,
+  INVENTORY_LDR_FIELD_BLVL_DROPDOWN,
+  INVENTORY_008_FIELD_DTST_DROPDOWN,
+  INVENTORY_008_FIELD_CONF_DROPDOWN,
+  INVENTORY_008_FIELD_FEST_DROPDOWN,
+  INVENTORY_008_FIELD_INDX_DROPDOWN,
+  INVENTORY_008_FIELD_LITF_DROPDOWN,
+} from '../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {
-        LDRValue: '00000naa\\a2200000uu\\4500',
         tag010: '010',
+        tagLDR: 'LDR',
+        tag008: '008',
         tag010Values: ['58020553', '766384'],
       };
       const calloutMessage = 'Record cannot be saved with more than one 010 field';
@@ -48,7 +58,14 @@ describe('MARC', () => {
           InventoryInstance.newMarcBibRecord();
 
           // #2 Replace blank values in LDR positions 06, 07 with valid values
-          QuickMarcEditor.updateExistingField('LDR', testData.LDRValue);
+          QuickMarcEditor.verifyFieldsDropdownOptoin(testData.tagLDR, 'Type', INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tagLDR, 'Type', INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tagLDR, 'BLvl', INVENTORY_LDR_FIELD_BLVL_DROPDOWN.A);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tag008, 'DtSt', INVENTORY_008_FIELD_DTST_DROPDOWN.M);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tag008, 'Conf', INVENTORY_008_FIELD_CONF_DROPDOWN.ONE);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tag008, 'Fest', INVENTORY_008_FIELD_FEST_DROPDOWN.ONE);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tag008, 'Indx', INVENTORY_008_FIELD_INDX_DROPDOWN.ONE);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tag008, 'LitF', INVENTORY_008_FIELD_LITF_DROPDOWN.I);
           // #3 Fill in the required fields with valid data:
           QuickMarcEditor.updateExistingField('245', `$a ${getRandomPostfix()}`);
           // #4 Add two new "010" fields and fill in them as specified:
