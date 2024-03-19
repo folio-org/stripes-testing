@@ -84,6 +84,7 @@ const openintegrationDetailsSectionButton = Button({
 const listIntegrationConfigs = MultiColumnList({
   id: 'list-integration-configs',
 });
+const donorCheckbox = Checkbox('Donor');
 
 export default {
   waitLoading: () => {
@@ -105,6 +106,19 @@ export default {
       organizationCodeField.fillIn(organization.code),
       saveAndClose.click(),
     ]);
+  },
+
+  createDonorOrganizationViaUi: (organization) => {
+    cy.expect(buttonNew.exists());
+    cy.do([
+      buttonNew.click(),
+      organizationStatus.choose(organization.status),
+      organizationNameField.fillIn(organization.name),
+      organizationCodeField.fillIn(organization.code),
+      donorCheckbox.click(),
+    ]);
+    cy.expect(donorCheckbox.is({ disabled: false }));
+    cy.do(saveAndClose.click());
   },
 
   createOrganizationWithAU: (organization, AcquisitionUnit) => {
@@ -141,9 +155,23 @@ export default {
   selectActiveStatus: () => {
     cy.do(Checkbox('Active').click());
   },
-  selectInActiveStatus: () => {
-    cy.do(Checkbox('Inactive').click());
+
+  selectIsDonorFilter: (isDonor) => {
+    if (isDonor === 'Yes') {
+      cy.do([
+        Button({ id: 'accordion-toggle-button-isDonor' }).click(),
+        Section({ id: 'isDonor' }).find(Checkbox('Yes')).click(),
+        Button({ id: 'accordion-toggle-button-isDonor' }).click(),
+      ]);
+    } else if (isDonor === 'No') {
+      cy.do([
+        Button({ id: 'accordion-toggle-button-isDonor' }).click(),
+        Section({ id: 'isDonor' }).find(Checkbox('No')).click(),
+        Button({ id: 'accordion-toggle-button-isDonor' }).click(),
+      ]);
+    }
   },
+
   selectPendingStatus: () => {
     cy.do(Checkbox('Pending').click());
   },
@@ -311,6 +339,11 @@ export default {
   checkChangeDayOnTommorowInIntegation: (tomorrowDate) => {
     cy.expect(schedulingSection.find(KeyValue({ value: tomorrowDate })));
     cy.wait(4000);
+  },
+
+  checkIsDonor: (organization) => {
+    cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
+    cy.expect(summarySection.find(donorCheckbox).is({ visible: true, disabled: false }));
   },
 
   expectColorFromList: () => {
@@ -671,6 +704,11 @@ export default {
     OrganizationDetails.waitLoading();
 
     return OrganizationDetails;
+  },
+
+  organizationIsAbsent: (organizationName) => {
+    cy.wait(4000);
+    cy.expect(Pane({ id: 'organizations-results-pane' }).find(Link(organizationName)).absent());
   },
 
   checkTextofElement: () => {
