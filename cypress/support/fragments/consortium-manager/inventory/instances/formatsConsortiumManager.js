@@ -52,9 +52,7 @@ export default {
               body.publicationResults.find((publication) => publication.tenantId === tenantId)
                 .response,
             ).instanceFormats;
-            return formats.find(
-              (format) => format.name === name,
-            );
+            return formats.find((format) => format.name === name);
           });
         },
       );
