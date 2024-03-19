@@ -40,7 +40,6 @@ describe('Organizations', () => {
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Organizations.createDonorOrganizationViaUi(organization);
-      //   Organizations.checkIsDonor(organization);
       Organizations.closeDetailsPane();
       Organizations.selectIsDonorFilter('Yes');
       Organizations.selectOrganization(organization.name);

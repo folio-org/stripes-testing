@@ -85,6 +85,8 @@ const listIntegrationConfigs = MultiColumnList({
   id: 'list-integration-configs',
 });
 const donorCheckbox = Checkbox('Donor');
+const toggleButtonIsDonor = Button({ id: 'accordion-toggle-button-isDonor' });
+const donorSection = Section({ id: 'isDonor' });
 
 export default {
   waitLoading: () => {
@@ -159,15 +161,15 @@ export default {
   selectIsDonorFilter: (isDonor) => {
     if (isDonor === 'Yes') {
       cy.do([
-        Button({ id: 'accordion-toggle-button-isDonor' }).click(),
-        Section({ id: 'isDonor' }).find(Checkbox('Yes')).click(),
-        Button({ id: 'accordion-toggle-button-isDonor' }).click(),
+        toggleButtonIsDonor.click(),
+        donorSection.find(Checkbox('Yes')).click(),
+        toggleButtonIsDonor.click(),
       ]);
     } else if (isDonor === 'No') {
       cy.do([
-        Button({ id: 'accordion-toggle-button-isDonor' }).click(),
-        Section({ id: 'isDonor' }).find(Checkbox('No')).click(),
-        Button({ id: 'accordion-toggle-button-isDonor' }).click(),
+        toggleButtonIsDonor.click(),
+        donorSection.find(Checkbox('No')).click(),
+        toggleButtonIsDonor.click(),
       ]);
     }
   },
