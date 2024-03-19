@@ -157,7 +157,10 @@ describe('MARC', () => {
             testData.authority.searchOption,
             testData.authority.nonExactTitle,
           );
-          MarcAuthorityBrowse.checkHeadingReference(testData.authority.nonExactTitle);
+          MarcAuthorityBrowse.checkHeadingReference(
+            testData.authority.nonExactTitle,
+            testData.authority.title,
+          );
         },
       );
 
