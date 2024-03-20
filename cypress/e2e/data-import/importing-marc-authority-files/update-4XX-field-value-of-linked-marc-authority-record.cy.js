@@ -103,7 +103,7 @@ describe('data-import', () => {
         fileName: `C374187 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numOfRecords: 2,
-        propertyName: 'relatedInstanceInfo',
+        propertyName: 'instance',
       },
       {
         marc: 'marcAuthFileForC374187.mrc',
@@ -111,7 +111,7 @@ describe('data-import', () => {
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
         authorityHeading: 'C374187 Elizabeth II, Queen of Great Britain, 1926-',
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
       },
     ];
     const linkingTagAndValue = {
@@ -156,8 +156,8 @@ describe('data-import', () => {
           marcFile.fileName,
           marcFile.jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+          response.forEach((record) => {
+            testData.createdRecordIDs.push(record[marcFile.propertyName].id);
           });
         });
       });

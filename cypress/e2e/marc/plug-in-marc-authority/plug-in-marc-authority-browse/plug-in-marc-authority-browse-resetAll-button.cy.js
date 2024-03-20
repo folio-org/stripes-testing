@@ -40,8 +40,8 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                createdAuthorityID = record.relatedInstanceInfo.idList[0];
+              response.forEach((record) => {
+                createdAuthorityID = record.instance.id;
               });
             });
             cy.login(user.userProperties.username, user.userProperties.password, {

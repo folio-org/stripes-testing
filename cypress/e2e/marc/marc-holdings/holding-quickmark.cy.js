@@ -23,7 +23,7 @@ describe('MARC', () => {
     const testData = {};
     const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const propertyName = 'relatedInstanceInfo';
+    const propertyName = 'instance';
     let instanceID;
 
     before(() => {
@@ -38,8 +38,8 @@ describe('MARC', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
           (response) => {
-            response.entries.forEach((record) => {
-              instanceID = record[propertyName].idList[0];
+            response.forEach((record) => {
+              instanceID = record[propertyName].id;
             });
           },
         );

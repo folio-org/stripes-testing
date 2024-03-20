@@ -32,7 +32,7 @@ describe('MARC', () => {
         marc: 'marcBibFileForC350697.mrc',
         fileName: `testMarcFileC350697.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-        propertyName: 'relatedInstanceInfo',
+        propertyName: 'instance',
       };
       let instanceId;
 
@@ -49,8 +49,8 @@ describe('MARC', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              instanceId = record[marcFile.propertyName].idList[0];
+            response.forEach((record) => {
+              instanceId = record[marcFile.propertyName].id;
             });
           });
 

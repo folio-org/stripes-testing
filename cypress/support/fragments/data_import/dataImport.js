@@ -373,7 +373,7 @@ function uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName) 
             id: entry.relatedItemInfo.length === 0 ? '' : entry.relatedItemInfo.idList[0],
             hrid: entry.relatedItemInfo.length === 0 ? '' : entry.relatedItemInfo.hridList[0],
           },
-          authorityInfo: {
+          authority: {
             id: entry.relatedAuthorityInfo.length === 0 ? '' : entry.relatedAuthorityInfo.idList[0],
             hrid:
               entry.relatedAuthorityInfo.length === 0 ? '' : entry.relatedAuthorityInfo.hridList[0],
@@ -483,7 +483,7 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                                   ? ''
                                   : recordResponse.body.relatedItemInfo.hridList[0],
                             },
-                            authorityInfo: {
+                            authority: {
                               id:
                                 recordResponse.body.relatedAuthorityInfo.length === 0
                                   ? ''
@@ -636,64 +636,13 @@ export default {
     });
   },
 
-  uploadFileViaApi1: (filePathName, fileName, profileName) => {
+  uploadFileViaApi: (filePathName, fileName, profileName) => {
     return checkSplitStatus().then((resp) => {
       if (resp.body.splitStatus === false) {
         uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName);
       } else {
         uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName);
       }
-    });
-  },
-
-  // TODO delete after moving all tests to uploadFileViaApi1 function
-  uploadFileViaApi: (filePathName, fileName, profileName) => {
-    const uiKeyValue = fileName;
-
-    return uploadDefinitions(uiKeyValue, fileName).then((response) => {
-      const uploadDefinitionId = response.body.fileDefinitions[0].uploadDefinitionId;
-      const fileId = response.body.fileDefinitions[0].id;
-      const jobExecutionId = response.body.fileDefinitions[0].jobExecutionId;
-
-      uploadBinaryMarcFile(filePathName, uploadDefinitionId, fileId);
-      // need to wait until file will be converted and uploaded
-      cy.wait(1500);
-      uploadDefinitionWithId(uploadDefinitionId).then((res) => {
-        const sourcePath = res.body.fileDefinitions[0].sourcePath;
-        const metaJobExecutionId = res.body.metaJobExecutionId;
-        const date = res.body.createDate;
-
-        SettingsJobProfile.getJobProfilesViaApi({ query: `name="${profileName}"` }).then(
-          ({ jobProfiles }) => {
-            processFile(
-              uploadDefinitionId,
-              fileId,
-              sourcePath,
-              jobExecutionId,
-              uiKeyValue,
-              jobProfiles[0].id,
-              metaJobExecutionId,
-              date,
-            );
-          },
-        );
-
-        recurse(
-          () => getJodStatus(jobExecutionId),
-          (resp) => resp.body.status === 'COMMITTED' && resp.body.uiStatus === 'RUNNING_COMPLETE',
-          {
-            limit: 16,
-            timeout: 80000,
-            delay: 5000,
-          },
-        );
-
-        getCreatedRecordInfo(jobExecutionId).then((resp) => {
-          // we can get relatedInstanceInfo and in it get idList or hridList
-          const recordInfo = resp.body;
-          return recordInfo;
-        });
-      });
     });
   },
 

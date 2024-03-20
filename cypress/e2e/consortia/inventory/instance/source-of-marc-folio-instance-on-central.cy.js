@@ -9,8 +9,7 @@ import InstanceRecordView from '../../../../support/fragments/inventory/instance
 import { tenantNames } from '../../../../support/dictionary/affiliations';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -18,7 +17,6 @@ describe('Inventory', () => {
     const C402762testData = {
       filePath: 'oneMarcBib.mrc',
       marcFileName: `C402762 autotestFileName${getRandomPostfix()}`,
-      instanceIds: [],
       instanceSource: 'MARC',
     };
     const C402763testData = {
@@ -27,27 +25,24 @@ describe('Inventory', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui])
-        .then((userProperties) => {
+      DataImport.uploadFileViaApi(
+        C402762testData.filePath,
+        C402762testData.marcFileName,
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      ).then((response) => {
+        C402762testData.instanceId = response[0].instance.id;
+      });
+      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+        C402763testData.instance = instanceData;
+      });
+
+      cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
+        (userProperties) => {
           user = userProperties;
-        })
-        .then(() => {
-          cy.loginAsAdmin({
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          });
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-          DataImport.uploadFileViaApi(C402762testData.filePath, C402762testData.marcFileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(C402762testData.marcFileName);
-          Logs.getCreatedItemsID().then((link) => {
-            C402762testData.instanceIds.push(link.split('/')[5]);
-          });
-          InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-            C402763testData.instance = instanceData;
-          });
+
           cy.resetTenant();
-        });
+        },
+      );
     });
 
     beforeEach('Login', () => {
@@ -62,7 +57,7 @@ describe('Inventory', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      InventoryInstance.deleteInstanceViaApi(C402762testData.instanceIds[0]);
+      InventoryInstance.deleteInstanceViaApi(C402762testData.instanceId);
       InventoryInstance.deleteInstanceViaApi(C402763testData.instance.instanceId);
     });
 
@@ -72,7 +67,7 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.verifySearchAndFilterPane();
         InventorySearchAndFilter.bySource(C402762testData.instanceSource);
-        InventorySearchAndFilter.searchInstanceByTitle(C402762testData.instanceIds[0]);
+        InventorySearchAndFilter.searchInstanceByTitle(C402762testData.instanceId);
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InstanceRecordView.verifyInstanceSource(C402762testData.instanceSource);
         InstanceRecordView.verifyEditInstanceButtonIsEnabled();

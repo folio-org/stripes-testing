@@ -33,8 +33,8 @@ describe('MARC', () => {
           marcFile.fileName,
           marcFile.jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            createdRecordIDs.push(record.relatedAuthorityInfo.idList[0]);
+          response.forEach((record) => {
+            createdRecordIDs.push(record.authority.id);
           });
         });
       });
