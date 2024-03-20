@@ -8,8 +8,7 @@ import InstanceRecordView from '../../../../support/fragments/inventory/instance
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -21,7 +20,6 @@ describe('Inventory', () => {
     const testData = {
       filePath: 'oneMarcBib.mrc',
       marcFileName: `C409516 autotestFileName ${getRandomPostfix()}`,
-      instanceIds: [],
       instanceSource: 'MARC',
     };
 
@@ -31,40 +29,33 @@ describe('Inventory', () => {
         testData.consortiaId = consortiaId;
 
         cy.setTenant(Affiliations.College);
-        DataImport.uploadFileViaApi(testData.filePath, testData.marcFileName);
-        cy.loginAsAdmin({
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(testData.marcFileName);
-        Logs.getCreatedItemsID()
-          .then((link) => {
-            testData.instanceIds.push(link.split('/')[5]);
-          })
-          .then(() => {
-            InventoryInstance.shareInstanceViaApi(
-              testData.instanceIds[0],
-              testData.consortiaId,
-              Affiliations.College,
-              Affiliations.Consortia,
-            );
-            // adding Holdings for shared Instance
-            const collegeLocationData = Locations.getDefaultLocation({
-              servicePointId: ServicePoints.getDefaultServicePoint().id,
-            }).location;
-            Locations.createViaApi(collegeLocationData).then((location) => {
-              testData.collegeLocation = location;
-              InventoryHoldings.createHoldingRecordViaApi({
-                instanceId: testData.instanceIds[0],
-                permanentLocationId: testData.collegeLocation.id,
-              }).then((holding) => {
-                testData.holding = holding;
-              });
+        DataImport.uploadFileViaApi(
+          testData.filePath,
+          testData.marcFileName,
+          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        ).then((response) => {
+          testData.instanceId = response[0].instance.id;
+
+          InventoryInstance.shareInstanceViaApi(
+            testData.instanceId,
+            testData.consortiaId,
+            Affiliations.College,
+            Affiliations.Consortia,
+          );
+          // adding Holdings for shared Instance
+          const collegeLocationData = Locations.getDefaultLocation({
+            servicePointId: ServicePoints.getDefaultServicePoint().id,
+          }).location;
+          Locations.createViaApi(collegeLocationData).then((location) => {
+            testData.collegeLocation = location;
+            InventoryHoldings.createHoldingRecordViaApi({
+              instanceId: testData.instanceId,
+              permanentLocationId: testData.collegeLocation.id,
+            }).then((holding) => {
+              testData.holding = holding;
             });
           });
+        });
         cy.resetTenant();
       });
 
@@ -96,14 +87,14 @@ describe('Inventory', () => {
       cy.setTenant(Affiliations.College);
       InventoryHoldings.deleteHoldingRecordViaApi(testData.holding.id);
       Locations.deleteViaApi(testData.collegeLocation);
-      InventoryInstance.deleteInstanceViaApi(testData.instanceIds[0]);
+      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
     });
 
     it(
       'C409516 (CONSORTIA) Verify the behavior of "View holdings" option on member tenant shared Instance (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet'] },
       () => {
-        InventoryInstances.searchByTitle(testData.instanceIds[0]);
+        InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InstanceRecordView.verifyInstanceSource('MARC');
         InstanceRecordView.openHoldingView();

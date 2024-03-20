@@ -46,13 +46,13 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       marc: 'marcBibFileForC365599.mrc',
       fileName: `testMarcFileC365599.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-      propertyName: 'relatedInstanceInfo',
+      propertyName: 'instance',
     },
     {
       marc: 'marcAuthFileForC365599.mrc',
       fileName: `testMarcFileC365599.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
-      propertyName: 'relatedAuthorityInfo',
+      propertyName: 'authority',
     },
   ];
 
@@ -86,8 +86,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
         });

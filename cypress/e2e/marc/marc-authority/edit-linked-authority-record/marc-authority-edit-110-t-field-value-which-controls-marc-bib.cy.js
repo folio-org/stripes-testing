@@ -35,13 +35,13 @@ describe('MARC', () => {
           marc: 'marcBibFileC374140.mrc',
           fileName: `C374140 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-          propertyName: 'relatedInstanceInfo',
+          propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileC374140.mrc',
           fileName: `C374140 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
           authorityHeading:
             'C374140 Egypt. C374140 Treaties, etc. 1978 September 17 (Framework for Peace in the Middle East)',
         },
@@ -60,8 +60,8 @@ describe('MARC', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
         });

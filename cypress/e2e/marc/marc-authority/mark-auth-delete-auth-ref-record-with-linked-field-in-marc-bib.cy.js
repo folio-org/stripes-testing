@@ -60,19 +60,19 @@ describe('MARC', () => {
         fileName: `testMarcFileC374148.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         instanceTitle: 'Crossfire : a litany for survival.',
-        propertyName: 'relatedInstanceInfo',
+        propertyName: 'instance',
       },
       {
         marc: 'marcAuthFileForC374148_01.mrc',
         fileName: `testMarcFileC374148.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
       },
       {
         marc: 'marcAuthFileForC374148_02.mrc',
         fileName: `testMarcFileC374148.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
         authorutyTitle: 'Poetry',
       },
     ];
@@ -110,8 +110,8 @@ describe('MARC', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
         });
