@@ -15,7 +15,7 @@ describe('data-export', () => {
     const user = {};
     const downloadedFile = 'C_353209.csv';
     const jobProfileToRun = 'Default - Create SRS MARC Authority';
-    const propertyName = 'relatedAuthorityInfo';
+    const propertyName = 'authority';
     const marcFile = {
       marc: 'Genre_1_record_C353209.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
@@ -24,21 +24,22 @@ describe('data-export', () => {
     let createdRecordIDs;
 
     before(() => {
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
+        (response) => {
+          response.forEach((record) => {
+            createdRecordIDs = record[propertyName].id;
+          });
+        },
+      );
+
       cy.createTempUser([
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
         Permissions.dataExportEnableModule.gui,
       ]).then((createdUserProperties) => {
         user.userProperties = createdUserProperties;
-      });
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
-          (response) => {
-            response.entries.forEach((record) => {
-              createdRecordIDs = record[propertyName].idList[0];
-            });
-          },
-        );
+
         cy.login(user.userProperties.username, user.userProperties.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,

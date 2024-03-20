@@ -412,3 +412,9 @@ export const ACTION_NAMES_IN_ACTION_PROFILE = {
   MODIFY: 'Modify (MARC Bibliographic record type only)',
   UPDATE: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
 };
+
+export const DEFAULT_JOB_PROFILE_NAMES = {
+  CREATE_INSTANCE_AND_SRS: 'Default - Create instance and SRS MARC Bib',
+  CREATE_AUTHORITY: 'Default - Create SRS MARC Authority',
+  CREATE_HOLDINGS_AND_SRS: 'Default - Create Holdings and SRS MARC Holdings',
+};

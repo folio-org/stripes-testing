@@ -98,7 +98,7 @@ describe('data-import', () => {
         marc: 'marcBibFileForC374182.mrc',
         fileName: `C374182 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-        propertyName: 'relatedInstanceInfo',
+        propertyName: 'instance',
         numOfRecords: 1,
       },
       {
@@ -106,7 +106,7 @@ describe('data-import', () => {
         fileName: `C374182 testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
         authorityHeading: 'C374182 Roberts, Julia,',
       },
     ];
@@ -146,8 +146,8 @@ describe('data-import', () => {
           marcFile.fileName,
           marcFile.jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+          response.forEach((record) => {
+            testData.createdRecordIDs.push(record[marcFile.propertyName].id);
           });
         });
       });

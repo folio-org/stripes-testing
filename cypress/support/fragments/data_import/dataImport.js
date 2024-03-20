@@ -373,7 +373,7 @@ function uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName) 
             id: entry.relatedItemInfo.length === 0 ? '' : entry.relatedItemInfo.idList[0],
             hrid: entry.relatedItemInfo.length === 0 ? '' : entry.relatedItemInfo.hridList[0],
           },
-          authorityInfo: {
+          authority: {
             id: entry.relatedAuthorityInfo.length === 0 ? '' : entry.relatedAuthorityInfo.idList[0],
             hrid:
               entry.relatedAuthorityInfo.length === 0 ? '' : entry.relatedAuthorityInfo.hridList[0],
@@ -483,7 +483,7 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                                   ? ''
                                   : recordResponse.body.relatedItemInfo.hridList[0],
                             },
-                            authorityInfo: {
+                            authority: {
                               id:
                                 recordResponse.body.relatedAuthorityInfo.length === 0
                                   ? ''

@@ -65,8 +65,8 @@ describe('MARC', () => {
         cy.getAdminToken();
         DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
           (response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityID.push(record.relatedAuthorityInfo.idList[0]);
+            response.forEach((record) => {
+              createdAuthorityID.push(record.authority.id);
             });
           },
         );

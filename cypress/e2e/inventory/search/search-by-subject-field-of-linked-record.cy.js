@@ -59,14 +59,14 @@ const testData = {
       fileName: `testMarcFileC375259.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numberOfRecords: 7,
-      propertyName: 'relatedInstanceInfo',
+      propertyName: 'instance',
     },
     {
       marc: 'marcAuthC375259.mrc',
       fileName: `testMarcFileAuth100C375259.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numberOfRecords: 7,
-      propertyName: 'relatedAuthorityInfo',
+      propertyName: 'authority',
     },
   ],
 };
@@ -104,8 +104,8 @@ describe('inventory', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              testData.recordIDs.push(record[marcFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              testData.recordIDs.push(record[marcFile.propertyName].id);
             });
           });
         });

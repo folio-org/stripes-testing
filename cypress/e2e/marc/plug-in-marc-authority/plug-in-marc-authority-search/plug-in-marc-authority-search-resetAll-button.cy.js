@@ -41,7 +41,7 @@ describe('MARC', () => {
               marcFile.jobProfileToRun,
             ).then((response) => {
               response.entries.forEach((record) => {
-                createdAuthorityID = record.relatedInstanceInfo.idList[0];
+                createdAuthorityID = record.instance.id;
               });
             });
             cy.login(user.userProperties.username, user.userProperties.password, {
