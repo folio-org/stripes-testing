@@ -43,7 +43,7 @@ describe('MARC', () => {
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numOfRecords: 1,
             contributorName: 'C366581 Chin, Staceyann, 1972-',
-            propertyName: 'relatedInstanceInfo',
+            propertyName: 'instance',
           },
           {
             marc: 'marcAuthFileForC366581.mrc',
@@ -51,7 +51,7 @@ describe('MARC', () => {
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 2,
             contributorName: 'C366581 Woodson, Jacqueline',
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
           },
         ];
         const linkingTagAndValues = [
@@ -87,8 +87,8 @@ describe('MARC', () => {
                 marcFile.fileName,
                 marcFile.jobProfileToRun,
               ).then((response) => {
-                response.entries.forEach((record) => {
-                  testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+                response.forEach((record) => {
+                  testData.createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
               });
             });

@@ -15,7 +15,7 @@ describe('MARC', () => {
         marcBibFilePath: 'Pretty_Woman_movie.mrc',
         marcBibFileName: `testMarcFileC380646.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-        propertyName: 'relatedInstanceInfo',
+        propertyName: 'instance',
       };
       let createdRecordIDs;
 
@@ -37,8 +37,8 @@ describe('MARC', () => {
               testData.marcBibFileName,
               testData.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                createdRecordIDs = record[testData.propertyName].idList[0];
+              response.forEach((record) => {
+                createdRecordIDs = record[testData.propertyName].id;
               });
             });
           });

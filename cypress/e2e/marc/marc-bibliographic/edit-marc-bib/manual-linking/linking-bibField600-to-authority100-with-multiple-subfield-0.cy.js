@@ -42,14 +42,14 @@ describe('MARC', () => {
             marc: 'marcBibFileForC380753.mrc',
             fileName: `testMarcFileC380753${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-            propertyName: 'relatedInstanceInfo',
+            propertyName: 'instance',
           },
           {
             marc: 'marcAuthFileForC380753.mrc',
             fileName: `testMarcFile380753${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             authorityHeading: 'C380753 Black Panther (Fictitious character) Wakanda Forever',
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
           },
         ];
 
@@ -90,8 +90,8 @@ describe('MARC', () => {
                 marcFile.fileName,
                 marcFile.jobProfileToRun,
               ).then((response) => {
-                response.entries.forEach((record) => {
-                  createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
               });
             });
