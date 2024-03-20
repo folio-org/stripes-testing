@@ -119,7 +119,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const tagsC375120 = ['110', '111', '130', '150', '151'];
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
@@ -211,7 +211,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
 
@@ -291,7 +291,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const newFieldsArr = [
         ['245', '1', '\\', '$a Added row (must indicate)'],
         ['260', '1', '1', '$b Added row (not indicate)'],
@@ -408,7 +408,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const initialLDRValue = String.raw`03891cz\\a2200505n\\4500`;
       const changesSavedCallout =
         'This record has successfully saved and is in process. Changes may not appear immediately.';
@@ -551,7 +551,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const createdAuthorityID = [];
 
       before('create test data', () => {
@@ -702,7 +702,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
 
@@ -793,7 +793,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
 
@@ -882,7 +882,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const tags = ['381', '382', '379', ''];
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
@@ -1009,7 +1009,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
 
