@@ -490,7 +490,7 @@ export const INVENTORY_008_FIELD_LITF_DROPDOWN = {
   P: 'p - Poetry',
   S: 's - Speeches',
   U: 'u - Unknown',
-}
+};
 
 export const DEFAULT_JOB_PROFILE_NAMES = {
   CREATE_INSTANCE_AND_SRS: 'Default - Create instance and SRS MARC Bib',

@@ -31,7 +31,7 @@ import {
   INVENTORY_008_FIELD_FEST_DROPDOWN,
   INVENTORY_008_FIELD_INDX_DROPDOWN,
   INVENTORY_008_FIELD_LITF_DROPDOWN,
-} from '../../support/constants';
+} from '../constants';
 
 const holdingsRecordViewSection = Section({ id: 'ui-inventory.holdingsRecordView' });
 const actionsButton = Button('Actions');
@@ -304,7 +304,6 @@ defaultFieldValues.getSourceContent = (contentInQuickMarcEditor) => contentInQui
 const requiredRowsTags = ['LDR', '001', '005', '008', '999'];
 const readOnlyAuthorityTags = ['LDR', '001', '005', '999'];
 const readOnlyHoldingsTags = ['001', '004', '005', '999'];
-const expectedFields = ['LDR', '001', '008', '005', '245', '999'];
 
 const getRowInteractorByRowNumber = (specialRowNumber) => QuickMarcEditor().find(QuickMarcEditorRow({ index: specialRowNumber }));
 const getRowInteractorByTagName = (tagName) => QuickMarcEditor().find(QuickMarcEditorRow({ tagValue: tagName }));
@@ -1213,8 +1212,8 @@ export default {
   verifyLDRPositionsDefaultValues(fieldName, fieldvalue, isDisabled = true) {
     cy.expect(
       QuickMarcEditorRow({ index: 0 })
-      .find(TextField({ name: fieldName }))
-      .has({ disabled: isDisabled, value: fieldvalue })
+        .find(TextField({ name: fieldName }))
+        .has({ disabled: isDisabled, value: fieldvalue })
     );
   },
 
