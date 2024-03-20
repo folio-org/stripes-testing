@@ -9,7 +9,7 @@ let agreement;
 let agreementId;
 const user = {
   active: true,
-  username: `firstUserName ${randomFourDigitNumber()}`,
+  username: `firstusername ${randomFourDigitNumber()}`,
   personal: {
     preferredContactTypeId: '002',
     firstName: 'firstUserFirstName',

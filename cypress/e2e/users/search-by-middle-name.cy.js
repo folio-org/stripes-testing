@@ -16,7 +16,7 @@ describe('Users', () => {
   };
   let userData = {
     password: getTestEntityValue('Password'),
-    username: getTestEntityValue('cypressTestUser'),
+    username: getTestEntityValue('cypresstestuser'),
   };
   const testData = {};
 

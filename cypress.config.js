@@ -34,6 +34,7 @@ module.exports = defineConfig({
     ecsEnabled: false,
     eureka: true,
     runAsAdmin: true,
+    systemRoleName: 'System admin role',
   },
   e2e: {
     async setupNodeEvents(on, config) {
