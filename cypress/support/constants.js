@@ -413,7 +413,7 @@ export const ACTION_NAMES_IN_ACTION_PROFILE = {
   UPDATE: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
 };
 
-export const INVENTORY_LDR_FIELD_STATUS_DROPDOWN = {
+export const AUTHORITY_LDR_FIELD_STATUS_DROPDOWN = {
   A: 'a - Increase in encoding level',
   C: 'c - Corrected or revised',
   D: 'd - Deleted',
