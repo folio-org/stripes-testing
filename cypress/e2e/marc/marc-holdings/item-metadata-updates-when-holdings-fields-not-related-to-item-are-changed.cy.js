@@ -1,9 +1,8 @@
 import uuid from 'uuid';
-import { JOB_STATUS_NAMES, LOCATION_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -56,20 +55,18 @@ describe('MARC', () => {
         marcFiles[0].marc,
         marcFiles[0].fileName,
         marcFiles[0].jobProfileToRun,
-      );
-      JobProfiles.waitFileIsImported(marcFiles[0].fileName);
-      Logs.openFileDetails(marcFiles[0].fileName);
-      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-        testData.instanceHrid = initialInstanceHrId;
+      ).then((response) => {
+        response.forEach((record) => {
+          testData.instanceHrid = record[0].instance.hrid;
 
-        // edit marc file adding instance hrid
-        DataImport.editMarcFile(
-          marcFiles[1].marc,
-          marcFiles[1].editedFileName,
-          ['in00000000037'],
-          [initialInstanceHrId],
-        );
+          // edit marc file adding instance hrid
+          DataImport.editMarcFile(
+            marcFiles[1].marc,
+            marcFiles[1].editedFileName,
+            ['in00000000037'],
+            [testData.instanceHrid],
+          );
+        });
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(marcFiles[1].editedFileName, marcFiles[1].fileName);

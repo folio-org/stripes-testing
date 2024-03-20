@@ -32,14 +32,14 @@ describe('MARC', () => {
             marc: 'marcBibFileForC365595.mrc',
             fileName: `C365595 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-            propertyName: 'relatedInstanceInfo',
+            propertyName: 'instance',
           },
           marcAuthFile: {
             marc: 'marcAuthFileForC365595.mrc',
             fileName: `C365595 testMarcFile${getRandomPostfix()}.mrc`,
             editedFileName: `C365595 marcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
           },
           tag010: '010',
           tag010content: `${randomCode}91065740`,
@@ -88,8 +88,8 @@ describe('MARC', () => {
             testData.marcBibFile.fileName,
             testData.marcBibFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              testData.createdRecordIDs.push(record[testData.marcBibFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              testData.createdRecordIDs.push(record[testData.marcBibFile.propertyName].id);
             });
           });
 
@@ -137,10 +137,8 @@ describe('MARC', () => {
               testData.marcAuthFile.fileName,
               testData.marcAuthFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                testData.createdRecordIDs.push(
-                  record[testData.marcAuthFile.propertyName].idList[0],
-                );
+              response.forEach((record) => {
+                testData.createdRecordIDs.push(record[testData.marcAuthFile.propertyName].id);
               });
             });
 

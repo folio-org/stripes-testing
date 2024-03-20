@@ -520,3 +520,9 @@ export const INVENTORY_008_FIELD_LITF_DROPDOWN = {
   S: 's - Speeches',
   U: 'u - Unknown',
 };
+
+export const DEFAULT_JOB_PROFILE_NAMES = {
+  CREATE_INSTANCE_AND_SRS: 'Default - Create instance and SRS MARC Bib',
+  CREATE_AUTHORITY: 'Default - Create SRS MARC Authority',
+  CREATE_HOLDINGS_AND_SRS: 'Default - Create Holdings and SRS MARC Holdings',
+};

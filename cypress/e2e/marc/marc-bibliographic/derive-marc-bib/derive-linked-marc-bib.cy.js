@@ -27,7 +27,7 @@ describe('MARC', () => {
           marc: 'marcBibFileC375994.mrc',
           fileName: `testMarcFileC375994.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-          propertyName: 'relatedInstanceInfo',
+          propertyName: 'instance',
           instanceTitle:
             'C375994 Abraham Lincoln, by Lillian Hertz. Prize essay in Alexander Hamilton junior high school P.S. 186, June 24, 1927.',
         },
@@ -37,7 +37,7 @@ describe('MARC', () => {
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           authorityHeading: 'C375994 Robinson, Peter, 1950-2022 Alt. title',
           authority001FieldValue: '30520443759941',
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
         {
           marc: 'marcAuthFileC375994_2.mrc',
@@ -45,7 +45,7 @@ describe('MARC', () => {
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           authorityHeading: 'C375994 Speaking Oratory debating',
           authority010FieldValue: 'sh850952993759942',
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
       ];
 
@@ -67,8 +67,8 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              response.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].id);
               });
             });
           });

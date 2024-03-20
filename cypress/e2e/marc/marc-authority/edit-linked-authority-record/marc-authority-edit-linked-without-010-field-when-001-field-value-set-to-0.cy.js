@@ -33,7 +33,7 @@ describe('MARC', () => {
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
           instanceTitle: 'Variations / C375139Ludwig Van Beethoven.',
           numOfRecords: 1,
-          propertyName: 'relatedInstanceInfo',
+          propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileForC375139.mrc',
@@ -41,7 +41,7 @@ describe('MARC', () => {
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           authorityHeading: 'C375139 Beethoven, Ludwig van (no 010)',
           numOfRecords: 1,
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
       ];
 
@@ -63,8 +63,8 @@ describe('MARC', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
         });

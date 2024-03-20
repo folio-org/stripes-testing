@@ -99,8 +99,8 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                testData.authorityIDs.push(record.relatedAuthorityInfo.idList[0]);
+              response.forEach((record) => {
+                testData.authorityIDs.push(record.authority.id);
               });
             });
           });

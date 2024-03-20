@@ -1,9 +1,8 @@
 import uuid from 'uuid';
-import { JOB_STATUS_NAMES, LOCATION_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -57,45 +56,42 @@ describe('MARC', () => {
         cy.getMaterialTypes({ limit: 1 }).then((res) => {
           testData.materialTypeId = res.id;
         });
+        // upload a marc file for creating new instance
+        DataImport.uploadFileViaApi(
+          marcFiles[0].marc,
+          marcFiles[0].fileName,
+          marcFiles[0].jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            testData.instanceHrid = record[0].instance.hrid;
+
+            // edit marc file adding instance hrid
+            DataImport.editMarcFile(
+              marcFiles[1].marc,
+              marcFiles[1].editedFileName,
+              ['in00000000037'],
+              [testData.instanceHrid],
+            );
+          });
+        });
       });
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      DataImport.uploadFileViaApi(
-        marcFiles[0].marc,
-        marcFiles[0].fileName,
-        marcFiles[0].jobProfileToRun,
-      );
-      // upload a marc file for creating new instance
-      JobProfiles.waitFileIsImported(marcFiles[0].fileName);
-      Logs.openFileDetails(marcFiles[0].fileName);
-      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-        testData.instanceHrid = initialInstanceHrId;
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(marcFiles[1].editedFileName, marcFiles[1].fileName);
+      JobProfiles.waitLoadingList();
+      JobProfiles.search(marcFiles[1].jobProfileToRun);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(marcFiles[1].fileName);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(marcFiles[1].fileName);
+      Logs.getCreatedItemsID().then((link) => {
+        testData.createdRecordIDs.push(link.split('/')[5]);
 
-        // edit marc file adding instance hrid
-        DataImport.editMarcFile(
-          marcFiles[1].marc,
-          marcFiles[1].editedFileName,
-          ['in00000000037'],
-          [initialInstanceHrId],
-        );
-        cy.visit(TopMenu.dataImportPath);
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(marcFiles[1].editedFileName, marcFiles[1].fileName);
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(marcFiles[1].jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFiles[1].fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFiles[1].fileName);
-        Logs.getCreatedItemsID().then((link) => {
-          testData.createdRecordIDs.push(link.split('/')[5]);
-
-          cy.getHoldings({
-            limit: 1,
-            query: `"instanceId"="${testData.createdRecordIDs[0]}"`,
-          }).then((holdings) => {
-            testData.holdingsId = holdings[0].id;
-          });
+        cy.getHoldings({
+          limit: 1,
+          query: `"instanceId"="${testData.createdRecordIDs[0]}"`,
+        }).then((holdings) => {
+          testData.holdingsId = holdings[0].id;
         });
       });
       cy.logout();

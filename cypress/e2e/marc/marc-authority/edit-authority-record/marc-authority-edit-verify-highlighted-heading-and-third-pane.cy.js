@@ -89,8 +89,8 @@ describe('MARC', () => {
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
             (response) => {
-              response.entries.forEach((record) => {
-                createdAuthorityIDs.push(record.relatedAuthorityInfo.idList[0]);
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record.authority.id);
               });
             },
           );

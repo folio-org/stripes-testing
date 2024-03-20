@@ -28,7 +28,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
 
@@ -50,8 +50,8 @@ describe('MARC', () => {
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
                 (response) => {
-                  response.entries.forEach((record) => {
-                    createdAuthorityID.push(record[propertyName].idList[0]);
+                  response.forEach((record) => {
+                    createdAuthorityID.push(record[propertyName].id);
                   });
                 },
               );
@@ -145,8 +145,8 @@ describe('MARC', () => {
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
                 (response) => {
-                  response.entries.forEach((record) => {
-                    createdAuthorityID.push(record[propertyName].idList[0]);
+                  response.forEach((record) => {
+                    createdAuthorityID.push(record[propertyName].id);
                   });
                 },
               );
@@ -236,8 +236,8 @@ describe('MARC', () => {
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
                 (response) => {
-                  response.entries.forEach((record) => {
-                    createdAuthorityID.push(record[propertyName].idList[0]);
+                  response.forEach((record) => {
+                    createdAuthorityID.push(record[propertyName].id);
                   });
                 },
               );
@@ -332,8 +332,8 @@ describe('MARC', () => {
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
                 (response) => {
-                  response.entries.forEach((record) => {
-                    createdAuthorityID.push(record[propertyName].idList[0]);
+                  response.forEach((record) => {
+                    createdAuthorityID.push(record[propertyName].id);
                   });
                 },
               );
@@ -488,8 +488,8 @@ describe('MARC', () => {
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
                 (response) => {
-                  response.entries.forEach((record) => {
-                    createdAuthorityID.push(record[propertyName].idList[0]);
+                  response.forEach((record) => {
+                    createdAuthorityID.push(record[propertyName].id);
                   });
                 },
               );
@@ -575,8 +575,8 @@ describe('MARC', () => {
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
                 (response) => {
-                  response.entries.forEach((record) => {
-                    createdAuthorityID.push(record[propertyName].idList[0]);
+                  response.forEach((record) => {
+                    createdAuthorityID.push(record[propertyName].id);
                   });
                 },
               );
@@ -727,8 +727,8 @@ describe('MARC', () => {
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
                 (response) => {
-                  response.entries.forEach((record) => {
-                    createdAuthorityID.push(record[propertyName].idList[0]);
+                  response.forEach((record) => {
+                    createdAuthorityID.push(record[propertyName].id);
                   });
                 },
               );
@@ -818,8 +818,8 @@ describe('MARC', () => {
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
                 (response) => {
-                  response.entries.forEach((record) => {
-                    createdAuthorityID.push(record[propertyName].idList[0]);
+                  response.forEach((record) => {
+                    createdAuthorityID.push(record[propertyName].id);
                   });
                 },
               );
@@ -908,8 +908,8 @@ describe('MARC', () => {
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
                 (response) => {
-                  response.entries.forEach((record) => {
-                    createdAuthorityID.push(record[propertyName].idList[0]);
+                  response.forEach((record) => {
+                    createdAuthorityID.push(record[propertyName].id);
                   });
                 },
               );
@@ -1034,8 +1034,8 @@ describe('MARC', () => {
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
                 (response) => {
-                  response.entries.forEach((record) => {
-                    createdAuthorityID.push(record[propertyName].idList[0]);
+                  response.forEach((record) => {
+                    createdAuthorityID.push(record[propertyName].id);
                   });
                 },
               );
