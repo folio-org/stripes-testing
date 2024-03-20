@@ -16,7 +16,7 @@ const testData = {
   marc: 'marcBibFileC387462.mrc',
   fileName: `testMarcFileC387462.${getRandomPostfix()}.mrc`,
   jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-  propertyName: 'relatedInstanceInfo',
+  propertyName: 'instance',
   instanceTitle: 'C387462The Journal of ecclesiastical history.',
   searchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
 };
@@ -53,8 +53,8 @@ describe('MARC', () => {
           testData.fileName,
           testData.jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            instanceId = record[testData.propertyName].idList[0];
+          response.forEach((record) => {
+            instanceId = record[testData.propertyName].id;
           });
         });
 

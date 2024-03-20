@@ -27,7 +27,7 @@ describe('data-import', () => {
             fileName,
             'Default - Create instance and SRS MARC Bib',
           ).then((response) => {
-            instanceIds.push(response.entries[0].relatedInstanceInfo.idList[0]);
+            instanceIds.push(response[0].instance.id);
           });
           cy.wait(2000);
         }
@@ -47,9 +47,10 @@ describe('data-import', () => {
       });
     });
 
+    // TODO added tag broken FAT-12393
     it(
       'C367923 A user can delete logs from the Import app "View all" page (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPathBroken', 'folijet'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();

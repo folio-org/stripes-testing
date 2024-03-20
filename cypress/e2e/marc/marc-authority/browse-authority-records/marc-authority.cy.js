@@ -45,7 +45,7 @@ describe('MARC', () => {
       };
       const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
       const updatedfileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       let createdAuthorityID;
 
       before('Creating data', () => {
@@ -70,8 +70,8 @@ describe('MARC', () => {
 
           DataImport.uploadFileViaApi('oneMarcAuthority.mrc', fileName, jobProfileToRun).then(
             (response) => {
-              response.entries.forEach((record) => {
-                createdAuthorityID = record[propertyName].idList[0];
+              response.forEach((record) => {
+                createdAuthorityID = record[propertyName].id;
               });
             },
           );
@@ -157,7 +157,10 @@ describe('MARC', () => {
             testData.authority.searchOption,
             testData.authority.nonExactTitle,
           );
-          MarcAuthorityBrowse.checkHeadingReference(testData.authority.nonExactTitle);
+          MarcAuthorityBrowse.checkHeadingReference(
+            testData.authority.nonExactTitle,
+            testData.authority.title,
+          );
         },
       );
 

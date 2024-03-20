@@ -46,14 +46,14 @@ describe('MARC', () => {
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 2,
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
       },
       {
         marc: 'marcFileForC365113.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 19,
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
       },
     ];
 
@@ -96,8 +96,8 @@ describe('MARC', () => {
           marcFiles[1].fileName,
           marcFiles[1].jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            createdAuthorityIDs.push(record[marcFiles[1].propertyName].idList[0]);
+          response.forEach((record) => {
+            createdAuthorityIDs.push(record[marcFiles[1].propertyName].id);
           });
         });
         cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -145,8 +145,8 @@ describe('MARC', () => {
           marcFiles[0].fileName,
           marcFiles[0].jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            createdAuthorityIDs.push(record[marcFiles[0].propertyName].idList[0]);
+          response.forEach((record) => {
+            createdAuthorityIDs.push(record[marcFiles[0].propertyName].id);
           });
         });
         cy.login(testData.userProperties.username, testData.userProperties.password, {

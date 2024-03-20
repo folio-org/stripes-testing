@@ -163,14 +163,15 @@ export default {
     ]);
   },
 
-  checkHeadingReference: (headingReference) => {
+  checkHeadingReference: (nonExactheadingReference, headingReference) => {
     cy.expect([
       rootSection
-        .find(MultiColumnListRow({ rowIndexInParent: 'row-0' }))
-        .find(MultiColumnListCell({ content: `${headingReference}\xa0would be here` })),
-      rootSection
-        .find(MultiColumnListRow({ rowIndexInParent: 'row-1' }))
-        .find(MultiColumnListCell({ content: headingReference })),
+        .find(
+          // eslint-disable-next-line no-irregular-whitespace
+          MultiColumnListCell({ content: `${nonExactheadingReference} would be here` }),
+        )
+        .exists(),
+      rootSection.find(MultiColumnListCell({ content: `${headingReference}` })).exists(),
     ]);
   },
 

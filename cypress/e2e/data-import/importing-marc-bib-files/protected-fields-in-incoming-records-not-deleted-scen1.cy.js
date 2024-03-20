@@ -16,6 +16,7 @@ describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let user = null;
     let instanceHrid;
+    let instanceid;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const protectedFieldData = {
       protectedField: '856',
@@ -35,10 +36,10 @@ describe('data-import', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi('marcFileForC358968.mrc', fileName, jobProfileToRun).then(
         (response) => {
-          instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+          instanceHrid = response[0].instance.hrid;
+          instanceid = response[0].instance.id;
         },
       );
-      Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -69,11 +70,7 @@ describe('data-import', () => {
           list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
         });
         Users.deleteViaApi(user.userId);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+        InventoryInstance.deleteInstanceViaApi(instanceid);
       });
     });
 
