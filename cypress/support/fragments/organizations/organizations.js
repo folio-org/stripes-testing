@@ -110,7 +110,7 @@ export default {
     ]);
   },
 
-  createDonorOrganizationViaUi: (organization) => {
+  createDonorOrganization: (organization) => {
     cy.expect(buttonNew.exists());
     cy.do([
       buttonNew.click(),
@@ -120,6 +120,20 @@ export default {
       donorCheckbox.click(),
     ]);
     cy.expect(donorCheckbox.is({ disabled: false }));
+    cy.do(saveAndClose.click());
+  },
+
+  addDonorToOrganization: () => {
+    cy.wait(4000);
+    cy.do(donorCheckbox.click());
+    cy.expect(donorCheckbox.is({ disabled: false }));
+    cy.do(saveAndClose.click());
+  },
+
+  removeDonorFromOrganization: () => {
+    cy.wait(4000);
+    cy.expect(donorCheckbox.is({ disabled: false }));
+    cy.do(donorCheckbox.click());
     cy.do(saveAndClose.click());
   },
 
