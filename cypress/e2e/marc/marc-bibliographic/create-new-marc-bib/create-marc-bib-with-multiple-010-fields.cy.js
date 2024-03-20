@@ -58,7 +58,6 @@ describe('MARC', () => {
           InventoryInstance.newMarcBibRecord();
 
           // #2 Replace blank values in LDR positions 06, 07 with valid values
-          QuickMarcEditor.verifyFieldsDropdownOptoin(testData.tagLDR, 'Type', INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A);
           QuickMarcEditor.selectFieldsDropdownOption(testData.tagLDR, 'Type', INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A);
           QuickMarcEditor.selectFieldsDropdownOption(testData.tagLDR, 'BLvl', INVENTORY_LDR_FIELD_BLVL_DROPDOWN.A);
           QuickMarcEditor.selectFieldsDropdownOption(testData.tag008, 'DtSt', INVENTORY_008_FIELD_DTST_DROPDOWN.M);

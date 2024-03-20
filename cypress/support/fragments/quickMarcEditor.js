@@ -1164,11 +1164,39 @@ export default {
   },
 
   selectFieldsDropdownOption(tag, dropdownLabel, option) {
-    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(Select({ label: dropdownLabel })).choose(option));
+    cy.do(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(Select({ label: dropdownLabel }))
+        .choose(option),
+    );
   },
 
-  verifyFieldsDropdownOptoin(tag, dropdownLabel, option) {
-    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(Select({ label: dropdownLabel })).has({ content: including(option) }));
+  verifyFieldsDropdownOption(tag, dropdownLabel, option) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(Select({ label: dropdownLabel }))
+        .has({ content: including(option) }),
+    );
+  },
+
+  verifyDropdownOptionChecked(tag, dropdownLabel, option) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(Select({ label: dropdownLabel }))
+        .has({ checkedOptionText: option }),
+    );
+  },
+
+  verifyDropdownHoverText(id, hoverText) {
+    cy.get(`span[id="${id}"]`).should('contain.text', hoverText);
+  },
+
+  verifyLDRPositionsDefaultValues(fieldName, fieldvalue, isDisabled = true) {
+    cy.expect(
+      QuickMarcEditorRow({ index: 0 })
+      .find(TextField({ name: fieldName }))
+      .has({ disabled: isDisabled, value: fieldvalue })
+    );
   },
 
   updateExistingTagName(currentTagName = validRecord.existingTag, newTagName) {
@@ -2116,14 +2144,29 @@ export default {
   },
 
   checkDefaultContent() {
-    this.checkContent('00000n\\\\\\a2200000uu\\4500', 0);
-    this.checkFieldsExist(expectedFields);
     this.checkEmptyContent('001');
     this.checkEmptyContent('005');
     this.checkEmptyContent('999');
     this.checkEmptyContent('008');
+    this.verifyLDRPositionsDefaultValues('records[0].content.Record length', '00000');
+    this.verifyDropdownOptionChecked('LDR', 'Status', 'n - New');
+    this.verifyDropdownOptionChecked('LDR', 'Type', '\\ - invalid value');
+    this.verifyDropdownOptionChecked('LDR', 'BLvl', '\\ - invalid value');
+    this.verifyDropdownOptionChecked('LDR', 'Ctrl', '\\ - No specified type');
+    this.verifyLDRPositionsDefaultValues('records[0].content.9-16 positions', 'a2200000');
+    this.verifyLDRPositionsDefaultValues('records[0].content.ELvl', 'u', false);
+    this.verifyDropdownOptionChecked('LDR', 'Desc', 'u - Unknown');
+    this.verifyDropdownOptionChecked('LDR', 'MultiLvl', '\\ - Not specified or not applicable');
+    this.verifyLDRPositionsDefaultValues('records[0].content.20-23 positions', '4500');
     this.verifyTagField(4, '245', '\\', '\\', '$a ', '');
     this.checkInitialContent(4);
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Status-text', 'Record status');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Type-text', 'Type of record');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-BLvl-text', 'Bibliographic level');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Ctrl-text', 'Type of control');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-ELvl-text', 'Encoding level');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Desc-text', 'Descriptive cataloging form');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-MultiLvl-text', 'Multipart resource record level');
   },
 
   checkEditableQuickMarcFormIsOpened: () => {
