@@ -49,14 +49,14 @@ describe('MARC', () => {
           marc: 'marcBibFileForC376595.mrc',
           fileName: `testMarcFileC376595.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-          propertyName: 'relatedInstanceInfo',
+          propertyName: 'instance',
           instanceTitle: 'Surface chemistry of solid and liquid interfaces / H. Yıldırım Erbil.',
         },
         {
           marc: 'marcAuthFileForC376595.mrc',
           fileName: `testMarcFileC376595.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
           authorityHeading: 'Erbil, H. Yıldırım',
         },
       ];
@@ -71,8 +71,8 @@ describe('MARC', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
         });

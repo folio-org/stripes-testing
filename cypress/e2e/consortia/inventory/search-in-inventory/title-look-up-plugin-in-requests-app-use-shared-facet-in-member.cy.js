@@ -24,8 +24,8 @@ function createFOLIOAndUploadMARCInstanceViaApi(titlesFOLIOInstance, marcFile, c
 
   DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, marcFile.jobProfileToRun).then(
     (response) => {
-      response.entries.forEach((record) => {
-        createdRecordsIds.push(record.relatedInstanceInfo.idList[0]);
+      response.forEach((record) => {
+        createdRecordsIds.push(record.instance.id);
       });
     },
   );

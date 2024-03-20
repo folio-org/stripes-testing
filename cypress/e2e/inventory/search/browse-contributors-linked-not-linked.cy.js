@@ -25,14 +25,14 @@ describe('inventory', () => {
         marc: 'marcBibFileC359595.mrc',
         fileName: `testMarcFileC359595.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-        propertyName: 'relatedInstanceInfo',
+        propertyName: 'instance',
       },
       {
         marc: 'marcAuthFileC359595.mrc',
         fileName: `testMarcFileC359595.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         naturalId: 'n8316359595',
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
       },
     ];
 
@@ -48,8 +48,8 @@ describe('inventory', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
         });

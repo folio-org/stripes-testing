@@ -15,7 +15,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     marc: 'oneMarcBib.mrc',
     fileName: `testMarcFileC380398${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-    propertyName: 'relatedInstanceInfo',
+    propertyName: 'instance',
   };
   const LDRvalues = [
     // 05
@@ -53,8 +53,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
       DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, marcFile.jobProfileToRun).then(
         (response) => {
-          response.entries.forEach((record) => {
-            testData.instanceID = record[marcFile.propertyName].idList[0];
+          response.forEach((record) => {
+            testData.instanceID = record[marcFile.propertyName].id;
           });
         },
       );

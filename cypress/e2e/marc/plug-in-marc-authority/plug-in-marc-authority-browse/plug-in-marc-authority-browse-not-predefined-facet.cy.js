@@ -33,21 +33,21 @@ describe('MARC', () => {
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
           numOfRecords: 1,
-          propertyName: 'relatedInstanceInfo',
+          propertyName: 'instance',
         },
         {
           marc: 'Auth_2_records_C365110.mrc',
           fileName: `marcFileGenreC365110.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           numOfRecords: 4,
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
         {
           marc: 'Auth_1_record_C365110.mrc',
           fileName: `marcFileGenreC365110.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           numOfRecords: 1,
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
       ];
       const predefinedPrefixes = [
@@ -100,8 +100,8 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].id);
               });
             });
           });
@@ -143,8 +143,8 @@ describe('MARC', () => {
               marcFiles[2].fileName,
               marcFiles[2].jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                createdAuthorityIDs.push(record[marcFiles[2].propertyName].idList[0]);
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFiles[2].propertyName].id);
 
                 InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
                 InventoryInstances.selectInstance();
