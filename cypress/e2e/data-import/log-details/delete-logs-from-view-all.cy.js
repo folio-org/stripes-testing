@@ -47,9 +47,10 @@ describe('data-import', () => {
       });
     });
 
+    // TODO added tag broken FAT-12393
     it(
       'C367923 A user can delete logs from the Import app "View all" page (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPathBroken', 'folijet'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
