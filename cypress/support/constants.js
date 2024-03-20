@@ -413,6 +413,16 @@ export const ACTION_NAMES_IN_ACTION_PROFILE = {
   UPDATE: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
 };
 
+export const INVENTORY_LDR_FIELD_STATUS_DROPDOWN = {
+  A: 'a - Increase in encoding level',
+  C: 'c - Corrected or revised',
+  D: 'd - Deleted',
+  N: 'n - New',
+  O: 'o - Obsolete',
+  S: 's - Deleted; heading split into two or more headings',
+  X: 'x - Deleted; heading replaced by another heading',
+};
+
 export const INVENTORY_LDR_FIELD_TYPE_DROPDOWN = {
   A: 'a - Language material',
   C: 'c - Notated music',

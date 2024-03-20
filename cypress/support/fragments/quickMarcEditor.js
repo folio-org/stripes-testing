@@ -1164,11 +1164,27 @@ export default {
   },
 
   selectFieldsDropdownOption(tag, dropdownLabel, option) {
-    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(Select({ label: dropdownLabel })).choose(option));
+    cy.do(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(Select({ label: dropdownLabel }))
+        .choose(option),
+    );
   },
 
-  verifyFieldsDropdownOptoin(tag, dropdownLabel, option) {
-    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(Select({ label: dropdownLabel })).has({ content: including(option) }));
+  verifyFieldsDropdownOption(tag, dropdownLabel, option) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(Select({ label: dropdownLabel }))
+        .has({ content: including(option) }),
+    );
+  },
+
+  verifyDropdownOptionChecked(tag, dropdownLabel, option) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(Select({ label: dropdownLabel }))
+        .has({ checkedOptionText: option }),
+    );
   },
 
   updateExistingTagName(currentTagName = validRecord.existingTag, newTagName) {
@@ -2251,5 +2267,13 @@ export default {
         expect(arrayOfOptions).to.not.include(option);
       });
     }
+  },
+
+  verifyDropdownValueOfLDRIsValid(dropdownLabel, isValid = true) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: 'LDR' })
+        .find(Select({ label: dropdownLabel }))
+        .has({ valid: isValid }),
+    );
   },
 };
