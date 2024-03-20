@@ -75,7 +75,7 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              createdAuthorityIDs.push(response.entries[0].relatedAuthorityInfo.idList[0]);
+              createdAuthorityIDs.push(response[0].authority.id);
             });
           });
           cy.createTempUser([

@@ -13,7 +13,7 @@ describe('inventory', () => {
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const fileNameForC360548 = `testInventoryFile.${getRandomPostfix()}.mrc`;
     const fileNameForC360555 = `testInventoryFile.${getRandomPostfix()}.mrc`;
-    const propertyName = 'relatedInstanceInfo';
+    const propertyName = 'instance';
     const createdInstanceIDs = [];
 
     before('Creating data', () => {
@@ -61,8 +61,8 @@ describe('inventory', () => {
           fileNameForC360548,
           jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            createdInstanceIDs.push(record[propertyName].idList[0]);
+          response.forEach((record) => {
+            createdInstanceIDs.push(record[propertyName].id);
           });
         });
 
@@ -97,8 +97,8 @@ describe('inventory', () => {
           fileNameForC360555,
           jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            createdInstanceIDs.push(record[propertyName].idList[0]);
+          response.forEach((record) => {
+            createdInstanceIDs.push(record[propertyName].id);
           });
         });
 

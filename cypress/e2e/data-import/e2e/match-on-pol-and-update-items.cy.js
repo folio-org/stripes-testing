@@ -278,7 +278,7 @@ describe('data-import', () => {
       Orders.resetFilters();
       Orders.searchByParameter('PO number', number);
       Orders.selectFromResultsList(number);
-      Orders.openOrder();
+      OrderDetails.openOrder();
     };
 
     const checkReceivedPiece = (number, title) => {

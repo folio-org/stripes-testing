@@ -12,6 +12,7 @@ describe('inventory', () => {
   describe('Instance', () => {
     let user;
     let instanceHrid;
+    let instanceId;
     const instanceSource = 'MARC';
     const filePathForUpload = 'oneMarcBib.mrc';
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
@@ -20,7 +21,8 @@ describe('inventory', () => {
     before('create test data and login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then((response) => {
-        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+        instanceHrid = response[0].instance.hrid;
+        instanceId = response[0].instance.id;
       });
 
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
@@ -37,11 +39,7 @@ describe('inventory', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+        InventoryInstance.deleteInstanceViaApi(instanceId);
       });
     });
 

@@ -19,7 +19,7 @@ describe('inventory', () => {
 
     const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const propertyName = 'relatedInstanceInfo';
+    const propertyName = 'instance';
 
     const importedInstanceID = [];
 
@@ -35,8 +35,8 @@ describe('inventory', () => {
           () => {
             DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
               (response) => {
-                response.entries.forEach((record) => {
-                  importedInstanceID.push(record[propertyName].idList[0]);
+                response.forEach((record) => {
+                  importedInstanceID.push(record[propertyName].id);
                 });
               },
             );

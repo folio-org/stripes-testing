@@ -1,11 +1,11 @@
 import uuid from 'uuid';
-import { REQUEST_METHOD } from '../../../../constants';
 import {
   Button,
-  including,
-  MultiColumnListRow,
   MultiColumnListCell,
+  MultiColumnListRow,
+  including,
 } from '../../../../../../interactors';
+import { REQUEST_METHOD } from '../../../../constants';
 
 export const reasonsActions = {
   edit: 'edit',

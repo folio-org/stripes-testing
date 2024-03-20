@@ -104,7 +104,7 @@ describe('data-import', () => {
           fileName,
           'Default - Create instance and SRS MARC Bib',
         ).then((response) => {
-          instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+          instanceHrid = response[0].instance.hrid;
         });
       });
     });
@@ -153,7 +153,7 @@ describe('data-import', () => {
 
     it(
       'C368009 Verify that no created SRS is present when job profile does not have create instance action: Case 2: Create holdings and item (folijet)',
-      { tags: ['criticalPath', 'folijet+', 'parallel'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);

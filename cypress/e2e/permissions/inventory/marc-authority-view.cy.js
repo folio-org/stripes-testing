@@ -14,7 +14,7 @@ describe('Permissions', () => {
     const marcFile = 'oneMarcBib.mrc';
     const fileName = `autotest1Bib${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const propertyName = 'relatedInstanceInfo';
+    const propertyName = 'instance';
 
     before('Creating user', () => {
       // This step added because when it runs checkbox "Allow title level requests" in settings/circulation/title-level-requests
@@ -33,8 +33,8 @@ describe('Permissions', () => {
 
         cy.getAdminToken();
         DataImport.uploadFileViaApi(marcFile, fileName, jobProfileToRun).then((response) => {
-          response.entries.forEach((record) => {
-            instanceID = record[propertyName].idList[0];
+          response.forEach((record) => {
+            instanceID = record[propertyName].id;
           });
         });
       });

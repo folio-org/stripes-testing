@@ -11,7 +11,6 @@ describe('MARC', () => {
       const testData = {
         field999: { tag: '999', content: '$a test123' },
         field245: { tag: '245', content: 'The most important book' },
-        fieldLDR: { tag: 'LDR', content: '00000naa\\a2200000uu\\4500' },
       };
       let instanceId;
 
@@ -49,7 +48,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.field245.tag, testData.field245.content);
 
           // Replace blank values in LDR positions 06, 07 with valid values
-          QuickMarcEditor.updateExistingField(testData.fieldLDR.tag, testData.fieldLDR.content);
+          QuickMarcEditor.updateLDR06And07Positions();
 
           // Click on "+" icon next to any field
           QuickMarcEditor.addNewField(testData.field999.tag, testData.field999.content, 4);
