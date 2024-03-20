@@ -23,6 +23,15 @@ import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 import InventoryInstance from './inventory/inventoryInstance';
 import Institutions from './settings/tenant/location-setup/institutions';
+import {
+  INVENTORY_LDR_FIELD_TYPE_DROPDOWN,
+  INVENTORY_LDR_FIELD_BLVL_DROPDOWN,
+  INVENTORY_008_FIELD_DTST_DROPDOWN,
+  INVENTORY_008_FIELD_CONF_DROPDOWN,
+  INVENTORY_008_FIELD_FEST_DROPDOWN,
+  INVENTORY_008_FIELD_INDX_DROPDOWN,
+  INVENTORY_008_FIELD_LITF_DROPDOWN,
+} from '../../support/constants';
 
 const holdingsRecordViewSection = Section({ id: 'ui-inventory.holdingsRecordView' });
 const actionsButton = Button('Actions');
@@ -1161,6 +1170,16 @@ export default {
   ) {
     cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
     return newContent;
+  },
+
+  updateLDR06And07Positions() {
+    this.selectFieldsDropdownOption('LDR', 'Type', INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A);
+    this.selectFieldsDropdownOption('LDR', 'BLvl', INVENTORY_LDR_FIELD_BLVL_DROPDOWN.A);
+    this.selectFieldsDropdownOption('008', 'DtSt', INVENTORY_008_FIELD_DTST_DROPDOWN.M);
+    this.selectFieldsDropdownOption('008', 'Conf', INVENTORY_008_FIELD_CONF_DROPDOWN.ONE);
+    this.selectFieldsDropdownOption('008', 'Fest', INVENTORY_008_FIELD_FEST_DROPDOWN.ONE);
+    this.selectFieldsDropdownOption('008', 'Indx', INVENTORY_008_FIELD_INDX_DROPDOWN.ONE);
+    this.selectFieldsDropdownOption('008', 'LitF', INVENTORY_008_FIELD_LITF_DROPDOWN.I);
   },
 
   selectFieldsDropdownOption(tag, dropdownLabel, option) {
