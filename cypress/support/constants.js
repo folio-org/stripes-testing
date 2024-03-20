@@ -423,6 +423,25 @@ export const AUTHORITY_LDR_FIELD_STATUS_DROPDOWN = {
   X: 'x - Deleted; heading replaced by another heading',
 };
 
+export const AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES = {
+  STATUS: 'Status',
+  TYPE: 'Type',
+  ELVL: 'ELvl',
+  PUNCT: 'Punct',
+};
+
+export const AUTHORITY_LDR_FIELD_ELVL_DROPDOWN = {
+  N: 'n - Complete authority record',
+  O: 'o - Incomplete authority record',
+};
+
+export const AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN = {
+  '\\': '\\ - No information provided',
+  C: 'c - Punctuation omitted',
+  I: 'i - Punctuation included',
+  U: 'u - Unknown',
+};
+
 export const INVENTORY_LDR_FIELD_TYPE_DROPDOWN = {
   A: 'a - Language material',
   C: 'c - Notated music',
