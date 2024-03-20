@@ -56,49 +56,49 @@ describe('MARC', () => {
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
           numOfRecords: 1,
-          propertyName: 'relatedInstanceInfo',
+          propertyName: 'instance',
         },
         {
           marc: 'marcFileForC359015.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           numOfRecords: 2,
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
         {
           marc: 'marcFileForC359206.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           numOfRecords: 2,
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
         {
           marc: 'marcFileForC359228.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           numOfRecords: 5,
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
         {
           marc: 'marcFileForC359229.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           numOfRecords: 2,
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
         {
           marc: 'marcFileForC359231.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           numOfRecords: 1,
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
         {
           marc: 'marcFileForC380566.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           numOfRecords: 2,
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
       ];
 
@@ -108,21 +108,21 @@ describe('MARC', () => {
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           numOfRecords: 1,
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
         {
           marc: 'marcFileForC359230_3.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           numOfRecords: 1,
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
         {
           marc: 'marcFileForC359230_twain.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           numOfRecords: 1,
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
       ];
 
@@ -144,8 +144,8 @@ describe('MARC', () => {
             marcFiles[0].fileName,
             marcFiles[0].jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityIDs.push(record[marcFiles[0].propertyName].idList[0]);
+            response.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFiles[0].propertyName].id);
             });
           });
         });
@@ -170,8 +170,8 @@ describe('MARC', () => {
             marcFiles[1].fileName,
             marcFiles[1].jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityIDs.push(record[marcFiles[1].propertyName].idList[0]);
+            response.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFiles[1].propertyName].id);
             });
           });
           cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -207,8 +207,8 @@ describe('MARC', () => {
             marcFiles[2].fileName,
             marcFiles[2].jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityIDs.push(record[marcFiles[2].propertyName].idList[0]);
+            response.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFiles[2].propertyName].id);
             });
           });
           cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -253,8 +253,8 @@ describe('MARC', () => {
             marcFiles[3].fileName,
             marcFiles[3].jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityIDs.push(record[marcFiles[2].propertyName].idList[0]);
+            response.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFiles[2].propertyName].id);
             });
           });
           cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -298,8 +298,8 @@ describe('MARC', () => {
             marcFiles[4].fileName,
             marcFiles[4].jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityIDs.push(record[marcFiles[4].propertyName].idList[0]);
+            response.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFiles[4].propertyName].id);
             });
           });
           cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -331,8 +331,8 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].id);
               });
             });
           });
@@ -375,8 +375,8 @@ describe('MARC', () => {
             marcFiles[6].fileName,
             marcFiles[6].jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityIDs.push(record[marcFiles[6].propertyName].idList[0]);
+            response.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFiles[6].propertyName].id);
             });
           });
           cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -404,8 +404,8 @@ describe('MARC', () => {
             marcFiles[5].fileName,
             marcFiles[5].jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityIDs.push(record[marcFiles[5].propertyName].idList[0]);
+            response.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFiles[5].propertyName].id);
             });
           });
           cy.login(testData.userProperties.username, testData.userProperties.password, {

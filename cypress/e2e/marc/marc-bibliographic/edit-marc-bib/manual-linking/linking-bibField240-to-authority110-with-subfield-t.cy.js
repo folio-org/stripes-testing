@@ -29,7 +29,7 @@ describe('MARC', () => {
             marc: 'marcBibFileC374111.mrc',
             fileName: `testMarcFileC374111${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-            propertyName: 'relatedInstanceInfo',
+            propertyName: 'instance',
             numOfRecords: 1,
             instanceAlternativeTitle:
               'Treaties, etc. 1978 September 17 (Framework for Peace in the Middle East) Israel',
@@ -39,7 +39,7 @@ describe('MARC', () => {
             fileName: `testMarcFileC374111${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
           },
         ];
         const bib240AfterLinkingToAuth110 = [
@@ -79,8 +79,8 @@ describe('MARC', () => {
                 marcFile.fileName,
                 marcFile.jobProfileToRun,
               ).then((response) => {
-                response.entries.forEach((record) => {
-                  createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+                response.forEach((record) => {
+                  createdAuthorityIDs.push(record[marcFile.propertyName].id);
                 });
               });
             });

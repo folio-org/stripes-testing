@@ -19,7 +19,7 @@ describe('MARC', () => {
           marc: 'marcAuthFileForC380635.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           numOfRecords: 1,
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
       ],
     };
@@ -33,8 +33,8 @@ describe('MARC', () => {
           marcFile.fileName,
           testData.jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+          response.forEach((record) => {
+            createdAuthorityIDs.push(record[marcFile.propertyName].id);
           });
         });
       });

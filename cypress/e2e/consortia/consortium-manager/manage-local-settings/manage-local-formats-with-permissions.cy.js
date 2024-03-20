@@ -44,15 +44,11 @@ describe('Consortium manager', () => {
           testData.user = userProperties;
           cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
           cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(testData.user.userId, [
-            Permissions.crudFormats.gui,
-          ]);
+          cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.crudFormats.gui]);
           cy.resetTenant();
           cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
           cy.setTenant(Affiliations.University);
-          cy.assignPermissionsToExistingUser(testData.user.userId, [
-            Permissions.crudFormats.gui,
-          ]);
+          cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.crudFormats.gui]);
           cy.resetTenant();
         });
       });
@@ -114,37 +110,19 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.newFormat.name,
             tenantNames.central,
-            [
-              testData.newFormat.name,
-              testData.newFormat.code,
-              'local',
-              '',
-              tenantNames.central,
-            ],
+            [testData.newFormat.name, testData.newFormat.code, 'local', '', tenantNames.central],
             [actionIcons.edit, actionIcons.trash],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.newFormat.name,
             tenantNames.college,
-            [
-              testData.newFormat.name,
-              testData.newFormat.code,
-              'local',
-              '',
-              tenantNames.college,
-            ],
+            [testData.newFormat.name, testData.newFormat.code, 'local', '', tenantNames.college],
             [actionIcons.edit, actionIcons.trash],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.newFormat.name,
             tenantNames.university,
-            [
-              testData.newFormat.name,
-              testData.newFormat.code,
-              'local',
-              '',
-              tenantNames.university,
-            ],
+            [testData.newFormat.name, testData.newFormat.code, 'local', '', tenantNames.university],
             [actionIcons.edit, actionIcons.trash],
           );
 
@@ -183,9 +161,7 @@ describe('Consortium manager', () => {
             actionIcons.trash,
           );
           ConsortiaControlledVocabularyPaneset.confirmDelete();
-          ConsortiumManagerApp.checkMessage(
-            messages.deleted('format', testData.newFormat.name),
-          );
+          ConsortiumManagerApp.checkMessage(messages.deleted('format', testData.newFormat.name));
           ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
             testData.newFormat.name,
             tenantNames.central,
@@ -212,30 +188,18 @@ describe('Consortium manager', () => {
 
           cy.visit(SettingsMenu.patronGroups);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [
-              testData.newFormat.name,
-              testData.newFormat.code,
-              'local',
-              '',
-            ],
+            [testData.newFormat.name, testData.newFormat.code, 'local', ''],
             [actionIcons.edit, actionIcons.trash],
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(SettingsMenu.formats);
-          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
-            testData.newFormat.name,
-          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(testData.newFormat.name);
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           cy.visit(SettingsMenu.formats);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [
-              testData.editFormat.name,
-              testData.editFormat.code,
-              'local',
-              '',
-            ],
+            [testData.editFormat.name, testData.editFormat.code, 'local', ''],
             [actionIcons.edit, actionIcons.trash],
           );
         },

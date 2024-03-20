@@ -29,7 +29,7 @@ describe('MARC', () => {
           fileName: `testMarcFileC374158${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
           instanceTitle: 'An Anglican view of the Vatican Council.',
-          propertyName: 'relatedInstanceInfo',
+          propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileC374158.mrc',
@@ -39,7 +39,7 @@ describe('MARC', () => {
             'C374158 Vatican Council (2nd : 1962-1965 : Basilica di San Pietro in Vaticano)',
           updatedAuthorityHeading:
             'C374158 Vatican Council (2nd : 1962-1966 : Basilica di San Pietro in Vaticano)',
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
       ];
       const linkingTagAndValue = {
@@ -58,8 +58,8 @@ describe('MARC', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
         });

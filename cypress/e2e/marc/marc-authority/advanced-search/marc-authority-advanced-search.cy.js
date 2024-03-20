@@ -31,7 +31,7 @@ describe('MARC', () => {
       const marcFile = {
         marc: 'MarcAuthorities(Personal,Uniform,Corporate).mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
       };
 
       const createdAuthorityID = [];
@@ -45,8 +45,8 @@ describe('MARC', () => {
 
         DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
           (response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityID.push(record[marcFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              createdAuthorityID.push(record[marcFile.propertyName].id);
             });
           },
         );
