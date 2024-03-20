@@ -63,7 +63,7 @@ describe('MARC', () => {
       marc: 'marcBibFileC389500.mrc',
       fileName: `testMarcFile.C389500.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-      propertyName: 'relatedInstanceInfo',
+      propertyName: 'instance',
     };
 
     const holdingsFile = {
@@ -103,8 +103,8 @@ describe('MARC', () => {
               instanceFile.fileName,
               instanceFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                recordIDs.push(record[instanceFile.propertyName].idList[0]);
+              response.forEach((record) => {
+                recordIDs.push(record[instanceFile.propertyName].id);
               });
             });
             JobProfiles.waitFileIsImported(instanceFile.fileName);

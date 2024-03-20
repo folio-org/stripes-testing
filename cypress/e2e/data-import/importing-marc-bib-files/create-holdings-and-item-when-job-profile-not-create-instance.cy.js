@@ -104,7 +104,7 @@ describe('data-import', () => {
           fileName,
           'Default - Create instance and SRS MARC Bib',
         ).then((response) => {
-          instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+          instanceHrid = response[0].instance.hrid;
         });
       });
     });

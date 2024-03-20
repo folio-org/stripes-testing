@@ -13,7 +13,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('data-import', () => {
   describe('Permissions', () => {
     let user;
-    let instanceHrid;
+    let instnaceId;
     const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
 
     before('create test data', () => {
@@ -23,7 +23,7 @@ describe('data-import', () => {
         fileName,
         'Default - Create instance and SRS MARC Bib',
       ).then((response) => {
-        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+        instnaceId = response[0].instance.id;
       });
 
       cy.createTempUser([
@@ -43,11 +43,7 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+        InventoryInstance.deleteInstanceViaApi(instnaceId);
       });
     });
 

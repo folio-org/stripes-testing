@@ -28,7 +28,7 @@ describe('MARC', () => {
         marc: 'marcBibForC375177.mrc',
         fileName: `testMarcFileC375177.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-        propertyName: 'relatedInstanceInfo',
+        propertyName: 'instance',
       };
 
       const createdInstanceIDs = [];
@@ -47,8 +47,8 @@ describe('MARC', () => {
                 marcFile.fileName,
                 marcFile.jobProfileToRun,
               ).then((response) => {
-                response.entries.forEach((record) => {
-                  createdInstanceIDs.push(record[marcFile.propertyName].idList[0]);
+                response.forEach((record) => {
+                  createdInstanceIDs.push(record[marcFile.propertyName].id);
                 });
               });
             },

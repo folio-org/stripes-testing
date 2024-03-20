@@ -41,7 +41,7 @@ describe('MARC', () => {
           marc: 'marcBibFileC380529.mrc',
           fileName: `testMarcFileC380529.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-          propertyName: 'relatedInstanceInfo',
+          propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileC380529_1.mrc',
@@ -50,7 +50,7 @@ describe('MARC', () => {
           authorityHeading:
             'C380529 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
           authority010FieldValue: 'n831308323805291',
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
         {
           marc: 'marcAuthFileC380529_2.mrc',
@@ -59,7 +59,7 @@ describe('MARC', () => {
           authorityHeading:
             'C380529 Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
           authority010FieldValue: 'n847454253805292',
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
       ];
 
@@ -81,8 +81,8 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              response.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].id);
               });
             });
           });

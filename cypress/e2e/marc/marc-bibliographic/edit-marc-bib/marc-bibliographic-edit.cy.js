@@ -25,7 +25,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-      const propertyName = 'relatedInstanceInfo';
+      const propertyName = 'instance';
       const tagArray = [
         '100',
         '110',
@@ -111,8 +111,8 @@ describe('MARC', () => {
           });
           DataImport.uploadFileViaApi('marcFileForC360542.mrc', fileName, jobProfileToRun).then(
             (response) => {
-              response.entries.forEach((record) => {
-                createdInstanceID = record[propertyName].idList[0];
+              response.forEach((record) => {
+                createdInstanceID = record[propertyName].id;
               });
             },
           );

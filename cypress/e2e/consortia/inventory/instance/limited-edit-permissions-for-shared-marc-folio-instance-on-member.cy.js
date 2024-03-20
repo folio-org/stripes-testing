@@ -9,8 +9,7 @@ import InstanceRecordView from '../../../../support/fragments/inventory/instance
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -18,7 +17,6 @@ describe('Inventory', () => {
     const C402335testData = {
       filePath: 'oneMarcBib.mrc',
       marcFileName: `C402335 autotestFileName${getRandomPostfix()}`,
-      instanceIds: [],
       instanceSource: 'MARC',
     };
     const C402376testData = {
@@ -27,16 +25,14 @@ describe('Inventory', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
+      DataImport.uploadFileViaApi(
+        C402335testData.filePath,
+        C402335testData.marcFileName,
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      ).then((response) => {
+        C402335testData.instanceId = response[0].instance.id;
       });
-      DataImport.uploadFileViaApi(C402335testData.filePath, C402335testData.marcFileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(C402335testData.marcFileName);
-      Logs.getCreatedItemsID().then((link) => {
-        C402335testData.instanceIds.push(link.split('/')[5]);
-      });
+
       InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
         C402376testData.instance = instanceData;
       });
@@ -66,7 +62,7 @@ describe('Inventory', () => {
     after('Delete test data', () => {
       cy.resetTenant();
       cy.getAdminToken();
-      InventoryInstance.deleteInstanceViaApi(C402335testData.instanceIds[0]);
+      InventoryInstance.deleteInstanceViaApi(C402335testData.instanceId);
       InventoryInstance.deleteInstanceViaApi(C402376testData.instance.instanceId);
       Users.deleteViaApi(user.userId);
     });
@@ -78,7 +74,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifySearchAndFilterPane();
         InventorySearchAndFilter.bySource(C402335testData.instanceSource);
         InventorySearchAndFilter.byShared('Yes');
-        InventorySearchAndFilter.searchInstanceByTitle(C402335testData.instanceIds[0]);
+        InventorySearchAndFilter.searchInstanceByTitle(C402335testData.instanceId);
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InstanceRecordView.verifyInstanceSource(C402335testData.instanceSource);
         InstanceRecordView.verifyEditInstanceButtonAbsent();

@@ -21,15 +21,15 @@ describe('data-export', () => {
     const searchHeading = 'C353209 Peplum films';
 
     before(() => {
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun);
+
       cy.createTempUser([
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
         Permissions.dataExportEnableModule.gui,
       ]).then((createdUserProperties) => {
         user.userProperties = createdUserProperties;
-      });
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun);
 
         cy.login(user.userProperties.username, user.userProperties.password, {
           path: TopMenu.marcAuthorities,

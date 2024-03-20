@@ -33,7 +33,7 @@ describe('data-import', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileForCreatingInstance).then(
         (response) => {
-          instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+          instanceHrid = response[0].instance.hrid;
         },
       );
 
