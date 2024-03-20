@@ -413,6 +413,85 @@ export const ACTION_NAMES_IN_ACTION_PROFILE = {
   UPDATE: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
 };
 
+export const INVENTORY_LDR_FIELD_TYPE_DROPDOWN = {
+  A: 'a - Language material',
+  C: 'c - Notated music',
+  D: 'd - Manuscript notated music',
+  E: 'e - Cartographic material',
+  F: 'f - Manuscript cartographic material',
+  G: 'g - Projected medium',
+  I: 'i - Nonmusical sound recording',
+  J: 'j - Musical sound recording',
+  K: 'k - Two-dimensional nonprojectable  graphic',
+  M: 'm - Computer file',
+  O: 'o - Kit',
+  P: 'p - Mixed materials',
+  R: 'r - Three-dimensional artifact or naturally occurring object',
+  T: 't - Manuscript language material',
+};
+
+export const INVENTORY_LDR_FIELD_BLVL_DROPDOWN = {
+  A: 'a - Monographic component part',
+  B: 'b - Serial component part',
+  C: 'c - Collection',
+  D: 'd - Subunit',
+  I: 'i - Integrating resource',
+  M: 'm - Monograph/Item',
+  S: 's - Serial',
+};
+
+export const INVENTORY_008_FIELD_DTST_DROPDOWN = {
+  NO: '| - No attempt to code',
+  B: 'b - No dates given; B.C. date involved',
+  C: 'c - Continuing resource currently published',
+  D: 'd - Continuing resource ceased publication',
+  E: 'e - Detailed date',
+  I: 'i - Inclusive dates of collection',
+  K: 'k - Range of years of bulk of collection',
+  M: 'm - Multiple dates',
+  N: 'n - Dates unknown',
+  P: 'p - Date of distribution/release/issue and production/recording session when different',
+  Q: 'q - Questionable date',
+  R: 'r - Reprint/reissue date and original date',
+  S: 's - Single known date/probable date',
+  T: 't - Publication date and copyright date',
+  U: 'u - Continuing resource status unknown',
+};
+
+export const INVENTORY_008_FIELD_CONF_DROPDOWN = {
+  NO: '| - No attempt to code',
+  ZERO: '0 - Not a conference publication',
+  ONE: '1 - Conference publication',
+};
+
+export const INVENTORY_008_FIELD_FEST_DROPDOWN = {
+  NO: '| - No attempt to code',
+  ZERO: '0 - Not a festschrift',
+  ONE: '1 - Festschrift',
+};
+
+export const INVENTORY_008_FIELD_INDX_DROPDOWN = {
+  NO: '| - No attempt to code',
+  ZERO: '0 - No index',
+  ONE: '1 - Index present',
+};
+
+export const INVENTORY_008_FIELD_LITF_DROPDOWN = {
+  NO: '| - No attempt to code',
+  ZERO: '0 - Not fiction (not further specified)',
+  ONE: '1 - Fiction (not further specified)',
+  D: 'd - Dramas',
+  E: 'e - Essays',
+  F: 'f - Novels',
+  H: 'h - Humor, satires, etc.',
+  I: 'i - Letters',
+  J: 'j - Short stories',
+  M: 'm - Mixed forms',
+  P: 'p - Poetry',
+  S: 's - Speeches',
+  U: 'u - Unknown',
+};
+
 export const DEFAULT_JOB_PROFILE_NAMES = {
   CREATE_INSTANCE_AND_SRS: 'Default - Create instance and SRS MARC Bib',
   CREATE_AUTHORITY: 'Default - Create SRS MARC Authority',
