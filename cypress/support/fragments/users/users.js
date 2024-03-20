@@ -12,6 +12,7 @@ import {
   TextField,
   Callout,
   HTML,
+  Spinner,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -27,6 +28,7 @@ const numberOfSearchResultsHeader = '//p[@id="paneHeaderusers-search-results-pan
 
 const usersApiPath = Cypress.env('eureka') ? 'users-keycloak/users' : 'users';
 const deleteUsersApiPath = Cypress.env('eureka') ? 'users-keycloak/users' : 'bl-users/by-id';
+const createUserPane = Pane('Create User');
 
 const defaultUser = {
   username: defaultUserName,
@@ -243,7 +245,7 @@ export default {
   },
 
   saveCreatedUser() {
-    cy.intercept('POST', '/users').as('createUser');
+    cy.intercept('POST', '/users-keycloak/users').as('createUser');
     cy.do(Button({ id: 'clickable-save' }).click());
     cy.wait('@createUser', { timeout: 100000 });
   },
@@ -263,4 +265,10 @@ export default {
       path: `addresstypes/${addressTypeId}`,
     })
     .then(({ body }) => body),
+
+  checkCreateUserPaneOpened: (isOpened = true) => {
+    cy.expect(Spinner().absent());
+    if (isOpened) cy.expect([createUserPane.exists(), contactInformationAccordion.exists()]);
+    else cy.expect(createUserPane.absent());
+  },
 };
