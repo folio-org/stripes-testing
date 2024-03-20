@@ -8,26 +8,20 @@ import ConsortiumManager from '../../../../support/fragments/settings/consortium
 import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../../support/fragments/topMenu';
+import inventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
   describe('Instance', () => {
     const testData = {
       instanceSource: 'FOLIO',
-      barcode: uuid(),
+      itemBarcode: uuid(),
     };
 
     before('Create test data', () => {
       cy.getAdminToken();
       InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
         testData.instance = instanceData;
-
-        cy.getInstance({
-          limit: 1,
-          expandAll: true,
-          query: `"id"=="${instanceData.instanceId}"`,
-        }).then((instance) => {
-          testData.instanceHRID = instance.hrid;
-        });
       });
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
@@ -43,25 +37,41 @@ describe('Inventory', () => {
         Locations.createViaApi(collegeLocationData).then((location) => {
           testData.collegeLocation = location;
         });
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"id"=="${testData.instance.instanceId}"`,
+        }).then((instance) => {
+          testData.instanceHRID = instance.hrid;
+        });
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
       });
-      ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-      ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
     });
 
-    // after('Delete test data', () => {
-    //   cy.resetTenant();
-    //   cy.getAdminToken();
-    //   Users.deleteViaApi(testData.user.userId);
-    //   InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId[0]);
-    //   cy.setTenant(Affiliations.College);
-    //   InventoryHoldings.deleteHoldingRecordViaApi(testData.holding.id);
-    //   Locations.deleteViaApi(testData.collegeLocation);
-    // });
+    after('Delete test data', () => {
+      cy.resetTenant();
+      cy.setTenant(Affiliations.College);
+      cy.getCollegeAdminToken();
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"id"=="${testData.instance.instanceId}"`,
+      }).then((instance) => {
+        cy.deleteItemViaApi(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+      });
+      Locations.deleteViaApi(testData.collegeLocation);
+      cy.resetTenant();
+      cy.getAdminToken();
+      Users.deleteViaApi(testData.user.userId);
+      InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+    });
 
     it(
       'C411387 (CONSORTIA) Check member instance and central consortial instance when member holdings & item are added to a shared instance (consortia) (folijet)',
@@ -74,6 +84,8 @@ describe('Inventory', () => {
           `${testData.collegeLocation.name} (${testData.collegeLocation.code}) `,
         );
         InventoryInstance.checkInstanceHrId(testData.instanceHRID);
+        // need to reload page because source is FOLIO-shared
+        cy.reload();
         InstanceRecordView.verifyInstanceSource(testData.instanceSource);
 
         const ItemRecordNew = InventoryInstance.clickAddItemByHoldingName({
@@ -81,23 +93,23 @@ describe('Inventory', () => {
           instanceTitle: testData.instance.instanceTitle,
         });
         ItemRecordNew.fillItemRecordFields({
-          barcode: testData.barcode,
+          barcode: testData.itemBarcode,
           materialType: 'book',
           loanType: 'Can circulate',
         });
         ItemRecordNew.saveAndClose({ itemSaved: true });
         InventoryInstance.waitLoading();
         InventoryInstance.openHoldingsAccordion(testData.collegeLocation.name);
-        InventoryInstance.checkIsItemCreated(testData.barcode);
+        InventoryInstance.checkIsItemCreated(testData.itemBarcode);
 
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
-        InventoryInstances.searchByTitle(testData.instance.instanceTitle);
-        InventoryInstances.selectInstance();
+        inventorySearchAndFilter.searchInstanceByHRID(testData.instanceHRID);
         InventoryInstance.waitLoading();
-        InventoryInstance.verifyConsortiaHoldingsAccordion();
-        // Holdings created in step 3 is assigned to the shared Instance ("Consortial Holdings" accordion NOT the "Holdings" accordion)
-        // Item created in step 5 is assigned to the holding in "Consortial Holdings" accordion
+        InventoryInstance.verifyConsortiaHoldingsAccordion(true);
+        InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.College);
+        InventoryInstance.openHoldingsAccordion(testData.collegeLocation.name);
+        InventoryInstance.checkIsItemCreated(testData.itemBarcode);
       },
     );
   });
