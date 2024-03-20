@@ -18,6 +18,7 @@ import {
   Select,
   TextArea,
   TextField,
+  Spinner,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
@@ -54,6 +55,8 @@ const resetAllButton = Button('Reset all');
 const selectRequestType = Select({ id: 'type' });
 const cancelButton = Button('Cancel');
 const userSearch = TextField('User search');
+const userEditPane = Pane('Edit');
+const closeIcon = Button({ id: 'clickable-closenewuserdialog' });
 let totalRows;
 
 // servicePointIds is array of ids
@@ -469,9 +472,11 @@ export default {
       });
   },
 
-  verifyUserPermissionsAccordion() {
-    cy.expect(permissionsAccordion.exists());
-    cy.expect(permissionsAccordion.has({ open: false }));
+  verifyUserPermissionsAccordion(isShown = false) {
+    if (isShown) {
+      cy.expect(permissionsAccordion.exists());
+      cy.expect(permissionsAccordion.has({ open: false }));
+    } else cy.expect(permissionsAccordion.absent());
   },
 
   verifyPermissionsNotExistInPermissionsAccordion(permissions) {
@@ -507,5 +512,29 @@ export default {
 
   editUsername(username) {
     cy.do(TextField({ id: 'adduser_username' }).fillIn(username));
+  },
+
+  fillRequiredFields: (userLastName, patronGroup, email, userType = null, userName = null) => {
+    if (userType) cy.do(Select({ id: 'type' }).choose(userType));
+    if (userName) cy.do(TextField({ id: 'adduser_username' }).fillIn(userName));
+    cy.do([
+      TextField({ id: 'adduser_lastname' }).fillIn(userLastName),
+      Select({ id: 'adduser_group' }).choose(patronGroup),
+      TextField({ id: 'adduser_email' }).fillIn(email),
+    ]);
+  },
+
+  checkUserEditPaneOpened: (isOpened = true) => {
+    cy.expect(Spinner().absent());
+    if (isOpened) {
+      cy.expect(userEditPane.exists(), userInformationAccordion.exists());
+    } else {
+      cy.expect(userEditPane.absent(), userInformationAccordion.absent());
+    }
+  },
+
+  closeUsingIcon() {
+    cy.do(closeIcon.click());
+    cy.expect(userEditPane.absent);
   },
 };
