@@ -18,7 +18,7 @@ import getRandomPostfix from '../../utils/stringTools';
 
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const contactInformationAccordion = Accordion('Contact information');
-const defaultUserName = `AutotestUser_${getRandomPostfix()}`;
+const defaultUserName = `autotestuser_${getRandomPostfix()}`;
 const deleteUser = Button({ id: 'clickable-checkdeleteuser' });
 const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
 const deleteYesButton = Button({ id: 'delete-user-button' });

@@ -20,7 +20,7 @@ describe('Circulation log', () => {
   };
   const secondUser = {
     active: true,
-    username: `secondUserName ${getRandomPostfix()}`,
+    username: `secondusername ${getRandomPostfix()}`,
     personal: {
       preferredContactTypeId: '002',
       firstName: 'secondUserFirstName',

@@ -20,7 +20,7 @@ describe('Circulation log', () => {
   };
   let userData = {
     password: getTestEntityValue('Password'),
-    username: getTestEntityValue('cypressTestUser'),
+    username: getTestEntityValue('cypresstestuser'),
   };
   let newUserProperties;
 

@@ -118,7 +118,7 @@ describe('Circulation log', () => {
   before('Preconditions', () => {
     cy.getAdminToken();
     cy.getAdminSourceRecord().then((record) => {
-      testData.adminSourceRecord = record;
+      testData.adminSourceRecord = record.toLowerCase();
     });
     ServicePoints.createViaApi(testData.userServicePoint);
     testData.defaultLocation = Locations.getDefaultLocation({

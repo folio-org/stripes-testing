@@ -3,8 +3,6 @@ import Users from '../fragments/users/users';
 import getRandomPostfix from '../utils/stringTools';
 import { FULFILMENT_PREFERENCES } from '../constants';
 
-const systemRoleName = 'System admin role';
-
 Cypress.Commands.add('getUsers', (searchParams) => {
   cy.okapiRequest({
     path: 'users',
@@ -79,7 +77,7 @@ Cypress.Commands.add('updateUser', (userData) => {
 
 Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userType = 'staff') => {
   const userProperties = {
-    username: `cypressTestUser${getRandomPostfix()}`,
+    username: `cypresstestuser${getRandomPostfix()}`,
     password: 'password',
   };
 
@@ -121,7 +119,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
           });
           cy.setUserPassword(userProperties);
           if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
-            cy.getUserRoleIdByNameApi(systemRoleName).then((roleId) => {
+            cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
               cy.addRolesToNewUserApi(userProperties.userId, [roleId]);
             });
           } else {
@@ -145,7 +143,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
 
 Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = []) => {
   if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
-    cy.getUserRoleIdByNameApi(systemRoleName).then((roleId) => {
+    cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
       cy.addRolesToNewUserApi(userId, [roleId]);
     });
   } else {

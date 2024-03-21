@@ -10,7 +10,7 @@ describe('Eureka', () => {
       lastName: `TestC442842User${generateItemBarcode()}`,
       userType: 'Patron',
       userEmail: 'test@folio.org',
-      userName: `userC448284${generateItemBarcode()}`,
+      userName: `userc448284${generateItemBarcode()}`,
     };
 
     before(() => {

@@ -9,24 +9,24 @@ import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 let agreementId;
 const firstUser = {
   active: true,
-  username: `firstUserName ${randomFourDigitNumber()}`,
+  username: `firstusername ${randomFourDigitNumber()}`,
   personal: {
     preferredContactTypeId: '002',
     firstName: 'firstUserFirstName',
     middleName: 'firstUserMiddleName',
-    lastName: 'firstUserLastName',
+    lastName: 'firstuserlastname',
     email: 'test@folio.org',
   },
   departments: [],
 };
 const secondUser = {
   active: true,
-  username: `secondUserName ${randomFourDigitNumber()}`,
+  username: `secondusername ${randomFourDigitNumber()}`,
   personal: {
     preferredContactTypeId: '002',
     firstName: 'secondUserFirstName',
     middleName: 'secondUserMiddleName',
-    lastName: 'secondUserLastName',
+    lastName: 'seconduserlastname',
     email: 'test2@folio.org',
   },
   departments: [],
