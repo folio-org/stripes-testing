@@ -11,7 +11,8 @@ import {
 import SelectMappingProfile from '../../settings/dataImport/modals/selectProfileModal';
 import { FOLIO_RECORD_TYPE, PROFILE_TYPE_NAMES } from '../../../constants';
 
-const action = 'Create (all record types except MARC Authority or MARC Holdings)';
+const action =
+  'Create (all record types except MARC Bibliographic, MARC Authority, or MARC Holdings)';
 
 const nameField = TextField({ name: 'profile.name' });
 const actionSelect = Select({ name: 'profile.action' });
