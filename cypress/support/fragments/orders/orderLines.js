@@ -129,6 +129,11 @@ const submitOrderLine = () => {
 const checkQuantityPhysical = (quantity) => {
   cy.expect(Accordion('Cost details').find(KeyValue('Quantity physical')).has({ value: quantity }));
 };
+const checkQuantityElectronic = (quantity) => {
+  cy.expect(
+    Accordion('Cost details').find(KeyValue('Quantity electronic')).has({ value: quantity }),
+  );
+};
 const expandActionsDropdownInPOL = () => {
   cy.do(
     orderLineDetailsPane
@@ -140,6 +145,7 @@ const expandActionsDropdownInPOL = () => {
 export default {
   submitOrderLine,
   checkQuantityPhysical,
+  checkQuantityElectronic,
   checkTitle(title) {
     cy.expect(Link(title).exists());
   },
@@ -2091,6 +2097,22 @@ export default {
     const arrayOfQuantityRows = [];
     cy.get('#location')
       .find('[class*="col-"]:nth-child(2)')
+      .each(($row) => {
+        cy.get('[class*="kvValue-"]', { withinSubject: $row })
+          // extract its text content
+          .invoke('text')
+          .then((cellValue) => {
+            arrayOfQuantityRows.push(cellValue);
+          });
+      })
+      .then(() => {
+        expect(quantity).to.equal(arrayOfQuantityRows.length);
+      });
+  },
+  checkElectronicQuantityInLocation: (quantity) => {
+    const arrayOfQuantityRows = [];
+    cy.get('#location')
+      .find('[class*="col-"]:nth-child(3)')
       .each(($row) => {
         cy.get('[class*="kvValue-"]', { withinSubject: $row })
           // extract its text content

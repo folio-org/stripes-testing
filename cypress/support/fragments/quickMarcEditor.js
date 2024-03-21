@@ -1213,7 +1213,7 @@ export default {
     cy.expect(
       QuickMarcEditorRow({ index: 0 })
         .find(TextField({ name: fieldName }))
-        .has({ disabled: isDisabled, value: fieldvalue })
+        .has({ disabled: isDisabled, value: fieldvalue }),
     );
   },
 
@@ -2180,11 +2180,20 @@ export default {
     this.checkInitialContent(4);
     this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Status-text', 'Record status');
     this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Type-text', 'Type of record');
-    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-BLvl-text', 'Bibliographic level');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-BLvl-text',
+      'Bibliographic level',
+    );
     this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Ctrl-text', 'Type of control');
     this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-ELvl-text', 'Encoding level');
-    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Desc-text', 'Descriptive cataloging form');
-    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-MultiLvl-text', 'Multipart resource record level');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Desc-text',
+      'Descriptive cataloging form',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-MultiLvl-text',
+      'Multipart resource record level',
+    );
   },
 
   checkEditableQuickMarcFormIsOpened: () => {
