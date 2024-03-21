@@ -2304,11 +2304,11 @@ export default {
 
   verifyOptionInAuthorityFileNameDropdown(option, isPresent = true) {
     if (isPresent) {
-      cy.wrap(selectAuthorityFile.optionsText()).should((arrayOfOptions) => {
+      cy.wrap(selectAuthorityFile.allOptionsText()).should((arrayOfOptions) => {
         expect(arrayOfOptions).to.include(option);
       });
     } else {
-      cy.wrap(selectAuthorityFile.optionsText()).should((arrayOfOptions) => {
+      cy.wrap(selectAuthorityFile.allOptionsText()).should((arrayOfOptions) => {
         expect(arrayOfOptions).to.not.include(option);
       });
     }
