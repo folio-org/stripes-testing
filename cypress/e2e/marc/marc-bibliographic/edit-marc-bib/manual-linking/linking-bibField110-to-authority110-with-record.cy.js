@@ -28,7 +28,7 @@ describe('MARC', () => {
             marc: 'marcBibFileC374194.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-            propertyName: 'relatedInstanceInfo',
+            propertyName: 'instance',
           },
           {
             marc: 'marcAuthFileC374194.mrc',
@@ -36,7 +36,7 @@ describe('MARC', () => {
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             authorityHeading: 'C374194 Beatles',
             authority110FieldValue: 'n79018119',
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
           },
         ];
 
@@ -82,8 +82,8 @@ describe('MARC', () => {
                 marcFile.fileName,
                 marcFile.jobProfileToRun,
               ).then((response) => {
-                response.entries.forEach((record) => {
-                  createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
               });
             });
@@ -117,7 +117,6 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
-            InventoryInstance.selectRecord();
             MarcAuthorities.checkFieldAndContentExistence(
               testData.tag110,
               `$a ${marcFiles[1].authorityHeading}`,
@@ -140,7 +139,6 @@ describe('MARC', () => {
             InventoryInstance.goToPreviousPage();
             // Wait for the content to be loaded.
             cy.wait(6000);
-            InventoryInstance.waitLoading();
             InventoryInstance.viewSource();
             InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
             InventoryInstance.clickViewAuthorityIconDisplayedInMarcViewPane();
@@ -150,7 +148,6 @@ describe('MARC', () => {
             cy.wait(6000);
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();
-            InventoryInstance.waitLoading();
             InstanceRecordView.verifyInstancePaneExists();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib110LinkedFieldValues);

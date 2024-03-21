@@ -33,13 +33,13 @@ const marcFiles = [
     marc: 'marcBibFileForC380531.mrc',
     fileName: `testMarcFileC380531.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-    propertyName: 'relatedInstanceInfo',
+    propertyName: 'instance',
   },
   {
     marc: 'marcAuthFileForC380531.mrc',
     fileName: `testMarcFileC380531.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create SRS MARC Authority',
-    propertyName: 'relatedAuthorityInfo',
+    propertyName: 'authority',
     authorityHeading:
       'C380531 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
     authority010FieldValue: 'n83130007380531',
@@ -65,8 +65,8 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              response.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].id);
               });
             });
           });

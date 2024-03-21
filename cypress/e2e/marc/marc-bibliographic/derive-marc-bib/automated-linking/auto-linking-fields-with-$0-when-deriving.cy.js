@@ -71,42 +71,42 @@ describe('MARC', () => {
             fileName: `C388638 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numOfRecords: 1,
-            propertyName: 'relatedInstanceInfo',
+            propertyName: 'instance',
           },
           {
             marc: 'marcAuthFileForC388638_1.mrc',
             fileName: `C388638_1 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numOfRecords: 1,
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
             authorityHeading: 'C388638 Runaway Bride (Motion picture)',
           },
           {
             marc: 'marcAuthFileForC388638_2.mrc',
             fileName: `C388638_2 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
             numOfRecords: 1,
           },
           {
             marc: 'marcAuthFileForC388638_3.mrc',
             fileName: `C388638_3 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
             numOfRecords: 1,
           },
           {
             marc: 'marcAuthFileForC388638_4.mrc',
             fileName: `C388638_4 testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
             numOfRecords: 1,
           },
           {
             marc: 'marcAuthFileForC388638_5.mrc',
             fileName: `C388638_5 testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
             numOfRecords: 1,
           },
         ];
@@ -134,8 +134,8 @@ describe('MARC', () => {
                 marcFile.fileName,
                 marcFile.jobProfileToRun,
               ).then((response) => {
-                response.entries.forEach((record) => {
-                  testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+                response.forEach((record) => {
+                  testData.createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
               });
             });

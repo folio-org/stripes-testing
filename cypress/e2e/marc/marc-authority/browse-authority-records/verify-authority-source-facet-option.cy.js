@@ -18,25 +18,23 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Browse - Authority records', () => {
       before('Creating data', () => {
+        cy.getAdminToken();
+        DataImport.uploadFileViaApi(fileName, updatedFileName, jobProfileToRun).then((response) => {
+          response.forEach((record) => {
+            createdAuthorityID.push(record.authority.id);
+          });
+        });
+
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
           (createdUserProperties) => {
             testData.userProperties = createdUserProperties;
-          },
-        );
 
-        cy.getAdminToken();
-        DataImport.uploadFileViaApi(fileName, updatedFileName, jobProfileToRun)
-          .then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityID.push(record.relatedAuthorityInfo.idList[0]);
-            });
-          })
-          .then(() => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             });
-          });
+          },
+        );
       });
 
       after('Deleting data', () => {

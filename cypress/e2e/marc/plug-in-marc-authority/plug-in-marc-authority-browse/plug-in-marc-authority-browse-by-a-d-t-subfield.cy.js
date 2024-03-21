@@ -41,8 +41,8 @@ describe('MARC', () => {
           marcFile.fileName,
           marcFile.jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            testData.createdRecordIDs.push(record.relatedInstanceInfo.idList[0]);
+          response.forEach((record) => {
+            testData.createdRecordIDs.push(record.instance.id);
           });
         });
 

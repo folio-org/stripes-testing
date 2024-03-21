@@ -9,6 +9,7 @@ import {
   TextField,
   including,
 } from '../../../../../interactors';
+import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../constants';
 
 const manageAuthorityFilesPane = Pane('Manage authority files');
 const newButton = manageAuthorityFilesPane.find(Button({ id: 'clickable-add-authorityfiles' }));
@@ -138,5 +139,33 @@ export default {
       targetRow.find(editButton).exists(),
     ]);
     if (isDeletable) cy.expect(targetRow.find(deleteButton).exists());
+  },
+
+  setAllDefaultFOLIOFilesToActiveViaAPI() {
+    Object.values(DEFAULT_FOLIO_AUTHORITY_FILES).forEach((fileName) => {
+      cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
+        cy.setActiveAuthoritySourceFileViaAPI(body.id, body._version + 1);
+      });
+    });
+  },
+
+  unsetAllDefaultFOLIOFilesAsActiveViaAPI() {
+    Object.values(DEFAULT_FOLIO_AUTHORITY_FILES).forEach((fileName) => {
+      cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
+        cy.setActiveAuthoritySourceFileViaAPI(body.id, body._version + 1, false);
+      });
+    });
+  },
+
+  setAuthorityFileToActiveViaApi(fileName) {
+    cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
+      cy.setActiveAuthoritySourceFileViaAPI(body.id, body._version + 1);
+    });
+  },
+
+  unsetAuthorityFileAsActiveViaApi(fileName) {
+    cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
+      cy.setActiveAuthoritySourceFileViaAPI(body.id, body._version + 1, false);
+    });
   },
 };

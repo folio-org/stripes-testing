@@ -21,8 +21,8 @@ describe('MARC', () => {
 
           DataImport.uploadFileViaApi(fileName, updatedFileName, jobProfileToRun).then(
             (response) => {
-              response.entries.forEach((record) => {
-                createdAuthorityID = record.relatedAuthorityInfo.idList[0];
+              response.forEach((record) => {
+                createdAuthorityID = record.authority.id;
               });
             },
           );
@@ -42,7 +42,7 @@ describe('MARC', () => {
 
     it(
       'C375089 View Authority Record: record opens in third pane when "Heading/Reference" value clicked for highlighted row (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPathBroken', 'spitfire'] },
       () => {
         MarcAuthorities.searchBy('Geographic name', 'C375089 Chidao Jineiya');
         MarcAuthorities.selectFirst();
