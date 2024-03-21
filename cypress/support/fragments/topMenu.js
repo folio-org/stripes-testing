@@ -37,6 +37,7 @@ const listsPath = '/lists';
 const coursesPath = '/cr/courses';
 const consortiumManagerPath = '/consortia-settings';
 const settingsAuthorityFilesPath = '/settings/marc-authorities/manage-authority-files';
+const settingsAuthorizationRoles = '/settings/authorization-roles';
 
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
@@ -78,6 +79,7 @@ export default {
   consortiumManagerPath,
   coursesPath,
   settingsAuthorityFilesPath,
+  settingsAuthorizationRoles,
 
   openCheckInApp: () => {
     cy.do(Link({ href: including('/checkin') }).click());
