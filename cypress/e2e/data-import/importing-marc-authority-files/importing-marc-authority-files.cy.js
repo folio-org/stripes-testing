@@ -15,7 +15,7 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     const testData = {};
     const jobProfileToRun = 'Default - Create SRS MARC Authority';

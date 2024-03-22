@@ -9,15 +9,14 @@ import InstanceRecordView from '../../../../support/fragments/inventory/instance
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 
 describe('Inventory', () => {
   describe('Instance', () => {
     let user;
     const C402335testData = {
       filePath: 'oneMarcBib.mrc',
-      marcFileName: `C402335 autotestFileName${getRandomPostfix()}`,
+      marcFileName: `C402335 autotestFileName${getRandomPostfix()}.mrc`,
       instanceIds: [],
       instanceSource: 'MARC',
     };
@@ -27,18 +26,12 @@ describe('Inventory', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
-      });
-      DataImport.uploadFileViaApi(C402335testData.filePath, C402335testData.marcFileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(C402335testData.marcFileName);
-      Logs.getCreatedItemsID().then((link) => {
-        C402335testData.instanceIds.push(link.split('/')[5]);
-      });
-      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-        C402376testData.instance = instanceData;
+      DataImport.uploadFileViaApi(
+        C402335testData.filePath,
+        C402335testData.marcFileName,
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      ).then((response) => {
+        C402376testData.instance = response[0].instance.id;
       });
 
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui])

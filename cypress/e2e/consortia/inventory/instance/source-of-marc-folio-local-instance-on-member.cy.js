@@ -9,8 +9,7 @@ import InstanceRecordView from '../../../../support/fragments/inventory/instance
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -18,7 +17,6 @@ describe('Inventory', () => {
     const C402760testData = {
       filePath: 'oneMarcBib.mrc',
       marcFileName: `C402760 autotestFileName ${getRandomPostfix()}`,
-      instanceIds: [],
       instanceSource: 'MARC',
     };
     const C402761testData = {
@@ -37,17 +35,13 @@ describe('Inventory', () => {
           cy.assignPermissionsToExistingUser(user.userId, [
             Permissions.uiInventoryViewCreateEditInstances.gui,
           ]);
-          cy.loginAsAdmin({
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          });
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          DataImport.uploadFileViaApi(C402760testData.filePath, C402760testData.marcFileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(C402760testData.marcFileName);
-          Logs.getCreatedItemsID().then((link) => {
-            C402760testData.instanceIds.push(link.split('/')[5]);
+
+          DataImport.uploadFileViaApi(
+            C402760testData.filePath,
+            C402760testData.marcFileName,
+            DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+          ).then((response) => {
+            C402760testData.instanceId = response[0].instance.id;
           });
           InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
             C402761testData.instance = instanceData;
@@ -70,7 +64,7 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       cy.setTenant(Affiliations.College);
-      InventoryInstance.deleteInstanceViaApi(C402760testData.instanceIds[0]);
+      InventoryInstance.deleteInstanceViaApi(C402760testData.instanceId);
     });
 
     it(
@@ -80,7 +74,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifySearchAndFilterPane();
         InventorySearchAndFilter.bySource(C402760testData.instanceSource);
         InventorySearchAndFilter.byShared('No');
-        InventorySearchAndFilter.searchInstanceByTitle(C402760testData.instanceIds[0]);
+        InventorySearchAndFilter.searchInstanceByTitle(C402760testData.instanceId);
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InstanceRecordView.verifyInstanceSource(C402760testData.instanceSource);
         InstanceRecordView.verifyEditInstanceButtonIsEnabled();

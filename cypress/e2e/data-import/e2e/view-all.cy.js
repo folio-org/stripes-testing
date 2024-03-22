@@ -4,11 +4,11 @@ import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let id;
     const filePath = 'oneMarcBib.mrc';
-    const uniqueFileName = `C11112 autotestFileName ${getRandomPostfix()}`;
+    const uniqueFileName = `C11112 autotestFileName${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
       cy.getAdminToken();

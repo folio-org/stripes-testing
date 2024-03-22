@@ -1,9 +1,7 @@
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -15,29 +13,19 @@ describe('Inventory', () => {
   describe('Instance', () => {
     const marcFile = {
       marc: 'oneMarcBib.mrc',
-      fileNameImported: `oneMarcBib.C411344.${getRandomPostfix()}.mrc`,
+      marcFileName: `C411344 marcFileName${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     };
     const testData = {};
 
     before('Create test data', () => {
       cy.getAdminToken();
-
-      cy.loginAsAdmin().then(() => {
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-        cy.visit(TopMenu.dataImportPath);
-        DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileNameImported);
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(marcFile.jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFile.fileNameImported);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFile.fileNameImported);
-        Logs.getCreatedItemID().then((instanceId) => {
-          testData.instanceId = instanceId;
-        });
+      DataImport.uploadFileViaApi(
+        marcFile.marc,
+        marcFile.fileName,
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      ).then((response) => {
+        testData.instanceId = response[0].instance.id;
       });
 
       cy.getConsortiaId()

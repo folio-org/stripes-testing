@@ -29,7 +29,7 @@ import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     const random010fieldValue = `n  4200${randomFourDigitNumber()}`;
     const testData = {

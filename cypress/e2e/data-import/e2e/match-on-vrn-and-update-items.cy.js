@@ -36,7 +36,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     const item = {
       title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
@@ -65,7 +65,7 @@ describe('data-import', () => {
     const instanceMatchProfileName = `C350591 Match for Instance ${getRandomPostfix()}`;
     const holdingsMatchProfileName = `C350591 Match for Holdings ${getRandomPostfix()}`;
     const itemMatchProfileName = `C350591 Match for Item ${getRandomPostfix()}`;
-    const editedMarcFileName = `marcFileForC350591.${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C350591 marcFile${getRandomPostfix()}.mrc`;
 
     const matchProfiles = [
       {

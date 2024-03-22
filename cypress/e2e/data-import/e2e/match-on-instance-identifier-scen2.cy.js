@@ -31,13 +31,13 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let userId;
     const filePathForCreateInstance = 'marcFileForMatchOnIdentifierForCreate.mrc';
     const filePathForUpdateInstance = 'marcFileForMatchOnIdentifierForUpdate_2.mrc';
-    const fileNameForCreateInstance = `C347829autotestFile.${getRandomPostfix()}.mrc`;
-    const fileNameForUpdateInstance = `C347829autotestFile.${getRandomPostfix()}.mrc`;
+    const fileNameForCreateInstance = `C347829 autotestFile${getRandomPostfix()}.mrc`;
+    const fileNameForUpdateInstance = `C347829 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const instanceGeneralNote = 'IDENTIFIER UPDATE 2';
     const resourceIdentifiers = [

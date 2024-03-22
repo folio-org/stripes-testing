@@ -37,9 +37,9 @@ describe.skip('data-import', () => {
     let instanceHRID;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     // file name
-    const nameMarcFileForCreate = `C345423autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForCreate = `C345423 autotestFile${getRandomPostfix()}.mrc`;
     const nameForCSVFile = `C345423autotestFile${getRandomPostfix()}.csv`;
-    const nameMarcFileForUpload = `C345423autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForUpload = `C345423 autotestFile${getRandomPostfix()}.mrc`;
     const mappingProfileFieldsForModify = {
       name: `autoTestMappingProf.${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,

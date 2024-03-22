@@ -31,7 +31,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     const randomNumberFor10Field = `nh00${randomFourDigitNumber()}`;
     const testData = {

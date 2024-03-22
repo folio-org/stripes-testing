@@ -26,13 +26,13 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing EDIFACT files', () => {
     let user;
     const invoiceNumber = '94994';
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.gobi;
     const filePathForUpload = 'ediFileForC375103.edi';
-    const fileName = `C375103autotestFile.${getRandomPostfix()}.edi`;
+    const fileName = `C375103 autotestFile${getRandomPostfix()}.edi`;
     const mappingProfile = {
       name: `C375103 Testing blank SRS column${getRandomPostfix()}`,
       description: '',

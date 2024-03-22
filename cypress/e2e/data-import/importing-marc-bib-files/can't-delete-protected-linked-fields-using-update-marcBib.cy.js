@@ -35,7 +35,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {
       updated245Field: [20, '245', '1', '0', '$a C380519 Variations / $c Van L.  Beethoven.'],

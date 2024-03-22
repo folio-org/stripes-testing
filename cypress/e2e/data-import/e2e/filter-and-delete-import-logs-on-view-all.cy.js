@@ -11,7 +11,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     const startedDate = new Date();
     const completedDate = startedDate;

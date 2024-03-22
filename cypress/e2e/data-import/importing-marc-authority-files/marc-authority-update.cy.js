@@ -32,7 +32,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     const testData = {
       authorityTitle: 'C374186 Elizabeth II, Queen of Great Britain, 1926-',

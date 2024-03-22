@@ -1,8 +1,7 @@
-import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../../support/fragments/data_import/logs/logsViewAll';
@@ -44,17 +43,12 @@ describe('Inventory', () => {
       cy.loginAsAdmin();
       ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
       ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-      cy.visit(TopMenu.dataImportPath);
-      DataImport.verifyUploadState();
-      DataImport.uploadFileAndRetry(marcFile.editedFileName, marcFile.fileNameImported);
-      JobProfiles.waitLoadingList();
-      JobProfiles.search(marcFile.jobProfileToRun);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(marcFile.fileNameImported);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(marcFile.fileNameImported);
-      Logs.getCreatedItemID().then((instanceId) => {
-        testData.instanceId = instanceId;
+      DataImport.uploadFileViaApi(
+        testData.marcFile.marc,
+        testData.marcFile.fileName,
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      ).then((response) => {
+        testData.instanceId = response[0].instance.id;
       });
       cy.resetTenant();
 

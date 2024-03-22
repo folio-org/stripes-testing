@@ -10,7 +10,7 @@ import { JOB_STATUS_NAMES } from '../../../support/constants';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     const testData = {
       // Path to static file in fixtures

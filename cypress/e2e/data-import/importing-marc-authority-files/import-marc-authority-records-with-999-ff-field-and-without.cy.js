@@ -8,11 +8,11 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     let user;
     const jobProfileToRun = 'Default - Create SRS MARC Authority';
-    const fileName = `C359207autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C359207 autotestFile${getRandomPostfix()}.mrc`;
     // eslint-disable-next-line
     const error =
       '{"error":"A new MARC-Authority was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';

@@ -9,7 +9,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let user = null;
     const instanceIds = [];

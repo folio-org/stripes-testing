@@ -30,14 +30,14 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let user = {};
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     // unique file name to upload
-    const nameForMarcFile = `C17044autoTestFile${getRandomPostfix()}.mrc`;
-    const nameForExportedMarcFile = `C17044autoTestFile${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `C17044autoTestFile${getRandomPostfix()}.csv`;
+    const nameForMarcFile = `C17044 autoTestFile${getRandomPostfix()}.mrc`;
+    const nameForExportedMarcFile = `C17044 autoTestFile${getRandomPostfix()}.mrc`;
+    const nameForCSVFile = `C17044 autoTestFile${getRandomPostfix()}.csv`;
     const matchProfile = {
       profileName: `autoTestMatchProf.${getRandomPostfix()}`,
       incomingRecordFields: {

@@ -44,7 +44,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let user = null;
     let orderNumber;
@@ -54,9 +54,9 @@ describe('data-import', () => {
     const instanceTitle =
       'South Asian texts in history : critical engagements with Sheldon Pollock. edited by Yigal Bronner, Whitney Cox, and Lawrence McCrea.';
     // unique file names
-    const nameMarcFileForCreate = `C350944 autotestFile.${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C350944 marcFileForMatchOnPol.${getRandomPostfix()}.mrc`;
-    const marcFileName = `C350944 autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForCreate = `C350944 autotestFile${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C350944 marcFileForMatchOnPol${getRandomPostfix()}.mrc`;
+    const marcFileName = `C350944 autotestFile${getRandomPostfix()}.mrc`;
 
     const collectionOfProfiles = [
       {

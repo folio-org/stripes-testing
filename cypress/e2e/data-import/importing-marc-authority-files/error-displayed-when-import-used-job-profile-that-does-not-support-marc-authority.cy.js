@@ -9,7 +9,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     let user;
     const filePathForUpload = 'marcAuthFileForC359246.mrc';

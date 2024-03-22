@@ -38,7 +38,7 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 import FileManager from '../../../support/utils/fileManager';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let instanceHrid;

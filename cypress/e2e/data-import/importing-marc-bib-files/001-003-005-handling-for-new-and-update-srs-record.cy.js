@@ -33,7 +33,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid = null;
     let instanceHridForReimport = null;
@@ -48,9 +48,9 @@ describe('data-import', () => {
     const catalogedDate = '###TODAY###';
 
     // unique file names
-    const nameMarcFileForCreate = `C17039 autotestFile.${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C17039 fileWith999Field.${getRandomPostfix()}.mrc`;
-    const fileNameAfterUpload = `C17039 uploadedFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForCreate = `C17039 autotestFile${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C17039 fileWith999Field${getRandomPostfix()}.mrc`;
+    const fileNameAfterUpload = `C17039 uploadedFile${getRandomPostfix()}.mrc`;
 
     const matchProfile = {
       profileName: `C17039 match profile ${getRandomPostfix()}`,

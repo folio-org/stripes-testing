@@ -2,6 +2,7 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
@@ -36,7 +37,6 @@ import InventoryHoldings from '../../../../support/fragments/inventory/holdings/
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {
-      sharedInstanceId: [],
       marcFile: {
         marc: 'marcBibFileForC411794.mrc',
         fileName: `C411794 testMarcFile${getRandomPostfix()}.mrc`,
@@ -100,20 +100,12 @@ describe('Data Import', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
-      });
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(testData.marcFile.jobProfileToRun);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(testData.marcFile.fileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(testData.marcFile.fileName);
-      Logs.getCreatedItemsID().then((link) => {
-        testData.sharedInstanceId.push(link.split('/')[5]);
+      DataImport.uploadFileViaApi(
+        testData.marcFile.marc,
+        testData.marcFile.fileName,
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      ).then((response) => {
+        testData.sharedInstanceId = response[0].instance.id;
       });
 
       cy.createTempUser([

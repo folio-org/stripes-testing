@@ -11,7 +11,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {
       createdRecordIDs: [],
