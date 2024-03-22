@@ -15,16 +15,9 @@ describe('MARC', () => {
         tag040NewValue: '0',
         tag380: '380',
         tag380RowIndex: 7,
-        ldr: {
-          tag: 'LDR',
-          ldrValue23Symbols: '01919cz\\\\a2200325n\\\\450',
-          ldrValue24Symbols: '01919cz\\\\a2200325n\\\\4500',
-        },
         searchInput:
           'C375167 Beethoveen, Ludwig van, 1770-1827. 14 variations sur un thème original',
         searchOption: 'Keyword',
-        calloutLDRMessage:
-          'Record cannot be saved. The Leader must contain 24 characters, including null spaces.',
         calloutMessage: 'Record cannot be saved. A MARC tag must contain three characters.',
       };
 
@@ -73,7 +66,7 @@ describe('MARC', () => {
       });
 
       it(
-        'C375167 Save "MARC authority" record with wrong tag value, empty LDR and deleted field (spitfire) (TaaS)',
+        'C375167 Save "MARC authority" record with wrong tag value and deleted field (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, testData.searchInput);
@@ -82,18 +75,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingTagName(testData.tag040, testData.tag040NewValue);
           QuickMarcEditor.checkButtonsEnabled();
 
-          QuickMarcEditor.checkLDRValue(testData.ldr.ldrValue24Symbols);
-          QuickMarcEditor.updateExistingField(testData.ldr.tag, testData.ldr.ldrValue23Symbols);
-          QuickMarcEditor.checkLDRValue(testData.ldr.ldrValue23Symbols);
-
           QuickMarcEditor.deleteField(testData.tag380RowIndex);
           QuickMarcEditor.afterDeleteNotification(testData.tag380);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.calloutLDRMessage);
-          QuickMarcEditor.closeCallout();
-
-          QuickMarcEditor.updateExistingField(testData.ldr.tag, testData.ldr.ldrValue24Symbols);
-          QuickMarcEditor.checkLDRValue(testData.ldr.ldrValue24Symbols);
 
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();

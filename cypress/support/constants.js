@@ -413,6 +413,35 @@ export const ACTION_NAMES_IN_ACTION_PROFILE = {
   UPDATE: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
 };
 
+export const AUTHORITY_LDR_FIELD_STATUS_DROPDOWN = {
+  A: 'a - Increase in encoding level',
+  C: 'c - Corrected or revised',
+  D: 'd - Deleted',
+  N: 'n - New',
+  O: 'o - Obsolete',
+  S: 's - Deleted; heading split into two or more headings',
+  X: 'x - Deleted; heading replaced by another heading',
+};
+
+export const AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES = {
+  STATUS: 'Status',
+  TYPE: 'Type',
+  ELVL: 'ELvl',
+  PUNCT: 'Punct',
+};
+
+export const AUTHORITY_LDR_FIELD_ELVL_DROPDOWN = {
+  N: 'n - Complete authority record',
+  O: 'o - Incomplete authority record',
+};
+
+export const AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN = {
+  '\\': '\\ - No information provided',
+  C: 'c - Punctuation omitted',
+  I: 'i - Punctuation included',
+  U: 'u - Unknown',
+};
+
 export const INVENTORY_LDR_FIELD_TYPE_DROPDOWN = {
   A: 'a - Language material',
   C: 'c - Notated music',

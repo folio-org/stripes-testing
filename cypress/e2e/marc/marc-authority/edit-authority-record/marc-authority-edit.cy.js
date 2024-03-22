@@ -7,6 +7,14 @@ import MarcFieldProtection from '../../../../support/fragments/settings/dataImpo
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix, { replaceByIndex } from '../../../../support/utils/stringTools';
+import {
+  AUTHORITY_LDR_FIELD_STATUS_DROPDOWN,
+  AUTHORITY_LDR_FIELD_ELVL_DROPDOWN,
+  AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN,
+  AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES,
+} from '../../../../support/constants';
+
+const LDR = 'LDR';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -111,7 +119,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const tagsC375120 = ['110', '111', '130', '150', '151'];
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
@@ -203,7 +211,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
 
@@ -283,7 +291,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const newFieldsArr = [
         ['245', '1', '\\', '$a Added row (must indicate)'],
         ['260', '1', '1', '$b Added row (not indicate)'],
@@ -400,7 +408,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const initialLDRValue = String.raw`03891cz\\a2200505n\\4500`;
       const changesSavedCallout =
         'This record has successfully saved and is in process. Changes may not appear immediately.';
@@ -538,67 +546,12 @@ describe('MARC', () => {
           searchOption: 'Keyword',
           tag: '100',
           rowIndex: 14,
-        },
-        authorityB: {
-          title: 'Beethoven, Ludwig van (no 010)',
-          searchOption: 'Keyword',
+          field100NewValue:
+            '$aUPDATED C353585Twain, Mark,$d1835-1910.$tAdventures of Huckleberry Finn',
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
-      const initialLDRValue = String.raw`03926cz\\a2200505n\\4500`;
-      let changedLDRs = [
-        {
-          newContent: replaceByIndex(
-            replaceByIndex(replaceByIndex(initialLDRValue, 5, 'a'), 17, 'n'),
-            18,
-            '\\',
-          ),
-        },
-        {
-          newContent: replaceByIndex(
-            replaceByIndex(replaceByIndex(initialLDRValue, 5, 'c'), 17, 'o'),
-            18,
-            ' ',
-          ),
-        },
-        {
-          newContent: replaceByIndex(
-            replaceByIndex(replaceByIndex(initialLDRValue, 5, 'd'), 17, 'n'),
-            18,
-            'c',
-          ),
-        },
-        {
-          newContent: replaceByIndex(
-            replaceByIndex(replaceByIndex(initialLDRValue, 5, 'n'), 17, 'o'),
-            18,
-            'i',
-          ),
-        },
-        {
-          newContent: replaceByIndex(
-            replaceByIndex(replaceByIndex(initialLDRValue, 5, 'o'), 17, 'n'),
-            18,
-            'u',
-          ),
-        },
-        {
-          newContent: replaceByIndex(
-            replaceByIndex(replaceByIndex(initialLDRValue, 5, 's'), 17, 'o'),
-            18,
-            'c',
-          ),
-        },
-        {
-          newContent: replaceByIndex(
-            replaceByIndex(replaceByIndex(initialLDRValue, 5, 'x'), 17, 'n'),
-            18,
-            'i',
-          ),
-        },
-      ];
-      const marcFieldProtectionRules = [];
+      const propertyName = 'authority';
       const createdAuthorityID = [];
 
       before('create test data', () => {
@@ -643,56 +596,94 @@ describe('MARC', () => {
           MarcAuthority.deleteViaAPI(id);
         });
         Users.deleteViaApi(testData.userProperties.userId);
-        marcFieldProtectionRules.forEach((ruleID) => {
-          if (ruleID) MarcFieldProtection.deleteViaApi(ruleID);
-        });
       });
 
       it(
         'C353585 Verify LDR validation rules with invalid data (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          const wrongPositionError =
-            'Record cannot be saved. Please check the Leader. Only positions 5, 17, 18 can be edited in the Leader.';
-          const positions5Error =
-            'Record cannot be saved. Please enter a valid Leader 05. Valid values are listed at https://www.loc.gov/marc/authority/adleader.html';
-          const position17Error =
-            'Record cannot be saved. Please enter a valid Leader 17. Valid values are listed at https://www.loc.gov/marc/authority/adleader.html';
-          const positions18Error =
-            'Record cannot be saved. Please enter a valid Leader 18. Valid values are listed at https://www.loc.gov/marc/authority/adleader.html';
-
-          changedLDRs = [
-            { newContent: replaceByIndex(initialLDRValue, 4, 3), errorMessage: wrongPositionError },
-            {
-              newContent: replaceByIndex(initialLDRValue, 6, 'a'),
-              errorMessage: wrongPositionError,
-            },
-            {
-              newContent: replaceByIndex(initialLDRValue, 16, 2),
-              errorMessage: wrongPositionError,
-            },
-            {
-              newContent: replaceByIndex(initialLDRValue, 19, 't'),
-              errorMessage: wrongPositionError,
-            },
-            { newContent: replaceByIndex(initialLDRValue, 5, 'w'), errorMessage: positions5Error },
-            { newContent: replaceByIndex(initialLDRValue, 17, 'p'), errorMessage: position17Error },
-            {
-              newContent: replaceByIndex(initialLDRValue, 18, 'q'),
-              errorMessage: positions18Error,
-            },
-          ];
+          const errorInvalidLDR05and17and18 =
+            'Record cannot be saved. Please enter a valid Leader 05, Leader 17 and Leader 18. Valid values are listed at https://www.loc.gov/marc/authority/adleader.html';
+          const errorInvalidLDR17and18 =
+            'Record cannot be saved. Please enter a valid Leader 17 and Leader 18. Valid values are listed at https://www.loc.gov/marc/authority/adleader.html';
 
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectTitle(testData.authority.title);
           MarcAuthority.edit();
           // Waiter needed for the whole page to be loaded.
           cy.wait(2000);
-          changedLDRs.forEach((changeLDR) => {
-            QuickMarcEditor.updateExistingField('LDR', changeLDR.newContent);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkCallout(changeLDR.errorMessage);
+          QuickMarcEditor.verifyDropdownValueOfLDRIsValid(
+            AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
+            false,
+          );
+          QuickMarcEditor.verifyDropdownValueOfLDRIsValid(
+            AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL,
+            false,
+          );
+          QuickMarcEditor.verifyDropdownValueOfLDRIsValid(
+            AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT,
+            false,
+          );
+
+          QuickMarcEditor.updateExistingField(
+            testData.authority.tag,
+            testData.authority.field100NewValue,
+          );
+          QuickMarcEditor.checkButtonsEnabled();
+
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkCallout(errorInvalidLDR05and17and18);
+
+          Object.values(AUTHORITY_LDR_FIELD_STATUS_DROPDOWN).forEach((dropdownOption) => {
+            QuickMarcEditor.verifyFieldsDropdownOption(
+              LDR,
+              AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
+              dropdownOption,
+            );
           });
+          QuickMarcEditor.verifyFieldsDropdownOption(
+            LDR,
+            AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
+            'b',
+          );
+
+          QuickMarcEditor.selectFieldsDropdownOption(
+            LDR,
+            AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
+            AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.A,
+          );
+          QuickMarcEditor.verifyDropdownOptionChecked(
+            LDR,
+            AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
+            AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.A,
+          );
+
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkCallout(errorInvalidLDR17and18);
+
+          QuickMarcEditor.selectFieldsDropdownOption(
+            LDR,
+            AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL,
+            AUTHORITY_LDR_FIELD_ELVL_DROPDOWN.N,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            LDR,
+            AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT,
+            AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN.I,
+          );
+          QuickMarcEditor.verifyDropdownValueOfLDRIsValid(AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL);
+          QuickMarcEditor.verifyDropdownValueOfLDRIsValid(
+            AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT,
+          );
+
+          QuickMarcEditor.clickSaveAndKeepEditing();
+          QuickMarcEditor.verifyDropdownValueOfLDRIsValid(AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL);
+          QuickMarcEditor.verifyDropdownValueOfLDRIsValid(
+            AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT,
+          );
+          QuickMarcEditor.verifyDropdownValueOfLDRIsValid(
+            AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
+          );
         },
       );
     });
@@ -711,7 +702,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
 
@@ -802,7 +793,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
 
@@ -891,7 +882,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const tags = ['381', '382', '379', ''];
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
@@ -1018,7 +1009,7 @@ describe('MARC', () => {
         },
       };
       const jobProfileToRun = 'Default - Create SRS MARC Authority';
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
 

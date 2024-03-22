@@ -2322,4 +2322,12 @@ export default {
       });
     }
   },
+
+  verifyDropdownValueOfLDRIsValid(dropdownLabel, isValid = true) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: 'LDR' })
+        .find(Select({ label: dropdownLabel }))
+        .has({ valid: isValid }),
+    );
+  },
 };

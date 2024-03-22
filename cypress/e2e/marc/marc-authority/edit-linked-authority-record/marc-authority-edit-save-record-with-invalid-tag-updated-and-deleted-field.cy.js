@@ -22,14 +22,7 @@ describe('MARC', () => {
         tag040NewValue: '0',
         tag952RowIndex: 18,
         tag600RowIndex: 25,
-        ldr: {
-          tag: 'LDR',
-          ldrValue23Symbols: '00862cz\\\\a2200265n\\\\450',
-          ldrValue24Symbols: '00862cz\\\\a2200265n\\\\4500',
-        },
         searchOption: 'Keyword',
-        calloutLDRMessage:
-          'Record cannot be saved. The Leader must contain 24 characters, including null spaces.',
         calloutMessage: 'Record cannot be saved. A MARC tag must contain three characters.',
       };
 
@@ -106,7 +99,7 @@ describe('MARC', () => {
       });
 
       it(
-        'C375171 Save linked "MARC authority" record with wrong tag value, invalid LDR, updated "1XX" and deleted field (spitfire) (TaaS)',
+        'C375171 Save linked "MARC authority" record with wrong tag value, updated "1XX" and deleted field (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, marcFiles[1].authorityHeading);
@@ -115,20 +108,11 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingTagName(testData.tag040, testData.tag040NewValue);
           QuickMarcEditor.checkButtonsEnabled();
 
-          QuickMarcEditor.checkLDRValue(testData.ldr.ldrValue24Symbols);
-          QuickMarcEditor.updateExistingField(testData.ldr.tag, testData.ldr.ldrValue23Symbols);
-          QuickMarcEditor.checkLDRValue(testData.ldr.ldrValue23Symbols);
-
           QuickMarcEditor.updateExistingField(testData.tag100, testData.newAuthority100FieldValue);
+          QuickMarcEditor.checkContentByTag(testData.tag100, testData.newAuthority100FieldValue);
 
           QuickMarcEditor.deleteField(testData.tag952RowIndex);
           QuickMarcEditor.afterDeleteNotification(testData.tag952);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.calloutLDRMessage);
-          QuickMarcEditor.closeCallout();
-
-          QuickMarcEditor.updateExistingField(testData.ldr.tag, testData.ldr.ldrValue24Symbols);
-          QuickMarcEditor.checkLDRValue(testData.ldr.ldrValue24Symbols);
 
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
@@ -141,6 +125,7 @@ describe('MARC', () => {
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(1);
 
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
+          MarcAuthorities.verifyViewPaneContentExists();
         },
       );
     });
