@@ -37,7 +37,7 @@ const testData = {
   ],
 };
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Subject Browse', () => {
     before('Create test data', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {

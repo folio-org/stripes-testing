@@ -2,7 +2,7 @@ import { ClassificationTypes } from '../../../support/fragments/settings/invento
 import { InventoryInstance, InventoryInstances } from '../../../support/fragments/inventory';
 import TopMenu from '../../../support/fragments/topMenu';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Instance', () => {
     const testData = {
       classificationTypes: [],

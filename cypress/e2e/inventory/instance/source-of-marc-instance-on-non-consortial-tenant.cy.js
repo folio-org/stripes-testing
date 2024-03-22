@@ -8,19 +8,19 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Instance', () => {
     let user;
     let instanceHrid;
     const instanceSource = 'MARC';
     const filePathForUpload = 'oneMarcBib.mrc';
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const fileName = `C402775 autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C402775 autotestFile${getRandomPostfix()}.mrc`;
 
     before('create test data and login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then((response) => {
-        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+        instanceHrid = response[0].instance.hrid;
       });
 
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(

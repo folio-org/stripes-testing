@@ -13,13 +13,13 @@ import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Single record import', () => {
     let user;
     let instanceHRID;
     let profileId;
     const OCLCAuthentication = '100481406/PAOLF';
-    const fileName = `C375126 autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C375126 autotestFile${getRandomPostfix()}.mrc`;
     const newTargetProfileName = `C375126 autotest profile${getRandomPostfix()}`;
     const OCLCWorldCatTargetProfileName = 'OCLC WorldCat';
     const profileForOverlay = 'Inventory Single Record - Default Update Instance (Default)';

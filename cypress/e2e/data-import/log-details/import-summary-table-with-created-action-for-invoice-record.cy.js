@@ -28,13 +28,13 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     const vendorInvoiceNumber = '94959';
     const quantityOfItems = '1';
     const filePathToUpload = 'ediFileForC353625.edi';
-    const fileName = `C353625 autotestFile.${getRandomPostfix()}.edi`;
+    const fileName = `C353625 autotestFile${getRandomPostfix()}.edi`;
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.gobi;
     const mappingProfile = {
       name: `C353625 autoTestMappingProf.${getRandomPostfix()}`,

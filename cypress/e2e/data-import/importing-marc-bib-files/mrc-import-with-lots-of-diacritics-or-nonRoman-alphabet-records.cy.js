@@ -12,7 +12,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const quantityOfItems = '15';
     const rowNumbers = [1, 4, 7, 14];
@@ -60,7 +60,7 @@ describe('data-import', () => {
       publisher: 'T-vo ukr. kooperatsiï',
       language: 'Ukrainian',
     };
-    const nameMarcFileForCreate = `C6709 autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForCreate = `C6709 autotestFile${getRandomPostfix()}.mrc`;
 
     before('login', () => {
       cy.loginAsAdmin();

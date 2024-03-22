@@ -8,7 +8,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     const testData = {};
     const createdRecordsIDs = [];
@@ -16,12 +16,12 @@ describe('data-import', () => {
     const marcFiles = [
       {
         marc: 'marcBibC357050-1.mrc',
-        fileName: `C357050 testMarcFile.${getRandomPostfix()}.mrc`,
+        fileName: `C357050 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       },
       {
         marc: 'marcBibC357050-2.mrc',
-        fileName: `C357050 testMarcFile.${getRandomPostfix()}.mrc`,
+        fileName: `C357050 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       },
     ];

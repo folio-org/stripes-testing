@@ -12,7 +12,7 @@ import InventoryItems from '../../../support/fragments/inventory/item/inventoryI
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Item', () => {
     const itemData = {
       barcode: generateItemBarcode(),

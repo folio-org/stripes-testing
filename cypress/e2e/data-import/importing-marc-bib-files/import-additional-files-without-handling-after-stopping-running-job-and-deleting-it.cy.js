@@ -8,11 +8,11 @@ import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
-    const bigFileName = `C378883autotestFile.${getRandomPostfix()}.mrc`;
-    const smallFileName = `C378883autotestFile.${getRandomPostfix()}.mrc`;
+    const bigFileName = `C378883 autotestFile${getRandomPostfix()}.mrc`;
+    const smallFileName = `C378883 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const numberOfLogsToDelete = '1';
 

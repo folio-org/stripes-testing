@@ -42,7 +42,7 @@ describe.skip('data-import', () => {
     let instanceHrid;
     const quantityOfItems = '1';
     const filePathForCreateOrder = 'marcFileForCreateOrder.mrc';
-    const marcFileName = `C380446 autotest file ${getRandomPostfix()}`;
+    const marcFileName = `C380446 autotestFile${getRandomPostfix()}.mrc`;
 
     const collectionOfMappingAndActionProfiles = [
       {

@@ -11,7 +11,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 let user;
 const maxLogsQuantityOnPage = 100;
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     const instanceIds = [];
 

@@ -20,7 +20,7 @@ const fileName = 'marBibFileC380502.mrc';
 const updatedFileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
 let createdAuthorityID;
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     before('Creating data', () => {
       cy.createTempUser([

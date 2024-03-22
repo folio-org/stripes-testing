@@ -29,7 +29,7 @@ const oclcRecordData = {
   },
 };
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Single record import', () => {
     before('create test data', () => {
       cy.getAdminToken().then(() => {

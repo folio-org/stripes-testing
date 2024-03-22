@@ -5,7 +5,7 @@ import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const filePathForUpload = 'oneMarcBib.mrc';
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
@@ -21,15 +21,15 @@ describe('data-import', () => {
       () => {
         [
           {
-            fileName: `C6707autotestFiles${getRandomPostfix()}`,
+            fileName: `C6707 autotestFiles${getRandomPostfix()}.mrc`,
             quantityOfFiles: '2',
           },
           {
-            fileName: `C6707autotestFiles${getRandomPostfix()}`,
+            fileName: `C6707 autotestFiles${getRandomPostfix()}.mrc`,
             quantityOfFiles: '4',
           },
           {
-            fileName: `C6707autotestFiles${getRandomPostfix()}`,
+            fileName: `C6707 autotestFiles${getRandomPostfix()}.mrc`,
             quantityOfFiles: '15',
           },
         ].forEach((upload) => {

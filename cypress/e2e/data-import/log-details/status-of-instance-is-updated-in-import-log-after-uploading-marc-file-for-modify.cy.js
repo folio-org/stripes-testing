@@ -33,13 +33,13 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     let instanceHrid;
     let exportedFileName;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const fileNameForCreate = `C357027 autotestFileCreteInstance.${getRandomPostfix()}.mrc`;
+    const fileNameForCreate = `C357027 autotestFileCreteInstance${getRandomPostfix()}.mrc`;
     const filePathForCreateInstance = 'oneMarcBib.mrc';
     const mappingProfile = {
       name: `C357027 autoTestMappingProf.${getRandomPostfix()}`,

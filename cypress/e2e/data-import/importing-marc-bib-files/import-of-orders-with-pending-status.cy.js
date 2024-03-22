@@ -29,13 +29,13 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let orderNumber;
     const quantityOfOrders = '2';
     const filePathForCreateOrder = 'marcFileForC375174.mrc';
-    const marcFileName = `C375174 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C375174 autotestFileName${getRandomPostfix()}.mrc`;
     const orderData = {
       title: 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.',
       publicationDate: '2023',

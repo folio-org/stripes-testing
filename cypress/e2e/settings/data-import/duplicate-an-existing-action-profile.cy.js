@@ -9,7 +9,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     let user;
     const actionProfile = {

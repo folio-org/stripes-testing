@@ -6,11 +6,11 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceId;
     const filePathToUpload = 'oneMarcBib.mrc';
-    const fileNameToUpload = `C2358 autotestFile.${getRandomPostfix()}.mrc`;
+    const fileNameToUpload = `C2358 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
     before('create test data', () => {

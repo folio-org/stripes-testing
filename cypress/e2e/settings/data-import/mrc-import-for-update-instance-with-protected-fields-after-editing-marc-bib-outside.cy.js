@@ -34,15 +34,15 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     let user;
     let instanceHrid = null;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const quantityOfItems = '1';
     // unique file names
-    const nameMarcFileForCreate = `C356830 autotestFile.${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C356830 marcFileForMatch.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForCreate = `C356830 autotestFile${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C356830 marcFileForMatch${getRandomPostfix()}.mrc`;
     const firstProtectedFieldsData = {
       indicator1: '*',
       indicator2: '*',

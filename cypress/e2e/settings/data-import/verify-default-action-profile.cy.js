@@ -9,7 +9,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     const testData = {};
     const defaultJobProfileName = 'Default - Create SRS MARC Authority';

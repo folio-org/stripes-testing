@@ -10,11 +10,11 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Permissions', () => {
     let user;
     let instanceHrid;
-    const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
+    const fileName = `C356780 marcBibFile${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
       cy.getAdminToken();

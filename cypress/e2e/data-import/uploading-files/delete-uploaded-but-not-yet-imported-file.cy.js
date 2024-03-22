@@ -5,11 +5,11 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Uploading files', () => {
     let user;
     const quantityOfFiles = '2';
-    const fileName = `C2377 autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C2377 autotestFile${getRandomPostfix()}.mrc`;
     const filePathForUpload = 'oneMarcBib.mrc';
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 

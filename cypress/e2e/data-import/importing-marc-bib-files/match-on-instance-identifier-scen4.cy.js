@@ -35,14 +35,14 @@ import FileManager from '../../../support/utils/fileManager';
 import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     const randomIdentifierCode = GenerateIdentifierCode.getRandomIdentifierCode();
-    const editedMarcFileNameForCreate = `C347831 marcFileForCreate.${getRandomPostfix()}.mrc`;
-    const editedMarcFileNameForUpdate = `C347831 marcFileForUpdate.${getRandomPostfix()}.mrc`;
-    const fileNameForCreateInstance = `C347831autotestFile.${getRandomPostfix()}.mrc`;
-    const fileNameForUpdateInstance = `C347831autotestFile.${getRandomPostfix()}.mrc`;
+    const editedMarcFileNameForCreate = `C347831 marcFileForCreate${getRandomPostfix()}.mrc`;
+    const editedMarcFileNameForUpdate = `C347831 marcFileForUpdate${getRandomPostfix()}.mrc`;
+    const fileNameForCreateInstance = `C347831 autotestFile${getRandomPostfix()}.mrc`;
+    const fileNameForUpdateInstance = `C347831 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const firstInstanceTitle =
       'Competing with idiots : Herman and Joe Mankiewicz, a dual portrait / Nick Davis.';

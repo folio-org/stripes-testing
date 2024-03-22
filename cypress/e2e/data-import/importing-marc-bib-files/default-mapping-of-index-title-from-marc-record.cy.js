@@ -11,7 +11,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     const instanceHrids = [];

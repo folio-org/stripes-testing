@@ -26,13 +26,13 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     let user;
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.harrassowitz;
     const filePathForUpload = 'ediFileForC345353.edi';
-    const fileNameForFirstImport = `C345353 autotestFileName.${getRandomPostfix()}`;
-    const fileNameForSecondImport = `C345353 autotestFileName.${getRandomPostfix()}`;
+    const fileNameForFirstImport = `C345353 autotestFileName${getRandomPostfix()}.mrc`;
+    const fileNameForSecondImport = `C345353 autotestFileName${getRandomPostfix()}.mrc`;
     const invoiceNumber = '246816';
     const invoiceData = [
       {

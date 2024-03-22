@@ -33,7 +33,7 @@ import FileManager from '../../../support/utils/fileManager';
 import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     const randomIdentifierCode = GenerateIdentifierCode.getRandomIdentifierCode();
@@ -45,10 +45,10 @@ describe('data-import', () => {
     const protectedFieldIds = [];
     const filePathToUpload = 'marcBibFileForC380390.mrc';
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const fileNameForCreate = `C380390 autotest file.${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C380390 autotest file.${getRandomPostfix()}.mrc`;
-    const fileNameForMatch = `C380390 autotest file.${getRandomPostfix()}.mrc`;
-    const fileNameForUpdate = `C380390 autotest file.${getRandomPostfix()}.mrc`;
+    const fileNameForCreate = `C380390 autotestFile${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C380390 autotestFile${getRandomPostfix()}.mrc`;
+    const fileNameForMatch = `C380390 autotestFile${getRandomPostfix()}.mrc`;
+    const fileNameForUpdate = `C380390 autotestFile${getRandomPostfix()}.mrc`;
     const matchProfile = {
       profileName: `C380390 ccn MARC match ${getRandomPostfix()}`,
       incomingRecordFields: {

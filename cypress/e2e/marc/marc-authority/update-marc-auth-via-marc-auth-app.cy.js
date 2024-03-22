@@ -20,7 +20,7 @@ describe('MARC', () => {
       authTitle: 'C417046 Jackson, Peter',
       marcFile: {
         marc: 'marcAuthC417046.mrc',
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        fileName: `C417046 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
       },
     };

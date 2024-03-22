@@ -6,12 +6,12 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Users from '../../../support/fragments/users/users';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Permissions', () => {
     let userA;
     let userB;
     const filePath = 'marcBibFileForC356788.mrc';
-    const marcFileName = `C356788 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C356788 autotestFileName${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
     before('create test data', () => {

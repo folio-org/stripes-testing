@@ -15,7 +15,7 @@ import { Permissions } from '../../../support/dictionary';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     const testData = {};
     const mappingProfile = {

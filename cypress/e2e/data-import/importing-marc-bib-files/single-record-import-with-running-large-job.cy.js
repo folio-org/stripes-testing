@@ -15,11 +15,11 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     const OCLCAuthentication = '100481406/PAOLF';
-    const fileName = `C356824autotestFile${getRandomPostfix()}.mrc`;
+    const fileName = `C356824 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const oclcForImport = '912958093';
     const oclcForUpdating = '698820890';

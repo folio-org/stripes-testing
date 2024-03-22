@@ -37,7 +37,7 @@ import FileManager from '../../../support/utils/fileManager';
 import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
     const quantityOfItems = '1';
@@ -53,12 +53,12 @@ describe('data-import', () => {
     const recordType = 'MARC_BIBLIOGRAPHIC';
     const note = 'Test administrative note for item';
     // unique file name
-    const editedMarcFileNameForCreate = `C11123 autotestFile.${getRandomPostfix()}.mrc`;
-    const marcFileForCreate = `C11123 autoTestFile.${getRandomPostfix()}.mrc`;
+    const editedMarcFileNameForCreate = `C11123 autotestFile${getRandomPostfix()}.mrc`;
+    const marcFileForCreate = `C11123 autoTestFile${getRandomPostfix()}.mrc`;
     const nameForCSVFile = `C11123 autotestFile${getRandomPostfix()}.csv`;
-    const nameMarcFileForUpload = `C11123 autotestFile.${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C11123 fileWithItemHrid.${getRandomPostfix()}.mrc`;
-    const nameMarcFileForUpdate = `C11123 autotestFileForUpdateItem.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForUpload = `C11123 autotestFile${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C11123 fileWithItemHrid${getRandomPostfix()}.mrc`;
+    const nameMarcFileForUpdate = `C11123 autotestFileForUpdateItem${getRandomPostfix()}.mrc`;
     // unique profile names for creating
     const instanceMappingProfileNameForCreate = `C11123 autotest_instance_mapping_profile_${getRandomPostfix()}`;
     const holdingsMappingProfileNameForCreate = `C11123 autotest_holdings_mapping_profile_${getRandomPostfix()}`;

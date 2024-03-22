@@ -8,7 +8,7 @@ import JobProfileView from '../../../support/fragments/data_import/job_profiles/
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     const defaultJobProfileName = 'Default - Create SRS MARC Authority';
     const defaultActionProfileName = 'Default - Create MARC Authority';

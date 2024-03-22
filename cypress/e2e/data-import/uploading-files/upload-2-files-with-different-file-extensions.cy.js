@@ -5,10 +5,10 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Uploading files', () => {
     let user;
-    const firstUploadFile = `C2357 autotestFile.${getRandomPostfix()}.mrc`;
+    const firstUploadFile = `C2357 autotestFile${getRandomPostfix()}.mrc`;
     const secondUploadFile = `C2357 autotestFile.${getRandomPostfix()}.csv`;
 
     before('create test data', () => {

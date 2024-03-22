@@ -11,7 +11,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Contributors Browse', () => {
     const testData = {
       contributorName: 'Lee, Stanley Test C359596',

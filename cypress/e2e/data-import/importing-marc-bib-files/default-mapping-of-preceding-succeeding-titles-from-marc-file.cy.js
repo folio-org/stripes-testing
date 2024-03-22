@@ -8,11 +8,11 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathToUpload = 'marcBibFileForC10923.mrc';
-    const fileName = `C10923 autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C10923 autotestFile${getRandomPostfix()}.mrc`;
     const titles = {
       instanceTitle: 'Justus Liebigs Annalen der Chemie.',
       precedingTitles: "Justus Liebig's Annalen der Chemie und Pharmacie",

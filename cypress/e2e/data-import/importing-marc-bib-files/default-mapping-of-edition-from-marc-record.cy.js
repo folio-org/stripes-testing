@@ -10,13 +10,13 @@ import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     const instanceHrids = [];
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathToUpload = 'marcBibFileForC11120.mrc';
-    const fileName = `C11120 autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C11120 autotestFile${getRandomPostfix()}.mrc`;
     const instances = [
       {
         title:

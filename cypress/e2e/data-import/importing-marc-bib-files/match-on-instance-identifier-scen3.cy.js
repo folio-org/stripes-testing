@@ -34,17 +34,17 @@ import Users from '../../../support/fragments/users/users';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let userId = null;
     const randomIdentifierCode = `(OCoLC)847143${generateItemBarcode()}8`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathForCreateInstance = 'marcFileForMatchOnIdentifierForCreate.mrc';
     const filePathForUpdateInstance = 'marcFileForMatchOnIdentifierForUpdate_3.mrc';
-    const editedMarcFileNameForCreate = `C347830 marcFileForCreate.${getRandomPostfix()}.mrc`;
-    const editedMarcFileNameForUpdate = `C347830 marcFileForUpdate.${getRandomPostfix()}.mrc`;
-    const fileNameForCreateInstance = `C347830autotestFile.${getRandomPostfix()}.mrc`;
-    const fileNameForUpdateInstance = `C347830autotestFile.${getRandomPostfix()}.mrc`;
+    const editedMarcFileNameForCreate = `C347830 marcFileForCreate${getRandomPostfix()}.mrc`;
+    const editedMarcFileNameForUpdate = `C347830 marcFileForUpdate${getRandomPostfix()}.mrc`;
+    const fileNameForCreateInstance = `C347830 autotestFile${getRandomPostfix()}.mrc`;
+    const fileNameForUpdateInstance = `C347830 autotestFile${getRandomPostfix()}.mrc`;
     const instanceGeneralNote = 'IDENTIFIER UPDATE 3';
     const resourceIdentifiers = [
       { type: 'UPC', value: 'ORD32671387-4' },

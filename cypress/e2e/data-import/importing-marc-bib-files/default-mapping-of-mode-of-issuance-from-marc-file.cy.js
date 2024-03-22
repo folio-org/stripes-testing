@@ -8,12 +8,12 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const instanceHrids = [];
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathToUpload = 'marcBibFileForC11121.mrc';
-    const fileName = `C11121 autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C11121 autotestFile${getRandomPostfix()}.mrc`;
 
     before('login', () => {
       cy.loginAsAdmin({
