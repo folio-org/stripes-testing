@@ -125,6 +125,35 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
               cy.addRolesToNewUserApi(userProperties.userId, [roleId]);
             });
           } else {
+            cy.getCapabilitiesApi().then((capabilitiesResponse) => {
+              cy.getCapabilitySetsApi().then((capabilitySetsResponse) => {
+                permissions.forEach((permission) => {
+                  const cp = capabilitiesResponse.find(capability => capability.permission === permission);
+                  if (!cp) {
+                    cy.log('Permission not found: ' + permission);
+                  } else {
+                    cy.addCapabilitiesToNewUserApi(userProperties.userId, [cp.id]);
+                  }
+
+                  const cps = capabilitySetsResponse.find(capability => capability.name === permission);
+                  if (!cps) {
+                    cy.log('Permission not found: ' + permission);
+                    const cpsn = capabilitySetsResponse.find(capability => capability.name === cp.name);
+                    if (cpsn) {
+                      cy.addCapabilitySetsToNewUserApi(userProperties.userId, [cpsn.id]);
+                    }
+                  } else {
+                    cy.addCapabilitiesToNewUserApi(userProperties.userId, [cps.id]);
+                  }
+                });
+              });
+            });
+            cy.getCapabilitySetsApi().then((capabilitySetsResponse) => {
+              const cs = capabilitySetsResponse.find(capability => capability.name === 'ui-users.view');
+              cy.log(cs);
+              cy.addCapabilitySetsToNewUserApi(userProperties.userId, [cs.id]);
+            });
+            cy.wait(3000);
             cy.addPermissionsToNewUserApi({
               userId: userProperties.userId,
               permissions: [

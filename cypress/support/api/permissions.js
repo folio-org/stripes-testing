@@ -41,26 +41,28 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('getCapabilitiesApi', (limit = 3000) => {
+Cypress.Commands.add('getCapabilitiesApi', (limit = 4000) => {
   cy.okapiRequest({
     method: 'GET',
     path: `capabilities?limit=${limit}`,
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
-    cy.wrap(body.capabilities).as('capabs');
+    //cy.wrap(body.capabilities).as('capabs');
+    return body.capabilities;
   });
-  return cy.get('@capabs');
+  //return cy.get('@capabs');
 });
 
-Cypress.Commands.add('getCapabilitySetsApi', (limit = 1000) => {
+Cypress.Commands.add('getCapabilitySetsApi', (limit = 2000) => {
   cy.okapiRequest({
     method: 'GET',
     path: `capability-sets?limit=${limit}`,
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
-    cy.wrap(body.capabilitySets).as('capabSets');
+    //cy.wrap(body.capabilitySets).as('capabSets');
+    return body.capabilitySets;
   });
-  return cy.get('@capabSets');
+  //return cy.get('@capabSets');
 });
 
 Cypress.Commands.add('addCapabilitiesToNewUserApi', (userId, capabilityIds) => {
@@ -69,7 +71,7 @@ Cypress.Commands.add('addCapabilitiesToNewUserApi', (userId, capabilityIds) => {
     path: 'users/capabilities',
     body: {
       userId,
-      capabilityIds: [...capabilityIds],
+      capabilityIds,
     },
     isDefaultSearchParamsRequired: false,
   });
@@ -81,7 +83,7 @@ Cypress.Commands.add('addCapabilitySetsToNewUserApi', (userId, capabilitySetIds)
     path: 'users/capability-sets',
     body: {
       userId,
-      capabilitySetIds: [...capabilitySetIds],
+      capabilitySetIds,
     },
     isDefaultSearchParamsRequired: false,
   });
@@ -110,25 +112,25 @@ Cypress.Commands.add('getUserRoleIdByNameApi', (roleName) => {
   return cy.get('@roleId');
 });
 
-Cypress.Commands.add('addCapabilitiesToNewRoleApi', (roleId, capabilityIds) => {
+Cypress.Commands.add('addCapabilitiesToNewRoleApi', (roleId, userCapabilityIds) => {
   cy.okapiRequest({
     method: 'POST',
     path: 'roles/capabilities',
     body: {
       roleId,
-      capabilityIds: [...capabilityIds],
+      capabilityIds: [...userCapabilityIds],
     },
     isDefaultSearchParamsRequired: false,
   });
 });
 
-Cypress.Commands.add('addCapabilitySetsToNewRoleApi', (roleId, capabilitySetIds) => {
+Cypress.Commands.add('addCapabilitySetsToNewRoleApi', (roleId, userCapabilitySetIds) => {
   cy.okapiRequest({
     method: 'POST',
     path: 'roles/capability-sets',
     body: {
       roleId,
-      capabilitySetIds: [...capabilitySetIds],
+      capabilitySetIds: [...userCapabilitySetIds],
     },
     isDefaultSearchParamsRequired: false,
   });

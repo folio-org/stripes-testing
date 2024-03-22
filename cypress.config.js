@@ -33,7 +33,7 @@ module.exports = defineConfig({
     rtrAuth: true,
     ecsEnabled: false,
     eureka: true,
-    runAsAdmin: true,
+    runAsAdmin: false,
   },
   e2e: {
     async setupNodeEvents(on, config) {
