@@ -33,7 +33,7 @@ describe('data-import', () => {
     let user;
     let orderNumber;
     const filePathForCreateOrder = 'marcBibFileForC380388.mrc';
-    const marcFileName = `C380388 autotest file ${getRandomPostfix()}`;
+    const marcFileName = `C380388 autotestFile${getRandomPostfix()}.mrc`;
 
     const mappingProfile = {
       name: `C380388 Create order - receipt not required${getRandomPostfix()}`,

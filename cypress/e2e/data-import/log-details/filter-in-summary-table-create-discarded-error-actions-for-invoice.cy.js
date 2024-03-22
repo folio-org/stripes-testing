@@ -36,7 +36,7 @@ describe('data-import', () => {
     };
     const invoiceNumber = '1024200';
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.ebsco;
-    const marcFileName = `C357018 autotest file ${getRandomPostfix()}`;
+    const marcFileName = `C357018 autotestFile${getRandomPostfix()}.mrc`;
     const filePathForUpload = 'ediFileForC357018.edi';
     const mappingProfile = {
       name: `C357018 Test invoice log table Create EBSCO invoice ${getRandomPostfix()}`,

@@ -94,7 +94,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.selectResultCheckboxes(1);
           InventorySearchAndFilter.exportInstanceAsMarc();
 
-          // use cy.getToken function to get toket for current tenant
+          // use cy.getToken function to get token for current tenant
           cy.getCollegeAdminToken();
           // download exported marc file
           cy.visit(TopMenu.dataExportPath);

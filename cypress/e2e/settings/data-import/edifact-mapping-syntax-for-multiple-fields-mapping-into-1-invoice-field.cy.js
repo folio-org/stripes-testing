@@ -31,8 +31,8 @@ describe('data-import', () => {
     let user;
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.harrassowitz;
     const filePathForUpload = 'ediFileForC345353.edi';
-    const fileNameForFirstImport = `C345353 autotestFileName.${getRandomPostfix()}`;
-    const fileNameForSecondImport = `C345353 autotestFileName.${getRandomPostfix()}`;
+    const fileNameForFirstImport = `C345353 autotestFileName.${getRandomPostfix()}.mrc`;
+    const fileNameForSecondImport = `C345353 autotestFileName.${getRandomPostfix()}.mrc`;
     const invoiceNumber = '246816';
     const invoiceData = [
       {

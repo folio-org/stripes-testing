@@ -11,7 +11,7 @@ describe('data-import', () => {
     let userA;
     let userB;
     const filePath = 'marcBibFileForC356788.mrc';
-    const marcFileName = `C356788 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C356788 autotestFileName${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
     before('create test data', () => {

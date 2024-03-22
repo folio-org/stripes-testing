@@ -32,7 +32,7 @@ describe('data-import', () => {
   describe('Permissions', () => {
     let user;
     const filePath = 'marcBibFileForC377023.mrc';
-    const marcFileName = `C377023 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C377023 autotestFileName${getRandomPostfix()}.mrc`;
     const title = 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.';
 
     const mappingProfile = {

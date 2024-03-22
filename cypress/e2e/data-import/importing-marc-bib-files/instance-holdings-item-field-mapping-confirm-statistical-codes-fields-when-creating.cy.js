@@ -35,7 +35,7 @@ describe('data-import', () => {
     let instanceHrid;
     const title = "101 things I wish I'd known when I started using hypnosis";
     const filePathToUpload = 'marcBibFileForC11090.mrc';
-    const marcFileName = `C11090 autotestFileName_${getRandomPostfix()}`;
+    const marcFileName = `C11090 autotestFileName${getRandomPostfix()}.mrc`;
 
     const collectionOfMappingAndActionProfiles = [
       {

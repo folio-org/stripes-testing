@@ -11,7 +11,7 @@ describe('data-import', () => {
     let id;
     let instanceId;
     const filePath = 'oneMarcBib.mrc';
-    const uniqueFileName = `C11112 autotestFileName ${getRandomPostfix()}`;
+    const uniqueFileName = `C11112 autotestFileName${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
       cy.getAdminToken();

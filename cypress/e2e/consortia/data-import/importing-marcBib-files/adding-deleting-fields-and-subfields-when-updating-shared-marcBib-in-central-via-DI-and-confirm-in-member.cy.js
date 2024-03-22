@@ -149,12 +149,12 @@ describe('Data Import', () => {
         .then(() => {
           cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
           cy.setTenant(Affiliations.College);
-          // cy.assignPermissionsToExistingUser(testData.user.userId, [
-          //   Permissions.moduleDataImportEnabled.gui,
-          //   Permissions.inventoryAll.gui,
-          //   Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          //   Permissions.dataExportEnableApp.gui,
-          // ]);
+          cy.assignPermissionsToExistingUser(testData.user.userId, [
+            Permissions.moduleDataImportEnabled.gui,
+            Permissions.inventoryAll.gui,
+            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+            Permissions.dataExportEnableApp.gui,
+          ]);
 
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,

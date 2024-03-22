@@ -16,7 +16,7 @@ describe('Inventory', () => {
     let user;
     const C402335testData = {
       filePath: 'oneMarcBib.mrc',
-      marcFileName: `C402335 autotestFileName${getRandomPostfix()}`,
+      marcFileName: `C402335 autotestFileName${getRandomPostfix()}.mrc`,
       instanceSource: 'MARC',
     };
     const C402376testData = {

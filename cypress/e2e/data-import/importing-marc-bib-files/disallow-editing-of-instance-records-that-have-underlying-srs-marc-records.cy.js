@@ -15,7 +15,7 @@ describe('data-import', () => {
     let instanceHrid;
     let instanceId;
     const filePath = 'marcFileForC2361.mrc';
-    const marcFileName = `C2361 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C2361 autotestFileName${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
     before('login', () => {

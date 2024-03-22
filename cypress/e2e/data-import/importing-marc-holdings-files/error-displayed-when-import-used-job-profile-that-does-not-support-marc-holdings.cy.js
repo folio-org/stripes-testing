@@ -18,8 +18,8 @@ describe('data-import', () => {
     let instanceId;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathForUpload = 'oneMarcBib.mrc';
-    const fileNameForCreateInstance = `C359245 autotestFileName.${getRandomPostfix()}`;
-    const fileNameForImportForMarcAuthority = `C359245 autotestFileName.${getRandomPostfix()}`;
+    const fileNameForCreateInstance = `C359245 autotestFileName.${getRandomPostfix()}.mrc`;
+    const fileNameForImportForMarcAuthority = `C359245 autotestFileName.${getRandomPostfix()}.mrc`;
     const editedMarcFileName = `C359245 editedMarcFile.${getRandomPostfix()}.mrc`;
     const title = 'Holdings';
     const errorMessageForMarcAuthorityProfile =

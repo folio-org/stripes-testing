@@ -42,7 +42,7 @@ describe('data-import', () => {
       { title: 'HOBBIT : AN ILLUSTRATED EDITION OF THE FANTASY CLASSIC.', rowNumber: 5 },
     ];
     const filePathForCreateOrder = 'marcBibFileForC375179.mrc';
-    const marcFileName = `C375179 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C375179 autotestFileName${getRandomPostfix()}.mrc`;
     const mappingProfile = {
       name: `C375179 Test Order ${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,

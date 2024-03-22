@@ -102,7 +102,7 @@ describe('data-import', () => {
       'C11087 Instance field mapping: Confirm the "suppress" checkboxes when creating (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const marcFileName = `C11087 autotestFile_${getRandomPostfix()}.mrc`;
+        const marcFileName = `C11087 autotestFile${getRandomPostfix()}.mrc`;
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
@@ -141,9 +141,9 @@ describe('data-import', () => {
       'C11088 Instance field mapping: Confirm the "suppress" checkboxes when updating (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const marcFileName = `C11088 autotestFile_${getRandomPostfix()}.mrc`;
-        const editedFileName = `C11088 editedAutotestFile_${getRandomPostfix()}.mrc`;
-        const fileNameForUpdate = `C11088 autotestFile_${getRandomPostfix()}.mrc`;
+        const marcFileName = `C11088 autotestFile${getRandomPostfix()}.mrc`;
+        const editedFileName = `C11088 editedAutotestFile${getRandomPostfix()}.mrc`;
+        const fileNameForUpdate = `C11088 autotestFile${getRandomPostfix()}.mrc`;
         const mappingProfileUpdate = {
           name: `C11088 autotest update MappingProf${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,

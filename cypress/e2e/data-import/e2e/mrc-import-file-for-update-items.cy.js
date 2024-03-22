@@ -58,7 +58,7 @@ describe('data-import', () => {
     // file names
     const nameMarcFileForImportCreate = `C343335autotestFile.${getRandomPostfix()}.mrc`;
     const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
-    const nameMarcFileForImportUpdate = `C343335autotestFile${getRandomPostfix()}.mrc`;
+    const nameMarcFileForImportUpdate = `C343335autotestFile.${getRandomPostfix()}.mrc`;
     const jobProfileNameForExport = `autoTestJobProf.${getRandomPostfix()}`;
 
     const marcBibMappingProfile = {

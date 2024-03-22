@@ -41,7 +41,7 @@ describe('data-import', () => {
     let orderNumber;
     let instanceHRID;
     const filePathForCreate = 'marcFileForC388570.mrc';
-    const marcFileName = `C388570 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C388570 autotestFileName${getRandomPostfix()}.mrc`;
     const arrayOfHoldingsStatuses = ['Created (KU/CC/DI/M)', 'Created (E)', 'Created (KU/CC/DI/A)'];
     const quantityOfCreatedHoldings = 3;
     const quantityOfCreatedItems = '6';
