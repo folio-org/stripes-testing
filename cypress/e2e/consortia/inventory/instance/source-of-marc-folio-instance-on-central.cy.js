@@ -56,7 +56,7 @@ describe('Inventory', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      InventoryInstance.deleteInstanceViaApi(C402762testData.instanceIds[0]);
+      InventoryInstance.deleteInstanceViaApi(C402762testData.instanceId);
       InventoryInstance.deleteInstanceViaApi(C402763testData.instance.instanceId);
     });
 
@@ -66,7 +66,7 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.verifySearchAndFilterPane();
         InventorySearchAndFilter.bySource(C402762testData.instanceSource);
-        InventorySearchAndFilter.searchInstanceByTitle(C402762testData.instanceIds[0]);
+        InventorySearchAndFilter.searchInstanceByTitle(C402762testData.instanceId);
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InstanceRecordView.verifyInstanceSource(C402762testData.instanceSource);
         InstanceRecordView.verifyEditInstanceButtonIsEnabled();

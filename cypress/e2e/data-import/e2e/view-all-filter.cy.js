@@ -9,6 +9,8 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import Users from '../../../support/fragments/users/users';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
@@ -50,10 +52,19 @@ describe('Data Import', () => {
           testData.pathToStaticFile,
           `C11113 autotestFileName ${getRandomPostfix()}`,
           testData.jobProfileName,
-        );
+        ).then((response) => {
+          testData.instanceId = response[0].instance.id;
+        });
 
         // Remove generated test files from fixtures after uploading
         FileManager.deleteFile(`cypress/fixtures/${testData.fileNameForFailedImport}`);
+      });
+    });
+
+    after('delete test data', () => {
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(testData.user.userId);
+        InventoryInstance.deleteInstanceViaApi(testData.instanceId);
       });
     });
 

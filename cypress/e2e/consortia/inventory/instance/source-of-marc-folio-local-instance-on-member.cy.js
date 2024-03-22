@@ -35,7 +35,6 @@ describe('Inventory', () => {
           cy.assignPermissionsToExistingUser(user.userId, [
             Permissions.uiInventoryViewCreateEditInstances.gui,
           ]);
-
           DataImport.uploadFileViaApi(
             C402760testData.filePath,
             C402760testData.marcFileName,

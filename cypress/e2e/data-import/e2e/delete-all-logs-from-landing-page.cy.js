@@ -20,22 +20,20 @@ describe('Data Import', () => {
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
     before('create test data', () => {
-      cy.createTempUser([
-        Permissions.moduleDataImportEnabled.gui,
-        Permissions.dataImportDeleteLogs.gui,
-      ]).then((userProperties) => {
+      cy.createTempUser([Permissions.dataImportDeleteLogs.gui]).then((userProperties) => {
         user = userProperties;
 
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
+        cy.getAdminToken();
         for (let i = 0; i < 26; i++) {
           const fileNameToUpload = `C358137 autotestFile${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFileViaApi(filePathToUpload, fileNameToUpload, jobProfileToRun).then(
             (response) => {
-              instanceIds.push(response.entries[0].relatedInstanceInfo.idList[0]);
+              instanceIds.push(response[0].instance.id);
             },
           );
         }

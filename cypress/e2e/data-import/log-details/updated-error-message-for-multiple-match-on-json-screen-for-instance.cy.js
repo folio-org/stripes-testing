@@ -118,7 +118,7 @@ describe('Data Import', () => {
           name.fileName,
           testData.jobProfileToRun,
         ).then((response) => {
-          testData.instanceIds.push(response.entries[0].relatedInstanceInfo.idList[0]);
+          testData.instanceIds.push(response[0].instance.id);
         });
       });
 

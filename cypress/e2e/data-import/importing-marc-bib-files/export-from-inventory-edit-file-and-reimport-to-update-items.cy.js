@@ -258,7 +258,7 @@ describe('Data Import', () => {
         marcFileForCreate,
         testData.jobProfileForCreate.profile.name,
       ).then((response) => {
-        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+        instanceHrid = response[0].instance.hrid;
       });
       cy.loginAsAdmin();
     });

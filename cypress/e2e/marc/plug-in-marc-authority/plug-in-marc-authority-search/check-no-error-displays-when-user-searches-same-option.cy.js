@@ -36,14 +36,14 @@ describe('MARC', () => {
             fileName: `testMarcFileBib360111.${getRandomPostfix()}.mrc`,
             jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
             numberOfRecords: 1,
-            propertyName: 'relatedInstanceInfo',
+            propertyName: 'instance',
           },
           {
             marc: 'marcAuthC360111.mrc',
             fileName: `testMarcFileAuthC360111.${randomFourDigitNumber()}.mrc`,
             jobProfileToRun: 'Default - Create SRS MARC Authority',
             numberOfRecords: 1,
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
           },
         ],
       };
@@ -87,11 +87,11 @@ describe('MARC', () => {
                 marcFile.fileName,
                 marcFile.jobProfileToRun,
               ).then((response) => {
-                response.entries.forEach((record) => {
+                response.forEach((record) => {
                   if (marcFile.jobProfileToRun === 'Default - Create instance and SRS MARC Bib') {
-                    testData.instanceIDs.push(record[marcFile.propertyName].idList[0]);
+                    testData.instanceIDs.push(record[marcFile.propertyName].id);
                   } else {
-                    testData.authorityIDs.push(record[marcFile.propertyName].idList[0]);
+                    testData.authorityIDs.push(record[marcFile.propertyName].id);
                   }
                 });
               });

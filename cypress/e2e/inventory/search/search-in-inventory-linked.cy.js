@@ -39,7 +39,7 @@ describe('Inventory', () => {
         fileName: `testMarcFileC375256.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numberOfRecords: 4,
-        propertyName: 'relatedInstanceInfo',
+        propertyName: 'instance',
       },
       {
         marc: 'marcAuthFileC375256_1.mrc',
@@ -48,7 +48,7 @@ describe('Inventory', () => {
         authorityHeading: 'BibleC375256. Polish. Biblia Płocka C375256',
         authority010FieldValue: 'n92085235375256',
         numberOfRecords: 1,
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
       },
       {
         marc: 'marcAuthFileC375256_2.mrc',
@@ -57,7 +57,7 @@ describe('Inventory', () => {
         authorityHeading: 'Abraham, Angela, C375256 Hosanna',
         authority010FieldValue: 'n99036055375256',
         numberOfRecords: 1,
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
       },
     ];
 
@@ -74,8 +74,8 @@ describe('Inventory', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
         });

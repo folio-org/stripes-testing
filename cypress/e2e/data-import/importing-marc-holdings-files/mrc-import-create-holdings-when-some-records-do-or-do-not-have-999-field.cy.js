@@ -29,7 +29,7 @@ describe('Data Import', () => {
     before('create test data', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then((response) => {
-        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+        instanceHrid = response[0].instance.hrid;
       });
 
       cy.createTempUser([

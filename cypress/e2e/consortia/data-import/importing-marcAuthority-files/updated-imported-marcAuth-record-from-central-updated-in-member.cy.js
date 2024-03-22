@@ -87,7 +87,7 @@ describe('Data Import', () => {
         marc: 'marcAuthFileForC405144.mrc',
         fileName: `C405144 testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
         numOfRecords: 1,
         authorityHeading: 'C405144 Dante Alighieri, 1265-1321',
       },
@@ -148,8 +148,8 @@ describe('Data Import', () => {
           marcFile.fileName,
           marcFile.jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+          response.forEach((record) => {
+            testData.createdRecordIDs.push(record[marcFile.propertyName].id);
           });
         });
       });

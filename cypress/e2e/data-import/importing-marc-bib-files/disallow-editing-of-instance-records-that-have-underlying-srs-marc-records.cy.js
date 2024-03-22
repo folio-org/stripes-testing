@@ -13,6 +13,7 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let instanceHrid;
+    let instanceId;
     const filePath = 'marcFileForC2361.mrc';
     const marcFileName = `C2361 autotestFileName${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
@@ -20,7 +21,8 @@ describe('Data Import', () => {
     before('login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePath, marcFileName, jobProfileToRun).then((response) => {
-        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+        instanceHrid = response[0].instance.hrid;
+        instanceId = response[0].instance.id;
       });
 
       // create temp user with inventoryAll permissions
@@ -37,12 +39,7 @@ describe('Data Import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+        InventoryInstance.deleteInstanceViaApi(instanceId);
       });
     });
 

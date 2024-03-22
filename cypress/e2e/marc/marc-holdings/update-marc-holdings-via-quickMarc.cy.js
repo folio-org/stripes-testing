@@ -30,8 +30,8 @@ describe('MARC', () => {
         testData.fileNameForCreateInstance,
         testData.jobProfileForCreateInstance,
       ).then((response) => {
-        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
-        testData.instanceId = response.entries[0].relatedInstanceInfo.idList[0];
+        instanceHrid = response[0].instance.hrid;
+        testData.instanceId = response[0].instance.id;
 
         DataImport.editMarcFile(
           'marcBibFileForC359241.mrc',
@@ -45,7 +45,7 @@ describe('MARC', () => {
         testData.fileNameForCreateHoldings,
         testData.jobProfileForCreateHoldings,
       ).then((response) => {
-        testData.holdingsId = response.entries[0].relatedHoldingsInfo[0].id;
+        testData.holdingsId = response[0].holdings.id;
       });
 
       cy.createTempUser([

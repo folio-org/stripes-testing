@@ -52,7 +52,7 @@ describe('Data Import', () => {
             bibFileName,
             firstTestData.jobProfileName,
           ).then((response) => {
-            firstTestData.instanceIds.push(response.entries[0].relatedInstanceInfo.idList[0]);
+            firstTestData.instanceIds.push(response[0].instance.id);
           });
         }
         cy.logout();
@@ -76,7 +76,7 @@ describe('Data Import', () => {
             authFileName,
             secondTestData.jobProfileName,
           ).then((response) => {
-            secondTestData.authorityIds.push(response.entries[0].relatedAuthorityInfo.idList[0]);
+            secondTestData.authorityIds.push(response[0].authority.id);
           });
         }
       });

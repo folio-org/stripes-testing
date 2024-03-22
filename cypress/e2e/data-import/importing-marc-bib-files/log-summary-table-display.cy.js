@@ -16,7 +16,7 @@ describe('Data Import', () => {
     before('login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathToUpload, fileName, jobProfileToRun).then((response) => {
-        instanceId = response.entries[0].relatedInstanceInfo.idList[0];
+        instanceId = response[0].instance.id;
       });
 
       cy.loginAsAdmin({

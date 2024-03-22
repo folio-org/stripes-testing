@@ -27,7 +27,7 @@ describe('Data Import', () => {
             fileName,
             'Default - Create instance and SRS MARC Bib',
           ).then((response) => {
-            instanceIds.push(response.entries[0].relatedInstanceInfo.idList[0]);
+            instanceIds.push(response[0].instance.id);
           });
           cy.wait(2000);
         }

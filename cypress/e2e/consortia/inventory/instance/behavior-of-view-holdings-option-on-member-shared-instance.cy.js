@@ -90,12 +90,14 @@ describe('Inventory', () => {
       InventoryHoldings.deleteHoldingRecordViaApi(testData.holding.id);
       Locations.deleteViaApi(testData.collegeLocation);
       InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
     });
 
     it(
       'C409516 (CONSORTIA) Verify the behavior of "View holdings" option on member tenant shared Instance (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet'] },
       () => {
+        InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InstanceRecordView.verifyInstanceSource('MARC');

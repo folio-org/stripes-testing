@@ -25,7 +25,7 @@ describe('MARC', () => {
           marc: 'marcBibFileC374157.mrc',
           fileName: `testMarcFileC374157${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-          propertyName: 'relatedInstanceInfo',
+          propertyName: 'instance',
           instanceTitle:
             'Runaway bride/ produced by Robert W. Cort, Ted Field, Scott Kroopf, Tom Rosenberg; written by Josann McGibbon, Sara Parriott; directed by Garry Marshall.',
         },
@@ -35,7 +35,7 @@ describe('MARC', () => {
           jobProfileToRun: 'Default - Create SRS MARC Authority',
           authorityHeading: 'C374157 Roberts, Julia, 1967-',
           valueAfterSave: 'C374157 Roberts, Julia, 1967-',
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
       ];
       const linkingTagAndValue = {
@@ -62,8 +62,8 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              response.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].id);
               });
             });
           });

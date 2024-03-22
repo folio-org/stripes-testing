@@ -91,7 +91,7 @@ describe('Data Import', () => {
         fileName: `C374167 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numOfRecords: 2,
-        propertyName: 'relatedInstanceInfo',
+        propertyName: 'instance',
       },
       {
         marc: 'marcAuthFileForC374167.mrc',
@@ -99,7 +99,7 @@ describe('Data Import', () => {
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
         authorityHeading: 'C374167 DiCaprio, Leonardo',
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
       },
     ];
     const linkingTagForFirstMarcBib = [
@@ -163,8 +163,8 @@ describe('Data Import', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              response.forEach((record) => {
+                testData.createdRecordIDs.push(record[marcFile.propertyName].id);
               });
             });
           });

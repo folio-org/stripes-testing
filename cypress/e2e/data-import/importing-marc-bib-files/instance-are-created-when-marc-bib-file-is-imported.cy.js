@@ -8,14 +8,16 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
-    const fileName = `C2359 autotestFile${getRandomPostfix()}.mrc`;
+    let instanceId;
+    const fileName = `C2359 autotestFile.${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathToUpload = 'oneMarcBib.mrc';
 
     before('created test data', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathToUpload, fileName, jobProfileToRun).then((response) => {
-        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+        instanceHrid = response[0].instance.hrid;
+        instanceId = response[0].instance.id;
       });
 
       cy.loginAsAdmin({
@@ -25,13 +27,8 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken().then(() => {
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
-      });
+      cy.getAdminToken();
+      InventoryInstance.deleteInstanceViaApi(instanceId);
     });
 
     it(

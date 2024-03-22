@@ -17,6 +17,7 @@ describe('Inventory', () => {
   describe('Single record import', () => {
     let user;
     let instanceHRID;
+    let instanceId;
     const OCLCAuthentication = '100481406/PAOLF';
     const profileForImport = 'Inventory Single Record - Default Update Instance (Default)';
     const fileName = `C375146 autotestFile${getRandomPostfix()}.mrc`;
@@ -39,7 +40,8 @@ describe('Inventory', () => {
         fileName,
         'Default - Create instance and SRS MARC Bib',
       ).then((response) => {
-        instanceHRID = response.entries[0].relatedInstanceInfo.hridList[0];
+        instanceHRID = response[0].instance.hrid;
+        instanceId = response[0].instance.id;
       });
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
       cy.loginAsAdmin();
@@ -70,11 +72,7 @@ describe('Inventory', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+        InventoryInstance.deleteInstanceViaApi(instanceId);
       });
     });
 

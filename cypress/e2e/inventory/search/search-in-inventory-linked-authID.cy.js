@@ -28,7 +28,7 @@ describe('Inventory', () => {
         fileName: `testMarcFileC367974.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numberOfRecords: 2,
-        propertyName: 'relatedInstanceInfo',
+        propertyName: 'instance',
       },
       {
         marc: 'marcAuthFileC367974.mrc',
@@ -37,7 +37,7 @@ describe('Inventory', () => {
         authorityHeading: 'DiCaprio, Leonardo C367974',
         authority010FieldValue: 'n94000330367974',
         numberOfRecords: 1,
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
       },
     ];
 
@@ -54,8 +54,8 @@ describe('Inventory', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
         });

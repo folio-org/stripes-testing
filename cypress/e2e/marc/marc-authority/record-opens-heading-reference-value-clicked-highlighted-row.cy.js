@@ -21,8 +21,8 @@ describe('MARC', () => {
 
           DataImport.uploadFileViaApi(fileName, updatedFileName, jobProfileToRun).then(
             (response) => {
-              response.entries.forEach((record) => {
-                createdAuthorityID = record.relatedAuthorityInfo.idList[0];
+              response.forEach((record) => {
+                createdAuthorityID = record.authority.id;
               });
             },
           );

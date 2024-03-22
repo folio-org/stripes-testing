@@ -84,7 +84,7 @@ describe('Data Import', () => {
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         instanceTitle: 'The other side of paradise : a memoir / Staceyann Chin. C376946',
-        propertyName: 'relatedInstanceInfo',
+        propertyName: 'instance',
       },
       {
         marc: 'C376946MarcAuth.mrc',
@@ -92,7 +92,7 @@ describe('Data Import', () => {
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         authorityHeading: 'Chin, Staceyann, 1972- C376946',
         authority010FieldValue: 'n2008052404376946',
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
       },
     ];
     const createdRecordIDs = [];
@@ -115,8 +115,8 @@ describe('Data Import', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
         });

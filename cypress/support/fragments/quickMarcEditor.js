@@ -23,6 +23,15 @@ import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 import InventoryInstance from './inventory/inventoryInstance';
 import Institutions from './settings/tenant/location-setup/institutions';
+import {
+  INVENTORY_LDR_FIELD_TYPE_DROPDOWN,
+  INVENTORY_LDR_FIELD_BLVL_DROPDOWN,
+  INVENTORY_008_FIELD_DTST_DROPDOWN,
+  INVENTORY_008_FIELD_CONF_DROPDOWN,
+  INVENTORY_008_FIELD_FEST_DROPDOWN,
+  INVENTORY_008_FIELD_INDX_DROPDOWN,
+  INVENTORY_008_FIELD_LITF_DROPDOWN,
+} from '../constants';
 
 const holdingsRecordViewSection = Section({ id: 'ui-inventory.holdingsRecordView' });
 const actionsButton = Button('Actions');
@@ -295,7 +304,6 @@ defaultFieldValues.getSourceContent = (contentInQuickMarcEditor) => contentInQui
 const requiredRowsTags = ['LDR', '001', '005', '008', '999'];
 const readOnlyAuthorityTags = ['LDR', '001', '005', '999'];
 const readOnlyHoldingsTags = ['001', '004', '005', '999'];
-const expectedFields = ['LDR', '001', '008', '005', '245', '999'];
 
 const getRowInteractorByRowNumber = (specialRowNumber) => QuickMarcEditor().find(QuickMarcEditorRow({ index: specialRowNumber }));
 const getRowInteractorByTagName = (tagName) => QuickMarcEditor().find(QuickMarcEditorRow({ tagValue: tagName }));
@@ -1161,6 +1169,52 @@ export default {
   ) {
     cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
     return newContent;
+  },
+
+  updateLDR06And07Positions() {
+    this.selectFieldsDropdownOption('LDR', 'Type', INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A);
+    this.selectFieldsDropdownOption('LDR', 'BLvl', INVENTORY_LDR_FIELD_BLVL_DROPDOWN.A);
+    this.selectFieldsDropdownOption('008', 'DtSt', INVENTORY_008_FIELD_DTST_DROPDOWN.M);
+    this.selectFieldsDropdownOption('008', 'Conf', INVENTORY_008_FIELD_CONF_DROPDOWN.ONE);
+    this.selectFieldsDropdownOption('008', 'Fest', INVENTORY_008_FIELD_FEST_DROPDOWN.ONE);
+    this.selectFieldsDropdownOption('008', 'Indx', INVENTORY_008_FIELD_INDX_DROPDOWN.ONE);
+    this.selectFieldsDropdownOption('008', 'LitF', INVENTORY_008_FIELD_LITF_DROPDOWN.I);
+  },
+
+  selectFieldsDropdownOption(tag, dropdownLabel, option) {
+    cy.do(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(Select({ label: dropdownLabel }))
+        .choose(option),
+    );
+  },
+
+  verifyFieldsDropdownOption(tag, dropdownLabel, option) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(Select({ label: dropdownLabel }))
+        .has({ content: including(option) }),
+    );
+  },
+
+  verifyDropdownOptionChecked(tag, dropdownLabel, option) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(Select({ label: dropdownLabel }))
+        .has({ checkedOptionText: option }),
+    );
+  },
+
+  verifyDropdownHoverText(id, hoverText) {
+    cy.get(`span[id="${id}"]`).should('contain.text', hoverText);
+  },
+
+  verifyLDRPositionsDefaultValues(fieldName, fieldvalue, isDisabled = true) {
+    cy.expect(
+      QuickMarcEditorRow({ index: 0 })
+        .find(TextField({ name: fieldName }))
+        .has({ disabled: isDisabled, value: fieldvalue }),
+    );
   },
 
   updateExistingTagName(currentTagName = validRecord.existingTag, newTagName) {
@@ -2108,14 +2162,38 @@ export default {
   },
 
   checkDefaultContent() {
-    this.checkContent('00000n\\\\\\a2200000uu\\4500', 0);
-    this.checkFieldsExist(expectedFields);
     this.checkEmptyContent('001');
     this.checkEmptyContent('005');
     this.checkEmptyContent('999');
     this.checkEmptyContent('008');
+    this.verifyLDRPositionsDefaultValues('records[0].content.Record length', '00000');
+    this.verifyDropdownOptionChecked('LDR', 'Status', 'n - New');
+    this.verifyDropdownOptionChecked('LDR', 'Type', '\\ - invalid value');
+    this.verifyDropdownOptionChecked('LDR', 'BLvl', '\\ - invalid value');
+    this.verifyDropdownOptionChecked('LDR', 'Ctrl', '\\ - No specified type');
+    this.verifyLDRPositionsDefaultValues('records[0].content.9-16 positions', 'a2200000');
+    this.verifyLDRPositionsDefaultValues('records[0].content.ELvl', 'u', false);
+    this.verifyDropdownOptionChecked('LDR', 'Desc', 'u - Unknown');
+    this.verifyDropdownOptionChecked('LDR', 'MultiLvl', '\\ - Not specified or not applicable');
+    this.verifyLDRPositionsDefaultValues('records[0].content.20-23 positions', '4500');
     this.verifyTagField(4, '245', '\\', '\\', '$a ', '');
     this.checkInitialContent(4);
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Status-text', 'Record status');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Type-text', 'Type of record');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-BLvl-text',
+      'Bibliographic level',
+    );
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Ctrl-text', 'Type of control');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-ELvl-text', 'Encoding level');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Desc-text',
+      'Descriptive cataloging form',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-MultiLvl-text',
+      'Multipart resource record level',
+    );
   },
 
   checkEditableQuickMarcFormIsOpened: () => {
@@ -2235,13 +2313,21 @@ export default {
 
   verifyOptionInAuthorityFileNameDropdown(option, isPresent = true) {
     if (isPresent) {
-      cy.wrap(selectAuthorityFile.optionsText()).should((arrayOfOptions) => {
+      cy.wrap(selectAuthorityFile.allOptionsText()).should((arrayOfOptions) => {
         expect(arrayOfOptions).to.include(option);
       });
     } else {
-      cy.wrap(selectAuthorityFile.optionsText()).should((arrayOfOptions) => {
+      cy.wrap(selectAuthorityFile.allOptionsText()).should((arrayOfOptions) => {
         expect(arrayOfOptions).to.not.include(option);
       });
     }
+  },
+
+  verifyDropdownValueOfLDRIsValid(dropdownLabel, isValid = true) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: 'LDR' })
+        .find(Select({ label: dropdownLabel }))
+        .has({ valid: isValid }),
+    );
   },
 };

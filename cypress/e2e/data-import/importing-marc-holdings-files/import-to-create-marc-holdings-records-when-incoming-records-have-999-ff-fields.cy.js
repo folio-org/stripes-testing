@@ -15,6 +15,7 @@ describe('Data Import', () => {
   describe('Importing MARC Holdings files', () => {
     let user;
     let instanceHrid;
+    let instanceId;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathForUpload = 'oneMarcBib.mrc';
     const fileWithHoldingsPathForUpload = 'marcBibFileForC359218.mrc';
@@ -26,7 +27,8 @@ describe('Data Import', () => {
     before('create test data', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then((response) => {
-        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+        instanceHrid = response[0].instance.hrid;
+        instanceId = response[0].instance.id;
       });
 
       cy.createTempUser([
@@ -48,13 +50,9 @@ describe('Data Import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+        InventoryInstance.deleteInstanceViaApi(instanceId);
       });
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     });
 
     it(

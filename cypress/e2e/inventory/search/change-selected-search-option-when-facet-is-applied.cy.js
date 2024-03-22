@@ -47,7 +47,7 @@ const testData = {
     fileName: `testMarcFileC410764.${randomFourDigitNumber()}.mrc`,
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     numberOfRecords: 1,
-    propertyName: 'relatedInstanceInfo',
+    propertyName: 'instance',
   },
 };
 
@@ -72,8 +72,8 @@ describe('Inventory', () => {
             testData.marcFile.fileName,
             testData.marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              testData.marcInstance.id = record[testData.marcFile.propertyName].idList[0];
+            response.forEach((record) => {
+              testData.marcInstance.id = record[testData.marcFile.propertyName].id;
             });
           });
         })
