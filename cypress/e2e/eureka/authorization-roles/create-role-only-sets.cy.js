@@ -9,8 +9,93 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role ${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
-        applicationName: 'app-platform-minimal-',
+        applicationName: 'app-platform-minimal',
+        firstSelectedCapabilitySet: {
+          table: 'Data',
+          resource: 'Configuration',
+          action: 'Manage',
+        },
+        secondSelectedCapabilitySet: {
+          table: 'Settings',
+          resource: 'UI-Notes Settings',
+          action: 'Edit',
+        },
+        capabilitiesInSelectedSets: [
+          {
+            table: 'Data',
+            resource: 'Configuration Entries Collection',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Configuration Entries Item',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Configuration Entries Item',
+            action: 'Edit',
+          },
+          {
+            table: 'Data',
+            resource: 'Configuration Entries Item',
+            action: 'Create',
+          },
+          {
+            table: 'Data',
+            resource: 'Configuration Entries Item',
+            action: 'Delete',
+          },
+          {
+            table: 'Data',
+            resource: 'Configuration Audit Collection',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Note Types Collection',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Note Types Item',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Note Types Item',
+            action: 'Edit',
+          },
+          {
+            table: 'Data',
+            resource: 'Note Types Item',
+            action: 'Create',
+          },
+          {
+            table: 'Data',
+            resource: 'Note Types Item',
+            action: 'Delete',
+          },
+          {
+            table: 'Settings',
+            resource: 'Settings Notes Enabled',
+            action: 'View',
+          },
+        ],
+        expectedCounts: {
+          capabilitySets: {
+            Data: 1,
+            Settings: 1,
+          },
+          capabilities: {
+            Data: 5,
+            Settings: 1,
+          },
+        },
       };
+
+      testData.firstSelectedCapabilitySet.application = testData.applicationName;
+      testData.secondSelectedCapabilitySet.application = testData.applicationName;
 
       before(() => {
         cy.createTempUser([]).then((createdUserProperties) => {
@@ -23,7 +108,11 @@ describe('Eureka', () => {
       });
 
       afterEach(() => {
+        cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
+        cy.deleteCapabilitiesFromRoleApi(testData.roleId);
+        cy.deleteCapabilitySetsFromRoleApi(testData.roleId);
+        cy.deleteAuthorizationRoleApi(testData.roleId);
       });
 
       it(
@@ -36,6 +125,44 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSelectApplication();
           AuthorizationRoles.selectApplicationInModal(testData.applicationName);
           AuthorizationRoles.clickSaveInModal();
+          AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.applicationName]);
+          AuthorizationRoles.selectCapabilitySetCheckbox(testData.firstSelectedCapabilitySet);
+          AuthorizationRoles.selectCapabilitySetCheckbox(testData.secondSelectedCapabilitySet);
+          testData.capabilitiesInSelectedSets.forEach((capability) => {
+            AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
+          });
+          cy.intercept('POST', '/roles*').as('roles');
+          cy.intercept('POST', '/roles/capability-sets*').as('capabilitySets');
+          AuthorizationRoles.clickSaveButton();
+          cy.wait('@roles').then((res) => {
+            expect(res.response.body.name).to.eq(testData.roleName);
+            expect(res.response.body.description).to.eq(testData.roleDescription);
+            testData.roleId = res.response.body.id;
+            cy.wait('@capabilitySets').then((res2) => {
+              expect(res2.response.body.totalRecords).to.eq(2);
+              res2.response.body.roleCapabilitySets.forEach((set) => {
+                expect(set.roleId).to.eq(res.response.body.id);
+              });
+            });
+          });
+          AuthorizationRoles.clickOnRoleName(testData.roleName);
+          AuthorizationRoles.clickOnCapabilitySetsAccordion();
+          AuthorizationRoles.clickOnCapabilitiesAccordion();
+          AuthorizationRoles.verifyCapabilitySetCheckboxCheckedAndDisabled(
+            testData.firstSelectedCapabilitySet,
+          );
+          AuthorizationRoles.verifyCapabilitySetCheckboxCheckedAndDisabled(
+            testData.secondSelectedCapabilitySet,
+          );
+          testData.capabilitiesInSelectedSets.forEach((capability) => {
+            AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
+          });
+          Object.entries(testData.expectedCounts.capabilities).forEach(([table, count]) => {
+            AuthorizationRoles.checkCountOfCapablities(table, count);
+          });
+          Object.entries(testData.expectedCounts.capabilitySets).forEach(([table, count]) => {
+            AuthorizationRoles.checkCountOfCapablitySets(table, count);
+          });
         },
       );
     });

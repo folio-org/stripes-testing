@@ -79,6 +79,7 @@ export const MultiColumnList = HTML.extend('multi column list')
   .filters({
     columns,
     id: (el) => el.querySelector('[role=grid]').id,
+    dataTestId: (el) => el.parentElement.getAttribute('data-testid'),
     columnCount: (el) => columns(el).length,
     rowCount: (el) => el.querySelectorAll('[class*=mclRow-]').length,
     height: (el) => el.offsetHeight,

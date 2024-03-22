@@ -9,6 +9,9 @@ import {
   Modal,
   TextArea,
   Accordion,
+  MultiColumnList,
+  MultiColumnListCell,
+  HTML,
 } from '../../../../../interactors';
 
 const rolesPane = Pane('Authorization roles');
@@ -30,6 +33,30 @@ const saveButtonInModal = selectApplicationModal.find(
 const capabilitiesAccordion = Accordion('Capabilities');
 const capabilitySetsAccordion = Accordion('Capability sets');
 const saveButton = Button('Save and close');
+
+const capabilityTables = {
+  Data: MultiColumnList({ dataTestId: 'capabilities-data-type' }),
+  Settings: MultiColumnList({ dataTestId: 'capabilities-settings-type' }),
+  Procedural: MultiColumnList({ dataTestId: 'capabilities-procedural-type' }),
+};
+
+const getResultsListByColumn = (columnIndex) => {
+  const cells = [];
+
+  cy.wait(2000);
+  return cy
+    .get('div[data-testid^="capabilities-"] [data-row-index]')
+    .each(($row) => {
+      // from each row, choose specific cell
+      cy.get(`[class*="mclCell-"]:nth-child(${columnIndex + 1})`, { withinSubject: $row })
+        // extract its text content
+        .invoke('text')
+        .then((cellValue) => {
+          cells.push(cellValue);
+        });
+    })
+    .then(() => cells);
+};
 
 export default {
   waitLoading: () => {
@@ -82,5 +109,68 @@ export default {
 
   clickSaveButton: () => {
     cy.do(saveButton.click());
+  },
+
+  verifyAppNamesInCapabilityTables: (appNamesArray) => {
+    getResultsListByColumn(0).then((cellTexts) => {
+      cellTexts.forEach((cellText) => {
+        expect(cellText).to.be.oneOf([...appNamesArray]);
+      });
+    });
+  },
+
+  selectCapabilitySetCheckbox: ({ table, application, resource, action }, isSelected = true) => {
+    const targetCheckbox = capabilitySetsAccordion
+      .find(capabilityTables[table])
+      .find(MultiColumnListRow(`${application}${resource}`, { isContainer: false }))
+      .find(MultiColumnListCell({ column: action }))
+      .find(Checkbox({ isWrapper: false }));
+    cy.do(targetCheckbox.click());
+    cy.expect(targetCheckbox.has({ checked: isSelected }));
+    // wait for capabilities selection to be updated
+    cy.wait(1000);
+  },
+
+  verifyCapabilityCheckboxCheckedAndDisabled: ({ table, resource, action }) => {
+    const targetCheckbox = capabilitiesAccordion
+      .find(capabilityTables[table])
+      .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
+    cy.expect(targetCheckbox.has({ checked: true, labelText: 'Read-only' }));
+  },
+
+  clickOnRoleName: (roleName) => {
+    cy.do(rolesPane.find(HTML(roleName, { className: including('root') })).click());
+    cy.expect([
+      Pane(roleName).exists(),
+      capabilitiesAccordion.has({ open: false }),
+      capabilitySetsAccordion.has({ open: false }),
+    ]);
+  },
+
+  clickOnCapabilitiesAccordion: () => {
+    cy.do(capabilitiesAccordion.clickHeader());
+    cy.expect(capabilitiesAccordion.has({ open: true }));
+  },
+
+  clickOnCapabilitySetsAccordion: () => {
+    cy.do(capabilitySetsAccordion.clickHeader());
+    cy.expect(capabilitySetsAccordion.has({ open: true }));
+  },
+
+  verifyCapabilitySetCheckboxCheckedAndDisabled: ({ table, resource, action }) => {
+    const targetCheckbox = capabilitySetsAccordion
+      .find(capabilityTables[table])
+      .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
+    cy.expect(targetCheckbox.has({ checked: true, labelText: 'Read-only' }));
+  },
+
+  checkCountOfCapablities: (table, expectedCount) => {
+    cy.expect(capabilitiesAccordion.find(capabilityTables[table]).has({ rowCount: expectedCount }));
+  },
+
+  checkCountOfCapablitySets: (table, expectedCount) => {
+    cy.expect(
+      capabilitySetsAccordion.find(capabilityTables[table]).has({ rowCount: expectedCount }),
+    );
   },
 };
