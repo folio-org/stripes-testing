@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -13,9 +14,9 @@ describe('Inventory', () => {
     let user;
     let instanceHrid;
     let instanceId;
-    const instanceSource = 'MARC';
+    const instanceSource = INSTANCE_SOURCE_NAMES.MARC;
     const filePathForUpload = 'oneMarcBib.mrc';
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const fileName = `C402775 autotestFile${getRandomPostfix()}.mrc`;
 
     before('create test data and login', () => {

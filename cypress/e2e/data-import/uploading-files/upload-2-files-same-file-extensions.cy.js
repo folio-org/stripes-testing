@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -9,6 +9,8 @@ import Users from '../../../support/fragments/users/users';
 describe('Data Import', () => {
   describe('Uploading files', () => {
     let user;
+    const filesNames = ['C2378_File1.mrc', 'C2378_File2.MRC'];
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
     before('create test data', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
@@ -29,8 +31,6 @@ describe('Data Import', () => {
       'C2378 UIDATIMP-252: Uploading 2 files with the same extension, but different case, does not work. (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const filesNames = ['C2378_File1.mrc', 'C2378_File2.MRC'];
-        const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
         DataImport.verifyUploadState();
         DataImport.uploadBunchOfDifferentFiles(filesNames);
         JobProfiles.waitLoadingList();

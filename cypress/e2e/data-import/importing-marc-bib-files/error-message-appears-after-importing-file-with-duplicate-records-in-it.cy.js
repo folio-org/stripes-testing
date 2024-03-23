@@ -5,6 +5,7 @@ import {
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -45,7 +46,7 @@ describe('Data Import', () => {
     const firstFileName = `C410708 autotestFileName${getRandomPostfix()}.mrc`;
     const secondFileName = `C410708 autotestFileName${getRandomPostfix()}.mrc`;
     const editedMarcFileName = `C410708 autotestFileName${getRandomPostfix()}.mrc`;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const matchProfile = {
       profileName: `C410708 001 to Instance HRID_${getRandomPostfix()}`,
       incomingRecordFields: {

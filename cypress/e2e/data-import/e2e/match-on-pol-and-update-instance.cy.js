@@ -14,6 +14,7 @@ import {
   ORDER_FORMAT_NAMES,
   RECORD_STATUSES,
   VENDOR_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -50,7 +51,7 @@ describe('Data Import', () => {
     let orderNumber;
     let instanceHrid;
     const itemBarcode = uuid();
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const instanceTitle =
       'South Asian texts in history : critical engagements with Sheldon Pollock. edited by Yigal Bronner, Whitney Cox, and Lawrence McCrea.';
     // unique file names

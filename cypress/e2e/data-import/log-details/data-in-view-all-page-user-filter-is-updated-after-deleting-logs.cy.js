@@ -6,6 +6,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 describe('Data Import', () => {
   describe('Log details', () => {
@@ -38,7 +39,7 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         const filesNames = ['marcBibFileForC358546_1.mrc', 'marcBibFileForC358546_2.MRC'];
-        const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+        const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
         DataImport.verifyUploadState();
         DataImport.uploadBunchOfDifferentFiles(filesNames);

@@ -2,15 +2,15 @@
 import { HTML, including } from '@interactors/html';
 import {
   Button,
-  TextField,
-  MultiColumnListCell,
-  Modal,
-  Section,
-  PaneHeader,
-  MultiColumnList,
-  Pane,
-  MultiColumnListRow,
   Callout,
+  Modal,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Pane,
+  PaneHeader,
+  Section,
+  TextField,
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
@@ -56,7 +56,6 @@ const search = (jobProfileTitle) => {
 };
 
 export default {
-  defaultInstanceAndSRSMarcBib: 'Default - Create instance and SRS MARC Bib',
   openNewJobProfileForm: () => {
     cy.do([actionsButton.click(), Button('New job profile').click()]);
   },

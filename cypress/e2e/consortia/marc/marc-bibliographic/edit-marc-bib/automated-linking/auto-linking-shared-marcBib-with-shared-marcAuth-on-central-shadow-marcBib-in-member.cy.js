@@ -6,7 +6,7 @@ import InventoryInstances from '../../../../../../support/fragments/inventory/in
 import getRandomPostfix from '../../../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES } from '../../../../../../support/constants';
+import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
 import JobProfiles from '../../../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../../../support/fragments/data_import/logs/logs';
 import QuickMarcEditor from '../../../../../../support/fragments/quickMarcEditor';
@@ -74,21 +74,21 @@ describe('MARC', () => {
           {
             marc: 'marcBibFileForC410818-Shared.mrc',
             fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             numOfRecords: 1,
             tenant: 'Central Office',
           },
           {
             marc: 'marcAuthFileForC410818-Shared.mrc',
             fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 4,
             tenant: 'Central Office',
           },
           {
             marc: 'marcAuthFileForC410818-Local.mrc',
             fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
             tenant: 'College',
           },

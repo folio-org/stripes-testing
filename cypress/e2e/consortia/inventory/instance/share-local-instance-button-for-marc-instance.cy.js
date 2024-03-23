@@ -14,7 +14,6 @@ describe('Inventory', () => {
     const marcFile = {
       marc: 'oneMarcBib.mrc',
       marcFileName: `C411344 marcFileName${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     };
     const testData = {};
 

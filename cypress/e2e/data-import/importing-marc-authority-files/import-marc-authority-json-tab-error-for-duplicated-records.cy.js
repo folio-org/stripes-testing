@@ -5,6 +5,7 @@ import {
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -42,7 +43,7 @@ describe('Data Import', () => {
         marc: 'marcAuthFileC380510.mrc',
         fileName: `C380510 testMarcFile${getRandomPostfix()}.mrc`,
         editedFileName: `C380510 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 1,
       },
       marcAuthorityUpdate: {

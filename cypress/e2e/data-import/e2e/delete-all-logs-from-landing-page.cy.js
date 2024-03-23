@@ -8,6 +8,7 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
@@ -17,7 +18,7 @@ describe('Data Import', () => {
     const numberOfLogsToDelete = 2;
     const numberOfLogsPerPage = 25;
     const getCalloutSuccessMessage = (logsCount) => `${logsCount} data import logs have been successfully deleted.`;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
     before('create test data', () => {
       cy.createTempUser([Permissions.dataImportDeleteLogs.gui]).then((userProperties) => {

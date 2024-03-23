@@ -1,5 +1,9 @@
 import uuid from 'uuid';
-import { LOAN_TYPE_NAMES, MATERIAL_TYPE_NAMES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  LOAN_TYPE_NAMES,
+  MATERIAL_TYPE_NAMES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -28,7 +32,7 @@ describe('MARC', () => {
     const marcFile = {
       marc: 'oneMarcBib.mrc',
       fileName: `testMarcFileC375188${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       propertyName: 'instance',
     };
     const callNumberValues = {

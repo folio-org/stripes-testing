@@ -6,7 +6,7 @@ import InventoryInstances from '../../../../../support/fragments/inventory/inven
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES } from '../../../../../support/constants';
+import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
@@ -48,25 +48,25 @@ describe('MARC', () => {
         {
           marc: 'marcBibFileForC410775.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           tenant: 'Central Office',
         },
         {
           marc: 'marcAuthFileForC410775-Shared.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           tenant: 'Central Office',
         },
         {
           marc: 'marcAuthFileForC410775-Local-M1.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           tenant: 'University',
         },
         {
           marc: 'marcAuthFileForC410775-Local-M2.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           tenant: 'College',
         },
       ];

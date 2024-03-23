@@ -12,7 +12,11 @@ import {
   Section,
 } from '../../../../interactors';
 import DataImportUploadFile from '../../../../interactors/dataImportUploadFile';
-import { ACCEPTED_DATA_TYPE_NAMES, JOB_STATUS_NAMES } from '../../constants';
+import {
+  ACCEPTED_DATA_TYPE_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  JOB_STATUS_NAMES,
+} from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import FileManager from '../../utils/fileManager';
 import getRandomPostfix from '../../utils/stringTools';
@@ -191,7 +195,7 @@ function processFile(
       },
       jobProfileInfo: {
         id: jobProfileId,
-        name: 'Default - Create instance and SRS MARC Bib',
+        name: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
       },
     },
@@ -542,7 +546,7 @@ export default {
     // upload a marc file for export
     cy.visit(TopMenu.dataImportPath);
     uploadFile('oneMarcBib.mrc', nameForMarcFileWithBib);
-    JobProfiles.search(JobProfiles.defaultInstanceAndSRSMarcBib);
+    JobProfiles.search(DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameForMarcFileWithBib);
 

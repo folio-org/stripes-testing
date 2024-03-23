@@ -1,4 +1,5 @@
 import { including } from '@interactors/html';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -57,14 +58,14 @@ const testData = {
     {
       marc: 'marcBibC375259.mrc',
       fileName: `testMarcFileC375259.${randomFourDigitNumber()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       numberOfRecords: 7,
       propertyName: 'instance',
     },
     {
       marc: 'marcAuthC375259.mrc',
       fileName: `testMarcFileAuth100C375259.${randomFourDigitNumber()}.mrc`,
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       numberOfRecords: 7,
       propertyName: 'authority',
     },

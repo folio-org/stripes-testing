@@ -1,8 +1,9 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthoritiesBrowseSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesBrowseSearch';
 import MarcAuthoritiesDelete from '../../../support/fragments/marcAuthority/marcAuthoritiesDelete';
@@ -10,7 +11,7 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -33,14 +34,14 @@ describe('MARC', () => {
       {
         marc: 'marcBibFileForC423379.mrc',
         fileName: `C423379 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numOfRecords: 1,
         propertyName: 'instance',
       },
       {
         marc: 'marcAuthFileForC423379.mrc',
         fileName: `C423379 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 1,
         propertyName: 'authority',
       },

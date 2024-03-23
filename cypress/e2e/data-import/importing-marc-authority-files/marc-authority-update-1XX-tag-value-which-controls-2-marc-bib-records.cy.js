@@ -5,6 +5,7 @@ import {
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -89,14 +90,14 @@ describe('Data Import', () => {
       {
         marc: 'marcBibFileForC374167.mrc',
         fileName: `C374167 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numOfRecords: 2,
         propertyName: 'instance',
       },
       {
         marc: 'marcAuthFileForC374167.mrc',
         fileName: `C374167 testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 1,
         authorityHeading: 'C374167 DiCaprio, Leonardo',
         propertyName: 'authority',

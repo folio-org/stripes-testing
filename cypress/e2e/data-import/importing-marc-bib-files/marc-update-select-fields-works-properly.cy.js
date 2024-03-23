@@ -6,6 +6,7 @@ import {
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -108,7 +109,7 @@ describe.skip('data-import', () => {
         DataImport.uploadFileViaApi(
           'oneMarcBib.mrc',
           marcFileForCreate,
-          'Default - Create instance and SRS MARC Bib',
+          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         ).then((response) => {
           instanceHrid = response[0].instance.hrid;
 

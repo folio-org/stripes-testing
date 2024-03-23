@@ -6,6 +6,7 @@ import {
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -36,7 +37,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user = null;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     // unique file names
     const firstMarcFileNameForCreate = `C358998 firstCreateAutotestFile${getRandomPostfix()}.mrc`;
     const firstMarcFileNameForUpdate = `C358998 firstUpdateAutotestFile${getRandomPostfix()}.mrc`;

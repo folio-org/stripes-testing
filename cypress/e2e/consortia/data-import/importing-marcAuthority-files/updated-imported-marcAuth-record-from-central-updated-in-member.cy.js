@@ -4,6 +4,7 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
@@ -86,7 +87,7 @@ describe('Data Import', () => {
       {
         marc: 'marcAuthFileForC405144.mrc',
         fileName: `C405144 testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         propertyName: 'authority',
         numOfRecords: 1,
         authorityHeading: 'C405144 Dante Alighieri, 1265-1321',

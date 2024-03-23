@@ -1,6 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { calloutTypes } from '../../../../interactors';
-import { RECORD_STATUSES } from '../../../support/constants';
+import { RECORD_STATUSES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -20,7 +20,7 @@ describe('Data Import', () => {
     let user;
     const OCLCAuthentication = '100481406/PAOLF';
     const fileName = `C356824 autotestFile${getRandomPostfix()}.mrc`;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const oclcForImport = '912958093';
     const oclcForUpdating = '698820890';
     const updatedInstanceData = {

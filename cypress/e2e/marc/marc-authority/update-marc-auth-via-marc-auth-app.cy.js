@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
@@ -21,7 +22,7 @@ describe('MARC', () => {
       marcFile: {
         marc: 'marcAuthC417046.mrc',
         fileName: `C417046 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       },
     };
 

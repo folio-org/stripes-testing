@@ -1,7 +1,12 @@
-import { RECORD_STATUSES, JOB_STATUS_NAMES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -9,14 +14,13 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
     const testData = {
-      jobProfileToRun: 'Default - Create Holdings and SRS MARC Holdings',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_HOLDINGS_AND_SRS,
       fileWithHoldingsPathForUpload: 'marcBibFileForC375187.mrc',
       editedMarcFileName: `C375187 testMarcFile${getRandomPostfix()}.mrc`,
       tagLDR: {
@@ -48,7 +52,7 @@ describe('MARC', () => {
     const marcFile = {
       marc: 'oneMarcBib.mrc',
       fileName: `C375187 testMarcFile${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       propertyName: 'instance',
     };
 

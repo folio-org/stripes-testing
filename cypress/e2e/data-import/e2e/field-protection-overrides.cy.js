@@ -6,6 +6,7 @@ import {
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -37,7 +38,7 @@ describe('Data Import', () => {
     let firstFieldId = null;
     let secondFieldId = null;
     let instanceHrid = null;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     // unique file name to upload
     const fileNameForCreatingInstance = `C17018autotestFileCreteInstance${getRandomPostfix()}.mrc`;
     const fileNameForProtect = `C17018 marcFileForC17018-Rev1-Protect${getRandomPostfix()}.mrc`;

@@ -1,12 +1,13 @@
+import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
 let user;
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
@@ -56,7 +57,7 @@ describe('bulk-edit', () => {
       () => {
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToHoldings();
-        InventorySearchAndFilter.bySource('FOLIO');
+        InventorySearchAndFilter.bySource(INSTANCE_SOURCE_NAMES.FOLIO);
         InventorySearchAndFilter.saveHoldingsUUIDs();
 
         TopMenuNavigation.navigateToApp('Bulk edit');

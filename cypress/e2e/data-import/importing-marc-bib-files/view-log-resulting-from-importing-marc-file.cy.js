@@ -1,4 +1,4 @@
-import { RECORD_STATUSES } from '../../../support/constants';
+import { RECORD_STATUSES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -11,7 +11,7 @@ describe('Data Import', () => {
     let instanceId;
     const filePathToUpload = 'oneMarcBib.mrc';
     const fileNameToUpload = `C2358 autotestFile${getRandomPostfix()}.mrc`;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
     before('create test data', () => {
       cy.getAdminToken();

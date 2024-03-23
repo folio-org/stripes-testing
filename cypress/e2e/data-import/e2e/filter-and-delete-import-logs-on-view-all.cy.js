@@ -10,6 +10,7 @@ import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
@@ -24,12 +25,12 @@ describe('Data Import', () => {
     const firstTestData = {
       instanceIds: [],
       marcFilePath: 'oneMarcBib.mrc',
-      jobProfileName: 'Default - Create instance and SRS MARC Bib',
+      jobProfileName: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     };
     const secondTestData = {
       authorityIds: [],
       marcFilePath: 'oneMarcAuthority.mrc',
-      jobProfileName: 'Default - Create SRS MARC Authority',
+      jobProfileName: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
     };
 
     before(() => {

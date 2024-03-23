@@ -1,6 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { Permissions } from '../../../support/dictionary';
-import { RECORD_STATUSES } from '../../../support/constants';
+import { RECORD_STATUSES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -11,7 +11,7 @@ import Users from '../../../support/fragments/users/users';
 describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     let user;
-    const jobProfileToRun = 'Default - Create SRS MARC Authority';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
     const fileName = `C359207 autotestFile${getRandomPostfix()}.mrc`;
     // eslint-disable-next-line
     const error =

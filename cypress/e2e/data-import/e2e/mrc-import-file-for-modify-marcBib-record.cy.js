@@ -4,6 +4,7 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -35,7 +36,7 @@ describe.skip('data-import', () => {
   describe('End to end scenarios', () => {
     let user = {};
     let instanceHRID;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     // file name
     const nameMarcFileForCreate = `C345423 autotestFile${getRandomPostfix()}.mrc`;
     const nameForCSVFile = `C345423autotestFile${getRandomPostfix()}.csv`;

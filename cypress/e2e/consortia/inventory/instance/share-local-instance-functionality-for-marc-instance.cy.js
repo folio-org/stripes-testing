@@ -14,7 +14,6 @@ describe('Inventory', () => {
     const marcFile = {
       marc: 'oneMarcBib.mrc',
       fileNameImported: `C411292 marcFileName${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       title:
         'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)',
     };

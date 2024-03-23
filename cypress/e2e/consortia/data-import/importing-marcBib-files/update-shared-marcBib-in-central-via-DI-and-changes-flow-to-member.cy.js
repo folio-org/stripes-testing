@@ -38,7 +38,6 @@ describe('Data Import', () => {
       marcFile: {
         marc: 'marcBibFileForC405534.mrc',
         fileName: `C405534 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         exportedFileName: `C405534 exportedTestMarcFile${getRandomPostfix()}.mrc`,
         modifiedMarcFile: `C405534 modifiedTestMarcFile${getRandomPostfix()}.mrc`,
       },

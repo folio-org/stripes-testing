@@ -4,6 +4,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 describe('Data Import', () => {
   describe('Uploading files', () => {
@@ -11,7 +12,7 @@ describe('Data Import', () => {
     const quantityOfFiles = '2';
     const fileName = `C2377 autotestFile${getRandomPostfix()}.mrc`;
     const filePathForUpload = 'oneMarcBib.mrc';
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
     before('create test data', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {

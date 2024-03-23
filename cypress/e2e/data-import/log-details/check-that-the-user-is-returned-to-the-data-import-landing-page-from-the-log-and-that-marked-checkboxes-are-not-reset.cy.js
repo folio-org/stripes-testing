@@ -7,6 +7,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 describe('Data Import', () => {
   describe('Log details', () => {
@@ -17,12 +18,12 @@ describe('Data Import', () => {
       {
         marc: 'marcBibC357050-1.mrc',
         fileName: `C357050 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       },
       {
         marc: 'marcBibC357050-2.mrc',
         fileName: `C357050 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       },
     ];
 

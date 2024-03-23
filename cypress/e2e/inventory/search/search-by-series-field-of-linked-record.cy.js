@@ -1,4 +1,5 @@
 import { including } from '@interactors/html';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -52,35 +53,35 @@ const testData = {
     {
       marc: 'marcBibC375258.mrc',
       fileName: `testMarcFileC375258.${randomFourDigitNumber()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       numberOfRecords: 4,
       propertyName: 'instance',
     },
     {
       marc: 'marcAuth100C375258.mrc',
       fileName: `testMarcFileAuth100C375258.${randomFourDigitNumber()}.mrc`,
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       numberOfRecords: 1,
       propertyName: 'authority',
     },
     {
       marc: 'marcAuth110C375258.mrc',
       fileName: `testMarcFileAuth110C375258.${randomFourDigitNumber()}.mrc`,
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       numberOfRecords: 1,
       propertyName: 'authority',
     },
     {
       marc: 'marcAuth111C375258.mrc',
       fileName: `testMarcFileAuth111C375258.${randomFourDigitNumber()}.mrc`,
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       numberOfRecords: 1,
       propertyName: 'authority',
     },
     {
       marc: 'marcAuth130C375258.mrc',
       fileName: `testMarcFileAuth130C375258.${randomFourDigitNumber()}.mrc`,
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       numberOfRecords: 1,
       propertyName: 'authority',
     },

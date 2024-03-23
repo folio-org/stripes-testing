@@ -1,4 +1,4 @@
-import { TARGET_PROFILE_NAMES } from '../../../support/constants';
+import { TARGET_PROFILE_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryEditMarcRecord from '../../../support/fragments/inventory/inventoryEditMarcRecord';
@@ -17,7 +17,7 @@ describe('Data Import', () => {
     let user = null;
     let instanceHrid;
     let instanceid;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const protectedFieldData = {
       protectedField: '856',
       in1: '*',

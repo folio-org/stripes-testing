@@ -4,6 +4,7 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -35,7 +36,7 @@ describe('Data Import', () => {
     const testData = {
       instanceIds: [],
       marcFilePath: 'marcBibFileForC389589.mrc',
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
 
       title: "101 things I wish I'd known when I started using hypnosis / Dabney Ewin.",
       errorMessage:

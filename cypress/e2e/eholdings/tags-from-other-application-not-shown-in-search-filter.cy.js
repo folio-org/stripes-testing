@@ -1,17 +1,17 @@
-import { JOB_STATUS_NAMES } from '../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import getRandomPostfix from '../../support/utils/stringTools';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import InteractorsTools from '../../support/utils/interactorsTools';
 import EHoldingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import EHoldingSearch from '../../support/fragments/eholdings/eHoldingsSearch';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import InteractorsTools from '../../support/utils/interactorsTools';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('eHoldings', () => {
   const testData = {
@@ -23,7 +23,7 @@ describe('eHoldings', () => {
     {
       marc: 'marcBibFileForC376614.mrc',
       fileName: `testMarcFileC376614${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     },
   ];
 

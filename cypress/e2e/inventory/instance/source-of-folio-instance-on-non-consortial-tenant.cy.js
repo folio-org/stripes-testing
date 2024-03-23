@@ -1,3 +1,4 @@
+import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -10,7 +11,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Inventory', () => {
   describe('Instance', () => {
     let user;
-    const instanceSource = 'FOLIO';
+    const instanceSource = INSTANCE_SOURCE_NAMES.FOLIO;
     const instanceTitle = `C402776 autotestInstance ${getRandomPostfix()}`;
     const itemBarcode = Helper.getRandomBarcode();
 

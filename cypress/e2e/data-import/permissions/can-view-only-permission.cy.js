@@ -1,5 +1,5 @@
 import { Permissions } from '../../../support/dictionary';
-import { RECORD_STATUSES } from '../../../support/constants';
+import { RECORD_STATUSES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -21,7 +21,7 @@ describe('Data Import', () => {
       DataImport.uploadFileViaApi(
         'oneMarcBib.mrc',
         fileName,
-        'Default - Create instance and SRS MARC Bib',
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       ).then((response) => {
         instnaceId = response[0].instance.id;
       });

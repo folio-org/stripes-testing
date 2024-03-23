@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
@@ -33,21 +34,21 @@ describe('Inventory', () => {
       {
         marc: 'marcBibFileC400610.mrc',
         fileName: `testMarcFileC400610.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numberOfRecords: 2,
         propertyName: 'instance',
       },
       {
         marc: 'marcBibFileC400616.mrc',
         fileName: `testMarcFileC400616.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numberOfRecords: 4,
         propertyName: 'instance',
       },
       {
         marc: 'marcBibFileC414977.mrc',
         fileName: `testMarcFileC414977.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numberOfRecords: 9,
         propertyName: 'instance',
       },

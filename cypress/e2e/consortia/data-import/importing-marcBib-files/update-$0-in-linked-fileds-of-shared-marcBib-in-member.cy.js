@@ -1,4 +1,8 @@
-import { EXISTING_RECORDS_NAMES, FOLIO_RECORD_TYPE } from '../../../../support/constants';
+import {
+  EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  DEFAULT_JOB_PROFILE_NAMES,
+} from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -67,13 +71,13 @@ describe('Data Import', () => {
       {
         marc: 'marcBibFileForC407696.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numOfRecords: 1,
       },
       {
         marc: 'marcAuthFileForC407696.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 3,
       },
     ];

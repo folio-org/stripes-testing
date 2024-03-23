@@ -4,12 +4,13 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 describe('Data Import', () => {
   describe('Log details', () => {
     const testData = {
       marcFileName: 'No file name.mrc',
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     };
 
     before('Create test data', () => {

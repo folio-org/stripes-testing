@@ -1,6 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { Permissions } from '../../../support/dictionary';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -15,7 +15,7 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     const instanceHrids = [];
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const filePathToUpload = 'marcBibFileForC6690.mrc';
     const editedFileForUpload = `C6690 editedAutotestFile${getRandomPostfix()}.mrc`;
     const fileName = `C6690 autotestFile${getRandomPostfix()}.mrc`;

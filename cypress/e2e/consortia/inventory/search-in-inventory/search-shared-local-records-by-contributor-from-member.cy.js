@@ -13,6 +13,7 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import BrowseContributors from '../../../../support/fragments/inventory/search/browseContributors';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -57,7 +58,7 @@ describe('Inventory', () => {
       {
         marc: 'marcBibFileForC411578-Shared.mrc',
         fileName: `C411578 Central testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
         tenant: tenantNames.central,
         numOfRecords: 3,
@@ -65,7 +66,7 @@ describe('Inventory', () => {
       {
         marc: 'marcBibFileForC411578-Local-M1.mrc',
         fileName: `C411578 Member1 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
         tenant: tenantNames.college,
         numOfRecords: 1,
@@ -73,7 +74,7 @@ describe('Inventory', () => {
       {
         marc: 'marcBibFileForC411578-Local-M2.mrc',
         fileName: `C411578 Member2 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
         tenant: tenantNames.university,
         numOfRecords: 1,

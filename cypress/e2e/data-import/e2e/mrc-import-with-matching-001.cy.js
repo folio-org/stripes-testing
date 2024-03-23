@@ -5,6 +5,7 @@ import {
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -33,7 +34,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let user = {};
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     // unique file name to upload
     const nameForMarcFile = `C17044 autoTestFile${getRandomPostfix()}.mrc`;
     const nameForExportedMarcFile = `C17044 autoTestFile${getRandomPostfix()}.mrc`;

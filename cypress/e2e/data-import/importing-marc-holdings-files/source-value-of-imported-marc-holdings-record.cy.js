@@ -1,4 +1,9 @@
-import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import {
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  INSTANCE_SOURCE_NAMES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -20,8 +25,8 @@ describe('Data Import', () => {
     let user;
     let instanceHrid;
     const instanceTitle = 'The Journal of ecclesiastical history.';
-    const jobProfileForCreatingInstance = 'Default - Create instance and SRS MARC Bib';
-    const jobProfileForCreatingHoldings = 'Default - Create Holdings and SRS MARC Holdings';
+    const jobProfileForCreatingInstance = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
+    const jobProfileForCreatingHoldings = DEFAULT_JOB_PROFILE_NAMES.CREATE_HOLDINGS_AND_SRS;
     const filePathForUpload = 'marcFileForC356820.mrc';
     const filePathForEdit = 'marcFileForC356820_holdings.mrc';
     const fileName = `C356820 autotestFileName.${getRandomPostfix()}`;
@@ -69,10 +74,10 @@ describe('Data Import', () => {
       'C356820 Check the "Source" value of imported "MARC Holdings" record. (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire'] },
       () => {
-        InventoryInstances.searchBySource('MARC');
+        InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyInstancePaneExists();
-        InstanceRecordView.verifyInstanceSource('MARC');
+        InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
         DataImport.editMarcFile(
           filePathForEdit,
           editedMarcFileName,

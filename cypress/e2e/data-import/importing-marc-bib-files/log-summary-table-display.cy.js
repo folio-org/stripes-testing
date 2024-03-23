@@ -1,4 +1,4 @@
-import { RECORD_STATUSES } from '../../../support/constants';
+import { RECORD_STATUSES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -8,7 +8,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const filePathToUpload = 'marcBibFileForC353624.mrc';
     const fileName = `C356324 autotestFile${getRandomPostfix()}.mrc`;
     let instanceId;

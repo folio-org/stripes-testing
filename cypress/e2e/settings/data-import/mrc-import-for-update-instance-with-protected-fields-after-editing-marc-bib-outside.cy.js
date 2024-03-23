@@ -1,6 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
@@ -38,7 +39,7 @@ describe('Data Import', () => {
   describe('Settings', () => {
     let user;
     let instanceHrid = null;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const quantityOfItems = '1';
     // unique file names
     const nameMarcFileForCreate = `C356830 autotestFile${getRandomPostfix()}.mrc`;

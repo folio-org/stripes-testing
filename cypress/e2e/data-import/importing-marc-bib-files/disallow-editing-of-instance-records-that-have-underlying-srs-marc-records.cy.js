@@ -8,6 +8,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -16,7 +17,7 @@ describe('Data Import', () => {
     let instanceId;
     const filePath = 'marcFileForC2361.mrc';
     const marcFileName = `C2361 autotestFileName${getRandomPostfix()}.mrc`;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
     before('login', () => {
       cy.getAdminToken();

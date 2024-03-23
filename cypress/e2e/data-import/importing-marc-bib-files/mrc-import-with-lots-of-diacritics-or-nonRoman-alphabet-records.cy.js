@@ -2,6 +2,7 @@ import {
   INSTANCE_SOURCE_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -16,7 +17,7 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const quantityOfItems = '15';
     const rowNumbers = [1, 4, 7, 14];
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const firstRecord = {
       title:
         'ha-Maʻaśim li-vene Erets-Yiśraʼel : halakhah ṿe-hisṭoryah be-Erets-Yiśraʼel ha-Bizanṭit / Hilel Nyuman.',

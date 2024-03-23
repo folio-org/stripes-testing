@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -13,7 +13,7 @@ describe('Data Import', () => {
     let user;
     const bigFileName = `C378883 autotestFile${getRandomPostfix()}.mrc`;
     const smallFileName = `C378883 autotestFile${getRandomPostfix()}.mrc`;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const numberOfLogsToDelete = '1';
 
     before('login', () => {

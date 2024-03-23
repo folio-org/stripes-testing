@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -10,7 +11,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     const testData = {};
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const fileNameForC360548 = `testInventoryFile.${getRandomPostfix()}.mrc`;
     const fileNameForC360555 = `testInventoryFile.${getRandomPostfix()}.mrc`;
     const propertyName = 'instance';

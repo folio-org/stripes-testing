@@ -1,18 +1,18 @@
-import Permissions from '../../../../support/dictionary/permissions';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import Users from '../../../../support/fragments/users/users';
-import TopMenu from '../../../../support/fragments/topMenu';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -20,7 +20,7 @@ describe('Inventory', () => {
     const testData = {
       filePath: 'oneMarcBib.mrc',
       marcFileName: `C409516 autotestFileName${getRandomPostfix()}.mrc`,
-      instanceSource: 'MARC',
+      instanceSource: INSTANCE_SOURCE_NAMES.MARC,
     };
 
     before('Create test data', () => {
@@ -100,7 +100,7 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
-        InstanceRecordView.verifyInstanceSource('MARC');
+        InstanceRecordView.verifyInstanceSource(testData.instanceSource);
         InstanceRecordView.openHoldingView();
         HoldingsRecordView.waitLoading();
         HoldingsRecordView.checkPermanentLocation(testData.collegeLocation.name);

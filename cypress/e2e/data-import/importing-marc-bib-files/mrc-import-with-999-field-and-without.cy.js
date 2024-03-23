@@ -1,4 +1,8 @@
-import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import {
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -13,7 +17,7 @@ import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScre
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const instanceTitle = 'Mistapim in Cambodia [microform]. Photos. by the author.';
     const error =
       '{"error":"A new Instance was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';

@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -26,14 +27,14 @@ describe('Inventory', () => {
       {
         marc: 'marcBibFileC367974.mrc',
         fileName: `testMarcFileC367974.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numberOfRecords: 2,
         propertyName: 'instance',
       },
       {
         marc: 'marcAuthFileC367974.mrc',
         fileName: `testMarcFileC367974.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         authorityHeading: 'DiCaprio, Leonardo C367974',
         authority010FieldValue: 'n94000330367974',
         numberOfRecords: 1,

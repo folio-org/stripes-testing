@@ -13,12 +13,13 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 
 describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     const testData = {};
-    const jobProfileToRun = 'Default - Create SRS MARC Authority';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
     const propertyName = 'authority';
     const createdJobProfile = {
       profileName: 'Update MARC authority records - 999 ff $s',

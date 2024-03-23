@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -41,7 +42,7 @@ describe('Inventory', () => {
         DataImport.uploadFileViaApi(
           'oneMarcBib.mrc',
           fileName,
-          'Default - Create instance and SRS MARC Bib',
+          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         ).then((response) => {
           instanceHRID = response[0].instance.hrid;
           instanceId = response[0].instance.id;

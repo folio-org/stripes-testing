@@ -10,6 +10,7 @@ import {
   EXISTING_RECORDS_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import {
   JobProfiles as SettingsJobProfiles,
@@ -102,7 +103,7 @@ describe('Data Import', () => {
         DataImport.uploadFileViaApi(
           'oneMarcBib.mrc',
           fileName,
-          'Default - Create instance and SRS MARC Bib',
+          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         ).then((response) => {
           instanceHrid = response[0].instance.hrid;
         });

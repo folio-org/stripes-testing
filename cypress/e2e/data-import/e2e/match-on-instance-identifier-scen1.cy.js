@@ -6,6 +6,7 @@ import {
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -35,7 +36,7 @@ describe('Data Import', () => {
     let userId;
     const fileNameForCreateInstance = `C347828 autotestFile${getRandomPostfix()}.mrc`;
     const fileNameForUpdateInstance = `C347828 autotestFile${getRandomPostfix()}.mrc`;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const instanceGeneralNote = 'IDENTIFIER UPDATE 1';
     const resourceIdentifiers = [
       { type: 'UPC', value: 'ORD32671387-4' },
