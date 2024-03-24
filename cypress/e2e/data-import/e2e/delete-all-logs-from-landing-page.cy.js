@@ -21,15 +21,27 @@ describe('Data Import', () => {
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
     before('create test data', () => {
-      cy.createTempUser([Permissions.dataImportDeleteLogs.gui]).then((userProperties) => {
+      cy.getAdminToken();
+      for (let i = 0; i < 26; i++) {
+        const fileNameToUpload = `C358137 autotestFile${getRandomPostfix()}.mrc`;
+
+        DataImport.uploadFileViaApi(filePathToUpload, fileNameToUpload, jobProfileToRun).then(
+          (response) => {
+            instanceIds.push(response[0].instance.id);
+          },
+        );
+      }
+      cy.createTempUser([
+        Permissions.dataImportDeleteLogs.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
         user = userProperties;
 
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
-        cy.getAdminToken();
-        for (let i = 0; i < 26; i++) {
+        for (let i = 0; i < 4; i++) {
           const fileNameToUpload = `C358137 autotestFile${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFileViaApi(filePathToUpload, fileNameToUpload, jobProfileToRun).then(
@@ -56,6 +68,7 @@ describe('Data Import', () => {
       () => {
         // need to open file for this we find it
         Logs.openViewAllLogs();
+        cy.wait(5000);
         LogsViewAll.openUserIdAccordion();
         LogsViewAll.filterJobsByUser(`${user.firstName} ${user.lastName}`);
         Logs.openFileDetailsByRowNumber();

@@ -31,7 +31,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe.skip('data-import', () => {
+describe.skip('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
     const quantityOfItems = '1';

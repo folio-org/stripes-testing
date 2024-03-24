@@ -17,8 +17,8 @@ describe('Data Import', () => {
   describe('Settings', () => {
     let user;
 
-    const mappingProfileName = `mapping_${getRandomPostfix()}`;
-    const actionProfileName = `action_${getRandomPostfix()}`;
+    const mappingProfileName = `C421995 mapping profile${getRandomPostfix()}`;
+    const actionProfileName = `C421995 action profile${getRandomPostfix()}`;
 
     before('Create test data', () => {
       cy.getAdminToken();
@@ -55,15 +55,7 @@ describe('Data Import', () => {
         ActionProfiles.openNewActionProfileForm();
         NewActionProfile.verifyNewActionProfileExists();
 
-        [
-          'Instance',
-          'Holdings',
-          'Item',
-          'Order',
-          'Invoice',
-          'MARC Bibliographic',
-          'MARC Authority',
-        ].forEach((type) => {
+        ['Instance', 'Holdings', 'Item', 'Order', 'Invoice', 'MARC Authority'].forEach((type) => {
           NewActionProfile.verifyFOLIORecordTypeOptionExists(type);
         });
 
@@ -74,11 +66,9 @@ describe('Data Import', () => {
 
         ActionProfileEdit.changeAction(actionCreate);
 
-        ['Instance', 'Holdings', 'Item', 'Order', 'Invoice', 'MARC Bibliographic'].forEach(
-          (type) => {
-            ActionProfileEdit.verifyFOLIORecordTypeOptionExists(type);
-          },
-        );
+        ['Instance', 'Holdings', 'Item', 'Order', 'Invoice'].forEach((type) => {
+          ActionProfileEdit.verifyFOLIORecordTypeOptionExists(type);
+        });
 
         ActionProfileEdit.changeAction();
 

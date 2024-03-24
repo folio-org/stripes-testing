@@ -15,6 +15,7 @@ describe('Data Import', () => {
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C2345 autotest action profile ${getRandomStringCode(8)}`,
+      action: ACTION_NAMES_IN_ACTION_PROFILE.CREATE,
     };
 
     const calloutErrorMessage = `New record not created: Action profile '${actionProfile.name}' already exists`;

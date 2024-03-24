@@ -12,6 +12,7 @@ describe('Data Import', () => {
     before('create test data', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -29,9 +30,9 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         const filePathWithNotExistingFileExtension = 'file.txt';
-        const fileNameWithNotExistingFileExtension = `C2356 autotestFile.${getRandomPostfix()}.txt`;
+        const fileNameWithNotExistingFileExtension = `C2356 autotestFile${getRandomPostfix()}.txt`;
         const filePathWithBlockedFileExtension = 'fileForC2356.mrk';
-        const fileNameWithBlockedFileExtension = `C2356 autotestFile.${getRandomPostfix()}.mrk`;
+        const fileNameWithBlockedFileExtension = `C2356 autotestFile${getRandomPostfix()}.mrk`;
 
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
@@ -43,7 +44,7 @@ describe('Data Import', () => {
         DataImport.verifyFileIsImported(fileNameWithNotExistingFileExtension);
 
         cy.visit(TopMenu.dataImportPath);
-        DataImport.verifyUploadState();
+        DataImport.clickDeleteFilesButton();
         DataImport.uploadFile(filePathWithBlockedFileExtension, fileNameWithBlockedFileExtension);
         DataImport.verifyImportBlockedModal();
       },

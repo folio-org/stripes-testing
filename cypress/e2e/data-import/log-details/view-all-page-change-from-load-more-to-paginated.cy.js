@@ -56,11 +56,15 @@ describe('Data Import', () => {
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
-        LogsViewAll.verifyPreviousPagination();
-        LogsViewAll.clickNextPaginationButton();
-        LogsViewAll.verifyNextPagination();
-        LogsViewAll.clickPreviousPaginationButton();
-        LogsViewAll.verifyPreviousPagination();
+        LogsViewAll.getNumberOfLogs().then((number) => {
+          const numberOfLogs = number;
+
+          LogsViewAll.verifyPreviousPagination();
+          LogsViewAll.clickNextPaginationButton();
+          LogsViewAll.verifyNextPagination(numberOfLogs);
+          LogsViewAll.clickPreviousPaginationButton();
+          LogsViewAll.verifyPreviousPagination();
+        });
       },
     );
   });

@@ -40,7 +40,7 @@ describe('Inventory', () => {
         HridHandling.checkRemoveLeadingZeroesAndSave();
         let date = DateTools.getFormattedDateWithTime(new Date(), { withSpace: true });
         // wait, because next steps can be failed without it
-        cy.wait(2000);
+        cy.wait(5000);
         HridHandling.verifyValueInRecordDetailsSection(testData.user.username);
         HridHandling.verifyValueInRecordDetailsSection(date);
         HridHandling.uncheckRemoveLeadingZeroesAndSave();

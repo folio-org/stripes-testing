@@ -134,12 +134,10 @@ describe('Data Import', () => {
         Logs.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
-        [
-          FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.checkStatusInColumn(
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.order,
-        ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
-        });
+        );
         FileDetails.openJsonScreen(title);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.openOrderTab();

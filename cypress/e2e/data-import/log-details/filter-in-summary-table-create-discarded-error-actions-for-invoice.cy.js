@@ -36,7 +36,7 @@ describe('Data Import', () => {
     };
     const invoiceNumber = '1024200';
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.ebsco;
-    const marcFileName = `C357018 autotestFile${getRandomPostfix()}.mrc`;
+    const marcFileName = `C357018 autotestFile${getRandomPostfix()}`;
     const filePathForUpload = 'ediFileForC357018.edi';
     const mappingProfile = {
       name: `C357018 Test invoice log table Create EBSCO invoice ${getRandomPostfix()}`,
@@ -100,6 +100,7 @@ describe('Data Import', () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfile(actionProfile);
+        cy.pause();
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
