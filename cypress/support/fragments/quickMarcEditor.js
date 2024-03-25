@@ -2374,6 +2374,24 @@ export default {
     ]);
   },
 
+  verifyBoxLabelsInLDRFieldInMarcHoldingRecord() {
+    cy.expect([
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.Record length') }))
+        .has({ disabled: true }),
+      fieldLDR.find(Select({ label: 'Status' })).exists(),
+      fieldLDR.find(Select({ label: 'Type' })).exists(),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.7-16 positions') }))
+        .has({ disabled: true }),
+      fieldLDR.find(Select({ label: 'ELvl' })).exists(),
+      fieldLDR.find(Select({ label: 'Item' })).exists(),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.19-23 positions') }))
+        .has({ disabled: true, value: '\\4500' }),
+    ]);
+  },
+
   verifyInitialLDRFieldsValuesInMarcHoldingRecord() {
     cy.expect([
       fieldLDR
