@@ -35,6 +35,8 @@ import {
   MARC_HOLDING_LDR_FIELD_TYPE_DROPDOWN,
   MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN,
   MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES,
+  AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES,
 } from '../constants';
 
 const holdingsRecordViewSection = Section({ id: 'ui-inventory.holdingsRecordView' });
@@ -2356,18 +2358,18 @@ export default {
     );
   },
 
-  verifyBoxLabelsInLDRField() {
+  verifyBoxLabelsInLDRFieldInMarcAuthorityRecord() {
     cy.expect([
       fieldLDR
         .find(TextField({ name: including('records[0].content.Record length') }))
         .has({ disabled: true }),
-      fieldLDR.find(Select({ label: 'Status' })).exists(),
-      fieldLDR.find(Select({ label: 'Type' })).exists(),
+      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS })).exists(),
+      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.TYPE })).exists(),
       fieldLDR
         .find(TextField({ name: including('records[0].content.7-16 positions') }))
         .has({ disabled: true }),
-      fieldLDR.find(Select({ label: 'ELvl' })).exists(),
-      fieldLDR.find(Select({ label: 'Punct' })).exists(),
+      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL })).exists(),
+      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT })).exists(),
       fieldLDR
         .find(TextField({ name: including('records[0].content.19-23 positions') }))
         .has({ disabled: true }),
@@ -2379,13 +2381,13 @@ export default {
       fieldLDR
         .find(TextField({ name: including('records[0].content.Record length') }))
         .has({ disabled: true }),
-      fieldLDR.find(Select({ label: 'Status' })).exists(),
-      fieldLDR.find(Select({ label: 'Type' })).exists(),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.STATUS })).exists(),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.TYPE })).exists(),
       fieldLDR
         .find(TextField({ name: including('records[0].content.7-16 positions') }))
         .has({ disabled: true }),
-      fieldLDR.find(Select({ label: 'ELvl' })).exists(),
-      fieldLDR.find(Select({ label: 'Item' })).exists(),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ELVL })).exists(),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ITEM })).exists(),
       fieldLDR
         .find(TextField({ name: including('records[0].content.19-23 positions') }))
         .has({ disabled: true, value: '\\4500' }),
@@ -2397,24 +2399,24 @@ export default {
       fieldLDR
         .find(TextField({ name: including('records[0].content.Record length') }))
         .has({ disabled: true, value: '00000' }),
-      fieldLDR.find(Select({ label: 'Status' })).exists(),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.STATUS })).exists(),
       fieldLDR
-        .find(Select({ label: 'Status' }))
+        .find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.STATUS }))
         .has({ checkedOptionText: MARC_HOLDING_LDR_FIELD_STATUS_DROPDOWN.N }),
-      fieldLDR.find(Select({ label: 'Type' })).exists(),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.TYPE })).exists(),
       fieldLDR
-        .find(Select({ label: 'Type' }))
+        .find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.TYPE }))
         .has({ checkedOptionText: MARC_HOLDING_LDR_FIELD_TYPE_DROPDOWN.U }),
       fieldLDR
         .find(TextField({ name: including('records[0].content.7-16 positions') }))
         .has({ disabled: true, value: '\\\\\\2200000' }),
-      fieldLDR.find(Select({ label: 'ELvl' })).exists(),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ELVL })).exists(),
       fieldLDR
-        .find(Select({ label: 'ELvl' }))
+        .find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ELVL }))
         .has({ checkedOptionText: MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN.U }),
-      fieldLDR.find(Select({ label: 'Item' })).exists(),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ITEM })).exists(),
       fieldLDR
-        .find(Select({ label: 'Item' }))
+        .find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ITEM }))
         .has({ checkedOptionText: MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN.N }),
       fieldLDR
         .find(TextField({ name: including('records[0].content.19-23 positions') }))
@@ -2423,6 +2425,10 @@ export default {
   },
 
   fillInElvlBoxInLDRField(value) {
-    cy.do(fieldLDR.find(TextField({ label: 'ELvl' })).fillIn(value));
+    cy.do(
+      fieldLDR
+        .find(TextField({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ELVL }))
+        .fillIn(value),
+    );
   },
 };

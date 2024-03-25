@@ -492,7 +492,7 @@ describe('MARC', () => {
             MarcAuthorities.selectTitle(testData.authority.title);
             MarcAuthority.edit();
 
-            QuickMarcEditor.verifyBoxLabelsInLDRField();
+            QuickMarcEditor.verifyBoxLabelsInLDRFieldInMarcAuthorityRecord();
             QuickMarcEditor.verifyLDRDropdownsHoverTexts();
 
             LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
