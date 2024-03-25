@@ -19,7 +19,7 @@ describe('Users', () => {
       PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
         patronGroup.id = patronGroupResponse;
       });
-      cy.wrap(['E', 'C', 'A', 'D', 'B', 'Z'])
+      cy.wrap(['e', 'c', 'a', 'd', 'b', 'z'])
         .each((user) => {
           Users.createViaApi({
             active: true,

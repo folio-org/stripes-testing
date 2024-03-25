@@ -18,11 +18,17 @@ Cypress.Commands.add('getUserPermissions', (targetUserId) => {
 });
 
 Cypress.Commands.add('addPermissionsToNewUserApi', (userAndPermissions) => {
-  cy.okapiRequest({
-    method: 'POST',
-    path: 'perms/users',
-    body: userAndPermissions,
-  });
+  if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
+    cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
+      cy.addRolesToNewUserApi(userAndPermissions.userId, [roleId]);
+    });
+  } else {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'perms/users',
+      body: userAndPermissions,
+    });
+  }
 });
 
 Cypress.Commands.add(

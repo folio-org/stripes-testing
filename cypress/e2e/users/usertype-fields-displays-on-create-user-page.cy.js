@@ -22,7 +22,7 @@ describe('Users', () => {
   const userOne = {
     patronGroup: patronGroup.name,
     barcode: barcodeNumber,
-    username: `AutotestUser_${barcodeNumber}`,
+    username: `autotestuser_${barcodeNumber}`,
     personal: {
       lastName: 'User',
       firstName: 'Delete',

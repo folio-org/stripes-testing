@@ -467,7 +467,7 @@ export default {
         saveAndCloseBtn.click(),
       ])
       .then(() => {
-        cy.intercept('/users').as('user');
+        cy.intercept('/users-keycloak/users').as('user');
         return cy.wait('@user', { timeout: 80000 }).then((xhr) => xhr.response.body.id);
       });
   },
