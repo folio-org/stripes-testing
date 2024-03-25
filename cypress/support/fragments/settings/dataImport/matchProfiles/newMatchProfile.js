@@ -668,8 +668,8 @@ export default {
     cy.expect(Callout({ textContent: including(message) }).exists());
   },
 
-  verifyExistingRecordSection: () => {
-    cy.expect([
+  verifyExistingRecordSection: (options) => {
+    cy.expect(
       matchProfileDetailsSection
         .find(
           HTML(
@@ -679,12 +679,10 @@ export default {
           ),
         )
         .exists(),
-      cy.get('#panel-existing-edit [data-id=INSTANCE]').should('exist'),
-      cy.get('#panel-existing-edit [data-id=HOLDINGS]').should('exist'),
-      cy.get('#panel-existing-edit [data-id=ITEM]').should('exist'),
-      cy.get('#panel-existing-edit [data-id=MARC_BIBLIOGRAPHIC]').should('exist'),
-      cy.get('#panel-existing-edit [data-id=MARC_AUTHORITY]').should('exist'),
-    ]);
+    );
+    options.forEach((option) => {
+      cy.get(`#panel-existing-edit [data-id=${option}]`).should('exist');
+    });
   },
   clickOnExistingRecordByName: (name) => {
     cy.do(matchProfileDetailsAccordion.find(Button({ text: name })).click());
@@ -728,5 +726,5 @@ export default {
       }),
     ]);
   },
-  clickClose: () => cy.do(closeButton.click()),
+  close: () => cy.do(closeButton.click()),
 };
