@@ -817,6 +817,10 @@ export default {
     internal: 'ui-organizations.acqUnits.assig',
     gui: 'Organizations: Assign acquisition units to new organization',
   },
+  uiOrganizationsViewBankingInformation: {
+    internal: 'ui-organizations.banking-information.view',
+    gui: 'Organizations: View banking information',
+  },
   uiOrganizationsIntegrationUsernamesAndPasswordsView: {
     internal: 'ui-organizations.integrations.creds.view',
     gui: 'Organizations: Integration usernames and passwords: view',
