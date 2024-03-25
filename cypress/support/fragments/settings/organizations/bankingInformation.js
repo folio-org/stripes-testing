@@ -15,14 +15,10 @@ export default {
   },
   setBankingInformationValue(isBankingInformationEnabled) {
     this.getBankingInformationConfigViaApi().then((configs) => {
-      if (configs[0]) {
-        Configs.updateConfigViaApi({
-          ...configs[0],
-          value: isBankingInformationEnabled,
-        });
-      } else {
-        // Do nothing
-      }
+      Configs.updateConfigViaApi({
+        ...configs[0],
+        value: isBankingInformationEnabled,
+      });
     });
   },
 };
