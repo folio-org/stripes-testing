@@ -27,10 +27,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let user = {};
-    const fileName = `C343334autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C343334 autotestFile${getRandomPostfix()}.mrc`;
 
     const collectionOfProfiles = [
       {

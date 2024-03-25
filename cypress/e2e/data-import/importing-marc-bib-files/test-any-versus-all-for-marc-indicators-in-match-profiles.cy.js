@@ -36,15 +36,15 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const instanceTitle = 'The distant sound / Susan Philipsz.';
     const itemBarcode = uuid();
     const quantityOfItems = '1';
     const filePathToUpload = 'marcFileForC17036.mrc';
-    const editedMarcFileName = `C17036 autotestFile.${getRandomPostfix()}.mrc`;
-    const marcFileNameForFirstUpdate = `C17036 autotestFile.${getRandomPostfix()}.mrc`;
-    const marcFileNameForSecondUpdate = `C17036 autotestFile.${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C17036 autotestFile${getRandomPostfix()}.mrc`;
+    const marcFileNameForFirstUpdate = `C17036 autotestFile${getRandomPostfix()}.mrc`;
+    const marcFileNameForSecondUpdate = `C17036 autotestFile${getRandomPostfix()}.mrc`;
     // profiles for create
     const collectionOfMappingAndActionProfilesForCreate = [
       {

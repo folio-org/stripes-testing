@@ -29,10 +29,10 @@ import Helper from '../../../support/fragments/finance/financeHelper';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
-    const marcFileName = `C11105 autotestFile.${getRandomPostfix()}.mrc`;
+    const marcFileName = `C11105 autotestFile${getRandomPostfix()}.mrc`;
     const filePathForUpload = 'marcFileNameForC11105.mrc';
     const title = "101 things I wish I'd known when I started using hypnosis";
     const collectionOfMappingAndActionProfiles = [

@@ -1,5 +1,9 @@
 import uuid from 'uuid';
-import { JOB_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  JOB_STATUS_NAMES,
+  LOCATION_NAMES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -31,13 +35,13 @@ describe('MARC', () => {
       {
         marc: 'oneMarcBib.mrc',
         fileName: `testMarcFileC388511${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       },
       {
         marc: 'marcBibFileForC388511.mrc',
         editedFileName: `testMarcFileC388511${getRandomPostfix()}.mrc`,
         fileName: `testMarcFileC388511${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create Holdings and SRS MARC Holdings',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_HOLDINGS_AND_SRS,
       },
     ];
 

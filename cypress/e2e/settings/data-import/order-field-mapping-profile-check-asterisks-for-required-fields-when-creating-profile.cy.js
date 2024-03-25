@@ -6,7 +6,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import Permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     let user;
     const mappingProfile = {

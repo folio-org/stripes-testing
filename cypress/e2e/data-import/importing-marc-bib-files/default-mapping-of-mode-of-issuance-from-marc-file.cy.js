@@ -1,5 +1,9 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import {
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
+} from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -8,12 +12,12 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const instanceHrids = [];
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const filePathToUpload = 'marcBibFileForC11121.mrc';
-    const fileName = `C11121 autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C11121 autotestFile${getRandomPostfix()}.mrc`;
 
     before('login', () => {
       cy.loginAsAdmin({

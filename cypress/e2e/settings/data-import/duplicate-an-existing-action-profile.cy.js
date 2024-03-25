@@ -9,12 +9,13 @@ import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     let user;
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C2345 autotest action profile ${getRandomStringCode(8)}`,
+      action: ACTION_NAMES_IN_ACTION_PROFILE.CREATE,
     };
 
     const calloutErrorMessage = `New record not created: Action profile '${actionProfile.name}' already exists`;

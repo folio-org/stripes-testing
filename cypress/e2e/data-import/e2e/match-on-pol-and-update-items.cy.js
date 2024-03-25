@@ -51,7 +51,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let firstOrderNumber;
     let secondOrderNumber;
@@ -75,7 +75,7 @@ describe('data-import', () => {
       quantity: '1',
       price: '20',
     };
-    const editedMarcFileName = `C350590 marcFileForMatchOnPol.${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C350590 marcFileForMatchOnPol${getRandomPostfix()}.mrc`;
     const collectionOfProfiles = [
       {
         mappingProfile: {
@@ -274,6 +274,7 @@ describe('data-import', () => {
     });
 
     const openOrder = (number) => {
+      cy.reload();
       cy.wait(2000);
       Orders.resetFilters();
       Orders.searchByParameter('PO number', number);
@@ -283,6 +284,7 @@ describe('data-import', () => {
 
     const checkReceivedPiece = (number, title) => {
       cy.visit(TopMenu.ordersPath);
+      cy.reload();
       cy.wait(2000);
       Orders.resetFilters();
       Orders.searchByParameter('PO number', number);

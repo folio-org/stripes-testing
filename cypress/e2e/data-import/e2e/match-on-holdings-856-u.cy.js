@@ -33,7 +33,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let instanceHRID = null;
     const nameForCreateMarcFile = `C17025 createFile${getRandomPostfix()}.mrc`;

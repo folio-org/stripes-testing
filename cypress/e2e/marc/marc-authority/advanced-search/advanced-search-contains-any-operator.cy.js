@@ -5,6 +5,7 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -47,7 +48,7 @@ describe('MARC', () => {
         'EkonomiMerkeziEPAM',
       ];
 
-      const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const marcFile = {
         marc: 'MarcAuthoritiesForC407726.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,

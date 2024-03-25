@@ -28,12 +28,12 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Orders from '../../../support/fragments/orders/orders';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let orderNumber;
     const filePathForCreateOrder = 'marcBibFileForC380388.mrc';
-    const marcFileName = `C380388 autotest file ${getRandomPostfix()}`;
+    const marcFileName = `C380388 autotestFile${getRandomPostfix()}.mrc`;
 
     const mappingProfile = {
       name: `C380388 Create order - receipt not required${getRandomPostfix()}`,

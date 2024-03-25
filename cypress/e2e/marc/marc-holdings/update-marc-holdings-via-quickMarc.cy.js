@@ -1,15 +1,16 @@
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
@@ -17,10 +18,10 @@ describe('MARC', () => {
     const testData = {
       filePath: 'oneMarcBib.mrc',
       fileNameForCreateInstance: `C417047 autotestFile${getRandomPostfix()}.mrc`,
-      jobProfileForCreateInstance: 'Default - Create instance and SRS MARC Bib',
-      editedFile: `C417047 editedAutotestFileName${getRandomPostfix()}`,
-      fileNameForCreateHoldings: `C417047 autotestFileName${getRandomPostfix()}`,
-      jobProfileForCreateHoldings: 'Default - Create Holdings and SRS MARC Holdings',
+      jobProfileForCreateInstance: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      editedFile: `C417047 editedAutotestFileName${getRandomPostfix()}.mrc`,
+      fileNameForCreateHoldings: `C417047 autotestFileName${getRandomPostfix()}.mrc`,
+      jobProfileForCreateHoldings: DEFAULT_JOB_PROFILE_NAMES.CREATE_HOLDINGS_AND_SRS,
     };
 
     before('Create test data', () => {

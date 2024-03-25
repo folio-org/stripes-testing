@@ -14,6 +14,7 @@ import getRandomPostfix from '../../../../../../support/utils/stringTools';
 import DataImport from '../../../../../../support/fragments/data_import/dataImport';
 import Logs from '../../../../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -51,7 +52,7 @@ describe('MARC', () => {
           {
             marc: 'marcAuthFileForC422141.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
           },
         ];

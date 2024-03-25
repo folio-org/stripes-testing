@@ -35,13 +35,13 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     let orderNumber;
     let instanceHRID;
     const filePathForCreate = 'marcFileForC388570.mrc';
-    const marcFileName = `C388570 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C388570 autotestFileName${getRandomPostfix()}.mrc`;
     const arrayOfHoldingsStatuses = ['Created (KU/CC/DI/M)', 'Created (E)', 'Created (KU/CC/DI/A)'];
     const quantityOfCreatedHoldings = 3;
     const quantityOfCreatedItems = '6';
