@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -40,13 +41,13 @@ describe('MARC', () => {
         {
           marc: 'marcBibFileC380529.mrc',
           fileName: `testMarcFileC380529.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileC380529_1.mrc',
           fileName: `testMarcFileC380529.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           authorityHeading:
             'C380529 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
           authority010FieldValue: 'n831308323805291',
@@ -55,7 +56,7 @@ describe('MARC', () => {
         {
           marc: 'marcAuthFileC380529_2.mrc',
           fileName: `testMarcFileC380529.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           authorityHeading:
             'C380529 Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
           authority010FieldValue: 'n847454253805292',

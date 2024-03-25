@@ -3,7 +3,7 @@ import Affiliations, { tenantNames } from '../../../../support/dictionary/affili
 import Users from '../../../../support/fragments/users/users';
 import TopMenu from '../../../../support/fragments/topMenu';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -17,7 +17,7 @@ describe('Data Import', () => {
     const marcFile = {
       marc: 'marcAuthFileForC405519.mrc',
       fileName: `C405519 testMarcFile${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       numOfRecords: 1,
     };
     let createdAuthorityID;

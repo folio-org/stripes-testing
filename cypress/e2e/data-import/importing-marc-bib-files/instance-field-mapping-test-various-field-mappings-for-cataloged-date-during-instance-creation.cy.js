@@ -26,12 +26,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
-    const firstMarcFileName = `C11089 autotestFile_${getRandomPostfix()}.mrc`;
-    const secondMarcFileName = `C11089 autotestFile_${getRandomPostfix()}.mrc`;
-    const thirdMarcFileName = `C11089 autotestFile_${getRandomPostfix()}.mrc`;
-    const forthMarcFileName = `C11089 autotestFile_${getRandomPostfix()}.mrc`;
+    const firstMarcFileName = `C11089 autotestFile${getRandomPostfix()}.mrc`;
+    const secondMarcFileName = `C11089 autotestFile${getRandomPostfix()}.mrc`;
+    const thirdMarcFileName = `C11089 autotestFile${getRandomPostfix()}.mrc`;
+    const forthMarcFileName = `C11089 autotestFile${getRandomPostfix()}.mrc`;
 
     const filePathToUpload = 'marcBibFileForC11089.mrc';
     const instanceHrids = [];

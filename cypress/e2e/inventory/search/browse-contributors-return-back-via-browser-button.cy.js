@@ -10,7 +10,7 @@ import Users from '../../../support/fragments/users/users';
 const testData = {};
 const instance = BrowseContributors.defaultInstanceAWithContributor;
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Contributors Browse', () => {
     before('Create inventory instance with contributor', () => {
       cy.getAdminToken().then(() => {

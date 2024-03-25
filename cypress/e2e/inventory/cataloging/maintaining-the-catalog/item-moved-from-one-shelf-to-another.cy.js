@@ -6,7 +6,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
     const testData = {
       callNumber: `${randomFourDigitNumber()}`,

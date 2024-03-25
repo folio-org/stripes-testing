@@ -1,10 +1,11 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 
 const testData = {
   authorityIDs: [],
@@ -25,19 +26,19 @@ const testData = {
     {
       marc: 'marcAuthC380586_01.mrc',
       fileName: `testMarcFileAuthC380586_01.${randomFourDigitNumber()}.mrc`,
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       numberOfRecords: 1,
     },
     {
       marc: 'marcAuthC380586_02.mrc',
       fileName: `testMarcFileAuthC380586_02.${randomFourDigitNumber()}.mrc`,
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       numberOfRecords: 1,
     },
     {
       marc: 'marcAuthC380586_03.mrc',
       fileName: `testMarcFileAuthC380586_03.${randomFourDigitNumber()}.mrc`,
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       numberOfRecords: 1,
     },
   ],

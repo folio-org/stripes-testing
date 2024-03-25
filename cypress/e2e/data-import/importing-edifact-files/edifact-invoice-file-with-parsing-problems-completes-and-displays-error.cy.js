@@ -26,12 +26,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing EDIFACT files', () => {
     let user;
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.harrassowitz;
     const filePathToUpload = 'ediFileForC377019.edi';
-    const fileName = `C377019 autotestFile.${getRandomPostfix()}.edi`;
+    const fileName = `C377019 autotestFile${getRandomPostfix()}.edi`;
     const title = 'ERROR_INVOICE';
     const errorMessage =
       '{"errors":[{"name":"io.xlate.edi.internal.stream.tokenization.EDIException","message":"EDIE003 - Invalid processing state; INVALID (previous: TAG_1); input: \' \' in segment IMD at position 44"}]}';

@@ -3,7 +3,7 @@ import Affiliations, { tenantNames } from '../../../../support/dictionary/affili
 import Users from '../../../../support/fragments/users/users';
 import TopMenu from '../../../../support/fragments/topMenu';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -23,7 +23,7 @@ describe('MARC', () => {
       {
         marc: 'marcBibFileForC404417Central.mrc',
         fileName: `C404417 Shared testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         title: 'C404417 Sleeping in the ground : an Inspector Banks novel / Peter Jackson.',
         tenant: tenantNames.central,
         numOfRecords: 1,
@@ -31,14 +31,14 @@ describe('MARC', () => {
       {
         marc: 'marcAuthFileForC404417Central.mrc',
         fileName: `C404417 Central testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         tenant: tenantNames.central,
         numOfRecords: 2,
       },
       {
         marc: 'marcAuthFileForC404417LocalMember1.mrc',
         fileName: `C404417 Local testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         tenant: tenantNames.college,
         numOfRecords: 1,
       },

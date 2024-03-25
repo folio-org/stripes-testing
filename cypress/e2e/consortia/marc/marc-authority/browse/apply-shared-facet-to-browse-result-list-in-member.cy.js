@@ -3,7 +3,11 @@ import Affiliations, { tenantNames } from '../../../../../support/dictionary/aff
 import Users from '../../../../../support/fragments/users/users';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import { JOB_STATUS_NAMES, MARC_AUTHORITY_BROWSE_OPTIONS } from '../../../../../support/constants';
+import {
+  JOB_STATUS_NAMES,
+  MARC_AUTHORITY_BROWSE_OPTIONS,
+  DEFAULT_JOB_PROFILE_NAMES,
+} from '../../../../../support/constants';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -22,7 +26,7 @@ describe('MARC', () => {
         {
           marc: 'marcAuthFileForC404449Central.mrc',
           fileName: `C404449 Central testMarcFile${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           tenant: tenantNames.central,
           affiliation: Affiliations.Consortia,
           numOfRecords: 2,
@@ -31,7 +35,7 @@ describe('MARC', () => {
         {
           marc: 'marcAuthFileForC404449LocalMember1.mrc',
           fileName: `C404449 Local testMarcFile${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           tenant: tenantNames.college,
           affiliation: Affiliations.College,
           numOfRecords: 2,
@@ -40,7 +44,7 @@ describe('MARC', () => {
         {
           marc: 'marcAuthFileForC404449LocalMember2.mrc',
           fileName: `C404449 Local testMarcFile${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           tenant: tenantNames.university,
           affiliation: Affiliations.University,
           numOfRecords: 2,

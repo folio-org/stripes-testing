@@ -1,15 +1,16 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 
 const testData = {
   marcValue: 'C380530 Beethoven, Ludwig van,',
@@ -32,13 +33,13 @@ const marcFiles = [
   {
     marc: 'marcBibFileForC380530.mrc',
     fileName: `testMarcFileC380530.${getRandomPostfix()}.mrc`,
-    jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+    jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     propertyName: 'instance',
   },
   {
     marc: 'marcAuthFileForC380530_1.mrc',
     fileName: `testMarcFileC380530.${getRandomPostfix()}.mrc`,
-    jobProfileToRun: 'Default - Create SRS MARC Authority',
+    jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
     propertyName: 'authority',
     authorityHeading:
       'C380530 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
@@ -47,7 +48,7 @@ const marcFiles = [
   {
     marc: 'marcAuthFileForC380530_2.mrc',
     fileName: `testMarcFileC380530.${getRandomPostfix()}.mrc`,
-    jobProfileToRun: 'Default - Create SRS MARC Authority',
+    jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
     propertyName: 'authority',
     authorityHeading:
       'C380530 Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',

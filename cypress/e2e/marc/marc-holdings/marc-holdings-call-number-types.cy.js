@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -62,14 +62,14 @@ describe('MARC', () => {
     const instanceFile = {
       marc: 'marcBibFileC389500.mrc',
       fileName: `testMarcFile.C389500.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       propertyName: 'instance',
     };
 
     const holdingsFile = {
       marc: 'marcHoldingsFileC389500.mrc',
       fileName: `testMarcFile.C389500.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create Holdings and SRS MARC Holdings',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_HOLDINGS_AND_SRS,
       numOfRecords: 6,
     };
 

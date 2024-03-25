@@ -5,6 +5,7 @@ import {
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -33,13 +34,13 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     let instanceHrid;
     let exportedFileName;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const fileNameForCreate = `C357027 autotestFileCreteInstance.${getRandomPostfix()}.mrc`;
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
+    const fileNameForCreate = `C357027 autotestFileCreteInstance${getRandomPostfix()}.mrc`;
     const filePathForCreateInstance = 'oneMarcBib.mrc';
     const mappingProfile = {
       name: `C357027 autoTestMappingProf.${getRandomPostfix()}`,

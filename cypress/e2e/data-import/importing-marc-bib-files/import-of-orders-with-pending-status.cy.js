@@ -2,19 +2,15 @@ import {
   ACQUISITION_METHOD_NAMES,
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   FOLIO_RECORD_TYPE,
+  INSTANCE_SOURCE_NAMES,
   JOB_STATUS_NAMES,
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
-  VENDOR_NAMES,
   RECORD_STATUSES,
+  VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -24,18 +20,23 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let orderNumber;
     const quantityOfOrders = '2';
     const filePathForCreateOrder = 'marcFileForC375174.mrc';
-    const marcFileName = `C375174 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C375174 autotestFileName${getRandomPostfix()}.mrc`;
     const orderData = {
       title: 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.',
       publicationDate: '2023',
@@ -45,7 +46,7 @@ describe('data-import', () => {
       orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
       receiptStatus: 'Pending',
       paymentStatus: 'Pending',
-      source: 'MARC',
+      source: INSTANCE_SOURCE_NAMES.MARC,
       selector: 'AAH',
       receivingWorkflow: 'Synchronized order and receipt quantity',
       accountNumber: '137009',

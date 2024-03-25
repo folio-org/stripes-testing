@@ -12,7 +12,7 @@ let user;
 const oclc = '1007797324';
 const OCLCAuthentication = '100481406/PAOLF';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Single record import', () => {
     before('create user', () => {
       cy.createTempUser([

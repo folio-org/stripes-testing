@@ -1,4 +1,5 @@
 import { calloutTypes } from '../../../../interactors';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -24,7 +25,7 @@ describe('MARC', () => {
     const marcFile = {
       marc: 'oneMarcBib.mrc',
       fileName: `testMarcFileC375206${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       propertyName: 'instance',
     };
 

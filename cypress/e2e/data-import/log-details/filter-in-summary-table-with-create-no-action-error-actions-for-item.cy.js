@@ -25,7 +25,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     const quantityOfItems = {
@@ -33,7 +33,7 @@ describe('data-import', () => {
       noAction: '5',
       error: '5',
     };
-    const marcFileName = `C357017 autotestFile.${getRandomPostfix()}.mrc`;
+    const marcFileName = `C357017 autotestFile${getRandomPostfix()}.mrc`;
     const filePathForUpload = 'marcBibFileForC357017.mrc';
     const collectionOfMappingAndActionProfiles = [
       {

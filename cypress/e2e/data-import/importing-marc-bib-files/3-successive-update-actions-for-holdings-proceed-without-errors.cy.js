@@ -34,7 +34,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let instanceHrid;
@@ -51,9 +51,9 @@ describe('data-import', () => {
       callNumberSuffix: 'TestSuf',
     };
     const filePathForCreate = 'marcFileForC401727.mrc';
-    const marcFileNameForCreate = `C401727 autotestFileNamForCreate ${getRandomPostfix()}`;
-    const marcFileNameForUpdate = `C401727 autotestFileNameForUpdate ${getRandomPostfix()}`;
-    const editedMarcFileName = `C401727 editedAutotestFileName ${getRandomPostfix()}`;
+    const marcFileNameForCreate = `C401727 autotestFileNamForCreate${getRandomPostfix()}.mrc`;
+    const marcFileNameForUpdate = `C401727 autotestFileNameForUpdate${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C401727 editedAutotestFileName${getRandomPostfix()}.mrc`;
     const holdingsMappingProfile = {
       typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
       name: `C401727 Create simple Holdings ${getRandomPostfix()}}`,

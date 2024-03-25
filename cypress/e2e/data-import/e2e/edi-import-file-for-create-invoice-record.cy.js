@@ -27,10 +27,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     const quantityOfItems = '1';
-    const fileName = `C343338 autotestFile.${getRandomPostfix()}.edi`;
+    const fileName = `C343338 autotestFile${getRandomPostfix()}.edi`;
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.gobi;
     let user = {};
 
