@@ -442,6 +442,10 @@ export const AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN = {
   U: 'u - Unknown',
 };
 
+export const AUTHORITY_LDR_FIELD_TYPE_DROPDOWN = {
+  Z: 'z - Authority data',
+};
+
 export const INVENTORY_LDR_FIELD_TYPE_DROPDOWN = {
   A: 'a - Language material',
   C: 'c - Notated music',

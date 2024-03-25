@@ -406,6 +406,7 @@ const defaultValid008HoldingsValues = {
   'Sep/comp': '\\',
   'Spec ret': ['\\', '\\', '\\'],
 };
+const fieldLDR = QuickMarcEditorRow({ tagValue: 'LDR' });
 
 export default {
   defaultValidLdr,
@@ -1207,6 +1208,16 @@ export default {
 
   verifyDropdownHoverText(id, hoverText) {
     cy.get(`span[id="${id}"]`).should('contain.text', hoverText);
+  },
+
+  verifyLDRDropdownsHoverTexts() {
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Status-text', 'Record status');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Type-text', 'Type of record');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-ELvl-text', 'Encoding level');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Punct-text',
+      'Punctuation policy',
+    );
   },
 
   verifyLDRPositionsDefaultValues(fieldName, fieldvalue, isDisabled = true) {
@@ -2329,5 +2340,23 @@ export default {
         .find(Select({ label: dropdownLabel }))
         .has({ valid: isValid }),
     );
+  },
+
+  verifyBoxLabelsInLDRField() {
+    cy.expect([
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.Record length') }))
+        .has({ disabled: true }),
+      fieldLDR.find(Select({ label: 'Status' })).exists(),
+      fieldLDR.find(Select({ label: 'Type' })).exists(),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.7-16 positions') }))
+        .has({ disabled: true }),
+      fieldLDR.find(Select({ label: 'ELvl' })).exists(),
+      fieldLDR.find(Select({ label: 'Punct' })).exists(),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.19-23 positions') }))
+        .has({ disabled: true }),
+    ]);
   },
 };
