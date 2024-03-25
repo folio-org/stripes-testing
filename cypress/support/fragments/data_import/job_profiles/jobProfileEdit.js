@@ -1,7 +1,10 @@
-import { including } from '@interactors/html';
-import { Button, Form, Modal, TextField } from '../../../../../interactors';
+import { HTML, including } from '@interactors/html';
+import { Accordion, Button, Form, Modal, TextField } from '../../../../../interactors';
+import ModalSelectProfile from './modalSelectProfile';
 
 const saveAndCloseButton = Button('Save as profile & Close');
+const actionsButton = Button('Action');
+const overviewAccordion = Accordion('Overview');
 
 export default {
   verifyScreenName: (profileName) => cy.expect(Form(including(`Edit ${profileName}`)).exists()),
@@ -31,6 +34,33 @@ export default {
       .find('button[icon="unlink"]')
       .click();
     cy.do(Modal({ id: 'unlink-job-profile-modal' }).find(Button('Unlink')).click());
+  },
+  unlinkForMatchActionsProfile: (number) => {
+    cy.get('[id*="branch-ROOT-MATCH-editable"]').eq(number).find('button[icon="unlink"]').click();
+    cy.do(Modal({ id: 'unlink-job-profile-modal' }).find(Button('Unlink')).click());
+  },
+  unlinkForNonMatchActionsProfile: (number) => {
+    cy.get('[id*="branch-ROOT-NON_MATCH-editable"]')
+      .eq(number)
+      .find('button[icon="unlink"]')
+      .click();
+    cy.do(Modal({ id: 'unlink-job-profile-modal' }).find(Button('Unlink')).click());
+  },
+  linkActionProfileForMatches: (actionProfileName, forMatchesOrder = 0) => {
+    cy.wait(3000);
+    cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
+    cy.do(actionsButton.click());
+    ModalSelectProfile.searchProfileByName(actionProfileName);
+    ModalSelectProfile.selectProfile(actionProfileName);
+    cy.expect(overviewAccordion.find(HTML(including(actionProfileName))).exists());
+  },
+  linkActionProfileForNonMatches(profileName, forMatchesOrder = 1) {
+    // TODO move to const
+    cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
+    cy.do(actionsButton.click());
+    ModalSelectProfile.searchProfileByName(profileName);
+    ModalSelectProfile.selectProfile(profileName);
+    cy.expect(overviewAccordion.find(HTML(including(profileName))).exists());
   },
   verifyLinkedProfiles(arrayOfProfileNames, numberOfProfiles) {
     const profileNames = [];
