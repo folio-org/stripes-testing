@@ -15,9 +15,10 @@ describe('Inventory', () => {
   describe('Instance', () => {
     const marcFile = {
       marc: 'oneMarcBib.mrc',
-      fileNameImported: `oneMarcBib.C411292.${getRandomPostfix()}.mrc`,
+      fileNameImported: `C411292 autotestFileName${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-      title: 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)',
+      title:
+        'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)',
     };
     const testData = {};
 
@@ -90,8 +91,10 @@ describe('Inventory', () => {
         InventoryInstance.closeShareInstanceModal();
         InventoryInstance.clickShareLocalInstanceButton();
         InventoryInstance.shareInstance();
-        InventoryInstance.verifyCalloutMessage(`Local instance ${marcFile.title} has been successfully shared`);
-      }
+        InventoryInstance.verifyCalloutMessage(
+          `Local instance ${marcFile.title} has been successfully shared`,
+        );
+      },
     );
   });
 });

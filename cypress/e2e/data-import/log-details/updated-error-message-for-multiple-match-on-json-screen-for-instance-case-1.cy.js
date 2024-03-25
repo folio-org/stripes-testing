@@ -36,7 +36,7 @@ describe('data-import', () => {
       createdRecordIDs: [],
       marcFilePath: 'marcBibFileForC389589.mrc',
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-      fileName: `C389589 marcFileName${getRandomPostfix()}`,
+      fileName: `C389589 marcFileName${getRandomPostfix()}.mrc`,
       title: "101 things I wish I'd known when I started using hypnosis / Dabney Ewin.",
       errorMessage:
         'org.folio.processing.exceptions.MatchingException: Found multiple records matching specified conditions. CQL query: [identifiers =/@value/@identifierTypeId="439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',

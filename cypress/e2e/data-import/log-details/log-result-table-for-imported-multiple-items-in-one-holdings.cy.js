@@ -33,7 +33,7 @@ describe('data-import', () => {
   describe('Log details', () => {
     const testData = {
       filePathForCreate: 'marcFileForC387490.mrc',
-      marcFileName: `C387490 autotestFileName${getRandomPostfix()}`,
+      marcFileName: `C387490 autotestFileName${getRandomPostfix()}.mrc`,
       permanentLocation: LOCATION_NAMES.MAIN_LIBRARY_UI,
       itemsQuqntity: 3,
     };

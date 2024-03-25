@@ -19,7 +19,7 @@ describe('data-import', () => {
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathForUpload = 'oneMarcBib.mrc';
     const fileWithHoldingsPathForUpload = 'marcBibFileForC359218.mrc';
-    const fileName = `C359218 autotestFileName.${getRandomPostfix()}`;
+    const fileName = `C359218 autotestFileName.${getRandomPostfix()}.mrc`;
     const editedMarcFileName = `C359218 editedMarcFile.${getRandomPostfix()}.mrc`;
     const errorMessage =
       '{"error":"A new MARC-Holding was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';

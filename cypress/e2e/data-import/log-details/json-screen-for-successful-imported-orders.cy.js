@@ -32,7 +32,7 @@ describe('data-import', () => {
     const testData = {
       title: 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.',
       filePath: 'marcBibFileForC375197.mrc',
-      fileName: `C375197 autotestFileName ${getRandomPostfix()}`,
+      fileName: `C375197 autotestFileName${getRandomPostfix()}.mrc`,
       jsonOrderTitle: '"titleOrPackage": "ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.",',
       jsonPOLContributor: '"contributor": "DENNISON, MATTHEW",',
     };

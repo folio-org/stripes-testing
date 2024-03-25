@@ -15,7 +15,7 @@ describe('Inventory', () => {
   describe('Instance', () => {
     const marcFile = {
       marc: 'oneMarcBib.mrc',
-      fileNameImported: `oneMarcBib.C411344.${getRandomPostfix()}.mrc`,
+      fileNameImported: `C411344 autotestMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     };
     const testData = {};

@@ -36,7 +36,7 @@ describe('data-import', () => {
 
     it(
       'C2331 Add tags to a job profile, then remove tags from it (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'eurekaPhase1'] },
       () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfileView.addExistingTag(tag);

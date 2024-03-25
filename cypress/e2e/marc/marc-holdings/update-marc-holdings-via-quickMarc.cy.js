@@ -18,8 +18,8 @@ describe('MARC', () => {
       filePath: 'oneMarcBib.mrc',
       fileNameForCreateInstance: `C417047 autotestFile${getRandomPostfix()}.mrc`,
       jobProfileForCreateInstance: 'Default - Create instance and SRS MARC Bib',
-      editedFile: `C417047 editedAutotestFileName${getRandomPostfix()}`,
-      fileNameForCreateHoldings: `C417047 autotestFileName${getRandomPostfix()}`,
+      editedFile: `C417047 editedAutotestFileName${getRandomPostfix()}.mrc`,
+      fileNameForCreateHoldings: `C417047 autotestFileName${getRandomPostfix()}.mrc`,
       jobProfileForCreateHoldings: 'Default - Create Holdings and SRS MARC Holdings',
     };
 

@@ -31,7 +31,7 @@ describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let user = null;
     const filePathForCreateOrder = 'marcBibFileForC380431.mrc';
-    const marcFileName = `C380431 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C380431 autotestFileName${getRandomPostfix()}.mrc`;
     const productIdentifiers = [
       {
         identifier: 'T90028Verve',

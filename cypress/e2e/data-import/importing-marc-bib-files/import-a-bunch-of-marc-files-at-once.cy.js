@@ -21,15 +21,15 @@ describe('data-import', () => {
       () => {
         [
           {
-            fileName: `C6707autotestFiles${getRandomPostfix()}`,
+            fileName: `C6707autotestFiles${getRandomPostfix()}.mrc`,
             quantityOfFiles: '2',
           },
           {
-            fileName: `C6707autotestFiles${getRandomPostfix()}`,
+            fileName: `C6707autotestFiles${getRandomPostfix()}.mrc`,
             quantityOfFiles: '4',
           },
           {
-            fileName: `C6707autotestFiles${getRandomPostfix()}`,
+            fileName: `C6707autotestFiles${getRandomPostfix()}.mrc`,
             quantityOfFiles: '15',
           },
         ].forEach((upload) => {

@@ -45,9 +45,9 @@ describe('data-import', () => {
   describe('Log details', () => {
     let user;
     const testData = {
-      firstInstanceTitle: `C375109 firstAutotestInstance ${getRandomPostfix()}`,
+      firstInstanceTitle: `C375109 firstAutotestInstance${getRandomPostfix()}.mrc`,
       firstBarcode: uuid(),
-      secondInstanceTitle: `C422064 secondAutotestInstance ${getRandomPostfix()}`,
+      secondInstanceTitle: `C422064 secondAutotestInstance${getRandomPostfix()}.mrc`,
       secondBarcode: uuid(),
     };
     const exportJobProfileName = `Testing titles for import.${getRandomPostfix()}`;

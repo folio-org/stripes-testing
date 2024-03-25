@@ -14,7 +14,7 @@ describe('data-import', () => {
   describe('Permissions', () => {
     let user;
     let instanceIds;
-    const fileName = `oneMarcBib${getRandomPostfix()}.mrc`;
+    const fileName = `C492 marcFileName${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
       cy.getAdminToken();
