@@ -31,6 +31,10 @@ import {
   INVENTORY_008_FIELD_FEST_DROPDOWN,
   INVENTORY_008_FIELD_INDX_DROPDOWN,
   INVENTORY_008_FIELD_LITF_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_STATUS_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_TYPE_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN,
 } from '../constants';
 
 const holdingsRecordViewSection = Section({ id: 'ui-inventory.holdingsRecordView' });
@@ -1220,6 +1224,16 @@ export default {
     );
   },
 
+  verifyMarcHoldingLDRDropdownsHoverTexts() {
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Status-text', 'Record status');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Type-text', 'Type of record');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-ELvl-text', 'Encoding level');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Item-text',
+      'Item information in record',
+    );
+  },
+
   verifyLDRPositionsDefaultValues(fieldName, fieldvalue, isDisabled = true) {
     cy.expect(
       QuickMarcEditorRow({ index: 0 })
@@ -2357,6 +2371,36 @@ export default {
       fieldLDR
         .find(TextField({ name: including('records[0].content.19-23 positions') }))
         .has({ disabled: true }),
+    ]);
+  },
+
+  verifyInitialLDRFieldsValuesInMarcHoldingRecord() {
+    cy.expect([
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.Record length') }))
+        .has({ disabled: true, value: '00000' }),
+      fieldLDR.find(Select({ label: 'Status' })).exists(),
+      fieldLDR
+        .find(Select({ label: 'Status' }))
+        .has({ checkedOptionText: MARC_HOLDING_LDR_FIELD_STATUS_DROPDOWN.N }),
+      fieldLDR.find(Select({ label: 'Type' })).exists(),
+      fieldLDR
+        .find(Select({ label: 'Type' }))
+        .has({ checkedOptionText: MARC_HOLDING_LDR_FIELD_TYPE_DROPDOWN.U }),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.7-16 positions') }))
+        .has({ disabled: true, value: '\\\\\\2200000' }),
+      fieldLDR.find(Select({ label: 'ELvl' })).exists(),
+      fieldLDR
+        .find(Select({ label: 'ELvl' }))
+        .has({ checkedOptionText: MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN.U }),
+      fieldLDR.find(Select({ label: 'Item' })).exists(),
+      fieldLDR
+        .find(Select({ label: 'Item' }))
+        .has({ checkedOptionText: MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN.N }),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.19-23 positions') }))
+        .has({ disabled: true, value: '\\4500' }),
     ]);
   },
 };
