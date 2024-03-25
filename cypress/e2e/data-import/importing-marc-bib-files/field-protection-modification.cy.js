@@ -30,14 +30,14 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user = null;
     let instanceHrid = null;
     const fieldsForDelete = ['977', '978', '979'];
     const fieldsForDeleteIds = [];
     // unique file name to upload
-    const fileName = `C350678autotestFileProtection.${getRandomPostfix()}.mrc`;
+    const fileName = `C350678 autotestFileProtection${getRandomPostfix()}.mrc`;
 
     const mappingProfile = {
       name: `C350678 Remove extraneous MARC fields ${getRandomPostfix()}`,

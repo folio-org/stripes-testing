@@ -15,7 +15,7 @@ const Dropdowns = {
   EFFECTIVE_LOCATION: 'Effective location (item)',
   NAME_TYPE: 'Name type',
 };
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();

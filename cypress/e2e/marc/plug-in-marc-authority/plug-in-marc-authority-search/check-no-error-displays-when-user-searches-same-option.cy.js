@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -34,14 +35,14 @@ describe('MARC', () => {
           {
             marc: 'marcBibC360111.mrc',
             fileName: `testMarcFileBib360111.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             numberOfRecords: 1,
             propertyName: 'instance',
           },
           {
             marc: 'marcAuthC360111.mrc',
             fileName: `testMarcFileAuthC360111.${randomFourDigitNumber()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numberOfRecords: 1,
             propertyName: 'authority',
           },
@@ -88,7 +89,9 @@ describe('MARC', () => {
                 marcFile.jobProfileToRun,
               ).then((response) => {
                 response.forEach((record) => {
-                  if (marcFile.jobProfileToRun === 'Default - Create instance and SRS MARC Bib') {
+                  if (
+                    marcFile.jobProfileToRun === DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS
+                  ) {
                     testData.instanceIDs.push(record[marcFile.propertyName].id);
                   } else {
                     testData.authorityIDs.push(record[marcFile.propertyName].id);

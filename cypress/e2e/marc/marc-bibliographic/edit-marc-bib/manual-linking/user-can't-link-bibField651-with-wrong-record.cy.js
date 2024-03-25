@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -73,14 +74,14 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
     {
       marc: 'marcBibFileForC380459.mrc',
       fileName: `testMarcFileC375070.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       numOfRecords: 1,
       propertyName: 'instance',
     },
     {
       marc: 'marcAuthFileForC380459.mrc',
       fileName: `testMarcFileC375070.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       numOfRecords: 10,
       propertyName: 'authority',
     },

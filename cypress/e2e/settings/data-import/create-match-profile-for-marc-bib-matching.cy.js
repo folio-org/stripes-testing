@@ -9,7 +9,7 @@ import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     let user;
     const incomingRecordType = 'MARC Bibliographic';
@@ -44,7 +44,13 @@ describe('data-import', () => {
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
-        NewMatchProfile.verifyExistingRecordSection();
+        NewMatchProfile.verifyExistingRecordSection([
+          'INSTANCE',
+          'HOLDINGS',
+          'ITEM',
+          'MARC_BIBLIOGRAPHIC',
+          'MARC_AUTHORITY',
+        ]);
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
         NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
         NewMatchProfile.verifyIncomingRecordsDropdown(
@@ -89,7 +95,13 @@ describe('data-import', () => {
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
-        NewMatchProfile.verifyExistingRecordSection();
+        NewMatchProfile.verifyExistingRecordSection([
+          'INSTANCE',
+          'HOLDINGS',
+          'ITEM',
+          'MARC_BIBLIOGRAPHIC',
+          'MARC_AUTHORITY',
+        ]);
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
         NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
         NewMatchProfile.fillIncomingRecordSections(matchProfile);
@@ -127,7 +139,13 @@ describe('data-import', () => {
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
-        NewMatchProfile.verifyExistingRecordSection();
+        NewMatchProfile.verifyExistingRecordSection([
+          'INSTANCE',
+          'HOLDINGS',
+          'ITEM',
+          'MARC_BIBLIOGRAPHIC',
+          'MARC_AUTHORITY',
+        ]);
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
         NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
         NewMatchProfile.fillStaticValue(

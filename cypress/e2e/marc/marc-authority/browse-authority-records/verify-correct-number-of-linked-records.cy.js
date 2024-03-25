@@ -1,11 +1,12 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
@@ -32,14 +33,14 @@ describe('MARC', () => {
         {
           marc: 'marcBibFileForC367936_1.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           title: 'The Journal of ecclesiastical history.',
           propertyName: 'instance',
         },
         {
           marc: 'marcBibFileForC367936_2.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           title:
             'Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.',
           propertyName: 'instance',
@@ -47,28 +48,28 @@ describe('MARC', () => {
         {
           marc: 'marcAuthFileForC367936_1.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           title: 'Dugmore, C. W. (Clifford William)',
           propertyName: 'authority',
         },
         {
           marc: 'marcAuthFileForC367936_2.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           title: 'Woodson, Jacqueline',
           propertyName: 'authority',
         },
         {
           marc: 'marcAuthFileForC367936_3.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           title: 'Chin, Staceyann, 1972-',
           propertyName: 'authority',
         },
         {
           marc: 'marcAuthFileForC367936_4.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           title: 'Lee, Stan, 1922-2018',
           propertyName: 'authority',
         },
@@ -155,7 +156,9 @@ describe('MARC', () => {
               marcFile.jobProfileToRun,
             ).then((response) => {
               response.forEach((record) => {
-                if (marcFile.jobProfileToRun === 'Default - Create instance and SRS MARC Bib') {
+                if (
+                  marcFile.jobProfileToRun === DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS
+                ) {
                   instanceIDs.push(record[marcFile.propertyName].id);
                 } else {
                   authorityIDs.push(record[marcFile.propertyName].id);

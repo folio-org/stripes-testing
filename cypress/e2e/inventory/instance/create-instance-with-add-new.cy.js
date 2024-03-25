@@ -5,7 +5,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Instance', () => {
     const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
 

@@ -1,3 +1,9 @@
+import { DEFAULT_JOB_PROFILE_NAMES,
+  MARC_HOLDING_LDR_FIELD_STATUS_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_TYPE_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -7,13 +13,6 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import {
-  MARC_HOLDING_LDR_FIELD_STATUS_DROPDOWN,
-  MARC_HOLDING_LDR_FIELD_TYPE_DROPDOWN,
-  MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN,
-  MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN,
-  MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES,
-} from '../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
@@ -43,7 +42,7 @@ describe('MARC', () => {
     const marcFile = {
       marc: 'oneMarcBib.mrc',
       fileName: `testMarcC357063.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       propertyName: 'instance',
     };
 

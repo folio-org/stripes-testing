@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { RECORD_STATUSES } from '../../../support/constants';
+import { RECORD_STATUSES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -15,12 +15,12 @@ const testData = {
   new082fieldRecord: '$a 270.05 $9 testing',
   new260fieldRecord: '$a London, $b Cambridge University Press [etc.] $9 testing $9 more testing',
 };
-const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 const fileName = 'marBibFileC380502.mrc';
 const updatedFileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
 let createdAuthorityID;
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     before('Creating data', () => {
       cy.createTempUser([

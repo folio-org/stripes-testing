@@ -1,3 +1,11 @@
+import {
+  AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES,
+  AUTHORITY_LDR_FIELD_ELVL_DROPDOWN,
+  AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN,
+  AUTHORITY_LDR_FIELD_STATUS_DROPDOWN,
+  AUTHORITY_LDR_FIELD_TYPE_DROPDOWN,
+  DEFAULT_JOB_PROFILE_NAMES,
+} from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -7,13 +15,6 @@ import MarcFieldProtection from '../../../../support/fragments/settings/dataImpo
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import {
-  AUTHORITY_LDR_FIELD_STATUS_DROPDOWN,
-  AUTHORITY_LDR_FIELD_ELVL_DROPDOWN,
-  AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN,
-  AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES,
-  AUTHORITY_LDR_FIELD_TYPE_DROPDOWN,
-} from '../../../../support/constants';
 
 const LDR = 'LDR';
 
@@ -28,7 +29,7 @@ describe('MARC', () => {
           rowIndex: 14,
         },
       };
-      const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const propertyName = 'authority';
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
@@ -119,7 +120,7 @@ describe('MARC', () => {
           rowIndex: 14,
         },
       };
-      const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const propertyName = 'authority';
       const tagsC375120 = ['110', '111', '130', '150', '151'];
       const marcFieldProtectionRules = [];
@@ -211,7 +212,7 @@ describe('MARC', () => {
           rowIndex: 14,
         },
       };
-      const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const propertyName = 'authority';
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
@@ -291,7 +292,7 @@ describe('MARC', () => {
           rowIndex: 14,
         },
       };
-      const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const propertyName = 'authority';
       const newFieldsArr = [
         ['245', '1', '\\', '$a Added row (must indicate)'],
@@ -410,7 +411,7 @@ describe('MARC', () => {
       const typeDropdownOptions = Object.values(AUTHORITY_LDR_FIELD_TYPE_DROPDOWN);
       const elvlDropdownOptions = Object.values(AUTHORITY_LDR_FIELD_ELVL_DROPDOWN);
       const punctDropdownOptions = Object.values(AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN);
-      const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const propertyName = 'authority';
       const changesSavedCallout =
         'This record has successfully saved and is in process. Changes may not appear immediately.';
@@ -549,7 +550,7 @@ describe('MARC', () => {
             '$aUPDATED C353585Twain, Mark,$d1835-1910.$tAdventures of Huckleberry Finn',
         },
       };
-      const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const propertyName = 'authority';
       const createdAuthorityID = [];
 
@@ -700,7 +701,7 @@ describe('MARC', () => {
           rowIndex: 14,
         },
       };
-      const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const propertyName = 'authority';
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
@@ -791,7 +792,7 @@ describe('MARC', () => {
           searchOption: 'Keyword',
         },
       };
-      const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const propertyName = 'authority';
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
@@ -880,7 +881,7 @@ describe('MARC', () => {
           searchOption: 'Keyword',
         },
       };
-      const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const propertyName = 'authority';
       const tags = ['381', '382', '379', ''];
       const marcFieldProtectionRules = [];
@@ -1007,7 +1008,7 @@ describe('MARC', () => {
           rowIndex: 14,
         },
       };
-      const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const propertyName = 'authority';
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];

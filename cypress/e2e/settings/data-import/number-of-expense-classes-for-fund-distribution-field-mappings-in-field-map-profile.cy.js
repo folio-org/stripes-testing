@@ -6,7 +6,7 @@ import SettingsFinance from '../../../support/fragments/settings/finance/setting
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     const firstExpencseClassData = {
       name: `autotestExpenseClass_${getRandomPostfix()}`,

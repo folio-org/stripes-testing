@@ -9,7 +9,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import SelectMappingProfile from '../../../support/fragments/settings/dataImport/modals/selectProfileModal';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     const testData = {
       mappingProfiles: [

@@ -14,7 +14,7 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 
-describe('inventory', () => {
+describe('Inventory', () => {
   before('Create test data', () => {
     InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
     cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {

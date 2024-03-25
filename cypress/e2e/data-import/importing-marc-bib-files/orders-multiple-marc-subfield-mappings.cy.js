@@ -27,11 +27,11 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Orders from '../../../support/fragments/orders/orders';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user = null;
     const filePathForCreateOrder = 'marcBibFileForC380431.mrc';
-    const marcFileName = `C380431 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C380431 autotestFileName${getRandomPostfix()}.mrc`;
     const productIdentifiers = [
       {
         identifier: 'T90028Verve',

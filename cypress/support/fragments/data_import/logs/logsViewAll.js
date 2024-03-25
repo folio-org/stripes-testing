@@ -452,10 +452,18 @@ export default {
     cy.do(MultiColumnList({ id: 'list-data-import' }).find(Link(fileName)).click());
   },
   clickNextPaginationButton: () => {
-    cy.do(nextButton.click());
+    cy.get('#list-data-import-next-paging-button').then(($button) => {
+      if (!$button.prop('disabled')) {
+        cy.wrap($button).click();
+      }
+    });
   },
   clickPreviousPaginationButton: () => {
-    cy.do(previousButton.click());
+    cy.get('#list-data-import-prev-paging-button').then(($button) => {
+      if (!$button.prop('disabled')) {
+        cy.wrap($button).click();
+      }
+    });
   },
 
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(selectAllCheckbox.absent()),
@@ -494,21 +502,26 @@ export default {
       .should('include', '100');
   },
 
-  verifyNextPagination: () => {
+  getNumberOfLogs: () => {
+    return cy
+      .get('#paneHeaderpane-results-subtitle')
+      .invoke('text')
+      .then((text) => {
+        const numberOfLogs = text.trim().split(' ')[0];
+        return numberOfLogs;
+      });
+  },
+
+  verifyNextPagination: (number) => {
     cy.get('#pane-results')
       .find('div[class^="mclPrevNextPageInfoContainer-"]')
       .invoke('text')
       .should('include', '101');
-    cy.get('#pane-results')
-      .find('div[class^="mclPrevNextPageInfoContainer-"]')
-      .invoke('text')
-      .then((text) => {
-        if (/\b(1\d{2}|200)\b/.test(text)) {
-          cy.expect(nextButton.has({ disabled: true }));
-        } else {
-          cy.expect(nextButton.has({ disabled: false }));
-        }
-      });
+    if (number <= 200) {
+      cy.expect(nextButton.has({ disabled: true }));
+    } else {
+      cy.expect(nextButton.has({ disabled: false }));
+    }
   },
 
   verifyUserNameIsAbsntInFilter(userName) {

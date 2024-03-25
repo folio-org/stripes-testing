@@ -14,7 +14,7 @@ import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Tags', () => {
     let userData;
     const patronGroup = {

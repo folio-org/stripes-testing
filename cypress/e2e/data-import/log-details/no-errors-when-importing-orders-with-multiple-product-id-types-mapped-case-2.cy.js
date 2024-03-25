@@ -30,12 +30,12 @@ import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScre
 import Orders from '../../../support/fragments/orders/orders';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     let orderNumber;
     const filePathForCreateOrder = 'marcBibFileForC378900.mrc';
-    const marcFileName = `C378900 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C378900 autotestFileName${getRandomPostfix()}.mrc`;
     const title = 'Ella & Basie! [sound recording] / arranged by Quincy Jones.';
     const productInfoJson = {
       productId: '"productId": "T90028"',

@@ -1,8 +1,9 @@
+import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -66,7 +67,7 @@ describe('bulk-edit', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToHoldings();
-        InventorySearchAndFilter.bySource('FOLIO');
+        InventorySearchAndFilter.bySource(INSTANCE_SOURCE_NAMES.FOLIO);
         InventorySearchAndFilter.searchHoldingsByHRID(holdingsHRID);
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.edit();

@@ -26,7 +26,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing EDIFACT files', () => {
     let user;
     const quantityOfInvoices = '5';
@@ -34,7 +34,7 @@ describe('data-import', () => {
     const invoiceNumbers = ['263056', '263057', '263058', '263059', '263061'];
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.harrassowitz;
     const filePathForUpload = 'ediFileForC347926.edi';
-    const fileName = `C347926autotestFile.${getRandomPostfix()}.edi`;
+    const fileName = `C347926 autotestFile${getRandomPostfix()}.edi`;
     const mappingProfile = {
       name: `C347926 Import Harrassowitz invoice.${getRandomPostfix()}`,
       description: '',

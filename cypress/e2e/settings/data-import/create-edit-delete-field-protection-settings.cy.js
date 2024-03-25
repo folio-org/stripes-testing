@@ -1,7 +1,7 @@
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     const protectedFieldData = {
       protectedField: '985',

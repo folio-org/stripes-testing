@@ -25,7 +25,7 @@ const item = {
 const successCalloutMessage =
   'Item has been successfully moved in FOLIO. To complete removing this item from remote storage, run an exception report or communicate this directly to your remote storage location.';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   before('create test data', () => {
     let holdingSources;
     cy.createTempUser([

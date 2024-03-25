@@ -11,7 +11,7 @@ import Users from '../../../support/fragments/users/users';
 import generateUniqueItemBarcodeWithShift from '../../../support/utils/generateUniqueItemBarcodeWithShift';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Item', () => {
     let user;
     const itemData = {

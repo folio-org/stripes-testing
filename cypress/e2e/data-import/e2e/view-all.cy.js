@@ -6,12 +6,12 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let id;
     let instanceId;
     const filePath = 'oneMarcBib.mrc';
-    const uniqueFileName = `C11112 autotestFileName ${getRandomPostfix()}`;
+    const uniqueFileName = `C11112 autotestFileName${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
       cy.getAdminToken();

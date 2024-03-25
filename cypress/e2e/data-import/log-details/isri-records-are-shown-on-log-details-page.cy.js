@@ -10,7 +10,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     const instanceHrids = [];
