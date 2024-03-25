@@ -261,29 +261,29 @@ const tag008HoldingsBytesProperties = {
 };
 
 const tag008DefaultValues = [
-  { interactor: TextField('Srce'), defaultValue: '\\' },
-  { interactor: TextField('Audn'), defaultValue: '\\' },
-  { interactor: TextField('Lang'), defaultValue: '\\\\\\' },
-  { interactor: TextField('Form'), defaultValue: '\\' },
-  { interactor: TextField('Conf'), defaultValue: '\\' },
-  { interactor: TextField('Biog'), defaultValue: '\\' },
-  { interactor: TextField('MRec'), defaultValue: '\\' },
-  { interactor: TextField('Ctry'), defaultValue: '\\\\\\' },
-  { interactor: TextField('GPub'), defaultValue: '\\' },
-  { interactor: TextField('LitF'), defaultValue: '\\' },
-  { interactor: TextField('Indx'), defaultValue: '\\' },
-  { interactor: TextField('Fest'), defaultValue: '\\' },
-  { interactor: TextField('DtSt'), defaultValue: '\\' },
-  { interactor: TextField('Date 1'), defaultValue: '\\\\\\\\' },
-  { interactor: TextField('Date 2'), defaultValue: '\\\\\\\\' },
-  { interactor: TextField('Ills', { name: including('Ills[0]') }), defaultValue: '\\' },
-  { interactor: TextField('Ills', { name: including('Ills[1]') }), defaultValue: '\\' },
-  { interactor: TextField('Ills', { name: including('Ills[2]') }), defaultValue: '\\' },
-  { interactor: TextField('Ills', { name: including('Ills[3]') }), defaultValue: '\\' },
-  { interactor: TextField('Cont', { name: including('Cont[0]') }), defaultValue: '\\' },
-  { interactor: TextField('Cont', { name: including('Cont[1]') }), defaultValue: '\\' },
-  { interactor: TextField('Cont', { name: including('Cont[2]') }), defaultValue: '\\' },
-  { interactor: TextField('Cont', { name: including('Cont[3]') }), defaultValue: '\\' },
+  { isSelect: true, interactor: Select('Srce'), defaultValue: '\\ - National bibliographic agency' },
+  { isSelect: true, interactor: Select('Audn'), defaultValue: '\\ - Unknown or not specified' },
+  { isSelect: false, interactor: TextField('Lang'), defaultValue: '\\\\\\' },
+  { isSelect: true, interactor: Select('Form'), defaultValue: '\\ - None of the following' },
+  { isSelect: true, interactor: Select('Conf'), defaultValue: '1 - Conference publication' },
+  { isSelect: true, interactor: Select('Biog'), defaultValue: '\\ - No biographical material' },
+  { isSelect: true, interactor: Select('MRec'), defaultValue: '\\ - Not modified' },
+  { isSelect: false, interactor: TextField('Ctry'), defaultValue: '\\\\\\' },
+  { isSelect: true, interactor: Select('GPub'), defaultValue: '\\ - Not a government publication' },
+  { isSelect: true, interactor: Select('LitF'), defaultValue: 'i - Letters' },
+  { isSelect: true, interactor: Select('Indx'), defaultValue: '1 - Index present' },
+  { isSelect: true, interactor: Select('Fest'), defaultValue: '1 - Festschrift' },
+  { isSelect: true, interactor: Select('DtSt'), defaultValue: 'm - Multiple dates' },
+  { isSelect: false, interactor: TextField('Date 1'), defaultValue: '\\\\\\\\' },
+  { isSelect: false, interactor: TextField('Date 2'), defaultValue: '\\\\\\\\' },
+  { isSelect: true, interactor: Select('Ills', { name: including('Ills[0]') }), defaultValue: '\\ - No illustrations' },
+  { isSelect: true, interactor: Select('Ills', { name: including('Ills[1]') }), defaultValue: '\\ - No illustrations' },
+  { isSelect: true, interactor: Select('Ills', { name: including('Ills[2]') }), defaultValue: '\\ - No illustrations' },
+  { isSelect: true, interactor: Select('Ills', { name: including('Ills[3]') }), defaultValue: '\\ - No illustrations' },
+  { isSelect: true, interactor: Select('Cont', { name: including('Cont[0]') }), defaultValue: '\\ - No specified nature of contents' },
+  { isSelect: true, interactor: Select('Cont', { name: including('Cont[1]') }), defaultValue: '\\ - No specified nature of contents' },
+  { isSelect: true, interactor: Select('Cont', { name: including('Cont[2]') }), defaultValue: '\\ - No specified nature of contents' },
+  { isSelect: true, interactor: Select('Cont', { name: including('Cont[3]') }), defaultValue: '\\ - No specified nature of contents' },
 ];
 
 const defaultFieldValues = {
@@ -1382,7 +1382,11 @@ export default {
 
   check008FieldContent() {
     tag008DefaultValues.forEach((field) => {
-      cy.expect(field.interactor.has({ value: field.defaultValue }));
+      if (field.isSelect === true) {
+        cy.expect(field.interactor.has({ checkedOptionText: field.defaultValue }));
+      } else {
+        cy.expect(field.interactor.has({ value: field.defaultValue }));
+      }
     });
   },
 
@@ -1997,7 +2001,9 @@ export default {
 
   deleteValuesIn008Boxes() {
     tag008DefaultValues.forEach((index) => {
-      cy.do(index.interactor.fillIn(''));
+      if (index.isSelect === false) {
+        cy.do(index.interactor.fillIn(''));
+      }
     });
   },
 
