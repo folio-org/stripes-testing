@@ -2421,4 +2421,8 @@ export default {
         .has({ disabled: true, value: '\\4500' }),
     ]);
   },
+
+  fillInElvlBoxInLDRField(value) {
+    cy.do(fieldLDR.find(TextField({ label: 'ELvl' })).fillIn(value));
+  },
 };
