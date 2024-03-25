@@ -30,6 +30,7 @@ const selectAppSearchButton = selectApplicationModal.find(
 const saveButtonInModal = selectApplicationModal.find(
   Button({ dataTestID: 'submit-applications-modal' }),
 );
+const cancelButtonInModal = selectApplicationModal.find(Button('Cancel'));
 const capabilitiesAccordion = Accordion('Capabilities');
 const capabilitySetsAccordion = Accordion('Capability sets');
 const saveButton = Button('Save and close');
@@ -83,7 +84,26 @@ export default {
 
   clickSelectApplication: () => {
     cy.do(selectApplicationButton.click());
-    cy.expect(selectApplicationModal.exists());
+    cy.expect([
+      selectApplicationModal.exists(),
+      saveButtonInModal.exists(),
+      cancelButtonInModal.exists(),
+      selectAppSearchButton.has({ disabled: true }),
+      selectAppSearchInput.exists(),
+    ]);
+  },
+
+  verifySelectApplicationModal: () => {
+    cy.expect([
+      saveButtonInModal.exists(),
+      cancelButtonInModal.exists(),
+      selectAppSearchButton.has({ disabled: true }),
+      selectAppSearchInput.exists(),
+      selectApplicationModal
+        .find(MultiColumnListRow({ index: 0, isContainer: false }))
+        .find(Checkbox())
+        .exists(),
+    ]);
   },
 
   selectApplicationInModal: (appName, isSelected = true) => {
@@ -172,5 +192,9 @@ export default {
     cy.expect(
       capabilitySetsAccordion.find(capabilityTables[table]).has({ rowCount: expectedCount }),
     );
+  },
+
+  checkAfterSaveCreate() {
+    cy.expect([createRolePane.absent()]);
   },
 };
