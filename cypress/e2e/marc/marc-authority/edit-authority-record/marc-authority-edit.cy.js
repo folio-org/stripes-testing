@@ -414,6 +414,24 @@ describe('MARC', () => {
       const propertyName = 'authority';
       const changesSavedCallout =
         'This record has successfully saved and is in process. Changes may not appear immediately.';
+      const LDRDropdownOptionSets = [
+        {
+          name: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
+          options: statusDropdownOptions,
+        },
+        {
+          name: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+          options: typeDropdownOptions,
+        },
+        {
+          name: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL,
+          options: elvlDropdownOptions,
+        },
+        {
+          name: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT,
+          options: punctDropdownOptions,
+        },
+      ];
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
 
@@ -476,77 +494,31 @@ describe('MARC', () => {
             QuickMarcEditor.verifyBoxLabelsInLDRField();
             QuickMarcEditor.verifyLDRDropdownsHoverTexts();
 
-            statusDropdownOptions.forEach((dropdownOption) => {
-              QuickMarcEditor.verifyFieldsDropdownOption(
+            LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
+              LDRDropdownOptionSet.options.forEach((dropdownOption) => {
+                QuickMarcEditor.verifyFieldsDropdownOption(
+                  LDR,
+                  LDRDropdownOptionSet.name,
+                  dropdownOption,
+                );
+              });
+            });
+
+            LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
+              QuickMarcEditor.selectFieldsDropdownOption(
                 LDR,
-                AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
-                dropdownOption,
+                LDRDropdownOptionSet.name,
+                LDRDropdownOptionSet.options[i % LDRDropdownOptionSet.options.length],
               );
             });
 
-            QuickMarcEditor.verifyFieldsDropdownOption(
-              LDR,
-              AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
-              typeDropdownOptions[0],
-            );
-
-            elvlDropdownOptions.forEach((dropdownOption) => {
-              QuickMarcEditor.verifyFieldsDropdownOption(
+            LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
+              QuickMarcEditor.verifyDropdownOptionChecked(
                 LDR,
-                AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL,
-                dropdownOption,
+                LDRDropdownOptionSet.name,
+                LDRDropdownOptionSet.options[i % LDRDropdownOptionSet.options.length],
               );
             });
-
-            punctDropdownOptions.forEach((dropdownOption) => {
-              QuickMarcEditor.verifyFieldsDropdownOption(
-                LDR,
-                AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT,
-                dropdownOption,
-              );
-            });
-
-            QuickMarcEditor.selectFieldsDropdownOption(
-              LDR,
-              AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
-              statusDropdownOptions[i % statusDropdownOptions.length],
-            );
-            QuickMarcEditor.selectFieldsDropdownOption(
-              LDR,
-              AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
-              typeDropdownOptions[i % typeDropdownOptions.length],
-            );
-            QuickMarcEditor.selectFieldsDropdownOption(
-              LDR,
-              AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL,
-              elvlDropdownOptions[i % elvlDropdownOptions.length],
-            );
-            QuickMarcEditor.selectFieldsDropdownOption(
-              LDR,
-              AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT,
-              punctDropdownOptions[i % punctDropdownOptions.length],
-            );
-
-            QuickMarcEditor.verifyDropdownOptionChecked(
-              LDR,
-              AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
-              statusDropdownOptions[i % statusDropdownOptions.length],
-            );
-            QuickMarcEditor.verifyDropdownOptionChecked(
-              LDR,
-              AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
-              typeDropdownOptions[i % typeDropdownOptions.length],
-            );
-            QuickMarcEditor.verifyDropdownOptionChecked(
-              LDR,
-              AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL,
-              elvlDropdownOptions[i % elvlDropdownOptions.length],
-            );
-            QuickMarcEditor.verifyDropdownOptionChecked(
-              LDR,
-              AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT,
-              punctDropdownOptions[i % punctDropdownOptions.length],
-            );
 
             QuickMarcEditor.pressSaveAndClose();
 
