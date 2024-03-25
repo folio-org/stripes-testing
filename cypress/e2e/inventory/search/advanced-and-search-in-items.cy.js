@@ -7,7 +7,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Advanced search', () => {
     const randomCallNumber = `001MYCN2225858${getRandomPostfix()}`;
     const testData = {

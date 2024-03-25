@@ -18,7 +18,7 @@ import Location from '../../../support/fragments/settings/tenant/locations/newLo
 import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     const testData = {
       servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),

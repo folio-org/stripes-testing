@@ -34,14 +34,14 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
     let holdingsHrId;
     const filePathToUpload = 'marcBibFileForC11106.mrc';
-    const editedMarcFileName = `C11106 autotestFileName_${getRandomPostfix()}`;
-    const marcFileName = `C11106 autotestFileName_${getRandomPostfix()}`;
-    const marcFileNameForUpdate = `C11106 autotestFileNameForUpdate_${getRandomPostfix()}`;
+    const editedMarcFileName = `C11106 autotestFileName${getRandomPostfix()}.mrc`;
+    const marcFileName = `C11106 autotestFileName${getRandomPostfix()}.mrc`;
+    const marcFileNameForUpdate = `C11106 autotestFileNameForUpdate${getRandomPostfix()}.mrc`;
 
     // profiles for creating
     const collectionOfMappingAndActionProfilesForCreate = [

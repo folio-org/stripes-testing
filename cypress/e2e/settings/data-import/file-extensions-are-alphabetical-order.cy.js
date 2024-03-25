@@ -5,7 +5,7 @@ import NewFileExtension from '../../../support/fragments/settings/dataImport/fil
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     let user;
     const testData = {

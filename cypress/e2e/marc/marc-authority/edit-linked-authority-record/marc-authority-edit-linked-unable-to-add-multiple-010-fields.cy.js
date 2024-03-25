@@ -1,13 +1,14 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import DataImport from '../../../../support/fragments/data_import/dataImport';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -28,14 +29,14 @@ describe('MARC', () => {
         {
           marc: 'marcBibFileForC375100.mrc',
           fileName: `testMarcFileC375100.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numOfRecords: 1,
           propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileForC375100.mrc',
           fileName: `testMarcFileC375100.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           authorityHeading: 'Variations / Ludwig Van Beethoven.',
           numOfRecords: 1,
           propertyName: 'authority',

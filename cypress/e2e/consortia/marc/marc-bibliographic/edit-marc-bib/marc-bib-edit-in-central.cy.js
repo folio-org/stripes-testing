@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES } from '../../../../../support/constants';
+import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
@@ -31,7 +31,7 @@ describe('MARC', () => {
       const marcFile = {
         marc: 'marcBibFileC405520.mrc',
         fileNameImported: `testMarcFileC405520.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       };
 
       let createdInstanceID;

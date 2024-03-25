@@ -31,7 +31,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
     const itemsForCreateInstance = {
@@ -50,8 +50,8 @@ describe('data-import', () => {
     const quantityOfItems = '1';
     const actionForSuppress = 'Mark for all affected records';
     // unique file names
-    const nameMarcFileForCreate = `C11109 autotestFile.${getRandomPostfix()}.mrc`;
-    const nameMarcFileForUpdate = `C11109 autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForCreate = `C11109 autotestFile${getRandomPostfix()}.mrc`;
+    const nameMarcFileForUpdate = `C11109 autotestFile${getRandomPostfix()}.mrc`;
 
     const collectionOfMappingAndActionProfiles = [
       {

@@ -2,6 +2,7 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
@@ -36,11 +37,9 @@ import InventoryHoldings from '../../../../support/fragments/inventory/holdings/
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {
-      sharedInstanceId: [],
       marcFile: {
         marc: 'marcBibFileForC411794.mrc',
         fileName: `C411794 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         exportedFileName: `C411794 exportedTestMarcFile${getRandomPostfix()}.mrc`,
         marcFileForModify: 'marcBibFileForC411794_1.mrc',
         modifiedMarcFile: `C411794 modifiedTestMarcFile${getRandomPostfix()}.mrc`,
@@ -100,20 +99,12 @@ describe('Data Import', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
-      });
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(testData.marcFile.jobProfileToRun);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(testData.marcFile.fileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(testData.marcFile.fileName);
-      Logs.getCreatedItemsID().then((link) => {
-        testData.sharedInstanceId.push(link.split('/')[5]);
+      DataImport.uploadFileViaApi(
+        testData.marcFile.marc,
+        testData.marcFile.fileName,
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      ).then((response) => {
+        testData.sharedInstanceId = response[0].instance.id;
       });
 
       cy.createTempUser([
@@ -121,80 +112,75 @@ describe('Data Import', () => {
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.dataExportEnableApp.gui,
-      ])
-        .then((userProperties) => {
-          testData.user = userProperties;
-        })
-        .then(() => {
-          cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
-          cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(testData.user.userId, [
-            Permissions.moduleDataImportEnabled.gui,
-            Permissions.inventoryAll.gui,
-            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-            Permissions.dataExportEnableApp.gui,
-          ]);
+      ]).then((userProperties) => {
+        testData.user = userProperties;
 
-          cy.resetTenant();
-          cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
-          cy.setTenant(Affiliations.University);
-          cy.assignPermissionsToExistingUser(testData.user.userId, [
-            Permissions.moduleDataImportEnabled.gui,
-            Permissions.inventoryAll.gui,
-            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-            Permissions.dataExportEnableApp.gui,
-          ]);
-          cy.resetTenant();
-        })
-        .then(() => {
-          cy.getCollegeAdminToken();
-          cy.setTenant(Affiliations.College);
-          NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
-            (mappingProfileResponse) => {
-              NewActionProfile.createActionProfileViaApiMarc(
-                actionProfile,
-                mappingProfileResponse.body.id,
-              ).then((actionProfileResponse) => {
-                NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
-                  matchProfile,
-                ).then((matchProfileResponse) => {
-                  NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
-                    jobProfileName,
-                    matchProfileResponse.body.id,
-                    actionProfileResponse.body.id,
-                  );
-                });
-              });
-            },
-          );
-          // adding Holdings for shared Instance
-          cy.getInstance({
-            limit: 1,
-            expandAll: true,
-            query: `"title"=="${testData.instanceTitle}"`,
-          }).then((instance) => {
-            testData.instanceIdOnMemberTenant = instance.id;
-            const collegeLocationData = Locations.getDefaultLocation({
-              servicePointId: ServicePoints.getDefaultServicePoint().id,
-            }).location;
-            Locations.createViaApi(collegeLocationData).then((location) => {
-              testData.collegeLocation = location;
-              InventoryHoldings.createHoldingRecordViaApi({
-                instanceId: instance.id,
-                permanentLocationId: testData.collegeLocation.id,
-              }).then((holding) => {
-                testData.holding = holding;
+        cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+        cy.setTenant(Affiliations.College);
+        cy.assignPermissionsToExistingUser(testData.user.userId, [
+          Permissions.moduleDataImportEnabled.gui,
+          Permissions.inventoryAll.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          Permissions.dataExportEnableApp.gui,
+        ]);
+        NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
+          (mappingProfileResponse) => {
+            NewActionProfile.createActionProfileViaApiMarc(
+              actionProfile,
+              mappingProfileResponse.body.id,
+            ).then((actionProfileResponse) => {
+              NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
+                matchProfile,
+              ).then((matchProfileResponse) => {
+                NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+                  jobProfileName,
+                  matchProfileResponse.body.id,
+                  actionProfileResponse.body.id,
+                );
               });
             });
-          });
+          },
+        );
+        // adding Holdings for shared Instance
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"title"=="${testData.instanceTitle}"`,
+        }).then((instance) => {
+          testData.instanceIdOnMemberTenant = instance.id;
 
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
+          const collegeLocationData = Locations.getDefaultLocation({
+            servicePointId: ServicePoints.getDefaultServicePoint().id,
+          }).location;
+          Locations.createViaApi(collegeLocationData).then((location) => {
+            testData.collegeLocation = location;
+            InventoryHoldings.createHoldingRecordViaApi({
+              instanceId: instance.id,
+              permanentLocationId: testData.collegeLocation.id,
+            }).then((holding) => {
+              testData.holding = holding;
+            });
           });
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         });
+        cy.resetTenant();
+
+        cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
+        cy.setTenant(Affiliations.University);
+        cy.assignPermissionsToExistingUser(testData.user.userId, [
+          Permissions.moduleDataImportEnabled.gui,
+          Permissions.inventoryAll.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          Permissions.dataExportEnableApp.gui,
+        ]);
+        cy.resetTenant();
+
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+      });
     });
 
     after('Delete test data', () => {

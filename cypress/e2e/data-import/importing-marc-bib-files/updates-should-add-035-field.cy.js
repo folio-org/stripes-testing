@@ -6,6 +6,7 @@ import {
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -33,17 +34,17 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user = null;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     // unique file names
-    const firstMarcFileNameForCreate = `C358998 firstCreateAutotestFile.${getRandomPostfix()}.mrc`;
-    const firstMarcFileNameForUpdate = `C358998 firstUpdateAutotestFile.${getRandomPostfix()}.mrc`;
-    const firstFileNameAfterUpload = `C358998 firstFileNameAfterUpload.${getRandomPostfix()}.mrc`;
-    const secondMarcFileNameForCreate = `C358998 secondCreateAutotestFile.${getRandomPostfix()}.mrc`;
-    const secondMarcFileNameForUpdate = `C358998 secondUpdateAutotestFile.${getRandomPostfix()}.mrc`;
-    const secondFileNameAfterUpload = `C358998 secondFileNameAfterUpload.${getRandomPostfix()}.mrc`;
+    const firstMarcFileNameForCreate = `C358998 firstCreateAutotestFile${getRandomPostfix()}.mrc`;
+    const firstMarcFileNameForUpdate = `C358998 firstUpdateAutotestFile${getRandomPostfix()}.mrc`;
+    const firstFileNameAfterUpload = `C358998 firstFileNameAfterUpload${getRandomPostfix()}.mrc`;
+    const secondMarcFileNameForCreate = `C358998 secondCreateAutotestFile${getRandomPostfix()}.mrc`;
+    const secondMarcFileNameForUpdate = `C358998 secondUpdateAutotestFile${getRandomPostfix()}.mrc`;
+    const secondFileNameAfterUpload = `C358998 secondFileNameAfterUpload${getRandomPostfix()}.mrc`;
 
     const mappingProfile = {
       name: `C358998 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`,

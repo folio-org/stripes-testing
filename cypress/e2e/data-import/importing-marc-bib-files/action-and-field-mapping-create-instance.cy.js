@@ -26,11 +26,11 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
     const quantityOfItems = '1';
-    const marcFileForCreate = `C11103 autotestFile.${getRandomPostfix()}.mrc`;
+    const marcFileForCreate = `C11103 autotestFile${getRandomPostfix()}.mrc`;
     const mappingProfile = {
       name: `C11103 autotest mapping profile.${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,

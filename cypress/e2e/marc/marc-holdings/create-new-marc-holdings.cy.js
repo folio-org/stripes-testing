@@ -1,3 +1,4 @@
+import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -50,7 +51,7 @@ describe('MARC', () => {
         '0',
         '\\\\\\\\\\\\',
       ],
-      sourceMARC: 'MARC',
+      sourceMARC: INSTANCE_SOURCE_NAMES.MARC,
       tag852callout: 'Record cannot be saved. An 852 is required.',
     };
 
@@ -177,7 +178,7 @@ describe('MARC', () => {
       'C350646 Create a new MARC Holdings record for existing "Instance" record (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        InventoryInstances.searchBySource('MARC');
+        InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstances.searchByTitle(instanceIds[1]);
         InventoryInstance.checkExpectedMARCSource();
         InventoryInstance.goToMarcHoldingRecordAdding();

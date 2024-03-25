@@ -4,6 +4,7 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -30,16 +31,16 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     const fieldProtectionIds = [];
     let instanceHRID = null;
     const quantityOfItems = '1';
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const marcFileNameForCreate = `C367966 autotestFile.${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C367966 editedAutotestFile.${getRandomPostfix()}.mrc`;
-    const marcFileName = `C367966 autotestFile.${getRandomPostfix()}.mrc`;
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
+    const marcFileNameForCreate = `C367966 autotestFile${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C367966 editedAutotestFile${getRandomPostfix()}.mrc`;
+    const marcFileName = `C367966 autotestFile${getRandomPostfix()}.mrc`;
     const protectedFields = {
       firstField: '020',
       secondField: '514',

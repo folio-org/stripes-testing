@@ -28,7 +28,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Organizations from '../../../support/fragments/organizations/organizations';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing EDIFACT files', () => {
     const testData = {
       profileForDuplicate: FieldMappingProfiles.mappingProfileForDuplicate.hein,

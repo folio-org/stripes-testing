@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -13,14 +14,14 @@ import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Single record import', () => {
     let user;
     let instanceHRID;
     let instanceId;
     let profileId;
     const OCLCAuthentication = '100481406/PAOLF';
-    const fileName = `C375126 autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C375126 autotestFile${getRandomPostfix()}.mrc`;
     const newTargetProfileName = `C375126 autotest profile${getRandomPostfix()}`;
     const OCLCWorldCatTargetProfileName = 'OCLC WorldCat';
     const profileForOverlay = 'Inventory Single Record - Default Update Instance (Default)';
@@ -41,7 +42,7 @@ describe('inventory', () => {
         DataImport.uploadFileViaApi(
           'oneMarcBib.mrc',
           fileName,
-          'Default - Create instance and SRS MARC Bib',
+          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         ).then((response) => {
           instanceHRID = response[0].instance.hrid;
           instanceId = response[0].instance.id;

@@ -4,6 +4,7 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -31,15 +32,15 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe.skip('data-import', () => {
+describe.skip('Data Import', () => {
   describe('End to end scenarios', () => {
     let user = {};
     let instanceHRID;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     // file name
-    const nameMarcFileForCreate = `C345423autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForCreate = `C345423 autotestFile${getRandomPostfix()}.mrc`;
     const nameForCSVFile = `C345423autotestFile${getRandomPostfix()}.csv`;
-    const nameMarcFileForUpload = `C345423autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForUpload = `C345423 autotestFile${getRandomPostfix()}.mrc`;
     const mappingProfileFieldsForModify = {
       name: `autoTestMappingProf.${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,

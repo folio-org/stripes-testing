@@ -35,10 +35,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
-    const marcFileName = `C378901autotestFile.${getRandomPostfix()}.mrc`;
+    const marcFileName = `C378901 autotestFile${getRandomPostfix()}.mrc`;
     const barcodes = ['B(UMLLTTEST3)LLTAMGUT8UGUT_-UM', 'B(UMLLTTEST3)LLTAALIVIAUCO_-UM'];
     const firstInstanceTitle =
       '<In lacu> Guillelmus de Sancto Theodorico (dubium) [electronic resource]';

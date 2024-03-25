@@ -4,7 +4,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Settings', () => {
     const testData = {};
 
@@ -40,7 +40,7 @@ describe('inventory', () => {
         HridHandling.checkRemoveLeadingZeroesAndSave();
         let date = DateTools.getFormattedDateWithTime(new Date(), { withSpace: true });
         // wait, because next steps can be failed without it
-        cy.wait(2000);
+        cy.wait(5000);
         HridHandling.verifyValueInRecordDetailsSection(testData.user.username);
         HridHandling.verifyValueInRecordDetailsSection(date);
         HridHandling.uncheckRemoveLeadingZeroesAndSave();

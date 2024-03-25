@@ -26,7 +26,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     let instanceHrid;

@@ -11,7 +11,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import GenerateItemBarcode from '../../../../support/utils/generateItemBarcode';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
     const itemData = {
       instanceTitle: `autoTestInstanceTitle ${Helper.getRandomBarcode()}`,

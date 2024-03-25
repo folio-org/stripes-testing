@@ -4,7 +4,7 @@ import FileExtensions from '../../../support/fragments/settings/dataImport/fileE
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     let user;
     let fileExtensionName;

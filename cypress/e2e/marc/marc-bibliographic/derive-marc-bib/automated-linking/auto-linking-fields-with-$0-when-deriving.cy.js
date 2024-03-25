@@ -1,14 +1,15 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
+import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
-import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -69,14 +70,14 @@ describe('MARC', () => {
           {
             marc: 'marcBibFileForC388638.mrc',
             fileName: `C388638 testMarcFile${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             numOfRecords: 1,
             propertyName: 'instance',
           },
           {
             marc: 'marcAuthFileForC388638_1.mrc',
             fileName: `C388638_1 testMarcFile${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
             propertyName: 'authority',
             authorityHeading: 'C388638 Runaway Bride (Motion picture)',
@@ -84,28 +85,28 @@ describe('MARC', () => {
           {
             marc: 'marcAuthFileForC388638_2.mrc',
             fileName: `C388638_2 testMarcFile${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             propertyName: 'authority',
             numOfRecords: 1,
           },
           {
             marc: 'marcAuthFileForC388638_3.mrc',
             fileName: `C388638_3 testMarcFile${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             propertyName: 'authority',
             numOfRecords: 1,
           },
           {
             marc: 'marcAuthFileForC388638_4.mrc',
             fileName: `C388638_4 testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             propertyName: 'authority',
             numOfRecords: 1,
           },
           {
             marc: 'marcAuthFileForC388638_5.mrc',
             fileName: `C388638_5 testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             propertyName: 'authority',
             numOfRecords: 1,
           },

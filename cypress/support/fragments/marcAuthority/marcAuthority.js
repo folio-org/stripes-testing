@@ -6,10 +6,10 @@ import {
   Modal,
   MultiColumnListHeader,
   PaneHeader,
-  TableRow,
   QuickMarcEditorRow,
   Section,
   TableCell,
+  TableRow,
   TextArea,
   TextField,
   including,
@@ -18,7 +18,6 @@ import {
 import DateTools from '../../utils/dateTools';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 
-const defaultCreateJobProfile = 'Default - Create SRS MARC Authority';
 const defaultUpdateJobProfile = 'Update authority by matching 010';
 const rootSection = Section({ id: 'marc-view-pane' });
 const rootHeader = rootSection.find(PaneHeader());
@@ -98,7 +97,6 @@ const detailsPaneHeader = PaneHeader({ id: 'paneHeadermarc-view-pane' });
 
 export default {
   defaultAuthority,
-  defaultCreateJobProfile,
   defaultUpdateJobProfile,
   waitLoading: () => cy.expect(rootSection.exists()),
   edit: () => {
