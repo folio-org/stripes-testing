@@ -44,7 +44,13 @@ describe('Data Import', () => {
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
-        NewMatchProfile.verifyExistingRecordSection();
+        NewMatchProfile.verifyExistingRecordSection([
+          'INSTANCE',
+          'HOLDINGS',
+          'ITEM',
+          'MARC_BIBLIOGRAPHIC',
+          'MARC_AUTHORITY',
+        ]);
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
         NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
         NewMatchProfile.verifyIncomingRecordsDropdown(
@@ -89,7 +95,13 @@ describe('Data Import', () => {
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
-        NewMatchProfile.verifyExistingRecordSection();
+        NewMatchProfile.verifyExistingRecordSection([
+          'INSTANCE',
+          'HOLDINGS',
+          'ITEM',
+          'MARC_BIBLIOGRAPHIC',
+          'MARC_AUTHORITY',
+        ]);
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
         NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
         NewMatchProfile.fillIncomingRecordSections(matchProfile);
@@ -127,7 +139,13 @@ describe('Data Import', () => {
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
-        NewMatchProfile.verifyExistingRecordSection();
+        NewMatchProfile.verifyExistingRecordSection([
+          'INSTANCE',
+          'HOLDINGS',
+          'ITEM',
+          'MARC_BIBLIOGRAPHIC',
+          'MARC_AUTHORITY',
+        ]);
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
         NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
         NewMatchProfile.fillStaticValue(
