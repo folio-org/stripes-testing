@@ -17,11 +17,9 @@ describe('MARC', () => {
         const testData = {
           tags: {
             tag245: '245',
-            tagLDR: 'LDR',
           },
           fieldContents: {
             tag245Content: 'Title with repeatables',
-            tagLDRContent: '00000naa\\a2200000uu\\4500',
           },
         };
 
@@ -134,10 +132,7 @@ describe('MARC', () => {
               testData.tags.tag245,
               `$a ${testData.fieldContents.tag245Content}`,
             );
-            QuickMarcEditor.updateExistingField(
-              testData.tags.tagLDR,
-              testData.fieldContents.tagLDRContent,
-            );
+            QuickMarcEditor.updateLDR06And07Positions();
             newFields.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
             });

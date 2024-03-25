@@ -17,11 +17,9 @@ describe('MARC', () => {
         const testData = {
           tags: {
             tag245: '245',
-            tagLDR: 'LDR',
           },
           fieldContents: {
             tag245Content: 'Created MARC bib with linked field',
-            tagLDRContent: '00000naa\\a2200000uu\\4500',
           },
           marcAuthIcon: 'Linked to MARC authority',
           accordion: 'Contributor',
@@ -103,10 +101,7 @@ describe('MARC', () => {
               testData.tags.tag245,
               `$a ${testData.fieldContents.tag245Content}`,
             );
-            QuickMarcEditor.updateExistingField(
-              testData.tags.tagLDR,
-              testData.fieldContents.tagLDRContent,
-            );
+            QuickMarcEditor.updateLDR06And07Positions();
             MarcAuthority.addNewField(4, newFields.tag, `$a ${newFields.content}`);
             QuickMarcEditor.checkLinkButtonExistByRowIndex(5);
 

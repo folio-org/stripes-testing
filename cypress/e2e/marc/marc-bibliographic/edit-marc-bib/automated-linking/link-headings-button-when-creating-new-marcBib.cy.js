@@ -16,11 +16,9 @@ describe('MARC', () => {
         const testData = {
           tags: {
             tag245: '245',
-            tagLDR: 'LDR',
           },
           fieldContents: {
             tag245Content: 'New title C422145',
-            tagLDRContent: '00000naa\\a2200000uu\\4500',
           },
           naturalIds: {
             tag100: '0255863',
@@ -124,10 +122,7 @@ describe('MARC', () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.checkAbsenceOfLinkHeadingsButton();
             QuickMarcEditor.updateExistingField(testData.tags.tag245, '$a A New Record');
-            QuickMarcEditor.updateExistingField(
-              testData.tags.tagLDR,
-              testData.fieldContents.tagLDRContent,
-            );
+            QuickMarcEditor.updateLDR06And07Positions();
             newFieldsForC388562.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, '');
             });

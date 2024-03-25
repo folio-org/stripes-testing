@@ -16,8 +16,6 @@ describe('MARC', () => {
         const testData = {
           tag245: '245',
           tag245Content: 'Title C389480',
-          tagLDR: 'LDR',
-          tagLDRContent: '00000naa\\a2200000uu\\4500',
         };
 
         const newFields = [
@@ -118,7 +116,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
 
             // #3 Replace blank values in "LDR" positions 06, 07 with valid values
-            QuickMarcEditor.updateExistingField(testData.tagLDR, testData.tagLDRContent);
+            QuickMarcEditor.updateLDR06And07Positions();
 
             // #4 - #5 Add three linkable fields -> Replace "$a" in fourth boxes of added linkable fields with "$0"
             newFields.forEach((newField) => {

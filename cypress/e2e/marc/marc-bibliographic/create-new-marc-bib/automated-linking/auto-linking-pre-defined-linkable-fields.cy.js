@@ -20,11 +20,9 @@ describe('MARC', () => {
         const testData = {
           tags: {
             tag245: '245',
-            tagLDR: 'LDR',
           },
           fieldContents: {
             tag245Content: 'C389489 Test: created record with all linkable fields without linking',
-            tagLDRContent: '00000naa\\a2200000uu\\4500',
           },
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         };
@@ -257,10 +255,7 @@ describe('MARC', () => {
               `$a ${testData.fieldContents.tag245Content}`,
             );
             // 3 Replace blank values in "LDR" positions 06, 07 with valid values
-            QuickMarcEditor.updateExistingField(
-              testData.tags.tagLDR,
-              testData.fieldContents.tagLDRContent,
-            );
+            QuickMarcEditor.updateLDR06And07Positions();
             // 4 Add eligible for manual linking only field with subfield "$0", by clicking "+" icon next to any field and filling first and fourth box of appeared row with following values
             MarcAuthority.addNewField(field600.rowIndex, field600.tag, field600.content);
             QuickMarcEditor.checkAbsenceOfLinkHeadingsButton();
