@@ -15,7 +15,7 @@ import { Permissions } from '../../../support/dictionary';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileEdit';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     const testData = {};
     const mappingProfileC380506 = {

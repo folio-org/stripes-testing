@@ -1,5 +1,5 @@
 import { Permissions } from '../../../support/dictionary';
-import { RECORD_STATUSES } from '../../../support/constants';
+import { RECORD_STATUSES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
@@ -11,16 +11,16 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Holdings files', () => {
     let user;
     let instanceHrid;
     let instanceId;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const filePathForUpload = 'oneMarcBib.mrc';
     const fileWithHoldingsPathForUpload = 'marcBibFileForC359218.mrc';
-    const fileName = `C359218 autotestFileName.${getRandomPostfix()}`;
-    const editedMarcFileName = `C359218 editedMarcFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C359218 autotestFileName${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C359218 editedMarcFile${getRandomPostfix()}.mrc`;
     const errorMessage =
       '{"error":"A new MARC-Holding was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
 
@@ -71,7 +71,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
         JobProfiles.waitFileIsUploaded();
-        JobProfiles.search('Default - Create Holdings and SRS MARC Holdings');
+        JobProfiles.search(DEFAULT_JOB_PROFILE_NAMES.CREATE_HOLDINGS_AND_SRS);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(editedMarcFileName);
         Logs.openFileDetails(editedMarcFileName);

@@ -30,7 +30,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     const holdingsData = [
@@ -161,7 +161,7 @@ describe('data-import', () => {
       { tags: ['criticalPath', 'folijet'] },
       () => {
         let instanceHRID;
-        const marcFileName = `C388506 multipleAutotestFileName.${getRandomPostfix()}`;
+        const marcFileName = `C388506 multipleAutotestFileName${getRandomPostfix()}.mrc`;
         const arrayOfHoldingsWithErrorsStatuses = [
           'Created (KU/CC/DI/M)',
           'Created (KU/CC/DI/A)',
@@ -225,7 +225,7 @@ describe('data-import', () => {
       { tags: ['criticalPath', 'folijet'] },
       () => {
         let instanceHrid;
-        const marcFileName = `C389502 multipleAutotestFileName.${getRandomPostfix()}`;
+        const marcFileName = `C389502 multipleAutotestFileName${getRandomPostfix()}.mrc`;
         const arrayOfHoldingsWithErrorsStatuses = [
           'Created (KU/CC/DI/M)',
           'Created (KU/CC/DI/A)',
@@ -318,7 +318,7 @@ describe('data-import', () => {
         ];
         const quantityOfCreatedItems = 6;
         const quantityOfCreatedHoldings = 3;
-        const marcFileName = `C388505 autotestFileName.${getRandomPostfix()}`;
+        const marcFileName = `C388505 autotestFileName${getRandomPostfix()}.mrc`;
 
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
@@ -380,7 +380,7 @@ describe('data-import', () => {
         ];
         const quantityOfCreatedItems = 6;
         const quantityOfCreatedHoldings = 3;
-        const marcFileName = `C389587 autotestFileName.${getRandomPostfix()}`;
+        const marcFileName = `C389587 autotestFileName${getRandomPostfix()}.mrc`;
 
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);

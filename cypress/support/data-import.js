@@ -1,11 +1,12 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
+import { DEFAULT_JOB_PROFILE_NAMES } from './constants';
 import { Button, HTML, including, Modal, MultiColumnListCell, Section } from '../../interactors';
-import { getLongDelay } from './utils/cypressTools';
 import JobProfiles from './fragments/data_import/job_profiles/jobProfiles';
+import { getLongDelay } from './utils/cypressTools';
 
 Cypress.Commands.add(
   'uploadFileWithDefaultJobProfile',
-  (name, jobProfileToRun = 'Default - Create instance and SRS MARC Bib') => {
+  (name, jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS) => {
     // upload generated file with given unique name
     cy.get('input[type=file]', getLongDelay()).attachFile(name);
     cy.expect(

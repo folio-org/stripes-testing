@@ -11,8 +11,8 @@ import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRec
 import { Locations } from '../../../support/fragments/settings/tenant';
 import settingsMenu from '../../../support/fragments/settingsMenu';
 
-describe('inventory', () => {
-  describe('item', () => {
+describe('Inventory', () => {
+  describe('Item', () => {
     const itemData = {
       barcode: generateItemBarcode(),
       instanceTitle: `Instance ${getRandomPostfix()}`,

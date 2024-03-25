@@ -46,7 +46,7 @@ import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let instanceHrid;
     const recordType = 'MARC_BIBLIOGRAPHIC';
@@ -56,9 +56,9 @@ describe('data-import', () => {
     const instanceTitle =
       'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
     // file names
-    const nameMarcFileForImportCreate = `C356802autotestFile.${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `C356802autotestFile${getRandomPostfix()}.csv`;
-    const nameMarcFileForImportUpdate = `C356802autotestFile${getRandomPostfix()}.mrc`;
+    const nameMarcFileForImportCreate = `C356802 autotestFile${getRandomPostfix()}.mrc`;
+    const nameForCSVFile = `C356802 autotestFile${getRandomPostfix()}.csv`;
+    const nameMarcFileForImportUpdate = `C356802 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileNameForExport = `C356802 job profile.${getRandomPostfix()}`;
     // profiles for creating instance, holdings, item
     const marcBibMappingProfileForCreate = {

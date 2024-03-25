@@ -5,6 +5,7 @@ import {
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -32,10 +33,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user = null;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const note = 'This instance was updated, plus a new subject heading was added';
     const resourceIdentifierForFirstInstance = {
       type: 'System control number',
@@ -48,10 +49,10 @@ describe('data-import', () => {
     let firstInstanceHrid;
     let secondInstanceHrid;
     // unique file names
-    const fileForCreateFirstName = `C358138 firstAutotestFileForCreate.${getRandomPostfix()}.mrc`;
-    const fileForCreateSecondName = `C358138 secondAutotestFileForCreate.${getRandomPostfix()}.mrc`;
-    const fileForUpdateFirstName = `C358138 firstAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
-    const fileForUpdateSecondName = `C358138 secondAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
+    const fileForCreateFirstName = `C358138 firstAutotestFileForCreate${getRandomPostfix()}.mrc`;
+    const fileForCreateSecondName = `C358138 secondAutotestFileForCreate${getRandomPostfix()}.mrc`;
+    const fileForUpdateFirstName = `C358138 firstAutotestFileForUpdate${getRandomPostfix()}.mrc`;
+    const fileForUpdateSecondName = `C358138 secondAutotestFileForUpdate${getRandomPostfix()}.mrc`;
 
     const matchProfile = {
       profileName: `C358138 Match on newly-created 035 ${getRandomPostfix()}`,

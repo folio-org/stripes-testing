@@ -29,12 +29,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     // unique file name to upload
-    const nameForMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
-    const nameForExportedMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `C343343autotestFile${getRandomPostfix()}.csv`;
+    const nameForMarcFile = `C343343 autotestFile${getRandomPostfix()}.mrc`;
+    const nameForExportedMarcFile = `C343343 autotestFile${getRandomPostfix()}.mrc`;
+    const nameForCSVFile = `C343343 autotestFile${getRandomPostfix()}.csv`;
 
     const mappingProfileForExport = {
       name: `autotestMappingProf${getRandomPostfix()}`,

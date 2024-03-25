@@ -1,6 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
 } from '../../../support/constants';
@@ -19,12 +20,12 @@ import NewMatchProfile from '../../../support/fragments/settings/dataImport/matc
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     let user;
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: 'Default - Create instance and SRS MARC Bib',
+      profileName: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
       actionProfile: 'Default - Create instance',
     };

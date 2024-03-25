@@ -1,18 +1,18 @@
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import { RECORD_STATUSES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
-import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import Users from '../../../../support/fragments/users/users';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 const testData = {
   new100fieldRecordForFirstFile: getRandomPostfix(),
   new100fieldRecordForSecondFile: getRandomPostfix(),
 };
-const jobProfileToRun = 'Default - Create SRS MARC Authority';
+const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
 const fileName = 'marcFileForC387474.mrc';
 const updatedFileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
 let createdAuthorityID;

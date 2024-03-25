@@ -150,4 +150,9 @@ export default {
       cy.expect(matchProfileForm.absent());
     }
   },
+  verifyDetailsSection: (options) => {
+    options.forEach((option) => {
+      cy.get(`#panel-existing-edit [data-id=${option}]`).should('exist');
+    });
+  },
 };

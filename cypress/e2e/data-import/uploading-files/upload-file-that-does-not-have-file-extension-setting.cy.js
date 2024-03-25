@@ -5,13 +5,14 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Uploading files', () => {
     let user;
 
     before('create test data', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -29,9 +30,9 @@ describe('data-import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         const filePathWithNotExistingFileExtension = 'file.txt';
-        const fileNameWithNotExistingFileExtension = `C2356 autotestFile.${getRandomPostfix()}.txt`;
+        const fileNameWithNotExistingFileExtension = `C2356 autotestFile${getRandomPostfix()}.txt`;
         const filePathWithBlockedFileExtension = 'fileForC2356.mrk';
-        const fileNameWithBlockedFileExtension = `C2356 autotestFile.${getRandomPostfix()}.mrk`;
+        const fileNameWithBlockedFileExtension = `C2356 autotestFile${getRandomPostfix()}.mrk`;
 
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
@@ -43,7 +44,7 @@ describe('data-import', () => {
         DataImport.verifyFileIsImported(fileNameWithNotExistingFileExtension);
 
         cy.visit(TopMenu.dataImportPath);
-        DataImport.verifyUploadState();
+        DataImport.clickDeleteFilesButton();
         DataImport.uploadFile(filePathWithBlockedFileExtension, fileNameWithBlockedFileExtension);
         DataImport.verifyImportBlockedModal();
       },
