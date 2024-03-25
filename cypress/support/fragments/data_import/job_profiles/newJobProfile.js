@@ -12,6 +12,13 @@ import {
 import ModalSelectProfile from './modalSelectProfile';
 import { ACCEPTED_DATA_TYPE_NAMES, PROFILE_TYPE_NAMES } from '../../../constants';
 
+const actionsButton = Button('Action');
+const matchButton = Button('Match');
+const saveAndCloseButton = Button('Save as profile & Close');
+const overviewAccordion = Accordion('Overview');
+const dataTypeSelect = Select({ name: 'profile.dataType' });
+const nameField = TextField({ name: 'profile.name' });
+
 const defaultJobProfile = {
   profileName: '',
   acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
@@ -28,13 +35,6 @@ const getDefaultJobProfile = (name) => {
   };
   return defaultjobProfile;
 };
-
-const actionsButton = Button('Action');
-const matchButton = Button('Match');
-const saveAndCloseButton = Button('Save as profile & Close');
-const overviewAccordion = Accordion('Overview');
-const dataTypeSelect = Select({ name: 'profile.dataType' });
-const nameField = TextField({ name: 'profile.name' });
 
 function linkActionProfileByName(profileName) {
   // TODO move to const and rewrite functions
@@ -417,6 +417,26 @@ export default {
               reactTo: 'MATCH',
             },
           ],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((responce) => {
+        return responce.body.id;
+      });
+  },
+
+  createJobProfileWithoutLinkedProfilesViaApi: (nameProfile) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/jobProfiles',
+        body: {
+          profile: {
+            name: nameProfile,
+            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+          },
+          addedRelations: [],
           deletedRelations: [],
         },
         isDefaultSearchParamsRequired: false,
