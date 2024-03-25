@@ -2003,7 +2003,7 @@ export default {
     tag008DefaultValues.forEach((index) => {
       if (index.isSelect === false) {
         cy.do(index.interactor.fillIn(''));
-      };
+      }
     });
   },
 
