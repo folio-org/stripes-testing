@@ -5,6 +5,7 @@ import {
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -29,14 +30,14 @@ import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     const random010fieldValue = `n  4200${randomFourDigitNumber()}`;
     const testData = {
       createdRecordIDs: [],
       filePathForCreate: 'oneMarcAuthority.mrc',
       editedFileNameForCreate: `C415367 marcFileName${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       fileNameForCreate: `C415367 marcFileName${getRandomPostfix()}.mrc`,
       filePathForUpdate: 'marcAuthFileForC415367.mrc',
       editedFileNameForUpdate: `C415367 marcFileName${getRandomPostfix()}.mrc`,

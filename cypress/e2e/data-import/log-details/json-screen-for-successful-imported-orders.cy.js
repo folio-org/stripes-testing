@@ -27,12 +27,12 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Orders from '../../../support/fragments/orders/orders';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     const testData = {
       title: 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.',
       filePath: 'marcBibFileForC375197.mrc',
-      fileName: `C375197 autotestFileName ${getRandomPostfix()}`,
+      fileName: `C375197 autotestFileName${getRandomPostfix()}.mrc`,
       jsonOrderTitle: '"titleOrPackage": "ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.",',
       jsonPOLContributor: '"contributor": "DENNISON, MATTHEW",',
     };

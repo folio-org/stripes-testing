@@ -27,13 +27,13 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let orderNumber;
     const quantityOfItems = '1';
     const filePathForCreateOrder = 'marcFileForC380483.mrc';
-    const marcFileName = `C380483 autotestFileName.${getRandomPostfix()}`;
+    const marcFileName = `C380483 autotestFileName${getRandomPostfix()}.mrc`;
     const mappingProfile = {
       typeValue: FOLIO_RECORD_TYPE.ORDER,
       name: `C380483 Test Electronic resource open order ${getRandomPostfix()}`,

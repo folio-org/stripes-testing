@@ -19,12 +19,12 @@ import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     const numberOfLogsToDelete = '1';
     const filePath = 'oneMarcBib.mrc';
-    const fileName = `C358534 autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C358534 autotestFile${getRandomPostfix()}.mrc`;
     const mappingProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C358534 instance mapping profile ${getRandomPostfix()}`,

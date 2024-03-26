@@ -6,7 +6,7 @@ import InventoryInstances from '../../../../../../support/fragments/inventory/in
 import getRandomPostfix from '../../../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES } from '../../../../../../support/constants';
+import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
 import JobProfiles from '../../../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../../../support/fragments/data_import/logs/logs';
 import QuickMarcEditor from '../../../../../../support/fragments/quickMarcEditor';
@@ -45,12 +45,12 @@ describe('MARC', () => {
           {
             marc: 'marcBibFileForC405560.mrc',
             fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           },
           {
             marc: 'marcAuthFileForC405560.mrc',
             fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           },
         ];
 
@@ -87,7 +87,10 @@ describe('MARC', () => {
             .then(() => {
               cy.resetTenant();
               cy.loginAsAdmin().then(() => {
-                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+                ConsortiumManager.switchActiveAffiliation(
+                  tenantNames.central,
+                  tenantNames.university,
+                );
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
                 marcFilesFor.forEach((marcFile) => {
                   cy.visit(TopMenu.dataImportPath);
@@ -109,7 +112,10 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               }).then(() => {
-                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+                ConsortiumManager.switchActiveAffiliation(
+                  tenantNames.central,
+                  tenantNames.university,
+                );
                 InventoryInstances.waitContentLoading();
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
               });

@@ -6,8 +6,9 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     const instanceIds = [];
@@ -20,7 +21,7 @@ describe('data-import', () => {
         DataImport.uploadFileViaApi(
           'oneMarcBib.mrc',
           fileName,
-          'Default - Create instance and SRS MARC Bib',
+          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         ).then((response) => {
           instanceIds.push(response[0].instance.id);
         });
@@ -55,11 +56,15 @@ describe('data-import', () => {
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
-        LogsViewAll.verifyPreviousPagination();
-        LogsViewAll.clickNextPaginationButton();
-        LogsViewAll.verifyNextPagination();
-        LogsViewAll.clickPreviousPaginationButton();
-        LogsViewAll.verifyPreviousPagination();
+        LogsViewAll.getNumberOfLogs().then((number) => {
+          const numberOfLogs = number;
+
+          LogsViewAll.verifyPreviousPagination();
+          LogsViewAll.clickNextPaginationButton();
+          LogsViewAll.verifyNextPagination(numberOfLogs);
+          LogsViewAll.clickPreviousPaginationButton();
+          LogsViewAll.verifyPreviousPagination();
+        });
       },
     );
   });

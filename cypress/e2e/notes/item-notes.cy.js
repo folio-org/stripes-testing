@@ -7,7 +7,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import { Locations } from '../../support/fragments/settings/tenant/location-setup';
 import TopMenu from '../../support/fragments/topMenu';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Item', () => {
     const testData = {
       folioInstances: InventoryInstances.generateFolioInstances(),

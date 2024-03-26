@@ -413,6 +413,75 @@ export const ACTION_NAMES_IN_ACTION_PROFILE = {
   UPDATE: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
 };
 
+export const AUTHORITY_LDR_FIELD_STATUS_DROPDOWN = {
+  A: 'a - Increase in encoding level',
+  C: 'c - Corrected or revised',
+  D: 'd - Deleted',
+  N: 'n - New',
+  O: 'o - Obsolete',
+  S: 's - Deleted; heading split into two or more headings',
+  X: 'x - Deleted; heading replaced by another heading',
+};
+
+export const AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES = {
+  STATUS: 'Status',
+  TYPE: 'Type',
+  ELVL: 'ELvl',
+  PUNCT: 'Punct',
+};
+
+export const AUTHORITY_LDR_FIELD_ELVL_DROPDOWN = {
+  N: 'n - Complete authority record',
+  O: 'o - Incomplete authority record',
+};
+
+export const AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN = {
+  '\\': '\\ - No information provided',
+  C: 'c - Punctuation omitted',
+  I: 'i - Punctuation included',
+  U: 'u - Unknown',
+};
+
+export const AUTHORITY_LDR_FIELD_TYPE_DROPDOWN = {
+  Z: 'z - Authority data',
+};
+
+export const MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES = {
+  STATUS: 'Status',
+  TYPE: 'Type',
+  ELVL: 'ELvl',
+  ITEM: 'Item',
+};
+
+export const MARC_HOLDING_LDR_FIELD_STATUS_DROPDOWN = {
+  C: 'c - Corrected or revised',
+  D: 'd - Deleted',
+  N: 'n - New',
+};
+
+export const MARC_HOLDING_LDR_FIELD_TYPE_DROPDOWN = {
+  U: 'u - Unknown',
+  V: 'v - Multipart item holdings',
+  X: 'x - Single-part item holdings',
+  Y: 'y - Serial item holdings',
+};
+
+export const MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN = {
+  1: '1 - Holdings level 1',
+  2: '2 - Holdings level 2',
+  3: '3 - Holdings level 3',
+  4: '4 - Holdings level 4',
+  5: '5 - Holdings level 4 with piece designation',
+  M: 'm - Mixed level',
+  U: 'u - Unknown',
+  Z: 'z - Other level',
+};
+
+export const MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN = {
+  I: 'i - Item information',
+  N: 'n - No item information',
+};
+
 export const INVENTORY_LDR_FIELD_TYPE_DROPDOWN = {
   A: 'a - Language material',
   C: 'c - Notated music',

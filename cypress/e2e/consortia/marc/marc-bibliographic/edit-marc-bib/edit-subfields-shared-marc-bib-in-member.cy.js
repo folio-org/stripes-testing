@@ -7,7 +7,7 @@ import getRandomPostfix, { randomFourDigitNumber } from '../../../../../support/
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES } from '../../../../../support/constants';
+import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
@@ -48,7 +48,7 @@ describe('MARC', () => {
           {
             marc: 'marcBibFileC405513.mrc',
             fileNameImported: `testMarcFileC405513.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           },
         ];
 

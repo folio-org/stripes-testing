@@ -25,13 +25,13 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     const testData = {
       title:
         'Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.',
       filePathForCreate: 'marcFileForC389471.mrc',
-      marcFileName: `C389471 autotestFileName${getRandomPostfix()}`,
+      marcFileName: `C389471 autotestFileName${getRandomPostfix()}.mrc`,
       arrayOfHoldingsStatuses: ['Created (KU/CC/DI/M)', 'Created (KU/CC/DI/A)'],
       quantityOfCreatedHoldings: 2,
       jsonHoldingsData: [

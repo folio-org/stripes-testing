@@ -14,13 +14,11 @@ describe('MARC', () => {
           tags: {
             tag100: '100',
             tag245: '245',
-            tagLDR: 'LDR',
           },
 
           fieldContents: {
             tag100Content: 'Author, Person $0 id001',
             tag245Content: 'New title',
-            tagLDRContent: '00000naa\\a2200000uu\\4500',
           },
         };
 
@@ -55,10 +53,7 @@ describe('MARC', () => {
               testData.tags.tag245,
               `$a ${testData.fieldContents.tag245Content}`,
             );
-            QuickMarcEditor.updateExistingField(
-              testData.tags.tagLDR,
-              testData.fieldContents.tagLDRContent,
-            );
+            QuickMarcEditor.updateLDR06And07Positions();
             MarcAuthority.addNewField(
               4,
               testData.tags.tag100,

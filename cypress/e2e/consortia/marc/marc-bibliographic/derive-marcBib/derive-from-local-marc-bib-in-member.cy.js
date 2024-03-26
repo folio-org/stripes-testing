@@ -8,7 +8,7 @@ import InventoryViewSource from '../../../../../support/fragments/inventory/inve
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES } from '../../../../../support/constants';
+import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
@@ -35,7 +35,7 @@ describe('MARC', () => {
       const marcFile = {
         marc: 'marcBibFileC402770.mrc',
         fileNameImported: `testMarcFileC402770.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       };
 
       const users = {};

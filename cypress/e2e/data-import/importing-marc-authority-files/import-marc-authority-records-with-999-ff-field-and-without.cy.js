@@ -1,6 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { Permissions } from '../../../support/dictionary';
-import { RECORD_STATUSES } from '../../../support/constants';
+import { RECORD_STATUSES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -8,11 +8,11 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     let user;
-    const jobProfileToRun = 'Default - Create SRS MARC Authority';
-    const fileName = `C359207autotestFile.${getRandomPostfix()}.mrc`;
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
+    const fileName = `C359207 autotestFile${getRandomPostfix()}.mrc`;
     // eslint-disable-next-line
     const error =
       '{"error":"A new MARC-Authority was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';

@@ -1,3 +1,11 @@
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  MARC_HOLDING_LDR_FIELD_STATUS_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_TYPE_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -6,32 +14,41 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { randomizeArray } from '../../../support/utils/arrays';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
     const testData = {
-      tagLDR: 'LDR',
       tag852: '852',
       existingLocation: QuickMarcEditor.getExistingLocation(),
-      LDRValues: {
-        validLDR05Values: randomizeArray(['c', 'd', 'n', 'c', 'd', 'n', 'c', 'd', 'n']),
-        validLDR06Values: randomizeArray(['u', 'v', 'x', 'y', 'u', 'v', 'x', 'y']),
-        validLDR17Values: randomizeArray(['1', '2', '3', '4', '5', 'm', 'u', 'z']),
-        validLDR18Values: randomizeArray(['i', 'n', '\\', ' ', 'i', 'n', '\\', ' ']),
-      },
     };
-
+    const LDR = 'LDR';
+    const LDRDropdownOptionSets = [
+      {
+        name: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
+        options: Object.values(MARC_HOLDING_LDR_FIELD_STATUS_DROPDOWN),
+      },
+      {
+        name: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+        options: Object.values(MARC_HOLDING_LDR_FIELD_TYPE_DROPDOWN),
+      },
+      {
+        name: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ELVL,
+        options: Object.values(MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN),
+      },
+      {
+        name: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ITEM,
+        options: Object.values(MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN),
+      },
+    ];
     const marcFile = {
       marc: 'oneMarcBib.mrc',
       fileName: `testMarcFileC357571.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       propertyName: 'instance',
     };
-
-    let instanceID;
     const holdingsIDs = [];
+    let instanceID;
 
     before(() => {
       cy.createTempUser([
@@ -77,24 +94,47 @@ describe('MARC', () => {
       () => {
         InventoryInstances.searchByTitle(instanceID);
         InventoryInstances.selectInstance();
-        for (let i = 0; i < testData.LDRValues.validLDR17Values.length; i++) {
+        for (let i = 0; i < Object.values(MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN).length; i++) {
           InventoryInstance.goToMarcHoldingRecordAdding();
           QuickMarcEditor.updateExistingField(testData.tag852, testData.existingLocation);
           QuickMarcEditor.checkContent(testData.existingLocation, 5);
-          QuickMarcEditor.getRegularTagContent(testData.tagLDR).then((content) => {
-            const updatedLDRvalue = `${content.substring(0, 5)}${
-              testData.LDRValues.validLDR05Values[i]
-            }${testData.LDRValues.validLDR06Values[i]}${content.substring(7, 17)}${
-              testData.LDRValues.validLDR17Values[i]
-            }${testData.LDRValues.validLDR18Values[i]}${content.substring(19)}`;
-            QuickMarcEditor.updateExistingField(testData.tagLDR, updatedLDRvalue);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveHoldings();
-            HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
-              holdingsIDs.push(holdingsID);
-              HoldingsRecordView.close();
-              InventoryInstance.waitLoading();
+
+          QuickMarcEditor.verifyInitialLDRFieldsValuesInMarcHoldingRecord();
+          QuickMarcEditor.verifyMarcHoldingLDRDropdownsHoverTexts();
+
+          LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
+            LDRDropdownOptionSet.options.forEach((dropdownOption) => {
+              QuickMarcEditor.verifyFieldsDropdownOption(
+                LDR,
+                LDRDropdownOptionSet.name,
+                dropdownOption,
+              );
             });
+          });
+
+          LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
+            QuickMarcEditor.selectFieldsDropdownOption(
+              LDR,
+              LDRDropdownOptionSet.name,
+              LDRDropdownOptionSet.options[i % LDRDropdownOptionSet.options.length],
+            );
+          });
+
+          LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
+            QuickMarcEditor.verifyDropdownOptionChecked(
+              LDR,
+              LDRDropdownOptionSet.name,
+              LDRDropdownOptionSet.options[i % LDRDropdownOptionSet.options.length],
+            );
+          });
+
+          QuickMarcEditor.verifySaveAndCloseButtonEnabled();
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveHoldings();
+          HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
+            holdingsIDs.push(holdingsID);
+            HoldingsRecordView.close();
+            InventoryInstance.waitLoading();
           });
         }
       },

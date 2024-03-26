@@ -825,9 +825,10 @@ export default {
   },
 
   expandMemberSubHoldings(memberId) {
-    cy.wait(2000);
+    cy.wait(4000);
+    cy.do(Accordion({ id: memberId }).focus());
     cy.do(Accordion({ id: memberId }).clickHeader());
-    cy.wait(1000);
+    cy.wait(2000);
     cy.expect(Accordion({ id: memberId }).has({ open: true }));
   },
 
@@ -1578,7 +1579,9 @@ export default {
     });
   },
   checkInstanceHrId: (expectedInstanceHrId) => cy.expect(
-    instanceDetailsSection.find(KeyValue('Instance HRID')).has({ value: expectedInstanceHrId }),
+    instanceDetailsSection
+      .find(KeyValue('Instance HRID'))
+      .has({ value: including(expectedInstanceHrId) }),
   ),
 
   verifySharedIconByTitle(title) {

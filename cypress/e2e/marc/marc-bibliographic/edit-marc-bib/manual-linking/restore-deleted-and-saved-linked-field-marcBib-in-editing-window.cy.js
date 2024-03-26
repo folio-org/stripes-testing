@@ -1,5 +1,7 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
+import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -8,7 +10,6 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
 describe('Manual Unlinking Bib field from Authority 1XX', () => {
   const testData = {
@@ -31,14 +32,14 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
     {
       marc: 'marcBibFileForC366576.mrc',
       fileName: `C366576 testMarcFile${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       numOfRecords: 1,
       propertyName: 'instance',
     },
     {
       marc: 'marcAuthFileForC366576.mrc',
       fileName: `C366576 testMarcFile${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       numOfRecords: 1,
       propertyName: 'authority',
     },

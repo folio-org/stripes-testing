@@ -13,7 +13,7 @@ import Users from '../../support/fragments/users/users';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Fast Add', () => {
     const timeStamp = {
       start: null,

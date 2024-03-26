@@ -10,7 +10,7 @@ import { Locations, ServicePoints } from '../../../../support/fragments/settings
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
     const testData = {
       barcode: uuid(),

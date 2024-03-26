@@ -6,7 +6,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Settings', () => {
     let user;
     const targetProfileName = `C374178 autotest targetProfileName ${getRandomPostfix()}`;

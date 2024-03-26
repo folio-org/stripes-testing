@@ -28,11 +28,11 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Permissions', () => {
     let user;
     const filePath = 'marcBibFileForC377023.mrc';
-    const marcFileName = `C377023 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C377023 autotestFileName${getRandomPostfix()}.mrc`;
     const title = 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.';
 
     const mappingProfile = {

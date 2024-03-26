@@ -9,7 +9,7 @@ import SettingsDataImport from '../../../support/fragments/settings/dataImport/s
 
 let user;
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     before('Create test data', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {

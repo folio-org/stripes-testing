@@ -1,5 +1,5 @@
 import { Permissions } from '../../../support/dictionary';
-import { RECORD_STATUSES } from '../../../support/constants';
+import { RECORD_STATUSES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -10,20 +10,20 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Permissions', () => {
     let user;
-    let instanceIds;
-    const fileName = `oneMarcBib${getRandomPostfix()}.mrc`;
+    let instanceId;
+    const fileName = `C492 marcFileName${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
       cy.getAdminToken();
-      DataImport.uploadFileViaApi1(
+      DataImport.uploadFileViaApi(
         'oneMarcBib.mrc',
         fileName,
-        'Default - Create instance and SRS MARC Bib',
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       ).then((response) => {
-        instanceIds = response;
+        instanceId = response[0].instance.id;
       });
 
       cy.createTempUser([
@@ -42,9 +42,7 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      instanceIds.forEach((record) => {
-        InventoryInstance.deleteInstanceViaApi(record.instance.id);
-      });
+      InventoryInstance.deleteInstanceViaApi(instanceId);
     });
 
     it('C492 Data Import permissions (folijet)', { tags: ['extendedPath', 'folijet'] }, () => {

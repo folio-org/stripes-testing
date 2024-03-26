@@ -1,12 +1,13 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import { Permissions } from '../../../../support/dictionary';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Users from '../../../../support/fragments/users/users';
-import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC', () => {
@@ -22,14 +23,7 @@ describe('MARC', () => {
         tag040NewValue: '0',
         tag952RowIndex: 18,
         tag600RowIndex: 25,
-        ldr: {
-          tag: 'LDR',
-          ldrValue23Symbols: '00862cz\\\\a2200265n\\\\450',
-          ldrValue24Symbols: '00862cz\\\\a2200265n\\\\4500',
-        },
         searchOption: 'Keyword',
-        calloutLDRMessage:
-          'Record cannot be saved. The Leader must contain 24 characters, including null spaces.',
         calloutMessage: 'Record cannot be saved. A MARC tag must contain three characters.',
       };
 
@@ -37,13 +31,13 @@ describe('MARC', () => {
         {
           marc: 'marcBibFileForC375171.mrc',
           fileName: `testMarcFileC375171.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileForC375171.mrc',
           fileName: `testMarcFileC375171.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           authorityHeading: 'Clovio, Giulio',
           propertyName: 'authority',
         },
@@ -106,7 +100,7 @@ describe('MARC', () => {
       });
 
       it(
-        'C375171 Save linked "MARC authority" record with wrong tag value, invalid LDR, updated "1XX" and deleted field (spitfire) (TaaS)',
+        'C375171 Save linked "MARC authority" record with wrong tag value, updated "1XX" and deleted field (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, marcFiles[1].authorityHeading);
@@ -115,20 +109,11 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingTagName(testData.tag040, testData.tag040NewValue);
           QuickMarcEditor.checkButtonsEnabled();
 
-          QuickMarcEditor.checkLDRValue(testData.ldr.ldrValue24Symbols);
-          QuickMarcEditor.updateExistingField(testData.ldr.tag, testData.ldr.ldrValue23Symbols);
-          QuickMarcEditor.checkLDRValue(testData.ldr.ldrValue23Symbols);
-
           QuickMarcEditor.updateExistingField(testData.tag100, testData.newAuthority100FieldValue);
+          QuickMarcEditor.checkContentByTag(testData.tag100, testData.newAuthority100FieldValue);
 
           QuickMarcEditor.deleteField(testData.tag952RowIndex);
           QuickMarcEditor.afterDeleteNotification(testData.tag952);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.calloutLDRMessage);
-          QuickMarcEditor.closeCallout();
-
-          QuickMarcEditor.updateExistingField(testData.ldr.tag, testData.ldr.ldrValue24Symbols);
-          QuickMarcEditor.checkLDRValue(testData.ldr.ldrValue24Symbols);
 
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
@@ -141,6 +126,7 @@ describe('MARC', () => {
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(1);
 
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
+          MarcAuthorities.verifyViewPaneContentExists();
         },
       );
     });

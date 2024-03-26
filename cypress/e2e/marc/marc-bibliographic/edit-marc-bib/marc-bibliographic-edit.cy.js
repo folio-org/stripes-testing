@@ -1,5 +1,5 @@
+import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../../support/constants';
 import { Permissions } from '../../../../support/dictionary';
-import { RECORD_STATUSES } from '../../../../support/constants';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
@@ -24,7 +24,7 @@ describe('MARC', () => {
           tag755: '755',
         },
       };
-      const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
       const propertyName = 'instance';
       const tagArray = [
         '100',
