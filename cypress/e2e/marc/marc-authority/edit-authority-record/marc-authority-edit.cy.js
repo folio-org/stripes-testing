@@ -3,6 +3,7 @@ import {
   AUTHORITY_LDR_FIELD_ELVL_DROPDOWN,
   AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN,
   AUTHORITY_LDR_FIELD_STATUS_DROPDOWN,
+  AUTHORITY_LDR_FIELD_TYPE_DROPDOWN,
   DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
@@ -13,7 +14,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import MarcFieldProtection from '../../../../support/fragments/settings/dataImport/marcFieldProtection';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import getRandomPostfix, { replaceByIndex } from '../../../../support/utils/stringTools';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 const LDR = 'LDR';
 
@@ -404,67 +405,34 @@ describe('MARC', () => {
         authority: {
           title: 'C353583Twain, Mark, 1835-1910. Adventures of Huckleberry Finn',
           searchOption: 'Keyword',
-          tag: '100',
-          rowIndex: 14,
         },
       };
+      const statusDropdownOptions = Object.values(AUTHORITY_LDR_FIELD_STATUS_DROPDOWN);
+      const typeDropdownOptions = Object.values(AUTHORITY_LDR_FIELD_TYPE_DROPDOWN);
+      const elvlDropdownOptions = Object.values(AUTHORITY_LDR_FIELD_ELVL_DROPDOWN);
+      const punctDropdownOptions = Object.values(AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN);
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const propertyName = 'authority';
-      const initialLDRValue = String.raw`03891cz\\a2200505n\\4500`;
       const changesSavedCallout =
         'This record has successfully saved and is in process. Changes may not appear immediately.';
-      const changedLDRs = [
+      const LDRDropdownOptionSets = [
         {
-          newContent: replaceByIndex(
-            replaceByIndex(replaceByIndex(initialLDRValue, 5, 'a'), 17, 'n'),
-            18,
-            '\\',
-          ),
+          name: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
+          options: statusDropdownOptions,
         },
         {
-          newContent: replaceByIndex(
-            replaceByIndex(replaceByIndex(initialLDRValue, 5, 'c'), 17, 'o'),
-            18,
-            ' ',
-          ),
+          name: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+          options: typeDropdownOptions,
         },
         {
-          newContent: replaceByIndex(
-            replaceByIndex(replaceByIndex(initialLDRValue, 5, 'd'), 17, 'n'),
-            18,
-            'c',
-          ),
+          name: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL,
+          options: elvlDropdownOptions,
         },
         {
-          newContent: replaceByIndex(
-            replaceByIndex(replaceByIndex(initialLDRValue, 5, 'n'), 17, 'o'),
-            18,
-            'i',
-          ),
-        },
-        {
-          newContent: replaceByIndex(
-            replaceByIndex(replaceByIndex(initialLDRValue, 5, 'o'), 17, 'n'),
-            18,
-            'u',
-          ),
-        },
-        {
-          newContent: replaceByIndex(
-            replaceByIndex(replaceByIndex(initialLDRValue, 5, 's'), 17, 'o'),
-            18,
-            'c',
-          ),
-        },
-        {
-          newContent: replaceByIndex(
-            replaceByIndex(replaceByIndex(initialLDRValue, 5, 'x'), 17, 'n'),
-            18,
-            'i',
-          ),
+          name: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT,
+          options: punctDropdownOptions,
         },
       ];
-
       const marcFieldProtectionRules = [];
       const createdAuthorityID = [];
 
@@ -519,19 +487,50 @@ describe('MARC', () => {
         'C353583 Verify LDR validation rules with valid data (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-          MarcAuthorities.selectTitle(testData.authority.title);
-          changedLDRs.forEach((changeLDR) => {
+          for (let i = 0; i < statusDropdownOptions.length; i++) {
+            MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+            MarcAuthorities.selectTitle(testData.authority.title);
             MarcAuthority.edit();
-            QuickMarcEditor.updateExistingField('LDR', changeLDR.newContent);
-            QuickMarcEditor.pressSaveAndClose();
-            if (changeLDR.newContent === String.raw`03891az\\a2200505n\\4500`) {
-              MarcAuthorities.verifyFirstValueSaveSuccess(
-                changesSavedCallout,
-                changeLDR.newContent,
+
+            QuickMarcEditor.verifyBoxLabelsInLDRFieldInMarcAuthorityRecord();
+            QuickMarcEditor.verifyLDRDropdownsHoverTexts();
+
+            LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
+              LDRDropdownOptionSet.options.forEach((dropdownOption) => {
+                QuickMarcEditor.verifyFieldsDropdownOption(
+                  LDR,
+                  LDRDropdownOptionSet.name,
+                  dropdownOption,
+                );
+              });
+            });
+
+            LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
+              QuickMarcEditor.selectFieldsDropdownOption(
+                LDR,
+                LDRDropdownOptionSet.name,
+                LDRDropdownOptionSet.options[i % LDRDropdownOptionSet.options.length],
               );
-            } else MarcAuthorities.verifySaveSuccess(changesSavedCallout, changeLDR.newContent);
-          });
+            });
+
+            LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
+              QuickMarcEditor.verifyDropdownOptionChecked(
+                LDR,
+                LDRDropdownOptionSet.name,
+                LDRDropdownOptionSet.options[i % LDRDropdownOptionSet.options.length],
+              );
+            });
+
+            QuickMarcEditor.pressSaveAndClose();
+
+            MarcAuthorities.verifyLDRFieldSavedSuccessfully(
+              changesSavedCallout,
+              statusDropdownOptions[i % statusDropdownOptions.length],
+              typeDropdownOptions[i % typeDropdownOptions.length],
+              elvlDropdownOptions[i % elvlDropdownOptions.length],
+              punctDropdownOptions[i % punctDropdownOptions.length],
+            );
+          }
         },
       );
     });

@@ -15,8 +15,6 @@ const testData = {
   jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
   propertyName: 'instance',
   instanceTitle: 'The Journal of ecclesiastical history.',
-  LDRValue: '01338cas\\a2200409\\\\\\4500',
-  updateLDRValue: '01338cas\\a2200409\\\\\\450',
   searchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
 };
 
@@ -68,11 +66,11 @@ describe('MARC', () => {
           InventoryInstances.selectInstanceById(instanceId);
           InventoryInstance.waitLoading();
           InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.updateExistingField('LDR', testData.updateLDRValue);
+          QuickMarcEditor.fillInElvlBoxInLDRField('');
           QuickMarcEditor.deleteFieldByTagAndCheck('222');
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.verifyRecordCanNotBeSavedCalloutLDR();
-          QuickMarcEditor.updateExistingField('LDR', testData.LDRValue);
+          QuickMarcEditor.fillInElvlBoxInLDRField('\\');
           QuickMarcEditor.clickSaveAndCloseThenCheck(1);
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkButtonsDisabled();
