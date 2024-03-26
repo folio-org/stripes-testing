@@ -8,8 +8,9 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let user = null;
     const instanceIds = [];
@@ -17,12 +18,22 @@ describe('data-import', () => {
     const numberOfLogsToDelete = 2;
     const numberOfLogsPerPage = 25;
     const getCalloutSuccessMessage = (logsCount) => `${logsCount} data import logs have been successfully deleted.`;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
     before('create test data', () => {
+      cy.getAdminToken();
+      for (let i = 0; i < 26; i++) {
+        const fileNameToUpload = `C358137 autotestFile${getRandomPostfix()}.mrc`;
+
+        DataImport.uploadFileViaApi(filePathToUpload, fileNameToUpload, jobProfileToRun).then(
+          (response) => {
+            instanceIds.push(response[0].instance.id);
+          },
+        );
+      }
       cy.createTempUser([
-        Permissions.moduleDataImportEnabled.gui,
         Permissions.dataImportDeleteLogs.gui,
+        Permissions.moduleDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -30,12 +41,12 @@ describe('data-import', () => {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
-        for (let i = 0; i < 26; i++) {
+        for (let i = 0; i < 4; i++) {
           const fileNameToUpload = `C358137 autotestFile${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFileViaApi(filePathToUpload, fileNameToUpload, jobProfileToRun).then(
             (response) => {
-              instanceIds.push(response.entries[0].relatedInstanceInfo.idList[0]);
+              instanceIds.push(response[0].instance.id);
             },
           );
         }
@@ -57,6 +68,7 @@ describe('data-import', () => {
       () => {
         // need to open file for this we find it
         Logs.openViewAllLogs();
+        cy.wait(5000);
         LogsViewAll.openUserIdAccordion();
         LogsViewAll.filterJobsByUser(`${user.firstName} ${user.lastName}`);
         Logs.openFileDetailsByRowNumber();

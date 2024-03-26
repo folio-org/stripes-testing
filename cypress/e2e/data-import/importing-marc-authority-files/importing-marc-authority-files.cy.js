@@ -13,13 +13,14 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     const testData = {};
-    const jobProfileToRun = 'Default - Create SRS MARC Authority';
-    const propertyName = 'relatedAuthorityInfo';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
+    const propertyName = 'authority';
     const createdJobProfile = {
       profileName: 'Update MARC authority records - 999 ff $s',
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
@@ -72,8 +73,8 @@ describe('data-import', () => {
       () => {
         DataImport.uploadFileViaApi('test-auth-file.mrc', fileName, jobProfileToRun).then(
           (response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityIDs.push(record[propertyName].idList[0]);
+            response.forEach((record) => {
+              createdAuthorityIDs.push(record[propertyName].id);
             });
           },
         );
@@ -94,8 +95,8 @@ describe('data-import', () => {
           fileName,
           createdJobProfile.profileName,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            createdAuthorityIDs.push(record[propertyName].idList[0]);
+          response.forEach((record) => {
+            createdAuthorityIDs.push(record[propertyName].id);
           });
         });
         Logs.waitFileIsImported(fileName);

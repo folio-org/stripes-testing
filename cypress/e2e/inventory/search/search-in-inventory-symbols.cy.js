@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -7,7 +8,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Search in Inventory', () => {
     const testData = {
       searchQueries: [
@@ -76,16 +77,16 @@ describe('inventory', () => {
       {
         marc: 'marcBibFileC369042.mrc',
         fileName: `testMarcFileC369042.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numberOfRecords: 3,
-        propertyName: 'relatedInstanceInfo',
+        propertyName: 'instance',
       },
       {
         marc: 'marcBibFileC368038.mrc',
         fileName: `testMarcFileC368038.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numberOfRecords: 8,
-        propertyName: 'relatedInstanceInfo',
+        propertyName: 'instance',
       },
     ];
 
@@ -102,8 +103,8 @@ describe('inventory', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
         });

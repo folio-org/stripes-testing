@@ -2,6 +2,7 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
@@ -39,7 +40,6 @@ describe('Data Import', () => {
       marcFile: {
         marc: 'marcBibFileForC405528.mrc',
         fileName: `C405528 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         exportedFileName: `C405528 exportedTestMarcFile${getRandomPostfix()}.mrc`,
         modifiedMarcFile: `C405528 modifiedTestMarcFile${getRandomPostfix()}.mrc`,
       },
@@ -84,22 +84,13 @@ describe('Data Import', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
+      DataImport.uploadFileViaApi(
+        testData.marcFile.marc,
+        testData.marcFile.fileName,
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      ).then((response) => {
+        testData.sharedInstanceId = response[0].instance.id;
       });
-      DataImport.verifyUploadState();
-      DataImport.uploadFileAndRetry(testData.marcFile.marc, testData.marcFile.fileName);
-      JobProfiles.waitLoadingList();
-      JobProfiles.search(testData.marcFile.jobProfileToRun);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(testData.marcFile.fileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(testData.marcFile.fileName);
-      Logs.getCreatedItemsID().then((link) => {
-        testData.sharedInstanceId.push(link.split('/')[5]);
-      });
-      cy.logout();
 
       // create user A
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
@@ -160,7 +151,7 @@ describe('Data Import', () => {
       cy.getAdminToken();
       Users.deleteViaApi(users.userAProperties.userId);
       Users.deleteViaApi(users.userBProperties.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId[0]);
+      InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -204,7 +195,6 @@ describe('Data Import', () => {
 
             // upload the exported and edited marc file
             cy.visit(TopMenu.dataImportPath);
-            // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
             DataImport.verifyUploadState();
             DataImport.uploadExportedFile(testData.marcFile.modifiedMarcFile);
             JobProfiles.waitFileIsUploaded();

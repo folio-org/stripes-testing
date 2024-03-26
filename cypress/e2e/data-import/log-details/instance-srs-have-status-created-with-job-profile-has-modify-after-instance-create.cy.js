@@ -24,11 +24,11 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     const filePathForUpload = 'marcFileForC386867.mrc';
-    const fileName = `C386867 autotestFileName${getRandomPostfix()}`;
+    const fileName = `C386867 autotestFileName${getRandomPostfix()}.mrc`;
     const mappingProfile = {
       name: `C386867 Modify MARC_BIB ${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,

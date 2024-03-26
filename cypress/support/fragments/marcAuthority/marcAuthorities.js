@@ -288,11 +288,25 @@ export default {
     ]);
   },
 
-  verifySaveSuccess(successMsg, txt) {
+  verifyLDRFieldSavedSuccessfully(
+    successMsg,
+    statusDropdownValue,
+    typeDropdownValue,
+    elvlDropdownValue,
+    punctDropdownValue,
+  ) {
+    const position05 = statusDropdownValue.substring(0, 1);
+    const position06 = typeDropdownValue.substring(0, 1);
+    const position17 = elvlDropdownValue.substring(0, 1);
+    const position18 =
+      punctDropdownValue.substring(0, 1) === '\\' ? ' ' : punctDropdownValue.substring(0, 1);
+
     cy.expect([
       Callout(successMsg).exists(),
       marcViewSectionContent.has({
-        text: including(`${txt.substring(0, 7)}  ${txt.substring(9, 19)} ${txt.substring(20, 24)}`),
+        text: including(
+          `LEADER 03891${position05}${position06}  a2200505${position17}${position18} 4500`,
+        ),
       }),
     ]);
   },

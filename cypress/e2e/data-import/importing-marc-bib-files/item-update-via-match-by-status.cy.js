@@ -40,7 +40,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let statisticalCode;
@@ -56,9 +56,9 @@ describe('data-import', () => {
     const itemNote = 'THIS WAS UPDATED!';
     const jobProfileNameForExport = `C357552 Bibs with Item HRIDs ${getRandomPostfix()}`;
     // file names
-    const nameMarcFileForImportCreate = `C357552autotestFile.${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `C357552autotestFile${getRandomPostfix()}.csv`;
-    const nameMarcFileForUpdate = `C357552autotestFile${getRandomPostfix()}.mrc`;
+    const nameMarcFileForImportCreate = `C357552 autotestFile${getRandomPostfix()}.mrc`;
+    const nameForCSVFile = `C357552 autotestFile${getRandomPostfix()}.csv`;
+    const nameMarcFileForUpdate = `C357552 autotestFile${getRandomPostfix()}.mrc`;
 
     const collectionOfMappingAndActionProfiles = [
       {

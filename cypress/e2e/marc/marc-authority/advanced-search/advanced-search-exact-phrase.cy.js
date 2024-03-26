@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -36,7 +37,7 @@ describe('MARC', () => {
         { auth: 'Authorized', heading: 'Parliament paper', typeOfHeading: 'Topical' },
       ];
 
-      const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const marcFile = {
         marc: 'MarcAuthoritiesForC407728.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
@@ -48,8 +49,8 @@ describe('MARC', () => {
         cy.getAdminToken();
         DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
           (response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityIDs.push(record.relatedAuthorityInfo.idList[0]);
+            response.forEach((record) => {
+              createdAuthorityIDs.push(record.authority.id);
             });
           },
         );

@@ -36,13 +36,13 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
     const quantityOfItems = '1';
-    const marcFileNameForCreate = `C11110 autotestFile.${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C11110 editedMarcFile.${getRandomPostfix()}.mrc`;
-    const marcFileNameForUpdate = `C11110 autotestFile.${getRandomPostfix()}.mrc`;
+    const marcFileNameForCreate = `C11110 autotestFile${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C11110 editedMarcFile${getRandomPostfix()}.mrc`;
+    const marcFileNameForUpdate = `C11110 autotestFile${getRandomPostfix()}.mrc`;
 
     const instanceMappingProfileForCreate = {
       name: `C11110 autotest instance mapping profile.${getRandomPostfix()}`,

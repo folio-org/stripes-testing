@@ -1,13 +1,14 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
+import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -16,8 +17,6 @@ describe('MARC', () => {
         const testData = {
           tag245: '245',
           tag245Content: 'Title C389480',
-          tagLDR: 'LDR',
-          tagLDRContent: '00000naa\\a2200000uu\\4500',
         };
 
         const newFields = [
@@ -47,19 +46,19 @@ describe('MARC', () => {
           {
             marc: 'marcAuthFileForC389480-1.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
           },
           {
             marc: 'marcAuthFileForC389480-2.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
           },
           {
             marc: 'marcAuthFileForC389480-3.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
           },
         ];
@@ -75,7 +74,7 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              createdAuthorityIDs.push(response.entries[0].relatedAuthorityInfo.idList[0]);
+              createdAuthorityIDs.push(response[0].authority.id);
             });
           });
           cy.createTempUser([
@@ -118,7 +117,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
 
             // #3 Replace blank values in "LDR" positions 06, 07 with valid values
-            QuickMarcEditor.updateExistingField(testData.tagLDR, testData.tagLDRContent);
+            QuickMarcEditor.updateLDR06And07Positions();
 
             // #4 - #5 Add three linkable fields -> Replace "$a" in fourth boxes of added linkable fields with "$0"
             newFields.forEach((newField) => {

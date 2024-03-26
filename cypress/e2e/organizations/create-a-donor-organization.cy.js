@@ -39,7 +39,7 @@ describe('Organizations', () => {
     'C421980 Create a donor Organization (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
-      Organizations.createDonorOrganizationViaUi(organization);
+      Organizations.createDonorOrganization(organization);
       Organizations.closeDetailsPane();
       Organizations.selectIsDonorFilter('Yes');
       Organizations.selectOrganization(organization.name);

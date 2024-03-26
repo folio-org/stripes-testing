@@ -15,11 +15,9 @@ describe('MARC', () => {
       const testData = {
         tags: {
           tag245: '245',
-          tagLDR: 'LDR',
         },
         fieldContents: {
           tag245Content: 'C405548 Created Local Instance',
-          tagLDRContent: '00000naa\\a2200000uu\\4500',
         },
         contributor: 'Publius Vergilius Maro',
       };
@@ -83,10 +81,7 @@ describe('MARC', () => {
             testData.tags.tag245,
             `$a ${testData.fieldContents.tag245Content}`,
           );
-          QuickMarcEditor.updateExistingField(
-            testData.tags.tagLDR,
-            testData.fieldContents.tagLDRContent,
-          );
+          QuickMarcEditor.updateLDR06And07Positions();
           MarcAuthority.addNewField(4, newField.tag, newField.content);
           QuickMarcEditor.updateIndicatorValue(newField.tag, '2', 0);
           QuickMarcEditor.updateIndicatorValue(newField.tag, '0', 1);

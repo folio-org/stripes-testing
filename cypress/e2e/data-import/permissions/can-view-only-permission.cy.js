@@ -1,5 +1,5 @@
 import { Permissions } from '../../../support/dictionary';
-import { RECORD_STATUSES } from '../../../support/constants';
+import { RECORD_STATUSES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -10,10 +10,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Permissions', () => {
     let user;
-    let instanceHrid;
+    let instnaceId;
     const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
 
     before('create test data', () => {
@@ -21,9 +21,9 @@ describe('data-import', () => {
       DataImport.uploadFileViaApi(
         'oneMarcBib.mrc',
         fileName,
-        'Default - Create instance and SRS MARC Bib',
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       ).then((response) => {
-        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+        instnaceId = response[0].instance.id;
       });
 
       cy.createTempUser([
@@ -43,11 +43,7 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+        InventoryInstance.deleteInstanceViaApi(instnaceId);
       });
     });
 

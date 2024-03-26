@@ -1,26 +1,27 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     let user;
     let instanceId;
     const filePathToUpload = 'oneMarcBib.mrc';
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const fileNameToUpload = `C380637autotestFile${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathToUpload, fileNameToUpload, jobProfileToRun).then(
         (response) => {
-          instanceId = response.entries[0].relatedInstanceInfo.idList[0];
+          instanceId = response[0].instance.id;
         },
       );
 

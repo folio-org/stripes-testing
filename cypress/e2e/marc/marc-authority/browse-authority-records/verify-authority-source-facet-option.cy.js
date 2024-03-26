@@ -1,14 +1,15 @@
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
-import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import Users from '../../../../support/fragments/users/users';
-import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 const testData = {};
-const jobProfileToRun = 'Default - Create SRS MARC Authority';
+const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
 const fileName = 'marFileForC365630.mrc';
 const updatedFileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
 const authoritySource = 'LC Subject Headings (LCSH)';
@@ -18,25 +19,23 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Browse - Authority records', () => {
       before('Creating data', () => {
+        cy.getAdminToken();
+        DataImport.uploadFileViaApi(fileName, updatedFileName, jobProfileToRun).then((response) => {
+          response.forEach((record) => {
+            createdAuthorityID.push(record.authority.id);
+          });
+        });
+
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
           (createdUserProperties) => {
             testData.userProperties = createdUserProperties;
-          },
-        );
 
-        cy.getAdminToken();
-        DataImport.uploadFileViaApi(fileName, updatedFileName, jobProfileToRun)
-          .then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityID.push(record.relatedAuthorityInfo.idList[0]);
-            });
-          })
-          .then(() => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             });
-          });
+          },
+        );
       });
 
       after('Deleting data', () => {

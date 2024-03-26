@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
@@ -18,7 +19,7 @@ describe('MARC', () => {
       {
         marc: 'marcAuthFileC365626.mrc',
         fileName: `testMarcFileC365626.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 1,
       },
     ];
@@ -33,8 +34,8 @@ describe('MARC', () => {
           marcFile.fileName,
           marcFile.jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            createdRecordIDs.push(record.relatedAuthorityInfo.idList[0]);
+          response.forEach((record) => {
+            createdRecordIDs.push(record.authority.id);
           });
         });
       });

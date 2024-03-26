@@ -1,11 +1,12 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthoritiesBrowseSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesBrowseSearch';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import MarcAuthoritiesBrowseSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesBrowseSearch';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import DataImport from '../../../../support/fragments/data_import/dataImport';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -18,7 +19,7 @@ describe('MARC', () => {
       const marcFile = {
         marc: 'marcAuthC422027.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 1,
       };
 
@@ -31,8 +32,8 @@ describe('MARC', () => {
           marcFile.fileName,
           marcFile.jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            createdAuthorityIDs.push(record.relatedAuthorityInfo.idList[0]);
+          response.forEach((record) => {
+            createdAuthorityIDs.push(record.authority.id);
           });
         });
 

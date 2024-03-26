@@ -34,7 +34,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const permanentLocation = 'Main Library (KU/CC/DI/M)';
     const recordType = 'MARC_BIBLIOGRAPHIC';
@@ -44,9 +44,9 @@ describe('data-import', () => {
     const noteForHoldingsMappingProfile = 'This note for holdings mapping profile';
     const noteForItemMappingProfile = 'This note for item mapping profile';
     // unique file name
-    const marcFileForCreate = `C17027 autoTestFile.${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C17027 marcFileForMatchOnLocation.${getRandomPostfix()}.mrc`;
-    const fileNameAfterUpdate = `C17027 marcFileForMatchOnLocation.${getRandomPostfix()}.mrc`;
+    const marcFileForCreate = `C17027 autoTestFile${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C17027 marcFileForMatchOnLocation${getRandomPostfix()}.mrc`;
+    const fileNameAfterUpdate = `C17027 marcFileForMatchOnLocation${getRandomPostfix()}.mrc`;
 
     // profiles for creating instance, holdings, item
     const instanceMappingProfileForCreate = {

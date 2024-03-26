@@ -10,6 +10,7 @@ import {
   EXISTING_RECORDS_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import {
   JobProfiles as SettingsJobProfiles,
@@ -38,7 +39,7 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 import FileManager from '../../../support/utils/fileManager';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let instanceHrid;
@@ -102,9 +103,9 @@ describe('data-import', () => {
         DataImport.uploadFileViaApi(
           'oneMarcBib.mrc',
           fileName,
-          'Default - Create instance and SRS MARC Bib',
+          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         ).then((response) => {
-          instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+          instanceHrid = response[0].instance.hrid;
         });
       });
     });

@@ -13,6 +13,7 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import BrowseContributors from '../../../../support/fragments/inventory/search/browseContributors';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -57,24 +58,24 @@ describe('Inventory', () => {
       {
         marc: 'marcBibFileForC411578-Shared.mrc',
         fileName: `C411578 Central testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-        propertyName: 'relatedInstanceInfo',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        propertyName: 'instance',
         tenant: tenantNames.central,
         numOfRecords: 3,
       },
       {
         marc: 'marcBibFileForC411578-Local-M1.mrc',
         fileName: `C411578 Member1 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-        propertyName: 'relatedInstanceInfo',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        propertyName: 'instance',
         tenant: tenantNames.college,
         numOfRecords: 1,
       },
       {
         marc: 'marcBibFileForC411578-Local-M2.mrc',
         fileName: `C411578 Member2 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-        propertyName: 'relatedInstanceInfo',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        propertyName: 'instance',
         tenant: tenantNames.university,
         numOfRecords: 1,
       },
@@ -209,8 +210,8 @@ describe('Inventory', () => {
                   marcFiles[0].fileName,
                   marcFiles[0].jobProfileToRun,
                 ).then((response) => {
-                  response.entries.forEach((record) => {
-                    createdRecordsIds.push(record[marcFiles[0].propertyName].idList[0]);
+                  response.forEach((record) => {
+                    createdRecordsIds.push(record[marcFiles[0].propertyName].id);
                   });
                 });
 
@@ -220,8 +221,8 @@ describe('Inventory', () => {
                   marcFiles[1].fileName,
                   marcFiles[1].jobProfileToRun,
                 ).then((response) => {
-                  response.entries.forEach((record) => {
-                    createdRecordsIds.push(record[marcFiles[1].propertyName].idList[0]);
+                  response.forEach((record) => {
+                    createdRecordsIds.push(record[marcFiles[1].propertyName].id);
                   });
                 });
 
@@ -231,8 +232,8 @@ describe('Inventory', () => {
                   marcFiles[2].fileName,
                   marcFiles[2].jobProfileToRun,
                 ).then((response) => {
-                  response.entries.forEach((record) => {
-                    createdRecordsIds.push(record[marcFiles[2].propertyName].idList[0]);
+                  response.forEach((record) => {
+                    createdRecordsIds.push(record[marcFiles[2].propertyName].id);
                   });
                 });
               },

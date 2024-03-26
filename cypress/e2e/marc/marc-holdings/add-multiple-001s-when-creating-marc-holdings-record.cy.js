@@ -1,22 +1,23 @@
+import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Users from '../../../support/fragments/users/users';
-import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 const testData = {
   marc: 'marcBibFileC387462.mrc',
   fileName: `testMarcFileC387462.${getRandomPostfix()}.mrc`,
-  jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-  propertyName: 'relatedInstanceInfo',
+  jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+  propertyName: 'instance',
   instanceTitle: 'C387462The Journal of ecclesiastical history.',
   searchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
 };
@@ -53,8 +54,8 @@ describe('MARC', () => {
           testData.fileName,
           testData.jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            instanceId = record[testData.propertyName].idList[0];
+          response.forEach((record) => {
+            instanceId = record[testData.propertyName].id;
           });
         });
 
@@ -75,7 +76,7 @@ describe('MARC', () => {
       'C387462 Add multiple 001s when creating "MARC Holdings" record (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire'] },
       () => {
-        InventoryInstances.searchBySource('MARC');
+        InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventorySearchAndFilter.selectSearchOptions(testData.searchOption, testData.instanceTitle);
         InventorySearchAndFilter.clickSearch();
         InventoryInstance.selectTopRecord();

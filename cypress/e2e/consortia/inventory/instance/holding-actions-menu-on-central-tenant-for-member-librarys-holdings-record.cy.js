@@ -26,36 +26,33 @@ describe('Inventory', () => {
           testData.instance = instanceData;
         })
         .then(() => {
+          cy.resetTenant();
           cy.setTenant(Affiliations.College);
+          cy.getCollegeAdminToken();
           ServicePoints.createViaApi(testData.servicePoint).then(() => {
             testData.location = Locations.getDefaultLocation({
               servicePointId: testData.servicePoint.id,
             }).location;
 
             Locations.createViaApi(testData.location).then(() => {
-              InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: testData.instance.instanceId,
-                  permanentLocationId: testData.location.id,
-                  sourceId: folioSource.id,
-                }).then(({ id: holdingId }) => {
-                  testData.instance.holdingId = holdingId;
-                });
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: testData.instance.instanceId,
+                permanentLocationId: testData.location.id,
+              }).then(({ id: holdingId }) => {
+                testData.instance.holdingId = holdingId;
               });
             });
           });
         });
+
       cy.resetTenant();
+      cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         user = userProperties;
 
-        cy.assignAffiliationToUser(Affiliations.College, user.userId);
-        cy.setTenant(Affiliations.College);
-        cy.assignPermissionsToExistingUser(user.userId, [Permissions.inventoryAll.gui]).then(() => {
-          cy.login(user.username, user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
         });
       });
     });
@@ -69,8 +66,8 @@ describe('Inventory', () => {
       ServicePoints.deleteViaApi(testData.servicePoint.id);
       cy.resetTenant();
       cy.getAdminToken();
-      InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
       Users.deleteViaApi(user.userId);
+      InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
     });
 
     it(

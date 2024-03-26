@@ -6,16 +6,18 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import Users from '../../../support/fragments/users/users';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     const testData = {
       // Path to static file in fixtures
       pathToStaticFile: 'oneMarcBib.mrc',
-      jobProfileName: 'Default - Create instance and SRS MARC Bib',
+      jobProfileName: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       fileNameForFailedImport: `C11113test${getRandomPostfix()}.mrc`,
       fileNameForSuccessfulImport: `C11113test${getRandomPostfix()}.mrc`,
       oclcNumber: '1234567',
@@ -50,10 +52,19 @@ describe('data-import', () => {
           testData.pathToStaticFile,
           `C11113 autotestFileName ${getRandomPostfix()}`,
           testData.jobProfileName,
-        );
+        ).then((response) => {
+          testData.instanceId = response[0].instance.id;
+        });
 
         // Remove generated test files from fixtures after uploading
         FileManager.deleteFile(`cypress/fixtures/${testData.fileNameForFailedImport}`);
+      });
+    });
+
+    after('delete test data', () => {
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(testData.user.userId);
+        InventoryInstance.deleteInstanceViaApi(testData.instanceId);
       });
     });
 

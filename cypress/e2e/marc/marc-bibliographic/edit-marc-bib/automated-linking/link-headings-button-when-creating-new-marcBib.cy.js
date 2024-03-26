@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -16,11 +17,9 @@ describe('MARC', () => {
         const testData = {
           tags: {
             tag245: '245',
-            tagLDR: 'LDR',
           },
           fieldContents: {
             tag245Content: 'New title C422145',
-            tagLDRContent: '00000naa\\a2200000uu\\4500',
           },
           naturalIds: {
             tag100: '0255863',
@@ -65,16 +64,16 @@ describe('MARC', () => {
           {
             marc: 'marcAuthFileForC422145_1.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 5,
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
           },
           {
             marc: 'marcAuthFileForC422145_2.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 3,
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
           },
         ];
 
@@ -88,8 +87,8 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].id);
               });
             });
           });
@@ -124,10 +123,7 @@ describe('MARC', () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.checkAbsenceOfLinkHeadingsButton();
             QuickMarcEditor.updateExistingField(testData.tags.tag245, '$a A New Record');
-            QuickMarcEditor.updateExistingField(
-              testData.tags.tagLDR,
-              testData.fieldContents.tagLDRContent,
-            );
+            QuickMarcEditor.updateLDR06And07Positions();
             newFieldsForC388562.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, '');
             });

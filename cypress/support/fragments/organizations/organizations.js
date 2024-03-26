@@ -87,6 +87,7 @@ const listIntegrationConfigs = MultiColumnList({
 const donorCheckbox = Checkbox('Donor');
 const toggleButtonIsDonor = Button({ id: 'accordion-toggle-button-isDonor' });
 const donorSection = Section({ id: 'isDonor' });
+const bankingInformationButton = Button('Banking information');
 
 export default {
   waitLoading: () => {
@@ -110,7 +111,7 @@ export default {
     ]);
   },
 
-  createDonorOrganizationViaUi: (organization) => {
+  createDonorOrganization: (organization) => {
     cy.expect(buttonNew.exists());
     cy.do([
       buttonNew.click(),
@@ -120,6 +121,20 @@ export default {
       donorCheckbox.click(),
     ]);
     cy.expect(donorCheckbox.is({ disabled: false }));
+    cy.do(saveAndClose.click());
+  },
+
+  addDonorToOrganization: () => {
+    cy.wait(4000);
+    cy.do(donorCheckbox.click());
+    cy.expect(donorCheckbox.is({ disabled: false }));
+    cy.do(saveAndClose.click());
+  },
+
+  removeDonorFromOrganization: () => {
+    cy.wait(4000);
+    cy.expect(donorCheckbox.is({ disabled: false }));
+    cy.do(donorCheckbox.click());
     cy.do(saveAndClose.click());
   },
 
@@ -400,7 +415,7 @@ export default {
   },
 
   closeDetailsPane: () => {
-    cy.do([timesButton.click()]);
+    cy.do(PaneHeader({ id: 'paneHeaderpane-organization-details' }).find(timesButton).click());
   },
 
   selectCountryFilter: () => {
@@ -736,5 +751,29 @@ export default {
 
   saveOrganization: () => {
     cy.do(saveAndClose.click());
+  },
+
+  addBankingInformation: (bankingInformation) => {
+    cy.do([
+      bankingInformationButton.click(),
+      Button({ id: 'bankingInformation-add-button' }).click(),
+      TextField({ name: 'bankingInformation[0].bankName' }).fillIn(bankingInformation.name),
+      TextField({ name: 'bankingInformation[0].bankAccountNumber' }).fillIn(
+        bankingInformation.accountNumber,
+      ),
+    ]);
+    cy.do(saveAndClose.click());
+    cy.wait(4000);
+  },
+
+  deleteBankingInformation: () => {
+    cy.do([
+      bankingInformationButton.click(),
+      Section({ id: 'bankingInformationSection' })
+        .find(Button({ icon: 'trash' }))
+        .click(),
+    ]);
+    cy.do(saveAndClose.click());
+    cy.wait(4000);
   },
 };

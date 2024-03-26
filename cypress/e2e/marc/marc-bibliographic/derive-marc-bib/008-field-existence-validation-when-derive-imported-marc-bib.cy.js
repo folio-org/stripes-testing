@@ -1,13 +1,14 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySteps from '../../../../support/fragments/inventory/inventorySteps';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import InventorySteps from '../../../../support/fragments/inventory/inventorySteps';
 import DateTools from '../../../../support/utils/dateTools';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -44,9 +45,9 @@ describe('MARC', () => {
       const marcFile = {
         marc: 'marcBibFileForC387452.mrc',
         fileName: `C387452 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numOfRecords: 1,
-        propertyName: 'relatedInstanceInfo',
+        propertyName: 'instance',
       };
 
       before('Creating user and data', () => {
@@ -65,8 +66,8 @@ describe('MARC', () => {
                 marcFile.fileName,
                 marcFile.jobProfileToRun,
               ).then((response) => {
-                response.entries.forEach((record) => {
-                  testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+                response.forEach((record) => {
+                  testData.createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
               });
             },

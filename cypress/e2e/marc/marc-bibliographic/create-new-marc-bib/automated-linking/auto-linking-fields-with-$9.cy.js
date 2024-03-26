@@ -1,14 +1,15 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
+import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
-import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -18,11 +19,9 @@ describe('MARC', () => {
           createdRecordIDs: [],
           tags: {
             tag245: '245',
-            tagLDR: 'LDR',
           },
           fieldContents: {
             tag245Content: `$a C422151 New title ${getRandomPostfix()} $9 TEST`,
-            tagLDRContent: '00000naa\\a2200000uu\\4500',
           },
           bib100AfterLinkingToAuth100: [
             5,
@@ -83,13 +82,13 @@ describe('MARC', () => {
           {
             marc: 'marcAuthFileForC422151_1.mrc',
             fileName: `C422151_1 testMarcFile${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
           },
           {
             marc: 'marcAuthFileForC422151_2.mrc',
             fileName: `C422151_2 testMarcFile${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
           },
         ];
@@ -116,7 +115,7 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              testData.createdRecordIDs.push(response.entries[0].relatedAuthorityInfo.idList[0]);
+              testData.createdRecordIDs.push(response[0].authority.id);
             });
           });
 
@@ -158,10 +157,7 @@ describe('MARC', () => {
               testData.tags.tag245,
               testData.fieldContents.tag245Content,
             );
-            QuickMarcEditor.updateExistingField(
-              testData.tags.tagLDR,
-              testData.fieldContents.tagLDRContent,
-            );
+            QuickMarcEditor.updateLDR06And07Positions();
             newFields.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
             });

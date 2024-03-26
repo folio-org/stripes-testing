@@ -1,14 +1,15 @@
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
-import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import Users from '../../../../support/fragments/users/users';
-import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -34,14 +35,14 @@ describe('MARC', () => {
         {
           marc: 'marcBibFileC374140.mrc',
           fileName: `C374140 testMarcFile${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-          propertyName: 'relatedInstanceInfo',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+          propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileC374140.mrc',
           fileName: `C374140 testMarcFile${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
-          propertyName: 'relatedAuthorityInfo',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+          propertyName: 'authority',
           authorityHeading:
             'C374140 Egypt. C374140 Treaties, etc. 1978 September 17 (Framework for Peace in the Middle East)',
         },
@@ -60,8 +61,8 @@ describe('MARC', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
         });

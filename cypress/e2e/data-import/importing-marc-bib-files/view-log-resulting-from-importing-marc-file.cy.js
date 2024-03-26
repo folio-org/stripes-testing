@@ -1,4 +1,4 @@
-import { RECORD_STATUSES } from '../../../support/constants';
+import { RECORD_STATUSES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -6,18 +6,18 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceId;
     const filePathToUpload = 'oneMarcBib.mrc';
-    const fileNameToUpload = `C2358 autotestFile.${getRandomPostfix()}.mrc`;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const fileNameToUpload = `C2358 autotestFile${getRandomPostfix()}.mrc`;
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
     before('create test data', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathToUpload, fileNameToUpload, jobProfileToRun).then(
         (response) => {
-          instanceId = response.entries[0].relatedInstanceInfo.idList[0];
+          instanceId = response[0].instance.id;
         },
       );
 

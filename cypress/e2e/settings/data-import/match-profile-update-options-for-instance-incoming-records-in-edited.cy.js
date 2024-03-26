@@ -13,7 +13,7 @@ import NewMatchProfile from '../../../support/fragments/settings/dataImport/matc
 
 let user;
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     const matchProfile = {
       profileName: `C411691 Match profile ${getRandomPostfix()}`,

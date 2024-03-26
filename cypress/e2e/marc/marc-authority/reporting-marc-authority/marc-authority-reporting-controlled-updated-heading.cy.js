@@ -1,15 +1,16 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 
 const testData = {
   marcValue: 'C380531 Beethoven, Ludwig van,',
@@ -32,14 +33,14 @@ const marcFiles = [
   {
     marc: 'marcBibFileForC380531.mrc',
     fileName: `testMarcFileC380531.${getRandomPostfix()}.mrc`,
-    jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-    propertyName: 'relatedInstanceInfo',
+    jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+    propertyName: 'instance',
   },
   {
     marc: 'marcAuthFileForC380531.mrc',
     fileName: `testMarcFileC380531.${getRandomPostfix()}.mrc`,
-    jobProfileToRun: 'Default - Create SRS MARC Authority',
-    propertyName: 'relatedAuthorityInfo',
+    jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+    propertyName: 'authority',
     authorityHeading:
       'C380531 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
     authority010FieldValue: 'n83130007380531',
@@ -65,8 +66,8 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              response.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].id);
               });
             });
           });

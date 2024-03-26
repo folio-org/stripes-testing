@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
@@ -50,17 +51,17 @@ describe('MARC', () => {
       {
         marc: 'marcAuthFileC360532.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         authorityHeading: 'C360532 Cartoons & Comics',
         numberOfRecors: 1,
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
       },
       {
         marc: 'marcAuthFileC409449.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numberOfRecors: 17,
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
       },
     ];
 
@@ -84,8 +85,8 @@ describe('MARC', () => {
                 marcFile.fileName,
                 marcFile.jobProfileToRun,
               ).then((response) => {
-                response.entries.forEach((record) => {
-                  createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
               });
             });

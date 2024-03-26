@@ -1,12 +1,13 @@
+import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
-import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import Users from '../../../../support/fragments/users/users';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -14,7 +15,7 @@ describe('MARC', () => {
       const testData = {
         initialSource: { name: 'Diku_admin' },
         authority: {
-          source: 'MARC',
+          source: INSTANCE_SOURCE_NAMES.MARC,
           searchInput: 'C350697 On the Road',
         },
         edited100Field: {
@@ -31,8 +32,8 @@ describe('MARC', () => {
       const marcFile = {
         marc: 'marcBibFileForC350697.mrc',
         fileName: `testMarcFileC350697.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-        propertyName: 'relatedInstanceInfo',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        propertyName: 'instance',
       };
       let instanceId;
 
@@ -49,8 +50,8 @@ describe('MARC', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              instanceId = record[marcFile.propertyName].idList[0];
+            response.forEach((record) => {
+              instanceId = record[marcFile.propertyName].id;
             });
           });
 

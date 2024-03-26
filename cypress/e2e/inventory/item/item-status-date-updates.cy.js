@@ -32,7 +32,7 @@ import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe.skip('inventory', () => {
+describe.skip('Inventory', () => {
   describe('Item', () => {
     const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
     const itemQuantity = '1';

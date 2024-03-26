@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
@@ -11,7 +12,7 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Browse - Authority records', () => {
       let user;
-      const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
       const createdAuthorityID = [];
 
@@ -19,8 +20,8 @@ describe('MARC', () => {
         cy.getAdminToken();
         DataImport.uploadFileViaApi('uniform_title.mrc', fileName, jobProfileToRun).then(
           (response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityID.push(record.relatedAuthorityInfo.idList[0]);
+            response.forEach((record) => {
+              createdAuthorityID.push(record.authority.id);
             });
           },
         );

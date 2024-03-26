@@ -1,17 +1,18 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
+import BrowseContributors from '../../../../../support/fragments/inventory/search/browseContributors';
+import BrowseSubjects from '../../../../../support/fragments/inventory/search/browseSubjects';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
-import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
-import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
-import BrowseContributors from '../../../../../support/fragments/inventory/search/browseContributors';
-import BrowseSubjects from '../../../../../support/fragments/inventory/search/browseSubjects';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -20,11 +21,9 @@ describe('MARC', () => {
         const testData = {
           tags: {
             tag245: '245',
-            tagLDR: 'LDR',
           },
           fieldContents: {
             tag245Content: 'C389489 Test: created record with all linkable fields without linking',
-            tagLDRContent: '00000naa\\a2200000uu\\4500',
           },
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         };
@@ -34,7 +33,7 @@ describe('MARC', () => {
           {
             marc: 'marcAuthFileForC389489.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 20,
           },
         ];
@@ -212,8 +211,8 @@ describe('MARC', () => {
                 marcFile.fileName,
                 marcFile.jobProfileToRun,
               ).then((response) => {
-                response.entries.forEach((record) => {
-                  createdAuthorityIDs.push(record.relatedAuthorityInfo.idList[0]);
+                response.forEach((record) => {
+                  createdAuthorityIDs.push(record.authority.id);
                 });
               });
             });
@@ -257,10 +256,7 @@ describe('MARC', () => {
               `$a ${testData.fieldContents.tag245Content}`,
             );
             // 3 Replace blank values in "LDR" positions 06, 07 with valid values
-            QuickMarcEditor.updateExistingField(
-              testData.tags.tagLDR,
-              testData.fieldContents.tagLDRContent,
-            );
+            QuickMarcEditor.updateLDR06And07Positions();
             // 4 Add eligible for manual linking only field with subfield "$0", by clicking "+" icon next to any field and filling first and fourth box of appeared row with following values
             MarcAuthority.addNewField(field600.rowIndex, field600.tag, field600.content);
             QuickMarcEditor.checkAbsenceOfLinkHeadingsButton();

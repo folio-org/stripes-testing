@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -67,30 +68,30 @@ describe('MARC', () => {
           {
             marc: 'marcBibFileForC388561.mrc',
             fileName: `C388561 testMarcFile${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             numOfRecords: 1,
-            propertyName: 'relatedInstanceInfo',
+            propertyName: 'instance',
           },
           {
             marc: 'marcAuthFileForC388561_1.mrc',
             fileName: `C388561 testMarcFile${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
           },
           {
             marc: 'marcAuthFileForC388561_2.mrc',
             fileName: `C388561 testMarcFile${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
           },
           {
             marc: 'marcAuthFileForC388561_3.mrc',
             fileName: `C388561 testMarcFile${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
           },
         ];
         const linkingTagAndValues = [
@@ -133,8 +134,8 @@ describe('MARC', () => {
                 marcFile.fileName,
                 marcFile.jobProfileToRun,
               ).then((response) => {
-                response.entries.forEach((record) => {
-                  testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+                response.forEach((record) => {
+                  testData.createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
               });
             });

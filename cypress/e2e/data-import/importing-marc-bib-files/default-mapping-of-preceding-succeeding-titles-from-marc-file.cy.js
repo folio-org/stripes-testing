@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -8,11 +8,11 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const filePathToUpload = 'marcBibFileForC10923.mrc';
-    const fileName = `C10923 autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C10923 autotestFile${getRandomPostfix()}.mrc`;
     const titles = {
       instanceTitle: 'Justus Liebigs Annalen der Chemie.',
       precedingTitles: "Justus Liebig's Annalen der Chemie und Pharmacie",

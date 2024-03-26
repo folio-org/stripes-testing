@@ -1,4 +1,8 @@
-import { RECORD_STATUSES, JOB_STATUS_NAMES } from '../../../support/constants';
+import {
+  RECORD_STATUSES,
+  JOB_STATUS_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -11,13 +15,13 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {
       createdRecordIDs: [],
       filePathForUpload: 'marcFileNameForC366549.mrc',
       marcFileName: `C366549 autotestMarcFile${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       tag720: '720',
     };
 

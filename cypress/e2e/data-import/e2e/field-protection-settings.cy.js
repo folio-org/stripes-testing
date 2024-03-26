@@ -32,7 +32,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     const marcFieldProtected = ['507', '920'];
     const marcFieldProtectionId = [];
@@ -49,9 +49,9 @@ describe('data-import', () => {
     const updateDataForField920 =
       'The previous 920 should be retained, since it is protected and repeatable, and this new 920 added.';
     // unique file names
-    const nameMarcFileForCreate = `C17017 autotestFile.${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C17017 protectedFields.${getRandomPostfix()}.mrc`;
-    const fileNameForUpdate = `C17017 updatedProtectedFields.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForCreate = `C17017 autotestFile${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C17017 protectedFields${getRandomPostfix()}.mrc`;
+    const fileNameForUpdate = `C17017 updatedProtectedFields${getRandomPostfix()}.mrc`;
     // profiles for create
     const mappingProfile = {
       name: `C17017 autotest MappingProf${getRandomPostfix()}`,

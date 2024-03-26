@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -23,15 +24,15 @@ describe('MARC', () => {
           {
             marc: 'marcBibFileC377033.mrc',
             fileName: `testMarcFileC377033${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-            propertyName: 'relatedInstanceInfo',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+            propertyName: 'instance',
           },
           {
             marc: 'marcAuthFileC377033.mrc',
             fileName: `testMarcFileC377033${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             authorityHeading: 'C377033 Speaking Oratory debating',
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
           },
         ];
         const createdRecordIDs = [];
@@ -62,8 +63,8 @@ describe('MARC', () => {
                 marcFile.fileName,
                 marcFile.jobProfileToRun,
               ).then((response) => {
-                response.entries.forEach((record) => {
-                  createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
               });
             });

@@ -8,12 +8,13 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix from '../../support/utils/stringTools';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
 
 describe('data-export', () => {
   describe('Authority records export', () => {
     const user = {};
     const downloadedFile = 'C_353209.csv';
-    const jobProfileToRun = 'Default - Create SRS MARC Authority';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
     const marcFile = {
       marc: 'Genre_1_record_C353209.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
@@ -21,15 +22,15 @@ describe('data-export', () => {
     const searchHeading = 'C353209 Peplum films';
 
     before(() => {
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun);
+
       cy.createTempUser([
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
         Permissions.dataExportEnableModule.gui,
       ]).then((createdUserProperties) => {
         user.userProperties = createdUserProperties;
-      });
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun);
 
         cy.login(user.userProperties.username, user.userProperties.password, {
           path: TopMenu.marcAuthorities,

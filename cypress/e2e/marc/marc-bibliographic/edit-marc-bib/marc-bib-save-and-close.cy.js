@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -24,8 +25,8 @@ describe('MARC', () => {
       const marcFile = {
         marc: 'marcBibFileC360097.mrc',
         fileName: `testMarcFileC360097.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-        propertyName: 'relatedInstanceInfo',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        propertyName: 'instance',
       };
       const instanceIDs = [];
 
@@ -42,8 +43,8 @@ describe('MARC', () => {
                 marcFile.fileName,
                 marcFile.jobProfileToRun,
               ).then((response) => {
-                response.entries.forEach((record) => {
-                  instanceIDs.push(record[marcFile.propertyName].idList[0]);
+                response.forEach((record) => {
+                  instanceIDs.push(record[marcFile.propertyName].id);
                 });
               });
             },

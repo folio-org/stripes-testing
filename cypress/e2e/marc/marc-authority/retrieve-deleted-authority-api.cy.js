@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -5,11 +6,11 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthoritiesDelete from '../../../support/fragments/marcAuthority/marcAuthoritiesDelete';
 import MarcAuthoritiesSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -23,25 +24,25 @@ describe('MARC', () => {
       {
         marc: 'marcBibFileC432300.mrc',
         fileName: `testMarcFileC432300.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numOfRecords: 1,
-        propertyName: 'relatedInstanceInfo',
+        propertyName: 'instance',
       },
       {
         marc: 'marcAuthFileC432300_1.mrc',
         fileName: `testMarcFileC432300.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 1,
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
         authorityHeading: 'Kerouac, Jack, C432300 1922-1969',
         tag010Value: '80036674432300',
       },
       {
         marc: 'marcAuthFileC432300_2.mrc',
         fileName: `testMarcFileC432300.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 1,
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
         authorityHeading: 'Beatles C432300',
         tag010Value: 'n79018119432300',
       },
@@ -62,8 +63,8 @@ describe('MARC', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
         });

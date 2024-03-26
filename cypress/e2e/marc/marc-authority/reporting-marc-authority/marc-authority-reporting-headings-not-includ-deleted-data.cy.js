@@ -1,9 +1,12 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import ExportManagerSearchPane from '../../../../support/fragments/exportManager/exportManagerSearchPane';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthoritiesDelete from '../../../../support/fragments/marcAuthority/marcAuthoritiesDelete';
+import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -11,8 +14,6 @@ import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
-import MarcAuthoritiesDelete from '../../../../support/fragments/marcAuthority/marcAuthoritiesDelete';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -39,23 +40,23 @@ describe('MARC', () => {
         {
           marc: 'marcBibFileForC380532.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numOfRecords: 1,
-          propertyName: 'relatedInstanceInfo',
+          propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileForC380532_1.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 1,
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
         {
           marc: 'marcAuthFileForC380532_2.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 1,
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
       ];
 
@@ -113,8 +114,8 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                testData.createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              response.forEach((record) => {
+                testData.createdRecordIDs.push(record[marcFile.propertyName].id);
               });
             });
           });
