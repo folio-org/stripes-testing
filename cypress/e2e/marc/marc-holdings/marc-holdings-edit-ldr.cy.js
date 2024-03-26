@@ -1,4 +1,11 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  MARC_HOLDING_LDR_FIELD_STATUS_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_TYPE_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -7,7 +14,6 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { randomizeArray } from '../../../support/utils/arrays';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('MARC', () => {
@@ -15,11 +21,25 @@ describe('MARC', () => {
     const testData = {
       tagLDR: 'LDR',
       tag852: '852',
-      validLDR05Values: randomizeArray(['c', 'd', 'n', 'c', 'd', 'n']),
-      validLDR06Values: randomizeArray(['u', 'v', 'x', 'y', 'u', 'v', 'x', 'y']),
-      validLDR17Values: randomizeArray(['1', '2', '3', '4', '5', 'm', 'u', 'z']),
-      validLDR18Values: randomizeArray(['i', 'n', '\\', ' ', 'i', 'n', '\\', ' ']),
     };
+    const LDRDropdownOptionSets = [
+      {
+        name: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
+        options: Object.values(MARC_HOLDING_LDR_FIELD_STATUS_DROPDOWN),
+      },
+      {
+        name: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+        options: Object.values(MARC_HOLDING_LDR_FIELD_TYPE_DROPDOWN),
+      },
+      {
+        name: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ELVL,
+        options: Object.values(MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN),
+      },
+      {
+        name: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ITEM,
+        options: Object.values(MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN),
+      },
+    ];
 
     const marcFile = {
       marc: 'oneMarcBib.mrc',
@@ -88,20 +108,43 @@ describe('MARC', () => {
       () => {
         HoldingsRecordView.close();
         InventoryInstance.openHoldingView();
-        for (let i = 0; i < testData.validLDR05Values.length; i++) {
+        for (let i = 0; i < Object.values(MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN).length; i++) {
           HoldingsRecordView.editInQuickMarc();
           QuickMarcEditor.waitLoading();
-          QuickMarcEditor.getRegularTagContent(testData.tagLDR).then((content) => {
-            const updatedLDRvalue = `${content.substring(0, 5)}${testData.validLDR05Values[i]}${
-              testData.validLDR06Values[i]
-            }${content.substring(7, 17)}${testData.validLDR17Values[i]}${
-              testData.validLDR18Values[i]
-            }${content.substring(19)}`;
-            QuickMarcEditor.updateExistingField(testData.tagLDR, updatedLDRvalue);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveHoldings();
-            HoldingsRecordView.checkHoldingRecordViewOpened();
+
+          QuickMarcEditor.verifyBoxLabelsInLDRFieldInMarcHoldingRecord();
+
+          QuickMarcEditor.verifyMarcHoldingLDRDropdownsHoverTexts();
+
+          LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
+            LDRDropdownOptionSet.options.forEach((dropdownOption) => {
+              QuickMarcEditor.verifyFieldsDropdownOption(
+                testData.tagLDR,
+                LDRDropdownOptionSet.name,
+                dropdownOption,
+              );
+            });
           });
+
+          LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
+            QuickMarcEditor.selectFieldsDropdownOption(
+              testData.tagLDR,
+              LDRDropdownOptionSet.name,
+              LDRDropdownOptionSet.options[i % LDRDropdownOptionSet.options.length],
+            );
+          });
+          LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
+            QuickMarcEditor.verifyDropdownOptionChecked(
+              testData.tagLDR,
+              LDRDropdownOptionSet.name,
+              LDRDropdownOptionSet.options[i % LDRDropdownOptionSet.options.length],
+            );
+          });
+          QuickMarcEditor.verifySaveAndCloseButtonEnabled();
+
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveHoldings();
+          HoldingsRecordView.checkHoldingRecordViewOpened();
         }
       },
     );

@@ -111,7 +111,6 @@ describe('Organizations', () => {
       Orders.resetFilters();
     },
   );
-
   it(
     'C423427: Searching in "Organization look-up" by "Bank account number" in "All" section with banking permission (thunderjet)',
     { tags: ['extendedPath', 'thunderjet'] },
