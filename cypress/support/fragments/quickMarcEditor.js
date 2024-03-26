@@ -267,7 +267,11 @@ const tag008HoldingsBytesProperties = {
 };
 
 const tag008DefaultValues = [
-  { isSelect: true, interactor: Select('Srce'), defaultValue: '\\ - National bibliographic agency' },
+  {
+    isSelect: true,
+    interactor: Select('Srce'),
+    defaultValue: '\\ - National bibliographic agency',
+  },
   { isSelect: true, interactor: Select('Audn'), defaultValue: '\\ - Unknown or not specified' },
   { isSelect: false, interactor: TextField('Lang'), defaultValue: '\\\\\\' },
   { isSelect: true, interactor: Select('Form'), defaultValue: '\\ - None of the following' },
@@ -282,14 +286,46 @@ const tag008DefaultValues = [
   { isSelect: true, interactor: Select('DtSt'), defaultValue: 'm - Multiple dates' },
   { isSelect: false, interactor: TextField('Date 1'), defaultValue: '\\\\\\\\' },
   { isSelect: false, interactor: TextField('Date 2'), defaultValue: '\\\\\\\\' },
-  { isSelect: true, interactor: Select('Ills', { name: including('Ills[0]') }), defaultValue: '\\ - No illustrations' },
-  { isSelect: true, interactor: Select('Ills', { name: including('Ills[1]') }), defaultValue: '\\ - No illustrations' },
-  { isSelect: true, interactor: Select('Ills', { name: including('Ills[2]') }), defaultValue: '\\ - No illustrations' },
-  { isSelect: true, interactor: Select('Ills', { name: including('Ills[3]') }), defaultValue: '\\ - No illustrations' },
-  { isSelect: true, interactor: Select('Cont', { name: including('Cont[0]') }), defaultValue: '\\ - No specified nature of contents' },
-  { isSelect: true, interactor: Select('Cont', { name: including('Cont[1]') }), defaultValue: '\\ - No specified nature of contents' },
-  { isSelect: true, interactor: Select('Cont', { name: including('Cont[2]') }), defaultValue: '\\ - No specified nature of contents' },
-  { isSelect: true, interactor: Select('Cont', { name: including('Cont[3]') }), defaultValue: '\\ - No specified nature of contents' },
+  {
+    isSelect: true,
+    interactor: Select('Ills', { name: including('Ills[0]') }),
+    defaultValue: '\\ - No illustrations',
+  },
+  {
+    isSelect: true,
+    interactor: Select('Ills', { name: including('Ills[1]') }),
+    defaultValue: '\\ - No illustrations',
+  },
+  {
+    isSelect: true,
+    interactor: Select('Ills', { name: including('Ills[2]') }),
+    defaultValue: '\\ - No illustrations',
+  },
+  {
+    isSelect: true,
+    interactor: Select('Ills', { name: including('Ills[3]') }),
+    defaultValue: '\\ - No illustrations',
+  },
+  {
+    isSelect: true,
+    interactor: Select('Cont', { name: including('Cont[0]') }),
+    defaultValue: '\\ - No specified nature of contents',
+  },
+  {
+    isSelect: true,
+    interactor: Select('Cont', { name: including('Cont[1]') }),
+    defaultValue: '\\ - No specified nature of contents',
+  },
+  {
+    isSelect: true,
+    interactor: Select('Cont', { name: including('Cont[2]') }),
+    defaultValue: '\\ - No specified nature of contents',
+  },
+  {
+    isSelect: true,
+    interactor: Select('Cont', { name: including('Cont[3]') }),
+    defaultValue: '\\ - No specified nature of contents',
+  },
 ];
 
 const defaultFieldValues = {
