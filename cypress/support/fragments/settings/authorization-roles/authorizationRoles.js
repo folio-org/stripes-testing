@@ -12,6 +12,7 @@ import {
   MultiColumnList,
   MultiColumnListCell,
   HTML,
+  Spinner,
 } from '../../../../../interactors';
 
 const rolesPane = Pane('Authorization roles');
@@ -167,14 +168,14 @@ export default {
     ]);
   },
 
-  clickOnCapabilitiesAccordion: () => {
+  clickOnCapabilitiesAccordion: (checkOpen = true) => {
     cy.do(capabilitiesAccordion.clickHeader());
-    cy.expect(capabilitiesAccordion.has({ open: true }));
+    if (checkOpen) cy.expect(capabilitiesAccordion.has({ open: true }));
   },
 
-  clickOnCapabilitySetsAccordion: () => {
+  clickOnCapabilitySetsAccordion: (checkOpen = true) => {
     cy.do(capabilitySetsAccordion.clickHeader());
-    cy.expect(capabilitySetsAccordion.has({ open: true }));
+    if (checkOpen) cy.expect(capabilitySetsAccordion.has({ open: true }));
   },
 
   verifyCapabilitySetCheckboxCheckedAndDisabled: ({ table, resource, action }) => {
@@ -194,7 +195,23 @@ export default {
     );
   },
 
-  checkAfterSaveCreate() {
-    cy.expect([createRolePane.absent()]);
+  checkAfterSaveCreate: (roleName, roleDescription = '') => {
+    cy.expect(createRolePane.absent());
+    cy.do(
+      rolesPane.find(MultiColumnListCell(roleName)).perform((element) => {
+        const rowNumber = +element.parentElement.getAttribute('data-row-inner');
+        cy.expect(
+          rolesPane.find(MultiColumnListCell(roleDescription, { row: rowNumber })).exists(),
+        );
+      }),
+    );
+  },
+
+  verifyEmptyCapabilitiesAccordion: () => {
+    cy.expect([Spinner().absent(), capabilitiesAccordion.find(MultiColumnListRow()).absent()]);
+  },
+
+  verifyEmptyCapabilitySetsAccordion: () => {
+    cy.expect([Spinner().absent(), capabilitySetsAccordion.find(MultiColumnListRow()).absent()]);
   },
 };
