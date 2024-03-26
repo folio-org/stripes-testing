@@ -12,6 +12,7 @@ import {
   MultiColumnList,
   MultiColumnListCell,
   HTML,
+  Spinner,
 } from '../../../../../interactors';
 
 const rolesPane = Pane('Authorization roles');
@@ -30,6 +31,7 @@ const selectAppSearchButton = selectApplicationModal.find(
 const saveButtonInModal = selectApplicationModal.find(
   Button({ dataTestID: 'submit-applications-modal' }),
 );
+const cancelButtonInModal = selectApplicationModal.find(Button('Cancel'));
 const capabilitiesAccordion = Accordion('Capabilities');
 const capabilitySetsAccordion = Accordion('Capability sets');
 const saveButton = Button('Save and close');
@@ -83,7 +85,26 @@ export default {
 
   clickSelectApplication: () => {
     cy.do(selectApplicationButton.click());
-    cy.expect(selectApplicationModal.exists());
+    cy.expect([
+      selectApplicationModal.exists(),
+      saveButtonInModal.exists(),
+      cancelButtonInModal.exists(),
+      selectAppSearchButton.has({ disabled: true }),
+      selectAppSearchInput.exists(),
+    ]);
+  },
+
+  verifySelectApplicationModal: () => {
+    cy.expect([
+      saveButtonInModal.exists(),
+      cancelButtonInModal.exists(),
+      selectAppSearchButton.has({ disabled: true }),
+      selectAppSearchInput.exists(),
+      selectApplicationModal
+        .find(MultiColumnListRow({ index: 0, isContainer: false }))
+        .find(Checkbox())
+        .exists(),
+    ]);
   },
 
   selectApplicationInModal: (appName, isSelected = true) => {
@@ -147,14 +168,14 @@ export default {
     ]);
   },
 
-  clickOnCapabilitiesAccordion: () => {
+  clickOnCapabilitiesAccordion: (checkOpen = true) => {
     cy.do(capabilitiesAccordion.clickHeader());
-    cy.expect(capabilitiesAccordion.has({ open: true }));
+    if (checkOpen) cy.expect(capabilitiesAccordion.has({ open: true }));
   },
 
-  clickOnCapabilitySetsAccordion: () => {
+  clickOnCapabilitySetsAccordion: (checkOpen = true) => {
     cy.do(capabilitySetsAccordion.clickHeader());
-    cy.expect(capabilitySetsAccordion.has({ open: true }));
+    if (checkOpen) cy.expect(capabilitySetsAccordion.has({ open: true }));
   },
 
   verifyCapabilitySetCheckboxCheckedAndDisabled: ({ table, resource, action }) => {
@@ -172,5 +193,25 @@ export default {
     cy.expect(
       capabilitySetsAccordion.find(capabilityTables[table]).has({ rowCount: expectedCount }),
     );
+  },
+
+  checkAfterSaveCreate: (roleName, roleDescription = '') => {
+    cy.expect(createRolePane.absent());
+    cy.do(
+      rolesPane.find(MultiColumnListCell(roleName)).perform((element) => {
+        const rowNumber = +element.parentElement.getAttribute('data-row-inner');
+        cy.expect(
+          rolesPane.find(MultiColumnListCell(roleDescription, { row: rowNumber })).exists(),
+        );
+      }),
+    );
+  },
+
+  verifyEmptyCapabilitiesAccordion: () => {
+    cy.expect([Spinner().absent(), capabilitiesAccordion.find(MultiColumnListRow()).absent()]);
+  },
+
+  verifyEmptyCapabilitySetsAccordion: () => {
+    cy.expect([Spinner().absent(), capabilitySetsAccordion.find(MultiColumnListRow()).absent()]);
   },
 };

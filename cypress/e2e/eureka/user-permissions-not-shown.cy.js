@@ -33,7 +33,7 @@ describe('Eureka', () => {
 
     it(
       'C442842 "User permissions" accordion is NOT shown when viewing/creating/editing user profile (eureka)',
-      { tags: ['smoke', 'eureka'] },
+      { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
       () => {
         const userGroupOption =
           Cypress.env('userGroups')[0].group + ' (' + Cypress.env('userGroups')[0].desc + ')';
