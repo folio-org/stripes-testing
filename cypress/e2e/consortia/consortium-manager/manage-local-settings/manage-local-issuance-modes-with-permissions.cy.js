@@ -41,11 +41,15 @@ describe('Consortium manager', () => {
           testData.user = userProperties;
           cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
           cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui]);
+          cy.assignPermissionsToExistingUser(testData.user.userId, [
+            Permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui,
+          ]);
           cy.resetTenant();
           cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
           cy.setTenant(Affiliations.University);
-          cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui]);
+          cy.assignPermissionsToExistingUser(testData.user.userId, [
+            Permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui,
+          ]);
           cy.resetTenant();
         });
       });
@@ -139,12 +143,7 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.editIssuanceMode.name,
             tenantNames.university,
-            [
-              testData.editIssuanceMode.name,
-              'local',
-              '',
-              tenantNames.university,
-            ],
+            [testData.editIssuanceMode.name, 'local', '', tenantNames.university],
             [actionIcons.edit, actionIcons.trash],
           );
 
@@ -154,7 +153,9 @@ describe('Consortium manager', () => {
             actionIcons.trash,
           );
           ConsortiaControlledVocabularyPaneset.confirmDelete();
-          ConsortiumManagerApp.checkMessage(messages.deleted('mode of issuance', testData.newIssuanceMode.name));
+          ConsortiumManagerApp.checkMessage(
+            messages.deleted('mode of issuance', testData.newIssuanceMode.name),
+          );
           ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
             testData.newIssuanceMode.name,
             tenantNames.central,
@@ -187,7 +188,9 @@ describe('Consortium manager', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(SettingsMenu.formats);
-          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(testData.newIssuanceMode.name);
+          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
+            testData.newIssuanceMode.name,
+          );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           cy.visit(SettingsMenu.formats);
