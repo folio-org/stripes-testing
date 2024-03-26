@@ -1,9 +1,11 @@
-import { DEFAULT_JOB_PROFILE_NAMES,
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
   MARC_HOLDING_LDR_FIELD_STATUS_DROPDOWN,
   MARC_HOLDING_LDR_FIELD_TYPE_DROPDOWN,
   MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN,
   MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN,
-  MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES } from '../../../support/constants';
+  MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
