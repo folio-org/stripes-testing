@@ -5,17 +5,36 @@ import {
   MultiColumnList,
   MultiColumnListCell,
   Option,
+  Section,
   Select,
   TextField,
+  Pane,
 } from '../../../../../interactors';
 import { ACTION_NAMES_IN_ACTION_PROFILE } from '../../../constants';
+import SelectMappingProfile from '../../settings/dataImport/modals/selectProfileModal';
 
+const profileLinkSection = Section({ id: 'actionProfileFormAssociatedMappingProfileAccordion' });
+const profileLinkButton = Button('Link Profile');
 const selectActionProfile = Select({ name: 'profile.action' });
 const recordTypeSelect = Select({ name: 'profile.folioRecord' });
 
+const save = () => cy.do(Button('Save as profile & Close').click());
+
 export default {
-  unlinkFieldMappingProfile: () => cy.do(Button({ title: 'Unlink this profile' }).click()),
-  save: () => cy.do(Button('Save as profile & Close').click()),
+  save,
+  unlinkFieldMappingProfile: () => cy.do(
+    MultiColumnList({ id: 'edit-associated-mappingProfiles-list' })
+      .find(Button({ title: 'Unlink this profile' }))
+      .click(),
+  ),
+  linkMappingProfile: (specialMappingProfileName) => {
+    cy.do(profileLinkButton.click());
+    SelectMappingProfile.searchProfile(specialMappingProfileName);
+    SelectMappingProfile.selectProfile(specialMappingProfileName);
+    cy.expect(profileLinkSection.find(profileLinkButton).has({ disabled: true }));
+    save();
+    cy.expect(Pane('Action profiles').find(Button('Actions')).exists());
+  },
 
   fieldMappingProfilePresented: (profileName) => {
     cy.expect(
