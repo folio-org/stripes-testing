@@ -18,21 +18,21 @@ describe('Organizations', () => {
   };
   const secondBankingInformation = {
     name: `BankInfo_${getRandomPostfix()}`,
-    accountNumber: `BankAN_${getRandomPostfix()}`,
+    accountNumber: getRandomPostfix(),
   };
   const firstBankingInformation = {
     name: `BankInfo_${getRandomPostfix()}`,
-    accountNumber: `BankAN_${getRandomPostfix()}`,
+    accountNumber: getRandomPostfix(),
   };
 
   let user;
+  let C423432User;
 
   before(() => {
     cy.getAdminToken();
     BankingInformation.setBankingInformationValue(true);
     Organizations.createOrganizationViaApi(firstOrganization).then((responseOrganizations) => {
       firstOrganization.id = responseOrganizations;
-      firstBankingInformation.accountNumber = firstOrganization.erpCode;
       cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
       Organizations.searchByParameters('Name', firstOrganization.name);
       Organizations.checkSearchResults(firstOrganization);
@@ -45,7 +45,6 @@ describe('Organizations', () => {
     Organizations.createOrganizationViaApi(secondOrganization).then(
       (responseSecondOrganizations) => {
         secondOrganization.id = responseSecondOrganizations;
-        secondBankingInformation.accountNumber = secondOrganization.erpCode;
         Organizations.searchByParameters('Name', secondOrganization.name);
         Organizations.checkSearchResults(secondOrganization);
         Organizations.selectOrganization(secondOrganization.name);
@@ -63,6 +62,9 @@ describe('Organizations', () => {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
       });
+    });
+    cy.createTempUser([permissions.uiOrdersView.gui]).then((secondUserProperties) => {
+      C423432User = secondUserProperties;
     });
   });
 
@@ -86,6 +88,7 @@ describe('Organizations', () => {
     Organizations.deleteOrganizationViaApi(secondOrganization.id);
     BankingInformation.setBankingInformationValue(false);
     Users.deleteViaApi(user.userId);
+    Users.deleteViaApi(C423432User.userId);
   });
 
   it(
@@ -95,14 +98,14 @@ describe('Organizations', () => {
       Orders.openVendorFilterModal();
       Orders.searchVendorbyindex(
         'Bank account number',
-        firstOrganization.erpCode,
+        firstBankingInformation.accountNumber,
         firstOrganization,
       );
       Orders.resetFilters();
       Orders.openVendorFilterModal();
       Orders.searchVendorbyindex(
         'Bank account number',
-        secondOrganization.erpCode,
+        secondBankingInformation.accountNumber,
         secondOrganization,
       );
       Orders.resetFilters();
@@ -113,11 +116,34 @@ describe('Organizations', () => {
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.openVendorFilterModal();
-      Orders.searchVendorbyindex('All', firstOrganization.erpCode, firstOrganization);
+      Orders.searchVendorbyindex('All', firstBankingInformation.accountNumber, firstOrganization);
       Orders.resetFilters();
       Orders.openVendorFilterModal();
-      Orders.searchVendorbyindex('All', secondOrganization.erpCode, secondOrganization);
+      Orders.searchVendorbyindex('All', secondBankingInformation.accountNumber, secondOrganization);
       Orders.resetFilters();
+    },
+  );
+
+  it(
+    'C423432: Searching in "Organization look-up" by "Bank account number" without banking permissions (thunderjet)',
+    { tags: ['extendedPath', 'thunderjet'] },
+    () => {
+      cy.login(C423432User.username, C423432User.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
+      Orders.openVendorFilterModal();
+      Orders.searchAbsentVendorbyindex(
+        'All',
+        firstBankingInformation.accountNumber,
+        firstOrganization,
+      );
+      Orders.openVendorFilterModal();
+      Orders.searchAbsentVendorbyindex(
+        'All',
+        secondBankingInformation.accountNumber,
+        secondOrganization,
+      );
     },
   );
 });
