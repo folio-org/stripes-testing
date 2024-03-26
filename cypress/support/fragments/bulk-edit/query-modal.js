@@ -4,6 +4,8 @@ import {
   Keyboard,
   Modal,
   MultiColumnList,
+  MultiSelect,
+  MultiSelectOption,
   RepeatableFieldItem,
   Select,
   Selection,
@@ -25,6 +27,8 @@ export const usersFieldValues = {
   expirationDate: 'User expiration date',
   firstName: 'User first name',
   lastName: 'User last name',
+  patronGroup: 'User patron group',
+  userActive: 'User active',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -44,6 +48,15 @@ export const stringOperators = [
   'starts with',
   'is null/empty',
 ];
+export const stringStoresUuidOperators = [
+  'Select operator',
+  '==',
+  '!=',
+  'in',
+  'not in',
+  'is null/empty',
+];
+export const booleanOperators = ['Select operator', '==', '!=', 'is null/empty'];
 
 export default {
   verify(firstline = true) {
@@ -154,6 +167,49 @@ export default {
     cy.do(RepeatableFieldItem({ index: row }).find(TextField()).fillIn(text));
   },
 
+  chooseValueSelect(choice, row = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: row })
+        .find(Select({ content: including('Select value') }))
+        .choose(choice),
+    );
+  },
+
+  fillInValueMultiselect(text, row = 0) {
+    cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).fillIn(text)]);
+    cy.wait(2000);
+    cy.do([
+      RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle(),
+      RepeatableFieldItem({ index: row })
+        .find(MultiSelectOption(including(text)))
+        .click(),
+    ]);
+  },
+
+  chooseFromValueMultiselect(text, row = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle(),
+      RepeatableFieldItem({ index: row })
+        .find(MultiSelectOption(including(text)))
+        .click(),
+    ]);
+  },
+
+  removeValueFromMultiselect(text) {
+    cy.contains('[data-test-selection-option-segment="true"]', text)
+      .parent()
+      .siblings('[icon="times"]')
+      .click();
+  },
+
+  selectValueFromSelect(selection, row = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: row })
+        .find(Select({ dataTestID: 'data-input-select-boolType' }))
+        .choose(selection),
+    );
+  },
+
   cancelDisabled(disabled = true) {
     cancelButton.has({ disabled });
   },
@@ -183,6 +239,10 @@ export default {
       RepeatableFieldItem({ index: row }).find(plusButton).has({ disabled: plusDisabled }),
       RepeatableFieldItem({ index: row }).find(trashButton).has({ disabled: trashDisabled }),
     ]);
+  },
+
+  clickGarbage(row = 1) {
+    cy.do(RepeatableFieldItem({ index: row }).find(trashButton).click());
   },
 
   clickTestQuery() {
