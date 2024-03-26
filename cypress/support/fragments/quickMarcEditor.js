@@ -31,6 +31,12 @@ import {
   INVENTORY_008_FIELD_FEST_DROPDOWN,
   INVENTORY_008_FIELD_INDX_DROPDOWN,
   INVENTORY_008_FIELD_LITF_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_STATUS_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_TYPE_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES,
+  AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES,
 } from '../constants';
 
 const holdingsRecordViewSection = Section({ id: 'ui-inventory.holdingsRecordView' });
@@ -406,6 +412,7 @@ const defaultValid008HoldingsValues = {
   'Sep/comp': '\\',
   'Spec ret': ['\\', '\\', '\\'],
 };
+const fieldLDR = QuickMarcEditorRow({ tagValue: 'LDR' });
 
 export default {
   defaultValidLdr,
@@ -1207,6 +1214,26 @@ export default {
 
   verifyDropdownHoverText(id, hoverText) {
     cy.get(`span[id="${id}"]`).should('contain.text', hoverText);
+  },
+
+  verifyLDRDropdownsHoverTexts() {
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Status-text', 'Record status');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Type-text', 'Type of record');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-ELvl-text', 'Encoding level');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Punct-text',
+      'Punctuation policy',
+    );
+  },
+
+  verifyMarcHoldingLDRDropdownsHoverTexts() {
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Status-text', 'Record status');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Type-text', 'Type of record');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-ELvl-text', 'Encoding level');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Item-text',
+      'Item information in record',
+    );
   },
 
   verifyLDRPositionsDefaultValues(fieldName, fieldvalue, isDisabled = true) {
@@ -2334,6 +2361,80 @@ export default {
       QuickMarcEditorRow({ tagValue: 'LDR' })
         .find(Select({ label: dropdownLabel }))
         .has({ valid: isValid }),
+    );
+  },
+
+  verifyBoxLabelsInLDRFieldInMarcAuthorityRecord() {
+    cy.expect([
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.Record length') }))
+        .has({ disabled: true }),
+      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS })).exists(),
+      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.TYPE })).exists(),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.7-16 positions') }))
+        .has({ disabled: true }),
+      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL })).exists(),
+      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT })).exists(),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.19-23 positions') }))
+        .has({ disabled: true }),
+    ]);
+  },
+
+  verifyBoxLabelsInLDRFieldInMarcHoldingRecord() {
+    cy.expect([
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.Record length') }))
+        .has({ disabled: true }),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.STATUS })).exists(),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.TYPE })).exists(),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.7-16 positions') }))
+        .has({ disabled: true }),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ELVL })).exists(),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ITEM })).exists(),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.19-23 positions') }))
+        .has({ disabled: true, value: '\\4500' }),
+    ]);
+  },
+
+  verifyInitialLDRFieldsValuesInMarcHoldingRecord() {
+    cy.expect([
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.Record length') }))
+        .has({ disabled: true, value: '00000' }),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.STATUS })).exists(),
+      fieldLDR
+        .find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.STATUS }))
+        .has({ checkedOptionText: MARC_HOLDING_LDR_FIELD_STATUS_DROPDOWN.N }),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.TYPE })).exists(),
+      fieldLDR
+        .find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.TYPE }))
+        .has({ checkedOptionText: MARC_HOLDING_LDR_FIELD_TYPE_DROPDOWN.U }),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.7-16 positions') }))
+        .has({ disabled: true, value: '\\\\\\2200000' }),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ELVL })).exists(),
+      fieldLDR
+        .find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ELVL }))
+        .has({ checkedOptionText: MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN.U }),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ITEM })).exists(),
+      fieldLDR
+        .find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ITEM }))
+        .has({ checkedOptionText: MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN.N }),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.19-23 positions') }))
+        .has({ disabled: true, value: '\\4500' }),
+    ]);
+  },
+
+  fillInElvlBoxInLDRField(value) {
+    cy.do(
+      fieldLDR
+        .find(TextField({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ELVL }))
+        .fillIn(value),
     );
   },
 };
