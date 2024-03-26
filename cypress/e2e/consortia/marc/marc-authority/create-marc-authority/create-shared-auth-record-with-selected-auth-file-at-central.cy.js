@@ -63,8 +63,8 @@ describe('MARC', () => {
             ).then((sourceId) => {
               testData.authSourceID = sourceId;
             });
-            // TODO: uncomment after functionality will be added
-            // ManageAuthorityFiles.setAllDefaultFOLIOFilesToActive();
+
+            ManageAuthorityFiles.setAllDefaultFOLIOFilesToActive();
           })
           .then(() => {
             cy.resetTenant();
@@ -80,8 +80,7 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
         MarcAuthority.deleteViaAPI(testData.authorityId);
-        // TODO: uncomment after functionality will be added
-        // ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActive();
+        ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActive();
         cy.deleteAuthoritySourceFileViaAPI(testData.authSourceID);
       });
 
