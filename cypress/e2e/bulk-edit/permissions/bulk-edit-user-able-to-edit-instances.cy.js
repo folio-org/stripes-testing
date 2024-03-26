@@ -12,7 +12,6 @@ const item = {
   barcode: getRandomPostfix(),
   instanceName: `instance-${getRandomPostfix()}`,
 };
-// const instanceHRIDFileName = `instanceHRID_${getRandomPostfix()}.csv`;
 const instanceUUIDsFileName = `validInstanceUUIDs_${getRandomPostfix()}.csv`;
 
 describe('bulk-edit', () => {
