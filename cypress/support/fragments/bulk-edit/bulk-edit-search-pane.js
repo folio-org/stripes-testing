@@ -99,7 +99,7 @@ export const itemIdentifiers = [
   'Holdings UUIDs',
 ];
 
-export const instanceIdentifiers = ['Instance UUIDs', 'Instance HRIDs', 'ISBN', 'ISSN'];
+export const instanceIdentifiers = ['Instance UUIDs', 'Instance HRIDs'];
 
 export default {
   waitLoading() {
@@ -165,8 +165,8 @@ export default {
       setCriteriaPane.find(identifierToggle).exists(),
       setCriteriaPane.find(logsToggle).exists(),
       setCriteriaPane.find(recordIdentifierDropdown).exists(),
-      setCriteriaPane.find(recordTypesAccordion).has({ open: true }),
     ]);
+    this.recordTypesAccordionExpanded(true);
     this.dragAndDropAreaExists(true);
     this.isDragAndDropAreaDisabled(true);
     if (query) cy.expect(setCriteriaPane.find(queryToggle).exists());
@@ -175,7 +175,6 @@ export default {
   verifySetCriteriaPaneElements() {
     cy.expect([
       setCriteriaPane.find(identifierToggle).exists(),
-      setCriteriaPane.find(recordTypesAccordion).has({ open: true }),
       recordTypesAccordion.find(usersRadio).exists(),
       this.isUsersRadioChecked(false),
       recordTypesAccordion.find(itemsRadio).exists(),
@@ -183,8 +182,9 @@ export default {
       recordTypesAccordion.find(holdingsRadio).exists(),
       this.isHoldingsRadioChecked(false),
       setCriteriaPane.find(recordIdentifierDropdown).exists(),
-      recordIdentifierDropdown.has({ disabled: true }),
     ]);
+    this.verifyRecordIdentifierDisabled(true);
+    this.recordTypesAccordionExpanded(true);
     this.dragAndDropAreaExists(true);
     this.isDragAndDropAreaDisabled(true);
     cy.expect(HTML('Select a record type and then a record identifier.').exists());
@@ -295,15 +295,19 @@ export default {
     cy.do(logsToggle.click());
   },
 
+  recordTypesAccordionExpanded(expanded = true) {
+    cy.expect(recordTypesAccordion.has({ open: expanded }));
+  },
+
   verifyQueryPane(selectedRadio = 'Users') {
     cy.expect([
       queryToggle.has({ default: false }),
-      recordTypesAccordion.has({ open: true }),
       recordTypesAccordion.find(usersRadio).exists(),
       recordTypesAccordion.find(itemsRadio).exists(),
       recordTypesAccordion.find(holdingsRadio).exists(),
       setCriteriaPane.find(buildQueryButton).has({ disabled: false }),
     ]);
+    this.recordTypesAccordionExpanded(true);
     // eslint-disable-next-line no-unused-expressions
     selectedRadio === 'Items'
       ? this.isItemsRadioChecked()
@@ -358,17 +362,16 @@ export default {
       usersRadio.absent(),
       itemsRadio.absent(),
       holdingsRadio.absent(),
-      recordIdentifierDropdown.has({ disabled: true }),
       fileButton.has({ disabled: true }),
       actions.absent(),
     ]);
+    this.verifyRecordIdentifierDisabled(true);
   },
 
   verifyUsersUpdatePermission() {
     cy.expect([
       itemsRadio.absent(),
       holdingsRadio.absent(),
-      recordIdentifierDropdown.has({ disabled: false }),
       fileButton.has({ disabled: true }),
       actions.absent(),
     ]);
@@ -379,10 +382,10 @@ export default {
       usersRadio.absent(),
       itemsRadio.absent(),
       holdingsRadio.absent(),
-      recordIdentifierDropdown.has({ disabled: true }),
       fileButton.has({ disabled: true }),
       actions.absent(),
     ]);
+    this.verifyRecordIdentifierDisabled(true);
   },
 
   verifyRecordIdentifierDisabled(disabled = true) {
@@ -835,12 +838,8 @@ export default {
   },
 
   verifyRecordTypesAccordionCollapsed() {
-    cy.expect([
-      recordTypesAccordion.has({ open: false }),
-      usersRadio.absent(),
-      itemsRadio.absent(),
-      holdingsRadio.absent(),
-    ]);
+    this.recordTypesAccordionExpanded(false);
+    cy.expect([usersRadio.absent(), itemsRadio.absent(), holdingsRadio.absent()]);
   },
 
   verifyUserAccordionCollapsed() {
@@ -862,12 +861,8 @@ export default {
   },
 
   verifyLogsRecordTypesAccordionCollapsed() {
-    cy.expect([
-      recordTypesAccordion.has({ open: false }),
-      usersCheckbox.absent(),
-      holdingsCheckbox.absent(),
-      itemsCheckbox.absent(),
-    ]);
+    this.recordTypesAccordionExpanded(false);
+    cy.expect([usersCheckbox.absent(), holdingsCheckbox.absent(), itemsCheckbox.absent()]);
   },
 
   verifyLogsStatusesAccordionExistsAndUnchecked() {
@@ -885,8 +880,8 @@ export default {
   },
 
   verifyLogsRecordTypesAccordionExistsAndUnchecked() {
+    this.recordTypesAccordionExpanded(true);
     cy.expect([
-      recordTypesAccordion.has({ open: true }),
       usersCheckbox.has({ checked: false }),
       holdingsCheckbox.has({ checked: false }),
       itemsCheckbox.has({ checked: false }),
