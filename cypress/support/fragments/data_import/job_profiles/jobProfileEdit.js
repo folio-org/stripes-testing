@@ -1,6 +1,8 @@
 import { HTML, including } from '@interactors/html';
-import { Accordion, Button, Form, Modal, TextField } from '../../../../../interactors';
+import { Accordion, Button, Form, Modal, TextField, matching } from '../../../../../interactors';
 import ModalSelectProfile from './modalSelectProfile';
+import InteractorsTools from '../../../utils/interactorsTools';
+import Notifications from '../../settings/dataImport/notifications';
 
 const saveAndCloseButton = Button('Save as profile & Close');
 const actionsButton = Button('Action');
@@ -12,6 +14,18 @@ export default {
   saveAndClose: () => {
     cy.do(saveAndCloseButton.click());
     cy.expect(saveAndCloseButton.absent());
+  },
+  linkActionProfileByName: (profileName) => {
+    // TODO move to const and rewrite functions
+    cy.do(
+      HTML({ className: including('linker-button'), id: 'type-selector-dropdown-linker-root' })
+        .find(Button())
+        .click(),
+    );
+    cy.do(actionsButton.click());
+    ModalSelectProfile.searchProfileByName(profileName);
+    ModalSelectProfile.selectProfile(profileName);
+    cy.expect(overviewAccordion.find(HTML(including(profileName))).exists());
   },
   unlinkProfile: (number) => {
     cy.get('[id*="branch-ROOT-MATCH-MATCH-MATCH-editable"]')
@@ -80,5 +94,10 @@ export default {
         }
         expect(numberOfProfiles).to.equal(profileNames.length);
       });
+  },
+  verifyCalloutMessage: () => {
+    InteractorsTools.checkCalloutMessage(
+      matching(new RegExp(Notifications.jobProfileCreatedSuccessfully)),
+    );
   },
 };

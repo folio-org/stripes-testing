@@ -15,6 +15,9 @@ const actionsButton = Button('Actions');
 const closeButton = Button({ icon: 'times' });
 
 export default {
+  waitLoading: () => {
+    cy.wait(2000);
+  },
   edit: () => {
     cy.do(viewPane.find(Button('Actions')).click());
     cy.do(Button('Edit').click());

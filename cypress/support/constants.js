@@ -619,3 +619,15 @@ export const DEFAULT_JOB_PROFILE_NAMES = {
   CREATE_AUTHORITY: 'Default - Create SRS MARC Authority',
   CREATE_HOLDINGS_AND_SRS: 'Default - Create Holdings and SRS MARC Holdings',
 };
+
+export const patronGroupNames = {
+  STAFF: 'staff',
+  FACULTY: 'faculty',
+  UNDERGRAD: 'undergrad',
+};
+
+export const patronGroupUuids = {
+  STAFF: '3684a786-6671-4268-8ed0-9db82ebca60b',
+  FACULTY: '503a81cd-6c26-400f-b620-14c08943697c',
+  UNDERGRAD: 'bdc2b6d4-5ceb-4a12-ab46-249b9a68473e',
+};
