@@ -13,8 +13,8 @@ import {
   matching,
 } from '../../../../../../interactors';
 import InteractorsTools from '../../../../utils/interactorsTools';
-import Notifications from '../notifications';
 import SelectActionProfile from '../modals/selectProfileModal';
+import Notifications from '../notifications';
 
 const jobProfileForm = Form({ id: 'job-profiles-form' });
 const summarySection = jobProfileForm.find(Section({ id: 'job-profile-summary' }));
@@ -22,7 +22,6 @@ const overviewSection = jobProfileForm.find(Accordion({ label: 'Overview' }));
 const addActionProfileButton = overviewSection
   .find(HTML({ id: 'type-selector-dropdown-linker-root' }))
   .find(Button());
-
 const closeButton = jobProfileForm.find(Button('Close'));
 const saveAndCloseButton = jobProfileForm.find(Button('Save as profile & Close'));
 
