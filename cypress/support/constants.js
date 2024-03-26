@@ -482,6 +482,44 @@ export const MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN = {
   N: 'n - No item information',
 };
 
+export const INVENTORY_LDR_FIELD_DROPDOWNS_NAMES = {
+  STATUS: 'Status',
+  TYPE: 'Type',
+  BLVL: 'BLvl',
+  CTRL: 'Ctrl',
+  DESC: 'Desc',
+  MULTILVL: 'MultiLvl',
+};
+
+export const INVENTORY_LDR_FIELD_STATUS_DROPDOWN = {
+  A: 'a - Increase in encoding level',
+  C: 'c - Corrected or revised',
+  D: 'd - Deleted',
+  N: 'n - New',
+  P: 'p - Increase in encoding level from prepublication',
+};
+
+export const INVENTORY_LDR_FIELD_CTRL_DROPDOWN = {
+  '\\': '\\ - No specified type',
+  A: 'a - Archival',
+};
+
+export const INVENTORY_LDR_FIELD_DESC_DROPDOWN = {
+  '\\': '\\ - Non-ISBD',
+  A: 'a - AACR2',
+  C: 'c - ISBD punctuation omitted',
+  I: 'i - ISBD punctuation included',
+  N: 'n - Non-ISBD punctuation omitted',
+  U: 'u - Unknown',
+};
+
+export const INVENTORY_LDR_FIELD_MULTILVL_DROPDOWN = {
+  '\\': '\\ - Not specified or not applicable',
+  A: 'a - Set',
+  B: 'b - Part with independent title',
+  C: 'c - Part with dependent title',
+};
+
 export const INVENTORY_LDR_FIELD_TYPE_DROPDOWN = {
   A: 'a - Language material',
   C: 'c - Notated music',
@@ -561,8 +599,35 @@ export const INVENTORY_008_FIELD_LITF_DROPDOWN = {
   U: 'u - Unknown',
 };
 
+export const INVENTORY_008_FIELD_REGL_DROPDOWN = {
+  NO: '| - No attempt to code',
+  N: 'n - Normalized irregular',
+  R: 'r - Regular',
+  U: 'u - Unknown',
+  X: 'x - Completely irregular',
+};
+
+export const INVENTORY_008_FIELD_S_L_DROPDOWN = {
+  NO: '| - No attempt to code',
+  0: '0 - Successive entry',
+  1: '1 - Latest entry',
+  2: '2 - Integrated entry',
+};
+
 export const DEFAULT_JOB_PROFILE_NAMES = {
   CREATE_INSTANCE_AND_SRS: 'Default - Create instance and SRS MARC Bib',
   CREATE_AUTHORITY: 'Default - Create SRS MARC Authority',
   CREATE_HOLDINGS_AND_SRS: 'Default - Create Holdings and SRS MARC Holdings',
+};
+
+export const patronGroupNames = {
+  STAFF: 'staff',
+  FACULTY: 'faculty',
+  UNDERGRAD: 'undergrad',
+};
+
+export const patronGroupUuids = {
+  STAFF: '3684a786-6671-4268-8ed0-9db82ebca60b',
+  FACULTY: '503a81cd-6c26-400f-b620-14c08943697c',
+  UNDERGRAD: 'bdc2b6d4-5ceb-4a12-ab46-249b9a68473e',
 };
