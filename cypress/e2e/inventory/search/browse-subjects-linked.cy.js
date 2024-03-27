@@ -77,7 +77,7 @@ describe('inventory', () => {
           InventoryInstance.searchResults(testData.subjectName);
           MarcAuthorities.checkFieldAndContentExistence(
             testData.tag010,
-            `$a ${marcFiles[1].naturalId}`,
+            `‡a ${marcFiles[1].naturalId}`,
           );
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag610);

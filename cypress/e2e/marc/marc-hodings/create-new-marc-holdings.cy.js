@@ -170,7 +170,7 @@ describe('MARC -> MARC Holdings', () => {
         // "Edit in quickMARC" option might not be active immediately after creating MARC Holdings
         // this option becomes active after reopening Holdings view window
         HoldingsRecordView.close();
-        InventoryInstance.openHoldingView();
+        InventoryInstance.openHoldingViewByID(holdingsID);
 
         HoldingsRecordView.editInQuickMarc();
         QuickMarcEditor.waitLoading();
@@ -203,7 +203,7 @@ describe('MARC -> MARC Holdings', () => {
       HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
         recordIDs.push(holdingsID);
         HoldingsRecordView.close();
-        InventoryInstance.openHoldingView();
+        InventoryInstance.openHoldingViewByID(holdingsID);
         HoldingsRecordView.viewSource();
         HoldingsRecordView.closeSourceView();
         InventoryInstance.verifyLastUpdatedDate();
@@ -239,7 +239,7 @@ describe('MARC -> MARC Holdings', () => {
       HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
         recordIDs.push(holdingsID);
         HoldingsRecordView.close();
-        InventoryInstance.openHoldingView();
+        InventoryInstance.openHoldingViewByID(holdingsID);
         HoldingsRecordView.viewSource();
         InventoryViewSource.checkFieldContentMatch(
           testData.tag001,
