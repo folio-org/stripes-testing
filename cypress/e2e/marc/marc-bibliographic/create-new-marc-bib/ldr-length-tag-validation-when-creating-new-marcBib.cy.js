@@ -5,6 +5,11 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import {
+  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES,
+  INVENTORY_LDR_FIELD_TYPE_DROPDOWN,
+  INVENTORY_LDR_FIELD_BLVL_DROPDOWN,
+} from '../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -13,18 +18,16 @@ describe('MARC', () => {
         tags: {
           tag245: '245',
           tagLDR: 'LDR',
-          tagL0: 'L0',
           tag0: '0',
           tag10: '10',
           tagABC: 'abc',
           tag100: '100',
         },
         fieldContents: {
-          tag245Content: 'A new title',
-          tagLDRContent: '00000naa\\a2200000uu\\4500',
-          tag0Content: '$a something',
-          tagLDRWithLessChar: '00000naa\\a2200000uu\\450',
-          tagLDRWithMoreChar: '00000naa\\a2200000uu\\450a2',
+          tag0: '$a something',
+          tag245: 'A new title',
+          tagLDRElvlBox: 'u',
+          tagLDRElvlBoxEmpty: '',
         },
         errors: {
           ldrCharacterLength:
@@ -34,8 +37,8 @@ describe('MARC', () => {
         },
       };
 
-      let userData = {};
-      const createdInstanceRecordId = [];
+      let userData;
+      let createdInstanceRecordId;
 
       before(() => {
         cy.createTempUser([
@@ -54,51 +57,54 @@ describe('MARC', () => {
       after('Deleting created user and data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(userData.userId);
-        InventoryInstance.deleteInstanceViaApi(createdInstanceRecordId[0]);
+        InventoryInstance.deleteInstanceViaApi(createdInstanceRecordId);
       });
 
       it(
-        'C422118 LDR length, tag validation when when creating a new "MARC bib" record (spitfire)',
+        'C422118 Tag and LDR validation when creating a new "MARC bib" record (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstance.newMarcBibRecord();
+
+          QuickMarcEditor.updateLDR06And07Positions();
+          QuickMarcEditor.verifyDropdownOptionChecked(
+            testData.tags.tagLDR,
+            INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+            INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A,
+          );
+          QuickMarcEditor.verifyDropdownOptionChecked(
+            testData.tags.tagLDR,
+            INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+            INVENTORY_LDR_FIELD_BLVL_DROPDOWN.A,
+          );
+          QuickMarcEditor.checkSubfieldsPresenceInTag008();
+
+          QuickMarcEditor.check008FieldContent();
+          QuickMarcEditor.fillInElvlBoxInLDRField(testData.fieldContents.tagLDRElvlBoxEmpty);
+          QuickMarcEditor.verifyValueInElvlBoxInLDRField(testData.fieldContents.tagLDRElvlBoxEmpty);
           QuickMarcEditor.updateExistingField(
             testData.tags.tag245,
-            `$a ${testData.fieldContents.tag245Content}`,
+            `$a ${testData.fieldContents.tag245}`,
           );
-          QuickMarcEditor.updateExistingField(
-            testData.tags.tagLDR,
-            testData.fieldContents.tagLDRContent,
+          QuickMarcEditor.checkContentByTag(
+            testData.tags.tag245,
+            `$a ${testData.fieldContents.tag245}`,
           );
-          MarcAuthority.addNewField(4, testData.tags.tag0, testData.fieldContents.tag0Content);
+
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkCallout(testData.errors.ldrCharacterLength);
+
+          QuickMarcEditor.fillInElvlBoxInLDRField(testData.fieldContents.tagLDRElvlBox);
+          QuickMarcEditor.verifyValueInElvlBoxInLDRField(testData.fieldContents.tagLDRElvlBox);
+
+          MarcAuthority.addNewField(4, testData.tags.tag0, testData.fieldContents.tag0);
           QuickMarcEditor.verifyTagFieldAfterUnlinking(
             5,
             '0',
             '\\',
             '\\',
-            testData.fieldContents.tag0Content,
+            testData.fieldContents.tag0,
           );
-
-          QuickMarcEditor.updateExistingField(
-            testData.tags.tagLDR,
-            testData.fieldContents.tagLDRWithLessChar,
-          );
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errors.ldrCharacterLength);
-
-          QuickMarcEditor.updateExistingField(
-            testData.tags.tagLDR,
-            testData.fieldContents.tagLDRWithMoreChar,
-          );
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errors.ldrCharacterLength);
-
-          QuickMarcEditor.updateExistingField(
-            testData.tags.tagLDR,
-            testData.fieldContents.tagLDRContent,
-          );
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errors.tagCharacterLength);
 
           QuickMarcEditor.updateExistingTagValue(5, '');
           QuickMarcEditor.pressSaveAndClose();
@@ -116,7 +122,7 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.getId().then((id) => {
-            createdInstanceRecordId.push(id);
+            createdInstanceRecordId = id;
           });
         },
       );
