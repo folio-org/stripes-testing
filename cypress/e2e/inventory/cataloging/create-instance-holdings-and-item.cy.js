@@ -31,6 +31,7 @@ describe('inventory', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
+        cy.wait(5000);
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
         Users.deleteViaApi(testData.user.userId);
       });
