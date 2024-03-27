@@ -5,6 +5,8 @@ import {
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
+import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
@@ -24,9 +26,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
-    // let instanceHrid;
-    // const quantityOfItems = '1';
-    // const marcFileForCreate = `C11103 autotestFile${getRandomPostfix()}.mrc`;
     const mappingProfile = {
       name: `C423473 Unlink action profile test${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -98,6 +97,14 @@ describe('Data Import', () => {
         cy.wait(1000);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+
+        JobProfileView.edit();
+        JobProfileEdit.verifyScreenName(jobProfile.profileName);
+        JobProfileEdit.unlinkForMatchActionsProfile(0);
+        JobProfileEdit.verifyLinkedProfiles(actionProfile.name, 1);
+        JobProfileEdit.saveAndClose();
+        JobProfileView.verifyLinkedProfilesForMatches([actionProfile.name], 0);
+        JobProfileView.verifyLinkedProfilesForNonMatches([actionProfile.name], 1);
       },
     );
   });
