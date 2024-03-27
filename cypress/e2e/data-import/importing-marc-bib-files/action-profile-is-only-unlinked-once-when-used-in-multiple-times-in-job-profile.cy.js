@@ -93,8 +93,6 @@ describe('Data Import', () => {
         NewJobProfile.linkMatchProfile(matchProfile.profileName);
         NewJobProfile.linkActionProfileForMatches(actionProfile.name);
         NewJobProfile.linkActionProfileForNonMatches(actionProfile.name);
-        // wait for the action profile to be linked
-        cy.wait(1000);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
