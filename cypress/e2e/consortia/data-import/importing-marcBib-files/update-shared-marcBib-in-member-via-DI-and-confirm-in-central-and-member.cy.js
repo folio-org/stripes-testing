@@ -3,6 +3,7 @@ import {
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
+  RECORD_STATUSES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
@@ -203,7 +204,7 @@ describe('Data Import', () => {
             JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
             Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
             Logs.openFileDetails(testData.marcFile.modifiedMarcFile);
-            FileDetails.openInstanceInInventory(FileDetails.status.updated);
+            FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
             InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
             InventoryInstance.verifyLastUpdatedSource(
               users.userAProperties.firstName,
