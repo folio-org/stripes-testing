@@ -12,6 +12,14 @@ export const reasonsActions = {
   trash: 'trash',
 };
 export default {
+  getViaApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'nature-of-content-terms',
+        searchParams,
+      })
+      .then(({ body }) => body);
+  },
   createViaApi: (body) => {
     return cy
       .okapiRequest({

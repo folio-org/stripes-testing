@@ -887,4 +887,13 @@ export default {
     cy.do(selectOrganizationModal.find(MultiColumnListRow({ index: 0 })).click());
     cy.do(Button({ id: 'accordion-toggle-button-filter-vendor' }).click());
   },
+
+  searchAbsentVendorbyindex: (index, searchParameter, organization) => {
+    cy.do([
+      selectOrganizationModal.find(searchField).selectIndex(index),
+      selectOrganizationModal.find(searchField).fillIn(searchParameter),
+      selectOrganizationModal.find(searchButton).click(),
+    ]);
+    cy.expect(MultiColumnListCell(organization.name).absent());
+  },
 };
