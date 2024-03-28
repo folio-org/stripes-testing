@@ -76,6 +76,9 @@ export default {
     cy.expect(searchButton.has({ disabled: false }));
     cy.do(searchButton.click());
   },
+  clearSearchField() {
+    cy.get('#input-record-search').clear();
+  },
   waitLoading() {
     cy.expect([ordersFiltersPane.exists(), ordersResultsPane.exists()]);
   },

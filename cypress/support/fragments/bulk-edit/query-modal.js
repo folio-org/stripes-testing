@@ -23,6 +23,10 @@ const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
 
 const booleanValues = ['AND'];
+
+export const itemFieldValues = {
+  instanceId: 'Instance ID',
+};
 export const usersFieldValues = {
   expirationDate: 'User expiration date',
   firstName: 'User first name',
@@ -49,6 +53,14 @@ export const stringOperators = [
   'is null/empty',
 ];
 export const stringStoresUuidOperators = [
+  'Select operator',
+  '==',
+  '!=',
+  'in',
+  'not in',
+  'is null/empty',
+];
+export const stringStoresUuidButMillionOperators = [
   'Select operator',
   '==',
   '!=',
