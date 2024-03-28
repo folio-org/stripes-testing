@@ -10,6 +10,7 @@ import {
   MultiColumnListRow,
   MultiSelect,
   MultiSelectOption,
+  NavListItem,
   Pane,
   PaneHeader,
   SearchField,
@@ -109,6 +110,10 @@ export default {
       organizationCodeField.fillIn(organization.code),
       saveAndClose.click(),
     ]);
+  },
+
+  varifyAbsentOrganizationApp: () => {
+    cy.expect(NavListItem('Organizations').absent());
   },
 
   createDonorOrganization: (organization) => {
