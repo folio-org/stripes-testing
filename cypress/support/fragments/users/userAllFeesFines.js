@@ -105,6 +105,9 @@ export default {
   paySelectedFeeFines: () => {
     cy.do(Dropdown('Actions').choose('Pay'));
   },
+  waiveSelectedFeeFines: () => {
+    cy.do(Dropdown('Actions').choose('Waive'));
+  },
   clickPayEllipsis: (rowIndex) => {
     cy.do(
       feeFinesList

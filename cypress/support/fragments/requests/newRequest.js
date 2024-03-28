@@ -307,6 +307,13 @@ export default {
       }),
     );
   },
+  checkRequestIsNotAllowedModalRequesterAlreadyHasOpenRequest() {
+    cy.expect(
+      Modal('Request not allowed').has({
+        message: 'This requester already has an open request for this item',
+      }),
+    );
+  },
   checkRequestIsNotAllowedInstanceModal() {
     cy.expect(
       Modal('Request not allowed').has({

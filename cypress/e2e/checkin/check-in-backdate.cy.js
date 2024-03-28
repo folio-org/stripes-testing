@@ -70,7 +70,7 @@ describe('Check in backdate', () => {
   });
 
   it('C587 Check in: backdate check ins (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
-    const itemEditedReturnTime = '2:00 AM';
+    const itemEditedReturnTime = '2:00 PM';
     const itemEditedReturnDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
 
     // Find an open loan that is not overdue
@@ -81,6 +81,7 @@ describe('Check in backdate', () => {
     cy.visit(TopMenu.checkInPath);
     CheckInActions.waitLoading();
     CheckInActions.editDateAndTimeReturned(itemEditedReturnDate, itemEditedReturnTime);
+    cy.wait(1000);
     // Enter barcode of item being checked in
     CheckInActions.checkInItemGui(itemBarcode);
     // Time returned is time entered

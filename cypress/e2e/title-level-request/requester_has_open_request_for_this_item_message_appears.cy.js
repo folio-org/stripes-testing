@@ -148,7 +148,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
       NewRequest.choosePickupServicePoint(testData.userServicePoint.name);
       NewRequest.saveRequestAndClose();
       NewRequest.verifyErrorMessage('This request was not placed successfully');
-      NewRequest.checkRequestIsNotAllowedModal();
+      NewRequest.checkRequestIsNotAllowedModalRequesterAlreadyHasOpenRequest();
     },
   );
 });
