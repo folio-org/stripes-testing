@@ -182,8 +182,9 @@ describe('MARC', () => {
             if (index) MarcAuthority.deleteViaAPI(id);
             else InventoryInstance.deleteInstanceViaApi(id);
           });
+          // TO DO: remove `failOnStatusCode = false` after MODELINKS-210 is done
           for (let i = 0; i < 2; i++) {
-            cy.deleteAuthoritySourceFileViaAPI(createdAuthSources[i]);
+            cy.deleteAuthoritySourceFileViaAPI(createdAuthSources[i], true);
           }
         });
 
