@@ -5,42 +5,43 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-
-const alphabetLowerCase = 'abcdefghijklmnopqrstuvwxyz';
-const alphabetUpperCase = 'abcdefghijklmnopqrstuvwxyz'.toUpperCase();
-const digits = '0123456789';
-const specialChars = "$&+,:;=?@#|'<>.-^* ()%!";
-const createdInstanceIDs = [];
+import {
+  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES,
+  INVENTORY_LDR_FIELD_STATUS_DROPDOWN,
+  INVENTORY_LDR_FIELD_CTRL_DROPDOWN,
+  INVENTORY_LDR_FIELD_DESC_DROPDOWN,
+  INVENTORY_LDR_FIELD_MULTILVL_DROPDOWN,
+} from '../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
-      const testData = {
-        marcBibTitle: 'The title: the face of a record',
-        LDRValues: {
-          validLDRvalue: '00000n\\\\\\a2200000uu\\4500',
-          validLDR05Values: ['a', 'c', 'd', 'n', 'p', 'a', 'c'],
-          validLDR06Values: ['c'],
-          validLDR07Values: ['i'],
-          validLDR08Values: ['a', '\\', 'a', ' ', '\\', 'a', ' '],
-          validLDR17Values: [
-            alphabetLowerCase[Math.floor(Math.random() * alphabetLowerCase.length)],
-            alphabetUpperCase[Math.floor(Math.random() * alphabetUpperCase.length)],
-            digits[Math.floor(Math.random() * digits.length)],
-            specialChars[Math.floor(Math.random() * specialChars.length)],
-            alphabetLowerCase[Math.floor(Math.random() * alphabetLowerCase.length)],
-            alphabetUpperCase[Math.floor(Math.random() * alphabetUpperCase.length)],
-            digits[Math.floor(Math.random() * digits.length)],
-          ],
-          validLDR18Values: [' ', '\\', 'a', 'c', 'i', 'n', 'u'],
-          validLDR19Values: [' ', '\\', 'a', 'b', 'c', 'a', 'b'],
+      const createdInstanceIDs = [];
+      let user;
+      const elvlBoxValues = ['P', 'n', '8', '$'];
+      const tagLDR = 'LDR';
+      const statusDropdownOptions = Object.values(INVENTORY_LDR_FIELD_STATUS_DROPDOWN);
+      const ctrlDropdownOptions = Object.values(INVENTORY_LDR_FIELD_CTRL_DROPDOWN);
+      const descDropdownOptions = Object.values(INVENTORY_LDR_FIELD_DESC_DROPDOWN);
+      const multilvlDropdownOptions = Object.values(INVENTORY_LDR_FIELD_MULTILVL_DROPDOWN);
+      const LDRDropdownOptionSets = [
+        {
+          name: INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
+          options: statusDropdownOptions,
         },
-      };
-      function checkLDRbyPosition(value, positions) {
-        QuickMarcEditor.getRegularTagContent('LDR').then((content) => {
-          positions.forEach((i) => (value[i] !== ' ' ? expect(content[i]).to.eq(value[i]) : expect(content[i]).to.eq('\\')));
-        });
-      }
+        {
+          name: INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.CTRL,
+          options: ctrlDropdownOptions,
+        },
+        {
+          name: INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.DESC,
+          options: descDropdownOptions,
+        },
+        {
+          name: INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.MULTILVL,
+          options: multilvlDropdownOptions,
+        },
+      ];
 
       before('Create test data', () => {
         cy.createTempUser([
@@ -48,9 +49,9 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((userProperties) => {
-          testData.user = userProperties;
+          user = userProperties;
 
-          cy.login(testData.user.username, testData.user.password, {
+          cy.login(user.username, user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
@@ -59,7 +60,7 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken().then(() => {
-          Users.deleteViaApi(testData.user.userId);
+          Users.deleteViaApi(user.userId);
           createdInstanceIDs.forEach((instanceID) => {
             InventoryInstance.deleteInstanceViaApi(instanceID);
           });
@@ -67,48 +68,61 @@ describe('MARC', () => {
       });
 
       it(
-        'C422111 Creating a new "MARC bib" record with valid LDR 05, 08, 17, 18, 19 values (spitfire) (TaaS)',
+        'C422111 Creating a new "MARC bib" record with valid LDR values in positions 05, 08, 17, 18, 19 (spitfire) (TaaS)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          for (let i = 0; i < testData.LDRValues.validLDR19Values.length; i++) {
-            const updatedLDRvalue = `${testData.LDRValues.validLDRvalue.substring(0, 5)}${
-              testData.LDRValues.validLDR05Values[i]
-            }${testData.LDRValues.validLDR06Values[0]}${testData.LDRValues.validLDR07Values[0]}${
-              testData.LDRValues.validLDR08Values[i]
-            }${testData.LDRValues.validLDRvalue.substring(9, 17)}${
-              testData.LDRValues.validLDR17Values[i]
-            }${testData.LDRValues.validLDR18Values[i]}${
-              testData.LDRValues.validLDR19Values[i]
-            }${testData.LDRValues.validLDRvalue.substring(20, 24)}`;
+          for (let i = 0; i < descDropdownOptions.length; i++) {
             const title = getRandomPostfix();
-            // Click on "Actions" buttons in second pane → Select "+New MARC Bib Record" option
+
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.waitLoading();
-            QuickMarcEditor.checkSubfieldsAbsenceInTag008();
-            // Fill "$a" value in "245" field (for example, input "The title: the face of a record")
+
             QuickMarcEditor.updateExistingField('245', `$a ${title}`);
-            // Replace blank values in LDR positions 06, 07 with valid values
-            // * Edit "05" position of "LDR" field with one of the valid values
-            // * Edit "08" position of "LDR" field with one of the valid values
-            // * Edit "17" position of "LDR" field with one of the valid values
-            // * Edit "18" position of "LDR" field with one of the valid values
-            // * Edit "19" position of "LDR" field with one of the valid values
-            QuickMarcEditor.updateExistingField('LDR', updatedLDRvalue);
-            // The boxes are displayed in "008" field with "\" value
-            QuickMarcEditor.checkSubfieldsPresenceInTag008();
-            // Click "Save & close" button
+
+            LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
+              LDRDropdownOptionSet.options.forEach((dropdownOption) => {
+                QuickMarcEditor.verifyFieldsDropdownOption(
+                  tagLDR,
+                  LDRDropdownOptionSet.name,
+                  dropdownOption,
+                );
+              });
+            });
+
+            QuickMarcEditor.updateLDR06And07Positions();
+
+            LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
+              QuickMarcEditor.selectFieldsDropdownOption(
+                tagLDR,
+                LDRDropdownOptionSet.name,
+                LDRDropdownOptionSet.options[i % LDRDropdownOptionSet.options.length],
+              );
+            });
+            QuickMarcEditor.fillInElvlBoxInLDRField(elvlBoxValues[i % elvlBoxValues.length]);
+            LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
+              QuickMarcEditor.verifyDropdownOptionChecked(
+                tagLDR,
+                LDRDropdownOptionSet.name,
+                LDRDropdownOptionSet.options[i % LDRDropdownOptionSet.options.length],
+              );
+            });
+            QuickMarcEditor.verifyValueInElvlBoxInLDRField(elvlBoxValues[i % elvlBoxValues.length]);
+
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
-            InventoryInstance.waitInstanceRecordViewOpened(title);
-            // Click on "Actions" buttons in second pane → Select "Edit MARC bibliographic record" option
+
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.waitLoading();
             QuickMarcEditor.saveInstanceIdToArrayInQuickMarc(createdInstanceIDs);
-            // * Editing view for created record is opened in a new pane
-            // * Values entered at Step 4 are shown in "LDR" field, positions 05, 08, 17, 18, 19
-            QuickMarcEditor.checkContent(`$a ${title}`, 4);
-            checkLDRbyPosition(updatedLDRvalue, [5, 8, 17, 18, 19]);
-            // Close editing window of "MARC bib" record
+            LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
+              QuickMarcEditor.verifyDropdownOptionChecked(
+                tagLDR,
+                LDRDropdownOptionSet.name,
+                LDRDropdownOptionSet.options[i % LDRDropdownOptionSet.options.length],
+              );
+            });
+            QuickMarcEditor.verifyValueInElvlBoxInLDRField(elvlBoxValues[i % elvlBoxValues.length]);
+
             QuickMarcEditor.closeWithoutSaving();
           }
         },
