@@ -152,7 +152,6 @@ describe('Data Import', () => {
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-        cy.logout();
 
         cy.login(secondUser.username, secondUser.password, {
           path: SettingsMenu.mappingProfilePath,
