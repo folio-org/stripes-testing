@@ -76,7 +76,9 @@ export default {
   waitLoading() {
     cy.expect([ordersFiltersPane.exists(), ordersResultsPane.exists()]);
   },
-
+  clearSearchField() {
+    cy.get('#input-record-search').clear();
+  },
   waitSettingsPageLoading() {
     cy.expect([
       Pane({ id: 'settings-nav-pane' }).exists(),

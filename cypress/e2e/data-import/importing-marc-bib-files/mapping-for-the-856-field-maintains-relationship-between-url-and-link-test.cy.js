@@ -93,6 +93,11 @@ describe('data-import', () => {
     };
 
     before('login', () => {
+      cy.getAdminToken();
+      NewInstanceStatusType.createViaApi().then((initialInstanceStatusType) => {
+        testData.instanceStatusTypeId = initialInstanceStatusType.body.id;
+      });
+
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -101,9 +106,6 @@ describe('data-import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        NewInstanceStatusType.createViaApi().then((initialInstanceStatusType) => {
-          testData.instanceStatusTypeId = initialInstanceStatusType.body.id;
-        });
         cy.login(user.username, user.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,

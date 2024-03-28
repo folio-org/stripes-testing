@@ -28,7 +28,7 @@ describe('data-import', () => {
   describe('Permissions', () => {
     let user;
     const filePath = 'marcBibFileForC377023.mrc';
-    const marcFileName = `C377023 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C377023 autotestFileName${getRandomPostfix()}.mrc`;
     const title = 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.';
 
     const mappingProfile = {
@@ -112,7 +112,6 @@ describe('data-import', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFileName);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      cy.logout();
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
