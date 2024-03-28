@@ -5,89 +5,31 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import {
+  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES,
+  INVENTORY_LDR_FIELD_TYPE_DROPDOWN,
+} from '../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {
         marcBibTitle: 'The title: the face of a record',
-        marcBibTitle2: 'Another title',
-        positions: [5, 6, 7, 8, 18, 19],
-        validLDRValue: '00000naa\\a2200000uu\\4500',
-        invalidLDRvalue: '000001b!ba2200000u$f4500',
-        invalidLDRValues: {
-          5: '1',
-          6: 'b',
-          7: '!',
-          8: 'b',
-          18: '$',
-          19: 'f',
-        },
-        LDR0607Combinations: {
-          invalidLDR06InvalidLDR07Set1: [
-            ['m', 'p'],
-            ['e', 'p'],
-            ['f', 'p'],
-            ['c', 'p'],
-            ['d', 'p'],
-            ['i', 'p'],
-            ['j', 'p'],
-            ['g', 'p'],
-            ['k', 'p'],
-            ['o', 'p'],
-            ['r', 'p'],
-            ['p', 'p'],
-          ],
-          invalidLDR06InvalidLDR07Set2: [
-            ['a', 'p'],
-            ['a', 'q'],
-          ],
-          invalidLDR06ValidLDR07: [
-            ['h', 'a'],
-            ['u', 'b'],
-            ['b', 'm'],
-          ],
-          validLDR06InvalidLDR07: [
-            ['b', 'e'],
-            ['h', 't'],
-            ['v', '$'],
-          ],
-        },
         tags: {
+          tag008: '008',
           tag245: '245',
           tag246: '246',
           tagLDR: 'LDR',
         },
         fieldContents: {
           tag245Content: 'New title',
-          tagLDRContent: '00000naa\\a2200000uu\\4500',
         },
       };
-
-      function trySaveWithInvalidLdrValue(position, value) {
-        QuickMarcEditor.updateLDRvalueByPosition(position, value);
-        QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.verifyInvalidLDRValueCallout(position);
-        QuickMarcEditor.verifyInvalidLDRCalloutLink();
-        QuickMarcEditor.closeCallout();
-      }
-
-      function updateLDR06LDR07Values(combinations, calloutPosition, is008SubfieldPresent) {
-        combinations.forEach((combination) => {
-          const updatedLDRValue = `${testData.validLDRValue.substring(0, 6)}${combination[0]}${
-            combination[1]
-          }${testData.validLDRValue.substring(8)}`;
-          QuickMarcEditor.updateExistingField('LDR', updatedLDRValue);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyInvalidLDRValueCallout(calloutPosition);
-          if (is008SubfieldPresent) {
-            QuickMarcEditor.checkSubfieldsPresenceInTag008();
-          } else {
-            QuickMarcEditor.checkSubfieldsAbsenceInTag008();
-          }
-          QuickMarcEditor.closeCallout();
-        });
-      }
+      const field008DropdownsOptionsSets = [
+        { name: 'DtSt', option: 'm - Multiple dates' },
+        { name: 'Comp', option: 'an - Anthems' },
+        { name: 'FMus', option: 'a - Full score' },
+      ];
 
       before('Create test data', () => {
         cy.createTempUser([
@@ -95,11 +37,13 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
         ]).then((userProperties) => {
           testData.user = userProperties;
+        });
+      });
 
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+      beforeEach('Create test data', () => {
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
         });
       });
 
@@ -110,46 +54,35 @@ describe('MARC', () => {
       });
 
       it(
-        'C422112 Creating a new "MARC bib" record with invalid LDR 05, 06, 07, 08, 17, 18, 19 values (spitfire) (TaaS)',
+        'C422112 Creating a new "MARC bib" record with invalid LDR positions 06, 07 values (spitfire) (TaaS)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateExistingField('245', `$a ${testData.marcBibTitle}`);
-          testData.positions.forEach((position) => {
-            trySaveWithInvalidLdrValue(position, testData.invalidLDRValues[position]);
-          });
-          QuickMarcEditor.updateExistingField('LDR', testData.invalidLDRvalue);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyInvalidLDRValueCallout(testData.positions);
-          QuickMarcEditor.closeCallout();
-          QuickMarcEditor.closeWithoutSavingAfterChange();
-        },
-      );
+          QuickMarcEditor.verifyInvalidLDRValueCallout(['06', '07']);
 
-      it(
-        'C422115 "008" field updated when invalid LDR 06, 07 values entered upon creation of "MARC bib" record (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
-        () => {
-          InventoryInstance.newMarcBibRecord();
-          QuickMarcEditor.updateExistingField('245', `$a ${testData.marcBibTitle}`);
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tagLDR,
+            INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+            INVENTORY_LDR_FIELD_TYPE_DROPDOWN.C,
+          );
+          QuickMarcEditor.verifyDropdownOptionChecked(
+            testData.tags.tagLDR,
+            INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+            INVENTORY_LDR_FIELD_TYPE_DROPDOWN.C,
+          );
 
-          updateLDR06LDR07Values(
-            testData.LDR0607Combinations.invalidLDR06InvalidLDR07Set1,
-            7,
-            true,
-          );
-          updateLDR06LDR07Values(
-            testData.LDR0607Combinations.invalidLDR06InvalidLDR07Set2,
-            7,
-            false,
-          );
-          updateLDR06LDR07Values(testData.LDR0607Combinations.invalidLDR06ValidLDR07, 6, false);
-          updateLDR06LDR07Values(
-            testData.LDR0607Combinations.validLDR06InvalidLDR07,
-            [6, 7],
-            false,
-          );
-          QuickMarcEditor.closeWithoutSavingAfterChange();
+          field008DropdownsOptionsSets.forEach((field008DropdownOption) => {
+            QuickMarcEditor.selectFieldsDropdownOption(
+              testData.tags.tag008,
+              field008DropdownOption.name,
+              field008DropdownOption.option,
+            );
+          });
+
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.verifyInvalidLDRValueCallout('07');
         },
       );
 
@@ -159,10 +92,7 @@ describe('MARC', () => {
         () => {
           InventoryInstance.newMarcBibRecord();
 
-          QuickMarcEditor.updateExistingField(
-            testData.tags.tagLDR,
-            testData.fieldContents.tagLDRContent,
-          );
+          QuickMarcEditor.updateLDR06And07Positions();
 
           QuickMarcEditor.updateExistingTagName(testData.tags.tag245, testData.tags.tag246);
 
@@ -170,7 +100,6 @@ describe('MARC', () => {
           QuickMarcEditor.verifyNo245TagCallout();
 
           QuickMarcEditor.updateExistingTagName(testData.tags.tag246, testData.tags.tag245);
-
           QuickMarcEditor.updateExistingField(
             testData.tags.tag245,
             `$a ${testData.fieldContents.tag245Content}`,
