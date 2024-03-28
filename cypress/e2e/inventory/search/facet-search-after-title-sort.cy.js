@@ -104,7 +104,10 @@ describe('Inventory', () => {
           });
         });
 
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.inventoryAll.gui,
+        Permissions.enableStaffSuppressFacet.gui,
+      ]).then((userProperties) => {
         testData.userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.inventoryPath,
