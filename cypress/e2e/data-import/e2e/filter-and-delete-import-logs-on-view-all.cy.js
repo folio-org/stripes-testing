@@ -31,7 +31,11 @@ describe('data-import', () => {
         firstUser = userProperties;
 
         const fileName = `C358136 fileName${getRandomPostfix()}.mrc`;
-        cy.login(firstUser.username, firstUser.password);
+        cy.login(firstUser.username, firstUser.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
+
         DataImport.verifyUploadState();
         DataImport.waitLoading();
         DataImport.uploadFile('oneMarcBib.mrc', fileName);
@@ -39,7 +43,6 @@ describe('data-import', () => {
         JobProfiles.search('Default - Create instance and SRS MARC Bib');
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
-        cy.logout();
       });
 
       cy.createTempUser([

@@ -23,6 +23,7 @@ describe('data-import', () => {
         user = userProperties;
 
         cy.login(user.username, user.password);
+        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.waitLoading();
         DataImport.uploadFile('oneMarcBib.mrc', fileName);
@@ -30,7 +31,6 @@ describe('data-import', () => {
         JobProfiles.search('Default - Create instance and SRS MARC Bib');
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
-        // DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
       });
     });
 

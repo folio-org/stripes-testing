@@ -266,7 +266,7 @@ describe('data-import', () => {
     });
 
     const openOrder = (number) => {
-      Orders.resetFilters();
+      Orders.clearSearchField();
       Orders.searchByParameter('PO number', number);
       Orders.selectFromResultsList(number);
       Orders.openOrder();
@@ -274,7 +274,7 @@ describe('data-import', () => {
 
     const checkReceivedPiece = (number, title) => {
       cy.visit(TopMenu.ordersPath);
-      Orders.resetFilters();
+      Orders.clearSearchField();
       Orders.searchByParameter('PO number', number);
       Orders.selectFromResultsList(number);
       OrderDetails.openPolDetails(title);
@@ -309,6 +309,8 @@ describe('data-import', () => {
 
           cy.wait(2000);
           Orders.checkIsOrderCreated(firstOrderNumber);
+          Orders.resetFilters();
+          cy.wait(2000);
           // open the first PO with POL
           openOrder(firstOrderNumber);
           Orders.selectStatusInSearch(ORDER_STATUSES.OPEN);

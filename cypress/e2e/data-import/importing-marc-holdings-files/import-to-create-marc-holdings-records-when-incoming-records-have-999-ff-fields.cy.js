@@ -38,7 +38,6 @@ describe('data-import', () => {
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
         instanceHrid = initialInstanceHrId;
       });
-      cy.logout();
 
       cy.createTempUser([
         Permissions.inventoryAll.gui,
