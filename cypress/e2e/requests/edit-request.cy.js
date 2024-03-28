@@ -42,7 +42,11 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
     { tags: ['smoke', 'vega', 'nonParallel', 'system'] },
     () => {
       cy.visit(TopMenu.requestsPath);
-      Object.values(EditRequest.requestStatuses).forEach((status) => {
+      [EditRequest.requestStatuses.NOT_YET_FILLED,
+        EditRequest.requestStatuses.IN_TRANSIT,
+        EditRequest.requestStatuses.AWAITING_PICKUP,
+        EditRequest.requestStatuses.AWAITING_DELIVERY,
+      ].forEach((status) => {
         EditRequest.checkIsEditsBeingSaved(requestData, instanceData, status);
         EditRequest.resetFiltersAndReloadPage();
       });
