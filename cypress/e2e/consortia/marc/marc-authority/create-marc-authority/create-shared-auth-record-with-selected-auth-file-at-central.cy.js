@@ -7,8 +7,7 @@ import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix, { getRandomLetters } from '../../../../../support/utils/stringTools';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
-// TODO: uncomment after functionality will be added
-// import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
+import ManageAuthorityFiles from '../../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -63,8 +62,8 @@ describe('MARC', () => {
             ).then((sourceId) => {
               testData.authSourceID = sourceId;
             });
-            // TODO: uncomment after functionality will be added
-            // ManageAuthorityFiles.setAllDefaultFOLIOFilesToActive();
+
+            ManageAuthorityFiles.setAllDefaultFOLIOFilesToActiveViaAPI();
           })
           .then(() => {
             cy.resetTenant();
@@ -80,8 +79,7 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
         MarcAuthority.deleteViaAPI(testData.authorityId);
-        // TODO: uncomment after functionality will be added
-        // ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActive();
+        ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
         cy.deleteAuthoritySourceFileViaAPI(testData.authSourceID);
       });
 
