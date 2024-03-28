@@ -115,6 +115,7 @@ module.exports = defineConfig({
       return result;
     },
     baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
+    // eslint-disable-next-line spaced-comment
     //testIsolation: false,
   },
 });
