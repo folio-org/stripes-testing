@@ -63,7 +63,7 @@ describe('Data Import', () => {
         NewJobProfile.linkActionProfileForNonMatches(defaultActionProfileName);
         // Click on "Save as profile & Close"
         JobProfileEdit.saveAndClose();
-        JobProfileView.verifyLinkedProfilesNonMatches([defaultActionProfileName], 1);
+        JobProfileView.verifyLinkedProfilesForNonMatches([defaultActionProfileName], 1);
       },
     );
   });

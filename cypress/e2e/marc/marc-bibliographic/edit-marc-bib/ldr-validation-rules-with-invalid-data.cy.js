@@ -1,4 +1,14 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES,
+  INVENTORY_LDR_FIELD_STATUS_DROPDOWN,
+  INVENTORY_LDR_FIELD_BLVL_DROPDOWN,
+  INVENTORY_LDR_FIELD_CTRL_DROPDOWN,
+  INVENTORY_LDR_FIELD_DESC_DROPDOWN,
+  INVENTORY_LDR_FIELD_MULTILVL_DROPDOWN,
+  INVENTORY_008_FIELD_REGL_DROPDOWN,
+  INVENTORY_008_FIELD_S_L_DROPDOWN,
+} from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -6,65 +16,59 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import InteractorsTools from '../../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
-      const testData = {
-        validLDR: '01218nam\\a22002773c\\4500',
-      };
       const marcFile = {
-        marc: 'oneMarcBib.mrc',
-        fileName: `testMarcFileC380397${getRandomPostfix()}.mrc`,
+        marc: 'marcBibFileForC357567.mrc',
+        fileName: `testMarcFileC357567${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
       };
-      const LDRValues = [
+      const tagLDR = 'LDR';
+      const tag008 = '008';
+      const invalidLDRDropdownsValues = [
+        INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
+        INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+        INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.CTRL,
+        INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.MULTILVL,
+      ];
+      const fieldLDRDropdownsOptionsSet = [
         {
-          position: '5',
-          value: '012181am\\a22002773c\\4500',
-          error:
-            'Record cannot be saved. Please enter a valid Leader 05. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html',
+          name: INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+          option: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.S,
         },
         {
-          position: '6',
-          value: '01218nbm\\a22002773c\\4500',
-          error:
-            'Record cannot be saved. Please enter a valid Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html',
+          name: INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.CTRL,
+          option: INVENTORY_LDR_FIELD_CTRL_DROPDOWN['\\'],
         },
         {
-          position: '7',
-          value: '01218na!\\a22002773c\\4500',
-          error:
-            'Record cannot be saved. Please enter a valid Leader 07. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html',
+          name: INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.DESC,
+          option: INVENTORY_LDR_FIELD_DESC_DROPDOWN.A,
         },
         {
-          position: '8',
-          value: '01218namba22002773c\\4500',
-          error:
-            'Record cannot be saved. Please enter a valid Leader 08. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html',
-        },
-        {
-          position: '18',
-          value: '01218nam\\a22002773$\\4500',
-          error:
-            'Record cannot be saved. Please enter a valid Leader 18. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html',
-        },
-        {
-          position: '19',
-          value: '01218nam\\a22002773cd4500',
-          error:
-            'Record cannot be saved. Please enter a valid Leader 19. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html',
-        },
-        {
-          position: 'invalid',
-          value: '012181b!ba22002773$d4500',
-          error:
-            'Record cannot be saved. Please enter a valid Leader 05, Leader 06, Leader 07, Leader 08, Leader 18 and Leader 19. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html',
+          name: INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.MULTILVL,
+          option: INVENTORY_LDR_FIELD_MULTILVL_DROPDOWN.C,
         },
       ];
+      const field008DropdownsOptionsSet = [
+        {
+          name: 'Regl',
+          option: INVENTORY_008_FIELD_REGL_DROPDOWN.R,
+        },
+        {
+          name: 'S/L',
+          option: INVENTORY_008_FIELD_S_L_DROPDOWN[0],
+        },
+      ];
+      const errorMessageFirstSave =
+        'Record cannot be saved. Please enter a valid Leader 05, Leader 07, Leader 08, Leader 18 and Leader 19. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
+      const errorMessageSecondSave =
+        'Record cannot be saved. Please enter a valid Leader 07, Leader 08, Leader 18 and Leader 19. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
+      let instanceID;
+      let user;
 
       before('Create user and data', () => {
         cy.getAdminToken();
@@ -74,7 +78,7 @@ describe('MARC', () => {
           marcFile.jobProfileToRun,
         ).then((response) => {
           response.forEach((record) => {
-            testData.instanceID = record[marcFile.propertyName].id;
+            instanceID = record[marcFile.propertyName].id;
           });
         });
 
@@ -82,19 +86,22 @@ describe('MARC', () => {
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((createdUserProperties) => {
-          testData.user = createdUserProperties;
+          user = createdUserProperties;
 
-          cy.login(testData.user.username, testData.user.password, {
+          cy.login(user.username, user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
+          InventoryInstances.searchByTitle(instanceID);
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitInventoryLoading();
         });
       });
 
       after('Deleting created users, Instances', () => {
         cy.getAdminToken().then(() => {
-          Users.deleteViaApi(testData.user.userId);
-          InventoryInstance.deleteInstanceViaApi(testData.instanceID);
+          Users.deleteViaApi(user.userId);
+          InventoryInstance.deleteInstanceViaApi(instanceID);
         });
       });
 
@@ -102,17 +109,76 @@ describe('MARC', () => {
         'C357567 Verify "LDR" validation rules with invalid data for editable positions "05", "06", "07", "08", "18", "19" when editing record (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire'] },
         () => {
-          InventoryInstances.searchByTitle(testData.instanceID);
-          InventoryInstances.selectInstance();
-          InventoryInstance.waitInventoryLoading();
           InventoryInstance.editMarcBibliographicRecord();
-          cy.wrap(LDRValues).each((ldr) => {
-            QuickMarcEditor.updateExistingField('LDR', testData.validLDR);
-            QuickMarcEditor.updateExistingField('LDR', ldr.value);
-            QuickMarcEditor.pressSaveAndClose();
-            InteractorsTools.checkCalloutErrorMessage(ldr.error);
-            QuickMarcEditor.verifyInvalidLDRCalloutLink();
-            QuickMarcEditor.closeCallout();
+
+          invalidLDRDropdownsValues.forEach((invalidLDRDropdownValue) => {
+            QuickMarcEditor.verifyDropdownValueOfLDRIsValid(invalidLDRDropdownValue, false);
+          });
+
+          QuickMarcEditor.updateExistingField(
+            '245',
+            '$a UPDATED Invalid LDR editable positions The Journal of ecclesiastical history.',
+          );
+          QuickMarcEditor.verifySaveAndCloseButtonEnabled();
+          QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
+
+          QuickMarcEditor.pressSaveAndKeepEditing(errorMessageFirstSave);
+
+          Object.values(INVENTORY_LDR_FIELD_STATUS_DROPDOWN).forEach((dropdownOption) => {
+            QuickMarcEditor.verifyFieldsDropdownOption(
+              tagLDR,
+              INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
+              dropdownOption,
+            );
+          });
+          QuickMarcEditor.verifyFieldsDropdownOption(
+            tagLDR,
+            INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
+            'b - invalid value',
+          );
+
+          QuickMarcEditor.selectFieldsDropdownOption(
+            tagLDR,
+            INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
+            INVENTORY_LDR_FIELD_STATUS_DROPDOWN.C,
+          );
+          QuickMarcEditor.verifyDropdownOptionChecked(
+            tagLDR,
+            INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
+            INVENTORY_LDR_FIELD_STATUS_DROPDOWN.C,
+          );
+
+          QuickMarcEditor.pressSaveAndKeepEditing(errorMessageSecondSave);
+
+          fieldLDRDropdownsOptionsSet.forEach((LDRFieldDropdownsOption) => {
+            QuickMarcEditor.selectFieldsDropdownOption(
+              tagLDR,
+              LDRFieldDropdownsOption.name,
+              LDRFieldDropdownsOption.option,
+            );
+            QuickMarcEditor.verifyDropdownOptionChecked(
+              tagLDR,
+              LDRFieldDropdownsOption.name,
+              LDRFieldDropdownsOption.option,
+            );
+          });
+
+          field008DropdownsOptionsSet.forEach((field008DropdownOption) => {
+            QuickMarcEditor.selectFieldsDropdownOption(
+              tag008,
+              field008DropdownOption.name,
+              field008DropdownOption.option,
+            );
+            QuickMarcEditor.verifyDropdownOptionChecked(
+              tag008,
+              field008DropdownOption.name,
+              field008DropdownOption.option,
+            );
+          });
+
+          QuickMarcEditor.clickSaveAndKeepEditing();
+          Object.values(INVENTORY_LDR_FIELD_DROPDOWNS_NAMES).forEach((dropdownName) => {
+            QuickMarcEditor.verifyDropdownValueOfLDRIsValid(dropdownName);
           });
         },
       );

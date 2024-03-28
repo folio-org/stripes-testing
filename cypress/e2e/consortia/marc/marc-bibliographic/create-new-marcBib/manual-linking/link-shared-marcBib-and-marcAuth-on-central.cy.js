@@ -23,11 +23,9 @@ describe('MARC', () => {
         const testData = {
           tags: {
             tag245: '245',
-            tagLDR: 'LDR',
           },
           fieldContents: {
             tag245Content: 'C422141 Created Shared Instance with linked field',
-            tagLDRContent: '00000naa\\a2200000uu\\4500',
           },
           authorityTitle: 'C422141 Dante Alighieri, 1265-1321',
           searchOption: 'Personal name',
@@ -131,10 +129,7 @@ describe('MARC', () => {
               testData.tags.tag245,
               `$a ${testData.fieldContents.tag245Content}`,
             );
-            QuickMarcEditor.updateExistingField(
-              testData.tags.tagLDR,
-              testData.fieldContents.tagLDRContent,
-            );
+            QuickMarcEditor.updateLDR06And07Positions();
             MarcAuthority.addNewField(4, newField.tag, newField.content);
             QuickMarcEditor.updateIndicatorValue(newField.tag, '2', 0);
             QuickMarcEditor.updateIndicatorValue(newField.tag, '0', 1);
