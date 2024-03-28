@@ -116,7 +116,6 @@ describe('Data Import', () => {
       JobProfiles.runImportFile();
       Logs.waitFileIsImported(marcFileName);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      cy.logout();
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
@@ -147,7 +146,8 @@ describe('Data Import', () => {
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.openOrderTab();
         JsonScreenView.verifyContentInTab(message);
-        cy.go('back');
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(marcFileName);
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.verifyOrderTitle(title);

@@ -35,7 +35,7 @@ describe('Data Import', () => {
     let orderNumber;
     const filePathForCreateOrder = 'marcBibFileForC378893.mrc';
     const marcFileName = `C378893 autotestFileName${getRandomPostfix()}.mrc`;
-    const title = 'Ella & Basie! [sound recording] / arranged by Quincy Jones.';
+    const title = 'Ella & Basie!';
     const productJson = {
       productId: '"productId": "T90028"',
       productIdType: '"productIdType": "b5d8cdc4-9441-487c-90cf-0c7ec97728eb"',
