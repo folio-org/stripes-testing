@@ -1,3 +1,4 @@
+import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -33,7 +34,7 @@ describe('MARC', () => {
         // waiting until page loading
         cy.wait(10000);
         HoldingsRecordView.getId().then((initialHoldindsRecordId) => {
-          HoldingsRecordView.checkSource('MARC');
+          HoldingsRecordView.checkSource(INSTANCE_SOURCE_NAMES.MARC);
           // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
           HoldingsRecordView.close();
           InventoryInstance.openHoldingView();

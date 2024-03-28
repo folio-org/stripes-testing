@@ -1,10 +1,11 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
-import Users from '../../../support/fragments/users/users';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -13,7 +14,7 @@ describe('MARC', () => {
         searchInput: 'Beatles',
         searchOption: 'Keyword',
       },
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       marcFiles: [
         {
           marc: 'marcAuthFileForC380635.mrc',

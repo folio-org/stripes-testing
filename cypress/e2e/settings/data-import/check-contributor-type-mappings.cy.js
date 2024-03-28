@@ -17,7 +17,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import { ORDER_STATUSES, JOB_STATUS_NAMES } from '../../../support/constants';
 import DataImportJobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     const fieldMappingProfile = `autotest_mapping_profile_name_${getRandomPostfix()}`;
     const actionProfile = `autotest_action_profile_name_${getRandomPostfix()}`;

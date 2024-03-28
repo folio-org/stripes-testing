@@ -28,13 +28,13 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     const orderNumbers = [];
     const quantityOfOrders = '7';
     const filePathForCreateOrder = 'marcFileForC376973.mrc';
-    const marcFileName = `C376973 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C376973 autotestFileName${getRandomPostfix()}.mrc`;
     const mappingProfile = {
       name: `C376973 mapping profile ${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,

@@ -6,7 +6,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,

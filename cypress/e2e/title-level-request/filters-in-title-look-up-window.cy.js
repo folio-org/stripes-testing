@@ -14,7 +14,7 @@ import Users from '../../support/fragments/users/users';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import DateTools from '../../support/utils/dateTools';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import { ITEM_STATUS_NAMES, INSTANCE_SOURCE_NAMES } from '../../support/constants';
 import NewInstanceHoldingItem from '../../support/fragments/inventory/holdingsMove/defaultInstanceHoldingItem';
 
 describe('Title Level Request', () => {
@@ -31,7 +31,7 @@ describe('Title Level Request', () => {
         suppressFromDiscovery: true,
         dateCreated: DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD'),
         dateUpdated: DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD'),
-        source: 'FOLIO',
+        source: INSTANCE_SOURCE_NAMES.FOLIO,
       },
       itemBarcode: uuid(),
       servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),

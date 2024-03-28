@@ -36,13 +36,13 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe.skip('data-import', () => {
+describe.skip('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let instanceHrid;
     const quantityOfItems = '1';
     const filePathForCreateOrder = 'marcFileForCreateOrder.mrc';
-    const marcFileName = `C380446 autotest file ${getRandomPostfix()}`;
+    const marcFileName = `C380446 autotestFile${getRandomPostfix()}.mrc`;
 
     const collectionOfMappingAndActionProfiles = [
       {

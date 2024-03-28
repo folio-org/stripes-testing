@@ -11,7 +11,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -53,7 +53,7 @@ describe('Inventory', () => {
       {
         marc: 'marcBibFileC411612SharedCentral.mrc',
         fileName: `C411612 Central testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         tenant: tenantNames.central,
         numOfRecords: 3,
         createdRecordsId: [],
@@ -61,7 +61,7 @@ describe('Inventory', () => {
       {
         marc: 'marcBibFileC411612LocalMember1.mrc',
         fileName: `C411612 Member1 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         tenant: tenantNames.college,
         numOfRecords: 1,
         createdRecordsId: [],
@@ -69,7 +69,7 @@ describe('Inventory', () => {
       {
         marc: 'marcBibFileC411612LocalMember2.mrc',
         fileName: `C411612 Member2 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         tenant: tenantNames.university,
         numOfRecords: 1,
         createdRecordsId: [],

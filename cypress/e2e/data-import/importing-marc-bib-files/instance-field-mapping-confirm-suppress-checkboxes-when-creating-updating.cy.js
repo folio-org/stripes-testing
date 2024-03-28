@@ -33,7 +33,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const instanceHrids = [];
     const checked = true;
@@ -102,7 +102,7 @@ describe('data-import', () => {
       'C11087 Instance field mapping: Confirm the "suppress" checkboxes when creating (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const marcFileName = `C11087 autotestFile_${getRandomPostfix()}.mrc`;
+        const marcFileName = `C11087 autotestFile${getRandomPostfix()}.mrc`;
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
@@ -141,7 +141,7 @@ describe('data-import', () => {
       'C11088 Instance field mapping: Confirm the "suppress" checkboxes when updating (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const marcFileName = `C11088 autotestFile_${getRandomPostfix()}.mrc`;
+        const marcFileName = `C11088 autotestFile${getRandomPostfix()}.mrc`;
         const editedFileName = `C11088 editedAutotestFile_${getRandomPostfix()}.mrc`;
         const fileNameForUpdate = `C11088 autotestFile_${getRandomPostfix()}.mrc`;
         const mappingProfileUpdate = {

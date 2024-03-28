@@ -431,10 +431,6 @@ export default {
     );
   },
 
-  checkmarkAllLogsIsRemoved: () => {
-    cy.do(dataImportList.find(Checkbox({ name: 'selected-all', checked: false })).exists());
-  },
-
   deleteLog: () => {
     cy.do(Pane({ id: 'pane-results' }).find(Button('Actions')).click());
     cy.do(Button('Delete selected logs').click());
@@ -452,10 +448,54 @@ export default {
     cy.do(MultiColumnList({ id: 'list-data-import' }).find(Link(fileName)).click());
   },
   clickNextPaginationButton: () => {
-    cy.do(nextButton.click());
+    cy.get('#list-data-import-next-paging-button').then(($button) => {
+      if (!$button.prop('disabled')) {
+        cy.wrap($button).click();
+      }
+    });
   },
   clickPreviousPaginationButton: () => {
-    cy.do(previousButton.click());
+    cy.get('#list-data-import-prev-paging-button').then(($button) => {
+      if (!$button.prop('disabled')) {
+        cy.wrap($button).click();
+      }
+    });
+  },
+
+  noLogResultsFound: () => {
+    cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
+  },
+
+  collapseButtonClick: () => cy.do(collapseButton.click()),
+
+  expandButtonClick: () => cy.do(expandButton.click()),
+
+  checkSearchPaneCollapsed: () => cy.expect(searchFilterPane.absent()),
+
+  clickFirstFileNameCell: () => {
+    cy.do(dataImportList.find(MultiColumnListCell({ row: 0, columnIndex: 0 })).hrefClick());
+  },
+
+  getNumberOfLogs: () => {
+    return cy
+      .get('#paneHeaderpane-results-subtitle')
+      .invoke('text')
+      .then((text) => {
+        const numberOfLogs = text.trim().split(' ')[0];
+        return numberOfLogs;
+      });
+  },
+
+  searchByKeyword: (value) => {
+    cy.do([
+      Select({ id: 'input-job-logs-search-qindex' }).choose('Keyword (ID, File name)'),
+      TextField({ id: 'input-job-logs-search' }).fillIn(value),
+      Button('Search').click(),
+    ]);
+  },
+
+  checkmarkAllLogsIsRemoved: () => {
+    cy.do(dataImportList.find(Checkbox({ name: 'selected-all', checked: false })).exists());
   },
 
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(selectAllCheckbox.absent()),
@@ -494,21 +534,16 @@ export default {
       .should('include', '100');
   },
 
-  verifyNextPagination: () => {
+  verifyNextPagination: (number) => {
     cy.get('#pane-results')
       .find('div[class^="mclPrevNextPageInfoContainer-"]')
       .invoke('text')
       .should('include', '101');
-    cy.get('#pane-results')
-      .find('div[class^="mclPrevNextPageInfoContainer-"]')
-      .invoke('text')
-      .then((text) => {
-        if (/\b(1\d{2}|200)\b/.test(text)) {
-          cy.expect(nextButton.has({ disabled: true }));
-        } else {
-          cy.expect(nextButton.has({ disabled: false }));
-        }
-      });
+    if (number <= 200) {
+      cy.expect(nextButton.has({ disabled: true }));
+    } else {
+      cy.expect(nextButton.has({ disabled: false }));
+    }
   },
 
   verifyUserNameIsAbsntInFilter(userName) {
@@ -529,16 +564,6 @@ export default {
     cy.get(jobProfile).should('not.exist');
   },
 
-  noLogResultsFound: () => {
-    cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
-  },
-
-  collapseButtonClick: () => cy.do(collapseButton.click()),
-
-  expandButtonClick: () => cy.do(expandButton.click()),
-
-  checkSearchPaneCollapsed: () => cy.expect(searchFilterPane.absent()),
-
   verifyFirstFileNameCellUnderlined: () => {
     cy.get('#pane-results [class*="mclCell-"]:nth-child(1) a')
       .eq(0)
@@ -552,15 +577,19 @@ export default {
       .should('have.css', 'color', visitedLinkColor);
   },
 
-  clickFirstFileNameCell: () => {
-    cy.do(dataImportList.find(MultiColumnListCell({ row: 0, columnIndex: 0 })).hrefClick());
-  },
-
   verifyFilterInactive(filter) {
     cy.expect(
       singleRecordImportsAccordion
         .find(Checkbox({ name: filter.toLowerCase() }))
         .has({ checked: false }),
     );
+  },
+
+  verifyLogsPaneIsOpened() {
+    cy.expect(logsResultPane.exists());
+  },
+
+  verifySearchResult(fileName) {
+    cy.expect(logsResultPane.find(MultiColumnListCell({ row: 0, content: fileName })).exists());
   },
 };

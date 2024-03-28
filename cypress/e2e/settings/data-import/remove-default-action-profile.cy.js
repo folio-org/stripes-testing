@@ -1,16 +1,16 @@
-import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
-import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
+import { DEFAULT_JOB_PROFILE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
+import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
-import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
-import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
-    const defaultJobProfileName = 'Default - Create SRS MARC Authority';
+    const defaultJobProfileName = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
     const defaultActionProfileName = 'Default - Create MARC Authority';
     const matchProfile = {
       profileName: `C422093 Match Profile ${getRandomPostfix()}`,
@@ -63,7 +63,7 @@ describe('data-import', () => {
         NewJobProfile.linkActionProfileForNonMatches(defaultActionProfileName);
         // Click on "Save as profile & Close"
         JobProfileEdit.saveAndClose();
-        JobProfileView.verifyLinkedProfilesNonMatches([defaultActionProfileName], 1);
+        JobProfileView.verifyLinkedProfilesForNonMatches([defaultActionProfileName], 1);
       },
     );
   });

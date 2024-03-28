@@ -12,11 +12,13 @@ import {
   Section,
 } from '../../../../interactors';
 import DataImportUploadFile from '../../../../interactors/dataImportUploadFile';
-import { ACCEPTED_DATA_TYPE_NAMES, JOB_STATUS_NAMES } from '../../constants';
+import {
+  ACCEPTED_DATA_TYPE_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  JOB_STATUS_NAMES,
+} from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import FileManager from '../../utils/fileManager';
-import getRandomPostfix from '../../utils/stringTools';
-import InventorySearchAndFilter from '../inventory/inventorySearchAndFilter';
 import MarcAuthorities from '../marcAuthority/marcAuthorities';
 import MarcAuthoritiesSearch from '../marcAuthority/marcAuthoritiesSearch';
 import MarcAuthority from '../marcAuthority/marcAuthority';
@@ -191,7 +193,7 @@ function processFile(
       },
       jobProfileInfo: {
         id: jobProfileId,
-        name: 'Default - Create instance and SRS MARC Bib',
+        name: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
       },
     },
@@ -365,13 +367,12 @@ function uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName) 
               entry.relatedInstanceInfo.length === 0 ? '' : entry.relatedInstanceInfo.hridList[0],
           },
           holding: {
-            id: entry.relatedHoldingsInfo.length === 0 ? '' : entry.relatedHoldingsInfo.idList[0],
-            hrid:
-              entry.relatedHoldingsInfo.length === 0 ? '' : entry.relatedHoldingsInfo.hridList[0],
+            id: entry.relatedHoldingsInfo.length === 0 ? '' : entry.relatedHoldingsInfo[0].id,
+            hrid: entry.relatedHoldingsInfo.length === 0 ? '' : entry.relatedHoldingsInfo[0].hrid,
           },
           item: {
-            id: entry.relatedItemInfo.length === 0 ? '' : entry.relatedItemInfo.idList[0],
-            hrid: entry.relatedItemInfo.length === 0 ? '' : entry.relatedItemInfo.hridList[0],
+            id: entry.relatedItemInfo.length === 0 ? '' : entry.relatedItemInfo[0].id,
+            hrid: entry.relatedItemInfo.length === 0 ? '' : entry.relatedItemInfo[0].hrid,
           },
           authority: {
             id: entry.relatedAuthorityInfo.length === 0 ? '' : entry.relatedAuthorityInfo.idList[0],
@@ -534,23 +535,6 @@ export default {
   uploadExportedFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
     cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
-  },
-
-  uploadMarcBib: () => {
-    // unique file name to upload
-    const nameForMarcFileWithBib = `autotest1Bib${getRandomPostfix()}.mrc`;
-    // upload a marc file for export
-    cy.visit(TopMenu.dataImportPath);
-    uploadFile('oneMarcBib.mrc', nameForMarcFileWithBib);
-    JobProfiles.search(JobProfiles.defaultInstanceAndSRSMarcBib);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(nameForMarcFileWithBib);
-
-    // get Instance HRID through API
-    InventorySearchAndFilter.getInstanceHRID().then((id) => {
-      cy.wrap(id).as('requestedHrId');
-    });
-    return cy.get('@requestedHrId');
   },
 
   getLinkToAuthority: (title) => cy.then(() => Button(title).href()),

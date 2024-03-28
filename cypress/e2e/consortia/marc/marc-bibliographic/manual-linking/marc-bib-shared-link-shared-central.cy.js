@@ -6,7 +6,7 @@ import InventoryInstances from '../../../../../support/fragments/inventory/inven
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES } from '../../../../../support/constants';
+import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
@@ -45,12 +45,12 @@ describe('MARC', () => {
         {
           marc: 'marcBibFileC397392.mrc',
           fileNameImported: `testMarcFileC397392.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         },
         {
           marc: 'marcAuthFileC397392.mrc',
           fileNameImported: `testMarcFileC397392.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         },
       ];
 

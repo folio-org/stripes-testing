@@ -5,7 +5,7 @@ import { Locations, ServicePoints } from '../../../support/fragments/settings/te
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Call Number Browse', () => {
     const firstCallNumber = 'QS 11 .GA1 E99 2005';
     const secondCallNumber = 'D15.H63 A3 2002';

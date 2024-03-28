@@ -9,7 +9,7 @@ import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/se
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     const testData = {
       mappings: {

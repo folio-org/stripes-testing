@@ -1,16 +1,17 @@
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
-import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import Users from '../../../../support/fragments/users/users';
-import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import InventoryHotkeys from '../../../../support/fragments/inventory/inventoryHotkeys';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import InventoryKeyboardShortcuts from '../../../../support/fragments/inventory/inventoryKeyboardShortcuts';
-import InventoryHotkeys from '../../../../support/fragments/inventory/inventoryHotkeys';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -27,7 +28,7 @@ describe('MARC', () => {
         {
           marc: 'marcBibFileC374156.mrc',
           fileName: `testMarcFileC374156${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           instanceTitle: 'Variations / Ludwig Van Beethoven.',
           instanceAlternativeTitle: 'Variation:, op. 44, E♭ major ver. 5',
           propertyName: 'instance',
@@ -35,7 +36,7 @@ describe('MARC', () => {
         {
           marc: 'marcAuthFileC374156.mrc',
           fileName: `testMarcFileC374156${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           authorityHeading:
             'Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
           updatedAuthorityHeading:

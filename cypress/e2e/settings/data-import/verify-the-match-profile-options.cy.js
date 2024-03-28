@@ -1,14 +1,14 @@
+import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
+import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
-import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     let user;
 
@@ -48,10 +48,8 @@ describe('data-import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         MatchProfiles.clickCreateNewMatchProfile();
-
-        NewMatchProfile.verifyExistingRecordSection();
-
-        NewMatchProfile.clickClose();
+        NewMatchProfile.verifyExistingRecordSection(recordItems);
+        NewMatchProfile.close();
         MatchProfiles.search(matchProfile.profileName);
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileTitleName(matchProfile.profileName);

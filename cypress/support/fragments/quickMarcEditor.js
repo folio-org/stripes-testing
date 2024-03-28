@@ -18,12 +18,14 @@ import {
   Tooltip,
   Select,
   Link,
+  Label,
 } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 import InventoryInstance from './inventory/inventoryInstance';
 import Institutions from './settings/tenant/location-setup/institutions';
 import {
+  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES,
   INVENTORY_LDR_FIELD_TYPE_DROPDOWN,
   INVENTORY_LDR_FIELD_BLVL_DROPDOWN,
   INVENTORY_008_FIELD_DTST_DROPDOWN,
@@ -31,6 +33,12 @@ import {
   INVENTORY_008_FIELD_FEST_DROPDOWN,
   INVENTORY_008_FIELD_INDX_DROPDOWN,
   INVENTORY_008_FIELD_LITF_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_STATUS_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_TYPE_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN,
+  MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES,
+  AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES,
 } from '../constants';
 
 const holdingsRecordViewSection = Section({ id: 'ui-inventory.holdingsRecordView' });
@@ -261,29 +269,65 @@ const tag008HoldingsBytesProperties = {
 };
 
 const tag008DefaultValues = [
-  { interactor: TextField('Srce'), defaultValue: '\\' },
-  { interactor: TextField('Audn'), defaultValue: '\\' },
-  { interactor: TextField('Lang'), defaultValue: '\\\\\\' },
-  { interactor: TextField('Form'), defaultValue: '\\' },
-  { interactor: TextField('Conf'), defaultValue: '\\' },
-  { interactor: TextField('Biog'), defaultValue: '\\' },
-  { interactor: TextField('MRec'), defaultValue: '\\' },
-  { interactor: TextField('Ctry'), defaultValue: '\\\\\\' },
-  { interactor: TextField('GPub'), defaultValue: '\\' },
-  { interactor: TextField('LitF'), defaultValue: '\\' },
-  { interactor: TextField('Indx'), defaultValue: '\\' },
-  { interactor: TextField('Fest'), defaultValue: '\\' },
-  { interactor: TextField('DtSt'), defaultValue: '\\' },
-  { interactor: TextField('Date 1'), defaultValue: '\\\\\\\\' },
-  { interactor: TextField('Date 2'), defaultValue: '\\\\\\\\' },
-  { interactor: TextField('Ills', { name: including('Ills[0]') }), defaultValue: '\\' },
-  { interactor: TextField('Ills', { name: including('Ills[1]') }), defaultValue: '\\' },
-  { interactor: TextField('Ills', { name: including('Ills[2]') }), defaultValue: '\\' },
-  { interactor: TextField('Ills', { name: including('Ills[3]') }), defaultValue: '\\' },
-  { interactor: TextField('Cont', { name: including('Cont[0]') }), defaultValue: '\\' },
-  { interactor: TextField('Cont', { name: including('Cont[1]') }), defaultValue: '\\' },
-  { interactor: TextField('Cont', { name: including('Cont[2]') }), defaultValue: '\\' },
-  { interactor: TextField('Cont', { name: including('Cont[3]') }), defaultValue: '\\' },
+  {
+    isSelect: true,
+    interactor: Select('Srce'),
+    defaultValue: '\\ - National bibliographic agency',
+  },
+  { isSelect: true, interactor: Select('Audn'), defaultValue: '\\ - Unknown or not specified' },
+  { isSelect: false, interactor: TextField('Lang'), defaultValue: '\\\\\\' },
+  { isSelect: true, interactor: Select('Form'), defaultValue: '\\ - None of the following' },
+  { isSelect: true, interactor: Select('Conf'), defaultValue: '1 - Conference publication' },
+  { isSelect: true, interactor: Select('Biog'), defaultValue: '\\ - No biographical material' },
+  { isSelect: true, interactor: Select('MRec'), defaultValue: '\\ - Not modified' },
+  { isSelect: false, interactor: TextField('Ctry'), defaultValue: '\\\\\\' },
+  { isSelect: true, interactor: Select('GPub'), defaultValue: '\\ - Not a government publication' },
+  { isSelect: true, interactor: Select('LitF'), defaultValue: 'i - Letters' },
+  { isSelect: true, interactor: Select('Indx'), defaultValue: '1 - Index present' },
+  { isSelect: true, interactor: Select('Fest'), defaultValue: '1 - Festschrift' },
+  { isSelect: true, interactor: Select('DtSt'), defaultValue: 'm - Multiple dates' },
+  { isSelect: false, interactor: TextField('Date 1'), defaultValue: '\\\\\\\\' },
+  { isSelect: false, interactor: TextField('Date 2'), defaultValue: '\\\\\\\\' },
+  {
+    isSelect: true,
+    interactor: Select('Ills', { name: including('Ills[0]') }),
+    defaultValue: '\\ - No illustrations',
+  },
+  {
+    isSelect: true,
+    interactor: Select('Ills', { name: including('Ills[1]') }),
+    defaultValue: '\\ - No illustrations',
+  },
+  {
+    isSelect: true,
+    interactor: Select('Ills', { name: including('Ills[2]') }),
+    defaultValue: '\\ - No illustrations',
+  },
+  {
+    isSelect: true,
+    interactor: Select('Ills', { name: including('Ills[3]') }),
+    defaultValue: '\\ - No illustrations',
+  },
+  {
+    isSelect: true,
+    interactor: Select('Cont', { name: including('Cont[0]') }),
+    defaultValue: '\\ - No specified nature of contents',
+  },
+  {
+    isSelect: true,
+    interactor: Select('Cont', { name: including('Cont[1]') }),
+    defaultValue: '\\ - No specified nature of contents',
+  },
+  {
+    isSelect: true,
+    interactor: Select('Cont', { name: including('Cont[2]') }),
+    defaultValue: '\\ - No specified nature of contents',
+  },
+  {
+    isSelect: true,
+    interactor: Select('Cont', { name: including('Cont[3]') }),
+    defaultValue: '\\ - No specified nature of contents',
+  },
 ];
 
 const defaultFieldValues = {
@@ -406,6 +450,7 @@ const defaultValid008HoldingsValues = {
   'Sep/comp': '\\',
   'Spec ret': ['\\', '\\', '\\'],
 };
+const fieldLDR = QuickMarcEditorRow({ tagValue: 'LDR' });
 
 export default {
   defaultValidLdr,
@@ -1209,11 +1254,50 @@ export default {
     cy.get(`span[id="${id}"]`).should('contain.text', hoverText);
   },
 
+  verifyLDRDropdownsHoverTexts() {
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Status-text', 'Record status');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Type-text', 'Type of record');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-ELvl-text', 'Encoding level');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Punct-text',
+      'Punctuation policy',
+    );
+  },
+
+  verifyMarcHoldingLDRDropdownsHoverTexts() {
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Status-text', 'Record status');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Type-text', 'Type of record');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-ELvl-text', 'Encoding level');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Item-text',
+      'Item information in record',
+    );
+  },
+
+  verifyMarcBibLDRDropdownsHoverTexts() {
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Status-text', 'Record status');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Type-text', 'Type of record');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-BLvl-text',
+      'Bibliographic level',
+    );
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Ctrl-text', 'Type of control');
+    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-ELvl-text', 'Encoding level');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Desc-text',
+      'Descriptive cataloging form',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-MultiLvl-text',
+      'Multipart resource record level',
+    );
+  },
+
   verifyLDRPositionsDefaultValues(fieldName, fieldvalue, isDisabled = true) {
     cy.expect(
       QuickMarcEditorRow({ index: 0 })
         .find(TextField({ name: fieldName }))
-        .has({ disabled: isDisabled, value: fieldvalue })
+        .has({ disabled: isDisabled, value: fieldvalue }),
     );
   },
 
@@ -1382,7 +1466,11 @@ export default {
 
   check008FieldContent() {
     tag008DefaultValues.forEach((field) => {
-      cy.expect(field.interactor.has({ value: field.defaultValue }));
+      if (field.isSelect === true) {
+        cy.expect(field.interactor.has({ checkedOptionText: field.defaultValue }));
+      } else {
+        cy.expect(field.interactor.has({ value: field.defaultValue }));
+      }
     });
   },
 
@@ -1997,7 +2085,9 @@ export default {
 
   deleteValuesIn008Boxes() {
     tag008DefaultValues.forEach((index) => {
-      cy.do(index.interactor.fillIn(''));
+      if (index.isSelect === false) {
+        cy.do(index.interactor.fillIn(''));
+      }
     });
   },
 
@@ -2180,11 +2270,20 @@ export default {
     this.checkInitialContent(4);
     this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Status-text', 'Record status');
     this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Type-text', 'Type of record');
-    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-BLvl-text', 'Bibliographic level');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-BLvl-text',
+      'Bibliographic level',
+    );
     this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Ctrl-text', 'Type of control');
     this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-ELvl-text', 'Encoding level');
-    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-Desc-text', 'Descriptive cataloging form');
-    this.verifyDropdownHoverText('ui-quick-marc.record.fixedField-MultiLvl-text', 'Multipart resource record level');
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-Desc-text',
+      'Descriptive cataloging form',
+    );
+    this.verifyDropdownHoverText(
+      'ui-quick-marc.record.fixedField-MultiLvl-text',
+      'Multipart resource record level',
+    );
   },
 
   checkEditableQuickMarcFormIsOpened: () => {
@@ -2304,13 +2403,191 @@ export default {
 
   verifyOptionInAuthorityFileNameDropdown(option, isPresent = true) {
     if (isPresent) {
-      cy.wrap(selectAuthorityFile.optionsText()).should((arrayOfOptions) => {
+      cy.wrap(selectAuthorityFile.allOptionsText()).should((arrayOfOptions) => {
         expect(arrayOfOptions).to.include(option);
       });
     } else {
-      cy.wrap(selectAuthorityFile.optionsText()).should((arrayOfOptions) => {
+      cy.wrap(selectAuthorityFile.allOptionsText()).should((arrayOfOptions) => {
         expect(arrayOfOptions).to.not.include(option);
       });
     }
+  },
+
+  verifyDropdownValueOfLDRIsValid(dropdownLabel, isValid = true) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: 'LDR' })
+        .find(Select({ label: dropdownLabel }))
+        .has({ valid: isValid }),
+    );
+  },
+
+  verifyBoxLabelsInLDRFieldInMarcAuthorityRecord() {
+    cy.expect([
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.Record length') }))
+        .has({ disabled: true }),
+      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS })).exists(),
+      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.TYPE })).exists(),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.7-16 positions') }))
+        .has({ disabled: true }),
+      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL })).exists(),
+      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT })).exists(),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.19-23 positions') }))
+        .has({ disabled: true }),
+    ]);
+  },
+
+  verifyBoxLabelsInLDRFieldInMarcHoldingRecord() {
+    cy.expect([
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.Record length') }))
+        .has({ disabled: true }),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.STATUS })).exists(),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.TYPE })).exists(),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.7-16 positions') }))
+        .has({ disabled: true }),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ELVL })).exists(),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ITEM })).exists(),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.19-23 positions') }))
+        .has({ disabled: true, value: '\\4500' }),
+    ]);
+  },
+
+  verifyBoxLabelsInLDRFieldInMarcBibRecord() {
+    cy.expect([
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.Record length') }))
+        .has({ disabled: true }),
+      fieldLDR.find(Select({ label: INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.STATUS })).exists(),
+      fieldLDR.find(Select({ label: INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE })).exists(),
+      fieldLDR.find(Select({ label: INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL })).exists(),
+      fieldLDR.find(Select({ label: INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.CTRL })).exists(),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.9-16 positions') }))
+        .has({ disabled: true }),
+
+      fieldLDR.find(TextField('ELvl')).exists(),
+      fieldLDR.find(TextField('ELvl')).has({ readOnly: false }),
+
+      fieldLDR.find(Select({ label: INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.DESC })).exists(),
+      fieldLDR.find(Select({ label: INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.MULTILVL })).exists(),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.20-23 positions') }))
+        .has({ disabled: true, value: '4500' }),
+    ]);
+  },
+
+  verifyInitialLDRFieldsValuesInMarcHoldingRecord() {
+    cy.expect([
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.Record length') }))
+        .has({ disabled: true, value: '00000' }),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.STATUS })).exists(),
+      fieldLDR
+        .find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.STATUS }))
+        .has({ checkedOptionText: MARC_HOLDING_LDR_FIELD_STATUS_DROPDOWN.N }),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.TYPE })).exists(),
+      fieldLDR
+        .find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.TYPE }))
+        .has({ checkedOptionText: MARC_HOLDING_LDR_FIELD_TYPE_DROPDOWN.U }),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.7-16 positions') }))
+        .has({ disabled: true, value: '\\\\\\2200000' }),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ELVL })).exists(),
+      fieldLDR
+        .find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ELVL }))
+        .has({ checkedOptionText: MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN.U }),
+      fieldLDR.find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ITEM })).exists(),
+      fieldLDR
+        .find(Select({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ITEM }))
+        .has({ checkedOptionText: MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN.N }),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.19-23 positions') }))
+        .has({ disabled: true, value: '\\4500' }),
+    ]);
+  },
+
+  fillInElvlBoxInLDRField(value) {
+    cy.do(
+      fieldLDR
+        .find(TextField({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ELVL }))
+        .fillIn(value),
+    );
+  },
+
+  verifyValueInElvlBoxInLDRField(boxValue) {
+    cy.expect(
+      fieldLDR
+        .find(TextField({ label: MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES.ELVL }))
+        .has({ value: boxValue }),
+    );
+  },
+
+  selectValidOptionsFor008FieldWhenUpdatingTypeDropdownInLDRField(selectedDropdownTypeOption) {
+    switch (selectedDropdownTypeOption) {
+      case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.C:
+      case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.D:
+      case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.I:
+        this.selectFieldsDropdownOption('008', 'Comp', 'an - Anthems');
+        cy.wait(1000);
+        this.selectFieldsDropdownOption('008', 'FMus', 'a - Full score');
+        cy.wait(1000);
+        break;
+
+      case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.E:
+      case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.F:
+        cy.wait(1000);
+        this.selectFieldsDropdownOption('008', 'CrTp', 'a - Single map');
+        cy.wait(1000);
+        this.selectFieldsDropdownOption('008', 'Indx', '0 - No index');
+        cy.wait(1000);
+        break;
+
+      case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.G:
+      case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.K:
+      case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.O:
+      case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.R:
+        cy.wait(1000);
+        this.selectFieldsDropdownOption('008', 'TMat', 'a - Art original');
+        cy.wait(1000);
+        this.selectFieldsDropdownOption('008', 'Tech', 'a - Animation');
+        cy.wait(1000);
+        break;
+
+      case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.M:
+        cy.wait(1000);
+        this.selectFieldsDropdownOption('008', 'File', 'a - Numeric data');
+        break;
+
+      case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.T:
+        cy.wait(1000);
+        this.selectFieldsDropdownOption('008', 'Conf', '0 - Not a conference publication');
+        cy.wait(1000);
+        this.selectFieldsDropdownOption('008', 'Fest', '0 - Not a festschrift');
+        cy.wait(1000);
+        this.selectFieldsDropdownOption('008', 'Indx', '0 - No index');
+        cy.wait(1000);
+        this.selectFieldsDropdownOption('008', 'LitF', '0 - Not fiction (not further specified)');
+        cy.wait(1000);
+        break;
+
+      default:
+        break;
+    }
+  },
+
+  check008FieldBoxesAbsent(...boxesNames) {
+    boxesNames.forEach((boxName) => {
+      cy.expect(
+        getRowInteractorByTagName('008')
+          .find(quickMarcEditorRowContent)
+          .find(Label(boxName))
+          .absent(),
+      );
+    });
   },
 };

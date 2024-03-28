@@ -10,7 +10,7 @@ import Locations from '../../../support/fragments/settings/tenant/location-setup
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     const testData = {
       servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),

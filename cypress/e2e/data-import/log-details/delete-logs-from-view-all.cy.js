@@ -7,11 +7,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 let user;
 const maxLogsQuantityOnPage = 100;
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     const instanceIds = [];
 
@@ -25,7 +26,7 @@ describe('data-import', () => {
           DataImport.uploadFileViaApi(
             'oneMarcBib.mrc',
             fileName,
-            'Default - Create instance and SRS MARC Bib',
+            DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           ).then((response) => {
             instanceIds.push(response[0].instance.id);
           });

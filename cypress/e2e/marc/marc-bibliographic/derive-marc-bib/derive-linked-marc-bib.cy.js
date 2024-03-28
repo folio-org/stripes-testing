@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -26,7 +27,7 @@ describe('MARC', () => {
         {
           marc: 'marcBibFileC375994.mrc',
           fileName: `testMarcFileC375994.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
           instanceTitle:
             'C375994 Abraham Lincoln, by Lillian Hertz. Prize essay in Alexander Hamilton junior high school P.S. 186, June 24, 1927.',
@@ -34,7 +35,7 @@ describe('MARC', () => {
         {
           marc: 'marcAuthFileC375994_1.mrc',
           fileName: `testMarcFileC375994.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           authorityHeading: 'C375994 Robinson, Peter, 1950-2022 Alt. title',
           authority001FieldValue: '30520443759941',
           propertyName: 'authority',
@@ -42,7 +43,7 @@ describe('MARC', () => {
         {
           marc: 'marcAuthFileC375994_2.mrc',
           fileName: `testMarcFileC375994.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           authorityHeading: 'C375994 Speaking Oratory debating',
           authority010FieldValue: 'sh850952993759942',
           propertyName: 'authority',
