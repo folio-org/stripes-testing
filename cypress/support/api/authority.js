@@ -45,7 +45,7 @@ Cypress.Commands.add('getAuthoritySourceFileDataViaAPI', (authorityFileName) => 
 
 Cypress.Commands.add(
   'createAuthoritySourceFileUsingAPI',
-  (prefix, startWithNumber, sourceName, isActive = true, sourceType = 'Local', baseURL = null) => {
+  (prefix, startWithNumber, sourceName, isActive = true, baseURL = null, sourceType = 'Local') => {
     cy.okapiRequest({
       method: 'POST',
       path: 'authority-source-files',
