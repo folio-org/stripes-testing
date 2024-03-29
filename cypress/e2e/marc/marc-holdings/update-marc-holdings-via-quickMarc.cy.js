@@ -46,7 +46,7 @@ describe('MARC', () => {
         testData.fileNameForCreateHoldings,
         testData.jobProfileForCreateHoldings,
       ).then((response) => {
-        testData.holdingsId = response[0].holdings.id;
+        testData.holdingsId = response[0].holding.id;
       });
 
       cy.createTempUser([

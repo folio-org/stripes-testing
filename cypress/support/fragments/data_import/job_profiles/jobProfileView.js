@@ -149,7 +149,41 @@ export default {
       });
   },
 
-  verifyLinkedProfilesNonMatches(arrayOfProfileNames, numberOfProfiles) {
+  verifyLinkedProfilesForMatches(arrayOfProfileNames, numberOfProfiles) {
+    waitLoading();
+    if (numberOfProfiles === 0) {
+      cy.get('[id*="branch-ROOT-MATCH"]').should('not.exist');
+      cy.get('[id^="accordion-match-ROOT-static"]').each(($element) => {
+        cy.wrap($element)
+          .invoke('text')
+          .then((text) => {
+            const initialText = text.slice(11);
+            expect(initialText).to.equal('This section contains no items');
+          });
+      });
+    } else {
+      const profileNames = [];
+
+      cy.get('[id*="branch-ROOT-MATCH"]')
+        .each(($element) => {
+          cy.wrap($element)
+            .invoke('text')
+            .then((name) => {
+              profileNames.push(name);
+            });
+        })
+        .then(() => {
+          // Iterate through each element in profileNames
+          for (let i = 0; i < profileNames.length; i++) {
+            expect(profileNames[i]).to.include(arrayOfProfileNames[i]);
+          }
+
+          expect(numberOfProfiles).to.equal(profileNames.length);
+        });
+    }
+  },
+
+  verifyLinkedProfilesForNonMatches(arrayOfProfileNames, numberOfProfiles) {
     waitLoading();
     const profileNames = [];
 

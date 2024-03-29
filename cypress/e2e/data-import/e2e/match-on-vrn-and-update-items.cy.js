@@ -205,10 +205,8 @@ describe('Data Import', () => {
         ).then((order) => {
           orderNumber = order.poNumber;
 
-          cy.reload();
-          cy.wait(2000);
           // open the PO with POL
-          Orders.resetFilters();
+          Orders.clearSearchField();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.openOrder();
@@ -217,9 +215,7 @@ describe('Data Import', () => {
           OrderDetails.checkIsItemsInInventoryCreated(item.title, 'Main Library');
           // check receiving pieces are created
           cy.visit(TopMenu.ordersPath);
-          cy.reload();
-          cy.wait(2000);
-          Orders.resetFilters();
+          Orders.clearSearchField();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           OrderDetails.openPolDetails(item.title);
