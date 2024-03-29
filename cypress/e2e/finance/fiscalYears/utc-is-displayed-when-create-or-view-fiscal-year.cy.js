@@ -31,7 +31,11 @@ describe('ui-finance: Fiscal Year', () => {
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       FiscalYears.createDefaultFiscalYear(defaultFiscalYear);
+      FiscalYears.searchByName(defaultFiscalYear.name);
+      FiscalYears.selectFisacalYear(defaultFiscalYear.name);
       FiscalYears.checkCreatedFiscalYear(defaultFiscalYear.name);
+      FiscalYears.closeThirdPane();
+      FiscalYears.resetFilters();
     },
   );
 });

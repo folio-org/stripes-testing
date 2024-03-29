@@ -133,7 +133,7 @@ export default {
     }
 
     invoiceInformation.forEach(({ key, value }) => {
-      cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
+      cy.expect(informationSection.find(KeyValue(key)).has({ value }));
     });
 
     vendorDetails.forEach(({ key, value }) => {

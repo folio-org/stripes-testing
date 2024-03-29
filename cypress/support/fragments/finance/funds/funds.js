@@ -265,7 +265,7 @@ export default {
         .fillIn(allocatedQuantity.toString()),
     ]);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.do([Button('Save').click()]);
+    cy.do([Button('Save & close').click()]);
     cy.wait(6000);
   },
 
