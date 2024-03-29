@@ -56,7 +56,6 @@ describe('Data Import', () => {
             firstTestData.instanceIds.push(response[0].instance.id);
           });
         }
-        cy.logout();
       });
 
       cy.createTempUser([
@@ -64,6 +63,7 @@ describe('Data Import', () => {
         Permissions.dataImportDeleteLogs.gui,
       ]).then((userProperties) => {
         secondTestData.user = userProperties;
+
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
