@@ -206,6 +206,7 @@ describe('Data Import', () => {
           orderNumber = order.poNumber;
 
           // open the PO with POL
+          cy.wait(1500);
           Orders.clearSearchField();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
