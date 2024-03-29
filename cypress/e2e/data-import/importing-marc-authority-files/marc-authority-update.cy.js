@@ -222,7 +222,7 @@ describe('Data Import', () => {
 
         cy.visit(TopMenu.marcAuthorities);
         MarcAuthorities.searchBy('Keyword', 'Queen of G. Britain');
-        MarcAuthority.contains('$a Elizabeth $b II, $c 1926-2022, $q Queen of G. Britain');
+        MarcAuthority.contains('$a C374186 Elizabeth $b II, $c 1926-2022, $q Queen of G. Britain');
 
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
@@ -234,7 +234,7 @@ describe('Data Import', () => {
           '700',
           '0',
           '\\',
-          '$a Elizabeth $b II, $c 1926-2022, $q Queen of G. Britain',
+          '$a C374186 Elizabeth $b II, $c 1926-2022, $q Queen of G. Britain',
           '',
           '$0 http://id.loc.gov/authorities/names/n80126296',
           '',
