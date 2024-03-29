@@ -4,8 +4,27 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import { randomizeArray } from '../../../../support/utils/arrays';
-import getRandomPostfix, { replaceByIndex } from '../../../../support/utils/stringTools';
+import getRandomPostfix from '../../../../support/utils/stringTools';
+import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
+import {
+  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES,
+  INVENTORY_LDR_FIELD_TYPE_DROPDOWN,
+  INVENTORY_LDR_FIELD_BLVL_DROPDOWN,
+  INVENTORY_008_FIELD_DTST_DROPDOWN,
+  INVENTORY_008_FIELD_CONF_DROPDOWN,
+  INVENTORY_008_FIELD_FEST_DROPDOWN,
+  INVENTORY_008_FIELD_INDX_DROPDOWN,
+  INVENTORY_008_FIELD_LITF_DROPDOWN,
+  INVENTORY_008_FIELD_DROPDOWNS_NAMES,
+  INVENTORY_008_FIELD_COMP_DROPDOWN,
+  INVENTORY_008_FIELD_FMUS_DROPDOWN,
+  INVENTORY_008_FIELD_CRTP_DROPDOWN,
+  INVENTORY_008_FIELD_TMAT_DROPDOWN,
+  INVENTORY_008_FIELD_TECH_DROPDOWN,
+  INVENTORY_008_FIELD_FILE_DROPDOWN,
+  INVENTORY_008_FIELD_REGL_DROPDOWN,
+  INVENTORY_008_FIELD_S_L_DROPDOWN,
+} from '../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -14,71 +33,32 @@ describe('MARC', () => {
         tags: {
           tag245: '245',
           tagLDR: 'LDR',
+          tag008: '008',
         },
+        valid008Values: [
+          {
+            label: 'Date 1',
+            value: '1111',
+          },
+          {
+            label: 'Date 2',
+            value: '2222',
+          },
+          {
+            label: 'Ctry',
+            value: 'ccc',
+          },
+          {
+            label: 'Lang',
+            value: 'hhh',
+          },
+        ],
 
         fieldContents: {
           tag245ContentPrefix: 'Created_Bib_',
-          valid008Values: [
-            'a',
-            'b',
-            'ccc',
-            'd',
-            'e',
-            'f',
-            'g',
-            'hhh',
-            'i',
-            'j',
-            'k',
-            'l',
-            'm',
-            '1111',
-            '2222',
-          ],
           tag245ValueWithAllSubfields:
             '$a testA $b testB $c testC $f testF $g testG $h testH $k testK $n testN $p testP $s testS $6 test6 $7 test7 $8 test8',
           instanceTitleWithSubfields: 'testA testB testC testF testG testH testK testN testP testS',
-        },
-
-        LDRValues: {
-          validLDRvalue: '00000naa\\a2200000uu\\4500',
-          updatedLDRValues: {
-            LDRValueWithUpdatedPos10: '00000naa\\a0200000uu\\4500',
-            LDRValueWithUpdatedPos11: '00000naa\\a2d00000uu\\4500',
-            LDRValueWithUpdatedPos20: '00000naa\\a2200000uu\\X500',
-            LDRValueWithUpdatedPos21: '00000naa\\a2200000uu\\4200',
-            LDRValueWithUpdatedPos22: '00000naa\\a2200000uu\\45\\0',
-            LDRValueWithUpdatedPos23: '00000naa\\a2200000uu\\450t',
-          },
-          validLDR06Values: randomizeArray([
-            'a',
-            'c',
-            'd',
-            'e',
-            'f',
-            'g',
-            'i',
-            'j',
-            'k',
-            'm',
-            'o',
-            'p',
-            'r',
-            't',
-          ]),
-          validLDR07Values: randomizeArray(['a', 'c', 'd', 'i', 'm', 's']),
-          invalidLDR06Value: 'b',
-          valid0607ValuesSets: [
-            [randomizeArray(['a', 't']), randomizeArray(['a', 'c', 'd', 'm'])],
-            [['m'], randomizeArray(['a', 'b', 'c', 'd', 'i', 'm', 's'])],
-            [
-              randomizeArray(['c', 'd', 'i', 'j']),
-              randomizeArray(['a', 'b', 'c', 'd', 'i', 'm', 's']),
-            ],
-            [['a'], randomizeArray(['b', 'i', 's'])],
-            [randomizeArray(['g', 'k', 'r']), randomizeArray(['a', 'b', 'c', 'd', 'i', 'm', 's'])],
-            [['p'], randomizeArray(['a', 'b', 'c', 'd', 'i', 'm', 's'])],
-          ],
         },
 
         expected008BoxesSets: [
@@ -168,9 +148,96 @@ describe('MARC', () => {
           ],
           ['DtSt', 'Date 1', 'Date 2', 'Ctry', 'Form', 'Lang', 'MRec', 'Srce'],
         ],
+        ldr06And07Values: [
+          'naa',
+          'nab',
+          'ncb',
+          'ndc',
+          'ned',
+          'nfi',
+          'ngm',
+          'nis',
+          'nja',
+          'nkb',
+          'nmc',
+          'nod',
+          'npi',
+          'nrm',
+          'nts',
+        ]
       };
 
-      const updatedLDRValuesArray = Object.values(testData.LDRValues.updatedLDRValues);
+      const optionsFor008FieldDropdowns = {
+        option_1: () => {
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.DTST, INVENTORY_008_FIELD_DTST_DROPDOWN.M);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.CONF, INVENTORY_008_FIELD_CONF_DROPDOWN.ONE);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.FEST, INVENTORY_008_FIELD_FEST_DROPDOWN.ONE);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.INDX, INVENTORY_008_FIELD_INDX_DROPDOWN.ONE);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.LITF, INVENTORY_008_FIELD_LITF_DROPDOWN.I);
+        },
+        option_2: () => {
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.DTST, INVENTORY_008_FIELD_DTST_DROPDOWN.M);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.CONF, INVENTORY_008_FIELD_CONF_DROPDOWN.ONE);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.REGL, INVENTORY_008_FIELD_REGL_DROPDOWN.U);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.SL, INVENTORY_008_FIELD_S_L_DROPDOWN.NO);
+        },
+        option_3: () => {
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.DTST, INVENTORY_008_FIELD_DTST_DROPDOWN.M);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.COMP, INVENTORY_008_FIELD_COMP_DROPDOWN.AN);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.FMUS, INVENTORY_008_FIELD_FMUS_DROPDOWN.C);
+        },
+        option_4: () => {
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.DTST, INVENTORY_008_FIELD_DTST_DROPDOWN.M);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.CRTP, INVENTORY_008_FIELD_CRTP_DROPDOWN.D);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.INDX, INVENTORY_008_FIELD_INDX_DROPDOWN.ONE);
+        },
+        option_5: () => {
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.DTST, INVENTORY_008_FIELD_DTST_DROPDOWN.M);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.TMAT, INVENTORY_008_FIELD_TMAT_DROPDOWN.B);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.TECH, INVENTORY_008_FIELD_TECH_DROPDOWN.U);
+        },
+        option_6: () => {
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.DTST, INVENTORY_008_FIELD_DTST_DROPDOWN.M);
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.FILE, INVENTORY_008_FIELD_FILE_DROPDOWN.E);
+        },
+        option_7: () => {
+          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.DTST, INVENTORY_008_FIELD_DTST_DROPDOWN.M);
+        },
+      };
+
+      const valid0607ValuesSets = [
+        {
+          typeField: INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A,
+          blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.A,
+          tag008Fields: () => {optionsFor008FieldDropdowns.option_1()},
+        },
+        {
+          typeField: INVENTORY_LDR_FIELD_TYPE_DROPDOWN.M,
+          blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.C,
+          tag008Fields: () => {optionsFor008FieldDropdowns.option_6()},
+        },
+        {
+          typeField: INVENTORY_LDR_FIELD_TYPE_DROPDOWN.D,
+          blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.I,
+          tag008Fields: () => {optionsFor008FieldDropdowns.option_3()},
+        },
+        {
+          typeField: INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A,
+          blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.B,
+          tag008Fields: () => {optionsFor008FieldDropdowns.option_2()},
+        },
+        {
+          typeField: 'k - Two-dimensional nonprojectable graphic',
+          blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.M,
+          tag008Fields: () => {optionsFor008FieldDropdowns.option_5()},
+        },
+        {
+          typeField: INVENTORY_LDR_FIELD_TYPE_DROPDOWN.P,
+          blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.S,
+          tag008Fields: () => {optionsFor008FieldDropdowns.option_7()},
+        },
+      ];
+
       const createdInstanceIDs = [];
       const userData = {};
 
@@ -187,12 +254,6 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((createdUserProperties) => {
           userData.C380704UserProperties = createdUserProperties;
-          cy.loginAsAdmin({
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
-            QuickMarcEditor.waitAndCheckFirstBibRecordCreated();
-          });
         });
       });
 
@@ -207,37 +268,6 @@ describe('MARC', () => {
       });
 
       it(
-        'C422113 Editing LDR 10, 11, 20-23 values when creating a new "MARC bib" record (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
-        () => {
-          cy.login(
-            userData.C380707UserProperties.username,
-            userData.C380707UserProperties.password,
-            {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            },
-          );
-
-          InventoryInstance.newMarcBibRecord();
-          QuickMarcEditor.updateExistingField(
-            testData.tags.tagLDR,
-            testData.LDRValues.validLDRvalue,
-          );
-          QuickMarcEditor.updateExistingField(
-            testData.tags.tag245,
-            `$a ${testData.fieldContents.tag245ContentPrefix + getRandomPostfix()}`,
-          );
-
-          updatedLDRValuesArray.forEach((LDRValue) => {
-            QuickMarcEditor.updateExistingField(testData.tags.tagLDR, LDRValue);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkNonEditableLdrCalloutBib();
-          });
-        },
-      );
-
-      it(
         'C422109 Creating a new "MARC bib" record with valid LDR 06, 07 values. (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
@@ -250,51 +280,234 @@ describe('MARC', () => {
             },
           );
 
-          for (let i = 0; i < testData.LDRValues.validLDR07Values.length; i++) {
-            const updatedLDRvalue = `${testData.LDRValues.validLDRvalue.substring(0, 6)}${
-              testData.LDRValues.validLDR06Values[i]
-            }${testData.LDRValues.validLDR07Values[i]}${testData.LDRValues.validLDRvalue.substring(
-              8,
-            )}`;
-            const updatedLDRmask = new RegExp(
-              `\\d{5}${updatedLDRvalue
-                .substring(5, 12)
-                .replace('\\', '\\\\')}\\d{5}${updatedLDRvalue
-                .substring(17)
-                .replace('\\', '\\\\')}`,
-            );
+          testData.ldr06And07Values.forEach((dropdownOption) => {
             const title = testData.fieldContents.tag245ContentPrefix + getRandomPostfix();
 
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(testData.tags.tag245, `$a ${title}`);
-            QuickMarcEditor.updateExistingField(
-              testData.tags.tagLDR,
-              replaceByIndex(
-                testData.LDRValues.validLDRvalue,
-                6,
-                testData.LDRValues.invalidLDR06Value,
-              ),
-            );
-            QuickMarcEditor.checkSubfieldsAbsenceInTag008();
-            QuickMarcEditor.updateExistingField(
-              testData.tags.tagLDR,
-              testData.LDRValues.validLDRvalue,
-            );
-            QuickMarcEditor.check008FieldContent();
-            QuickMarcEditor.updateExistingField(testData.tags.tagLDR, updatedLDRvalue);
-            QuickMarcEditor.checkSubfieldsPresenceInTag008();
+            Object.values(INVENTORY_LDR_FIELD_TYPE_DROPDOWN).forEach((dropdownOption) => {
+              QuickMarcEditor.verifyFieldsDropdownOption(
+                testData.tags.tagLDR,
+                INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+                dropdownOption,
+              );
+            });
+            Object.values(INVENTORY_LDR_FIELD_BLVL_DROPDOWN).forEach((dropdownOption) => {
+              QuickMarcEditor.verifyFieldsDropdownOption(
+                testData.tags.tagLDR,
+                INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+                dropdownOption,
+              );
+            });
+
+            switch (dropdownOption) {
+              case 'naa':
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+                  INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A,
+                );
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+                  INVENTORY_LDR_FIELD_BLVL_DROPDOWN.A,
+                );
+                optionsFor008FieldDropdowns.option_1();
+                break;
+              case 'nab':
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+                  INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A,
+                );
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+                  INVENTORY_LDR_FIELD_BLVL_DROPDOWN.B,
+                );
+                optionsFor008FieldDropdowns.option_2();
+                break;
+              case 'ncb':
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+                  INVENTORY_LDR_FIELD_TYPE_DROPDOWN.C,
+                );
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+                  INVENTORY_LDR_FIELD_BLVL_DROPDOWN.B,
+                );
+                optionsFor008FieldDropdowns.option_3();
+                break;
+              case 'ndc':
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+                  INVENTORY_LDR_FIELD_TYPE_DROPDOWN.D,
+                );
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+                  INVENTORY_LDR_FIELD_BLVL_DROPDOWN.C,
+                );
+                optionsFor008FieldDropdowns.option_3();
+                break;
+              case 'ned':
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+                  INVENTORY_LDR_FIELD_TYPE_DROPDOWN.E,
+                );
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+                  INVENTORY_LDR_FIELD_BLVL_DROPDOWN.D,
+                );
+                optionsFor008FieldDropdowns.option_4();
+                break;
+              case 'nfi':
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+                  INVENTORY_LDR_FIELD_TYPE_DROPDOWN.F,
+                );
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+                  INVENTORY_LDR_FIELD_BLVL_DROPDOWN.I,
+                );
+                optionsFor008FieldDropdowns.option_4();
+                break;
+              case 'ngm':
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+                  INVENTORY_LDR_FIELD_TYPE_DROPDOWN.G,
+                );
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+                  INVENTORY_LDR_FIELD_BLVL_DROPDOWN.M,
+                );
+                optionsFor008FieldDropdowns.option_5();
+                break;
+              case 'nis':
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+                  INVENTORY_LDR_FIELD_TYPE_DROPDOWN.I,
+                );
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+                  INVENTORY_LDR_FIELD_BLVL_DROPDOWN.S,
+                );
+                optionsFor008FieldDropdowns.option_3();
+                break;
+              case 'nja':
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+                  INVENTORY_LDR_FIELD_TYPE_DROPDOWN.J,
+                );
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+                  INVENTORY_LDR_FIELD_BLVL_DROPDOWN.A,
+                );
+                optionsFor008FieldDropdowns.option_3();
+                break;
+              case 'nkb':
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+                  'k - Two-dimensional nonprojectable graphic',
+                );
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+                  INVENTORY_LDR_FIELD_BLVL_DROPDOWN.B,
+                );
+                optionsFor008FieldDropdowns.option_5();
+                break;
+              case 'nmc':
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+                  INVENTORY_LDR_FIELD_TYPE_DROPDOWN.M,
+                );
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+                  INVENTORY_LDR_FIELD_BLVL_DROPDOWN.C,
+                );
+                optionsFor008FieldDropdowns.option_6();
+                break;
+              case 'nod':
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+                  INVENTORY_LDR_FIELD_TYPE_DROPDOWN.O,
+                );
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+                  INVENTORY_LDR_FIELD_BLVL_DROPDOWN.D,
+                );
+                optionsFor008FieldDropdowns.option_5();
+                break;
+              case 'npi':
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+                  INVENTORY_LDR_FIELD_TYPE_DROPDOWN.P,
+                );
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+                  INVENTORY_LDR_FIELD_BLVL_DROPDOWN.I,
+                );
+                optionsFor008FieldDropdowns.option_7();
+                break;
+              case 'nrm':
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+                  INVENTORY_LDR_FIELD_TYPE_DROPDOWN.R,
+                );
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+                  INVENTORY_LDR_FIELD_BLVL_DROPDOWN.M,
+                );
+                optionsFor008FieldDropdowns.option_5();
+                break;
+              case 'nts':
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+                  INVENTORY_LDR_FIELD_TYPE_DROPDOWN.T,
+                );
+                QuickMarcEditor.selectFieldsDropdownOption(
+                  testData.tags.tagLDR,
+                  INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+                  INVENTORY_LDR_FIELD_BLVL_DROPDOWN.S,
+                );
+                optionsFor008FieldDropdowns.option_1();
+                break;
+            }
+
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkInstanceTitle(title);
-
-            InventoryInstance.editMarcBibliographicRecord();
-            QuickMarcEditor.saveInstanceIdToArrayInQuickMarc(createdInstanceIDs);
-            QuickMarcEditor.checkFieldContentMatch(
-              'textarea[name="records[0].content"]',
-              updatedLDRmask,
-            );
-            QuickMarcEditor.closeWithoutSaving();
-          }
+            InventoryInstance.getId().then((id) => {
+              createdInstanceIDs.push(id);
+            });
+            InventoryInstance.viewSource();
+            InventoryViewSource.contains(`${dropdownOption} a2200`);
+            InventoryViewSource.close();
+          });
         },
       );
 
@@ -311,11 +524,11 @@ describe('MARC', () => {
             },
           );
           InventoryInstance.newMarcBibRecord();
-          QuickMarcEditor.updateExistingField(
-            testData.tags.tagLDR,
-            testData.LDRValues.validLDRvalue,
-          );
-          QuickMarcEditor.updateValuesIn008Boxes(testData.fieldContents.valid008Values);
+          QuickMarcEditor.updateLDR06And07Positions();
+          testData.valid008Values.forEach((textField) => {
+            QuickMarcEditor.update008TextFields(textField.label, textField.value);
+            QuickMarcEditor.verify008TextFields(textField.label, textField.value);
+          });
           QuickMarcEditor.updateExistingField(
             testData.tags.tag245,
             testData.fieldContents.tag245ValueWithAllSubfields,
@@ -326,7 +539,9 @@ describe('MARC', () => {
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.saveInstanceIdToArrayInQuickMarc(createdInstanceIDs);
           QuickMarcEditor.checkContent(testData.fieldContents.tag245ValueWithAllSubfields, 4);
-          QuickMarcEditor.checkValuesIn008Boxes(testData.fieldContents.valid008Values);
+          testData.valid008Values.forEach((textField) => {
+            QuickMarcEditor.verify008TextFields(textField.label, textField.value);
+          });
         },
       );
 
@@ -342,17 +557,23 @@ describe('MARC', () => {
               waiter: InventoryInstances.waitContentLoading,
             },
           );
-          testData.LDRValues.valid0607ValuesSets.forEach((set, index) => {
-            const updatedLDRvalue = `${testData.LDRValues.validLDRvalue.substring(0, 6)}${
-              set[0][0]
-            }${set[1][0]}${testData.LDRValues.validLDRvalue.substring(8)}`;
+          valid0607ValuesSets.forEach((set, index) => {
             const title = testData.fieldContents.tag245ContentPrefix + getRandomPostfix();
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(testData.tags.tag245, `$a ${title}`);
-            QuickMarcEditor.updateExistingField(testData.tags.tagLDR, updatedLDRvalue);
+            QuickMarcEditor.selectFieldsDropdownOption(
+              testData.tags.tagLDR,
+              INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
+              set.typeField,
+            );
+            QuickMarcEditor.selectFieldsDropdownOption(
+              testData.tags.tagLDR,
+              INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+              set.blvlField,
+            );
+            cy.wait(1000);
             QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets[index]);
-            QuickMarcEditor.check008BoxesCount(testData.expected008BoxesSets[index].length);
-            QuickMarcEditor.checkOnlyBackslashesIn008Boxes();
+            set.tag008Fields();
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
             InventoryInstance.waitInstanceRecordViewOpened(title);
@@ -362,7 +583,6 @@ describe('MARC', () => {
           });
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets[5]);
-          QuickMarcEditor.check008BoxesCount(testData.expected008BoxesSets[5].length);
         },
       );
     });
