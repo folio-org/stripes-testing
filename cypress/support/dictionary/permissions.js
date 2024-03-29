@@ -273,6 +273,10 @@ export default {
     internal: 'ui-inventory.settings.identifier-types',
     gui: 'Settings (Inventory): Create, edit, delete resource identifier types',
   },
+  enableStaffSuppressFacet: {
+    internal: 'ui-inventory.instance.view-staff-suppressed-records',
+    gui: 'Inventory: Enable staff suppress facet',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {

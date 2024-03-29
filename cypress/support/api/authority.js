@@ -112,6 +112,8 @@ Cypress.Commands.add(
       isDefaultSearchParamsRequired: false,
     }).then(({ body }) => {
       cy.wrap(body).as('body');
+      // wait for source file to be fully created on back-end side
+      cy.wait(2000);
     });
     return cy.get('@body');
   },
