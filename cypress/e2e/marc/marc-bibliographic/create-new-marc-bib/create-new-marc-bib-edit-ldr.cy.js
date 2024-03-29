@@ -285,18 +285,18 @@ describe('MARC', () => {
 
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(testData.tags.tag245, `$a ${title}`);
-            Object.values(INVENTORY_LDR_FIELD_TYPE_DROPDOWN).forEach((dropdownOption) => {
+            Object.values(INVENTORY_LDR_FIELD_TYPE_DROPDOWN).forEach((option) => {
               QuickMarcEditor.verifyFieldsDropdownOption(
                 testData.tags.tagLDR,
                 INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
-                dropdownOption,
+                option,
               );
             });
-            Object.values(INVENTORY_LDR_FIELD_BLVL_DROPDOWN).forEach((dropdownOption) => {
+            Object.values(INVENTORY_LDR_FIELD_BLVL_DROPDOWN).forEach((option) => {
               QuickMarcEditor.verifyFieldsDropdownOption(
                 testData.tags.tagLDR,
                 INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
-                dropdownOption,
+                option,
               );
             });
 
@@ -495,6 +495,9 @@ describe('MARC', () => {
                   INVENTORY_LDR_FIELD_BLVL_DROPDOWN.S,
                 );
                 optionsFor008FieldDropdowns.option_1();
+                break;
+              default:
+                console.log('No value');
                 break;
             }
 

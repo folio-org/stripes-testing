@@ -126,7 +126,6 @@ const calloutThreeCharacterMarcTag = Callout(
 );
 const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
-const validNewMarBibLDR = '00000naa\\a2200000uu\\4500';
 const specRetInputNamesHoldings008 = [
   'records[3].content.Spec ret[0]',
   'records[3].content.Spec ret[1]',
