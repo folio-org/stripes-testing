@@ -209,32 +209,32 @@ describe('MARC', () => {
         {
           typeField: INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A,
           blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.A,
-          tag008Fields: () => {optionsFor008FieldDropdowns.option_1()},
+          tag008Fields: () => { optionsFor008FieldDropdowns.option_1(); },
         },
         {
           typeField: INVENTORY_LDR_FIELD_TYPE_DROPDOWN.M,
           blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.C,
-          tag008Fields: () => {optionsFor008FieldDropdowns.option_6()},
+          tag008Fields: () => { optionsFor008FieldDropdowns.option_6(); },
         },
         {
           typeField: INVENTORY_LDR_FIELD_TYPE_DROPDOWN.D,
           blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.I,
-          tag008Fields: () => {optionsFor008FieldDropdowns.option_3()},
+          tag008Fields: () => { optionsFor008FieldDropdowns.option_3(); },
         },
         {
           typeField: INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A,
           blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.B,
-          tag008Fields: () => {optionsFor008FieldDropdowns.option_2()},
+          tag008Fields: () => { optionsFor008FieldDropdowns.option_2(); },
         },
         {
           typeField: 'k - Two-dimensional nonprojectable graphic',
           blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.M,
-          tag008Fields: () => {optionsFor008FieldDropdowns.option_5()},
+          tag008Fields: () => { optionsFor008FieldDropdowns.option_5(); },
         },
         {
           typeField: INVENTORY_LDR_FIELD_TYPE_DROPDOWN.P,
           blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.S,
-          tag008Fields: () => {optionsFor008FieldDropdowns.option_7()},
+          tag008Fields: () => { optionsFor008FieldDropdowns.option_7(); },
         },
       ];
 
