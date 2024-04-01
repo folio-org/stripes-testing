@@ -104,10 +104,10 @@ module.exports = defineConfig({
         delete process.env.TESTRAIL_PROJECTID;
       }
 
-      const configCloud = await cloudPlugin(on, config);
-
       // eslint-disable-next-line global-require
-      const result = require('@cypress/grep/src/plugin')(configCloud);
+      const grepConfig = require('@cypress/grep/src/plugin')(config);
+
+      const result = await cloudPlugin(on, grepConfig);
 
       // eslint-disable-next-line global-require
       await require('cypress-testrail-simple/src/plugin')(on, config);
