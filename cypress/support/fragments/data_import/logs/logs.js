@@ -209,4 +209,21 @@ export default {
     .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
     .find(Link({ href: including('/data-import/log/') }))
     .text()),
+
+  getCreatedItemLinkByNumber(recordNumber) {
+    cy.do(
+      searchResultList
+        .find(MultiColumnListCell({ columnIndex: 0, content: `${recordNumber}` }))
+        .perform((element) => {
+          const rowIndex = element.parentElement.getAttribute('data-row-inner');
+          cy.wrap(
+            searchResultList
+              .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+              .find(Link('Created'))
+              .href(),
+          ).as('link');
+        }),
+    );
+    return cy.get('@link');
+  },
 };
