@@ -13,7 +13,7 @@ const item = {
 };
 const randomSearchString = `randomSearchString-${getRandomPostfix()}`;
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Subject Browse', () => {
     before('create test data', () => {
       cy.createTempUser([permissions.uiSubjectBrowse.gui]).then((userProperties) => {

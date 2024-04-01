@@ -21,7 +21,7 @@ const testData = {
   calloutMessage: 'has been successfully saved.',
 };
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Holdings', () => {
     before('Create test data', () => {
       cy.getAdminToken()

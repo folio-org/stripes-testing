@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -25,28 +26,28 @@ const testData = {
     {
       marc: 'marcBibC367973_01.mrc',
       fileName: `testMarcFileC367973_01.${randomFourDigitNumber()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       numberOfRecords: 1,
       propertyName: 'instance',
     },
     {
       marc: 'marcBibC367973_02.mrc',
       fileName: `testMarcFileC367973_02.${randomFourDigitNumber()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       numberOfRecords: 1,
       propertyName: 'instance',
     },
     {
       marc: 'marcAuthC367973.mrc',
       fileName: `testMarcFileAuthC367973.${randomFourDigitNumber()}.mrc`,
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       numberOfRecords: 1,
       propertyName: 'authority',
     },
   ],
 };
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();

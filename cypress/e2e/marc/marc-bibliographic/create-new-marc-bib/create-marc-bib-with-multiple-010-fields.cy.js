@@ -14,6 +14,8 @@ describe('MARC', () => {
     describe('Create new MARC bib', () => {
       const testData = {
         tag010: '010',
+        tagLDR: 'LDR',
+        tag008: '008',
         tag010Values: ['58020553', '766384'],
       };
       const calloutMessage = 'Record cannot be saved with more than one 010 field';

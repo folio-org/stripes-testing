@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import ExportManagerSearchPane from '../../../../support/fragments/exportManager/exportManagerSearchPane';
@@ -40,13 +41,13 @@ describe('MARC', () => {
         {
           marc: 'marcBibFileC357996.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileC375996.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           authorityHeading:
             'C357996 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
           authority001FieldValue: 'n83130007357996',

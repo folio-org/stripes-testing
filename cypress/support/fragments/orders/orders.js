@@ -44,7 +44,7 @@ const newButton = Button('New');
 const saveAndClose = Button('Save & close');
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = Button('Search');
-const admin = 'administrator';
+const admin = 'folio-aqa';
 const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
 const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
 const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderFormat' });
@@ -67,6 +67,7 @@ const expandActionsDropdown = () => {
       .click(),
   );
 };
+const selectOrganizationModal = Modal('Select Organization');
 
 export default {
   searchByParameter(parameter, value) {
@@ -74,6 +75,9 @@ export default {
     cy.do([searchField.selectIndex(parameter), searchField.fillIn(value)]);
     cy.expect(searchButton.has({ disabled: false }));
     cy.do(searchButton.click());
+  },
+  clearSearchField() {
+    cy.get('#orders-filters-pane-content').find('#input-record-search').clear();
   },
   waitLoading() {
     cy.expect([ordersFiltersPane.exists(), ordersResultsPane.exists()]);
@@ -550,7 +554,7 @@ export default {
     cy.do([
       Button({ id: 'accordion-toggle-button-filter-vendor' }).click(),
       Button('Organization look-up').click(),
-      Modal('Select Organization').find(searchField).fillIn(invoice.vendorName),
+      selectOrganizationModal.find(searchField).fillIn(invoice.vendorName),
       searchButton.click(),
     ]);
     SearchHelper.selectFromResultsList();
@@ -641,11 +645,9 @@ export default {
     cy.do([
       buttonFVendorFilter.click(),
       Button({ id: 'purchaseOrder.vendor-button' }).click(),
-      Modal('Select Organization').find(searchField).fillIn(invoice.vendorName),
-      Modal('Select Organization').find(searchButton).click(),
-      Modal('Select Organization')
-        .find(MultiColumnListRow({ index: 0 }))
-        .click(),
+      selectOrganizationModal.find(searchField).fillIn(invoice.vendorName),
+      selectOrganizationModal.find(searchButton).click(),
+      selectOrganizationModal.find(MultiColumnListRow({ index: 0 })).click(),
     ]);
     cy.do(buttonFVendorFilter.click());
   },
@@ -868,5 +870,33 @@ export default {
         orderLinesPane.find(HTML(including(btnName, { class: including('primary') }))).exists(),
       );
     }
+  },
+
+  openVendorFilterModal: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-filter-vendor' }).click(),
+      Button('Organization look-up').click(),
+    ]);
+    cy.expect(selectOrganizationModal.exists());
+  },
+
+  searchVendorbyindex: (index, searchParameter, organization) => {
+    cy.do([
+      selectOrganizationModal.find(searchField).selectIndex(index),
+      selectOrganizationModal.find(searchField).fillIn(searchParameter),
+      selectOrganizationModal.find(searchButton).click(),
+    ]);
+    cy.expect(MultiColumnListCell(organization.name).exists());
+    cy.do(selectOrganizationModal.find(MultiColumnListRow({ index: 0 })).click());
+    cy.do(Button({ id: 'accordion-toggle-button-filter-vendor' }).click());
+  },
+
+  searchAbsentVendorbyindex: (index, searchParameter, organization) => {
+    cy.do([
+      selectOrganizationModal.find(searchField).selectIndex(index),
+      selectOrganizationModal.find(searchField).fillIn(searchParameter),
+      selectOrganizationModal.find(searchButton).click(),
+    ]);
+    cy.expect(MultiColumnListCell(organization.name).absent());
   },
 };

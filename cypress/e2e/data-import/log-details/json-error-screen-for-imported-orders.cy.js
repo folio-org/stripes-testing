@@ -27,7 +27,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     const testData = {

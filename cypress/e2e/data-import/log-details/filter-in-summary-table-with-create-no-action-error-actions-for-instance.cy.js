@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -8,7 +8,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     const quantityOfItems = {
@@ -16,9 +16,9 @@ describe('data-import', () => {
       noAction: '4',
       error: '4',
     };
-    const marcFileName = `C357015 autotestFile.${getRandomPostfix()}.mrc`;
+    const marcFileName = `C357015 autotestFile${getRandomPostfix()}.mrc`;
     const filePathForUpload = 'marcBibFileForC357015.mrc';
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
     before(() => {
       cy.createTempUser([

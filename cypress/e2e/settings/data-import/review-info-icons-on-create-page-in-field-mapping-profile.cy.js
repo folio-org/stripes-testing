@@ -6,7 +6,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     let user;
     const mappingProfile = {

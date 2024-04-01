@@ -1,22 +1,26 @@
-import Permissions from '../../../../support/dictionary/permissions';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  INSTANCE_SOURCE_NAMES,
+  JOB_STATUS_NAMES,
+} from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import Users from '../../../../support/fragments/users/users';
-import TopMenu from '../../../../support/fragments/topMenu';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import getRandomPostfix, { getTestEntityValue } from '../../../../support/utils/stringTools';
-import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import BrowseSubjects from '../../../../support/fragments/inventory/search/browseSubjects';
-import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
+import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
+import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
+import BrowseSubjects from '../../../../support/fragments/inventory/search/browseSubjects';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix, { getTestEntityValue } from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -46,24 +50,24 @@ describe('Inventory', () => {
         {
           marc: 'marcBibFileC407777Shared.mrc',
           fileNameImported: `testMarcFileC407777Shared.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numberOftitles: 2,
         },
         {
           marc: 'marcBibFileC407777LocalM1.mrc',
           fileNameImported: `testMarcFileC407777LocalM1.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numberOftitles: 1,
         },
         {
           marc: 'marcBibFileC407777LocalM2.mrc',
           fileNameImported: `testMarcFileC407777LocalM2.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numberOftitles: 1,
         },
       ];
       const folioInstances = testData.instances.filter((instance) => instance.title.includes('Folio'));
-      const marcInstances = testData.instances.filter((instance) => instance.title.includes('MARC'));
+      const marcInstances = testData.instances.filter((instance) => instance.title.includes(INSTANCE_SOURCE_NAMES.MARC));
       const createdInstanceIds = {
         shared: [],
         college: [],

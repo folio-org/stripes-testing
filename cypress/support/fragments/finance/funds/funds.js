@@ -66,6 +66,7 @@ const resetButton = Button({ id: 'reset-funds-filters' });
 const addTransferModal = Modal({ id: 'add-transfer-modal' });
 const closeWithoutSavingButton = Button('Close without saving');
 const addExpenseClassButton = Button({ id: 'budget-status-expense-classes-add-button' });
+const saveAndClose = Button('Save & Close');
 
 export default {
   defaultUiFund: {
@@ -209,11 +210,11 @@ export default {
     cy.do([
       newButton.click(),
       nameField.fillIn(fundName),
-      Button('Save & Close').click(),
+      saveAndClose.click(),
       codeField.fillIn('some code'),
-      Button('Save & Close').click(),
+      saveAndClose.click(),
       externalAccountField.fillIn('some account'),
-      Button('Save & Close').click(),
+      saveAndClose.click(),
       // try to navigate without saving
       Button('Agreements').click(),
       Button('Keep editing').click,

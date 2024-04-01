@@ -5,7 +5,7 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     let user;
 

@@ -12,7 +12,7 @@ import FieldMappingProfiles from '../../../support/fragments/data_import/mapping
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileEdit';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     let user;
 

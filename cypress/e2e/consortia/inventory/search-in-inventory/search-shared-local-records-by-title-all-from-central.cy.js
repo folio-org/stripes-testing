@@ -11,7 +11,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -47,7 +47,7 @@ describe('Inventory', () => {
       {
         marc: 'marcBibFileForC411611-Shared.mrc',
         fileName: `C411611 Central testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         tenant: tenantNames.central,
         numOfRecords: 2,
         createdRecordsId: [],
@@ -55,7 +55,7 @@ describe('Inventory', () => {
       {
         marc: 'marcBibFileForC411611-Local.mrc',
         fileName: `C411611 Member1 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         tenant: tenantNames.college,
         numOfRecords: 1,
         createdRecordsId: [],

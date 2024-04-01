@@ -1,5 +1,9 @@
 import uuid from 'uuid';
-import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
@@ -13,7 +17,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Advanced search', () => {
     let user;
     const testData = {
@@ -28,7 +32,7 @@ describe('inventory', () => {
     const marcFile = {
       marc: 'marcBibFileC400613.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       numberOfRecords: 2,
     };
 

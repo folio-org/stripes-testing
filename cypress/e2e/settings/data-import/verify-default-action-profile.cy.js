@@ -1,18 +1,18 @@
-import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
+import { ACCEPTED_DATA_TYPE_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import { JobProfiles as SettingsJobProfiles } from '../../../support/fragments/settings/dataImport';
+import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
+import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import { JobProfiles as SettingsJobProfiles } from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
-import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     const testData = {};
-    const defaultJobProfileName = 'Default - Create SRS MARC Authority';
+    const defaultJobProfileName = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
     const newJobProfileName = `C422235 autoTestJobProf.${getRandomPostfix()}`;
     const defaultActionProfileName = 'Default - Create instance';
     const jobProfile = {
@@ -53,7 +53,7 @@ describe('data-import', () => {
         // #2 Find and select "Default - Create SRS MARC Authority" job profile ->
         JobProfiles.search(newJobProfileName);
         JobProfileView.edit();
-        JobProfileEdit.unlinkActionsProfile(0);
+        JobProfileEdit.unlinkActionProfile(0);
         JobProfileEdit.saveAndClose();
         JobProfileView.verifyNoLinkedProfiles();
         // #3-4 Create new job profile, link to default action profile, and save

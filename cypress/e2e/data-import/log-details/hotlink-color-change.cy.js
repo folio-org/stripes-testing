@@ -6,7 +6,7 @@ import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
 

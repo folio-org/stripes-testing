@@ -17,7 +17,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     let user;
     const actionProfileToDelete = {

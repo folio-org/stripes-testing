@@ -30,14 +30,14 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     let user;
     const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.gobi;
     const filePathForUpload = 'ediFileForC345356.edi';
-    const editedFileForUpload = `C345356 autotestFile.${getRandomPostfix()}.edi`;
-    const fileName = `C345356 autotestFile.${getRandomPostfix()}.edi`;
+    const editedFileForUpload = `C345356 autotestFile${getRandomPostfix()}.edi`;
+    const fileName = `C345356 autotestFile${getRandomPostfix()}.edi`;
     const invoiceNumber = `${randomFourDigitNumber()}3`;
     const quantityOfItems = '1';
     const mappingProfile = {

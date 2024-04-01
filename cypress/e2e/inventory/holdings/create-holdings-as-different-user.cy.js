@@ -9,7 +9,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Holdings', () => {
     let firstUser;
     let secondUser;
@@ -49,8 +49,8 @@ describe('inventory', () => {
     });
 
     it(
-      'C1294: Create a Holdings record as another user than the one that created the Instance (folijet)',
-      { tags: ['smoke', 'folijet', 'eurekaPhase1'] },
+      'C1294 Create a Holdings record as another user than the one that created the Instance (folijet)',
+      { tags: ['smoke', 'folijet'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillRequiredValues(recordsData.instanceTitle);

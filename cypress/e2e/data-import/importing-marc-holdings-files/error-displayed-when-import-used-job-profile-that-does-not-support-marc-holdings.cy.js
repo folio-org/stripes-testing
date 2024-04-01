@@ -1,4 +1,8 @@
-import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import {
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -11,16 +15,16 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Holdings files', () => {
     let user;
     let instanceHrid;
     let instanceId;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const filePathForUpload = 'oneMarcBib.mrc';
-    const fileNameForCreateInstance = `C359245 autotestFileName.${getRandomPostfix()}.mrc`;
-    const fileNameForImportForMarcAuthority = `C359245 autotestFileName.${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C359245 editedMarcFile.${getRandomPostfix()}.mrc`;
+    const fileNameForCreateInstance = `C359245 autotestFileName${getRandomPostfix()}.mrc`;
+    const fileNameForImportForMarcAuthority = `C359245 autotestFileName${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C359245 editedMarcFile${getRandomPostfix()}.mrc`;
     const title = 'Holdings';
     const errorMessageForMarcAuthorityProfile =
       "Chosen job profile 'Default - Create SRS MARC Authority' does not support 'MARC_HOLDING' record type";
@@ -69,7 +73,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, fileNameForImportForMarcAuthority);
         JobProfiles.waitFileIsUploaded();
-        JobProfiles.search('Default - Create SRS MARC Authority');
+        JobProfiles.search(DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForImportForMarcAuthority);
         Logs.checkJobStatus(

@@ -23,7 +23,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Cataloging -> Creating new records', () => {
     let effectiveLocation;
     let orderNumber;

@@ -1,6 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
@@ -33,12 +34,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid = null;
     let instanceHridForReimport = null;
     let exportedFileName = null;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     // resource identifiers
     const resourceIdentifiers = [
       { type: 'OCLC', value: '(OCoLC)26493177' },
@@ -48,9 +49,9 @@ describe('data-import', () => {
     const catalogedDate = '###TODAY###';
 
     // unique file names
-    const nameMarcFileForCreate = `C17039 autotestFile.${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C17039 fileWith999Field.${getRandomPostfix()}.mrc`;
-    const fileNameAfterUpload = `C17039 uploadedFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForCreate = `C17039 autotestFile${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C17039 fileWith999Field${getRandomPostfix()}.mrc`;
+    const fileNameAfterUpload = `C17039 uploadedFile${getRandomPostfix()}.mrc`;
 
     const matchProfile = {
       profileName: `C17039 match profile ${getRandomPostfix()}`,

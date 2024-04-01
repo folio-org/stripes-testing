@@ -14,6 +14,7 @@ import getRandomPostfix from '../../../../../../support/utils/stringTools';
 import DataImport from '../../../../../../support/fragments/data_import/dataImport';
 import Logs from '../../../../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -22,11 +23,9 @@ describe('MARC', () => {
         const testData = {
           tags: {
             tag245: '245',
-            tagLDR: 'LDR',
           },
           fieldContents: {
             tag245Content: 'C422141 Created Shared Instance with linked field',
-            tagLDRContent: '00000naa\\a2200000uu\\4500',
           },
           authorityTitle: 'C422141 Dante Alighieri, 1265-1321',
           searchOption: 'Personal name',
@@ -51,7 +50,7 @@ describe('MARC', () => {
           {
             marc: 'marcAuthFileForC422141.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
           },
         ];
@@ -130,10 +129,7 @@ describe('MARC', () => {
               testData.tags.tag245,
               `$a ${testData.fieldContents.tag245Content}`,
             );
-            QuickMarcEditor.updateExistingField(
-              testData.tags.tagLDR,
-              testData.fieldContents.tagLDRContent,
-            );
+            QuickMarcEditor.updateLDR06And07Positions();
             MarcAuthority.addNewField(4, newField.tag, newField.content);
             QuickMarcEditor.updateIndicatorValue(newField.tag, '2', 0);
             QuickMarcEditor.updateIndicatorValue(newField.tag, '0', 1);

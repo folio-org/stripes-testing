@@ -7,7 +7,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Advanced search', () => {
     const barcodeBase = `MYCODE02070506${randomFourDigitNumber()}`;
     const callNumberBase = `ADVSRCH00900${randomFourDigitNumber()}`;

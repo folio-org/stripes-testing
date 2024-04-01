@@ -1,17 +1,18 @@
-import Permissions from '../../../../support/dictionary/permissions';
+import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import Users from '../../../../support/fragments/users/users';
-import TopMenu from '../../../../support/fragments/topMenu';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import UserEdit from '../../../../support/fragments/users/userEdit';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Requests from '../../../../support/fragments/requests/requests';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import NewRequest from '../../../../support/fragments/requests/newRequest';
-import TitleLevelRequests from '../../../../support/fragments/settings/circulation/titleLevelRequests';
+import Requests from '../../../../support/fragments/requests/requests';
 import SelectInstanceModal from '../../../../support/fragments/requests/selectInstanceModal';
+import TitleLevelRequests from '../../../../support/fragments/settings/circulation/titleLevelRequests';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../../support/fragments/topMenu';
+import UserEdit from '../../../../support/fragments/users/userEdit';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 function createFOLIOAndUploadMARCInstanceViaApi(titlesFOLIOInstance, marcFile, createdRecordsIds) {
   titlesFOLIOInstance.forEach((title) => {
@@ -76,17 +77,17 @@ describe('Inventory', () => {
       {
         marc: 'marcBibFileForC410702Shared.mrc',
         fileName: `C410702 Central testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       },
       {
         marc: 'marcBibFileForC410702LocalMember1.mrc',
         fileName: `C410702 Local testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       },
       {
         marc: 'marcBibFileForC410702LocalMember2.mrc',
         fileName: `C410702 Local testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       },
     ];
 
@@ -271,7 +272,7 @@ describe('Inventory', () => {
 
         // 9 Click on "Source" accordion header → Select "MARC" option in expanded accordion
         SelectInstanceModal.clickAccordionByName(filterName);
-        SelectInstanceModal.selectOptionInExpandedFilter(filterName, 'MARC');
+        SelectInstanceModal.selectOptionInExpandedFilter(filterName, INSTANCE_SOURCE_NAMES.MARC);
         sharedMARCInstances.forEach((instance) => {
           SelectInstanceModal.verifyListResults(instance);
           SelectInstanceModal.verifyResultRowContentSharedIcon(instance, true);

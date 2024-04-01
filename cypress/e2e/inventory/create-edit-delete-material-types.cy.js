@@ -4,7 +4,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Permissions', () => {
     let userId;
     const materialTypeName = `autoTestMaterialType.${getRandomPostfix()}`;

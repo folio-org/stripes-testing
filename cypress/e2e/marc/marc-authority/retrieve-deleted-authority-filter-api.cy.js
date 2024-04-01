@@ -1,13 +1,14 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthoritiesDelete from '../../../support/fragments/marcAuthority/marcAuthoritiesDelete';
 import MarcAuthoritiesSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -50,14 +51,14 @@ describe('MARC', () => {
       {
         marc: 'marcAuthFileC432317_1.mrc',
         fileName: `testMarcFileC432317.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 13,
         propertyName: 'authority',
       },
       {
         marc: 'marcAuthFileC432317_2.mrc',
         fileName: `testMarcFileC43231.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 1,
         propertyName: 'authority',
       },

@@ -7,7 +7,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Instance', () => {
     const instanceIds = [];
     const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;

@@ -1,10 +1,11 @@
+import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import TitleLevelRequests from '../../../support/fragments/settings/circulation/titleLevelRequests';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import TitleLevelRequests from '../../../support/fragments/settings/circulation/titleLevelRequests';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Permissions', () => {
@@ -13,7 +14,7 @@ describe('Permissions', () => {
     let instanceID;
     const marcFile = 'oneMarcBib.mrc';
     const fileName = `autotest1Bib${getRandomPostfix()}.mrc`;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const propertyName = 'instance';
 
     before('Creating user', () => {
@@ -58,7 +59,7 @@ describe('Permissions', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
-        InventoryInstances.searchBySource('MARC');
+        InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstances.searchByTitle(instanceID);
         InventoryInstance.checkExpectedMARCSource();
         // Wait for the content to be loaded.

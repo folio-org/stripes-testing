@@ -10,7 +10,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Holdings', () => {
     let user;
     const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;

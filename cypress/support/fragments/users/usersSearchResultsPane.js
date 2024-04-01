@@ -5,6 +5,7 @@ import {
   PaneContent,
   MultiColumnListCell,
   including,
+  MultiColumnList,
 } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 
@@ -66,5 +67,9 @@ export default {
         .find(MultiColumnListCell({ column: 'Name' }))
         .has({ content: including(userName) }),
     ]);
+  },
+
+  checkSearchResultsCount(rowCount) {
+    cy.expect(searchResultsPaneContent.find(MultiColumnList({ rowCount })).exists());
   },
 };

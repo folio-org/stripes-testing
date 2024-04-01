@@ -28,13 +28,13 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     let instanceHrid;
     const quantityOfItems = '11';
     const instanceTitle = 'Protozoological abstracts.';
-    const nameMarcFile = `C356801autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFile = `C356801 autotestFile${getRandomPostfix()}.mrc`;
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: {
