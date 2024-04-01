@@ -2,7 +2,7 @@ import NewNoticePolicyTemplate from '../../../../support/fragments/settings/circ
 import { NOTICE_CATEGORIES } from '../../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 
-describe('ui-circulation-settings: create patron notice template', () => {
+describe('Settings (Notices)', () => {
   const patronNoticeTemplate = {
     ...NewNoticePolicyTemplate.defaultUi,
     category: NOTICE_CATEGORIES.loan,
@@ -14,7 +14,7 @@ describe('ui-circulation-settings: create patron notice template', () => {
     });
   });
 
-  it('C199656 Create notice template (vega)', { tags: ['smoke', 'volaris'] }, () => {
+  it('C199656 Create notice template (volaris)', { tags: ['smoke', 'volaris'] }, () => {
     NewNoticePolicyTemplate.startAdding();
     NewNoticePolicyTemplate.checkInitialState();
     NewNoticePolicyTemplate.addToken('item.title');
