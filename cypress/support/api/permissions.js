@@ -184,3 +184,65 @@ Cypress.Commands.add('deleteAuthorizationRoleApi', (roleId) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('getAuthorizationPoliciesForEntityApi', (policyType, entityId) => {
+  cy.okapiRequest({
+    path: 'policies',
+    searchParams: {
+      query: `name="Policy for ${policyType}: ${entityId}"`,
+      limit: 1000,
+    },
+    isDefaultSearchParamsRequired: false,
+  }).then(({ status, body }) => {
+    return {
+      status,
+      body,
+    };
+  });
+});
+
+Cypress.Commands.add('getAuthorizationRolesForUserApi', (userId) => {
+  cy.okapiRequest({
+    path: `/roles/users/${userId}`,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ status, body }) => {
+    return {
+      status,
+      body,
+    };
+  });
+});
+
+Cypress.Commands.add('getCapabilitiesForUserApi', (userId) => {
+  cy.okapiRequest({
+    path: 'users/capabilities',
+    searchParams: {
+      query: `userId==${userId}`,
+      limit: 10,
+      offset: 0,
+    },
+    isDefaultSearchParamsRequired: false,
+  }).then(({ status, body }) => {
+    return {
+      status,
+      body,
+    };
+  });
+});
+
+Cypress.Commands.add('getCapabilitySetsForUserApi', (userId) => {
+  cy.okapiRequest({
+    path: 'users/capability-sets',
+    searchParams: {
+      query: `userId==${userId}`,
+      limit: 10,
+      offset: 0,
+    },
+    isDefaultSearchParamsRequired: false,
+  }).then(({ status, body }) => {
+    return {
+      status,
+      body,
+    };
+  });
+});
