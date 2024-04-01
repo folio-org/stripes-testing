@@ -547,6 +547,22 @@ export const INVENTORY_LDR_FIELD_BLVL_DROPDOWN = {
   S: 's - Serial',
 };
 
+export const INVENTORY_008_FIELD_DROPDOWNS_NAMES = {
+  DTST: 'DtSt',
+  CONF: 'Conf',
+  FEST: 'Fest',
+  INDX: 'Indx',
+  LITF: 'LitF',
+  COMP: 'Comp',
+  FMUS: 'FMus',
+  CRTP: 'CrTp',
+  TMAT: 'TMat',
+  TECH: 'Tech',
+  FILE: 'File',
+  REGL: 'Regl',
+  SL: 'S/L',
+};
+
 export const INVENTORY_008_FIELD_DTST_DROPDOWN = {
   NO: '| - No attempt to code',
   B: 'b - No dates given; B.C. date involved',
@@ -597,6 +613,76 @@ export const INVENTORY_008_FIELD_LITF_DROPDOWN = {
   P: 'p - Poetry',
   S: 's - Speeches',
   U: 'u - Unknown',
+};
+
+export const INVENTORY_008_FIELD_COMP_DROPDOWN = {
+  NO: '|| - No attempt to code',
+  AN: 'an - Anthems',
+  BD: 'bd - Ballads',
+  CA: 'ca - Chaconnes',
+  DF: 'df - Dance forms',
+  FG: 'fg - Fugues',
+  GM: 'gm - Gospel music',
+  HY: 'hy - Hymns',
+  JZ: 'jz - Jazz',
+  MC: 'mc - Musical revues and comedies',
+  NC: 'nc - Nocturnes',
+  OP: 'op - Operas',
+  PG: 'pg - Program music',
+  RC: 'rc - Rock music',
+  SD: 'sd - Square dance music',
+  TC: 'tc - Toccatas',
+  UU: 'uu - Unknown',
+  VI: 'vi - Villancicos',
+  WZ: 'wz - Waltzes',
+  ZZ: 'zz - Other',
+};
+
+export const INVENTORY_008_FIELD_FMUS_DROPDOWN = {
+  NO: '| - No attempt to code',
+  A: 'a - Full score',
+  B: 'b - Miniature or study score',
+  C: 'c - Accompaniment reduced for keyboard',
+  D: 'd - Voice score with accompaniment omitted',
+  Z: 'z - Other',
+};
+
+export const INVENTORY_008_FIELD_CRTP_DROPDOWN = {
+  NO: '| - No attempt to code',
+  A: 'a - Single map',
+  B: 'b - Map series',
+  C: 'c - Map serial',
+  D: 'd - Globe',
+  Z: 'z - Other',
+};
+
+export const INVENTORY_008_FIELD_TMAT_DROPDOWN = {
+  NO: '| - No attempt to code',
+  A: 'a - Art original',
+  B: 'b - Kit',
+  C: 'c - Art reproduction',
+  D: 'd - Diorama',
+  Z: 'z - Other',
+};
+
+export const INVENTORY_008_FIELD_TECH_DROPDOWN = {
+  NO: '| - No attempt to code',
+  A: 'a - Animation',
+  C: 'c - Animation and live action',
+  L: 'l - Live action',
+  N: 'n - Not applicable',
+  U: 'u - Unknown',
+  Z: 'z - Other',
+};
+
+export const INVENTORY_008_FIELD_FILE_DROPDOWN = {
+  NO: '| - No attempt to code',
+  A: 'a - Numeric data',
+  B: 'b - Computer program',
+  C: 'c - Representational',
+  D: 'd - Document',
+  E: 'e - Bibliographic data',
+  Z: 'z - Other',
 };
 
 export const INVENTORY_008_FIELD_REGL_DROPDOWN = {

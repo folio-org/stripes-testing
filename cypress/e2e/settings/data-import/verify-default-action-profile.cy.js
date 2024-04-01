@@ -53,7 +53,7 @@ describe('Data Import', () => {
         // #2 Find and select "Default - Create SRS MARC Authority" job profile ->
         JobProfiles.search(newJobProfileName);
         JobProfileView.edit();
-        JobProfileEdit.unlinkActionsProfile(0);
+        JobProfileEdit.unlinkActionProfile(0);
         JobProfileEdit.saveAndClose();
         JobProfileView.verifyNoLinkedProfiles();
         // #3-4 Create new job profile, link to default action profile, and save
