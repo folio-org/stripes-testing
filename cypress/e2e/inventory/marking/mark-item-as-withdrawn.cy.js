@@ -10,7 +10,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Item', () => {
     let user = {};
     let defaultServicePointId;

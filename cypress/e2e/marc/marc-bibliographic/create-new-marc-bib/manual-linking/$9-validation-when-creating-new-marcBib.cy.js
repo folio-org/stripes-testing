@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -17,11 +18,9 @@ describe('MARC', () => {
         const fieldsToUpdate = {
           tags: {
             tag245: '245',
-            tagLDR: 'LDR',
           },
           fieldContents: {
             tag245Content: 'The most important book',
-            tagLDRContent: '00000naa\\a2200000uu\\4500',
           },
           searchOptions: {
             personalName: 'Personal name',
@@ -36,7 +35,7 @@ describe('MARC', () => {
           {
             marc: 'marcAuthFileForC380726.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
             propertyName: 'authority',
           },
@@ -90,10 +89,7 @@ describe('MARC', () => {
               fieldsToUpdate.tags.tag245,
               `$a ${fieldsToUpdate.fieldContents.tag245Content}`,
             );
-            QuickMarcEditor.updateExistingField(
-              fieldsToUpdate.tags.tagLDR,
-              fieldsToUpdate.fieldContents.tagLDRContent,
-            );
+            QuickMarcEditor.updateLDR06And07Positions();
             MarcAuthority.addNewField(4, '100', '');
             MarcAuthority.addNewField(5, '600', 'test');
             QuickMarcEditor.clickLinkIconInTagField(5);

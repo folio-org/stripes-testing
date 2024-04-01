@@ -25,7 +25,7 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     const testData = {
       title:

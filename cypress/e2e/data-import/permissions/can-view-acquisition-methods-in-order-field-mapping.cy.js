@@ -6,7 +6,7 @@ import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Permissions', () => {
     let user;
     before('create test data', () => {

@@ -12,7 +12,7 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import { ItemRecordEdit } from '../../../support/fragments/inventory';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Item', () => {
     const testData = {
       user: {},

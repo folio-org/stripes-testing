@@ -30,12 +30,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     const rowNumbers = [0, 1];
     const instanceHrids = [];
-    const marcFileName = `C368005 autotestFile.${getRandomPostfix()}.mrc`;
+    const marcFileName = `C368005 autotestFile${getRandomPostfix()}.mrc`;
     const itemNotes = {
       note: 'This is a plain note',
       checkInNoteForFirstItem: 'This is a check in note',

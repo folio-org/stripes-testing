@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -11,7 +12,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Contributors Browse', () => {
     const testData = {
       contributorName: 'Lee, Stanley Test C359596',
@@ -21,20 +22,20 @@ describe('inventory', () => {
       {
         marc: 'marcBibC359596.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
       },
       {
         marc: 'marcAuthC359596_1.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         naturalId: 'n831692600011181',
         propertyName: 'authority',
       },
       {
         marc: 'marcAuthC359596_2.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         naturalId: 'n831692600011182',
         propertyName: 'authority',
       },

@@ -87,6 +87,7 @@ const listIntegrationConfigs = MultiColumnList({
 const donorCheckbox = Checkbox('Donor');
 const toggleButtonIsDonor = Button({ id: 'accordion-toggle-button-isDonor' });
 const donorSection = Section({ id: 'isDonor' });
+const bankingInformationButton = Button('Banking information');
 
 export default {
   waitLoading: () => {
@@ -414,7 +415,7 @@ export default {
   },
 
   closeDetailsPane: () => {
-    cy.do([timesButton.click()]);
+    cy.do(PaneHeader({ id: 'paneHeaderintegration-view' }).find(timesButton).click());
   },
 
   selectCountryFilter: () => {
@@ -701,7 +702,7 @@ export default {
 
   deleteOrganization: (confirm = true) => {
     cy.do([
-      PaneHeader({ id: 'paneHeaderpane-organization-details' }).find(actionsButton).click(),
+      PaneHeader({ id: 'paneHeaderintegration-view' }).find(actionsButton).click(),
       Button('Delete').click(),
     ]);
     if (confirm) {
@@ -750,5 +751,29 @@ export default {
 
   saveOrganization: () => {
     cy.do(saveAndClose.click());
+  },
+
+  addBankingInformation: (bankingInformation) => {
+    cy.do([
+      bankingInformationButton.click(),
+      Button({ id: 'bankingInformation-add-button' }).click(),
+      TextField({ name: 'bankingInformation[0].bankName' }).fillIn(bankingInformation.name),
+      TextField({ name: 'bankingInformation[0].bankAccountNumber' }).fillIn(
+        bankingInformation.accountNumber,
+      ),
+    ]);
+    cy.do(saveAndClose.click());
+    cy.wait(4000);
+  },
+
+  deleteBankingInformation: () => {
+    cy.do([
+      bankingInformationButton.click(),
+      Section({ id: 'bankingInformationSection' })
+        .find(Button({ icon: 'trash' }))
+        .click(),
+    ]);
+    cy.do(saveAndClose.click());
+    cy.wait(4000);
   },
 };

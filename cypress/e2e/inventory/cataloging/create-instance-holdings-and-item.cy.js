@@ -8,7 +8,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Cataloging -> Creating new records', () => {
     const barcode = uuid();
     const testData = {

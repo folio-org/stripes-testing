@@ -1,9 +1,7 @@
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -15,8 +13,7 @@ describe('Inventory', () => {
   describe('Instance', () => {
     const marcFile = {
       marc: 'oneMarcBib.mrc',
-      fileNameImported: `C411292 autotestFileName${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      fileNameImported: `C411292 marcFileName${getRandomPostfix()}.mrc`,
       title:
         'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)',
     };
@@ -24,32 +21,13 @@ describe('Inventory', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-
-      cy.loginAsAdmin().then(() => {
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-        cy.visit(TopMenu.dataImportPath);
-        DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileNameImported);
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(marcFile.jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFile.fileNameImported);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFile.fileNameImported);
-        Logs.getCreatedItemID().then((instanceId) => {
-          testData.instanceId = instanceId;
-        });
+      DataImport.uploadFileViaApi(
+        marcFile.marc,
+        marcFile.fileNameImported,
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      ).then((response) => {
+        testData.instanceId = response[0].instance.id;
       });
-
-      cy.getConsortiaId()
-        .then((consortiaId) => {
-          testData.consortiaId = consortiaId;
-        })
-        .then(() => {
-          cy.setTenant(Affiliations.College);
-        });
 
       cy.resetTenant();
       cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then((userProperties) => {

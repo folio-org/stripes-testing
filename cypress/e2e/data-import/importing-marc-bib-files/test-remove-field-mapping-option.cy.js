@@ -37,12 +37,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const itemBarcode = uuid();
     const quantityOfItems = '1';
-    const marcFileNameForCreate = `C17033 autotestFile.${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `marcFileForC317033.${getRandomPostfix()}.mrc`;
+    const marcFileNameForCreate = `C17033 autotestFile${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C17033 marcFileForC317033${getRandomPostfix()}.mrc`;
     // profiles for creating
     const collectionOfMappingAndActionProfilesForCreate = [
       {

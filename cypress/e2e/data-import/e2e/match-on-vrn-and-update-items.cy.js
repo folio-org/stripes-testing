@@ -36,7 +36,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     const item = {
       title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
@@ -65,7 +65,7 @@ describe('data-import', () => {
     const instanceMatchProfileName = `C350591 Match for Instance ${getRandomPostfix()}`;
     const holdingsMatchProfileName = `C350591 Match for Holdings ${getRandomPostfix()}`;
     const itemMatchProfileName = `C350591 Match for Item ${getRandomPostfix()}`;
-    const editedMarcFileName = `marcFileForC350591.${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C350591 marcFile${getRandomPostfix()}.mrc`;
 
     const matchProfiles = [
       {
@@ -205,10 +205,9 @@ describe('data-import', () => {
         ).then((order) => {
           orderNumber = order.poNumber;
 
-          Orders.resetFilters();
-          Orders.checkIsOrderCreated(orderNumber);
-          // open the first PO with POL
-          Orders.resetFilters();
+          // open the PO with POL
+          cy.wait(1500);
+          Orders.clearSearchField();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.openOrder();
@@ -217,7 +216,7 @@ describe('data-import', () => {
           OrderDetails.checkIsItemsInInventoryCreated(item.title, 'Main Library');
           // check receiving pieces are created
           cy.visit(TopMenu.ordersPath);
-          Orders.resetFilters();
+          Orders.clearSearchField();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           OrderDetails.openPolDetails(item.title);

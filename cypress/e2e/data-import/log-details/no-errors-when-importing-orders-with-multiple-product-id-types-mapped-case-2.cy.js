@@ -30,13 +30,13 @@ import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScre
 import Orders from '../../../support/fragments/orders/orders';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     let orderNumber;
     const filePathForCreateOrder = 'marcBibFileForC378900.mrc';
     const marcFileName = `C378900 autotestFileName${getRandomPostfix()}.mrc`;
-    const title = 'Ella & Basie! [sound recording] / arranged by Quincy Jones.';
+    const title = 'Ella & Basie!';
     const productInfoJson = {
       productId: '"productId": "T90028"',
       productIdType: '"productIdType": "b5d8cdc4-9441-487c-90cf-0c7ec97728eb"',
@@ -139,12 +139,10 @@ describe('data-import', () => {
         Logs.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
-        [
-          FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.checkStatusInColumn(
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.order,
-        ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
-        });
+        );
         FileDetails.openJsonScreen(title);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.openOrderTab();

@@ -9,7 +9,7 @@ import Users from '../../../support/fragments/users/users';
 import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Advanced search', () => {
     const randomInstanceIdentifier = `${GenerateIdentifierCode.getRandomIdentifierCode()}123456987`;
     const testData = {

@@ -30,7 +30,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
     const marcFileName = `C11107 marcFile${getRandomPostfix()}.mrc`;

@@ -6,7 +6,7 @@ import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Search In Inventory', () => {
     const testData = {
       instanceTitle: `C366119 autoTestInstanceTitle${getRandomPostfix()}`,

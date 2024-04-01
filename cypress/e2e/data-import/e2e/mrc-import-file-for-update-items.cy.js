@@ -41,7 +41,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let instanceHRID = null;
     // profile names for creating
@@ -56,9 +56,9 @@ describe('data-import', () => {
     const jobProfileNameCreate = `autotest_job_profile_${getRandomPostfix()}`;
     const recordType = 'MARC_BIBLIOGRAPHIC';
     // file names
-    const nameMarcFileForImportCreate = `C343335autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForImportCreate = `C343335 autotestFile${getRandomPostfix()}.mrc`;
     const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
-    const nameMarcFileForImportUpdate = `C343335autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForImportUpdate = `C343335 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileNameForExport = `autoTestJobProf.${getRandomPostfix()}`;
 
     const marcBibMappingProfile = {

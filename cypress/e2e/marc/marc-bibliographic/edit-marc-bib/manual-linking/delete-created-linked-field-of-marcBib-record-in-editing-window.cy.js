@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -34,14 +35,14 @@ describe('MARC', () => {
           {
             marc: 'marcBibFileForC366582.mrc',
             fileName: `C366582 testMarcFile${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             numOfRecords: 1,
             propertyName: 'instance',
           },
           {
             marc: 'marcAuthFileC366582.mrc',
             fileName: `C366582 testMarcFile${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             authorityHeading: 'C366582 Coates, Ta-Nehisi',
             numOfRecords: 1,
             propertyName: 'authority',

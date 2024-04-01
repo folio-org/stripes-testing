@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import { Permissions } from '../../../../support/dictionary';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -42,7 +43,7 @@ describe('MARC', () => {
       };
       const subfieldPrefix = '$a';
       const authorityPostfix = '?authRefType=Authorized&heading';
-      const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const headerContent = {
         initialHeaderContent: {
           source: { firstName: 'ADMINISTRATOR', name: 'Diku_admin' },

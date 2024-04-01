@@ -42,7 +42,7 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire'] },
         () => {
           InventoryInstance.newMarcBibRecord();
-          QuickMarcEditor.updateExistingField(testData.fieldLDR.tag, testData.fieldLDR.content);
+          QuickMarcEditor.updateLDR06And07Positions();
           QuickMarcEditor.check008FieldContent();
           QuickMarcEditor.updateExistingField(testData.field245.tag, testData.field245.content);
           QuickMarcEditor.updateExistingTagName('008', '00');

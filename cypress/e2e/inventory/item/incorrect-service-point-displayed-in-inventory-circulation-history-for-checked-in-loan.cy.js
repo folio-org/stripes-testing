@@ -18,7 +18,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Item', () => {
     let user;
     const itemStatus = 'Checked out';

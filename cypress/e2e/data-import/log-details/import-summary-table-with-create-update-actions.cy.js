@@ -44,7 +44,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     const instanceHrids = [];
@@ -52,11 +52,11 @@ describe('data-import', () => {
     const quantityOfCreatedItems = '1';
     const filePathForCreateInstance = 'marcFileForC356791.mrc';
     const filePathWithUpdatedContent = 'marcFileForC356791_for_update.mrc';
-    const fileNameForCreateInstance = `C356791 autotestFileForCreate.${getRandomPostfix()}.mrc`;
+    const fileNameForCreateInstance = `C356791 autotestFileForCreate${getRandomPostfix()}.mrc`;
     const nameForCSVFile = `C356791autotestCsvFile.${getRandomPostfix()}.csv`;
-    const exportedFileName = `C356791 autotestExportedFile.${getRandomPostfix()}.mrc`;
-    const fileNameWithUpdatedContent = `C356791 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
-    const fileNameForUpdateInstance = `C356791 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
+    const exportedFileName = `C356791 autotestExportedFile${getRandomPostfix()}.mrc`;
+    const fileNameWithUpdatedContent = `C356791 autotestFileForUpdate${getRandomPostfix()}.mrc`;
+    const fileNameForUpdateInstance = `C356791 autotestFileForUpdate${getRandomPostfix()}.mrc`;
     const jobProfileNameForExport = `C356791 autotest job profile.${getRandomPostfix()}`;
     const addedInstanceTitle = 'Minakata Kumagusu kinrui saishoku zufu hyakusen.';
 

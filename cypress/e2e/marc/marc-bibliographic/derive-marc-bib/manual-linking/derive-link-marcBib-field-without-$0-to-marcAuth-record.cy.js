@@ -1,6 +1,5 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../../../../support/utils/stringTools';
-import getRandomStringCode from '../../../../../support/utils/genereteTextCode';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -11,6 +10,8 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import FileManager from '../../../../../support/utils/fileManager';
+import getRandomStringCode from '../../../../../support/utils/genereteTextCode';
+import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -31,14 +32,14 @@ describe('MARC', () => {
           marcBibFile: {
             marc: 'marcBibFileForC365595.mrc',
             fileName: `C365595 testMarcFile${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             propertyName: 'instance',
           },
           marcAuthFile: {
             marc: 'marcAuthFileForC365595.mrc',
             fileName: `C365595 testMarcFile${getRandomPostfix()}.mrc`,
             editedFileName: `C365595 marcFile${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             propertyName: 'authority',
           },
           tag010: '010',

@@ -10,7 +10,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 
-describe('ui-users: Custom Fields', () => {
+describe('Custom Fields', () => {
   before('login', () => {
     cy.getAdminToken();
     cy.createTempUser([Permissions.uiUsersCustomField.gui, Permissions.uiUserEdit.gui]).then(

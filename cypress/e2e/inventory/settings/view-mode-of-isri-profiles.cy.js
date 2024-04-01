@@ -51,7 +51,7 @@ const zdcProfile = {
   updateMappingProfile: `zdc autotest mappingProfile${getRandomPostfix()}`,
 };
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Settings', () => {
     let user;
     const createJobProfileIds = [];

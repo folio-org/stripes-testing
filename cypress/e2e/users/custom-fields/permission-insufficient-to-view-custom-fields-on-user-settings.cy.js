@@ -5,7 +5,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 
-describe('Permissions --> My Profile', () => {
+describe('Custom Fields', () => {
   let userData;
   let servicePointId;
 

@@ -16,7 +16,7 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import BrowseSubjects from '../../../../support/fragments/inventory/search/browseSubjects';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
@@ -201,13 +201,13 @@ describe('Inventory', () => {
         {
           marc: 'testMarcBibC404353Shared.mrc',
           fileNameImported: `testMarcBibC404353Shared.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numberOftitles: 5,
         },
         {
           marc: 'testMarcBibC404353Local.mrc',
           fileNameImported: `testMarcBibC404353Local.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numberOftitles: 1,
         },
       ];

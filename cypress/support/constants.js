@@ -413,6 +413,113 @@ export const ACTION_NAMES_IN_ACTION_PROFILE = {
   UPDATE: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
 };
 
+export const AUTHORITY_LDR_FIELD_STATUS_DROPDOWN = {
+  A: 'a - Increase in encoding level',
+  C: 'c - Corrected or revised',
+  D: 'd - Deleted',
+  N: 'n - New',
+  O: 'o - Obsolete',
+  S: 's - Deleted; heading split into two or more headings',
+  X: 'x - Deleted; heading replaced by another heading',
+};
+
+export const AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES = {
+  STATUS: 'Status',
+  TYPE: 'Type',
+  ELVL: 'ELvl',
+  PUNCT: 'Punct',
+};
+
+export const AUTHORITY_LDR_FIELD_ELVL_DROPDOWN = {
+  N: 'n - Complete authority record',
+  O: 'o - Incomplete authority record',
+};
+
+export const AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN = {
+  '\\': '\\ - No information provided',
+  C: 'c - Punctuation omitted',
+  I: 'i - Punctuation included',
+  U: 'u - Unknown',
+};
+
+export const AUTHORITY_LDR_FIELD_TYPE_DROPDOWN = {
+  Z: 'z - Authority data',
+};
+
+export const MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES = {
+  STATUS: 'Status',
+  TYPE: 'Type',
+  ELVL: 'ELvl',
+  ITEM: 'Item',
+};
+
+export const MARC_HOLDING_LDR_FIELD_STATUS_DROPDOWN = {
+  C: 'c - Corrected or revised',
+  D: 'd - Deleted',
+  N: 'n - New',
+};
+
+export const MARC_HOLDING_LDR_FIELD_TYPE_DROPDOWN = {
+  U: 'u - Unknown',
+  V: 'v - Multipart item holdings',
+  X: 'x - Single-part item holdings',
+  Y: 'y - Serial item holdings',
+};
+
+export const MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN = {
+  1: '1 - Holdings level 1',
+  2: '2 - Holdings level 2',
+  3: '3 - Holdings level 3',
+  4: '4 - Holdings level 4',
+  5: '5 - Holdings level 4 with piece designation',
+  M: 'm - Mixed level',
+  U: 'u - Unknown',
+  Z: 'z - Other level',
+};
+
+export const MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN = {
+  I: 'i - Item information',
+  N: 'n - No item information',
+};
+
+export const INVENTORY_LDR_FIELD_DROPDOWNS_NAMES = {
+  STATUS: 'Status',
+  TYPE: 'Type',
+  BLVL: 'BLvl',
+  CTRL: 'Ctrl',
+  DESC: 'Desc',
+  MULTILVL: 'MultiLvl',
+};
+
+export const INVENTORY_LDR_FIELD_STATUS_DROPDOWN = {
+  A: 'a - Increase in encoding level',
+  C: 'c - Corrected or revised',
+  D: 'd - Deleted',
+  N: 'n - New',
+  P: 'p - Increase in encoding level from prepublication',
+};
+
+export const INVENTORY_LDR_FIELD_CTRL_DROPDOWN = {
+  '\\': '\\ - No specified type',
+  A: 'a - Archival',
+};
+
+export const INVENTORY_LDR_FIELD_DESC_DROPDOWN = {
+  '\\': '\\ - Non-ISBD',
+  A: 'a - AACR2',
+  C: 'c - ISBD punctuation omitted',
+  I: 'i - ISBD punctuation included',
+  N: 'n - Non-ISBD punctuation omitted',
+  U: 'u - Unknown',
+};
+
+export const INVENTORY_LDR_FIELD_MULTILVL_DROPDOWN = {
+  '\\': '\\ - Not specified or not applicable',
+  A: 'a - Set',
+  B: 'b - Part with independent title',
+  C: 'c - Part with dependent title',
+};
+
 export const INVENTORY_LDR_FIELD_TYPE_DROPDOWN = {
   A: 'a - Language material',
   C: 'c - Notated music',
@@ -438,6 +545,22 @@ export const INVENTORY_LDR_FIELD_BLVL_DROPDOWN = {
   I: 'i - Integrating resource',
   M: 'm - Monograph/Item',
   S: 's - Serial',
+};
+
+export const INVENTORY_008_FIELD_DROPDOWNS_NAMES = {
+  DTST: 'DtSt',
+  CONF: 'Conf',
+  FEST: 'Fest',
+  INDX: 'Indx',
+  LITF: 'LitF',
+  COMP: 'Comp',
+  FMUS: 'FMus',
+  CRTP: 'CrTp',
+  TMAT: 'TMat',
+  TECH: 'Tech',
+  FILE: 'File',
+  REGL: 'Regl',
+  SL: 'S/L',
 };
 
 export const INVENTORY_008_FIELD_DTST_DROPDOWN = {
@@ -492,8 +615,105 @@ export const INVENTORY_008_FIELD_LITF_DROPDOWN = {
   U: 'u - Unknown',
 };
 
+export const INVENTORY_008_FIELD_COMP_DROPDOWN = {
+  NO: '|| - No attempt to code',
+  AN: 'an - Anthems',
+  BD: 'bd - Ballads',
+  CA: 'ca - Chaconnes',
+  DF: 'df - Dance forms',
+  FG: 'fg - Fugues',
+  GM: 'gm - Gospel music',
+  HY: 'hy - Hymns',
+  JZ: 'jz - Jazz',
+  MC: 'mc - Musical revues and comedies',
+  NC: 'nc - Nocturnes',
+  OP: 'op - Operas',
+  PG: 'pg - Program music',
+  RC: 'rc - Rock music',
+  SD: 'sd - Square dance music',
+  TC: 'tc - Toccatas',
+  UU: 'uu - Unknown',
+  VI: 'vi - Villancicos',
+  WZ: 'wz - Waltzes',
+  ZZ: 'zz - Other',
+};
+
+export const INVENTORY_008_FIELD_FMUS_DROPDOWN = {
+  NO: '| - No attempt to code',
+  A: 'a - Full score',
+  B: 'b - Miniature or study score',
+  C: 'c - Accompaniment reduced for keyboard',
+  D: 'd - Voice score with accompaniment omitted',
+  Z: 'z - Other',
+};
+
+export const INVENTORY_008_FIELD_CRTP_DROPDOWN = {
+  NO: '| - No attempt to code',
+  A: 'a - Single map',
+  B: 'b - Map series',
+  C: 'c - Map serial',
+  D: 'd - Globe',
+  Z: 'z - Other',
+};
+
+export const INVENTORY_008_FIELD_TMAT_DROPDOWN = {
+  NO: '| - No attempt to code',
+  A: 'a - Art original',
+  B: 'b - Kit',
+  C: 'c - Art reproduction',
+  D: 'd - Diorama',
+  Z: 'z - Other',
+};
+
+export const INVENTORY_008_FIELD_TECH_DROPDOWN = {
+  NO: '| - No attempt to code',
+  A: 'a - Animation',
+  C: 'c - Animation and live action',
+  L: 'l - Live action',
+  N: 'n - Not applicable',
+  U: 'u - Unknown',
+  Z: 'z - Other',
+};
+
+export const INVENTORY_008_FIELD_FILE_DROPDOWN = {
+  NO: '| - No attempt to code',
+  A: 'a - Numeric data',
+  B: 'b - Computer program',
+  C: 'c - Representational',
+  D: 'd - Document',
+  E: 'e - Bibliographic data',
+  Z: 'z - Other',
+};
+
+export const INVENTORY_008_FIELD_REGL_DROPDOWN = {
+  NO: '| - No attempt to code',
+  N: 'n - Normalized irregular',
+  R: 'r - Regular',
+  U: 'u - Unknown',
+  X: 'x - Completely irregular',
+};
+
+export const INVENTORY_008_FIELD_S_L_DROPDOWN = {
+  NO: '| - No attempt to code',
+  0: '0 - Successive entry',
+  1: '1 - Latest entry',
+  2: '2 - Integrated entry',
+};
+
 export const DEFAULT_JOB_PROFILE_NAMES = {
   CREATE_INSTANCE_AND_SRS: 'Default - Create instance and SRS MARC Bib',
   CREATE_AUTHORITY: 'Default - Create SRS MARC Authority',
   CREATE_HOLDINGS_AND_SRS: 'Default - Create Holdings and SRS MARC Holdings',
+};
+
+export const patronGroupNames = {
+  STAFF: 'staff',
+  FACULTY: 'faculty',
+  UNDERGRAD: 'undergrad',
+};
+
+export const patronGroupUuids = {
+  STAFF: '3684a786-6671-4268-8ed0-9db82ebca60b',
+  FACULTY: '503a81cd-6c26-400f-b620-14c08943697c',
+  UNDERGRAD: 'bdc2b6d4-5ceb-4a12-ab46-249b9a68473e',
 };

@@ -8,7 +8,7 @@ import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Tags', () => {
     let userData;
     const testData = {

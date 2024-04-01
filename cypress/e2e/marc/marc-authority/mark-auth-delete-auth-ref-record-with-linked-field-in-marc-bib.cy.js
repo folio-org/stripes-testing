@@ -1,16 +1,17 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
-import MarcAuthoritiesDelete from '../../../support/fragments/marcAuthority/marcAuthoritiesDelete';
-import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthoritiesDelete from '../../../support/fragments/marcAuthority/marcAuthoritiesDelete';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -58,20 +59,20 @@ describe('MARC', () => {
       {
         marc: 'marcBibFileForC374148.mrc',
         fileName: `testMarcFileC374148.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         instanceTitle: 'Crossfire : a litany for survival.',
         propertyName: 'instance',
       },
       {
         marc: 'marcAuthFileForC374148_01.mrc',
         fileName: `testMarcFileC374148.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         propertyName: 'authority',
       },
       {
         marc: 'marcAuthFileForC374148_02.mrc',
         fileName: `testMarcFileC374148.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         propertyName: 'authority',
         authorutyTitle: 'Poetry',
       },

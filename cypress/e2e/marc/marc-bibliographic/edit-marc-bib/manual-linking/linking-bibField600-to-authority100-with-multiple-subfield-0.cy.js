@@ -1,16 +1,17 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
+import DataImport from '../../../../../support/fragments/data_import/dataImport';
+import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
+import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthoritiesSearch from '../../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
+import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
-import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
-import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
-import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
-import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
-import MarcAuthoritiesSearch from '../../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
-import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
-import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -41,13 +42,13 @@ describe('MARC', () => {
           {
             marc: 'marcBibFileForC380753.mrc',
             fileName: `testMarcFileC380753${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             propertyName: 'instance',
           },
           {
             marc: 'marcAuthFileForC380753.mrc',
             fileName: `testMarcFile380753${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             authorityHeading: 'C380753 Black Panther (Fictitious character) Wakanda Forever',
             propertyName: 'authority',
           },

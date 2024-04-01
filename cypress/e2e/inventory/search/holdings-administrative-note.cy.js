@@ -9,7 +9,7 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Search in Inventory', () => {
     const testData = {
       folioInstances: InventoryInstances.generateFolioInstances(),

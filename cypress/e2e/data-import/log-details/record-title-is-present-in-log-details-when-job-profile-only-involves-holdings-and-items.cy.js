@@ -41,7 +41,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     const testData = {
@@ -170,7 +170,7 @@ describe('data-import', () => {
       'C375109 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details WITH instance match item (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        const marcFileNameForUpdate = `C375109 firstmarcFile.${getRandomPostfix()}.mrc`;
+        const marcFileNameForUpdate = `C375109 firstmarcFile${getRandomPostfix()}.mrc`;
         const csvFileName = `C375109 firstautotestFile${getRandomPostfix()}.csv`;
         const quantityOfItems = '1';
         const collectionOfMappingAndActionProfiles = [

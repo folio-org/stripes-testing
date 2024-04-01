@@ -9,10 +9,10 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
-    const nameMarcFileForCreate = `C357019 autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForCreate = `C357019 autotestFile${getRandomPostfix()}.mrc`;
 
     before('Create test data', () => {
       cy.createTempUser([

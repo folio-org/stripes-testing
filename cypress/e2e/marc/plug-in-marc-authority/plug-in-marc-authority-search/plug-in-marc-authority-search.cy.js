@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -54,49 +55,49 @@ describe('MARC', () => {
         {
           marc: 'oneMarcBib.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numOfRecords: 1,
           propertyName: 'instance',
         },
         {
           marc: 'marcFileForC359015.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 2,
           propertyName: 'authority',
         },
         {
           marc: 'marcFileForC359206.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 2,
           propertyName: 'authority',
         },
         {
           marc: 'marcFileForC359228.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 5,
           propertyName: 'authority',
         },
         {
           marc: 'marcFileForC359229.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 2,
           propertyName: 'authority',
         },
         {
           marc: 'marcFileForC359231.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 1,
           propertyName: 'authority',
         },
         {
           marc: 'marcFileForC380566.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 2,
           propertyName: 'authority',
         },
@@ -106,21 +107,21 @@ describe('MARC', () => {
         {
           marc: 'marcFileForC359230_2.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 1,
           propertyName: 'authority',
         },
         {
           marc: 'marcFileForC359230_3.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 1,
           propertyName: 'authority',
         },
         {
           marc: 'marcFileForC359230_twain.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 1,
           propertyName: 'authority',
         },

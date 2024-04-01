@@ -9,7 +9,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Instance', () => {
     const testData = {
       instanceTitle: `C380582 autoTestInstanceTitle${getRandomPostfix()}`,

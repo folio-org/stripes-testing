@@ -13,7 +13,7 @@ import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecord
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import LoanTypesSection from '../../../support/fragments/settings/inventory/items/loanTypes';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Item', () => {
     const itemData = {
       barcode: generateItemBarcode(),

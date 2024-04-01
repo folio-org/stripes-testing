@@ -52,6 +52,7 @@ const exportButton = Button('Export');
 const ledgerResultsPaneSection = Section({ id: 'ledger-results-pane' });
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = Button('Search');
+const saveAndClose = Button('Save & Close');
 
 export default {
   defaultUiLedger: {
@@ -536,7 +537,7 @@ export default {
     ]);
     // TODO: check ability to work through interactors
     cy.get(fiscalYearCss).select(defaultLedger.fiscalYear);
-    cy.do(Button('Save & Close').click());
+    cy.do(saveAndClose.click());
     this.waitForLedgerDetailsLoading();
   },
 
@@ -549,9 +550,9 @@ export default {
     cy.do([
       Button('New').click(),
       TextField('Name*').fillIn(ledgerName),
-      Button('Save & Close').click(),
+      saveAndClose.click(),
       TextField('Code*').fillIn('some code'),
-      Button('Save & Close').click(),
+      saveAndClose.click(),
       // try to navigate without saving
       Button('Agreements').click(),
       Button('Keep editing').click,

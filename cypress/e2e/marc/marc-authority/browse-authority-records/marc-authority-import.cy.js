@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -23,7 +24,7 @@ describe('MARC', () => {
         reference: 'Reference',
         recordWithoutTitle: 'Twain, Mark, 1835-1910',
       };
-      const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const propertyName = 'authority';
       let fileName;
       const createdAuthorityIDs = [];

@@ -39,6 +39,37 @@ export default {
     });
   },
 
+  getIssuanceModeByNameAndTenant(name, tenantId) {
+    return cy.getConsortiaId().then((consortiaId) => {
+      cy.getPublications([tenantId], '/modes-of-issuance?limit=2000&offset=0').then(
+        (publicationId) => {
+          cy.okapiRequest({
+            method: REQUEST_METHOD.GET,
+            path: `consortia/${consortiaId}/publications/${publicationId}/results`,
+          }).then(({ body }) => {
+            const issuanceModes = JSON.parse(
+              body.publicationResults.find((publication) => publication.tenantId === tenantId)
+                .response,
+            ).issuanceModes;
+            return issuanceModes.find((issuanceMode) => issuanceMode.name === name);
+          });
+        },
+      );
+    });
+  },
+
+  deleteIssuanceModeByNameAndTenant(name, tenantId) {
+    this.getIssuanceModeByNameAndTenant(name, tenantId).then((format) => {
+      cy.setTenant(tenantId);
+      cy.okapiRequest({
+        method: REQUEST_METHOD.DELETE,
+        path: `modes-of-issuance/${format.id}`,
+        failOnStatusCode: false,
+      });
+      cy.resetTenant();
+    });
+  },
+
   waitLoading() {
     ConsortiaControlledVocabularyPaneset.waitLoading('Modes of issuance');
   },

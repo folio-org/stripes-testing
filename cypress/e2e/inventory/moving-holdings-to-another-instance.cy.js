@@ -21,7 +21,7 @@ const secondItem = {
 };
 const successCalloutMessage = '1 holding has been successfully moved.';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.uiInventoryMoveItems.gui,

@@ -4,6 +4,7 @@ import {
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  INSTANCE_SOURCE_NAMES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
@@ -179,7 +180,6 @@ describe('Inventory', () => {
 
         // upload the exported and edited marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(testData.exportedFileName);
         JobProfiles.waitFileIsUploaded();
@@ -194,7 +194,7 @@ describe('Inventory', () => {
         );
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instance.instanceTitle);
-        InstanceRecordView.verifyInstanceSource('MARC');
+        InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
         InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
         InventoryInstance.viewSource();
         InventoryViewSource.contains(`$a ${testData.instance.instanceTitle}`);

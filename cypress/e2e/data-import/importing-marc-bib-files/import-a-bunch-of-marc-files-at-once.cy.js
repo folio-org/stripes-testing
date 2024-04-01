@@ -4,11 +4,12 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const filePathForUpload = 'oneMarcBib.mrc';
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
     before(() => {
       cy.getAdminToken();
@@ -21,15 +22,15 @@ describe('data-import', () => {
       () => {
         [
           {
-            fileName: `C6707autotestFiles${getRandomPostfix()}.mrc`,
+            fileName: `C6707 autotestFiles${getRandomPostfix()}.mrc`,
             quantityOfFiles: '2',
           },
           {
-            fileName: `C6707autotestFiles${getRandomPostfix()}.mrc`,
+            fileName: `C6707 autotestFiles${getRandomPostfix()}.mrc`,
             quantityOfFiles: '4',
           },
           {
-            fileName: `C6707autotestFiles${getRandomPostfix()}.mrc`,
+            fileName: `C6707 autotestFiles${getRandomPostfix()}.mrc`,
             quantityOfFiles: '15',
           },
         ].forEach((upload) => {
@@ -43,6 +44,7 @@ describe('data-import', () => {
 
           Logs.openViewAllLogs();
           LogsViewAll.viewAllIsOpened();
+          cy.wait(20000);
           LogsViewAll.selectOption('Keyword (ID, File name)');
           LogsViewAll.searchWithTerm(upload.fileName);
           // TODO need to wait until files are filtered

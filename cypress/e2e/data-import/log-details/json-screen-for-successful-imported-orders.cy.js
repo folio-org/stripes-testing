@@ -27,7 +27,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Orders from '../../../support/fragments/orders/orders';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     const testData = {
       title: 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.',
