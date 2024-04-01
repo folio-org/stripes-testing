@@ -26,6 +26,7 @@ const booleanValues = ['AND'];
 
 export const itemFieldValues = {
   instanceId: 'Instance ID',
+  itemStatus: 'Item status',
 };
 export const usersFieldValues = {
   expirationDate: 'User expiration date',
@@ -68,6 +69,7 @@ export const stringStoresUuidButMillionOperators = [
   'not in',
   'is null/empty',
 ];
+export const enumOperators = ['Select operator', '==', '!=', 'in', 'not in', 'is null/empty'];
 export const booleanOperators = ['Select operator', '==', '!=', 'is null/empty'];
 
 export default {
