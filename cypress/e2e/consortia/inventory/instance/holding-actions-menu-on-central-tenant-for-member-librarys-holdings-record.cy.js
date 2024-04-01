@@ -9,13 +9,11 @@ import Locations from '../../../../support/fragments/settings/tenant/location-se
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
     let user;
     const testData = {
-      newInstanceTitle: `C411384 instanceTitle${getRandomPostfix()}`,
       servicePoint: ServicePoints.defaultServicePoint,
     };
 
