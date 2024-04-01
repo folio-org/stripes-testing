@@ -34,7 +34,7 @@ export default {
       .click();
     cy.do(Modal({ id: 'unlink-job-profile-modal' }).find(Button('Unlink')).click());
   },
-  unlinkActionsProfile: (number) => {
+  unlinkActionProfile: (number) => {
     cy.get('[id*="branch-ROOT-editable"]').eq(number).find('button[icon="unlink"]').click();
     cy.do(Modal({ id: 'unlink-job-profile-modal' }).find(Button('Unlink')).click());
   },
