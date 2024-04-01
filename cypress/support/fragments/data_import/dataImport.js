@@ -756,7 +756,7 @@ export default {
 
   waitFileIsUploaded: () => {
     // TODO need to wait until big file is uploaded
-    cy.wait(60000);
+    cy.wait(40000);
   },
 
   uploadFileAndRetry(filePathName, fileName, maxRetries = 10) {
