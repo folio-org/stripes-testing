@@ -1,0 +1,143 @@
+import Permissions from '../../../../support/dictionary/permissions';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
+import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/stringTools';
+
+describe('MARC', () => {
+  describe('MARC Authority', () => {
+    describe('Create MARC Authority', () => {
+      const randomPostfix = getRandomPostfix();
+      const testData = {
+        sourceName: 'LC Name Authority file (LCNAF)',
+        searchOption: 'Keyword',
+        marcValue: 'Create a new MARC authority record with FOLIO authority file test',
+        tag001: '001',
+        tag010: '010',
+        tag100: '100',
+        tag010Value: 'n00776432',
+        tag001Value: 'n4332123',
+        headerText: 'Create a new MARC authority record',
+        AUTHORIZED: 'Authorized',
+      };
+      const newField = {
+        rowIndex: 4,
+        tag: '100',
+        content: '$a Create a new MARC authority record with Local authority file test',
+      };
+      const localAuthFile = {
+        name: `C423528 auth source file active ${randomPostfix}`,
+        prefix: getRandomLetters(8),
+        startWithNumber: '1',
+        isActive: true,
+      };
+
+      const users = {};
+
+      before('Create users, data', () => {
+        cy.getAdminToken();
+        cy.createTempUser([
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
+        ])
+          .then((userProperties) => {
+            users.userProperties = userProperties;
+          })
+          .then(() => {
+            cy.createAuthoritySourceFileUsingAPI(
+              localAuthFile.prefix,
+              localAuthFile.startWithNumber,
+              localAuthFile.name,
+              localAuthFile.isActive,
+            ).then((sourceId) => {
+              localAuthFile.id = sourceId;
+
+              ManageAuthorityFiles.setAllDefaultFOLIOFilesToActiveViaAPI();
+            });
+          })
+          .then(() => {
+            cy.login(users.userProperties.username, users.userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
+          });
+      });
+
+      after('Delete users, data', () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(users.userProperties.userId);
+        MarcAuthority.deleteViaAPI(testData.authorityId);
+        cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id);
+
+        ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
+      });
+
+      it(
+        'C423528 Create a new MARC authority record with "Local" authority file selected (spitfire)',
+        { tags: ['criticalPath', 'spitfire'] },
+        () => {
+          // 1 Click on "Actions" button in second pane >> Select "+ New" option
+          MarcAuthorities.clickNewAuthorityButton();
+          QuickMarcEditor.checkPaneheaderContains(testData.headerText);
+          QuickMarcEditor.verifyAuthorityLookUpButton();
+
+          // 2 Click on "Authority file look-up" hyperlink
+          QuickMarcEditor.clickAuthorityLookUpButton();
+
+          // 3 Click on the "Select authority file" placeholder in "Authority file name" dropdown and select "Local" option created by user
+          QuickMarcEditor.selectAuthorityFile(localAuthFile.name);
+          QuickMarcEditor.verifyAuthorityFileSelected(localAuthFile.name);
+
+          // 4 Click on the "Save & close" button
+          QuickMarcEditor.clickSaveAndCloseInModal();
+          QuickMarcEditor.checkContentByTag(
+            testData.tag001,
+            `${localAuthFile.prefix}${localAuthFile.startWithNumber}`,
+          );
+
+          // 5 Add 1 new field by clicking on "+" icon and fill it as specified:
+          // 100 \\ "$a Create a new MARC authority record with Local authority file test"
+
+          MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
+          QuickMarcEditor.checkContentByTag(newField.tag, newField.content);
+
+          // 6 Click on the "Save & close" button
+          QuickMarcEditor.pressSaveAndClose();
+          MarcAuthority.verifyAfterSaveAndClose();
+          QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);
+          MarcAuthorities.verifyViewPaneContentExists();
+          MarcAuthority.getId().then((id) => {
+            testData.authorityId = id;
+          });
+
+          MarcAuthority.contains(testData.tag001);
+          MarcAuthority.contains(`${localAuthFile.prefix}${localAuthFile.startWithNumber}`);
+          MarcAuthority.contains(newField.tag);
+          MarcAuthority.contains(newField.content);
+
+          // 7 Close the detail view pane by clicking on "X" icon placed in the left upper corner of the pane
+          MarcAuthorities.closeMarcViewPane();
+          MarcAuthorities.verifyMarcViewPaneIsOpened(false);
+
+          // 8 Click on the "Authority source" multi select element in "Authority source" accordion placed on "Search & filter" pane
+          MarcAuthorities.clickAuthoritySourceAccordion();
+
+          // 9 Click on the Local authority file created at preconditions in expanded dropdonw
+          MarcAuthorities.chooseAuthoritySourceOption(localAuthFile.name);
+          MarcAuthorities.checkSelectedAuthoritySource(localAuthFile.name);
+          MarcAuthorities.checkAfterSearch(
+            testData.AUTHORIZED,
+            'Create a new MARC authority record with Local authority file test',
+          );
+          MarcAuthorities.checkRecordDetailPageMarkedValue(
+            'Create a new MARC authority record with Local authority file test',
+          );
+        },
+      );
+    });
+  });
+});
