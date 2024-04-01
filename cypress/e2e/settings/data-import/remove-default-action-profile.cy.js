@@ -37,7 +37,7 @@ describe('Data Import', () => {
       JobProfiles.select(defaultJobProfileName);
       JobProfileView.edit();
       JobProfileEdit.verifyScreenName(defaultJobProfileName);
-      JobProfileEdit.unlinkActionsProfile(0);
+      JobProfileEdit.unlinkActionProfile(0);
       NewJobProfile.linkActionProfileByName(defaultActionProfileName);
       JobProfileEdit.saveAndClose();
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
@@ -58,7 +58,7 @@ describe('Data Import', () => {
         // #4 Click on the "Actions" button -> Select "Edit"
         JobProfileView.edit();
         // #5 Update the profile
-        JobProfileEdit.unlinkActionsProfile(0);
+        JobProfileEdit.unlinkActionProfile(0);
         NewJobProfile.linkMatchProfile(matchProfile.profileName);
         NewJobProfile.linkActionProfileForNonMatches(defaultActionProfileName);
         // Click on "Save as profile & Close"
