@@ -349,6 +349,11 @@ const fillInvoiceLineDescription = (description) => {
 const fillSummaryDescription = (text) => {
   cy.do(Accordion('Summary').find(TextArea('Description')).fillIn(text));
 };
+const fillMaterialType = (type) => cy.do(materialTypeField.fillIn(type));
+const fillStatus = (itemStatus) => cy.do(TextField('Status').fillIn(itemStatus));
+const fillPermanentLoanType = (loanType) => cy.do(TextField('Permanent loan type').fillIn(`"${loanType}"`));
+const fillInstanceStatusTerm = (statusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED) => cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`));
+const fillHoldingsType = (type) => cy.do(TextField('Holdings type').fillIn(`"${type}"`));
 const selectAdminNotesAction = (numberOfmappingField, action = actions.addTheseToExisting) => {
   // number needs for using this method in filling fields for holdings and item profiles
   const adminNoteFieldName = `profile.mappingDetails.mappingFields[${numberOfmappingField}].repeatableFieldAction`;
@@ -356,6 +361,13 @@ const selectAdminNotesAction = (numberOfmappingField, action = actions.addTheseT
   cy.do([
     Select({ name: adminNoteFieldName }).focus(),
     Select({ name: adminNoteFieldName }).choose(action),
+  ]);
+};
+const addStatisticalCode = (name, number, action) => {
+  this.selectActionForStatisticalCode(number, action);
+  cy.do([
+    Button('Add statistical code').click(),
+    TextField('Statistical code').fillIn(`"${name}"`),
   ]);
 };
 
@@ -385,11 +397,53 @@ export default {
   fillSummaryDescription,
   fillInvoiceLineDescription,
   fillFolioRecordType,
+  fillMaterialType,
+  fillPermanentLoanType,
+  fillStatus,
+  fillInstanceStatusTerm,
+  fillHoldingsType,
   selectOrganizationByName,
   selectAdminNotesAction,
+  addStatisticalCode,
   save,
   waitLoading: () => {
     cy.expect(mappingProfilesForm.exists());
+  },
+
+  fillInsatnceMappingProfile: (profile) => {
+    // Summary section
+    fillSummaryInMappingProfile(profile);
+    if (profile.instanceStatusTerm) {
+      fillInstanceStatusTerm(profile.instanceStatusTerm);
+    }
+    save();
+    cy.expect(saveButton.absent());
+  },
+
+  fillHoldingsMappingProfile: (profile) => {
+    // Summary section
+    fillSummaryInMappingProfile(profile);
+    if (profile.permanentLocation) {
+      cy.do(permanentLocationField.fillIn(profile.permanentLocation));
+    }
+    if (profile.holdingsType) {
+      fillHoldingsType(profile.holdingsType);
+    }
+    save();
+    cy.expect(saveButton.absent());
+  },
+
+  fillItemMappingProfile: (profile) => {
+    // Summary section
+    fillSummaryInMappingProfile(profile);
+    fillMaterialType(profile.materialType);
+    fillPermanentLoanType(profile.permanentLoanType);
+    fillStatus(`"${profile.status}"`);
+    if (profile.statisticalCode) {
+      addStatisticalCode(profile.statisticalCode, 4);
+    }
+    save();
+    cy.expect(saveButton.absent());
   },
 
   fillMappingProfile: (specialMappingProfile = defaultMappingProfile) => {
@@ -718,14 +772,6 @@ export default {
     ]);
   },
 
-  addStatisticalCode(name, number, action) {
-    this.selectActionForStatisticalCode(number, action);
-    cy.do([
-      Button('Add statistical code').click(),
-      TextField('Statistical code').fillIn(`"${name}"`),
-    ]);
-  },
-
   addStatisticalCodeWithSeveralCodes(firstCode, secondCode, number, action) {
     this.selectActionForStatisticalCode(number, action);
     cy.do([
@@ -849,15 +895,10 @@ export default {
 
   fillPermanentLocation: (location) => cy.do(permanentLocationField.fillIn(location)),
   fillCatalogedDate: (date = catalogedDate) => cy.do(catalogedDateField.fillIn(date)),
-  fillInstanceStatusTerm: (statusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED) => cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`)),
-  fillHoldingsType: (type) => cy.do(TextField('Holdings type').fillIn(`"${type}"`)),
   fillCallNumberType: (type) => cy.do(TextField('Call number type').fillIn(type)),
   fillCallNumberPrefix: (prefix) => cy.do(TextField('Call number prefix').fillIn(prefix)),
   fillcallNumberSuffix: (sufix) => cy.do(TextField('Call number suffix').fillIn(sufix)),
-  fillStatus: (itemStatus) => cy.do(TextField('Status').fillIn(itemStatus)),
-  fillPermanentLoanType: (loanType) => cy.do(TextField('Permanent loan type').fillIn(`"${loanType}"`)),
   fillTemporaryLoanType: (loanType) => cy.do(TextField('Temporary loan type').fillIn(loanType)),
-  fillMaterialType: (type) => cy.do(materialTypeField.fillIn(type)),
   fillIllPolicy: (policy) => cy.do(TextField('ILL policy').fillIn(`"${policy}"`)),
   fillBatchGroup: (group) => cy.do(batchGroupField.fillIn(group)),
   fillPaymentMethod: (method) => cy.do(paymentMethodField.fillIn(method)),
