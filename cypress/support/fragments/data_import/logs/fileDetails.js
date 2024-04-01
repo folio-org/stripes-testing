@@ -565,7 +565,7 @@ export default {
   },
 
   verifyLogDetailsPageIsOpened: (fileName) => {
-    cy.expect(Pane(fileName).exists());
+    cy.expect(Pane(including(fileName)).exists());
   },
 
   verifyInstanceStatusIsHiperlink: (itmStatus, rowNumber = 0) => {
