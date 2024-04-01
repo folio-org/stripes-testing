@@ -17,7 +17,7 @@ import UserEdit from '../../../../support/fragments/users/userEdit';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
-describe('ui-users: Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works', () => {
+describe('Item Blocks', () => {
   let user = {};
   const instanceTitle = `autotest title ${getRandomPostfix()}`;
   let servicePoint;

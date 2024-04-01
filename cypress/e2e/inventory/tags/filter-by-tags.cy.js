@@ -1,4 +1,3 @@
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -10,7 +9,6 @@ import PatronGroups from '../../../support/fragments/settings/users/patronGroups
 import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
-import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
@@ -21,56 +19,20 @@ describe('Inventory', () => {
       name: getTestEntityValue('groupTags'),
     };
     const testData = {
-      userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-      itemBarcode: generateItemBarcode(),
-    };
-    const instanceData = {
-      title: getTestEntityValue('InstanceTags'),
+      folioInstances: InventoryInstances.generateFolioInstances(),
+      servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     };
 
     before('Preconditions', () => {
       cy.getAdminToken()
         .then(() => {
-          ServicePoints.createViaApi(testData.userServicePoint);
-          testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-          Location.createViaApi(testData.defaultLocation);
-          cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-            testData.instanceTypeId = instanceTypes[0].id;
-          });
-          cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
-            testData.holdingTypeId = holdingTypes[0].id;
-          });
-          cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
-            testData.loanTypeId = loanTypes[0].id;
-          });
-          cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
-            testData.materialTypeId = materialTypes.id;
-          });
-        })
-        .then(() => {
-          InventoryInstances.createFolioInstanceViaApi({
-            instance: {
-              instanceTypeId: testData.instanceTypeId,
-              title: instanceData.title,
-            },
-            holdings: [
-              {
-                holdingsTypeId: testData.holdingTypeId,
-                permanentLocationId: testData.defaultLocation.id,
-              },
-            ],
-            items: [
-              {
-                barcode: testData.itemBarcode,
-                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                permanentLoanType: { id: testData.loanTypeId },
-                materialType: { id: testData.materialTypeId },
-              },
-            ],
-          }).then((specialInstanceIds) => {
-            instanceData.instanceId = specialInstanceIds.instanceId;
-            instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
-            instanceData.itemId = specialInstanceIds.holdingIds[0].itemIds[0];
+          ServicePoints.createViaApi(testData.servicePoint);
+          testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
+          Location.createViaApi(testData.defaultLocation).then((location) => {
+            InventoryInstances.createFolioInstancesViaApi({
+              folioInstances: testData.folioInstances,
+              location,
+            });
           });
         })
         .then(() => {
@@ -83,9 +45,9 @@ describe('Inventory', () => {
           ).then((userProperties) => {
             userData = userProperties;
             UserEdit.addServicePointViaApi(
-              testData.userServicePoint.id,
+              testData.servicePoint.id,
               userData.userId,
-              testData.userServicePoint.id,
+              testData.servicePoint.id,
             );
           });
         });
@@ -98,11 +60,13 @@ describe('Inventory', () => {
 
     after('Deleting created entities', () => {
       cy.getAdminToken();
-      UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-      ServicePoints.deleteViaApi(testData.userServicePoint.id);
+      UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
+      ServicePoints.deleteViaApi(testData.servicePoint.id);
       Users.deleteViaApi(userData.userId);
       PatronGroups.deleteViaApi(patronGroup.id);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
+        testData.folioInstances[0].barcodes[0],
+      );
       Location.deleteViaApiIncludingInstitutionCampusLibrary(
         testData.defaultLocation.institutionId,
         testData.defaultLocation.campusId,
@@ -114,14 +78,14 @@ describe('Inventory', () => {
     it('C343216 Filter Holdings by Tags (volaris)', { tags: ['extendedPath', 'volaris'] }, () => {
       const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
       InventorySearchAndFilter.switchToHoldings();
-      InventorySearchAndFilter.byKeywords(instanceData.title);
+      InventorySearchAndFilter.byKeywords(testData.folioInstances[0].instanceTitle);
       InventoryInstance.openHoldingView();
       HoldingsRecordEdit.openTags();
       HoldingsRecordEdit.addTag(tagName);
 
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.switchToHoldings();
-      InventorySearchAndFilter.byKeywords(instanceData.title);
+      InventorySearchAndFilter.byKeywords(testData.folioInstances[0].instanceTitle);
       InventorySearchAndFilter.resetAll();
       InventorySearchAndFilter.filterByTag(tagName);
       InventorySearchAndFilter.checkRowsCount(1);
@@ -130,7 +94,7 @@ describe('Inventory', () => {
     it('C343217 Filter Items by Tags (volaris)', { tags: ['extendedPath', 'volaris'] }, () => {
       const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
       InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', testData.itemBarcode);
+      InventorySearchAndFilter.searchByParameter('Barcode', testData.folioInstances[0].barcodes[0]);
       HoldingsRecordEdit.openTags();
       HoldingsRecordEdit.addTag(tagName);
 
