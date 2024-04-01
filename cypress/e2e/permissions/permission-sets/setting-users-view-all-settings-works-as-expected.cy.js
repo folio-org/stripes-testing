@@ -55,10 +55,17 @@ describe('Permission Sets', () => {
     mutable: true,
     id: uuid(),
   };
+  const patronBlockTemplate = {
+    name: getTestEntityValue('Template'),
+    desc: getTestEntityValue('Description'),
+  };
 
   before('Preconditions', () => {
     cy.getAdminToken().then(() => {
       ServicePoints.createViaApi(testData.userServicePoint);
+      PatronBlockTemplates.createViaApi(patronBlockTemplate).then((templateResp) => {
+        testData.patronBlockTemplateId = templateResp.id;
+      });
       UsersOwners.createViaApi(ownerBody);
       WaiveReasons.createViaApi(waiveReason);
       PaymentMethods.createViaApi(ownerBody.id).then((paymentRes) => {
@@ -87,6 +94,7 @@ describe('Permission Sets', () => {
 
   after('Deleting created entities', () => {
     cy.getAdminToken();
+    PatronBlockTemplates.deleteViaApi(testData.patronBlockTemplateId);
     PermissionSets.deletePermissionSetViaApi(permissionSetBody.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
@@ -216,6 +224,16 @@ describe('Permission Sets', () => {
         description: refundReason.description,
       });
       UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
+    },
+  );
+
+  it(
+    'C402779 Verify that "Settings(users):View all settings " allows to only view Templates (volaris)',
+    { tags: ['extendedPath', 'volaris'] },
+    () => {
+      cy.visit(SettingsMenu.patronBlockTemplates);
+      PatronBlockTemplates.findPatronTemlate(patronBlockTemplate.name);
+      PermissionSets.checkEditButtonNotAvailable();
     },
   );
 
