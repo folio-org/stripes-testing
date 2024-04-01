@@ -1,4 +1,3 @@
-import { ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
@@ -13,7 +12,6 @@ import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Circulation log', () => {
@@ -22,64 +20,24 @@ describe('Circulation log', () => {
   };
   let userA;
   let userB;
-  const itemData = {
-    barcode: generateItemBarcode(),
-    title: getTestEntityValue('InstanceCircLog'),
-  };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
+    folioInstances: InventoryInstances.generateFolioInstances(),
+    servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
 
   before('Preconditions', () => {
-    cy.getAdminToken()
-      .then(() => {
-        ServicePoints.createViaApi(testData.userServicePoint);
-        testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-        Location.createViaApi(testData.defaultLocation);
-        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-          testData.instanceTypeId = instanceTypes[0].id;
-        });
-        cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
-          testData.holdingTypeId = holdingTypes[0].id;
-        });
-        cy.createLoanType({
-          name: getTestEntityValue('typeForCL'),
-        }).then((loanType) => {
-          testData.loanTypeId = loanType.id;
-        });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
-          testData.materialTypeId = materialTypes.id;
-        });
-      })
-      .then(() => {
-        InventoryInstances.createFolioInstanceViaApi({
-          instance: {
-            instanceTypeId: testData.instanceTypeId,
-            title: itemData.title,
-          },
-          holdings: [
-            {
-              holdingsTypeId: testData.holdingTypeId,
-              permanentLocationId: testData.defaultLocation.id,
-            },
-          ],
-          items: [
-            {
-              barcode: itemData.barcode,
-              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-              permanentLoanType: { id: testData.loanTypeId },
-              materialType: { id: testData.materialTypeId },
-            },
-          ],
-        }).then((specialInstanceIds) => {
-          itemData.instanceId = specialInstanceIds.instanceId;
-        });
+    cy.getAdminToken();
+    ServicePoints.createViaApi(testData.servicePoint);
+    testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
+    Location.createViaApi(testData.defaultLocation).then((location) => {
+      InventoryInstances.createFolioInstancesViaApi({
+        folioInstances: testData.folioInstances,
+        location,
       });
-
+    });
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-
     cy.createTempUser(
       [
         permissions.checkoutAll.gui,
@@ -92,17 +50,17 @@ describe('Circulation log', () => {
     ).then((userAProperties) => {
       userA = userAProperties;
       UserEdit.addServicePointViaApi(
-        testData.userServicePoint.id,
+        testData.servicePoint.id,
         userA.userId,
-        testData.userServicePoint.id,
+        testData.servicePoint.id,
       );
       cy.createTempUser([permissions.uiRequestsAll.gui], patronGroup.name).then(
         (userBProperties) => {
           userB = userBProperties;
           UserEdit.addServicePointViaApi(
-            testData.userServicePoint.id,
+            testData.servicePoint.id,
             userB.userId,
-            testData.userServicePoint.id,
+            testData.servicePoint.id,
           );
         },
       );
@@ -116,24 +74,25 @@ describe('Circulation log', () => {
   after('Deleting created entities', () => {
     cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
-      itemBarcode: itemData.barcode,
-      servicePointId: testData.userServicePoint.id,
+      itemBarcode: testData.folioInstances[0].barcodes[0],
+      servicePointId: testData.servicePoint.id,
       checkInDate: new Date().toISOString(),
     });
-    UserEdit.changeServicePointPreferenceViaApi(userA.userId, [testData.userServicePoint.id]);
-    UserEdit.changeServicePointPreferenceViaApi(userB.userId, [testData.userServicePoint.id]);
-    ServicePoints.deleteViaApi(testData.userServicePoint.id);
+    UserEdit.changeServicePointPreferenceViaApi(userA.userId, [testData.servicePoint.id]);
+    UserEdit.changeServicePointPreferenceViaApi(userB.userId, [testData.servicePoint.id]);
+    ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(userA.userId);
     Users.deleteViaApi(userB.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
+      testData.folioInstances[0].barcodes[0],
+    );
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    cy.deleteLoanType(testData.loanTypeId);
   });
 
   it(
@@ -141,8 +100,11 @@ describe('Circulation log', () => {
     { tags: ['extendedPath', 'volaris'] },
     () => {
       CheckOutActions.checkOutUser(userB.barcode);
-      CheckOutActions.checkOutItem(itemData.barcode);
-      CheckOutActions.checkItemInfo(itemData.barcode, itemData.title);
+      CheckOutActions.checkOutItem(testData.folioInstances[0].barcodes[0]);
+      CheckOutActions.checkItemInfo(
+        testData.folioInstances[0].barcodes[0],
+        testData.folioInstances[0].instanceTitle,
+      );
       CheckOutActions.openLoanDetails();
       LoansPage.openChangeDueDate();
       ChangeDueDateForm.fillDate('10/07/2030');
