@@ -141,7 +141,7 @@ describe('Data Import', () => {
 
     it(
       'C380474 Import to create open orders: Physical resource with Instances, Holdings, Items (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'eurekaPhase1'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.createOrderMappingProfile(

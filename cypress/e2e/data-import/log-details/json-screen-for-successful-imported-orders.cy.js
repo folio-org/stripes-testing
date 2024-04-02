@@ -139,7 +139,7 @@ describe('Data Import', () => {
 
     it(
       'C375197 Verify the JSON screen for successful imported orders (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'eurekaPhase1'] },
       () => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
