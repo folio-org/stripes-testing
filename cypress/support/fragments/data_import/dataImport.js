@@ -443,6 +443,7 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                   const childJobExecutionId = resp2.body.jobExecutions[0].id;
 
                   return getRecordSourceId(childJobExecutionId).then((resp3) => {
+                    // TODO redesign method for several records
                     const sourceRecords = resp3.body.entries;
                     const infos = [];
 
@@ -468,21 +469,21 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                               id:
                                 recordResponse.body.relatedHoldingsInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedHoldingsInfo.idList[0],
+                                  : recordResponse.body.relatedHoldingsInfo[0].id,
                               hrid:
                                 recordResponse.body.relatedHoldingsInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedHoldingsInfo.hridList[0],
+                                  : recordResponse.body.relatedHoldingsInfo[0].hrid,
                             },
                             item: {
                               id:
                                 recordResponse.body.relatedItemInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedItemInfo.idList[0],
+                                  : recordResponse.body.relatedItemInfo[0].id,
                               hrid:
                                 recordResponse.body.relatedItemInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedItemInfo.hridList[0],
+                                  : recordResponse.body.relatedItemInfo[0].hrid,
                             },
                             authority: {
                               id:

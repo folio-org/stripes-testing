@@ -104,7 +104,6 @@ describe('Data Import', () => {
       ).then((response) => {
         testData.instanceId = response[0].instance.id;
       });
-      cy.logout();
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
