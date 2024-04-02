@@ -33,7 +33,7 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411809 Export list: Not canned lists (corsair)', { tags: ['smoke', 'corsair'] }, () => {
+    it('C411809 Export list: Not canned lists (corsair)', { tags: ['smoke', 'corsair', 'eurekaPhase1'] }, () => {
       cy.login(userData.username, userData.password);
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
@@ -55,7 +55,7 @@ describe('lists', () => {
       cy.contains(`List ${listData.name} was successfully exported to CSV.`);
     });
 
-    it('C411811 Export list: Inactive lists', { tags: ['smoke', 'corsair'] }, () => {
+    it('C411811 Export list: Inactive lists', { tags: ['smoke', 'corsair', 'eurekaPhase1'] }, () => {
       cy.login(userData.username, userData.password);
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
@@ -71,7 +71,7 @@ describe('lists', () => {
       cy.contains('Export list (CSV)').should('be.disabled');
     });
 
-    it('C411812 Export list: Refresh is in progress', { tags: ['smoke', 'corsair'] }, () => {
+    it('C411812 Export list: Refresh is in progress', { tags: ['smoke', 'corsair', 'eurekaPhase1'] }, () => {
       cy.login(userData.username, userData.password);
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
@@ -91,7 +91,7 @@ describe('lists', () => {
 
     it(
       'C411813 Export list: Edit is in progress, when the list contains records',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
@@ -114,7 +114,7 @@ describe('lists', () => {
 
     it(
       "C411830 Export list: Edit is in progress, when the list doesn't have query",
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
@@ -134,7 +134,7 @@ describe('lists', () => {
 
     it(
       "C411819 Export list: The list doesn't contain query",
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
@@ -153,7 +153,7 @@ describe('lists', () => {
 
     it(
       'C411837 Export list: Edit is in progress, when the list has active query with 0 records',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);

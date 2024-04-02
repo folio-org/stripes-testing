@@ -65,12 +65,16 @@ export default {
       middleName: response.body.personal.middleName,
     })),
 
-  deleteViaApi: (userId) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `${deleteUsersApiPath}/${userId}`,
-    isDefaultSearchParamsRequired: false,
-    failOnStatusCode: false,
-  }),
+  deleteViaApi: (userId) => cy
+    .okapiRequest({
+      method: 'DELETE',
+      path: `${deleteUsersApiPath}/${userId}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    })
+    .then(({ status }) => {
+      return status;
+    }),
 
   getUsers: (searchParams) => {
     return cy

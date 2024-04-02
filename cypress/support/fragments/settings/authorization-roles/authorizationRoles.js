@@ -225,11 +225,12 @@ export default {
     cy.expect([Spinner().absent(), capabilitySetsAccordion.find(MultiColumnListRow()).absent()]);
   },
 
-  verifyCapabilitySetCheckboxEnabled: ({ table, resource, action }) => {
+  verifyCapabilitySetCheckboxEnabled: ({ table, resource, action }, isEnabled = true) => {
     const targetCheckbox = capabilitySetsAccordion
       .find(capabilityTables[table])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
-    cy.expect(targetCheckbox.has({ disabled: false }));
+    if (isEnabled) cy.expect(targetCheckbox.has({ disabled: !isEnabled }));
+    else cy.expect(targetCheckbox.has({ checked: true, labelText: 'Read-only' }));
   },
 
   verifyCapabilitySetCheckboxChecked: ({ table, resource, action }, isSelected = true) => {
@@ -240,16 +241,14 @@ export default {
   },
 
   clickOnCheckedDisabledCheckbox: ({ table, resource, action }) => {
-    const targetCheckbox = capabilitiesAccordion
-      .find(capabilityTables[table])
-      .find(
-        Checkbox({
-          ariaLabel: `${action} ${resource}`,
-          isWrapper: false,
-          checked: true,
-          labelText: 'Read-only',
-        }),
-      );
+    const targetCheckbox = capabilitiesAccordion.find(capabilityTables[table]).find(
+      Checkbox({
+        ariaLabel: `${action} ${resource}`,
+        isWrapper: false,
+        checked: true,
+        labelText: 'Read-only',
+      }),
+    );
     cy.do(targetCheckbox.click());
     cy.expect(targetCheckbox.has({ checked: true, labelText: 'Read-only' }));
   },

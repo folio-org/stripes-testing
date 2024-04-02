@@ -148,11 +148,19 @@ describe('Eureka', () => {
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.clickOnCapabilitiesAccordion();
-          AuthorizationRoles.verifyCapabilitySetCheckboxCheckedAndDisabled(
+          AuthorizationRoles.verifyCapabilitySetCheckboxChecked(
             testData.firstSelectedCapabilitySet,
           );
-          AuthorizationRoles.verifyCapabilitySetCheckboxCheckedAndDisabled(
+          AuthorizationRoles.verifyCapabilitySetCheckboxChecked(
             testData.secondSelectedCapabilitySet,
+          );
+          AuthorizationRoles.verifyCapabilitySetCheckboxEnabled(
+            testData.firstSelectedCapabilitySet,
+            false,
+          );
+          AuthorizationRoles.verifyCapabilitySetCheckboxEnabled(
+            testData.secondSelectedCapabilitySet,
+            false,
           );
           testData.capabilitiesInSelectedSets.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);

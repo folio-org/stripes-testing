@@ -33,7 +33,7 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411822  Refresh list: Inactive lists (corsair)', { tags: ['smoke', 'corsair'] }, () => {
+    it('C411822  Refresh list: Inactive lists (corsair)', { tags: ['smoke', 'corsair', 'eurekaPhase1'] }, () => {
       cy.login(userData.username, userData.password);
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
@@ -70,7 +70,7 @@ describe('lists', () => {
 
     it(
       'C411824 Refresh list: Edit is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
@@ -91,7 +91,7 @@ describe('lists', () => {
 
     it(
       'C411833 Refresh list: Export is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
@@ -115,7 +115,7 @@ describe('lists', () => {
 
     it(
       'C411834 Refresh list: Cancel Refresh - less than 500 records (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
@@ -136,7 +136,7 @@ describe('lists', () => {
 
     it(
       'C411834 Refresh list: Cancel Refresh - more than 500 records (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);

@@ -33,7 +33,7 @@ describe('lists', () => {
 
     it(
       'C411704 Create new lists: Private list (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
         listData.status = 'Active';
         listData.visibility = 'Private';
@@ -59,7 +59,7 @@ describe('lists', () => {
 
     it(
       'C411706 Create new lists: Shared lists (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
         listData.status = 'Active';
         listData.visibility = 'Shared';
@@ -85,7 +85,7 @@ describe('lists', () => {
 
     it(
       'C411707 Create new lists: Active lists (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
         listData.status = 'Active';
         listData.visibility = 'Shared';
@@ -111,7 +111,7 @@ describe('lists', () => {
 
     it(
       'C411708 Create new lists: Inactive lists (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
         listData.status = 'Inactive';
         listData.visibility = 'Shared';

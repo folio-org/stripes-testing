@@ -40,7 +40,7 @@ describe('lists', () => {
       Users.deleteViaApi(secondUser.userId);
     });
 
-    it('C411733 Edit list: Make the list Private (corsair)', { tags: ['smoke', 'corsair'] }, () => {
+    it('C411733 Edit list: Make the list Private (corsair)', { tags: ['smoke', 'corsair', 'eurekaPhase1'] }, () => {
       cy.login(firstUser.username, firstUser.password);
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
@@ -74,7 +74,7 @@ describe('lists', () => {
       Lists.verifyListIsNotPresent(listData.name);
     });
 
-    it('C411736 Edit list: Make the list Shared (corsair)', { tags: ['smoke', 'corsair'] }, () => {
+    it('C411736 Edit list: Make the list Shared (corsair)', { tags: ['smoke', 'corsair', 'eurekaPhase1'] }, () => {
       cy.login(firstUser.username, firstUser.password);
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
