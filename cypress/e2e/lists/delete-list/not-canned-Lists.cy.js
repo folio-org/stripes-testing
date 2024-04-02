@@ -21,7 +21,7 @@ describe('lists', () => {
         userData.userId = userProperties.userId;
       });
     });
-    it('C411768 Delete list: Positive case (corsair)', { tags: ['smoke', 'corsair'] }, () => {
+    it('C411768 Delete list: Positive case (corsair)', { tags: ['smoke', 'corsair', 'eurekaPhase1'] }, () => {
       cy.login(userData.username, userData.password);
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
@@ -39,7 +39,7 @@ describe('lists', () => {
 
     it(
       'C411772 Delete list: "Edit list" mode (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);

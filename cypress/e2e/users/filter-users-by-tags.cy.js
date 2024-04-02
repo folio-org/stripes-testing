@@ -39,7 +39,7 @@ describe('Users', () => {
     Users.deleteViaApi(existingUser.userId);
   });
 
-  it('C343214 Filter users by tags (volaris) (TaaS)', { tags: ['criticalPath', 'volaris'] }, () => {
+  it('C343214 Filter users by tags (volaris) (TaaS)', { tags: ['criticalPath', 'volaris', 'eurekaPhase1'] }, () => {
     UsersSearchPane.searchByKeywords(existingUser.userId);
     UsersCard.waitLoading();
     UsersCard.verifyTagsNumber('0');
