@@ -135,7 +135,7 @@ describe('Data Import', () => {
 
     it(
       'C375202 Verify the JSON error screen for imported orders (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'eurekaPhase1'] },
       () => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();

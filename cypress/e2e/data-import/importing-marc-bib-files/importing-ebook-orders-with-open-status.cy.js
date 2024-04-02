@@ -109,7 +109,7 @@ describe('Data Import', () => {
 
     it(
       'C375989 Verify the importing of eBook orders with open status (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'eurekaPhase1'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);

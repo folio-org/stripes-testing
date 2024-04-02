@@ -84,7 +84,7 @@ describe('Data Import', () => {
 
     it(
       'C357018 Check the filter in summary table with "create + discarded + error" actions for the Invoice column (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'eurekaPhase1'] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.waitLoading();
@@ -100,7 +100,6 @@ describe('Data Import', () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfile(actionProfile);
-        cy.pause();
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 

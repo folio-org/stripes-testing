@@ -61,7 +61,7 @@ describe('Data Import', () => {
 
     it(
       'C347615 Import a large EDIFACT invoice file (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'eurekaPhase1'] },
       () => {
         // create Field mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);
