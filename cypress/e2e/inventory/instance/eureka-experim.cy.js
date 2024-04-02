@@ -1,6 +1,4 @@
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import Orders from '../../../support/fragments/orders/orders';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
@@ -30,13 +28,9 @@ describe('inventory', () => {
         cy.log(JSON.stringify(testData.user));
 
         cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
         });
-        InventorySearchAndFilter.instanceTabIsDefault();
-        InventoryInstances.searchByTitle('*');
-        InventoryInstance.selectTopRecord();
-        InventoryInstance.waitInventoryLoading();
       });
       cy.getCapabilitiesApi(10).then((capabs) => {
         cy.getCapabilitySetsApi(10).then((capabSets) => {

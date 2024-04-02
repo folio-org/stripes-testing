@@ -21,16 +21,16 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://kong-pedcon.int.aws.folio.org',
-    OKAPI_TENANT: 'fs01000002',
+    OKAPI_HOST: 'https://kong-qlcepcon.int.aws.folio.org',
+    OKAPI_TENANT: 'fs090001sr',
     diku_login: 'folio',
-    diku_password: 'folio',
+    diku_password: 'folio-loc',
     is_kiwi_release: false,
     downloadTimeout: 2000,
     allure: 'true',
     grepFilterSpecs: true,
     grepOmitFiltered: true,
-    rtrAuth: true,
+    rtrAuth: false,
     ecsEnabled: false,
     eureka: true,
     runAsAdmin: true,
@@ -117,27 +117,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://crs-sandbox2.int.aws.folio.org',
+    baseUrl: 'https://loc-pv-non-ecs-02.int.aws.folio.org',
     testIsolation: false,
   },
 });
-
-/* Eureka dry run envs data
-1) Non-ECS dry run
-OKAPI_HOST: 'https://kong-pedcon.int.aws.folio.org',
-OKAPI_TENANT: 'fs01000002',
-diku_login: 'folio',
-diku_password: 'folio',
-baseUrl: 'https://crs-sandbox2.int.aws.folio.org',
-
-2) ECS dry run
-OKAPI_HOST: 'https://kong-pedcon.int.aws.folio.org', (same as for non-ECS)
-OKAPI_TENANT: 'cs01000001',
-diku_login: 'folio',
-diku_password: 'folio',
-baseUrl: 'https://lcsg-sandbox2.int.aws.folio.org/',
-
-Examples of other tenants:
-cs01000001m0005 - Congressonal | can be used instead of "College"
-cs01000001m0001 - General Collections | can be used instead of "University"
- */
