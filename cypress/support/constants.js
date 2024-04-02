@@ -706,6 +706,12 @@ export const DEFAULT_JOB_PROFILE_NAMES = {
   CREATE_HOLDINGS_AND_SRS: 'Default - Create Holdings and SRS MARC Holdings',
 };
 
+export const AUTHORIZATION_POLICY_TYPES = {
+  USER: 'user',
+  ROLE: 'role',
+  TIME: 'time',
+};
+
 export const patronGroupNames = {
   STAFF: 'staff',
   FACULTY: 'faculty',

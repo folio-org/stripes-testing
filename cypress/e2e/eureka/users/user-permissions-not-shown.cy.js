@@ -1,8 +1,8 @@
-import UserEdit from '../../support/fragments/users/userEdit';
-import Users from '../../support/fragments/users/users';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import UsersCard from '../../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 
 describe('Eureka', () => {
   describe('Users', () => {
