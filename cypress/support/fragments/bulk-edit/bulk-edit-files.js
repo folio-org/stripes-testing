@@ -143,7 +143,7 @@ export default {
   },
 
   verifyMatchedResultExpirationDate(actualResult, expectedResult) {
-    const actualExpirationDate = actualResult.split(',')[20];
+    const actualExpirationDate = actualResult.split(',')[21];
     expect(actualExpirationDate).to.include(expectedResult);
   },
 
