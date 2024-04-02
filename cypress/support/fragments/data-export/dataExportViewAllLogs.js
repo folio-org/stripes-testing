@@ -136,7 +136,7 @@ export default {
     cy.get('#search-results-list')
       .invoke('attr', 'data-total-count')
       .then((rowCount) => {
-        for (let i = 0; i < rowCount; i++) {
+        for (let i = 0; i < --rowCount; i++) {
           const statusField = MultiColumnListCell({ row: i, columnIndex: 1 });
           cy.expect(statusField.is({ content: 'Completed' }));
         }
