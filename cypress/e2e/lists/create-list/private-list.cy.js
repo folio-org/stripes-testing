@@ -42,7 +42,7 @@ describe('lists', () => {
 
     it(
       "C411710 Verify that private list isn't visible for the other users",
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
       () => {
         cy.login(firstUser.username, firstUser.password);
         cy.visit(TopMenu.listsPath);

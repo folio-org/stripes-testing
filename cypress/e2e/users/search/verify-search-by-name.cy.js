@@ -62,7 +62,7 @@ describe('Permissions Tags', () => {
     });
   });
 
-  it('C415 Search: Verify search by Name (volaris)', { tags: ['criticalPath', 'volaris'] }, () => {
+  it('C415 Search: Verify search by Name (volaris)', { tags: ['criticalPath', 'volaris', 'eurekaPhase1'] }, () => {
     UsersSearchPane.searchByKeywords(sameName);
     UsersSearchResultsPane.checkSearchResultsCount(
       [...usersWithSameName, ...usersWithSameLastName].length,

@@ -127,7 +127,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343330 Check that the user can create "Financial Transactions Detail Report" for transfer',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'eurekaPhase1'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.fillInRequiredFields({

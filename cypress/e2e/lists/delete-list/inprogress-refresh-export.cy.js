@@ -35,7 +35,7 @@ describe('lists', () => {
 
     it(
       'C411770 Delete list: Refresh is in progress (corsair)',
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
@@ -62,7 +62,7 @@ describe('lists', () => {
 
     it(
       'C411771 Delete list: Export is in progress (corsair)',
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
