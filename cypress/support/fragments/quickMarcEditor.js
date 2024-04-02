@@ -126,7 +126,6 @@ const calloutThreeCharacterMarcTag = Callout(
 );
 const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
-const validNewMarBibLDR = '00000naa\\a2200000uu\\4500';
 const specRetInputNamesHoldings008 = [
   'records[3].content.Spec ret[0]',
   'records[3].content.Spec ret[1]',
@@ -1226,6 +1225,22 @@ export default {
     this.selectFieldsDropdownOption('008', 'LitF', INVENTORY_008_FIELD_LITF_DROPDOWN.I);
   },
 
+  update008TextFields(dropdownLabel, value) {
+    cy.do(
+      QuickMarcEditorRow({ tagValue: '008' })
+        .find(TextField(dropdownLabel))
+        .fillIn(value),
+    );
+  },
+
+  verify008TextFields(dropdownLabel, value) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: '008' })
+        .find(TextField(dropdownLabel))
+        .has({ value }),
+    );
+  },
+
   selectFieldsDropdownOption(tag, dropdownLabel, option) {
     cy.do(
       QuickMarcEditorRow({ tagValue: tag })
@@ -1450,7 +1465,7 @@ export default {
 
   check008FieldLabels(labels) {
     labels.forEach((label) => {
-      cy.expect(TextField(label).exists());
+      cy.expect(QuickMarcEditorRow({ tagValue: '008', text: including(label) }).exists());
     });
   },
 
@@ -1856,7 +1871,7 @@ export default {
     }
     InventoryInstance.newMarcBibRecord();
     this.updateExistingField('245', `$a ${marcBibTitle}`);
-    this.updateExistingField('LDR', validNewMarBibLDR);
+    this.updateLDR06And07Positions();
     this.pressSaveAndClose();
     cy.expect(calloutAfterSaveAndClose.exists());
     checkBib();

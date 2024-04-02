@@ -95,10 +95,10 @@ describe('Data Import', () => {
         JobProfileView.edit();
         JobProfileEdit.verifyScreenName(jobProfile.profileName);
         // #6 Delete the second action profile from the job profile
-        JobProfileEdit.unlinkActionsProfile(1);
+        JobProfileEdit.unlinkActionProfile(1);
         JobProfileEdit.verifyLinkedProfiles([actionProfiles[0].name, actionProfiles[2].name], 2);
         // #7 Delete the first action profile from the job profile
-        JobProfileEdit.unlinkActionsProfile(0);
+        JobProfileEdit.unlinkActionProfile(0);
         JobProfileEdit.verifyLinkedProfiles([actionProfiles[2].name], 1);
         // #8 Save the edited job profile
         JobProfileEdit.saveAndClose();
