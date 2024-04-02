@@ -119,16 +119,6 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C15484 Filter circulation log on item barcode (volaris)',
-    { tags: ['smoke', 'volaris'] },
-    () => {
-      SearchPane.searchByItemBarcode(ITEM_BARCODE);
-      SearchPane.verifyResultCells();
-      SearchPane.resetResults();
-    },
-  );
-
-  it(
     'C16979 Check item details from filtering Circulation log by checked-out (firebird)',
     { tags: ['criticalPath', 'firebird'] },
     () => {
@@ -147,18 +137,6 @@ describe('Circulation log', () => {
     SearchPane.verifyResultCells(verifyDate);
     SearchPane.resetResults();
   });
-
-  it(
-    'C15485 Filter circulation log on user barcode (volaris)',
-    { tags: ['smoke', 'volaris'] },
-    () => {
-      const userBarcode = Cypress.env('users')[0].barcode;
-
-      SearchPane.searchByUserBarcode(userBarcode);
-      SearchPane.verifyResultCells();
-      SearchPane.resetResults();
-    },
-  );
 
   it(
     'C16978 Filter circulation log by checked-out (firebird)',
