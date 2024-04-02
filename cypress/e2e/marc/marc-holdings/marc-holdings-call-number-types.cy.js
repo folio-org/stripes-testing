@@ -103,8 +103,8 @@ describe('MARC', () => {
       Logs.openFileDetails(holdingsFile.fileName);
       // additional wait for holdings list to load
       cy.wait(2000);
-      for (let i = 0; i < holdingsFile.numOfRecords; i++) {
-        Logs.getCreatedItemsID(i).then((createdLink) => {
+      for (let i = 1; i <= holdingsFile.numOfRecords; i++) {
+        Logs.getCreatedItemLinkByNumber(i).then((createdLink) => {
           recordIDs.push(createdLink.split('/')[6]);
         });
       }
