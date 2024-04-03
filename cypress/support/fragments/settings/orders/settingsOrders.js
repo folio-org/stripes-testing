@@ -90,6 +90,7 @@ export default {
       TextField({ placeholder: 'description' }).fillIn(info.description),
       saveButton.click(),
     ]);
+    cy.wait(6000);
   },
 
   createPreffix(preffixInfo) {
