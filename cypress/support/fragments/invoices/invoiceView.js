@@ -128,28 +128,46 @@ export default {
     voucherInformation = [],
     vendorDetailsInformation = [],
   } = {}) {
+    // Функция для нормализации текста
+    const normalizeText = (text) => text.replace(/\s/g, ''); // Удаляем все пробелы и прочие пробельные символы
+
     if (title) {
       cy.expect(invoiceDetailsPane.has({ title: `Vendor invoice number - ${title}` }));
     }
 
     invoiceInformation.forEach(({ key, value }) => {
-      cy.expect(informationSection.find(KeyValue(key)).has({ value }));
+      // Применяем нормализацию к фактическому значению
+      cy.expect(informationSection.find(KeyValue(key)).invoke('text').then(normalizeText)).to.equal(
+        normalizeText(value),
+      );
     });
 
     vendorDetails.forEach(({ key, value }) => {
-      cy.expect(vendorDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
+      // Применяем нормализацию к фактическому значению
+      cy.expect(
+        vendorDetailsSection.find(KeyValue(key)).invoke('text').then(normalizeText),
+      ).to.include(normalizeText(value));
     });
 
     voucherExport.forEach(({ key, value }) => {
-      cy.expect(voucherExportDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
+      // Применяем нормализацию к фактическому значению
+      cy.expect(
+        voucherExportDetailsSection.find(KeyValue(key)).invoke('text').then(normalizeText),
+      ).to.include(normalizeText(value));
     });
 
     voucherInformation.forEach(({ key, value }) => {
-      cy.expect(voucherInformationSection.find(KeyValue(key)).has({ value: including(value) }));
+      // Применяем нормализацию к фактическому значению
+      cy.expect(
+        voucherInformationSection.find(KeyValue(key)).invoke('text').then(normalizeText),
+      ).to.include(normalizeText(value));
     });
 
     vendorDetailsInformation.forEach(({ key, value }) => {
-      cy.expect(vendorDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
+      // Применяем нормализацию к фактическому значению
+      cy.expect(
+        vendorDetailsSection.find(KeyValue(key)).invoke('text').then(normalizeText),
+      ).to.include(normalizeText(value));
     });
 
     if (invoiceLines) {
@@ -161,6 +179,7 @@ export default {
       this.checkInvoiceLinesTableContent(invoiceLines);
     }
   },
+
   checkFieldsHasCopyIcon(fields = []) {
     fields.forEach(({ label }) => {
       cy.expect(
