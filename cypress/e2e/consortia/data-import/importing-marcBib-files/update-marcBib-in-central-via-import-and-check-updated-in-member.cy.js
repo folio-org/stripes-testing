@@ -163,7 +163,6 @@ describe('Data Import', () => {
       cy.setTenant(Affiliations.College);
       InventoryHoldings.deleteHoldingRecordViaApi(testData.holding.id);
       Locations.deleteViaApi(testData.collegeLocation);
-      InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
       cy.resetTenant();
       InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
@@ -175,7 +174,6 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
     });
 
-    // https://folio-org.atlassian.net/browse/MODSOURCE-755
     it(
       'C411795 User can update "MARC Bib" in Central tenant via import and check updated in member tenant (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet'] },
@@ -228,7 +226,7 @@ describe('Data Import', () => {
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstances.searchByTitle(testData.updatedInstanceTitle);
+        InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
         InventoryInstance.verifyLastUpdatedSource(
           users.userAProperties.firstName,
