@@ -20,12 +20,13 @@ describe('Data Import', () => {
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const instanceTitle = 'Mistapim in Cambodia [microform]. Photos. by the author.';
     const error =
-      '{"error":"A new Instance was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
+      'org.folio.processing.exceptions.EventProcessingException: A new Instance was not created because the incoming record already contained a 999ff$s or 999ff$i field';
     const nameMarcFileForCreate = `C359012 autotestFile${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -74,7 +75,7 @@ describe('Data Import', () => {
           RECORD_STATUSES.ERROR,
           FileDetails.columnNameInResultList.error,
         );
-        FileDetails.openJsonScreen('No content');
+        FileDetails.openJsonScreen('The Journal of ecclesiastical history.');
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.verifyContentInTab(error);
       },
