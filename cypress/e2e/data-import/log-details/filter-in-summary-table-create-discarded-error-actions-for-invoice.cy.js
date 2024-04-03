@@ -100,7 +100,6 @@ describe('Data Import', () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfile(actionProfile);
-        cy.pause();
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
