@@ -1,4 +1,11 @@
-import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  RECORD_STATUSES,
+  AUTHORITY_LDR_FIELD_STATUS_DROPDOWN,
+  AUTHORITY_LDR_FIELD_TYPE_DROPDOWN,
+  AUTHORITY_LDR_FIELD_ELVL_DROPDOWN,
+  AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN,
+} from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -13,12 +20,6 @@ import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import {
-  AUTHORITY_LDR_FIELD_STATUS_DROPDOWN,
-  AUTHORITY_LDR_FIELD_TYPE_DROPDOWN,
-  AUTHORITY_LDR_FIELD_ELVL_DROPDOWN,
-  AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN,
-} from '../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
