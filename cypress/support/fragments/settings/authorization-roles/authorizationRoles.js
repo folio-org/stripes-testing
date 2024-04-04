@@ -81,6 +81,10 @@ export default {
 
   fillRoleNameDescription: (roleName, roleDescription = '') => {
     cy.do([roleNameInput.fillIn(roleName), roleDescriptionInput.fillIn(roleDescription)]);
+    cy.expect([
+      roleNameInput.has({ value: roleName }),
+      roleDescriptionInput.has({ value: roleDescription }),
+    ]);
   },
 
   clickSelectApplication: () => {
