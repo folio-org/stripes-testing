@@ -8,7 +8,6 @@ import {
   HTML,
   Accordion,
   Image,
-  MultiColumnListCell,
 } from '../../../../interactors';
 
 const viewAllLogsButton = Button('View all');
@@ -129,18 +128,6 @@ export default {
   checkErrorsInExportOption(option) {
     const checkboxToClick = option === 'Yes' ? errorsInExportYesOptionId : errorsInExportNoOptionId;
     cy.get(`#${checkboxToClick}`).check();
-  },
-
-  verifyStatusAllCompleted() {
-    cy.expect(logsTable.exists());
-    cy.get('#search-results-list')
-      .invoke('attr', 'data-total-count')
-      .then((rowCount) => {
-        for (let i = 0; i < --rowCount; i++) {
-          const statusField = MultiColumnListCell({ row: i, columnIndex: 1 });
-          cy.expect(statusField.is({ content: 'Completed' }));
-        }
-      });
   },
 
   verifyStatusIncludesErrors() {
