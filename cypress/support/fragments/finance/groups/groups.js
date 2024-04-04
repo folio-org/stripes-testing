@@ -58,7 +58,7 @@ export default {
       newButton.click(),
       nameField.fillIn(defaultGroup.name),
       codeField.fillIn(defaultGroup.code),
-      Button('Save & Close').click(),
+      Button('Save & close').click(),
     ]);
     this.waitForGroupDetailsLoading();
   },
@@ -124,7 +124,7 @@ export default {
   },
 
   tryToCreateGroupWithoutMandatoryFields(groupName) {
-    cy.do([newButton.click(), nameField.fillIn(groupName), Button('Save & Close').click()]);
+    cy.do([newButton.click(), nameField.fillIn(groupName), Button('Save & close').click()]);
     cy.expect(codeField.has({ error: 'Required!' }));
     cy.do([
       // try to navigate without saving
