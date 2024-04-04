@@ -50,19 +50,23 @@ describe('ui-finance: Funds', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C343211 Delete Budget (thunderjet)', { tags: ['smoke', 'thunderjet'] }, () => {
-    FinanceHelp.searchByName(defaultFund.name);
-    Funds.selectFund(defaultFund.name);
-    Funds.addBudget(allocatedQuantity);
-    Funds.checkCreatedBudget(defaultFund.code, firstFiscalYear.code);
-    Funds.viewTransactions();
-    Funds.selectTransactionInList('Allocation');
-    Funds.closeTransactionDetails();
-    Funds.closeTransactionApp(defaultFund, firstFiscalYear);
-    Funds.deleteBudgetViaActions();
-    Funds.checkDeletedBudget(currentBudgetSectionId);
-    Funds.deleteFundViaActions();
-    FinanceHelp.searchByName(defaultFund.name);
-    Funds.checkZeroSearchResultsHeader();
-  });
+  it(
+    'C343211 Delete Budget (thunderjet)',
+    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+    () => {
+      FinanceHelp.searchByName(defaultFund.name);
+      Funds.selectFund(defaultFund.name);
+      Funds.addBudget(allocatedQuantity);
+      Funds.checkCreatedBudget(defaultFund.code, firstFiscalYear.code);
+      Funds.viewTransactions();
+      Funds.selectTransactionInList('Allocation');
+      Funds.closeTransactionDetails();
+      Funds.closeTransactionApp(defaultFund, firstFiscalYear);
+      Funds.deleteBudgetViaActions();
+      Funds.checkDeletedBudget(currentBudgetSectionId);
+      Funds.deleteFundViaActions();
+      FinanceHelp.searchByName(defaultFund.name);
+      Funds.checkZeroSearchResultsHeader();
+    },
+  );
 });
