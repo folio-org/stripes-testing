@@ -59,7 +59,6 @@ describe('Acquisition Units', () => {
       AcquisitionUnits.newAcquisitionUnit();
       AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);
       AcquisitionUnits.assignUser(user.username);
-
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.fiscalYearPath,
         waiter: FiscalYears.waitForFiscalYearDetailsLoading,
