@@ -142,6 +142,7 @@ export default {
   },
 
   filltheStartAndEndDateonCalenderstartDateField: (periodStart, periodEnd) => {
+    cy.wait(6000);
     cy.do([
       TextField({ name: 'periodStart' }).clear(),
       TextField({ name: 'periodStart' }).fillIn(periodStart),

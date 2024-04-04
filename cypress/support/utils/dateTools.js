@@ -51,6 +51,13 @@ export default {
     )}/${currentDate.getFullYear()}`;
   },
 
+  getCurrentDateInPreviusMonthForFiscalYearOnUIEdit: () => {
+    const currentDate = new Date();
+    return `${padWithZero(currentDate.getMonth())}/${padWithZero(
+      currentDate.getDate(),
+    )}/${currentDate.getFullYear()}`;
+  },
+
   getRandomFiscalYearCodeForRollover: (min, max) => {
     // returns random 4 digit code for the Fiscal Year
     return (
