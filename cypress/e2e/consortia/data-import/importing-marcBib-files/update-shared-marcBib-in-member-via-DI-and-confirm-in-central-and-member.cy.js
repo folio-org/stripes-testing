@@ -95,8 +95,8 @@ describe('Data Import', () => {
 
       // create user A
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
-        .then((userProperties) => {
-          users.userAProperties = userProperties;
+        .then((userProperties1) => {
+          users.userAProperties = userProperties1;
         })
         .then(() => {
           cy.assignAffiliationToUser(Affiliations.College, users.userAProperties.userId);
@@ -133,8 +133,8 @@ describe('Data Import', () => {
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       ])
-        .then((userProperties) => {
-          users.userBProperties = userProperties;
+        .then((userProperties2) => {
+          users.userBProperties = userProperties2;
         })
         .then(() => {
           cy.assignAffiliationToUser(Affiliations.University, users.userBProperties.userId);
@@ -170,18 +170,19 @@ describe('Data Import', () => {
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.verifySelectedRecords(1);
         InventorySearchAndFilter.exportInstanceAsMarc();
 
         // download exported marc file
+        cy.getAdminToken();
         cy.setTenant(Affiliations.College).then(() => {
-          // use cy.getToken function to get toket for current tenant
-          cy.getCollegeAdminToken();
           cy.visit(TopMenu.dataExportPath);
           cy.wait(2000);
+          // use cy.getToken function to get toket for current tenant
+          cy.getCollegeAdminToken();
           ExportFile.getExportedFileNameViaApi().then((name) => {
             testData.marcFile.exportedFileName = name;
 
@@ -218,7 +219,7 @@ describe('Data Import', () => {
             });
             InventorySearchAndFilter.verifyPanesExist();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            InventoryInstances.searchByTitle(testData.updatedInstanceTitle);
+            InventoryInstances.searchByTitle(testData.sharedInstanceId);
             InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
             InventoryInstance.verifyLastUpdatedSource(
               users.userAProperties.firstName,
@@ -240,7 +241,7 @@ describe('Data Import', () => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
             InventorySearchAndFilter.verifyPanesExist();
-            InventoryInstances.searchByTitle(testData.updatedInstanceTitle);
+            InventoryInstances.searchByTitle(testData.sharedInstanceId);
             InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
             InventoryInstance.verifyLastUpdatedSource(
               users.userAProperties.firstName,

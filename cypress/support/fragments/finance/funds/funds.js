@@ -66,7 +66,7 @@ const resetButton = Button({ id: 'reset-funds-filters' });
 const addTransferModal = Modal({ id: 'add-transfer-modal' });
 const closeWithoutSavingButton = Button('Close without saving');
 const addExpenseClassButton = Button({ id: 'budget-status-expense-classes-add-button' });
-const saveAndClose = Button('Save & close');
+const saveAndClose = Button('Save & Close');
 
 export default {
   defaultUiFund: {

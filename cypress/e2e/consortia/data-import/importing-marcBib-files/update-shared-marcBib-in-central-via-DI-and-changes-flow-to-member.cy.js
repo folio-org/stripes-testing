@@ -108,7 +108,6 @@ describe('Data Import', () => {
       ).then((response) => {
         testData.sharedInstanceId = response[0].instance.id;
       });
-      cy.logout();
 
       // create user A
       cy.createTempUser([
@@ -203,7 +202,6 @@ describe('Data Import', () => {
           users.userAProperties.firstName,
           users.userAProperties.lastName,
         );
-        cy.logout();
 
         cy.login(users.userBProperties.username, users.userBProperties.password, {
           path: TopMenu.inventoryPath,
