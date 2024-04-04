@@ -70,9 +70,9 @@ export default {
     // Need to wait,while input will be loaded(Settings menu has problems with interactors)
     cy.wait(8000);
     cy.get('input[name=value]').click().type(`{selectall}{backspace}${polNumbers}`);
-    cy.wait(4000);
+    cy.wait(6000);
     cy.get('input[name=value]').click().type(`{selectall}{backspace}${polNumbers}`);
-    cy.wait(4000);
+    cy.wait(6000);
     cy.do(Button({ id: 'set-polines-limit-submit-btn' }).click());
     InteractorsTools.checkCalloutMessage(
       'The limit of purchase order lines has been successfully saved',
