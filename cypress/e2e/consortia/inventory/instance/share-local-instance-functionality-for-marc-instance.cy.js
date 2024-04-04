@@ -21,15 +21,6 @@ describe('Inventory', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      DataImport.uploadFileViaApi(
-        marcFile.marc,
-        marcFile.fileNameImported,
-        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-      ).then((response) => {
-        testData.instanceId = response[0].instance.id;
-      });
-
-      cy.resetTenant();
       cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then((userProperties) => {
         testData.user = userProperties;
         cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
@@ -38,28 +29,35 @@ describe('Inventory', () => {
           Permissions.uiInventoryViewCreateInstances.gui,
           Permissions.consortiaInventoryShareLocalInstance.gui,
         ]);
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileNameImported,
+          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        ).then((response) => {
+          testData.instanceId = response[0].instance.id;
+        });
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
       });
     });
 
     after('Delete test data', () => {
       cy.resetTenant();
       cy.getAdminToken();
-      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
       Users.deleteViaApi(testData.user.userId);
+      cy.resetTenant();
+      cy.setTenant(Affiliations.College);
+      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
     });
 
     it(
       'C411292 (CONSORTIA) Check the action of the "Share local instance" button on Source = MARC Instance on Member tenant (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();

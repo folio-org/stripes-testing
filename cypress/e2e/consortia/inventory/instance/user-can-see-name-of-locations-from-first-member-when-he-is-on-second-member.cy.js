@@ -9,11 +9,13 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
     let user;
     const testData = {
+      instanceTitle: `C423392 Instance title${getRandomPostfix()}`,
       itemBarcode: uuid(),
     };
 
@@ -106,7 +108,7 @@ describe('Inventory', () => {
       'C423392 (CONSORTIA) User can see the the name of locations from Member tenant when he is on the second Member tenant (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet'] },
       () => {
-        InventoryInstances.searchByTitle(testData.instanceIds.instanceId);
+        InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.verifyConsortiaHoldingsAccordion();
         InventoryInstance.expandConsortiaHoldings();

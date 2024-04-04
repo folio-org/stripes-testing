@@ -141,25 +141,18 @@ describe('Data Import', () => {
             });
           },
         );
-        // adding Holdings for shared Instance
-        cy.getInstance({
-          limit: 1,
-          expandAll: true,
-          query: `"title"=="${testData.instanceTitle}"`,
-        }).then((instance) => {
-          testData.instanceIdOnMemberTenant = instance.id;
 
-          const collegeLocationData = Locations.getDefaultLocation({
-            servicePointId: ServicePoints.getDefaultServicePoint().id,
-          }).location;
-          Locations.createViaApi(collegeLocationData).then((location) => {
-            testData.collegeLocation = location;
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: instance.id,
-              permanentLocationId: testData.collegeLocation.id,
-            }).then((holding) => {
-              testData.holding = holding;
-            });
+        const collegeLocationData = Locations.getDefaultLocation({
+          servicePointId: ServicePoints.getDefaultServicePoint().id,
+        }).location;
+        Locations.createViaApi(collegeLocationData).then((location) => {
+          testData.collegeLocation = location;
+          // adding Holdings for shared Instance
+          InventoryHoldings.createHoldingRecordViaApi({
+            instanceId: testData.sharedInstanceId,
+            permanentLocationId: testData.collegeLocation.id,
+          }).then((holding) => {
+            testData.holding = holding;
           });
         });
         cy.resetTenant();
@@ -187,11 +180,10 @@ describe('Data Import', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId[0]);
+      InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
       cy.setTenant(Affiliations.College);
       InventoryHoldings.deleteHoldingRecordViaApi(testData.holding.id);
       Locations.deleteViaApi(testData.collegeLocation);
-      InventoryInstance.deleteInstanceViaApi(testData.instanceIdOnMemberTenant);
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -205,24 +197,30 @@ describe('Data Import', () => {
       'C411794 Adding/deleting fields and subfields when updating Shadow "MARC Bib" in member tenant via Data Import (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet'] },
       () => {
-        InventoryInstances.searchByTitle(testData.instanceIdOnMemberTenant);
+        InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.verifySelectedRecords(1);
         InventorySearchAndFilter.exportInstanceAsMarc();
-        // download exported marc file
-        cy.visit(TopMenu.dataExportPath);
-        cy.wait(1000);
-        ExportFile.getExportedFileNameViaApi().then((name) => {
-          testData.marcFile.exportedFileName = name;
-          ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
-          // change exported file
-          DataImport.replace999SubfieldsInPreupdatedFile(
-            testData.marcFile.exportedFileName,
-            testData.marcFile.marcFileForModify,
-            testData.marcFile.modifiedMarcFile,
-          );
+
+        cy.setTenant(Affiliations.College).then(() => {
+          // download exported marc file
+          cy.visit(TopMenu.dataExportPath);
+          cy.wait(1000);
+          ExportFile.getExportedFileNameViaApi().then((name) => {
+            testData.marcFile.exportedFileName = name;
+
+            ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
+            // change exported file
+            DataImport.replace999SubfieldsInPreupdatedFile(
+              testData.marcFile.exportedFileName,
+              testData.marcFile.marcFileForModify,
+              testData.marcFile.modifiedMarcFile,
+            );
+          });
         });
+        cy.resetTenant();
+
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
@@ -235,7 +233,7 @@ describe('Data Import', () => {
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstances.searchByTitle(testData.sharedInstanceId[0]);
+        InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName);
         InventoryInstance.verifyContributorAbsent(testData.absentContributorName);
@@ -256,7 +254,7 @@ describe('Data Import', () => {
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName);
         InventoryInstance.verifyContributorAbsent(testData.absentContributorName);

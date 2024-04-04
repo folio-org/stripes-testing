@@ -168,6 +168,7 @@ describe('Data Import', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+      cy.setTenant(Affiliations.College);
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -181,7 +182,7 @@ describe('Data Import', () => {
       'C405532 Adding/deleting fields and subfields when updating shared "MARC Bib" in member tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
-        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instanceId);
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.verifySelectedRecords(1);
@@ -189,8 +190,6 @@ describe('Data Import', () => {
 
         // download exported marc file
         cy.setTenant(Affiliations.College).then(() => {
-          // use cy.getToken function to get toket for current tenant
-          cy.getCollegeAdminToken();
           cy.visit(TopMenu.dataExportPath);
           cy.wait(2000);
           ExportFile.getExportedFileNameViaApi().then((name) => {
@@ -205,6 +204,7 @@ describe('Data Import', () => {
             );
           });
         });
+        cy.resetTenant();
 
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
@@ -216,7 +216,7 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.central);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.verifyPanesExist();
         InventoryInstances.searchByTitle(testData.instanceId);
@@ -242,7 +242,7 @@ describe('Data Import', () => {
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.verifyPanesExist();
-        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName, testData.contributorType);
         InventoryInstance.verifyContributorAbsent(testData.absentContributorName);
