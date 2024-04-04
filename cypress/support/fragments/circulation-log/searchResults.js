@@ -14,6 +14,7 @@ const resultTable = MultiColumnList({ id: 'circulation-log-list' });
 
 export default {
   clickOnCell(content, row) {
+    cy.wait(5000);
     cy.do(MultiColumnListCell({ content, row }).find(Link()).click());
   },
 
