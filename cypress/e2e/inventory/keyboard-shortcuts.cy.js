@@ -48,7 +48,7 @@ describe('ui-inventory: Keyboard shortcut (NEW)', () => {
 
   it(
     'C345298 Keyboard Shortcut. Test the functionality of the different shortcut keys (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'broken'] },
+    { tags: ['smoke', 'thunderjet', 'broken', 'eurekaPhase1'] },
     () => {
       InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
 
