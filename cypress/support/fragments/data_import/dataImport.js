@@ -46,6 +46,7 @@ const importBlockedModal = Modal('Import blocked');
 const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 
 const uploadFile = (filePathName, fileName) => {
+  cy.reload();
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
 };
 
@@ -56,6 +57,7 @@ const uploadBunchOfDifferentFiles = (fileNames) => {
   }
   cy.get('input[type=file]').attachFile(arrayOfFiles);
   cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
+  cy.wait(1500);
 };
 
 const uploadBunchOfFiles = (editedFileName, numberOfFiles, finalFileName) => {
