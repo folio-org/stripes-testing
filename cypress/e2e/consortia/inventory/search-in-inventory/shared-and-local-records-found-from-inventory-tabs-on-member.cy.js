@@ -149,7 +149,7 @@ describe('Inventory', () => {
 
     it(
       'C410715 "Shared" and "Local" (for current tenant) records will be found from "Instance/Holdings/Item" tabs of "inventory" app on Member tenant (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire', 'eurekaPhase1'] },
+      { tags: ['criticalPathECS', 'spitfire'] },
       () => {
         InventoryInstances.searchByTitle(titlePrefix);
         InventorySearchAndFilter.verifySearchResult(sharedFOLIOInstance.title);

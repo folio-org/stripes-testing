@@ -101,7 +101,7 @@ describe('Browse in Inventory', () => {
 
   it(
     'C388531 Verify that contributors with the same "Name" , "Name type" and "authorityID" will display as one row (spitfire)',
-    { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifyKeywordsAsDefault();

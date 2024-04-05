@@ -119,7 +119,7 @@ describe('Inventory', () => {
 
     it(
       'C367973 Search for one "Instance" record by "Authority UUID" value of linked "MARC Authority" record (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

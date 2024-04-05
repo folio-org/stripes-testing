@@ -53,7 +53,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C410829 Verify "Tenant -> Location setup" settings HTML page title format (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       TopMenuNavigation.navigateToApp('Settings');
       TenantPane.verifyPageTitle('Settings - FOLIO');
