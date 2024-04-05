@@ -9,6 +9,9 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role C431152 ${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
+        updatedRoleName: `Auto Role C431152 ${getRandomPostfix()} UPD`,
+        updateRoleDescription: `Description ${getRandomPostfix()} UPD`,
+        application: 'app-platform-minimal',
         originalCapabilities: [
           {
             table: 'Data',
@@ -26,21 +29,46 @@ describe('Eureka', () => {
           resource: 'UI-Tags Settings',
           action: 'Manage',
         },
+        expectedCounts: {
+          Data: 1,
+          Settings: 1,
+        },
+        capabIds: [],
       };
 
-      before(() => {
+      testData.originalCapabilities.forEach((capab) => {
+        capab.application = testData.application;
+      });
+      testData.capabilityToSelect.application = testData.application;
+
+      before('Create role, user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.settingsAuthorizationRoles,
-            waiter: AuthorizationRoles.waitContentLoading,
+          cy.createAuthorizationRoleApi().then((role) => {
+            testData.roleName = role.name;
+            testData.roleId = role.id;
+            testData.originalCapabilities.forEach((capability) => {
+              capability.type = capability.table;
+              cy.getCapabilityIdViaApi(capability).then((capabId) => {
+                testData.capabIds.push(capabId);
+              });
+            });
           });
+        });
+      });
+
+      before('Assign capabilities and login', () => {
+        cy.addCapabilitiesToNewRoleApi(testData.roleId, testData.capabIds);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.settingsAuthorizationRoles,
+          waiter: AuthorizationRoles.waitContentLoading,
         });
       });
 
       afterEach(() => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
+        cy.deleteCapabilitiesFromRoleApi(testData.roleId);
         cy.deleteAuthorizationRoleApi(testData.roleId);
       });
 
@@ -48,32 +76,28 @@ describe('Eureka', () => {
         'C431152 Assigning capabilities after role name edited (eureka)',
         { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
         () => {
-          // AuthorizationRoles.clickNewButton();
-          // AuthorizationRoles.verifyEmptyCapabilitiesAccordion();
-          // AuthorizationRoles.verifyEmptyCapabilitySetsAccordion();
-          // AuthorizationRoles.fillRoleNameDescription(testData.roleName, testData.roleDescription);
-          // cy.intercept('POST', '/roles*').as('roles');
-          // cy.intercept('POST', '/roles/capability-sets*').as('capabilitySets');
-          // cy.intercept('POST', '/roles/capabilities*').as('capabilities');
-          // AuthorizationRoles.clickSaveButton();
-          // cy.wait('@roles').then((res) => {
-          //   expect(res.response.body.name).to.eq(testData.roleName);
-          //   expect(res.response.body.description).to.eq(testData.roleDescription);
-          //   testData.roleId = res.response.body.id;
-          //   cy.wait(2000);
-          //   cy.get('@capabilitySets.all').then((calls) => {
-          //     expect(calls).to.have.length(0);
-          //   });
-          //   cy.get('@capabilities.all').then((calls) => {
-          //     expect(calls).to.have.length(0);
-          //   });
-          // });
-          // AuthorizationRoles.checkAfterSaveCreate(testData.roleName, testData.roleDescription);
-          // AuthorizationRoles.clickOnRoleName(testData.roleName);
-          // AuthorizationRoles.clickOnCapabilitySetsAccordion(false);
-          // AuthorizationRoles.clickOnCapabilitiesAccordion(false);
-          // AuthorizationRoles.verifyEmptyCapabilitiesAccordion();
-          // AuthorizationRoles.verifyEmptyCapabilitySetsAccordion();
+          AuthorizationRoles.clickOnRoleName(testData.roleName);
+          AuthorizationRoles.clickOnCapabilitiesAccordion();
+          AuthorizationRoles.openForEdit();
+          AuthorizationRoles.fillRoleNameDescription(
+            testData.updatedRoleName,
+            testData.updateRoleDescription,
+          );
+          AuthorizationRoles.selectCapabilityCheckbox(testData.originalCapabilities[1], false);
+          AuthorizationRoles.selectCapabilityCheckbox(testData.capabilityToSelect);
+          AuthorizationRoles.clickSaveButton();
+          AuthorizationRoles.checkAfterSaveEdit(testData.roleName, testData.roleDescription);
+          AuthorizationRoles.clickOnCapabilitiesAccordion();
+          AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(
+            testData.originalCapabilities[0],
+          );
+          AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(
+            testData.capabilityToSelect,
+          );
+          AuthorizationRoles.verifyCapabilityCheckboxAbsent(testData.originalCapabilities[1]);
+          Object.entries(testData.expectedCounts).forEach(([table, count]) => {
+            AuthorizationRoles.checkCountOfCapablities(table, count);
+          });
         },
       );
     });
