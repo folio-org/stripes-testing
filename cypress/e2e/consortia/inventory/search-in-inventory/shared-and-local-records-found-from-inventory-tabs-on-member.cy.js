@@ -108,7 +108,7 @@ describe('Inventory', () => {
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFile.fileName);
+              Logs.waitFileIsImported(marcFile.fileName);
               Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
               Logs.openFileDetails(marcFile.fileName);
               Logs.getCreatedItemsID().then((link) => {

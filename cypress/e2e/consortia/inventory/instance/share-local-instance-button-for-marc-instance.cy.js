@@ -21,7 +21,7 @@ describe('Inventory', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         marcFile.marc,
-        marcFile.fileName,
+        marcFile.marcFileName,
         DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       ).then((response) => {
         testData.instanceId = response[0].instance.id;
@@ -45,35 +45,41 @@ describe('Inventory', () => {
       cy.createTempUser([
         Permissions.uiInventoryViewCreateInstances.gui,
         Permissions.consortiaInventoryShareLocalInstance.gui,
-      ]).then((userProperties) => {
-        testData.user1 = userProperties;
+      ]).then((userProperties1) => {
+        testData.user1 = userProperties1;
       });
 
-      cy.resetTenant();
-      cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then((userProperties) => {
-        testData.user2 = userProperties;
-        cy.assignAffiliationToUser(Affiliations.College, testData.user2.userId);
-        cy.setTenant(Affiliations.College);
-        cy.assignPermissionsToExistingUser(testData.user2.userId, [
-          Permissions.uiInventoryViewCreateInstances.gui,
-          Permissions.consortiaInventoryShareLocalInstance.gui,
-        ]);
-      });
+      cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then(
+        (userProperties2) => {
+          testData.user2 = userProperties2;
+
+          cy.assignAffiliationToUser(Affiliations.College, testData.user2.userId);
+          cy.setTenant(Affiliations.College);
+          cy.assignPermissionsToExistingUser(testData.user2.userId, [
+            Permissions.uiInventoryViewCreateInstances.gui,
+            Permissions.consortiaInventoryShareLocalInstance.gui,
+          ]);
+        },
+      );
 
       cy.resetTenant();
-      cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then((userProperties) => {
-        testData.user3 = userProperties;
-      });
+      cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then(
+        (userProperties3) => {
+          testData.user3 = userProperties3;
+        },
+      );
 
       cy.resetTenant();
-      cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then((userProperties) => {
-        testData.user4 = userProperties;
-        cy.assignAffiliationToUser(Affiliations.College, testData.user4.userId);
-        cy.setTenant(Affiliations.College);
-        cy.assignPermissionsToExistingUser(testData.user4.userId, [
-          Permissions.uiInventoryViewCreateInstances.gui,
-        ]);
-      });
+      cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then(
+        (userProperties4) => {
+          testData.user4 = userProperties4;
+          cy.assignAffiliationToUser(Affiliations.College, testData.user4.userId);
+          cy.setTenant(Affiliations.College);
+          cy.assignPermissionsToExistingUser(testData.user4.userId, [
+            Permissions.uiInventoryViewCreateInstances.gui,
+          ]);
+        },
+      );
     });
 
     after('Delete test data', () => {

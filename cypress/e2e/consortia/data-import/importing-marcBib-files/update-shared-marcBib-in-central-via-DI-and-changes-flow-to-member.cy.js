@@ -108,7 +108,6 @@ describe('Data Import', () => {
       ).then((response) => {
         testData.sharedInstanceId = response[0].instance.id;
       });
-      cy.logout();
 
       // create user A
       cy.createTempUser([
@@ -169,23 +168,19 @@ describe('Data Import', () => {
         InventorySearchAndFilter.exportInstanceAsMarc();
 
         // download exported marc file
-        cy.setTenant(Affiliations.Consortia).then(() => {
-          // use cy.getToken function to get toket for current tenant
-          cy.getAdminToken();
-          cy.visit(TopMenu.dataExportPath);
-          cy.wait(2000);
-          ExportFile.getExportedFileNameViaApi().then((name) => {
-            testData.marcFile.exportedFileName = name;
+        cy.visit(TopMenu.dataExportPath);
+        cy.wait(2000);
+        ExportFile.getExportedFileNameViaApi().then((name) => {
+          testData.marcFile.exportedFileName = name;
 
-            ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
-            // change exported file
-            DataImport.editMarcFile(
-              testData.marcFile.exportedFileName,
-              testData.marcFile.modifiedMarcFile,
-              [testData.instanceTitle, 'Proceedings'],
-              [testData.updatedInstanceTitle, 'Proceedings Updated'],
-            );
-          });
+          ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
+          // change exported file
+          DataImport.editMarcFile(
+            testData.marcFile.exportedFileName,
+            testData.marcFile.modifiedMarcFile,
+            [testData.instanceTitle, 'Proceedings'],
+            [testData.updatedInstanceTitle, 'Proceedings Updated'],
+          );
         });
         // upload the exported and edited marc file
         cy.visit(TopMenu.dataImportPath);
@@ -203,7 +198,6 @@ describe('Data Import', () => {
           users.userAProperties.firstName,
           users.userAProperties.lastName,
         );
-        cy.logout();
 
         cy.login(users.userBProperties.username, users.userBProperties.password, {
           path: TopMenu.inventoryPath,
@@ -212,7 +206,7 @@ describe('Data Import', () => {
         InventorySearchAndFilter.verifyPanesExist();
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        InventoryInstances.searchByTitle(testData.updatedInstanceTitle);
+        InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
         InventoryInstance.verifyLastUpdatedSource(
           users.userAProperties.firstName,

@@ -31,28 +31,28 @@ describe('MARC', () => {
       const marcFiles = [
         {
           marc: 'marcBibFileForC405927-Shared.mrc',
-          fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+          fileName: `C405927 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numOfRecords: 3,
           tenant: 'Central Office',
         },
         {
           marc: 'marcAuthFileForC405927.mrc',
-          fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+          fileName: `C405927 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 1,
           tenant: 'Central Office',
         },
         {
           marc: 'marcBibFileForC405927-Local-M1.mrc',
-          fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+          fileName: `C405927 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numOfRecords: 1,
           tenant: 'University',
         },
         {
           marc: 'marcBibFileForC405927-Local-M2.mrc',
-          fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+          fileName: `C405927 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numOfRecords: 1,
           tenant: 'College',

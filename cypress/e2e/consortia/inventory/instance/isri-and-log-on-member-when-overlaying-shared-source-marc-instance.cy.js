@@ -18,7 +18,7 @@ describe('Inventory', () => {
   describe('Instance', () => {
     const marcFile = {
       marc: 'oneMarcBib.mrc',
-      fileNameImported: `C418582 autotestFileName${getRandomPostfix()}.mrc`,
+      fileName: `C418582 autotestFileName${getRandomPostfix()}.mrc`,
       editedFileName: `C418582 editedAutotestFileName${getRandomPostfix()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       instanceTitle:
@@ -40,17 +40,13 @@ describe('Inventory', () => {
         [marcFile.newInstanceTitle],
       );
       cy.getAdminToken();
-      cy.loginAsAdmin();
-      ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-      ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
       DataImport.uploadFileViaApi(
-        testData.marcFile.marc,
-        testData.marcFile.fileName,
+        marcFile.editedFileName,
+        marcFile.fileName,
         DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       ).then((response) => {
         testData.instanceId = response[0].instance.id;
       });
-      cy.resetTenant();
 
       cy.createTempUser([
         Permissions.uiInventorySingleRecordImport.gui,
@@ -82,7 +78,6 @@ describe('Inventory', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      cy.setTenant(Affiliations.College);
       cy.getInstance({
         limit: 1,
         expandAll: true,

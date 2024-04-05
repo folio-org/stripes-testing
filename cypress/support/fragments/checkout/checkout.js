@@ -49,6 +49,7 @@ export default {
           servicePointId,
           userBarcode,
         },
+        isDefaultSearchParamsRequired: false,
       })
       .then((checkedOutItem) => {
         return checkedOutItem.body;

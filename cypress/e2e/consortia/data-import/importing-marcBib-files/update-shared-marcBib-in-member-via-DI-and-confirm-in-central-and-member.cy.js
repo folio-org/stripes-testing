@@ -95,8 +95,8 @@ describe('Data Import', () => {
 
       // create user A
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
-        .then((userProperties) => {
-          users.userAProperties = userProperties;
+        .then((userProperties1) => {
+          users.userAProperties = userProperties1;
         })
         .then(() => {
           cy.assignAffiliationToUser(Affiliations.College, users.userAProperties.userId);
@@ -133,8 +133,8 @@ describe('Data Import', () => {
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       ])
-        .then((userProperties) => {
-          users.userBProperties = userProperties;
+        .then((userProperties2) => {
+          users.userBProperties = userProperties2;
         })
         .then(() => {
           cy.assignAffiliationToUser(Affiliations.University, users.userBProperties.userId);
@@ -153,6 +153,8 @@ describe('Data Import', () => {
       Users.deleteViaApi(users.userAProperties.userId);
       Users.deleteViaApi(users.userBProperties.userId);
       InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
+      cy.resetTenant();
+      cy.setTenant(Affiliations.College);
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -162,6 +164,7 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
     });
 
+    // https://folio-org.atlassian.net/browse/MODSOURCE-755
     it(
       'C405528 User can update shared "MARC Bib" in member tenant via Data import and confirm in central & member tenants (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
@@ -170,7 +173,7 @@ describe('Data Import', () => {
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.verifySelectedRecords(1);
@@ -178,8 +181,6 @@ describe('Data Import', () => {
 
         // download exported marc file
         cy.setTenant(Affiliations.College).then(() => {
-          // use cy.getToken function to get toket for current tenant
-          cy.getCollegeAdminToken();
           cy.visit(TopMenu.dataExportPath);
           cy.wait(2000);
           ExportFile.getExportedFileNameViaApi().then((name) => {
@@ -193,63 +194,62 @@ describe('Data Import', () => {
               [testData.instanceTitle, 'Proceedings'],
               [testData.updatedInstanceTitle, 'Proceedings Updated'],
             );
-
-            // upload the exported and edited marc file
-            cy.visit(TopMenu.dataImportPath);
-            DataImport.verifyUploadState();
-            DataImport.uploadExportedFile(testData.marcFile.modifiedMarcFile);
-            JobProfiles.waitFileIsUploaded();
-            JobProfiles.search(jobProfileName);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(testData.marcFile.modifiedMarcFile);
-            FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
-            InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
-            InventoryInstance.verifyLastUpdatedSource(
-              users.userAProperties.firstName,
-              users.userAProperties.lastName,
-            );
-            cy.logout();
-
-            cy.login(users.userBProperties.username, users.userBProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            InventorySearchAndFilter.verifyPanesExist();
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            InventoryInstances.searchByTitle(testData.updatedInstanceTitle);
-            InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
-            InventoryInstance.verifyLastUpdatedSource(
-              users.userAProperties.firstName,
-              users.userAProperties.lastName,
-            );
-            InventoryInstance.editMarcBibliographicRecord();
-            QuickMarcEditor.checkContentByTag(testData.field245.tag, testData.field245.content);
-            QuickMarcEditor.checkContentByTag(testData.field500.tag, testData.field500.content);
-            QuickMarcEditor.checkSourceValue(
-              users.userAProperties.firstName,
-              users.userAProperties.lastName,
-            );
-            cy.logout();
-
-            cy.login(users.userBProperties.username, users.userBProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
-            InventorySearchAndFilter.verifyPanesExist();
-            InventoryInstances.searchByTitle(testData.updatedInstanceTitle);
-            InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
-            InventoryInstance.verifyLastUpdatedSource(
-              users.userAProperties.firstName,
-              users.userAProperties.lastName,
-            );
-            InventoryInstance.viewSource();
-            InventoryViewSource.contains(testData.field245.content);
-            InventoryViewSource.contains(testData.field500.content);
           });
+          cy.resetTenant();
+
+          // upload the exported and edited marc file
+          cy.visit(TopMenu.dataImportPath);
+          DataImport.verifyUploadState();
+          DataImport.uploadExportedFile(testData.marcFile.modifiedMarcFile);
+          JobProfiles.waitFileIsUploaded();
+          JobProfiles.search(jobProfileName);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.openFileDetails(testData.marcFile.modifiedMarcFile);
+          FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+          InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
+          InventoryInstance.verifyLastUpdatedSource(
+            users.userAProperties.firstName,
+            users.userAProperties.lastName,
+          );
+
+          cy.login(users.userBProperties.username, users.userBProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          InventorySearchAndFilter.verifyPanesExist();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          InventoryInstances.searchByTitle(testData.sharedInstanceId);
+          InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
+          InventoryInstance.verifyLastUpdatedSource(
+            users.userAProperties.firstName,
+            users.userAProperties.lastName,
+          );
+          InventoryInstance.editMarcBibliographicRecord();
+          QuickMarcEditor.checkContentByTag(testData.field245.tag, testData.field245.content);
+          QuickMarcEditor.checkContentByTag(testData.field500.tag, testData.field500.content);
+          QuickMarcEditor.checkSourceValue(
+            users.userAProperties.firstName,
+            users.userAProperties.lastName,
+          );
+
+          cy.login(users.userBProperties.username, users.userBProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+          InventorySearchAndFilter.verifyPanesExist();
+          InventoryInstances.searchByTitle(testData.sharedInstanceId);
+          InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
+          InventoryInstance.verifyLastUpdatedSource(
+            users.userAProperties.firstName,
+            users.userAProperties.lastName,
+          );
+          InventoryInstance.viewSource();
+          InventoryViewSource.contains(testData.field245.content);
+          InventoryViewSource.contains(testData.field500.content);
         });
       },
     );

@@ -152,7 +152,7 @@ describe('MARC', () => {
                 JobProfiles.waitLoadingList();
                 JobProfiles.search(marcFile.jobProfileToRun);
                 JobProfiles.runImportFile();
-                JobProfiles.waitFileIsImported(marcFile.fileName);
+                Logs.waitFileIsImported(marcFile.fileName);
                 Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
                 Logs.openFileDetails(marcFile.fileName);
                 for (let i = 0; i < marcFile.numOfRecords; i++) {

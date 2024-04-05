@@ -13,47 +13,43 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    let user;
     const testData = {
       newInstanceTitle: `C411384 instanceTitle${getRandomPostfix()}`,
-      servicePoint: ServicePoints.defaultServicePoint,
     };
 
     before('Create test data', () => {
       cy.getAdminToken();
-      InventoryInstance.createInstanceViaApi()
-        .then(({ instanceData }) => {
-          testData.instance = instanceData;
-        })
-        .then(() => {
-          cy.resetTenant();
-          cy.setTenant(Affiliations.College);
-          cy.getCollegeAdminToken();
-          ServicePoints.createViaApi(testData.servicePoint).then(() => {
-            testData.location = Locations.getDefaultLocation({
-              servicePointId: testData.servicePoint.id,
-            }).location;
+      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+        testData.instance = instanceData;
+      });
 
-            Locations.createViaApi(testData.location).then(() => {
-              InventoryHoldings.createHoldingRecordViaApi({
-                instanceId: testData.instance.instanceId,
-                permanentLocationId: testData.location.id,
-              }).then(({ id: holdingId }) => {
-                testData.instance.holdingId = holdingId;
-              });
+      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+        testData.user = userProperties;
+
+        cy.setTenant(Affiliations.College);
+        cy.getCollegeAdminToken();
+        const collegeLocationData = Locations.getDefaultLocation({
+          servicePointId: ServicePoints.getDefaultServicePoint().id,
+        }).location;
+        Locations.createViaApi(collegeLocationData)
+          .then((location) => {
+            testData.collegeLocation = location;
+          })
+          .then(() => {
+            InventoryHoldings.createHoldingRecordViaApi({
+              instanceId: testData.instance.instanceId,
+              permanentLocationId: testData.collegeLocation.id,
+            }).then(({ id: holdingId }) => {
+              testData.instance.holdingId = holdingId;
             });
           });
-        });
+        cy.resetTenant();
 
-      cy.resetTenant();
-      cy.getAdminToken();
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
-        user = userProperties;
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.login(testData.user.username, testData.user.password);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        cy.setTenant(Affiliations.Consortia);
+        cy.getAdminToken();
+        cy.visit(TopMenu.inventoryPath);
       });
     });
 
@@ -66,7 +62,7 @@ describe('Inventory', () => {
       ServicePoints.deleteViaApi(testData.servicePoint.id);
       cy.resetTenant();
       cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
+      Users.deleteViaApi(testData.user);
       InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
     });
 
@@ -76,8 +72,10 @@ describe('Inventory', () => {
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
+        cy.wait(4000);
         InventoryInstance.expandConsortiaHoldings();
         InventoryInstance.expandMemberSubHoldings(Affiliations.College);
+        cy.wait(4000);
         InventoryInstance.openHoldingView();
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         HoldingsRecordView.checkActionsMenuOptions();
