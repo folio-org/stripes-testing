@@ -1,6 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -19,7 +19,7 @@ describe('Settings: Tenant', () => {
         user = userProperties;
         cy.login(user.username, user.password);
         cy.wait(2000);
-        TopMenuNavigation.navigateToApp('Settings');
+        cy.visit(TopMenu.settingsPath);
         ServicePoints.goToServicePointsTab();
       },
     );

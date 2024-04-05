@@ -20,7 +20,7 @@ describe('Export Manager', () => {
 
   it(
     'C350764 Verify that user without Export Manager permissions: cannot view Export Manager (firebird)',
-    { tags: ['criticalPath', 'firebird', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       TopMenuNavigation.isAbsent();
       cy.visit(TopMenu.exportManagerPath);
