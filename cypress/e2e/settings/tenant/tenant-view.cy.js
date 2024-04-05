@@ -36,7 +36,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C409487 Settings (tenant): View -- Location setup (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: [testData.institution] });
       // reload is needed because sometimes Location setup section is not displayed

@@ -11,8 +11,8 @@ import LocationEditForm from '../../../support/fragments/settings/tenant/locatio
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -45,7 +45,7 @@ describe('Settings: Tenant', () => {
 
       cy.login(testData.user.username, testData.user.password);
       cy.wait(2000);
-      TopMenuNavigation.navigateToApp('Settings');
+      cy.visit(TopMenu.settingsPath);
       Locations.goToLocationsTab();
     });
   });

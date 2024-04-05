@@ -91,7 +91,7 @@ describe('Export Manager', () => {
 
   it(
     'C405555 Verify that User is able to see the executed jobs but not to download the files with View permissions (firebird)',
-    { tags: ['smoke', 'firebird', 'eurekaPhase1'] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       ExportManagerSearchPane.waitLoading();
       ExportManagerSearchPane.searchByAuthorityControl();
