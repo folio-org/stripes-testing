@@ -100,7 +100,7 @@ describe('Inventory', () => {
 
     it(
       'C375163 Browse | Separate entries for "Subjects" from linked and unlinked "6XX" fields of "MARC bib" record (same subject names) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
