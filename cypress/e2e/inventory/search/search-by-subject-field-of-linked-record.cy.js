@@ -146,7 +146,7 @@ describe('Inventory', () => {
 
     it(
       'C375259 Query search | Search by "Subject" field of linked "MARC Bib" record (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

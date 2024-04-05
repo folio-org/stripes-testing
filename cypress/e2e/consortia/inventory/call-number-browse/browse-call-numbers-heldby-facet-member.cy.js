@@ -452,7 +452,7 @@ describe('Inventory', () => {
 
       it(
         'C404353 Use "Held by" facet when browsing Call numbers in Consortia tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'eurekaPhase1'] },
+        { tags: ['criticalPathECS', 'spitfire'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password).then(() => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
