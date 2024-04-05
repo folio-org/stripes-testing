@@ -73,12 +73,12 @@ describe('MARC', () => {
           InventoryInstance.waitLoading();
           InventoryInstance.editMarcBibliographicRecord();
 
-          QuickMarcEditor.addEmptyFields(4);
-          QuickMarcEditor.checkEmptyFieldAdded(5);
+          QuickMarcEditor.addEmptyFields(6);
+          QuickMarcEditor.checkEmptyFieldAdded(7);
 
           QuickMarcEditor.updateExistingField('', testData.tag001Content);
-          QuickMarcEditor.updateTagNameToLockedTag(5, testData.tag001);
-          QuickMarcEditor.checkFourthBoxDisabled(5);
+          QuickMarcEditor.updateTagNameToLockedTag(7, testData.tag001);
+          QuickMarcEditor.checkFourthBoxDisabled(7);
 
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();

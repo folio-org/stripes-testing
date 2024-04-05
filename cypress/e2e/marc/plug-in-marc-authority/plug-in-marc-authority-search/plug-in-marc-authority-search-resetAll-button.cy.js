@@ -19,7 +19,7 @@ describe('MARC', () => {
         numOfRecords: 1,
       };
       const searchOption = '*';
-      let createdAuthorityID;
+      let createdInstanceID;
 
       before('Creating user and test data', () => {
         cy.createTempUser([
@@ -41,8 +41,8 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                createdAuthorityID = record.instance.id;
+              response.forEach((record) => {
+                createdInstanceID = record.instance.id;
               });
             });
             cy.login(user.userProperties.username, user.userProperties.password, {
@@ -51,7 +51,7 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            InventoryInstances.searchByTitle(createdAuthorityID);
+            InventoryInstances.searchByTitle(createdInstanceID);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             InventoryInstance.verifyAndClickLinkIcon('700');
@@ -62,7 +62,7 @@ describe('MARC', () => {
       after('Deleting created user and test data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userProperties.userId);
-        InventoryInstance.deleteInstanceViaApi(createdAuthorityID);
+        InventoryInstance.deleteInstanceViaApi(createdInstanceID);
       });
 
       it(
