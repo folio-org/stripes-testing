@@ -1050,4 +1050,8 @@ export default {
       stuffSupressAccordion.find(Checkbox({ id: 'clickable-filter-staffSuppress-true' })).click(),
     ]);
   },
+
+  clearSharedFilter() {
+    cy.do(sharedAccordion.find(Button({ ariaLabel: including('Clear selected filters') })).click());
+  },
 };

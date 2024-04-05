@@ -74,7 +74,7 @@ describe('Inventory', () => {
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFiles.shared.jobProfileToRun);
               JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFiles.shared.fileNameImported);
+              Logs.waitFileIsImported(marcFiles.shared.fileNameImported);
               Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
               Logs.openFileDetails(marcFiles.shared.fileNameImported);
               Logs.getCreatedItemsID().then((link) => {
@@ -89,7 +89,7 @@ describe('Inventory', () => {
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFiles.local.jobProfileToRun);
               JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFiles.local.fileNameImported);
+              Logs.waitFileIsImported(marcFiles.local.fileNameImported);
               Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
               Logs.openFileDetails(marcFiles.local.fileNameImported);
               Logs.getCreatedItemsID().then((link) => {

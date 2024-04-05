@@ -43,12 +43,12 @@ describe('MARC', () => {
         const marcFilesForCentral = [
           {
             marc: 'marcBibFileForC405559_1.mrc',
-            fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
+            fileNameImported: `C405559 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           },
           {
             marc: 'marcAuthFileForC405559.mrc',
-            fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
+            fileNameImported: `C405559 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           },
         ];
@@ -144,7 +144,7 @@ describe('MARC', () => {
                 JobProfiles.waitLoadingList();
                 JobProfiles.search(marcFile.jobProfileToRun);
                 JobProfiles.runImportFile();
-                JobProfiles.waitFileIsImported(marcFile.fileNameImported);
+                Logs.waitFileIsImported(marcFile.fileNameImported);
                 Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
                 Logs.openFileDetails(marcFile.fileNameImported);
                 Logs.getCreatedItemsID().then((link) => {

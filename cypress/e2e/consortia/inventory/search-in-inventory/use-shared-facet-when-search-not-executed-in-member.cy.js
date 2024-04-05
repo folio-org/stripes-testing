@@ -87,7 +87,7 @@ describe('Inventory', () => {
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFile.fileName);
+              Logs.waitFileIsImported(marcFile.fileName);
               Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
               Logs.openFileDetails(marcFile.fileName);
               Logs.getCreatedItemsID().then((link) => {
@@ -176,6 +176,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
         InventorySearchAndFilter.verifyResultListExists();
+        cy.wait(3000);
         InventorySearchAndFilter.checkSharedAndLocalInstancesInResultList();
 
         // 9 Scroll down to the end of the result list and click on the "Next" pagination button.

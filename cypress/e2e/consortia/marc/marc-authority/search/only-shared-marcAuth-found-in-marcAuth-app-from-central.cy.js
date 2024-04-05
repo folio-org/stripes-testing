@@ -36,13 +36,13 @@ describe('MARC', () => {
       const marcFiles = [
         {
           marc: 'marcAuthFileForC410739-Shared.mrc',
-          fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
+          fileNameImported: `C410739 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           tenant: 'Central Office',
         },
         {
           marc: 'marcAuthFileForC410739-Local.mrc',
-          fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
+          fileNameImported: `C410739 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           tenant: 'College',
         },
@@ -155,7 +155,8 @@ describe('MARC', () => {
             testData.authorityBrowseOption,
             testData.marcValueLocal,
           );
-          InventorySearchAndFilter.verifySearchResult(`${testData.marcValueLocal} would be here`);
+          // eslint-disable-next-line no-irregular-whitespace
+          InventorySearchAndFilter.verifySearchResult(`${testData.marcValueLocal} would be here`);
 
           MarcAuthorities.searchByParameter(testData.authorityBrowseOption, testData.testId);
           MarcAuthorities.checkAfterSearch(

@@ -69,7 +69,7 @@ describe('MARC', () => {
                 DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileNameImported);
                 JobProfiles.search(marcFile.jobProfileToRun);
                 JobProfiles.runImportFile();
-                JobProfiles.waitFileIsImported(marcFile.fileNameImported);
+                Logs.waitFileIsImported(marcFile.fileNameImported);
                 Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
                 Logs.openFileDetails(marcFile.fileNameImported);
                 Logs.getCreatedItemsID().then((link) => {
@@ -138,8 +138,8 @@ describe('MARC', () => {
             users.userAProperties.firstName,
             users.userAProperties.lastName,
           );
-          QuickMarcEditor.verifyTagValue(16, testData.tag504);
-          QuickMarcEditor.verifyTagValue(17, testData.tag500);
+          QuickMarcEditor.verifyTagValue(18, testData.tag504);
+          QuickMarcEditor.verifyTagValue(16, testData.tag500);
         },
       );
     });
