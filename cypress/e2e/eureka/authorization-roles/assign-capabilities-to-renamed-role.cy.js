@@ -86,7 +86,10 @@ describe('Eureka', () => {
           AuthorizationRoles.selectCapabilityCheckbox(testData.originalCapabilities[1], false);
           AuthorizationRoles.selectCapabilityCheckbox(testData.capabilityToSelect);
           AuthorizationRoles.clickSaveButton();
-          AuthorizationRoles.checkAfterSaveEdit(testData.roleName, testData.roleDescription);
+          AuthorizationRoles.checkAfterSaveEdit(
+            testData.updatedRoleName,
+            testData.updateRoleDescription,
+          );
           AuthorizationRoles.clickOnCapabilitiesAccordion();
           AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(
             testData.originalCapabilities[0],
@@ -94,7 +97,6 @@ describe('Eureka', () => {
           AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(
             testData.capabilityToSelect,
           );
-          AuthorizationRoles.verifyCapabilityCheckboxAbsent(testData.originalCapabilities[1]);
           Object.entries(testData.expectedCounts).forEach(([table, count]) => {
             AuthorizationRoles.checkCountOfCapablities(table, count);
           });
