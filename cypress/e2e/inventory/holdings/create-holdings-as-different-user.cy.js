@@ -50,7 +50,7 @@ describe('Inventory', () => {
 
     it(
       'C1294 Create a Holdings record as another user than the one that created the Instance (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'eurekaPhase1'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillRequiredValues(recordsData.instanceTitle);
@@ -60,7 +60,6 @@ describe('Inventory', () => {
         cy.expect(MultiColumnListCell({ row: 0, content: recordsData.instanceTitle }).exists());
 
         // logout and login as a different user
-        cy.logout();
         cy.login(firstUser.username, firstUser.password);
 
         cy.visit(TopMenu.inventoryPath);
