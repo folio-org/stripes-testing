@@ -357,15 +357,15 @@ const tag008DefaultValuesHoldings = [
   { interactor: TextField('AcqEndDate'), defaultValue: '\\\\\\\\' },
   { interactor: TextField('Gen ret'), defaultValue: '\\' },
   {
-    interactor: TextField('Spec ret', { name: 'records[3].content.Spec ret[0]' }),
+    interactor: TextField('Spec ret', { name: 'records[2].content.Spec ret[0]' }),
     defaultValue: '\\',
   },
   {
-    interactor: TextField('Spec ret', { name: 'records[3].content.Spec ret[1]' }),
+    interactor: TextField('Spec ret', { name: 'records[2].content.Spec ret[1]' }),
     defaultValue: '\\',
   },
   {
-    interactor: TextField('Spec ret', { name: 'records[3].content.Spec ret[2]' }),
+    interactor: TextField('Spec ret', { name: 'records[2].content.Spec ret[2]' }),
     defaultValue: '\\',
   },
   { interactor: TextField('Compl'), defaultValue: '\\' },
@@ -415,9 +415,9 @@ const holdingsLocationSaveButton = holdingsLocationModal.find(Button('Save and c
 const defaultValidLdr = '00000naa\\a2200000uu\\4500';
 const defaultValidHoldingsLdr = '00000nu\\\\\\2200000un\\4500';
 const defaultValid008Values = {
-  Type: '\\',
-  BLvl: '\\',
-  DtSt: '\\',
+  Type: 'a',
+  BLvl: 'a',
+  DtSt: '|',
   Date1: '\\\\\\\\',
   Date2: '\\\\\\\\',
   Ctry: '\\\\\\',
@@ -429,10 +429,10 @@ const defaultValid008Values = {
   Form: '\\',
   Cont: ['\\', '\\', '\\', '\\'],
   GPub: '\\',
-  Conf: '\\',
-  Fest: '\\',
-  Indx: '\\',
-  LitF: '\\',
+  Conf: '|',
+  Fest: '|',
+  Indx: '|',
+  LitF: '|',
   Biog: '\\',
 };
 const defaultValid008HoldingsValues = {
@@ -1226,18 +1226,12 @@ export default {
   },
 
   update008TextFields(dropdownLabel, value) {
-    cy.do(
-      QuickMarcEditorRow({ tagValue: '008' })
-        .find(TextField(dropdownLabel))
-        .fillIn(value),
-    );
+    cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(TextField(dropdownLabel)).fillIn(value));
   },
 
   verify008TextFields(dropdownLabel, value) {
     cy.expect(
-      QuickMarcEditorRow({ tagValue: '008' })
-        .find(TextField(dropdownLabel))
-        .has({ value }),
+      QuickMarcEditorRow({ tagValue: '008' }).find(TextField(dropdownLabel)).has({ value }),
     );
   },
 
