@@ -634,7 +634,6 @@ export default {
   },
 
   verifyItemNoteActions(type = 'Note', rowIndex = 0) {
-    console.log('verifyItemNoteActions');
     const options = [
       'Mark as staff only',
       'Remove mark as staff only',
