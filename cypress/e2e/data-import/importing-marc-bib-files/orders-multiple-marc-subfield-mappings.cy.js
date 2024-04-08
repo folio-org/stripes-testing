@@ -35,10 +35,12 @@ describe('Data Import', () => {
     const productIdentifiers = [
       {
         identifier: 'T90028Verve',
+        productIdType: 'Publisher or distributor number',
         rowIndex: 0,
       },
       {
         identifier: 'V-4061Verve',
+        productIdType: 'Publisher or distributor number',
         rowIndex: 1,
       },
     ];
@@ -133,7 +135,7 @@ describe('Data Import', () => {
           orderNumber = polNumber.replace('-1', '');
         });
         productIdentifiers.forEach((id) => {
-          OrderLines.verifyProductIdentifier(id.identifier, id.rowIndex);
+          OrderLines.verifyProductIdentifier(id.identifier, id.productIdType, id.rowIndex);
         });
       },
     );
