@@ -1,8 +1,8 @@
 import {
+  DEFAULT_JOB_PROFILE_NAMES,
   INSTANCE_SOURCE_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -36,7 +36,7 @@ describe('Data Import', () => {
       firstAlternativeTitle:
         'Tibet in dialogue with its neighbour : history, culture and art of central and western Tibet, 8th to 15th century',
       secondAlternativeTitle: '8-15世纪中西部西藏的历史, 文化与艺术',
-      contributerName: 'Forte, Erika',
+      contributerName: 'Forte, Erika,',
       firstPublisher: 'Zhongguo Zang xue chu ban she',
       secondPublisher: '中国藏学出版社',
       language: 'Chinese, English',

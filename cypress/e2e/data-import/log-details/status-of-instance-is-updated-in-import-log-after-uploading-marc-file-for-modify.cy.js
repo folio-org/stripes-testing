@@ -1,11 +1,11 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -121,7 +121,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreate);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
@@ -177,7 +177,7 @@ describe('Data Import', () => {
             JobProfiles.search(jobProfile.profileName);
             JobProfiles.runImportFile();
             Logs.waitFileIsImported(exportedFileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+            Logs.checkJobStatus(exportedFileName, JOB_STATUS_NAMES.COMPLETED);
             Logs.openFileDetails(exportedFileName);
             FileDetails.checkStatusInColumn(
               RECORD_STATUSES.CREATED,

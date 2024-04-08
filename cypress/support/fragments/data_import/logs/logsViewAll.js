@@ -1,23 +1,23 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { or, HTML, including } from '@interactors/html';
+import { HTML, including, or } from '@interactors/html';
 import {
   Accordion,
   Button,
+  Checkbox,
+  Link,
+  Modal,
   MultiColumnList,
+  MultiColumnListCell,
   MultiColumnListHeader,
+  Pane,
+  PaneContent,
   Select,
   Selection,
   SelectionList,
   TextField,
-  Pane,
-  PaneContent,
-  Checkbox,
-  MultiColumnListCell,
-  Modal,
-  Link,
 } from '../../../../../interactors';
-import UrlParams from '../url-params';
 import InteractorsTools from '../../../utils/interactorsTools';
+import UrlParams from '../url-params';
 
 const singleRecordImportsAccordion = Accordion('Inventory single record imports');
 const dataImportList = MultiColumnList({ id: 'list-data-import' });
@@ -457,7 +457,15 @@ export default {
   },
 
   openFileDetails: (fileName) => {
-    cy.do(MultiColumnList({ id: 'list-data-import' }).find(Link(fileName)).click());
+    const newFileName = fileName.replace('.mrc', '');
+
+    cy.do(
+      MultiColumnList({ id: 'list-data-import' })
+        .find(Link(including(newFileName)))
+        .click(),
+    );
+    // TODO need to wait until page is uploaded
+    cy.wait(3500);
   },
   clickNextPaginationButton: () => {
     cy.get('#list-data-import-next-paging-button').then(($button) => {
@@ -602,6 +610,11 @@ export default {
   },
 
   verifySearchResult(fileName) {
-    cy.expect(logsResultPane.find(MultiColumnListCell({ row: 0, content: fileName })).exists());
+    const newFileName = fileName.replace('.mrc', '');
+    cy.expect(
+      logsResultPane
+        .find(MultiColumnListCell({ row: 0, content: including(newFileName) }))
+        .exists(),
+    );
   },
 };

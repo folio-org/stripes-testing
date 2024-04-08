@@ -1,42 +1,44 @@
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
+import SelectProfileModal from '../../../support/fragments/settings/dataImport/modals/selectProfileModal';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import SelectMappingProfile from '../../../support/fragments/settings/dataImport/modals/selectProfileModal';
 
 describe('Data Import', () => {
   describe('Settings', () => {
     const testData = {
       mappingProfiles: [
         {
-          name: `A-C377046${getRandomPostfix()}`,
+          name: `A-C377046_${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
         {
-          name: `B-C377046${getRandomPostfix()}`,
+          name: `B-C377046_${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
         {
-          name: `C-C377046${getRandomPostfix()}`,
+          name: `C-C377046_${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
         {
-          name: `D-C377046${getRandomPostfix()}`,
+          name: `D-C377046_${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
         {
-          name: `Z-C377046${getRandomPostfix()}`,
+          name: `Z-C377046_${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
       ],
 
       newMappingProfile: {
-        name: `E-C377046${getRandomPostfix()}`,
+        name: `E-C377046_${getRandomPostfix()}`,
         typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       },
     };
@@ -84,12 +86,11 @@ describe('Data Import', () => {
         FieldMappingProfiles.verifyProfilesIsSortedInAlphabeticalOrder();
 
         // #5 Select "Action profiles" -> click "Actions" button -> Select "New action profile" option
-        FieldMappingProfiles.openNewMappingProfileForm();
-
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.openNewActionProfileForm();
         // #6 Click "Link profile" button
-        NewFieldMappingProfile.clickLinkProfileButton();
-        SelectMappingProfile.waitLoading();
-        FieldMappingProfiles.verifyProfilesIsSortedInAlphabeticalOrder();
+        NewActionProfile.clickLinkProfileButton();
+        SelectProfileModal.verifyProfilesIsSortedInAlphabeticalOrder();
       },
     );
   });

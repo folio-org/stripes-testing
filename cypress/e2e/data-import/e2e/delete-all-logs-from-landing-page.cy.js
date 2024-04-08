@@ -1,14 +1,14 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
@@ -68,7 +68,7 @@ describe('Data Import', () => {
       () => {
         // need to open file for this we find it
         Logs.openViewAllLogs();
-        cy.wait(5000);
+        cy.wait(8000);
         LogsViewAll.openUserIdAccordion();
         LogsViewAll.filterJobsByUser(`${user.firstName} ${user.lastName}`);
         Logs.openFileDetailsByRowNumber();
@@ -79,10 +79,12 @@ describe('Data Import', () => {
         DataImport.getLogsHrIdsFromUI(numberOfLogsToDelete).then((logsHrIdsToBeDeleted) => {
           // verify that user can cancel deletion of logs
           DataImport.selectAllLogs();
+          cy.wait(2000);
           DataImport.verifyAllLogsCheckedStatus({ logsCount: numberOfLogsPerPage, checked: true });
           DataImport.verifyLogsPaneSubtitleExist(numberOfLogsPerPage);
           DataImport.openDeleteImportLogsModal();
           DataImport.cancelDeleteImportLogs();
+          cy.wait(2000);
           DataImport.verifyAllLogsCheckedStatus({ logsCount: numberOfLogsPerPage, checked: false });
           DataImport.verifyLogsPaneSubtitleAbsent();
           DataImport.verifyDeleteLogsButtonDisabled();

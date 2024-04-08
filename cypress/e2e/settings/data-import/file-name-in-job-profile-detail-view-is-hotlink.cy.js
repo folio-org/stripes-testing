@@ -15,11 +15,13 @@ describe('Data Import', () => {
     let instanceId;
     const filePathToUpload = 'oneMarcBib.mrc';
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
-    const fileNameToUpload = `C380637autotestFile${getRandomPostfix()}.mrc`;
+    const uniquePartOfFileName = getRandomPostfix();
+    const uniqueFileName = `C380637 autotestFileName${uniquePartOfFileName}.mrc`;
+    const uniqueFileNameForSearch = `C380637 autotestFileName${uniquePartOfFileName}_1.mrc`;
 
     before('create test data', () => {
       cy.getAdminToken();
-      DataImport.uploadFileViaApi(filePathToUpload, fileNameToUpload, jobProfileToRun).then(
+      DataImport.uploadFileViaApi(filePathToUpload, uniqueFileName, jobProfileToRun).then(
         (response) => {
           instanceId = response[0].instance.id;
         },
@@ -48,9 +50,9 @@ describe('Data Import', () => {
         JobProfiles.checkListOfExistingProfilesIsDisplayed();
         JobProfiles.search(jobProfileToRun);
         JobProfileView.verifyJobProfileOpened();
-        JobProfileView.verifyJobsUsingThisProfileSection(fileNameToUpload);
-        JobProfileView.openLogDetailsPageView(fileNameToUpload);
-        FileDetails.verifyLogDetailsPageIsOpened(fileNameToUpload);
+        JobProfileView.verifyJobsUsingThisProfileSection(uniqueFileNameForSearch);
+        JobProfileView.openLogDetailsPageView(uniqueFileNameForSearch);
+        FileDetails.verifyLogDetailsPageIsOpened(uniqueFileNameForSearch);
       },
     );
   });

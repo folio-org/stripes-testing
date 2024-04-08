@@ -1,17 +1,17 @@
 import { HTML, including } from '@interactors/html';
 import {
-  MultiColumnListCell,
+  Button,
+  Link,
   MultiColumnList,
+  MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
-  Link,
+  Pane,
   PaneHeader,
   Section,
-  Button,
-  Pane,
 } from '../../../../../interactors';
-import LogsViewAll from './logsViewAll';
 import arrays from '../../../utils/arrays';
+import LogsViewAll from './logsViewAll';
 
 const invoiceNumberFromEdifactFile = '94999';
 
@@ -313,6 +313,7 @@ export default {
         .find(Link(itemStatus))
         .click(),
     );
+    cy.expect(Pane({ id: 'order-lines-details' }).exists());
   },
 
   openItemInInventoryByTitle: (title, columnIndex, itemStatus = 'Updated') => {
@@ -425,7 +426,7 @@ export default {
           // get text contains e.g. 'Created (it00000000123)' and put it to an array
           Array.from(element.querySelectorAll('[class*="baselineCell-"]')).map((el) => extractedMatches.push(el.innerText.match(/(Created \(it\d+\)|No action|-)/g)));
           // get the first element from an array
-          const currentArray = Array.from(extractedMatches[0]);
+          const currentArray = extractedMatches[0];
 
           expect(expectedQuantity).to.equal(currentArray.length);
         }),
@@ -565,7 +566,8 @@ export default {
   },
 
   verifyLogDetailsPageIsOpened: (fileName) => {
-    cy.expect(Pane(including(fileName)).exists());
+    const newFileName = fileName.replace('.mrc', '');
+    cy.expect(Pane(including(newFileName)).exists());
   },
 
   verifyInstanceStatusIsHiperlink: (itmStatus, rowNumber = 0) => {
@@ -611,8 +613,9 @@ export default {
   },
 
   verifyHeader: (fileName, recordsNumber) => {
+    const newFileName = fileName.replace('.mrc', '');
     cy.expect([
-      paneHeader.find(HTML(including(fileName))).exists(),
+      paneHeader.find(HTML(including(newFileName))).exists(),
       paneHeader.find(HTML(including(`${recordsNumber} records found`))).exists(),
     ]);
   },
