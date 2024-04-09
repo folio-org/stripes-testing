@@ -127,9 +127,9 @@ const calloutThreeCharacterMarcTag = Callout(
 const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
 const specRetInputNamesHoldings008 = [
-  'records[3].content.Spec ret[0]',
-  'records[3].content.Spec ret[1]',
-  'records[3].content.Spec ret[2]',
+  'records[4].content.Spec ret[0]',
+  'records[4].content.Spec ret[1]',
+  'records[4].content.Spec ret[2]',
 ];
 
 const paneHeader = PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' });
@@ -357,15 +357,15 @@ const tag008DefaultValuesHoldings = [
   { interactor: TextField('AcqEndDate'), defaultValue: '\\\\\\\\' },
   { interactor: TextField('Gen ret'), defaultValue: '\\' },
   {
-    interactor: TextField('Spec ret', { name: 'records[3].content.Spec ret[0]' }),
+    interactor: TextField('Spec ret', { name: 'records[4].content.Spec ret[0]' }),
     defaultValue: '\\',
   },
   {
-    interactor: TextField('Spec ret', { name: 'records[3].content.Spec ret[1]' }),
+    interactor: TextField('Spec ret', { name: 'records[4].content.Spec ret[1]' }),
     defaultValue: '\\',
   },
   {
-    interactor: TextField('Spec ret', { name: 'records[3].content.Spec ret[2]' }),
+    interactor: TextField('Spec ret', { name: 'records[4].content.Spec ret[2]' }),
     defaultValue: '\\',
   },
   { interactor: TextField('Compl'), defaultValue: '\\' },
@@ -1226,18 +1226,12 @@ export default {
   },
 
   update008TextFields(dropdownLabel, value) {
-    cy.do(
-      QuickMarcEditorRow({ tagValue: '008' })
-        .find(TextField(dropdownLabel))
-        .fillIn(value),
-    );
+    cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(TextField(dropdownLabel)).fillIn(value));
   },
 
   verify008TextFields(dropdownLabel, value) {
     cy.expect(
-      QuickMarcEditorRow({ tagValue: '008' })
-        .find(TextField(dropdownLabel))
-        .has({ value }),
+      QuickMarcEditorRow({ tagValue: '008' }).find(TextField(dropdownLabel)).has({ value }),
     );
   },
 
@@ -2523,6 +2517,24 @@ export default {
       fieldLDR
         .find(TextField({ name: including('records[0].content.19-23 positions') }))
         .has({ disabled: true, value: '\\4500' }),
+    ]);
+  },
+
+  verifyBoxValuesInLDRFieldInMarcAuthorityRecord(field0to4value, statusOption, typeOption, field7to16value, elvlOption, punctOption, field19to23value) {
+    cy.expect([
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.Record length') }))
+        .has({ disabled: true, value: field0to4value }),
+      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS })).has({ checkedOptionText: statusOption }),
+      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.TYPE })).has({ checkedOptionText: typeOption }),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.7-16 positions') }))
+        .has({ disabled: true, value: field7to16value }),
+      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL })).has({ checkedOptionText: elvlOption }),
+      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT })).has({ checkedOptionText: punctOption }),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.19-23 positions') }))
+        .has({ disabled: true, value: field19to23value }),
     ]);
   },
 

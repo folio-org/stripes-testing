@@ -20,7 +20,7 @@ const donorInfoSection = fundEditForm.find(Section({ id: 'donorInformation' }));
 const addDonorButton = donorInfoSection.find(Button({ id: 'fund.donorOrganizationIds-plugin' }));
 
 const cancelButton = fundEditForm.find(Button('Cancel'));
-const saveAndCloseButton = fundEditForm.find(Button('Save & Close'));
+const saveAndCloseButton = fundEditForm.find(Button('Save & close'));
 
 const fundSections = {
   'Fund information': fundInfoSection,

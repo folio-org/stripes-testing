@@ -21,7 +21,7 @@ describe('MARC', () => {
     const users = {};
 
     const marcFile = {
-      marc: 'oneMarcBib.mrc',
+      marc: 'marcBibFileForC358964.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       propertyName: 'instance',
