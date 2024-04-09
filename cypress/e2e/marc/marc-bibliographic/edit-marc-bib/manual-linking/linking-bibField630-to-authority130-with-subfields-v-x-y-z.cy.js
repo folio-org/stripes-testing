@@ -40,7 +40,7 @@ describe('MARC', () => {
         const createdRecordIDs = [];
 
         const bib630AfterLinkingToAuth130 = [
-          23,
+          24,
           testData.tag630,
           '0',
           '7',
@@ -104,13 +104,13 @@ describe('MARC', () => {
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag630);
-            QuickMarcEditor.checkUnlinkTooltipText(23, 'Unlink from MARC Authority record');
+            QuickMarcEditor.checkUnlinkTooltipText(24, 'Unlink from MARC Authority record');
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(bib630AfterLinkingToAuth130[0]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib630AfterLinkingToAuth130);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyInstanceSubject(
-              2,
+              3,
               0,
               `${testData.authorityIconText}${testData.subjectValue}`,
             );

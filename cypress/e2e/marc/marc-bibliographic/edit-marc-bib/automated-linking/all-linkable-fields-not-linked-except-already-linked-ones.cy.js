@@ -104,32 +104,32 @@ describe('MARC', () => {
             naturalId: 'no20200242309',
           },
           {
-            rowIndex: 65,
+            rowIndex: 51,
             tag: '600',
             naturalId: 'n20160040819',
           },
           {
-            rowIndex: 60,
+            rowIndex: 69,
             tag: '610',
             naturalId: 'nb20090244889',
           },
           {
-            rowIndex: 61,
+            rowIndex: 70,
             tag: '611',
             naturalId: 'n822167579',
           },
           {
-            rowIndex: 62,
+            rowIndex: 71,
             tag: '630',
             naturalId: 'no20230068899',
           },
           {
-            rowIndex: 67,
+            rowIndex: 62,
             tag: '650',
             naturalId: 'sh20091259899',
           },
           {
-            rowIndex: 71,
+            rowIndex: 68,
             tag: '651',
             naturalId: 'sh850015319',
           },

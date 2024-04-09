@@ -23,16 +23,16 @@ describe('MARC', () => {
         const autoLinkedFields = [
           { rowIndex: 17, tag: '100', aSubfield: '$a Chin, Staceyann.', isUnlinked: true },
           { rowIndex: 28, tag: '600', aSubfield: '$a Chin, Staceyann.', isUnlinked: true },
-          { rowIndex: 30, tag: '650', aSubfield: '$a Authors, Jamaican', isUnlinked: false },
+          { rowIndex: 31, tag: '650', aSubfield: '$a Authors, Jamaican', isUnlinked: false },
           {
-            rowIndex: 31,
+            rowIndex: 32,
             tag: '650',
             aSubfield: '$a C388515Lesbian authors',
             newContent: '$a C388515Lesbian authors $z Jamaica $v Biography. $0 sh96007532',
             isUnlinked: true,
           },
           {
-            rowIndex: 32,
+            rowIndex: 33,
             tag: '650',
             aSubfield: '$a C388515Lesbian activists',
             newContent: '$a C388515Lesbian activists $z Jamaica $v Biography.',
@@ -43,13 +43,13 @@ describe('MARC', () => {
           { rowIndex: 17, tag: '100', aSubfield: '$a C388515Chin, Staceyann.' },
           { rowIndex: 28, tag: '600', aSubfield: '$a C388515Chin, Staceyann.' },
           {
-            rowIndex: 31,
+            rowIndex: 32,
             tag: '650',
             aSubfield: '$a C388515Lesbian authors',
             newContent: '$a C388515Lesbian authors $z Jamaica $v Biography. $0 sh96007532',
           },
           {
-            rowIndex: 32,
+            rowIndex: 33,
             tag: '650',
             aSubfield: '$a C388515Lesbian activists',
             newContent: '$a C388515Lesbian activists $z Jamaica $v Biography.',

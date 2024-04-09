@@ -63,14 +63,14 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
   const marcFiles = [
     {
       marc: 'marcBibFileForC380467.mrc',
-      fileName: `testMarcFileC375070.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC380467.${getRandomPostfix()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       numOfRecords: 1,
       propertyName: 'instance',
     },
     {
       marc: 'marcAuthFileForC380467.mrc',
-      fileName: `testMarcFileC375070.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC380467.${getRandomPostfix()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       numOfRecords: 10,
       propertyName: 'authority',

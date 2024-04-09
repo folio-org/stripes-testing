@@ -26,8 +26,8 @@ describe('MARC', () => {
             'C388512Lesbian authors',
             'C388512Lesbian activists',
           ],
-          rowsToUnlink: [28, 31, 32],
-          rowsAbleToLink: [17, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 41, 42, 43, 44, 45],
+          rowsToUnlink: [28, 32, 33],
+          rowsAbleToLink: [17, 29, 30, 32, 33, 34, 35, 36, 37, 38, 39, 41, 42, 43, 44, 45],
           field100Values: [
             17,
             '100',
@@ -60,7 +60,7 @@ describe('MARC', () => {
             '',
           ],
           [
-            30,
+            31,
             '650',
             '\\',
             '0',
@@ -70,7 +70,7 @@ describe('MARC', () => {
             '',
           ],
           [
-            31,
+            32,
             '650',
             '\\',
             '0',
@@ -80,7 +80,7 @@ describe('MARC', () => {
             '',
           ],
           [
-            32,
+            33,
             '650',
             '\\',
             '0',
@@ -240,15 +240,15 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.field600AfterManualLinking);
 
-            QuickMarcEditor.updateExistingFieldContent(31, testData.new31RowValue);
-            QuickMarcEditor.updateExistingFieldContent(32, testData.new32RowValue);
+            QuickMarcEditor.updateExistingFieldContent(32, testData.new31RowValue);
+            QuickMarcEditor.updateExistingFieldContent(33, testData.new32RowValue);
 
             QuickMarcEditor.undoDelete();
             QuickMarcEditor.verifyTagFieldNotLinked(...testData.field100Values);
 
             QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(28);
-            QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(30);
+            QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(31);
             testData.rowsAbleToLink.forEach((rowIndex) => {
               QuickMarcEditor.checkLinkButtonExistByRowIndex(rowIndex);
             });

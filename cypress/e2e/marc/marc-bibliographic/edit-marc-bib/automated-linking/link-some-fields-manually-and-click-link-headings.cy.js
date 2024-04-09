@@ -54,7 +54,7 @@ describe('MARC', () => {
             },
           },
           {
-            rowIndex: 32,
+            rowIndex: 33,
             value: 'sh 99014708C388504',
             tag: 650,
             defaultSearchOption: 'advancedSearch',
@@ -74,7 +74,7 @@ describe('MARC', () => {
         ];
 
         const fieldToUpdate = [
-          30,
+          31,
           '650',
           '\\',
           '0',
@@ -82,7 +82,7 @@ describe('MARC', () => {
         ];
 
         const fieldAfterUpdate = [
-          30,
+          31,
           '650',
           '\\',
           '0',

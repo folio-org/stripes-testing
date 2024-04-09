@@ -123,7 +123,7 @@ describe('Data Import', () => {
     ];
 
     const linkingTagAndValues = {
-      rowIndex: 21,
+      rowIndex: 22,
       value:
         'C377005 Cambridge tracts in mathematics and mathematical physics no. 19. english England',
       tag: '830',
@@ -233,7 +233,6 @@ describe('Data Import', () => {
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
-        cy.pause();
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
