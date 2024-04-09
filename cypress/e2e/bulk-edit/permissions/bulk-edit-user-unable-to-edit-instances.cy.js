@@ -70,7 +70,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instances', 'Instance HRIDs');
         BulkEditSearchPane.uploadFile(instanceHRIDFileName);
-        BulkEditSearchPane.checkForUploading(instanceHRIDFileName);
         BulkEditSearchPane.verifyMatchedResults(item.instanceHRID);
         BulkEditSearchPane.verifyPaneRecordsCount(1);
         BulkEditActions.openActions();
