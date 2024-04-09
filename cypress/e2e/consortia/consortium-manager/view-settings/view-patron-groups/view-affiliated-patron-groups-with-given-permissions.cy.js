@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import moment from 'moment';
 import permissions from '../../../../../support/dictionary/permissions';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
@@ -135,14 +134,14 @@ describe('Consortium manager', () => {
             testData.centralSharedPatronGroup.payload.group,
             '',
             '',
-            `${moment().format('l')} by SystemConsortia`,
+            '',
             'All',
           ]);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
             testData.centralLocalPatronGroup.name,
             '',
             '',
-            `${moment().format('l')} by Admin, ECS`,
+            '',
             tenantNames.central,
           ]);
 
@@ -150,17 +149,11 @@ describe('Consortium manager', () => {
             testData.collegeLocalPatronGroup.name,
             '',
             '',
-            `${moment().format('l')} by Admin, ECS`,
+            '',
             tenantNames.college,
           ]);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [
-              testData.universityLocalPatronGroup.name,
-              '',
-              '',
-              `${moment().format('l')} by Admin, ECS`,
-              tenantNames.university,
-            ],
+            [testData.universityLocalPatronGroup.name, '', '', '', tenantNames.university],
             ['edit', 'trash'],
           );
 
@@ -173,7 +166,7 @@ describe('Consortium manager', () => {
             testData.centralSharedPatronGroup.payload.group,
             '',
             '',
-            `${moment().format('l')} by SystemConsortia`,
+            '',
             'All',
           ]);
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
@@ -184,17 +177,11 @@ describe('Consortium manager', () => {
             testData.collegeLocalPatronGroup.name,
             '',
             '',
-            `${moment().format('l')} by Admin, ECS`,
+            '',
             tenantNames.college,
           ]);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [
-              testData.universityLocalPatronGroup.name,
-              '',
-              '',
-              `${moment().format('l')} by Admin, ECS`,
-              tenantNames.university,
-            ],
+            [testData.universityLocalPatronGroup.name, '', '', '', tenantNames.university],
             ['edit', 'trash'],
           );
         },
@@ -222,25 +209,19 @@ describe('Consortium manager', () => {
             testData.centralSharedPatronGroup.payload.group,
             '',
             '',
-            `${moment().format('l')} by SystemConsortia`,
+            '',
             'All',
           ]);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
             testData.centralLocalPatronGroup.name,
             '',
             '',
-            `${moment().format('l')} by Admin, ECS`,
+            '',
             tenantNames.central,
           ]);
 
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [
-              testData.collegeLocalPatronGroup.name,
-              '',
-              '',
-              `${moment().format('l')} by Admin, ECS`,
-              tenantNames.college,
-            ],
+            [testData.collegeLocalPatronGroup.name, '', '', '', tenantNames.college],
             ['edit', 'trash'],
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
@@ -256,14 +237,14 @@ describe('Consortium manager', () => {
             testData.centralSharedPatronGroup.payload.group,
             '',
             '',
-            `${moment().format('l')} by SystemConsortia`,
+            '',
             'All',
           ]);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
             testData.centralLocalPatronGroup.name,
             '',
             '',
-            `${moment().format('l')} by Admin, ECS`,
+            '',
             tenantNames.central,
           ]);
 

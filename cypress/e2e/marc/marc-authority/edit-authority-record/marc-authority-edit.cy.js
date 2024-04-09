@@ -92,8 +92,8 @@ describe('MARC', () => {
           QuickMarcEditor.undoDelete();
           MarcAuthority.changeTag(testData.authority.rowIndex, testData.authority.tag);
           QuickMarcEditor.checkContentByTag(
-            '$a Twain, Mark, $d 1835-1910. $t Adventures of Huckleberry Finn',
             testData.authority.tag,
+            '$a Twain, Mark, $d 1835-1910. $t Adventures of Huckleberry Finn',
           );
           MarcAuthority.checkAddNew1XXTag(
             testData.authority.rowIndex,

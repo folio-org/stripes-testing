@@ -3,6 +3,7 @@ import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYe
 import NewFiscalYear from '../../../support/fragments/finance/fiscalYears/newFiscalYear';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 
 describe('ui-finance: Fiscal Year', () => {
   const defaultFiscalYear = { ...NewFiscalYear.defaultFiscalYear };
@@ -21,6 +22,7 @@ describe('ui-finance: Fiscal Year', () => {
   });
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.fiscalYearPath, waiter: FiscalYears.waitLoading });
+    FinanceHelp.searchByName(defaultFiscalYear.name);
     FiscalYears.selectFY(defaultFiscalYear.name);
     FiscalYears.deleteFiscalYearViaActions();
     Users.deleteViaApi(user.userId);

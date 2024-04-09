@@ -148,7 +148,7 @@ describe('MARC', () => {
                 JobProfiles.waitLoadingList();
                 JobProfiles.search(marcFile.jobProfileToRun);
                 JobProfiles.runImportFile();
-                JobProfiles.waitFileIsImported(marcFile.fileName);
+                Logs.waitFileIsImported(marcFile.fileName);
                 Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
                 Logs.openFileDetails(marcFile.fileName);
                 Logs.getCreatedItemsID().then((link) => {
@@ -212,7 +212,7 @@ describe('MARC', () => {
         'C410775 Derive new Local MARC bib record from shadow Instance with "MARC" source and link it in Member tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire'] },
         () => {
-          InventoryInstances.searchByTitle('c573889c-4ac4-432f-86ad-9de618296919');
+          InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstance.checkPresentedText(testData.instanceTitle);
           InventoryInstance.checkSharedTextInDetailView();
           InventoryInstance.checkExpectedMARCSource();
