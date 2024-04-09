@@ -82,17 +82,6 @@ describe('MARC', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      InventoryInstances.getInstancesViaApi({
-        limit: 100,
-        query: `title="${marcFiles[0].instanceTitle}"`,
-      }).then((instances) => {
-        if (instances) {
-          instances.forEach(({ id }) => {
-            InventoryInstance.deleteInstanceViaApi(id);
-          });
-        }
-      });
-
       testData.searchAuthorityQueries.forEach((query) => {
         MarcAuthorities.getMarcAuthoritiesViaApi({
           limit: 100,

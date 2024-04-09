@@ -15,6 +15,7 @@ import {
 } from '../../../../interactors';
 
 const buildQueryModal = Modal('Build query');
+const buildQueryButton = Button('Build query');
 const testQueryButton = Button('Test query');
 const cancelButton = Button('Cancel');
 const runQueryButton = Button('Run query');
@@ -291,5 +292,9 @@ export default {
 
   verifyClosed() {
     cy.do(buildQueryModal.absent());
+  },
+
+  buildQueryButtonDisabled(disabled = true) {
+    cy.do(buildQueryButton.has({ disabled }));
   },
 };
