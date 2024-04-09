@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -10,7 +11,6 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -60,7 +60,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(jobProfileToRun);
         Logs.openFileDetails(fileName);
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileName);
         FileDetails.openJsonScreen(title);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.openMarcSrsTab();

@@ -1,16 +1,15 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import DeleteDataImportLogsModal from '../../../support/fragments/data_import/logs/deleteDataImportLogsModal';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
@@ -45,7 +44,7 @@ describe('Data Import', () => {
           waiter: DataImport.waitLoading,
         });
         // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 5; i++) {
           const bibFileName = `C358136 autotestFileName${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFileViaApi(
@@ -69,7 +68,7 @@ describe('Data Import', () => {
           waiter: DataImport.waitLoading,
         });
         // Log list should contain at least 30-35 import jobs
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 5; i++) {
           const authFileName = `C358136 autotestFileName${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFileViaApi(

@@ -2,16 +2,16 @@ import { HTML, including } from '@interactors/html';
 import {
   Accordion,
   Button,
-  Pane,
-  MultiSelect,
-  ValueChipRoot,
-  MultiColumnList,
-  MultiColumnListRow,
-  MultiColumnListCell,
-  MultiSelectOption,
   Callout,
-  Modal,
   Link,
+  Modal,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  MultiSelect,
+  MultiSelectOption,
+  Pane,
+  ValueChipRoot,
 } from '../../../../../interactors';
 
 const viewPane = Pane({ id: 'view-job-profile-pane' });
@@ -216,7 +216,7 @@ export default {
   verifyJobsUsingThisProfileSection(fileName) {
     cy.do(
       Accordion('Jobs using this profile')
-        .find(MultiColumnListCell({ content: fileName }))
+        .find(MultiColumnListCell({ content: including(fileName) }))
         .perform((element) => {
           const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
 

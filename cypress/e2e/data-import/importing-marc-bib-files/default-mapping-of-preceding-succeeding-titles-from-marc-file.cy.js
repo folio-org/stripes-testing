@@ -1,12 +1,16 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
+} from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import TopMenu from '../../../support/fragments/topMenu';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -35,8 +39,8 @@ describe('Data Import', () => {
         Logs.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByTitle('Justus Liebigs Annalen der Chemie.');
+        Logs.openFileDetails(fileName);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.verifyPrecedingTitle(titles.precedingTitles);
         InstanceRecordView.verifySucceedingTitle(titles.succeedingTitles);
