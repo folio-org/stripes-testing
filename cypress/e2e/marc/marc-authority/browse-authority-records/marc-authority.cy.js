@@ -1,4 +1,11 @@
-import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  RECORD_STATUSES,
+  AUTHORITY_LDR_FIELD_STATUS_DROPDOWN,
+  AUTHORITY_LDR_FIELD_TYPE_DROPDOWN,
+  AUTHORITY_LDR_FIELD_ELVL_DROPDOWN,
+  AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN,
+} from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -21,7 +28,6 @@ describe('MARC', () => {
         authority: {
           title: 'Congress and foreign policy series',
           nonExactTitle: 'Congress',
-          ldr: '00846cz\\\\a2200241n\\\\4500',
           searchOption: 'Uniform title',
           newField: {
             title: `Test authority ${getRandomPostfix()}`,
@@ -171,7 +177,15 @@ describe('MARC', () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
           MarcAuthority.edit();
-          MarcAuthority.checkLDRValue(testData.authority.ldr);
+          QuickMarcEditor.verifyBoxValuesInLDRFieldInMarcAuthorityRecord(
+            '00846',
+            AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.C,
+            AUTHORITY_LDR_FIELD_TYPE_DROPDOWN.Z,
+            '\\\\a2200241',
+            AUTHORITY_LDR_FIELD_ELVL_DROPDOWN.N,
+            AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN['\\'],
+            '\\4500',
+          );
           MarcAuthority.check008Field();
           MarcAuthority.checkRemovedTag(9);
         },
