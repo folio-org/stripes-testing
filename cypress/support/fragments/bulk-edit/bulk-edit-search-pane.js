@@ -358,8 +358,8 @@ export default {
   },
 
   verifyCsvViewPermission() {
+    this.verifyUsersRadioAbsent();
     cy.expect([
-      usersRadio.absent(),
       itemsRadio.absent(),
       holdingsRadio.absent(),
       fileButton.has({ disabled: true }),
@@ -378,8 +378,8 @@ export default {
   },
 
   verifyInAppViewPermission() {
+    this.verifyUsersRadioAbsent();
     cy.expect([
-      usersRadio.absent(),
       itemsRadio.absent(),
       holdingsRadio.absent(),
       fileButton.has({ disabled: true }),
@@ -410,6 +410,10 @@ export default {
 
   verifyInputLabel(name) {
     cy.expect(HTML(name).exists());
+  },
+
+  verifyUsersRadioAbsent() {
+    cy.expect(usersRadio.absent());
   },
 
   checkUsersRadio() {
@@ -839,7 +843,8 @@ export default {
 
   verifyRecordTypesAccordionCollapsed() {
     this.recordTypesAccordionExpanded(false);
-    cy.expect([usersRadio.absent(), itemsRadio.absent(), holdingsRadio.absent()]);
+    this.verifyUsersRadioAbsent();
+    cy.expect([itemsRadio.absent(), holdingsRadio.absent()]);
   },
 
   verifyUserAccordionCollapsed() {
