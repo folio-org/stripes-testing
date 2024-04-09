@@ -1,5 +1,5 @@
+import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import { RECORD_STATUSES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -14,13 +14,15 @@ describe('Data Import', () => {
   describe('Permissions', () => {
     let user;
     let instnaceId;
-    const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
+    const uniquePartOfFileName = getRandomPostfix();
+    const uniqueFileName = `C356780 autotestFileName${uniquePartOfFileName}.mrc`;
+    const uniqueFileNameForSearch = `C356780 autotestFileName${uniquePartOfFileName}_1.mrc`;
 
     before('create test data', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         'oneMarcBib.mrc',
-        fileName,
+        uniqueFileName,
         DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       ).then((response) => {
         instnaceId = response[0].instance.id;
@@ -53,8 +55,8 @@ describe('Data Import', () => {
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
-        LogsViewAll.searchWithTerm(fileName);
-        LogsViewAll.openFileDetails(fileName);
+        LogsViewAll.searchWithTerm(uniqueFileNameForSearch);
+        LogsViewAll.openFileDetails(uniqueFileName);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstances.verifyInstanceDetailsView();
       },

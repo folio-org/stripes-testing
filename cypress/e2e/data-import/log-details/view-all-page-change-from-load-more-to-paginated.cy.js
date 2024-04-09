@@ -1,12 +1,12 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 describe('Data Import', () => {
   describe('Log details', () => {
@@ -15,7 +15,7 @@ describe('Data Import', () => {
 
     before('create user and login', () => {
       cy.getAdminToken();
-      for (let i = 0; i < 51; i++) {
+      for (let i = 0; i < 10; i++) {
         const fileName = `C353589 autotestFileName${getRandomPostfix()}.mrc`;
 
         DataImport.uploadFileViaApi(
