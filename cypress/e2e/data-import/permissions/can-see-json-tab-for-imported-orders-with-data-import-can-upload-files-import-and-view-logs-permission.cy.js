@@ -139,7 +139,7 @@ describe('Data Import', () => {
       'C377023 A user can see JSON tab for imported Orders with "Data import: Can upload files, import, and view logs" permission (folijet)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const message = `Import Log for Record 1 (${title})`;
+        const message = `Import Log for Record 01 (${title})`;
 
         Logs.openFileDetails(marcFileName);
         FileDetails.openJsonScreen(title);
