@@ -2228,7 +2228,10 @@ export default {
   },
 
   check008BoxesCount(count) {
-    cy.get('div[data-testid="bytes-field-col"]').should('have.length', count);
+    cy.get('input[value="008"]')
+      .parents('[data-testid="quick-marc-editorid"]')
+      .find('div[data-testid="bytes-field-col"]')
+      .should('have.length', count);
   },
 
   checkTagAbsent(tag) {
@@ -2520,18 +2523,34 @@ export default {
     ]);
   },
 
-  verifyBoxValuesInLDRFieldInMarcAuthorityRecord(field0to4value, statusOption, typeOption, field7to16value, elvlOption, punctOption, field19to23value) {
+  verifyBoxValuesInLDRFieldInMarcAuthorityRecord(
+    field0to4value,
+    statusOption,
+    typeOption,
+    field7to16value,
+    elvlOption,
+    punctOption,
+    field19to23value,
+  ) {
     cy.expect([
       fieldLDR
         .find(TextField({ name: including('records[0].content.Record length') }))
         .has({ disabled: true, value: field0to4value }),
-      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS })).has({ checkedOptionText: statusOption }),
-      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.TYPE })).has({ checkedOptionText: typeOption }),
+      fieldLDR
+        .find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS }))
+        .has({ checkedOptionText: statusOption }),
+      fieldLDR
+        .find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.TYPE }))
+        .has({ checkedOptionText: typeOption }),
       fieldLDR
         .find(TextField({ name: including('records[0].content.7-16 positions') }))
         .has({ disabled: true, value: field7to16value }),
-      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL })).has({ checkedOptionText: elvlOption }),
-      fieldLDR.find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT })).has({ checkedOptionText: punctOption }),
+      fieldLDR
+        .find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL }))
+        .has({ checkedOptionText: elvlOption }),
+      fieldLDR
+        .find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT }))
+        .has({ checkedOptionText: punctOption }),
       fieldLDR
         .find(TextField({ name: including('records[0].content.19-23 positions') }))
         .has({ disabled: true, value: field19to23value }),
