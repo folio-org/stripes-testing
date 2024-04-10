@@ -77,6 +77,7 @@ export default {
       userSearchModal.find(firstSearchResult).find(checkboxAll).click(),
       userSearchModal.find(saveButton).click(),
     ]);
+    cy.wait(4000);
   },
 
   assignAdmin: () => {
@@ -87,6 +88,7 @@ export default {
       firstSearchResult.find(checkboxAll).click(),
       userSearchModal.find(saveButton).click(),
     ]);
+    cy.wait(4000);
   },
 
   unAssignUser: (AUName) => {
