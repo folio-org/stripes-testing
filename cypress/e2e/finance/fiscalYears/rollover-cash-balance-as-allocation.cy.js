@@ -110,7 +110,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         firstOrder.id = secondOrderResponse.id;
         Orders.checkCreatedOrder(firstOrder);
         OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
         OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
           defaultFund,
           '10',
