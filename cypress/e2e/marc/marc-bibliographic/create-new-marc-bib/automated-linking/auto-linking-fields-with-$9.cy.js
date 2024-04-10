@@ -161,7 +161,7 @@ describe('MARC', () => {
             newFields.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
             });
-            cy.wait(1000);
+            cy.wait(3000);
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(5);
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(6);
