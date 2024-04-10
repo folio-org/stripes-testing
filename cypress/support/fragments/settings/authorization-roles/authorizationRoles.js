@@ -291,4 +291,15 @@ export default {
         .absent(),
     );
   },
+
+  verifyCapabilityCheckboxChecked: ({ table, resource, action }, isSelected = true) => {
+    const targetCheckbox = capabilitiesAccordion
+      .find(capabilityTables[table])
+      .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
+    cy.expect(targetCheckbox.has({ checked: isSelected }));
+  },
+
+  verifyCapabilityTableAbsent(tableName) {
+    cy.expect(capabilitiesAccordion.find(capabilityTables[tableName]).absent());
+  },
 };
