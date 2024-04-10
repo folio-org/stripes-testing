@@ -38,7 +38,7 @@ describe('MARC', () => {
 
         const linkingTagAndValues = [
           {
-            rowIndex: 70,
+            rowIndex: 65,
             value: 'C389486 Superheroes',
             tag: 650,
             boxSecond: '\\',
@@ -88,32 +88,32 @@ describe('MARC', () => {
             naturalId: 'no2020024230C389486',
           },
           {
-            rowIndex: 65,
+            rowIndex: 51,
             tag: '600',
             naturalId: 'n2016004081C389486',
           },
           {
-            rowIndex: 60,
+            rowIndex: 69,
             tag: '610',
             naturalId: 'nb2009024488C389486',
           },
           {
-            rowIndex: 61,
+            rowIndex: 70,
             tag: '611',
             naturalId: 'n82216757C389486',
           },
           {
-            rowIndex: 62,
+            rowIndex: 71,
             tag: '630',
             naturalId: 'no2023006889C389486',
           },
           {
-            rowIndex: 67,
+            rowIndex: 62,
             tag: '650',
             naturalId: 'sh2009125989C389486',
           },
           {
-            rowIndex: 71,
+            rowIndex: 68,
             tag: '651',
             naturalId: 'sh85001531C389486',
           },
