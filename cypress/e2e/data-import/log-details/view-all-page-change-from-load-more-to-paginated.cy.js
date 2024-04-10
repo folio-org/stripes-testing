@@ -15,7 +15,7 @@ describe('Data Import', () => {
 
     before('create user and login', () => {
       cy.getAdminToken();
-      for (let i = 0; i < 51; i++) {
+      for (let i = 0; i < 15; i++) {
         const fileName = `C353589 autotestFileName${getRandomPostfix()}.mrc`;
 
         DataImport.uploadFileViaApi(

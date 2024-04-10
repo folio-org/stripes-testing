@@ -110,7 +110,8 @@ describe('Data Import', () => {
 
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate('2020-09-10');
-          cy.go('back');
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(firstMarcFileName);
         });
         // check the second instance without Cataloged date
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
@@ -146,7 +147,8 @@ describe('Data Import', () => {
 
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate(DateTools.getFormattedDate({ date: new Date() }));
-          cy.go('back');
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(secondMarcFileName);
         });
         // check the second instance without Cataloged date
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
@@ -182,7 +184,8 @@ describe('Data Import', () => {
 
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate('2020-06-01');
-          cy.go('back');
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(thirdMarcFileName);
         });
         // check the second instance without Cataloged date
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
@@ -218,7 +221,8 @@ describe('Data Import', () => {
 
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate('2020-09-10');
-          cy.go('back');
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(forthMarcFileName);
         });
         // check the second instance without Cataloged date
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);

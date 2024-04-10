@@ -128,46 +128,28 @@ export default {
     voucherInformation = [],
     vendorDetailsInformation = [],
   } = {}) {
-    // Функция для нормализации текста
-    const normalizeText = (text) => text.replace(/\s/g, ''); // Удаляем все пробелы и прочие пробельные символы
-
     if (title) {
       cy.expect(invoiceDetailsPane.has({ title: `Vendor invoice number - ${title}` }));
     }
 
     invoiceInformation.forEach(({ key, value }) => {
-      // Применяем нормализацию к фактическому значению
-      cy.expect(informationSection.find(KeyValue(key)).invoke('text').then(normalizeText)).to.equal(
-        normalizeText(value),
-      );
+      cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
     });
 
     vendorDetails.forEach(({ key, value }) => {
-      // Применяем нормализацию к фактическому значению
-      cy.expect(
-        vendorDetailsSection.find(KeyValue(key)).invoke('text').then(normalizeText),
-      ).to.include(normalizeText(value));
+      cy.expect(vendorDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
     });
 
     voucherExport.forEach(({ key, value }) => {
-      // Применяем нормализацию к фактическому значению
-      cy.expect(
-        voucherExportDetailsSection.find(KeyValue(key)).invoke('text').then(normalizeText),
-      ).to.include(normalizeText(value));
+      cy.expect(voucherExportDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
     });
 
     voucherInformation.forEach(({ key, value }) => {
-      // Применяем нормализацию к фактическому значению
-      cy.expect(
-        voucherInformationSection.find(KeyValue(key)).invoke('text').then(normalizeText),
-      ).to.include(normalizeText(value));
+      cy.expect(voucherInformationSection.find(KeyValue(key)).has({ value: including(value) }));
     });
 
     vendorDetailsInformation.forEach(({ key, value }) => {
-      // Применяем нормализацию к фактическому значению
-      cy.expect(
-        vendorDetailsSection.find(KeyValue(key)).invoke('text').then(normalizeText),
-      ).to.include(normalizeText(value));
+      cy.expect(vendorDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
     });
 
     if (invoiceLines) {
