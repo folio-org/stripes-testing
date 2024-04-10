@@ -110,6 +110,10 @@ describe('data-import', () => {
           }
         },
       );
+      cy.loginAsAdmin({
+        path: SettingsMenu.mappingProfilePath,
+        waiter: FieldMappingProfiles.waitLoading,
+      });
     });
 
     after('delete test data', () => {
@@ -134,7 +138,6 @@ describe('data-import', () => {
       { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profile for creating instance
-        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(
           collectionOfMappingAndActionProfiles[0].mappingProfile,

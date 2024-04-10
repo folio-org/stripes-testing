@@ -1,4 +1,3 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -11,12 +10,10 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('data-import', () => {
   describe('End to end scenarios', () => {
     let userId = null;
-    let fileNameToUpload = '';
+    const fileNameToUpload = `C358137autotestFile.${getRandomPostfix()}.mrc`;
     const filePathToUpload = 'oneMarcBib.mrc';
-    const emptyFilePathToUpload = 'emptyMarc.mrc';
     const numberOfLogsToDelete = 2;
     const numberOfLogsPerPage = 25;
-    const numberOfLogsToUpload = 30;
     const getCalloutSuccessMessage = (logsCount) => `${logsCount} data import logs have been successfully deleted.`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
@@ -33,33 +30,19 @@ describe('data-import', () => {
           });
         })
         .then(() => {
-          DataImport.checkIsLandingPageOpened();
-
-          new Array(numberOfLogsToUpload).fill(null).forEach((_, index) => {
-            // as stated in preconditions we need at least 30 logs so,
-            // we are uploading 29 empty files and 1 file with content to speed up uploading process
-            const filePath =
-              numberOfLogsToUpload - 1 === index ? filePathToUpload : emptyFilePathToUpload;
-            fileNameToUpload = `C358137autotestFile.${getRandomPostfix()}.mrc`;
-            // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-            DataImport.verifyUploadState();
-            DataImport.waitLoading();
-            DataImport.uploadFile(filePath, fileNameToUpload);
-            JobProfiles.waitFileIsUploaded();
-            JobProfiles.search(jobProfileToRun);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(fileNameToUpload);
-            cy.wait(5000);
-          });
+          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.verifyUploadState();
+          DataImport.waitLoading();
+          DataImport.uploadFile(filePathToUpload, fileNameToUpload);
+          JobProfiles.waitFileIsUploaded();
+          JobProfiles.search(jobProfileToRun);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(fileNameToUpload);
         });
     });
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        Logs.selectAllLogs();
-        Logs.actionsButtonClick();
-        Logs.deleteLogsButtonClick();
-        DataImport.confirmDeleteImportLogs();
         Users.deleteViaApi(userId);
       });
     });
