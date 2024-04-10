@@ -141,6 +141,7 @@ describe('Data Import', () => {
         );
         FileDetails.openJsonScreen(title);
         JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.openMarcSrsTab();
         JsonScreenView.verifyContentInTab('No record');
       },
     );
