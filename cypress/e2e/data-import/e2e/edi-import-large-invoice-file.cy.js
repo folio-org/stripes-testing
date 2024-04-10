@@ -24,7 +24,7 @@ describe('data-import', () => {
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.harrassowitz;
     const fileName = `C347615autotestFile.${getRandomPostfix()}.edi`;
     const mappingProfile = {
-      name: `Import Large Harrassowitz Serials Invoice ${getRandomPostfix()}`,
+      name: `C347615 Import Large Harrassowitz Serials Invoice ${getRandomPostfix()}`,
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
       typeValue: FOLIO_RECORD_TYPE.INVOICE,
       description: '',
@@ -33,12 +33,12 @@ describe('data-import', () => {
       paymentMethod: PAYMENT_METHOD.CASH,
     };
     const actionProfile = {
-      name: `Create Large Harrassowitz serials invoice ${getRandomPostfix()}`,
+      name: `C347615 Create Large Harrassowitz serials invoice ${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INVOICE,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `Create Large Harrassowitz serials invoice ${getRandomPostfix()}`,
+      profileName: `C347615 Create Large Harrassowitz serials invoice ${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.EDIFACT,
     };
 
@@ -86,7 +86,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
-        cy.wait(5000);
+        cy.wait(120000);
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkImportFile(jobProfile.profileName);
         Logs.checkStatusOfJobProfile();

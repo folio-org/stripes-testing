@@ -48,8 +48,9 @@ describe('data-import', () => {
         JobProfiles.runImportFile();
         DataImport.checkIsLandingPageOpened();
         Logs.checkFileIsRunning(marcFileName);
+        cy.wait(60000);
         JobProfiles.waitFileIsImported(marcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
       },
     );
   });

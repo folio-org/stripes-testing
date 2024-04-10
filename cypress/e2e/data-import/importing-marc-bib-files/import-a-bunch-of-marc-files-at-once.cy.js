@@ -43,7 +43,7 @@ describe('data-import', () => {
 
           Logs.openViewAllLogs();
           LogsViewAll.viewAllIsOpened();
-          cy.wait(20000);
+          cy.wait(120000);
           LogsViewAll.selectOption('Keyword (ID, File name)');
           LogsViewAll.searchWithTerm(upload.fileName);
           LogsViewAll.verifyQuantityOfLogs(upload.quantityOfFiles);
