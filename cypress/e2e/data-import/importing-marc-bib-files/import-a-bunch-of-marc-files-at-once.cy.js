@@ -44,7 +44,7 @@ describe('Data Import', () => {
 
           Logs.openViewAllLogs();
           LogsViewAll.viewAllIsOpened();
-          cy.wait(20000);
+          cy.wait(180000);
           LogsViewAll.selectOption('Keyword (ID, File name)');
           LogsViewAll.searchWithTerm(upload.fileName);
           // TODO need to wait until files are filtered

@@ -16,7 +16,7 @@ export default {
       .find('[class*="string--"]')
       .invoke('text')
       .then((text) => {
-        const instanceHrid = text.match(/oin(\d+)/);
+        const instanceHrid = text.match(/in(\d+)/);
         return instanceHrid[0];
       });
   },

@@ -77,6 +77,7 @@ export default {
     cy.do(searchButton.click());
   },
   clearSearchField() {
+    cy.wait(2000);
     cy.get('#orders-filters-pane-content').find('#input-record-search').clear();
   },
   waitLoading() {

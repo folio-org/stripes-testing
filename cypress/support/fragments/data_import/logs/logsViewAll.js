@@ -399,7 +399,7 @@ export default {
         },
       })
       .then(({ body }) => {
-        return body.jobExecutions[0];
+        return body.jobExecutions[1];
       });
   },
 
