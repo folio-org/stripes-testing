@@ -227,6 +227,10 @@ export default {
     cy.do([cancellationReasonSelect.choose('INN-Reach'), confirmButton.click()]);
   },
 
+  confirmCancellation() {
+    cy.do(confirmButton.click());
+  },
+
   selectCancellationReason(reason) {
     cy.do(cancellationReasonSelect.choose(reason));
   },

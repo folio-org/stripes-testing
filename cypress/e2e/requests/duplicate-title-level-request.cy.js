@@ -11,6 +11,7 @@ import EditRequest from '../../support/fragments/requests/edit-request';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
@@ -44,6 +45,7 @@ describe('Title Level Request', () => {
   before('Create preconditions', () => {
     cy.getAdminToken()
       .then(() => {
+        TitleLevelRequests.enableTLRViaApi();
         ServicePoints.createViaApi(servicePoint1);
         ServicePoints.createViaApi(servicePoint2);
         defaultLocation = Location.getDefaultLocation(servicePoint1.id);
