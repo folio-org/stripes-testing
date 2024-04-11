@@ -7,7 +7,6 @@ import SelectInstanceModal from '../../support/fragments/requests/selectInstance
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -117,11 +116,7 @@ describe('Title Level Request', () => {
         testData.tag.id = id;
       });
 
-      cy.loginAsAdmin({
-        path: SettingsMenu.circulationTitleLevelRequestsPath,
-        waiter: TitleLevelRequests.waitLoading,
-      });
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+      TitleLevelRequests.enableTLRViaApi();
 
       cy.createTempUser(
         [

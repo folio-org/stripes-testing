@@ -67,6 +67,7 @@ describe('Title Level Request', () => {
         Permissions.uiUsersView.gui,
         Permissions.loansAll.gui,
         Permissions.loansRenewOverride.gui,
+        Permissions.folio_admin.gui,
       ],
       patronGroup.name,
     ).then((user) => {
