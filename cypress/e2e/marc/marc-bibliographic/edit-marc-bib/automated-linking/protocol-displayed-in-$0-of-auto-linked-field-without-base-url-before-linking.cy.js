@@ -146,6 +146,8 @@ describe('MARC', () => {
                 source.sourceName,
                 source.isChecked,
                 source.baseUrl,
+                // TO DO: remove `failOnStatusCode = false` after MODELINKS-210 is done
+                true,
               ).then((sourceId) => {
                 createdAuthSources.push(sourceId);
               });

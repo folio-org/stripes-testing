@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, INVENTORY_008_FIELD_CONF_DROPDOWN } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -87,6 +87,7 @@ describe('MARC', () => {
         QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.updatedTag245Value}`);
         // wait for updates to apply
         cy.wait(1000);
+        QuickMarcEditor.selectFieldsDropdownOption('008', 'Conf', INVENTORY_008_FIELD_CONF_DROPDOWN.ONE);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
