@@ -1,9 +1,10 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import DataImport from '../../../support/fragments/data_import/dataImport';
 
 describe('Data Import', () => {
   describe('Log details', () => {
@@ -38,8 +39,8 @@ describe('Data Import', () => {
         Logs.openViewAllLogs();
         LogsViewAll.checkByReverseChronologicalOrder();
         LogsViewAll.getAllLogsColumnsResults(jobProfileColumn).then((beforeFilteringCells) => {
-          LogsViewAll.filterJobsByJobProfile('Inventory Single Record - Default Create Instance');
-          LogsViewAll.checkByJobProfileName('Inventory Single Record - Default Create Instance');
+          LogsViewAll.filterJobsByJobProfile(DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS);
+          LogsViewAll.checkByJobProfileName(DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS);
           LogsViewAll.getAllLogsColumnsResults(jobProfileColumn).then(
             (afterFilteringByJobProfileCells) => {
               cy.expect(beforeFilteringCells).to.not.deep.equal(afterFilteringByJobProfileCells);

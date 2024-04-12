@@ -10,14 +10,11 @@ export default {
 
   getInstanceHrid: () => {
     return cy
-      .contains('"instanceHrid":')
-      .should('exist')
-      .invoke('parent')
-      .find('[class*="string--"]')
+      .get('[class*="info--"]')
       .invoke('text')
       .then((text) => {
-        const instanceHrid = text.match(/in(\d+)/);
-        return instanceHrid[0];
+        const instanceHrid = text.match(/"instanceHrid":\s*(.*)/);
+        return instanceHrid[1].slice(1, -1);
       });
   },
 
