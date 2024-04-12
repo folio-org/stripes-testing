@@ -87,10 +87,15 @@ const getDefaultItemActionProfile = (name) => {
   return defaultItemActionProfile;
 };
 
+const clickLinkProfileButton = () => {
+  cy.do(profileLinkButton.click());
+};
+
 export default {
   getDefaultInstanceActionProfile,
   getDefaultHoldingsActionProfile,
   getDefaultItemActionProfile,
+  clickLinkProfileButton,
   fill: (specialActionProfile = defaultActionProfile) => {
     cy.do([
       nameField.fillIn(specialActionProfile.name),
@@ -108,7 +113,7 @@ export default {
   saveProfile: () => cy.do(Button('Save as profile & Close').click()),
 
   linkMappingProfile: (specialMappingProfileName) => {
-    cy.do(profileLinkButton.click());
+    clickLinkProfileButton();
     SelectMappingProfile.searchProfile(specialMappingProfileName);
     SelectMappingProfile.selectProfile(specialMappingProfileName);
     cy.expect(profileLinkSection.find(profileLinkButton).has({ disabled: true }));
