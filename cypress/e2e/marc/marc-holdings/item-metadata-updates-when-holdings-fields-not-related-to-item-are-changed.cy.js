@@ -61,7 +61,7 @@ describe('MARC', () => {
         marcFiles[0].jobProfileToRun,
       ).then((response) => {
         response.forEach((record) => {
-          testData.instanceHrid = record[0].instance.hrid;
+          testData.instanceHrid = record.instance.hrid;
 
           // edit marc file adding instance hrid
           DataImport.editMarcFile(

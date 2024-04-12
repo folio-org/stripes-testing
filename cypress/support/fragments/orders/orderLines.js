@@ -404,7 +404,7 @@ export default {
     cy.do([quantityPhysicalLocationField.fillIn(quantityPhysical), saveAndCloseButton.click()]);
   },
 
-  POLineInfoWithReceiptNotRequiredStatus: (institutionId) => {
+  POLineInfoWithReceiptNotRequiredStatus(institutionId) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
@@ -430,6 +430,7 @@ export default {
       Select('Create inventory*').choose('Instance, holdings, item'),
       saveAndCloseButton.click(),
     ]);
+    submitOrderLine();
   },
 
   POLineInfoWithReceiptNotRequiredStatuswithSelectLocation: (institutionId) => {
@@ -460,13 +461,14 @@ export default {
     ]);
   },
 
-  POLineInfoEditWithReceiptNotRequiredStatus: () => {
+  POLineInfoEditWithReceiptNotRequiredStatus() {
     cy.do(Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.RECEIPT_NOT_REQUIRED));
     cy.expect(receivingWorkflowSelect.disabled());
     cy.do(saveAndCloseButton.click());
+    submitOrderLine();
   },
 
-  POLineInfoEditWithPendingReceiptStatus: () => {
+  POLineInfoEditWithPendingReceiptStatus() {
     cy.do([
       Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.PENDING),
       receivingWorkflowSelect.choose(
@@ -474,6 +476,7 @@ export default {
       ),
       saveAndCloseButton.click(),
     ]);
+    submitOrderLine();
   },
 
   viewPO: () => {

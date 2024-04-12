@@ -118,7 +118,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C369050 Verify that Errors accordion displays correct identifier on the confirmation screen (instance HRIDs)(firebird) (TaaS)',
+      'C369050 Verify that Errors accordion displays correct identifier on the confirmation screen (instance HRIDs) (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Instance HRIDs');
@@ -142,7 +142,7 @@ describe('bulk-edit', () => {
 
         const newLocation = 'Annex';
         BulkEditActions.selectOption('Temporary holdings location');
-        BulkEditActions.selectAction('Replace with', 0);
+        BulkEditActions.selectSecondAction('Replace with');
         BulkEditActions.clickSelectedLocation('Select location', newLocation);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(2, newLocation);

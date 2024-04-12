@@ -91,16 +91,16 @@ describe('bulk-edit', () => {
         // Select "Temporary item location" from "Options" dropdown and "Replace with" option from "Select option" dropdown;
         const newLocation1 = 'Online';
         BulkEditActions.selectOption('Temporary item location');
-        BulkEditActions.selectAction('Replace with', 0);
+        BulkEditActions.selectSecondAction('Replace with');
         BulkEditActions.locationLookupExists();
-        BulkEditActions.selectLocation(newLocation1, 0);
+        BulkEditActions.selectLocation(newLocation1);
         // Click on the "Plus" icon
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.isDisabledRowIcons(false);
         // Select "Item status" from "Options" dropdown and select item status in "Select item status" dropdown
         const newLocation2 = 'Online';
         BulkEditActions.selectOption('Permanent item location', 1);
-        BulkEditActions.selectAction('Replace with', 1);
+        BulkEditActions.selectSecondAction('Replace with', 1);
         BulkEditActions.selectLocation(newLocation2, 1);
         BulkEditActions.locationLookupExists();
         BulkEditActions.clickLocationLookup(1);

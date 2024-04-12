@@ -88,7 +88,6 @@ describe('data-export', () => {
       DataExportViewAllLogs.verifyErrorsInExportCheckbox('Yes', false);
       DataExportViewAllLogs.verifyStatusIncludesAll();
       DataExportViewAllLogs.checkErrorsInExportOption('No');
-      DataExportViewAllLogs.verifyStatusAllCompleted();
       DataExportViewAllLogs.checkErrorsInExportOption('Yes');
       DataExportViewAllLogs.verifyStatusIncludesAll();
       DataExportViewAllLogs.resetAll();

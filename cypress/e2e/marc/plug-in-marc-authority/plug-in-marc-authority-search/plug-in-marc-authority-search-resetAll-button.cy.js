@@ -41,7 +41,7 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
+              response.forEach((record) => {
                 createdAuthorityID = record.instance.id;
               });
             });

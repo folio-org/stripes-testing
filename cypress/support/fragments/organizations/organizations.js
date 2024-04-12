@@ -415,9 +415,11 @@ export default {
   },
 
   closeDetailsPane: () => {
+    cy.do(PaneHeader({ id: 'paneHeaderpane-organization-details' }).find(timesButton).click());
+  },
+  closeIntegrationDetailsPane: () => {
     cy.do(PaneHeader({ id: 'paneHeaderintegration-view' }).find(timesButton).click());
   },
-
   selectCountryFilter: () => {
     cy.do([
       Button({ id: 'accordion-toggle-button-plugin-country-filter' }).click(),
@@ -702,7 +704,7 @@ export default {
 
   deleteOrganization: (confirm = true) => {
     cy.do([
-      PaneHeader({ id: 'paneHeaderintegration-view' }).find(actionsButton).click(),
+      PaneHeader({ id: 'paneHeaderpane-organization-details' }).find(actionsButton).click(),
       Button('Delete').click(),
     ]);
     if (confirm) {
