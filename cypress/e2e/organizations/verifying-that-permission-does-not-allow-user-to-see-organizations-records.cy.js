@@ -2,18 +2,15 @@ import permissions from '../../support/dictionary/permissions';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import Users from '../../support/fragments/users/users';
-import BankingInformation from '../../support/fragments/settings/organizations/bankingInformation';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYearDetails';
 
 describe('Organizations', () => {
   const firstOrganization = { ...NewOrganization.defaultUiOrganizations };
 
   let user;
-  let C423432User;
 
   before(() => {
     cy.getAdminToken();
-    BankingInformation.setBankingInformationValue(true);
     Organizations.createOrganizationViaApi(firstOrganization).then((responseOrganizations) => {
       firstOrganization.id = responseOrganizations;
     });
@@ -29,9 +26,7 @@ describe('Organizations', () => {
   after(() => {
     cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(firstOrganization.id);
-    BankingInformation.setBankingInformationValue(false);
     Users.deleteViaApi(user.userId);
-    Users.deleteViaApi(C423432User.userId);
   });
 
   it(

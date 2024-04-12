@@ -10,7 +10,6 @@ import {
   MultiColumnListRow,
   MultiSelect,
   MultiSelectOption,
-  NavListItem,
   Pane,
   PaneHeader,
   SearchField,
@@ -21,6 +20,7 @@ import {
   TextArea,
   TextField,
 } from '../../../../interactors';
+import { AppList } from '../../../../interactors/applist';
 import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -113,7 +113,7 @@ export default {
   },
 
   varifyAbsentOrganizationApp: () => {
-    cy.expect(NavListItem('Organizations').absent());
+    cy.expect(AppList('Organizations').absent());
   },
 
   createDonorOrganization: (organization) => {

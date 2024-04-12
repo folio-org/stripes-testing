@@ -1,4 +1,5 @@
-import { Button, NavListItem, PaneHeader, Section, including } from '../../../../../interactors';
+import { Button, PaneHeader, Section, including } from '../../../../../interactors';
+import { AppList } from '../../../../../interactors/applist';
 import FinanceDetails from '../financeDetails';
 import LedgerDetails from '../ledgers/ledgerDetails';
 
@@ -43,6 +44,6 @@ export default {
     );
   },
   varifyExistsFinanceApp: () => {
-    cy.expect(NavListItem('Finance').exists());
+    cy.expect(AppList('Finance').exists());
   },
 };
