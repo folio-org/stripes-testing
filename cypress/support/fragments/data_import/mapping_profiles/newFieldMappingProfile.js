@@ -363,8 +363,17 @@ const selectAdminNotesAction = (numberOfmappingField, action = actions.addTheseT
     Select({ name: adminNoteFieldName }).choose(action),
   ]);
 };
+const selectActionForStatisticalCode = (number, action = actions.addTheseToExisting) => {
+  // number needs for using this method in filling fields for holdings and item profiles
+  const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
+
+  cy.do([
+    Select({ name: statisticalCodeFieldName }).focus(),
+    Select({ name: statisticalCodeFieldName }).choose(action),
+  ]);
+};
 const addStatisticalCode = (name, number, action) => {
-  this.selectActionForStatisticalCode(number, action);
+  selectActionForStatisticalCode(number, action);
   cy.do([
     Button('Add statistical code').click(),
     TextField('Statistical code').fillIn(`"${name}"`),
@@ -405,6 +414,7 @@ export default {
   selectOrganizationByName,
   selectAdminNotesAction,
   addStatisticalCode,
+  selectActionForStatisticalCode,
   save,
   waitLoading: () => {
     cy.expect(mappingProfilesForm.exists());
@@ -436,11 +446,17 @@ export default {
   fillItemMappingProfile: (profile) => {
     // Summary section
     fillSummaryInMappingProfile(profile);
-    fillMaterialType(profile.materialType);
-    fillPermanentLoanType(profile.permanentLoanType);
-    fillStatus(`"${profile.status}"`);
+    if (profile.materialType) {
+      fillMaterialType(profile.materialType);
+    }
+    if (profile.permanentLoanType) {
+      fillPermanentLoanType(profile.permanentLoanType);
+    }
+    if (profile.status) {
+      fillStatus(`"${profile.status}"`);
+    }
     if (profile.statisticalCode) {
-      addStatisticalCode(profile.statisticalCode, 4);
+      addStatisticalCode(profile.statisticalCode, 6);
     }
     save();
     cy.expect(saveButton.absent());
@@ -762,18 +778,8 @@ export default {
     );
   },
 
-  selectActionForStatisticalCode(number, action = actions.addTheseToExisting) {
-    // number needs for using this method in filling fields for holdings and item profiles
-    const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
-
-    cy.do([
-      Select({ name: statisticalCodeFieldName }).focus(),
-      Select({ name: statisticalCodeFieldName }).choose(action),
-    ]);
-  },
-
   addStatisticalCodeWithSeveralCodes(firstCode, secondCode, number, action) {
-    this.selectActionForStatisticalCode(number, action);
+    selectActionForStatisticalCode(number, action);
     cy.do([
       Button('Add statistical code').click(),
       TextField({
