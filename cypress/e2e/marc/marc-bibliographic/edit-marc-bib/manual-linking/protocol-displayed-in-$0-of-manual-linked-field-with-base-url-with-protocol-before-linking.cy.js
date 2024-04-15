@@ -19,11 +19,11 @@ describe('MARC', () => {
 
         const testData = {
           searchAuthorityQueries: [
-            'C436828 Whiteread, Rachel, 1963-',
-            'C436828 Martini, Carlo Maria, 1927-2012. Works. Selections',
-            'C436828 St. Louis Art Museum',
-            'C436828 Tate Britain (Gallery)',
-            'C436828 Action and adventure fiction',
+            'C436830 Whiteread, Rachel, 1963-',
+            'C436830 Martini, Carlo Maria, 1927-2012. Works. Selections',
+            'C436830 St. Louis Art Museum',
+            'C436830 Tate Britain (Gallery)',
+            'C436830 Action and adventure fiction',
           ],
           url: 'https://',
           marcAuthIcon: 'Linked to MARC authority',
@@ -35,7 +35,7 @@ describe('MARC', () => {
             '100',
             '1',
             '\\',
-            '$a C436828 Whiteread, Rachel, $d 1963-',
+            '$a C436830 Whiteread, Rachel, $d 1963-',
             '$e artist.',
             '$0 http://id.loc.gov/authorities/names/nr94042914',
             '',
@@ -46,7 +46,7 @@ describe('MARC', () => {
             '655',
             '\\',
             '7',
-            '$a C436828 Action and adventure fiction',
+            '$a C436830 Action and adventure fiction',
             '',
             '$0 https://vocabularyserver.com/gsafd/gsafd2014026217',
             '$2 lcgft',
@@ -56,7 +56,7 @@ describe('MARC', () => {
             '710',
             '2',
             '\\',
-            '$a C436828 Tate Britain (Gallery)',
+            '$a C436830 Tate Britain (Gallery)',
             '$e organizer, $e host institution.',
             '$0 http://linking.com/automated/tests/protocolhttp/os000208089',
             '',
@@ -66,7 +66,7 @@ describe('MARC', () => {
             '710',
             '2',
             '\\',
-            '$a C436828 St. Louis Art Museum',
+            '$a C436830 St. Louis Art Museum',
             '$e host institution.',
             '$0 https://linking.com/automated/tests/protocolhttps/osw790055919',
             '',
@@ -92,14 +92,14 @@ describe('MARC', () => {
 
         const marcFiles = [
           {
-            marc: 'marcBibFileForC436828.mrc',
+            marc: 'marcBibFileForC436830.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             numOfRecords: 1,
             propertyName: 'instance',
           },
           {
-            marc: 'marcAuthFileForC436828.mrc',
+            marc: 'marcAuthFileForC436830.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 5,
@@ -110,27 +110,27 @@ describe('MARC', () => {
         const linkingTagAndValues = [
           {
             rowIndex: 11,
-            value: 'C436828 Whiteread, Rachel, 1963-',
+            value: 'C436830 Whiteread, Rachel, 1963-',
             tag: 100,
           },
           {
             rowIndex: 12,
-            value: 'C436828 Martini, Carlo Maria 1927-2012. Works. Selections',
+            value: 'C436830 Martini, Carlo Maria 1927-2012. Works. Selections',
             tag: 240,
           },
           {
             rowIndex: 24,
-            value: 'C436828 Action and adventure fiction',
+            value: 'C436830 Action and adventure fiction',
             tag: 655,
           },
           {
             rowIndex: 25,
-            value: 'C436828 Tate Britain (Gallery)',
+            value: 'C436830 Tate Britain (Gallery)',
             tag: 710,
           },
           {
             rowIndex: 26,
-            value: 'C436828 St. Louis Art Museum',
+            value: 'C436830 St. Louis Art Museum',
             tag: 710,
           },
         ];
@@ -208,7 +208,7 @@ describe('MARC', () => {
         });
 
         it(
-          'C436828 Protocol is displayed in subfield "$0" of manually linked field when field has base URL without protocol before linking (spitfire)',
+          'C436830 Protocol is displayed in subfield "$0" of manually linked field when field has base URL with "https://" protocol before linking (spitfire)',
           { tags: ['criticalPath', 'spitfire'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
@@ -217,11 +217,11 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkPaneheaderContains('Edit MARC record');
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
-            QuickMarcEditor.checkValueAbsent(11, testData.url);
-            QuickMarcEditor.checkValueAbsent(12, testData.url);
-            QuickMarcEditor.checkValueAbsent(24, testData.url);
-            QuickMarcEditor.checkValueAbsent(25, testData.url);
-            QuickMarcEditor.checkValueAbsent(26, testData.url);
+            QuickMarcEditor.checkValueExist(11, testData.url);
+            QuickMarcEditor.checkValueExist(12, testData.url);
+            QuickMarcEditor.checkValueExist(24, testData.url);
+            QuickMarcEditor.checkValueExist(25, testData.url);
+            QuickMarcEditor.checkValueExist(26, testData.url);
             linkingTagAndValues.forEach((linking) => {
               QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
               MarcAuthorities.switchToSearch();
@@ -240,19 +240,19 @@ describe('MARC', () => {
 
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t100\t1  \t$a C436828 Whiteread, Rachel, $d 1963- $e artist. $0 http://id.loc.gov/authorities/names/nr94042914 $9`,
+              `${testData.marcAuthIcon}\n\t100\t1  \t$a C436830 Whiteread, Rachel, $d 1963- $e artist. $0 http://id.loc.gov/authorities/names/nr94042914 $9`,
             );
             InventoryViewSource.contains(
               `${testData.marcAuthIcon}\n\t240\t1 0\t$a Works. $k Selections $0 2018019878 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t655\t  7\t$a C436828 Action and adventure fiction $0 https://vocabularyserver.com/gsafd/gsafd2014026217 $9`,
+              `${testData.marcAuthIcon}\n\t655\t  7\t$a C436830 Action and adventure fiction $0 https://vocabularyserver.com/gsafd/gsafd2014026217 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436828 Tate Britain (Gallery) $e organizer, $e host institution. $0 http://linking.com/automated/tests/protocolhttp/os000208089 $9`,
+              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436830 Tate Britain (Gallery) $e organizer, $e host institution. $0 http://linking.com/automated/tests/protocolhttp/os000208089 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436828 St. Louis Art Museum $e host institution. $0 https://linking.com/automated/tests/protocolhttps/osw790055919 $9`,
+              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436830 St. Louis Art Museum $e host institution. $0 https://linking.com/automated/tests/protocolhttps/osw790055919 $9`,
             );
           },
         );
