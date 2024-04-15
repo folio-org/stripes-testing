@@ -215,7 +215,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('deleteUserGroupApi', (groupId) => {
   return cy.okapiRequest({
-    method: 'DELEtE',
+    method: 'DELETE',
     path: `groups/${groupId}`,
     isDefaultSearchParamsRequired: false,
   });
