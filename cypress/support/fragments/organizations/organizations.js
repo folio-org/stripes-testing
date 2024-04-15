@@ -88,6 +88,7 @@ const donorCheckbox = Checkbox('Donor');
 const toggleButtonIsDonor = Button({ id: 'accordion-toggle-button-isDonor' });
 const donorSection = Section({ id: 'isDonor' });
 const bankingInformationButton = Button('Banking information');
+const bankingInformationAddButton = Button({ id: 'bankingInformation-add-button' });
 
 export default {
   waitLoading: () => {
@@ -109,6 +110,10 @@ export default {
       organizationCodeField.fillIn(organization.code),
       saveAndClose.click(),
     ]);
+  },
+
+  buttonNewIsAbsent: () => {
+    cy.expect(Pane({ id: 'organizations-results-pane' }).find(buttonNew).absent());
   },
 
   createDonorOrganization: (organization) => {
@@ -543,7 +548,20 @@ export default {
   },
 
   openContactPeopleSection: () => {
-    cy.do([openContactSectionButton.click()]);
+    cy.do(openContactSectionButton.click());
+  },
+
+  openBankInformationSection: () => {
+    cy.do(Button('Banking information').click());
+  },
+
+  checkBankInformationExist: (bankingInformationName) => {
+    cy.do(Button('Banking information').click());
+    cy.expect(
+      Section({ id: 'bankingInformationSection' })
+        .find(KeyValue({ value: bankingInformationName }))
+        .exists(),
+    );
   },
 
   addContactToOrganization: (contact) => {
@@ -758,7 +776,7 @@ export default {
   addBankingInformation: (bankingInformation) => {
     cy.do([
       bankingInformationButton.click(),
-      Button({ id: 'bankingInformation-add-button' }).click(),
+      bankingInformationAddButton.click(),
       TextField({ name: 'bankingInformation[0].bankName' }).fillIn(bankingInformation.name),
       TextField({ name: 'bankingInformation[0].bankAccountNumber' }).fillIn(
         bankingInformation.accountNumber,
@@ -766,6 +784,13 @@ export default {
     ]);
     cy.do(saveAndClose.click());
     cy.wait(4000);
+  },
+
+  editBankingInformationName: (bankingInformationName) => {
+    cy.do([
+      bankingInformationButton.click(),
+      TextField({ name: 'bankingInformation[0].bankName' }).fillIn(bankingInformationName),
+    ]);
   },
 
   deleteBankingInformation: () => {
@@ -777,5 +802,9 @@ export default {
     ]);
     cy.do(saveAndClose.click());
     cy.wait(4000);
+  },
+
+  checkBankingInformationAddButtonIsDisabled: () => {
+    cy.expect(Button({ id: 'bankingInformation-add-button' }).has({ disabled: true }));
   },
 };
