@@ -31,6 +31,7 @@ const optionsList = {
   holdingsHrid: 'Admin data: Holdings HRID',
   itemHrid: 'Admin data: Item HRID',
   pol: 'Acquisitions data: Purchase order line (POL)',
+  vrn: 'Acquisitions data: Vendor reference number',
   uri: 'Electronic access: URI',
   instanceUuid: 'Admin data: Instance UUID',
   holdingsPermLoc: 'Location: Permanent',
