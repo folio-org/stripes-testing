@@ -31,7 +31,7 @@ describe('Loans', () => {
     before('create inventory instance', () => {
       let source;
       cy.getAdminToken();
-      cy.createTempUser([Permissions.loansAll.gui, Permissions.checkoutAll.gui]).then(
+      cy.createTempUser([Permissions.loansAll.gui, Permissions.checkoutAll.gui, Permissions.uiCirculationCreateViewOverdueFinesPolicies.gui]).then(
         (userProperties) => {
           checkOutUser = userProperties;
           cy.getAdminToken()
