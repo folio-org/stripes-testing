@@ -829,6 +829,18 @@ export default {
     internal: 'ui-organizations.banking-information.view',
     gui: 'Organizations: View banking information',
   },
+  uiOrganizationsViewAndEditBankingInformation: {
+    internal: 'ui-organizations.banking-information.edit',
+    gui: 'Organizations: View and edit banking information',
+  },
+  uiOrganizationsViewEditAndCreateBankingInformation: {
+    internal: 'ui-organizations.banking-information.create',
+    gui: 'Organizations: View, edit and create banking information',
+  },
+  uiOrganizationsViewEditCreateAndDeleteBankingInformation: {
+    internal: 'ui-organizations.banking-information.delete',
+    gui: 'Organizations: View, edit, create and delete banking information',
+  },
   uiOrganizationsIntegrationUsernamesAndPasswordsView: {
     internal: 'ui-organizations.integrations.creds.view',
     gui: 'Organizations: Integration usernames and passwords: view',
