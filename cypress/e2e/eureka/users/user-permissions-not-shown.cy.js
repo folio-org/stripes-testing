@@ -18,13 +18,15 @@ describe('Eureka', () => {
       cy.getUserGroups({ limit: 1 });
       cy.createTempUser([]).then((createdUserProperties) => {
         testData.tempUser = createdUserProperties;
-      });
-      cy.createUserGroupApi().then((group) => {
-        testData.userGroup = group;
+        cy.createUserGroupApi().then((group) => {
+          testData.userGroup = group;
+        });
+        cy.login(testData.tempUser.username, testData.tempUser.password);
       });
     });
 
     afterEach(() => {
+      cy.getAdminToken();
       cy.getUsers({ query: `personal.lastName="${testData.lastName}"` }).then(() => {
         Cypress.env('users').forEach((user) => {
           Users.deleteViaApi(user.id);
