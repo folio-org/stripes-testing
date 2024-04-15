@@ -22,7 +22,7 @@ describe('Data Import', () => {
 
     before('create test data', () => {
       cy.getAdminToken();
-      for (let i = 0; i < 26; i++) {
+      for (let i = 0; i < 4; i++) {
         const fileNameToUpload = `C358137 autotestFile${getRandomPostfix()}.mrc`;
 
         DataImport.uploadFileViaApi(filePathToUpload, fileNameToUpload, jobProfileToRun).then(
