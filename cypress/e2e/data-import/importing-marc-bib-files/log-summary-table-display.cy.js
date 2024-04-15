@@ -1,10 +1,10 @@
-import { RECORD_STATUSES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -48,7 +48,7 @@ describe('Data Import', () => {
         };
 
         Logs.openFileDetails(fileName);
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileName);
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.summary, [
           RECORD_STATUSES.CREATED,
           RECORD_STATUSES.UPDATED,
@@ -93,10 +93,10 @@ describe('Data Import', () => {
           '0',
         ]);
         FileDetails.clickNextPaginationButton();
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileName);
         FileDetails.verifyLogSummaryTableIsDisplayed();
         FileDetails.clickPreviousPaginationButton();
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileName);
         FileDetails.verifyLogSummaryTableIsDisplayed();
       },
     );

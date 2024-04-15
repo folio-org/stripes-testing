@@ -92,7 +92,7 @@ describe('Data Import', () => {
         FieldMappingProfileEditForm.fillMappingProfileFields({ ...testData.mappingProfile });
 
         // Press the "Save as profile & Close" button
-        FieldMappingProfileEditForm.clickSaveAndCloseButton();
+        FieldMappingProfileEditForm.clickSaveAndCloseButton({ profileCreated: true });
 
         // Review the "Bill to address" and "Ship to address" details on the View screen
         FieldMappingProfileView.checkOrderFieldsConditions([

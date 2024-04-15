@@ -14,7 +14,7 @@ const allowableEncumbranceTextField = addBudgetModal.find(
 const allocatedTextField = addBudgetModal.find(TextField({ name: 'allocated' }));
 
 const cancelButton = addBudgetModal.find(Button('Cancel'));
-const saveButton = addBudgetModal.find(Button('Save'));
+const saveButton = addBudgetModal.find(Button('Save & close'));
 
 export default {
   verifyModalView(header = 'Current budget') {

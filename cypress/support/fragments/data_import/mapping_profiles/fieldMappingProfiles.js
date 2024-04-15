@@ -63,6 +63,24 @@ export default {
     FieldMappingProfileView.closeViewMode(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
+  createInstanceMappingProfile: (mappingProfile) => {
+    openNewMappingProfileForm();
+    NewFieldMappingProfile.fillInsatnceMappingProfile(mappingProfile);
+    FieldMappingProfileView.closeViewMode(mappingProfile.name);
+    cy.expect(actionsButton.exists());
+  },
+  createHoldingsMappingProfile: (mappingProfile) => {
+    openNewMappingProfileForm();
+    NewFieldMappingProfile.fillHoldingsMappingProfile(mappingProfile);
+    FieldMappingProfileView.closeViewMode(mappingProfile.name);
+    cy.expect(actionsButton.exists());
+  },
+  createItemMappingProfile: (mappingProfile) => {
+    openNewMappingProfileForm();
+    NewFieldMappingProfile.fillItemMappingProfile(mappingProfile);
+    FieldMappingProfileView.closeViewMode(mappingProfile.name);
+    cy.expect(actionsButton.exists());
+  },
   verifyActionMenu: () => {
     cy.do([Pane({ id: 'full-screen-view' }).find(actionsButton).click()]);
     cy.expect([editButton.exists(), deleteButton.exists(), dublicateButton.exists()]);
