@@ -790,6 +790,19 @@ export default {
     cy.wait(4000);
   },
 
+  addSecondBankingInformation: (bankingInformation) => {
+    cy.do([
+      bankingInformationButton.click(),
+      bankingInformationAddButton.click(),
+      TextField({ name: 'bankingInformation[1].bankName' }).fillIn(bankingInformation.name),
+      TextField({ name: 'bankingInformation[1].bankAccountNumber' }).fillIn(
+        bankingInformation.accountNumber,
+      ),
+    ]);
+    cy.do(saveAndClose.click());
+    cy.wait(4000);
+  },
+
   editBankingInformationName: (bankingInformationName) => {
     cy.do([
       bankingInformationButton.click(),
@@ -798,12 +811,10 @@ export default {
   },
 
   deleteBankingInformation: () => {
-    cy.do([
-      bankingInformationButton.click(),
-      Section({ id: 'bankingInformationSection' })
-        .find(Button({ icon: 'trash' }))
-        .click(),
-    ]);
+    cy.do([bankingInformationButton.click()]);
+    cy.get('[data-test-repeatable-field-remove-item-button="true"]', { timeout: 15000 })
+      .first()
+      .click();
     cy.do(saveAndClose.click());
     cy.wait(4000);
   },
