@@ -12,7 +12,6 @@ describe('MARC', () => {
     describe('Create MARC Authority', () => {
       const randomPostfix = getRandomPostfix();
       const testData = {
-        sourceName: 'LC Name Authority file (LCNAF)',
         searchOption: 'Keyword',
         marcValue: 'Create a new MARC authority record with FOLIO authority file test',
         tag001: '001',
@@ -23,10 +22,11 @@ describe('MARC', () => {
         headerText: 'Create a new MARC authority record',
         AUTHORIZED: 'Authorized',
       };
+      let createdAuthorityId;
       const newField = {
         rowIndex: 4,
         tag: '100',
-        content: '$a Create a new MARC authority record with Local authority file test',
+        content: '$a C423528 Create a new MARC authority record with Local authority file test',
       };
       const localAuthFile = {
         name: `C423528 auth source file active ${randomPostfix}`,
@@ -70,10 +70,9 @@ describe('MARC', () => {
       after('Delete users, data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
-        MarcAuthority.deleteViaAPI(testData.authorityId);
-        cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id);
-
+        MarcAuthority.deleteViaAPI(createdAuthorityId);
         ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
+        cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id);
       });
 
       it(
@@ -111,7 +110,7 @@ describe('MARC', () => {
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);
           MarcAuthorities.verifyViewPaneContentExists();
           MarcAuthority.getId().then((id) => {
-            testData.authorityId = id;
+            createdAuthorityId = id;
           });
 
           MarcAuthority.contains(testData.tag001);
@@ -126,7 +125,7 @@ describe('MARC', () => {
           // 8 Click on the "Authority source" multi select element in "Authority source" accordion placed on "Search & filter" pane
           MarcAuthorities.clickAuthoritySourceAccordion();
 
-          // 9 Click on the Local authority file created at preconditions in expanded dropdonw
+          // 9 Click on the Local authority file created at preconditions in expanded dropdown
           MarcAuthorities.chooseAuthoritySourceOption(localAuthFile.name);
           MarcAuthorities.checkSelectedAuthoritySource(localAuthFile.name);
           MarcAuthorities.checkAfterSearch(
