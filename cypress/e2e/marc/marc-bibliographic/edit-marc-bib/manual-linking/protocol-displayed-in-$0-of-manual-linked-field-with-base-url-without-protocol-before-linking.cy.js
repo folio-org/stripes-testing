@@ -229,7 +229,7 @@ describe('MARC', () => {
               InventoryInstance.verifySearchOptions();
               InventoryInstance.searchResults(linking.value);
               InventoryInstance.clickLinkButton();
-            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
+              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
             });
 
             linkedTags.forEach((field) => {
