@@ -88,6 +88,7 @@ describe('Request notice triggers', () => {
       Permissions.uiCirculationSettingsNoticeTemplates.gui,
       Permissions.uiUserEdit.gui,
       Permissions.circulationLogAll.gui,
+      Permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
     ]).then((userAProp) => {
       testData.userA = userAProp;
       UserEdit.addServicePointViaApi(

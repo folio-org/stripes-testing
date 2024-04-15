@@ -5,7 +5,7 @@ import Permissions from '../../../../support/dictionary/permissions';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import inventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -105,7 +105,7 @@ describe('Inventory', () => {
 
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
-        inventorySearchAndFilter.searchInstanceByHRID(testData.instanceHRID);
+        InventorySearchAndFilter.searchInstanceByHRID(testData.instanceHRID);
         InventoryInstance.waitLoading();
         InventoryInstance.verifyConsortiaHoldingsAccordion(true);
         InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.College);

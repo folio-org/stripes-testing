@@ -11,6 +11,7 @@ import {
   ORDER_STATUSES,
   RECORD_STATUSES,
   VENDOR_NAMES,
+  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
@@ -409,7 +410,7 @@ describe('Data Import', () => {
         JobProfiles.search(specialJobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(editedMarcFileName);
-        Logs.checkStatusOfJobProfile();
+        Logs.checkJobStatus(editedMarcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(editedMarcFileName);
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
         FileDetails.checkInstanceQuantityInSummaryTable('1', 1);

@@ -15,6 +15,7 @@ import {
 } from '../../../../interactors';
 
 const buildQueryModal = Modal('Build query');
+const buildQueryButton = Button('Build query');
 const testQueryButton = Button('Test query');
 const cancelButton = Button('Cancel');
 const runQueryButton = Button('Run query');
@@ -26,6 +27,7 @@ const booleanValues = ['AND'];
 
 export const itemFieldValues = {
   instanceId: 'Instance ID',
+  itemStatus: 'Item status',
 };
 export const usersFieldValues = {
   expirationDate: 'User expiration date',
@@ -68,6 +70,7 @@ export const stringStoresUuidButMillionOperators = [
   'not in',
   'is null/empty',
 ];
+export const enumOperators = ['Select operator', '==', '!=', 'in', 'not in', 'is null/empty'];
 export const booleanOperators = ['Select operator', '==', '!=', 'is null/empty'];
 
 export default {
@@ -289,5 +292,9 @@ export default {
 
   verifyClosed() {
     cy.do(buildQueryModal.absent());
+  },
+
+  buildQueryButtonDisabled(disabled = true) {
+    cy.do(buildQueryButton.has({ disabled }));
   },
 };

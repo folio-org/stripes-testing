@@ -429,7 +429,14 @@ export default {
   },
 
   clickJobId(jobId) {
-    cy.get("[data-testid='text-link']").contains(jobId).click();
+    cy.window().document().then((doc) => {
+      doc.addEventListener('click', () => {
+        // this adds a listener that reloads your page
+        // after 5 seconds from clicking the download button
+        setTimeout(() => { doc.location.reload(); }, 5000);
+      });
+      cy.get("[data-testid='text-link']").contains(jobId).click();
+    });
     waitClick();
   },
 };

@@ -45,7 +45,7 @@ describe('Data Import', () => {
         '245',
         '1',
         '0',
-        '$a Crossfire : $b deletion testing : poems 1998-2019 / $c Staceyann Chin ; foreword by Jacqueline Woodson.',
+        '$a Crossfire : $b deletion testing : poems 1998-2019 / $c Staceyann Chin ; foreword by Jacqueline Woodson. TEST',
       ],
     };
     function replace999SubfieldsInPreupdatedFile(

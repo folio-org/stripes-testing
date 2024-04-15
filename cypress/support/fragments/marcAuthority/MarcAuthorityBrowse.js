@@ -103,7 +103,7 @@ export default {
 
   checkSearchOptions: () => {
     // TODO: issue with openning of select by interactors and cypress. Try to find working option
-    cy.get('select>option').should(
+    cy.get('#textarea-authorities-search-qindex>option').should(
       'have.text',
       Object.values(searchOptions)
         .map((searchOption) => searchOption.option)
