@@ -11,30 +11,22 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Create MARC Authority', () => {
       const randomPostfix = getRandomPostfix();
-      const testData = {
-        searchOption: 'Keyword',
-        marcValue: 'Create a new MARC authority record with FOLIO authority file test',
-        tag001: '001',
-        tag010: '010',
-        tag100: '100',
-        tag010Value: 'n00776432',
-        tag001Value: 'n4332123',
-        headerText: 'Create a new MARC authority record',
-        AUTHORIZED: 'Authorized',
-      };
+      const tag001 = '001';
+      const headerText = 'Create a new MARC authority record';
       let createdAuthorityId;
       const newField = {
         rowIndex: 4,
         tag: '100',
         content: '$a C423528 Create a new MARC authority record with Local authority file test',
       };
+      const recordTitle =
+        'C423528 Create a new MARC authority record with Local authority file test';
       const localAuthFile = {
         name: `C423528 auth source file active ${randomPostfix}`,
         prefix: getRandomLetters(8),
         startWithNumber: '1',
         isActive: true,
       };
-
       const users = {};
 
       before('Create users, data', () => {
@@ -72,7 +64,7 @@ describe('MARC', () => {
         Users.deleteViaApi(users.userProperties.userId);
         MarcAuthority.deleteViaAPI(createdAuthorityId);
         ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
-        cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id);
+        cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id, true);
       });
 
       it(
@@ -81,7 +73,7 @@ describe('MARC', () => {
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickNewAuthorityButton();
-          QuickMarcEditor.checkPaneheaderContains(testData.headerText);
+          QuickMarcEditor.checkPaneheaderContains(headerText);
           QuickMarcEditor.verifyAuthorityLookUpButton();
 
           // 2 Click on "Authority file look-up" hyperlink
@@ -94,26 +86,25 @@ describe('MARC', () => {
           // 4 Click on the "Save & close" button
           QuickMarcEditor.clickSaveAndCloseInModal();
           QuickMarcEditor.checkContentByTag(
-            testData.tag001,
+            tag001,
             `${localAuthFile.prefix}${localAuthFile.startWithNumber}`,
           );
 
           // 5 Add 1 new field by clicking on "+" icon and fill it as specified:
           // 100 \\ "$a Create a new MARC authority record with Local authority file test"
-
           MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
           QuickMarcEditor.checkContentByTag(newField.tag, newField.content);
 
           // 6 Click on the "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
-          QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);
+          QuickMarcEditor.verifyPaneheaderWithContentAbsent(headerText);
           MarcAuthorities.verifyViewPaneContentExists();
           MarcAuthority.getId().then((id) => {
             createdAuthorityId = id;
           });
 
-          MarcAuthority.contains(testData.tag001);
+          MarcAuthority.contains(tag001);
           MarcAuthority.contains(`${localAuthFile.prefix}${localAuthFile.startWithNumber}`);
           MarcAuthority.contains(newField.tag);
           MarcAuthority.contains(newField.content);
@@ -123,18 +114,14 @@ describe('MARC', () => {
           MarcAuthorities.verifyMarcViewPaneIsOpened(false);
 
           // 8 Click on the "Authority source" multi select element in "Authority source" accordion placed on "Search & filter" pane
-          MarcAuthorities.clickAuthoritySourceAccordion();
+          MarcAuthorities.clickMultiSelectToggleButtonInAccordion('Authority source');
+          MarcAuthorities.checkAuthoritySourceDropdownHasOption(localAuthFile.name);
 
           // 9 Click on the Local authority file created at preconditions in expanded dropdown
           MarcAuthorities.chooseAuthoritySourceOption(localAuthFile.name);
           MarcAuthorities.checkSelectedAuthoritySource(localAuthFile.name);
-          MarcAuthorities.checkAfterSearch(
-            testData.AUTHORIZED,
-            'Create a new MARC authority record with Local authority file test',
-          );
-          MarcAuthorities.checkRecordDetailPageMarkedValue(
-            'Create a new MARC authority record with Local authority file test',
-          );
+          MarcAuthorities.checkAfterSearch('Authorized', recordTitle);
+          MarcAuthorities.checkRecordDetailPageMarkedValue(recordTitle);
         },
       );
     });
