@@ -40,7 +40,7 @@ describe('Data Import', () => {
     let instanceHrid;
     let exportedFileName;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
-    const fileNameForCreate = `C357027 autotestFileCreteInstance${getRandomPostfix()}.mrc`;
+    const fileNameForCreate = `C357027 autotestFileCreateInstance${getRandomPostfix()}.mrc`;
     const filePathForCreateInstance = 'oneMarcBib.mrc';
     const mappingProfile = {
       name: `C357027 autoTestMappingProf.${getRandomPostfix()}`,

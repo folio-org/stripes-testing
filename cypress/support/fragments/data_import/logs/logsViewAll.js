@@ -362,7 +362,7 @@ export default {
   },
 
   checkByDateAndJobProfile({ from, end }, profileId) {
-    const queryString = `completedAfter=${from}&completedBefore=${end}&limit=100&profileIdAny=${profileId}&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED`;
+    const queryString = `completedAfter=${from}&completedBefore=${end}&limit=100&profileIdAny=${profileId}&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED&subordinationTypeNotAny=COMPOSITE_PARENT`;
     return this.getNumberOfMatchedJobs(queryString).then((count) => {
       // ensure MultiColumnList is filtered by Date
       this.checkRowsCount(count);
@@ -399,7 +399,7 @@ export default {
         },
       })
       .then(({ body }) => {
-        return body.jobExecutions[0];
+        return body.jobExecutions[1];
       });
   },
 

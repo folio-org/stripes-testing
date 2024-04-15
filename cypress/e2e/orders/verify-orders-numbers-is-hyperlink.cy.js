@@ -94,6 +94,7 @@ describe('Orders', () => {
         OrderLines.selectOrderline(title);
         OrderLines.verifyOrderTitlePOL(`PO Line details - ${title}`);
       });
+      Orders.resetFilters();
     },
   );
 });

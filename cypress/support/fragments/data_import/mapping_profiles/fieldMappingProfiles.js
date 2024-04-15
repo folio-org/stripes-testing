@@ -148,6 +148,7 @@ export default {
 
   verifyProfilesIsSortedInAlphabeticalOrder: () => {
     const cells = [];
+
     cy.get('div[class^="mclRowContainer--"]')
       .find('[data-row-index]')
       .each(($row) => {
@@ -158,6 +159,11 @@ export default {
             cells.push(cellValue);
           });
       })
-      .then(() => cy.expect(ArrayUtils.checkIsSortedAlphabetically({ array: cells })).to.equal(true));
+      .then(() => {
+        console.log('cells', cells);
+        const result = ArrayUtils.checkIsSortedAlphabetically({ array: cells });
+        console.log(result);
+        cy.expect(ArrayUtils.checkIsSortedAlphabetically({ array: cells })).to.equal(true);
+      });
   },
 };
