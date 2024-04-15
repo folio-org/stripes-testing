@@ -1,4 +1,5 @@
 import { Button, PaneHeader, Section, including } from '../../../../../interactors';
+import { AppList } from '../../../../../interactors/applist';
 import FinanceDetails from '../financeDetails';
 import LedgerDetails from '../ledgers/ledgerDetails';
 
@@ -41,5 +42,8 @@ export default {
     cy.expect(
       fiscalYearDetailsSection.find(fiscalYearDetailsHeader).has({ text: including(title) }),
     );
+  },
+  varifyExistsFinanceApp: () => {
+    cy.expect(AppList('Finance').exists());
   },
 };
