@@ -302,4 +302,8 @@ export default {
   verifyCapabilityTableAbsent(tableName) {
     cy.expect(capabilitiesAccordion.find(capabilityTables[tableName]).absent());
   },
+
+  verifyCapabilitySetTableAbsent(tableName) {
+    cy.expect(capabilitySetsAccordion.find(capabilityTables[tableName]).absent());
+  },
 };
