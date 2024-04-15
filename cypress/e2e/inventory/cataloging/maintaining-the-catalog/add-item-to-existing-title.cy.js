@@ -14,7 +14,7 @@ import ItemRecordNew from '../../../../support/fragments/inventory/item/itemReco
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
     let user;
     const testData = {

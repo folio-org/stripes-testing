@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
@@ -26,14 +27,14 @@ describe('MARC', () => {
       const marcFile = {
         marc: 'marcBibFileC360098.mrc',
         fileName: `testMarcFileC360098.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-        propertyName: 'relatedInstanceInfo',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        propertyName: 'instance',
       };
       const marcFileC359239 = {
         marc: 'marcBibFileC359239.mrc',
         fileName: `testMarcFileC359239.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-        propertyName: 'relatedInstanceInfo',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        propertyName: 'instance',
       };
       const createdInstanceIDs = [];
 
@@ -50,8 +51,8 @@ describe('MARC', () => {
                 marcFile.fileName,
                 marcFile.jobProfileToRun,
               ).then((response) => {
-                response.entries.forEach((record) => {
-                  createdInstanceIDs.push(record[marcFile.propertyName].idList[0]);
+                response.forEach((record) => {
+                  createdInstanceIDs.push(record[marcFile.propertyName].id);
                 });
               });
               DataImport.uploadFileViaApi(
@@ -59,8 +60,8 @@ describe('MARC', () => {
                 `${marcFile.fileName}_copy`,
                 marcFile.jobProfileToRun,
               ).then((response) => {
-                response.entries.forEach((record) => {
-                  createdInstanceIDs.push(record[marcFile.propertyName].idList[0]);
+                response.forEach((record) => {
+                  createdInstanceIDs.push(record[marcFile.propertyName].id);
                 });
               });
               DataImport.uploadFileViaApi(
@@ -68,8 +69,8 @@ describe('MARC', () => {
                 marcFileC359239.fileName,
                 marcFileC359239.jobProfileToRun,
               ).then((response) => {
-                response.entries.forEach((record) => {
-                  createdInstanceIDs.push(record[marcFileC359239.propertyName].idList[0]);
+                response.forEach((record) => {
+                  createdInstanceIDs.push(record[marcFileC359239.propertyName].id);
                 });
               });
             },
@@ -145,7 +146,7 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          InventoryInstances.searchBySource('MARC');
+          InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
           InventoryInstances.searchByTitle(createdInstanceIDs[1]);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();

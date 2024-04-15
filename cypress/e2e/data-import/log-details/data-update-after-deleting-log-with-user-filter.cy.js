@@ -7,14 +7,15 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Uploading files', () => {
     let user = {};
     let instanceId;
     const filesPath = 'C2378_File1.mrc';
     const fileName = `C358540 autoTest${getRandomPostfix()}.mrc`;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
     before('create test data', () => {
       cy.createTempUser([
@@ -28,7 +29,7 @@ describe('data-import', () => {
           waiter: DataImport.waitLoading,
         });
         DataImport.uploadFileViaApi(filesPath, fileName, jobProfileToRun).then((response) => {
-          instanceId = response.entries[0].relatedInstanceInfo.idList[0];
+          instanceId = response[0].instance.id;
         });
       });
     });

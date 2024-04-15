@@ -5,15 +5,10 @@ import {
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
-  VENDOR_NAMES,
   RECORD_STATUSES,
+  VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -23,16 +18,21 @@ import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScre
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import OrderLines from '../../../support/fragments/orders/orderLines';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Permissions', () => {
     let user;
     const filePath = 'marcBibFileForC377023.mrc';
-    const marcFileName = `C377023 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C377023 autotestFileName${getRandomPostfix()}.mrc`;
     const title = 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.';
 
     const mappingProfile = {
@@ -116,7 +116,6 @@ describe('data-import', () => {
       JobProfiles.runImportFile();
       Logs.waitFileIsImported(marcFileName);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      cy.logout();
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
@@ -140,14 +139,15 @@ describe('data-import', () => {
       'C377023 A user can see JSON tab for imported Orders with "Data import: Can upload files, import, and view logs" permission (folijet)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const message = `Import Log for Record 1 (${title})`;
+        const message = `Import Log for Record 01 (${title})`;
 
         Logs.openFileDetails(marcFileName);
         FileDetails.openJsonScreen(title);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.openOrderTab();
         JsonScreenView.verifyContentInTab(message);
-        cy.go('back');
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(marcFileName);
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.verifyOrderTitle(title);

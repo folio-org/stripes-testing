@@ -2,6 +2,8 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  RECORD_STATUSES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
@@ -34,11 +36,9 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const users = {};
     const testData = {
-      sharedInstanceId: [],
       marcFile: {
         marc: 'marcBibFileForC405534.mrc',
         fileName: `C405534 testMarcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         exportedFileName: `C405534 exportedTestMarcFile${getRandomPostfix()}.mrc`,
         modifiedMarcFile: `C405534 modifiedTestMarcFile${getRandomPostfix()}.mrc`,
       },
@@ -101,20 +101,12 @@ describe('Data Import', () => {
           });
         },
       );
-      cy.loginAsAdmin({
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
-      });
-      DataImport.verifyUploadState();
-      DataImport.uploadFileAndRetry(testData.marcFile.marc, testData.marcFile.fileName);
-      JobProfiles.waitLoadingList();
-      JobProfiles.search(testData.marcFile.jobProfileToRun);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(testData.marcFile.fileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(testData.marcFile.fileName);
-      Logs.getCreatedItemsID().then((link) => {
-        testData.sharedInstanceId.push(link.split('/')[5]);
+      DataImport.uploadFileViaApi(
+        testData.marcFile.marc,
+        testData.marcFile.fileName,
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      ).then((response) => {
+        testData.sharedInstanceId = response[0].instance.id;
       });
       cy.logout();
 
@@ -153,7 +145,7 @@ describe('Data Import', () => {
       cy.getAdminToken();
       Users.deleteViaApi(users.userAProperties.userId);
       Users.deleteViaApi(users.userBProperties.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId[0]);
+      InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -170,7 +162,7 @@ describe('Data Import', () => {
         cy.login(users.userAProperties.username, users.userAProperties.password);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstances.searchByTitle(testData.sharedInstanceId[0]);
+        InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.verifySelectedRecords(1);
@@ -197,7 +189,6 @@ describe('Data Import', () => {
         });
         // upload the exported and edited marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(testData.marcFile.modifiedMarcFile);
         JobProfiles.waitFileIsUploaded();
@@ -206,7 +197,7 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(testData.marcFile.modifiedMarcFile);
-        FileDetails.openInstanceInInventory(FileDetails.status.updated);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
         InventoryInstance.verifyLastUpdatedSource(
           users.userAProperties.firstName,

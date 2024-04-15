@@ -273,6 +273,10 @@ export default {
     internal: 'ui-inventory.settings.identifier-types',
     gui: 'Settings (Inventory): Create, edit, delete resource identifier types',
   },
+  enableStaffSuppressFacet: {
+    internal: 'ui-inventory.instance.view-staff-suppressed-records',
+    gui: 'Inventory: Enable staff suppress facet',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
@@ -353,6 +357,10 @@ export default {
   uiCirculationCreateEditRemoveStaffSlips: {
     internal: 'ui-circulation.settings.staff-slips',
     gui: 'Settings (Circ): Can create, edit and remove staff slips',
+  },
+  uiCirculationCreateViewOverdueFinesPolicies: {
+    internal: 'ui-circulation.settings.view-overdue-fines-policies',
+    gui: 'Settings (Circ): Can view overdue fine policies',
   },
   // Users
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
@@ -816,6 +824,22 @@ export default {
   uiOrganizationsAssignAcquisitionUnitsToNewOrganization: {
     internal: 'ui-organizations.acqUnits.assig',
     gui: 'Organizations: Assign acquisition units to new organization',
+  },
+  uiOrganizationsViewBankingInformation: {
+    internal: 'ui-organizations.banking-information.view',
+    gui: 'Organizations: View banking information',
+  },
+  uiOrganizationsViewAndEditBankingInformation: {
+    internal: 'ui-organizations.banking-information.edit',
+    gui: 'Organizations: View and edit banking information',
+  },
+  uiOrganizationsViewEditAndCreateBankingInformation: {
+    internal: 'ui-organizations.banking-information.create',
+    gui: 'Organizations: View, edit and create banking information',
+  },
+  uiOrganizationsViewEditCreateAndDeleteBankingInformation: {
+    internal: 'ui-organizations.banking-information.delete',
+    gui: 'Organizations: View, edit, create and delete banking information',
   },
   uiOrganizationsIntegrationUsernamesAndPasswordsView: {
     internal: 'ui-organizations.integrations.creds.view',

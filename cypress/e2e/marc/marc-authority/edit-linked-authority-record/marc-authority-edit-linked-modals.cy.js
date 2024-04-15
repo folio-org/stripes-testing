@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -29,16 +30,16 @@ describe('MARC', () => {
         {
           marc: 'marcBibFileC375173.mrc',
           fileName: `testMarcFileC375173.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-          propertyName: 'relatedInstanceInfo',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+          propertyName: 'instance',
           instanceTitle:
             'C375173 Farnese book of hours : MS M.69 of the Pierpont Morgan Library New York / commentary, William M. Voelkle, Ivan Golub.',
         },
         {
           marc: 'marcAuthFileC375173.mrc',
           fileName: `testMarcFileC375173.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: 'Default - Create SRS MARC Authority',
-          propertyName: 'relatedAuthorityInfo',
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+          propertyName: 'authority',
           authorityHeading: 'C375173 Clovio, Giulio, 1498-1578',
           authority001FieldValue: 'n83073672375173',
           authority035FieldValue: '(OCoLC)oca00955395',
@@ -65,8 +66,8 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                createdRecordIDs.push(record[marcFile.propertyName].idList[0]);
+              response.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].id);
               });
             });
           });

@@ -1,5 +1,5 @@
+import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import { RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -10,20 +10,22 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Permissions', () => {
     let user;
-    let instanceHrid;
-    const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
+    let instnaceId;
+    const uniquePartOfFileName = getRandomPostfix();
+    const uniqueFileName = `C356780 autotestFileName${uniquePartOfFileName}.mrc`;
+    const uniqueFileNameForSearch = `C356780 autotestFileName${uniquePartOfFileName}_1.mrc`;
 
     before('create test data', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         'oneMarcBib.mrc',
-        fileName,
-        'Default - Create instance and SRS MARC Bib',
+        uniqueFileName,
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       ).then((response) => {
-        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+        instnaceId = response[0].instance.id;
       });
 
       cy.createTempUser([
@@ -43,11 +45,7 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+        InventoryInstance.deleteInstanceViaApi(instnaceId);
       });
     });
 
@@ -57,8 +55,8 @@ describe('data-import', () => {
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
-        LogsViewAll.searchWithTerm(fileName);
-        LogsViewAll.openFileDetails(fileName);
+        LogsViewAll.searchWithTerm(uniqueFileNameForSearch);
+        LogsViewAll.openFileDetails(uniqueFileName);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstances.verifyInstanceDetailsView();
       },

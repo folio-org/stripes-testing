@@ -13,8 +13,9 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {
-        LDRValue: '00000naa\\a2200000uu\\4500',
         tag010: '010',
+        tagLDR: 'LDR',
+        tag008: '008',
         tag010Values: ['58020553', '766384'],
       };
       const calloutMessage = 'Record cannot be saved with more than one 010 field';
@@ -48,7 +49,7 @@ describe('MARC', () => {
           InventoryInstance.newMarcBibRecord();
 
           // #2 Replace blank values in LDR positions 06, 07 with valid values
-          QuickMarcEditor.updateExistingField('LDR', testData.LDRValue);
+          QuickMarcEditor.updateLDR06And07Positions();
           // #3 Fill in the required fields with valid data:
           QuickMarcEditor.updateExistingField('245', `$a ${getRandomPostfix()}`);
           // #4 Add two new "010" fields and fill in them as specified:

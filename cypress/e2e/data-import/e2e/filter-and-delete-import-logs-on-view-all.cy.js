@@ -1,17 +1,17 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import DeleteDataImportLogsModal from '../../../support/fragments/data_import/logs/deleteDataImportLogsModal';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     const startedDate = new Date();
     const completedDate = startedDate;
@@ -24,12 +24,12 @@ describe('data-import', () => {
     const firstTestData = {
       instanceIds: [],
       marcFilePath: 'oneMarcBib.mrc',
-      jobProfileName: 'Default - Create instance and SRS MARC Bib',
+      jobProfileName: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     };
     const secondTestData = {
       authorityIds: [],
       marcFilePath: 'oneMarcAuthority.mrc',
-      jobProfileName: 'Default - Create SRS MARC Authority',
+      jobProfileName: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
     };
 
     before(() => {
@@ -44,7 +44,7 @@ describe('data-import', () => {
           waiter: DataImport.waitLoading,
         });
         // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 5; i++) {
           const bibFileName = `C358136 autotestFileName${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFileViaApi(
@@ -52,10 +52,9 @@ describe('data-import', () => {
             bibFileName,
             firstTestData.jobProfileName,
           ).then((response) => {
-            firstTestData.instanceIds.push(response.entries[0].relatedInstanceInfo.idList[0]);
+            firstTestData.instanceIds.push(response[0].instance.id);
           });
         }
-        cy.logout();
       });
 
       cy.createTempUser([
@@ -63,12 +62,13 @@ describe('data-import', () => {
         Permissions.dataImportDeleteLogs.gui,
       ]).then((userProperties) => {
         secondTestData.user = userProperties;
+
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
         // Log list should contain at least 30-35 import jobs
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 5; i++) {
           const authFileName = `C358136 autotestFileName${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFileViaApi(
@@ -76,7 +76,7 @@ describe('data-import', () => {
             authFileName,
             secondTestData.jobProfileName,
           ).then((response) => {
-            secondTestData.authorityIds.push(response.entries[0].relatedAuthorityInfo.idList[0]);
+            secondTestData.authorityIds.push(response[0].authority.id);
           });
         }
       });

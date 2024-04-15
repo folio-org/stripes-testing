@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -45,13 +45,13 @@ const testData = {
   marcFile: {
     marc: 'marcBibC410764.mrc',
     fileName: `testMarcFileC410764.${randomFourDigitNumber()}.mrc`,
-    jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+    jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     numberOfRecords: 1,
-    propertyName: 'relatedInstanceInfo',
+    propertyName: 'instance',
   },
 };
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
@@ -72,8 +72,8 @@ describe('inventory', () => {
             testData.marcFile.fileName,
             testData.marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              testData.marcInstance.id = record[testData.marcFile.propertyName].idList[0];
+            response.forEach((record) => {
+              testData.marcInstance.id = record[testData.marcFile.propertyName].id;
             });
           });
         })

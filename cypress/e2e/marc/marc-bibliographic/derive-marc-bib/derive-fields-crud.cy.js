@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -39,8 +40,8 @@ describe('MARC', () => {
       const marcFile = {
         marc: 'marcBibC367956.mrc',
         fileName: `testMarcFile_C367956_${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-        propertyName: 'relatedInstanceInfo',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        propertyName: 'instance',
       };
 
       let instanceId;
@@ -60,8 +61,8 @@ describe('MARC', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              instanceId = record[marcFile.propertyName].idList[0];
+            response.forEach((record) => {
+              instanceId = record[marcFile.propertyName].id;
             });
           });
 
@@ -87,25 +88,25 @@ describe('MARC', () => {
           QuickMarcEditor.addNewField(tags.tag800, inputContent.field800, 28);
           QuickMarcEditor.checkContent(inputContent.field800, 29);
           // Update the first of three "655" fields to "660"
-          QuickMarcEditor.updateExistingTagValue(23, tags.tag660);
-          QuickMarcEditor.verifyTagValue(23, tags.tag660);
+          QuickMarcEditor.updateExistingTagValue(22, tags.tag660);
+          QuickMarcEditor.verifyTagValue(22, tags.tag660);
           // Update the second "655" field content in the following way $a Edited 4th field only
-          QuickMarcEditor.updateExistingFieldContent(24, inputContent.field655primary);
-          QuickMarcEditor.checkContent(inputContent.field655primary, 24);
+          QuickMarcEditor.updateExistingFieldContent(23, inputContent.field655primary);
+          QuickMarcEditor.checkContent(inputContent.field655primary, 23);
           // Update the third "655" field in the following way $a Edited MARC tag and 4th field
-          QuickMarcEditor.updateExistingFieldContent(25, inputContent.field655secondary);
-          QuickMarcEditor.checkContent(inputContent.field655secondary, 25);
+          QuickMarcEditor.updateExistingFieldContent(24, inputContent.field655secondary);
+          QuickMarcEditor.checkContent(inputContent.field655secondary, 24);
           // Delete all editable 9XX fields by clicking on the "Delete this field" icons.
-          QuickMarcEditor.deleteField(26);
+          QuickMarcEditor.deleteField(25);
           QuickMarcEditor.afterDeleteNotification(tags.tag906);
-          QuickMarcEditor.deleteField(27);
+          QuickMarcEditor.deleteField(26);
           QuickMarcEditor.afterDeleteNotification(tags.tag925);
-          QuickMarcEditor.deleteField(28);
+          QuickMarcEditor.deleteField(27);
           QuickMarcEditor.afterDeleteNotification(tags.tag955);
           // Move "245" MARC field above the "100" field by clicking on the "Move field up a row" icon placed next to the "245" field.
-          QuickMarcEditor.moveFieldUp(14);
-          QuickMarcEditor.verifyTagValue(14, tags.tag100);
-          QuickMarcEditor.verifyTagValue(13, tags.tag245);
+          QuickMarcEditor.moveFieldUp(13);
+          QuickMarcEditor.verifyTagValue(13, tags.tag100);
+          QuickMarcEditor.verifyTagValue(12, tags.tag245);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.continueWithSaveAndCheckNewInstanceCreated();
           InventoryInstance.viewSource();

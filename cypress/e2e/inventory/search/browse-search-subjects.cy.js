@@ -6,7 +6,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Subject Browse', () => {
     const testData = {
       instanceTitle: `instanceName-${getRandomPostfix()}`,

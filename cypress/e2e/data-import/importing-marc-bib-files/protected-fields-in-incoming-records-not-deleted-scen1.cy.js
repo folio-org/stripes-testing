@@ -1,4 +1,4 @@
-import { TARGET_PROFILE_NAMES } from '../../../support/constants';
+import { TARGET_PROFILE_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryEditMarcRecord from '../../../support/fragments/inventory/inventoryEditMarcRecord';
@@ -12,11 +12,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user = null;
     let instanceHrid;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    let instanceid;
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const protectedFieldData = {
       protectedField: '856',
       in1: '*',
@@ -35,7 +36,8 @@ describe('data-import', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi('marcFileForC358968.mrc', fileName, jobProfileToRun).then(
         (response) => {
-          instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+          instanceHrid = response[0].instance.hrid;
+          instanceid = response[0].instance.id;
         },
       );
 
@@ -68,11 +70,7 @@ describe('data-import', () => {
           list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
         });
         Users.deleteViaApi(user.userId);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+        InventoryInstance.deleteInstanceViaApi(instanceid);
       });
     });
 

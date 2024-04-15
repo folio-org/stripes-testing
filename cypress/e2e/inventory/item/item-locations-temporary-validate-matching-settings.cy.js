@@ -12,7 +12,7 @@ import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecord
 import settingsMenu from '../../../support/fragments/settingsMenu';
 import { Locations } from '../../../support/fragments/settings/tenant';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Item', () => {
     const itemData = {
       barcode: generateItemBarcode(),

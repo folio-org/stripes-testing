@@ -1,14 +1,15 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
+import DataImport from '../../../../../support/fragments/data_import/dataImport';
+import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
+import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
-import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
-import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
-import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
-import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
-import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 
 describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () => {
   let userData = {};
@@ -31,16 +32,16 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
     {
       marc: 'marcBibFileForC365594.mrc',
       fileName: `testMarcFileC365594${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       numOfRecords: 1,
-      propertyName: 'relatedInstanceInfo',
+      propertyName: 'instance',
     },
     {
       marc: 'marcAuthFileC365594.mrc',
       fileName: `testMarcFileC365594${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       numOfRecords: 1,
-      propertyName: 'relatedAuthorityInfo',
+      propertyName: 'authority',
     },
   ];
 
@@ -75,8 +76,8 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              testData.createdRecordsIDs.push(record[marcFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              testData.createdRecordsIDs.push(record[marcFile.propertyName].id);
             });
           });
         });

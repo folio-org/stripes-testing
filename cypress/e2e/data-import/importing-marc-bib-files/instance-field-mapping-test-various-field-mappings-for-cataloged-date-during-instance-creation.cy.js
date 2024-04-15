@@ -26,12 +26,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
-    const firstMarcFileName = `C11089 autotestFile_${getRandomPostfix()}.mrc`;
-    const secondMarcFileName = `C11089 autotestFile_${getRandomPostfix()}.mrc`;
-    const thirdMarcFileName = `C11089 autotestFile_${getRandomPostfix()}.mrc`;
-    const forthMarcFileName = `C11089 autotestFile_${getRandomPostfix()}.mrc`;
+    const firstMarcFileName = `C11089 autotestFile${getRandomPostfix()}.mrc`;
+    const secondMarcFileName = `C11089 autotestFile${getRandomPostfix()}.mrc`;
+    const thirdMarcFileName = `C11089 autotestFile${getRandomPostfix()}.mrc`;
+    const forthMarcFileName = `C11089 autotestFile${getRandomPostfix()}.mrc`;
 
     const filePathToUpload = 'marcBibFileForC11089.mrc';
     const instanceHrids = [];
@@ -110,7 +110,8 @@ describe('data-import', () => {
 
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate('2020-09-10');
-          cy.go('back');
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(firstMarcFileName);
         });
         // check the second instance without Cataloged date
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
@@ -146,7 +147,8 @@ describe('data-import', () => {
 
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate(DateTools.getFormattedDate({ date: new Date() }));
-          cy.go('back');
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(secondMarcFileName);
         });
         // check the second instance without Cataloged date
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
@@ -182,7 +184,8 @@ describe('data-import', () => {
 
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate('2020-06-01');
-          cy.go('back');
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(thirdMarcFileName);
         });
         // check the second instance without Cataloged date
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
@@ -218,7 +221,8 @@ describe('data-import', () => {
 
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate('2020-09-10');
-          cy.go('back');
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(forthMarcFileName);
         });
         // check the second instance without Cataloged date
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);

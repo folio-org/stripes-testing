@@ -4,14 +4,9 @@ import {
   JOB_STATUS_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
-  VENDOR_NAMES,
   RECORD_STATUSES,
+  VENDOR_NAMES,
 } from '../../../support/constants';
-import {
-  JobProfiles as SettingsJobProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -24,20 +19,25 @@ import FieldMappingProfileView from '../../../support/fragments/data_import/mapp
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Settings', () => {
     let user;
     const orderNumbers = [];
     const filePathForCreateOrder = 'marcFileForC376975.mrc';
-    const firstMarcFileName = `C376975 autotestFileName ${getRandomPostfix()}`;
-    const secondMarcFileName = `C376975 autotestFileName ${getRandomPostfix()}`;
-    const thirdMarcFileName = `C376975 autotestFileName ${getRandomPostfix()}`;
-    const forthMarcFileName = `C376975 autotestFileName ${getRandomPostfix()}`;
+    const firstMarcFileName = `C376975 autotestFileName${getRandomPostfix()}.mrc`;
+    const secondMarcFileName = `C376975 autotestFileName${getRandomPostfix()}.mrc`;
+    const thirdMarcFileName = `C376975 autotestFileName${getRandomPostfix()}.mrc`;
+    const forthMarcFileName = `C376975 autotestFileName${getRandomPostfix()}.mrc`;
     const fundAndExpenseClassData = [
       {
         fund: 'History(HIST)',

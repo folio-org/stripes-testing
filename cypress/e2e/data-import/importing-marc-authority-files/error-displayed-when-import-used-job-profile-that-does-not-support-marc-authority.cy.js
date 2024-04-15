@@ -7,9 +7,13 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
-import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import {
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
+  DEFAULT_JOB_PROFILE_NAMES,
+} from '../../../support/constants';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     let user;
     const filePathForUpload = 'marcAuthFileForC359246.mrc';
@@ -17,15 +21,15 @@ describe('data-import', () => {
     const marcFiles = [
       {
         fileName: `C359246 marcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         errorMessage:
-          "io.vertx.core.impl.NoStackTraceThrowable: Chosen job profile 'Default - Create instance and SRS MARC Bib' does not support 'MARC_AUTHORITY' record type",
+          "Chosen job profile 'Default - Create instance and SRS MARC Bib' does not support 'MARC_AUTHORITY' record type",
       },
       {
         fileName: `C359246 marcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create Holdings and SRS MARC Holdings',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_HOLDINGS_AND_SRS,
         errorMessage:
-          "io.vertx.core.impl.NoStackTraceThrowable: Chosen job profile 'Default - Create Holdings and SRS MARC Holdings' does not support 'MARC_AUTHORITY' record type",
+          "Chosen job profile 'Default - Create Holdings and SRS MARC Holdings' does not support 'MARC_AUTHORITY' record type",
       },
     ];
 

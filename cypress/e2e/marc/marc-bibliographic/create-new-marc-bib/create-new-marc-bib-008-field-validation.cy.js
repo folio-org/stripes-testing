@@ -42,7 +42,7 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire'] },
         () => {
           InventoryInstance.newMarcBibRecord();
-          QuickMarcEditor.updateExistingField(testData.fieldLDR.tag, testData.fieldLDR.content);
+          QuickMarcEditor.updateLDR06And07Positions();
           QuickMarcEditor.check008FieldContent();
           QuickMarcEditor.updateExistingField(testData.field245.tag, testData.field245.content);
           QuickMarcEditor.updateExistingTagName('008', '00');
@@ -65,7 +65,7 @@ describe('MARC', () => {
           cy.intercept('GET', '**records-editor/records?externalId=**').as('editMarc');
           InventoryInstance.editMarcBibliographicRecord();
           cy.wait('@editMarc').then((res) => {
-            expect(res.response.body.fields[1].content.Entered).to.be.eq(currentDate);
+            expect(res.response.body.fields[2].content.Entered).to.be.eq(currentDate);
           });
         },
       );

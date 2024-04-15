@@ -1,15 +1,16 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
+import InventoryEditMarcRecord from '../../../../support/fragments/inventory/inventoryEditMarcRecord';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
+import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
-import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
-import InventoryEditMarcRecord from '../../../../support/fragments/inventory/inventoryEditMarcRecord';
 
 describe('MARC', () => {
   describe('plug-in MARC authority', () => {
@@ -30,7 +31,7 @@ describe('MARC', () => {
       const marcFile = {
         marc: 'marcBibFileForC385657.mrc',
         fileName: `C385657 marcFile${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numOfRecords: 1,
       };
 
@@ -41,8 +42,8 @@ describe('MARC', () => {
           marcFile.fileName,
           marcFile.jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            testData.createdRecordIDs.push(record.relatedInstanceInfo.idList[0]);
+          response.forEach((record) => {
+            testData.createdRecordIDs.push(record.instance.id);
           });
         });
 

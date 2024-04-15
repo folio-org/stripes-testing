@@ -1,14 +1,14 @@
-import { RECORD_STATUSES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const filePathToUpload = 'marcBibFileForC353624.mrc';
     const fileName = `C356324 autotestFile${getRandomPostfix()}.mrc`;
     let instanceId;
@@ -16,7 +16,7 @@ describe('data-import', () => {
     before('login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathToUpload, fileName, jobProfileToRun).then((response) => {
-        instanceId = response.entries[0].relatedInstanceInfo.idList[0];
+        instanceId = response[0].instance.id;
       });
 
       cy.loginAsAdmin({
@@ -48,7 +48,7 @@ describe('data-import', () => {
         };
 
         Logs.openFileDetails(fileName);
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileName);
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.summary, [
           RECORD_STATUSES.CREATED,
           RECORD_STATUSES.UPDATED,
@@ -93,10 +93,10 @@ describe('data-import', () => {
           '0',
         ]);
         FileDetails.clickNextPaginationButton();
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileName);
         FileDetails.verifyLogSummaryTableIsDisplayed();
         FileDetails.clickPreviousPaginationButton();
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileName);
         FileDetails.verifyLogSummaryTableIsDisplayed();
       },
     );

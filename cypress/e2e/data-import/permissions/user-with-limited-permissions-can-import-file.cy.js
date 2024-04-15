@@ -29,12 +29,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Permissions', () => {
     let firstUser;
     let secondUser;
     const quantityOfItems = '1';
-    const nameMarcFile = `C356841autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFile = `C356841 autotestFile${getRandomPostfix()}.mrc`;
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: {
@@ -152,7 +152,6 @@ describe('data-import', () => {
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-        cy.logout();
 
         cy.login(secondUser.username, secondUser.password, {
           path: SettingsMenu.mappingProfilePath,

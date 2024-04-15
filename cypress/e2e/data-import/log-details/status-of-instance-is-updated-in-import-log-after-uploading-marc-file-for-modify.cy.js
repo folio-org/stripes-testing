@@ -1,6 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
@@ -33,13 +34,13 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     let instanceHrid;
     let exportedFileName;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const fileNameForCreate = `C357027 autotestFileCreteInstance.${getRandomPostfix()}.mrc`;
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
+    const fileNameForCreate = `C357027 autotestFileCreteInstance${getRandomPostfix()}.mrc`;
     const filePathForCreateInstance = 'oneMarcBib.mrc';
     const mappingProfile = {
       name: `C357027 autoTestMappingProf.${getRandomPostfix()}`,
@@ -120,7 +121,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreate);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
@@ -176,7 +177,7 @@ describe('data-import', () => {
             JobProfiles.search(jobProfile.profileName);
             JobProfiles.runImportFile();
             Logs.waitFileIsImported(exportedFileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+            Logs.checkJobStatus(exportedFileName, JOB_STATUS_NAMES.COMPLETED);
             Logs.openFileDetails(exportedFileName);
             FileDetails.checkStatusInColumn(
               RECORD_STATUSES.CREATED,

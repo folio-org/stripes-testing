@@ -129,6 +129,11 @@ const submitOrderLine = () => {
 const checkQuantityPhysical = (quantity) => {
   cy.expect(Accordion('Cost details').find(KeyValue('Quantity physical')).has({ value: quantity }));
 };
+const checkQuantityElectronic = (quantity) => {
+  cy.expect(
+    Accordion('Cost details').find(KeyValue('Quantity electronic')).has({ value: quantity }),
+  );
+};
 const expandActionsDropdownInPOL = () => {
   cy.do(
     orderLineDetailsPane
@@ -140,6 +145,7 @@ const expandActionsDropdownInPOL = () => {
 export default {
   submitOrderLine,
   checkQuantityPhysical,
+  checkQuantityElectronic,
   checkTitle(title) {
     cy.expect(Link(title).exists());
   },
@@ -398,7 +404,7 @@ export default {
     cy.do([quantityPhysicalLocationField.fillIn(quantityPhysical), saveAndCloseButton.click()]);
   },
 
-  POLineInfoWithReceiptNotRequiredStatus: (institutionId) => {
+  POLineInfoWithReceiptNotRequiredStatus(institutionId) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
@@ -424,6 +430,7 @@ export default {
       Select('Create inventory*').choose('Instance, holdings, item'),
       saveAndCloseButton.click(),
     ]);
+    submitOrderLine();
   },
 
   POLineInfoWithReceiptNotRequiredStatuswithSelectLocation: (institutionId) => {
@@ -454,13 +461,14 @@ export default {
     ]);
   },
 
-  POLineInfoEditWithReceiptNotRequiredStatus: () => {
+  POLineInfoEditWithReceiptNotRequiredStatus() {
     cy.do(Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.RECEIPT_NOT_REQUIRED));
     cy.expect(receivingWorkflowSelect.disabled());
     cy.do(saveAndCloseButton.click());
+    submitOrderLine();
   },
 
-  POLineInfoEditWithPendingReceiptStatus: () => {
+  POLineInfoEditWithPendingReceiptStatus() {
     cy.do([
       Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.PENDING),
       receivingWorkflowSelect.choose(
@@ -468,6 +476,7 @@ export default {
       ),
       saveAndCloseButton.click(),
     ]);
+    submitOrderLine();
   },
 
   viewPO: () => {
@@ -2103,6 +2112,22 @@ export default {
         expect(quantity).to.equal(arrayOfQuantityRows.length);
       });
   },
+  checkElectronicQuantityInLocation: (quantity) => {
+    const arrayOfQuantityRows = [];
+    cy.get('#location')
+      .find('[class*="col-"]:nth-child(3)')
+      .each(($row) => {
+        cy.get('[class*="kvValue-"]', { withinSubject: $row })
+          // extract its text content
+          .invoke('text')
+          .then((cellValue) => {
+            arrayOfQuantityRows.push(cellValue);
+          });
+      })
+      .then(() => {
+        expect(quantity).to.equal(arrayOfQuantityRows.length);
+      });
+  },
   getOrderLineViaApi(searchParams) {
     return cy
       .okapiRequest({
@@ -2212,7 +2237,7 @@ export default {
     ]);
   },
 
-  verifyProductIdentifier: (productId, rowIndex = 0, productIdType) => {
+  verifyProductIdentifier: (productId, productIdType, rowIndex = 0) => {
     if (productIdType) {
       cy.expect([
         MultiColumnList({ id: 'list-product-ids' })

@@ -44,6 +44,7 @@ describe('Loans', () => {
         Permissions.uiUsersView.gui,
         Permissions.uiUsersViewLoans.gui,
         Permissions.uiUserLoansChangeDueDate.gui,
+        Permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
         UserEdit.addServicePointViaApi(

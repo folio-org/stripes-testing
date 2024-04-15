@@ -20,6 +20,7 @@ import {
   TextArea,
   TextField,
 } from '../../../../interactors';
+import { AppList } from '../../../../interactors/applist';
 import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -84,6 +85,11 @@ const openintegrationDetailsSectionButton = Button({
 const listIntegrationConfigs = MultiColumnList({
   id: 'list-integration-configs',
 });
+const donorCheckbox = Checkbox('Donor');
+const toggleButtonIsDonor = Button({ id: 'accordion-toggle-button-isDonor' });
+const donorSection = Section({ id: 'isDonor' });
+const bankingInformationButton = Button('Banking information');
+const bankingInformationAddButton = Button({ id: 'bankingInformation-add-button' });
 
 export default {
   waitLoading: () => {
@@ -105,6 +111,40 @@ export default {
       organizationCodeField.fillIn(organization.code),
       saveAndClose.click(),
     ]);
+  },
+
+  varifyAbsentOrganizationApp: () => {
+    cy.expect(AppList('Organizations').absent());
+  },
+  buttonNewIsAbsent: () => {
+    cy.expect(Pane({ id: 'organizations-results-pane' }).find(buttonNew).absent());
+  },
+
+  createDonorOrganization: (organization) => {
+    cy.expect(buttonNew.exists());
+    cy.do([
+      buttonNew.click(),
+      organizationStatus.choose(organization.status),
+      organizationNameField.fillIn(organization.name),
+      organizationCodeField.fillIn(organization.code),
+      donorCheckbox.click(),
+    ]);
+    cy.expect(donorCheckbox.is({ disabled: false }));
+    cy.do(saveAndClose.click());
+  },
+
+  addDonorToOrganization: () => {
+    cy.wait(4000);
+    cy.do(donorCheckbox.click());
+    cy.expect(donorCheckbox.is({ disabled: false }));
+    cy.do(saveAndClose.click());
+  },
+
+  removeDonorFromOrganization: () => {
+    cy.wait(4000);
+    cy.expect(donorCheckbox.is({ disabled: false }));
+    cy.do(donorCheckbox.click());
+    cy.do(saveAndClose.click());
   },
 
   createOrganizationWithAU: (organization, AcquisitionUnit) => {
@@ -141,9 +181,23 @@ export default {
   selectActiveStatus: () => {
     cy.do(Checkbox('Active').click());
   },
-  selectInActiveStatus: () => {
-    cy.do(Checkbox('Inactive').click());
+
+  selectIsDonorFilter: (isDonor) => {
+    if (isDonor === 'Yes') {
+      cy.do([
+        toggleButtonIsDonor.click(),
+        donorSection.find(Checkbox('Yes')).click(),
+        toggleButtonIsDonor.click(),
+      ]);
+    } else if (isDonor === 'No') {
+      cy.do([
+        toggleButtonIsDonor.click(),
+        donorSection.find(Checkbox('No')).click(),
+        toggleButtonIsDonor.click(),
+      ]);
+    }
   },
+
   selectPendingStatus: () => {
     cy.do(Checkbox('Pending').click());
   },
@@ -313,6 +367,11 @@ export default {
     cy.wait(4000);
   },
 
+  checkIsDonor: (organization) => {
+    cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
+    cy.expect(summarySection.find(donorCheckbox).is({ visible: true, disabled: false }));
+  },
+
   expectColorFromList: () => {
     cy.get('#organizations-list').should('have.css', 'background-color', blueColor);
   },
@@ -365,9 +424,11 @@ export default {
   },
 
   closeDetailsPane: () => {
-    cy.do([timesButton.click()]);
+    cy.do(PaneHeader({ id: 'paneHeaderpane-organization-details' }).find(timesButton).click());
   },
-
+  closeIntegrationDetailsPane: () => {
+    cy.do(PaneHeader({ id: 'paneHeaderintegration-view' }).find(timesButton).click());
+  },
   selectCountryFilter: () => {
     cy.do([
       Button({ id: 'accordion-toggle-button-plugin-country-filter' }).click(),
@@ -491,7 +552,20 @@ export default {
   },
 
   openContactPeopleSection: () => {
-    cy.do([openContactSectionButton.click()]);
+    cy.do(openContactSectionButton.click());
+  },
+
+  openBankInformationSection: () => {
+    cy.do(Button('Banking information').click());
+  },
+
+  checkBankInformationExist: (bankingInformationName) => {
+    cy.do(Button('Banking information').click());
+    cy.expect(
+      Section({ id: 'bankingInformationSection' })
+        .find(KeyValue({ value: bankingInformationName }))
+        .exists(),
+    );
   },
 
   addContactToOrganization: (contact) => {
@@ -673,6 +747,11 @@ export default {
     return OrganizationDetails;
   },
 
+  organizationIsAbsent: (organizationName) => {
+    cy.wait(4000);
+    cy.expect(Pane({ id: 'organizations-results-pane' }).find(Link(organizationName)).absent());
+  },
+
   checkTextofElement: () => {
     cy.xpath(numberOfSearchResultsHeader).then(($value) => {
       const textValue = $value.length;
@@ -696,5 +775,51 @@ export default {
 
   saveOrganization: () => {
     cy.do(saveAndClose.click());
+  },
+
+  addBankingInformation: (bankingInformation) => {
+    cy.do([
+      bankingInformationButton.click(),
+      bankingInformationAddButton.click(),
+      TextField({ name: 'bankingInformation[0].bankName' }).fillIn(bankingInformation.name),
+      TextField({ name: 'bankingInformation[0].bankAccountNumber' }).fillIn(
+        bankingInformation.accountNumber,
+      ),
+    ]);
+    cy.do(saveAndClose.click());
+    cy.wait(4000);
+  },
+
+  addSecondBankingInformation: (bankingInformation) => {
+    cy.do([
+      bankingInformationButton.click(),
+      bankingInformationAddButton.click(),
+      TextField({ name: 'bankingInformation[1].bankName' }).fillIn(bankingInformation.name),
+      TextField({ name: 'bankingInformation[1].bankAccountNumber' }).fillIn(
+        bankingInformation.accountNumber,
+      ),
+    ]);
+    cy.do(saveAndClose.click());
+    cy.wait(4000);
+  },
+
+  editBankingInformationName: (bankingInformationName) => {
+    cy.do([
+      bankingInformationButton.click(),
+      TextField({ name: 'bankingInformation[0].bankName' }).fillIn(bankingInformationName),
+    ]);
+  },
+
+  deleteBankingInformation: () => {
+    cy.do([bankingInformationButton.click()]);
+    cy.get('[data-test-repeatable-field-remove-item-button="true"]', { timeout: 15000 })
+      .first()
+      .click();
+    cy.do(saveAndClose.click());
+    cy.wait(4000);
+  },
+
+  checkBankingInformationAddButtonIsDisabled: () => {
+    cy.expect(Button({ id: 'bankingInformation-add-button' }).has({ disabled: true }));
   },
 };

@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -11,8 +12,8 @@ describe('MARC', () => {
   describe('MARC Holdings', () => {
     const fileName = `autotest1Bib${getRandomPostfix()}.mrc`;
     const marcFile = 'oneMarcBib.mrc';
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const propertyName = 'relatedInstanceInfo';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
+    const propertyName = 'instance';
     let createdInstanceID;
     let holdingsID;
 
@@ -22,8 +23,8 @@ describe('MARC', () => {
       cy.getAdminToken();
 
       DataImport.uploadFileViaApi(marcFile, fileName, jobProfileToRun).then((response) => {
-        response.entries.forEach((record) => {
-          createdInstanceID = record[propertyName].idList[0];
+        response.forEach((record) => {
+          createdInstanceID = record[propertyName].id;
         });
       });
     });

@@ -17,7 +17,6 @@ describe('MARC', () => {
           tag800: '800',
           tag240: '240',
           tag245: '245',
-          tagLDR: 'LDR',
         },
 
         fieldContents: {
@@ -27,7 +26,6 @@ describe('MARC', () => {
           tag800Content: 'New series',
           tag240Content: 'New alt. title',
           tag245Content: 'New title',
-          tagLDRContent: '00000naa\\a2200000uu\\4500',
         },
 
         accordions: {
@@ -73,10 +71,7 @@ describe('MARC', () => {
             `$a ${testData.fieldContents.tag245Content}`,
           );
           QuickMarcEditor.verifySaveAndCloseButtonEnabled();
-          QuickMarcEditor.updateExistingField(
-            testData.tags.tagLDR,
-            testData.fieldContents.tagLDRContent,
-          );
+          QuickMarcEditor.updateLDR06And07Positions();
           MarcAuthority.addNewField(
             4,
             testData.tags.tag100,
@@ -137,7 +132,7 @@ describe('MARC', () => {
             /in\d{11}/gm,
           );
           QuickMarcEditor.checkFieldContentMatch(
-            'textarea[name="records[3].content"]',
+            'textarea[name="records[2].content"]',
             /\d{14}\.\d{1}/gm,
           );
           QuickMarcEditor.verifyTagField(10, '999', 'f', 'f', '$s', '$i');

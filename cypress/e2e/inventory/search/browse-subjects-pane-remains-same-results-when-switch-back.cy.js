@@ -1,16 +1,21 @@
-import { LOAN_TYPE_NAMES, LOCATION_NAMES, MATERIAL_TYPE_NAMES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  LOAN_TYPE_NAMES,
+  LOCATION_NAMES,
+  MATERIAL_TYPE_NAMES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import ConfirmDeleteItemModal from '../../../support/fragments/inventory/modals/confirmDeleteItemModal';
 import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import ConfirmDeleteItemModal from '../../../support/fragments/inventory/modals/confirmDeleteItemModal';
 
 const testData = {
   inventoryTitle: 'C380405',
@@ -30,14 +35,14 @@ const testData = {
     {
       marc: 'marcBibC380405.mrc',
       fileName: `testMarcFileC380405.${randomFourDigitNumber()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       numberOfRecords: 1,
-      propertyName: 'relatedInstanceInfo',
+      propertyName: 'instance',
     },
   ],
 };
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Subject Browse', () => {
     before('Create test data', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
@@ -65,8 +70,8 @@ describe('inventory', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              testData.instanceIDs.push(record[marcFile.propertyName].idList[0]);
+            response.forEach((record) => {
+              testData.instanceIDs.push(record[marcFile.propertyName].id);
             });
           });
         });

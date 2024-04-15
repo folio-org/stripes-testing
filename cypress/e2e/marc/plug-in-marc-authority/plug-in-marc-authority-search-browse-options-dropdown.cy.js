@@ -1,3 +1,8 @@
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  MARC_AUTHORITY_BROWSE_OPTIONS,
+  MARC_AUTHORITY_SEARCH_OPTIONS,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -6,10 +11,6 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import {
-  MARC_AUTHORITY_SEARCH_OPTIONS,
-  MARC_AUTHORITY_BROWSE_OPTIONS,
-} from '../../../support/constants';
 
 describe('MARC', () => {
   describe('plug-in MARC authority', () => {
@@ -17,7 +18,7 @@ describe('MARC', () => {
     const marcFile = {
       marc: 'oneMarcBib.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       numOfRecords: 1,
     };
     let createdAuthorityID;
@@ -40,8 +41,8 @@ describe('MARC', () => {
             marcFile.fileName,
             marcFile.jobProfileToRun,
           ).then((response) => {
-            response.entries.forEach((record) => {
-              createdAuthorityID = record.relatedInstanceInfo.idList[0];
+            response.forEach((record) => {
+              createdAuthorityID = record.instance.id;
             });
           });
         })

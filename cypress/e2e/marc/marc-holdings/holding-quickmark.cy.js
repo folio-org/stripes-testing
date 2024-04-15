@@ -1,5 +1,5 @@
 import { calloutTypes } from '../../../../interactors';
-import { RECORD_STATUSES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -22,8 +22,8 @@ describe('MARC', () => {
   describe('MARC Holdings', () => {
     const testData = {};
     const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const propertyName = 'relatedInstanceInfo';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
+    const propertyName = 'instance';
     let instanceID;
 
     before(() => {
@@ -38,8 +38,8 @@ describe('MARC', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
           (response) => {
-            response.entries.forEach((record) => {
-              instanceID = record[propertyName].idList[0];
+            response.forEach((record) => {
+              instanceID = record[propertyName].id;
             });
           },
         );

@@ -149,6 +149,7 @@ const itemStatusKeyValue = KeyValue('Item status');
 const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(viewHoldingsButton);
 const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
 const detailsViewPaneheader = PaneHeader({ id: 'paneHeaderpane-instancedetails' });
+const consortiaHoldingsAccordion = Accordion({ id: 'consortialHoldings' });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -815,6 +816,27 @@ export default {
 
     return HoldingsRecordView;
   },
+
+  expandConsortiaHoldings() {
+    cy.wait(2000);
+    cy.do(consortiaHoldingsAccordion.clickHeader());
+    cy.wait(2000);
+    cy.expect(consortiaHoldingsAccordion.has({ open: true }));
+  },
+
+  expandMemberSubHoldings(memberId) {
+    cy.wait(4000);
+    cy.do(Accordion({ id: memberId }).focus());
+    cy.do(Accordion({ id: memberId }).clickHeader());
+    cy.wait(2000);
+    cy.expect(Accordion({ id: memberId }).has({ open: true }));
+  },
+
+  expandMemberSubSubHoldings(memberId, holdingsId) {
+    cy.wait(2000);
+    cy.do(Accordion({ id: `consortialHoldings.${memberId}.${holdingsId}` }).clickHeader());
+  },
+
   createHoldingsRecord: (permanentLocation) => {
     pressAddHoldingsButton();
     InventoryNewHoldings.fillRequiredFields(permanentLocation);
@@ -1583,5 +1605,89 @@ export default {
         );
       }
     });
+  },
+  checkInstanceHrId: (expectedInstanceHrId) => cy.expect(
+    instanceDetailsSection
+      .find(KeyValue('Instance HRID'))
+      .has({ value: including(expectedInstanceHrId) }),
+  ),
+
+  verifySharedIconByTitle(title) {
+    cy.expect(
+      paneResultsSection
+        .find(MultiColumnListCell(title, { innerHTML: including('sharedIcon') }))
+        .exists(),
+    );
+  },
+
+  verifySharedIconAbsentByTitle(title) {
+    cy.expect(
+      paneResultsSection
+        .find(MultiColumnListCell(title, { innerHTML: including('sharedIcon') }))
+        .absent(),
+    );
+  },
+
+  createAlternativeTitleTypeViaAPI(alternativeTitleTypeName, sourceName = 'local', id = uuid()) {
+    const body = {
+      id,
+      name: alternativeTitleTypeName,
+      source: sourceName,
+    };
+
+    return cy.createAlternativeTitleTypes(body);
+  },
+
+  createClassificationTypeViaApi(classificationTypeName, sourceName = 'local', id = uuid()) {
+    const body = {
+      id,
+      name: classificationTypeName,
+      source: sourceName,
+    };
+
+    return cy.createClassifierIdentifierTypes(body);
+  },
+
+  createInstanceNoteTypeViaApi(instanceNoteTypeName, sourceName = 'local', id = uuid()) {
+    const body = {
+      id,
+      name: instanceNoteTypeName,
+      source: sourceName,
+    };
+
+    return cy.createInstanceNoteTypes(body);
+  },
+
+  createModesOfIssuanceViaApi(modesOfIssuanceName, sourceName = 'local', id = uuid()) {
+    const body = {
+      id,
+      name: modesOfIssuanceName,
+      source: sourceName,
+    };
+
+    return cy.createModesOfIssuance(body);
+  },
+
+  verifyConsortiaHoldingsAccordion(isOpen = false) {
+    cy.expect([
+      Section({ id: 'consortialHoldings' }).exists(),
+      Accordion({ id: 'consortialHoldings' }).has({ open: isOpen }),
+    ]);
+  },
+
+  verifyMemberSubHoldingsAccordion(memberId, isOpen = true) {
+    cy.wait(2000);
+    cy.expect([
+      Accordion({ id: 'consortialHoldings' }).has({ open: isOpen }),
+      Accordion({ id: memberId }).exists(),
+    ]);
+  },
+
+  verifyMemberSubSubHoldingsAccordion(memberId, holdingsId, isOpen = true) {
+    cy.wait(2000);
+    cy.expect([
+      Accordion({ id: memberId }).has({ open: isOpen }),
+      Accordion({ id: `consortialHoldings.cs00000int_0005.${holdingsId}` }).exists(),
+    ]);
   },
 };

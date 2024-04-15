@@ -46,7 +46,7 @@ describe('Invoices', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '100';
-  const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
+  const periodStartForFirstFY = DateTools.getCurrentDateInPreviusMonthForFiscalYearOnUIEdit();
   const periodEndForFirstFY = DateTools.getTwoPreviousDaysDateForFiscalYearOnUIEdit();
   const periodStartForSecondFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
   const periodEndForSecondFY = DateTools.getDayTomorrowDateForFiscalYearOnUIEdit();
@@ -57,6 +57,13 @@ describe('Invoices', () => {
 
   before(() => {
     cy.getAdminToken();
+
+    ServicePoints.getViaApi().then((servicePoint) => {
+      servicePointId = servicePoint[0].id;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+        location = res;
+      });
+    });
     // create first Fiscal Year and prepere 2 Funds for Rollover
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
@@ -103,13 +110,6 @@ describe('Invoices', () => {
       periodEndForSecondFY,
     );
 
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
-
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
       invoice.accountingCode = organization.erpCode;
@@ -137,9 +137,9 @@ describe('Invoices', () => {
     });
 
     cy.createTempUser([
+      permissions.uiFinanceExecuteFiscalYearRollover.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiInvoicesApproveInvoices.gui,
-      permissions.viewEditCreateInvoiceInvoiceLine.gui,
+      permissions.uiFinanceViewLedger.gui,
       permissions.uiInvoicesPayInvoices.gui,
       permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
       permissions.uiOrdersView.gui,

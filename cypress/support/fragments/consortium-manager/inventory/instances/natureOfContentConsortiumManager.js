@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import { Button, MultiColumnListHeader } from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
+import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 
 const newButton = Button('+ New');
 const id = uuid();
@@ -46,6 +47,10 @@ export default {
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });
+  },
+
+  waitLoading() {
+    ConsortiaControlledVocabularyPaneset.waitLoading('Nature of content');
   },
 
   createViaApi(type) {

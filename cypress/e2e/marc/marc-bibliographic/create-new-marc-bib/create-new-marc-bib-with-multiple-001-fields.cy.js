@@ -11,12 +11,10 @@ describe('MARC', () => {
       const testData = {
         tags: {
           tag245: '245',
-          tagLDR: 'LDR',
           tag001: '001',
         },
         fieldContents: {
           tag245Content: 'New important book',
-          tagLDRContent: '00000naa\\a2200000uu\\4500',
           tag001Content: '$a n 94000339',
         },
         tag001ValueInSourceMask: /[a-z]+\d+/,
@@ -49,10 +47,7 @@ describe('MARC', () => {
         () => {
           InventoryInstance.newMarcBibRecord();
 
-          QuickMarcEditor.updateExistingField(
-            testData.tags.tagLDR,
-            testData.fieldContents.tagLDRContent,
-          );
+          QuickMarcEditor.updateLDR06And07Positions();
           QuickMarcEditor.updateExistingField(
             testData.tags.tag245,
             testData.fieldContents.tag245Content,

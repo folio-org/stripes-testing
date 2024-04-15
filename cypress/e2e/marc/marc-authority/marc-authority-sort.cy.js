@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -44,16 +45,16 @@ describe('MARC', () => {
       {
         marc: 'marcFileForC350579.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 2,
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
       },
       {
         marc: 'marcFileForC365113.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 19,
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
       },
     ];
 
@@ -96,8 +97,8 @@ describe('MARC', () => {
           marcFiles[1].fileName,
           marcFiles[1].jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            createdAuthorityIDs.push(record[marcFiles[1].propertyName].idList[0]);
+          response.forEach((record) => {
+            createdAuthorityIDs.push(record[marcFiles[1].propertyName].id);
           });
         });
         cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -145,8 +146,8 @@ describe('MARC', () => {
           marcFiles[0].fileName,
           marcFiles[0].jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            createdAuthorityIDs.push(record[marcFiles[0].propertyName].idList[0]);
+          response.forEach((record) => {
+            createdAuthorityIDs.push(record[marcFiles[0].propertyName].id);
           });
         });
         cy.login(testData.userProperties.username, testData.userProperties.password, {

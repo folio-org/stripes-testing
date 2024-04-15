@@ -1,6 +1,10 @@
 import { HTML, including } from '@interactors/html';
 import { Button } from '../../../../../interactors';
 
+const srsMarcTab = Button(including('SRS MARC'));
+const instanceTab = Button(including('Instance'));
+const itemTab = Button(including('Item'));
+
 export default {
   verifyJsonScreenIsOpened: () => {
     cy.get('#logs-pane').should('exist');
@@ -34,20 +38,12 @@ export default {
       });
   },
 
-  openMarcSrsTab: () => {
-    cy.do(Button(including('SRS MARC')).click());
-  },
-
-  openInstanceTab: () => {
-    cy.do(Button(including('Instance')).click());
-  },
+  openMarcSrsTab: () => cy.do(srsMarcTab.click()),
+  openInstanceTab: () => cy.do(instanceTab.click()),
+  openItemTab: () => cy.do(itemTab.click()),
 
   openHoldingsTab: () => {
     cy.get('div[class^="buttonGroup-"]').find('[data-test-logs-filter-option="3"]').click();
-  },
-
-  openItemTab: () => {
-    cy.do(Button(including('Item')).click());
   },
 
   openOrderTab: () => {
@@ -56,5 +52,18 @@ export default {
 
   verifyContentInTab: (value) => {
     cy.expect(HTML(including(value)).exists());
+  },
+
+  verifyTabsPresented: () => {
+    cy.expect([
+      Button(including('Incoming record')).exists(),
+      srsMarcTab.exists(),
+      instanceTab.exists(),
+      Button(including('Holdings')).exists(),
+      itemTab.exists(),
+      Button(including('Authority')).exists(),
+      Button(including('Order')).exists(),
+      Button(including('Invoice')).exists(),
+    ]);
   },
 };

@@ -4,6 +4,7 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -32,7 +33,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     const testData = {
       authorityTitle: 'C374186 Elizabeth II, Queen of Great Britain, 1926-',
@@ -83,16 +84,16 @@ describe('data-import', () => {
       {
         marc: 'marcBibFileForC374186.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numOfRecords: 1,
-        propertyName: 'relatedInstanceInfo',
+        propertyName: 'instance',
       },
       {
         marc: 'marcAuthFileC374186.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 1,
-        propertyName: 'relatedAuthorityInfo',
+        propertyName: 'authority',
       },
     ];
 
@@ -118,8 +119,8 @@ describe('data-import', () => {
           marcFile.fileName,
           marcFile.jobProfileToRun,
         ).then((response) => {
-          response.entries.forEach((record) => {
-            createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+          response.forEach((record) => {
+            createdAuthorityIDs.push(record[marcFile.propertyName].id);
           });
         });
       });
@@ -221,7 +222,7 @@ describe('data-import', () => {
 
         cy.visit(TopMenu.marcAuthorities);
         MarcAuthorities.searchBy('Keyword', 'Queen of G. Britain');
-        MarcAuthority.contains('$a Elizabeth $b II, $c 1926-2022, $q Queen of G. Britain');
+        MarcAuthority.contains('$a C374186 Elizabeth $b II, $c 1926-2022, $q Queen of G. Britain');
 
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
@@ -233,7 +234,7 @@ describe('data-import', () => {
           '700',
           '0',
           '\\',
-          '$a Elizabeth $b II, $c 1926-2022, $q Queen of G. Britain',
+          '$a C374186 Elizabeth $b II, $c 1926-2022, $q Queen of G. Britain',
           '',
           '$0 http://id.loc.gov/authorities/names/n80126296',
           '',

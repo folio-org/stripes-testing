@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -20,11 +21,9 @@ describe('MARC', () => {
         const testData = {
           tags: {
             tag245: '245',
-            tagLDR: 'LDR',
           },
           fieldContents: {
             tag245Content: 'The most important book',
-            tagLDRContent: '00000naa\\a2200000uu\\4500',
           },
           marcAuthIcon: 'Linked to MARC authority',
           accordion: 'Subject',
@@ -63,9 +62,9 @@ describe('MARC', () => {
           {
             marc: 'marcAuthFileForC380728.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 2,
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
           },
         ];
 
@@ -88,8 +87,8 @@ describe('MARC', () => {
                 marcFile.fileName,
                 marcFile.jobProfileToRun,
               ).then((response) => {
-                response.entries.forEach((record) => {
-                  createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+                response.forEach((record) => {
+                  createdAuthorityIDs.push(record[marcFile.propertyName].id);
                 });
               });
             });
@@ -118,10 +117,7 @@ describe('MARC', () => {
               testData.tags.tag245,
               `$a ${testData.fieldContents.tag245Content}`,
             );
-            QuickMarcEditor.updateExistingField(
-              testData.tags.tagLDR,
-              testData.fieldContents.tagLDRContent,
-            );
+            QuickMarcEditor.updateLDR06And07Positions();
             MarcAuthority.addNewField(4, newFields[0].tag, `$a ${newFields[0].content}`);
             QuickMarcEditor.checkLinkButtonExistByRowIndex(5);
             MarcAuthority.addNewField(5, newFields[1].tag, `$a ${newFields[1].content}`);

@@ -5,7 +5,7 @@ import BrowseContributors from '../../../support/fragments/inventory/search/brow
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Contributors Browse', () => {
     let instances = [];
     let contributors = [];

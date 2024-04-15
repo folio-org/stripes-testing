@@ -1,53 +1,47 @@
-import Permissions from '../../../../support/dictionary/permissions';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import Users from '../../../../support/fragments/users/users';
-import TopMenu from '../../../../support/fragments/topMenu';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
 import { tenantNames } from '../../../../support/dictionary/affiliations';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
     let user;
     const C402762testData = {
       filePath: 'oneMarcBib.mrc',
-      marcFileName: `C402762 autotestFileName${getRandomPostfix()}`,
-      instanceIds: [],
-      instanceSource: 'MARC',
+      marcFileName: `C402762 autotestFileName${getRandomPostfix()}.mrc`,
+      instanceSource: INSTANCE_SOURCE_NAMES.MARC,
     };
     const C402763testData = {
-      instanceSource: 'FOLIO',
+      instanceSource: INSTANCE_SOURCE_NAMES.FOLIO,
     };
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui])
-        .then((userProperties) => {
+      DataImport.uploadFileViaApi(
+        C402762testData.filePath,
+        C402762testData.marcFileName,
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      ).then((response) => {
+        C402762testData.instanceId = response[0].instance.id;
+      });
+      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+        C402763testData.instance = instanceData;
+      });
+      cy.resetTenant();
+
+      cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
+        (userProperties) => {
           user = userProperties;
-        })
-        .then(() => {
-          cy.loginAsAdmin({
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          });
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-          DataImport.uploadFileViaApi(C402762testData.filePath, C402762testData.marcFileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(C402762testData.marcFileName);
-          Logs.getCreatedItemsID().then((link) => {
-            C402762testData.instanceIds.push(link.split('/')[5]);
-          });
-          InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-            C402763testData.instance = instanceData;
-          });
-          cy.resetTenant();
-        });
+        },
+      );
     });
 
     beforeEach('Login', () => {
@@ -62,7 +56,7 @@ describe('Inventory', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      InventoryInstance.deleteInstanceViaApi(C402762testData.instanceIds[0]);
+      InventoryInstance.deleteInstanceViaApi(C402762testData.instanceId);
       InventoryInstance.deleteInstanceViaApi(C402763testData.instance.instanceId);
     });
 
@@ -72,7 +66,7 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.verifySearchAndFilterPane();
         InventorySearchAndFilter.bySource(C402762testData.instanceSource);
-        InventorySearchAndFilter.searchInstanceByTitle(C402762testData.instanceIds[0]);
+        InventorySearchAndFilter.searchInstanceByTitle(C402762testData.instanceId);
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InstanceRecordView.verifyInstanceSource(C402762testData.instanceSource);
         InstanceRecordView.verifyEditInstanceButtonIsEnabled();

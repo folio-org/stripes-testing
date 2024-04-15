@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -21,7 +22,6 @@ describe('MARC', () => {
       fileNameForCreateHoldings: `C359241 autotestFileName${getRandomPostfix()}`,
       fileName: `C359241 autotestFileName${getRandomPostfix()}`,
       filePath: 'marcBibFileForC359241.mrc',
-      jobProfileForRun: 'Default - Create Holdings and SRS MARC Holdings',
     };
     const fieldData = {
       firstFieldForAdding: { tag: '', content: '' },
@@ -42,9 +42,9 @@ describe('MARC', () => {
       DataImport.uploadFileViaApi(
         'oneMarcBib.mrc',
         testData.fileNameForCreateInstance,
-        'Default - Create instance and SRS MARC Bib',
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       ).then((response) => {
-        instanceHrid = response.entries[0].relatedInstanceInfo.hridList[0];
+        instanceHrid = response[0].instance.hrid;
 
         DataImport.editMarcFile(
           testData.filePath,
@@ -56,7 +56,7 @@ describe('MARC', () => {
       DataImport.uploadFileViaApi(
         testData.fileName,
         testData.fileNameForCreateHoldings,
-        'Default - Create Holdings and SRS MARC Holdings',
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_HOLDINGS_AND_SRS,
       );
 
       cy.createTempUser([

@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -52,7 +53,10 @@ describe('MARC', () => {
         () => {
           DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName2);
           JobProfiles.waitFileIsUploaded();
-          DataImport.importFileForBrowse(MarcAuthority.defaultCreateJobProfile, testData.fileName2);
+          DataImport.importFileForBrowse(
+            DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+            testData.fileName2,
+          );
           cy.visit(TopMenu.marcAuthorities);
           MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.searchBy(testData.searchOption, testData.recordForC357549);
@@ -72,7 +76,7 @@ describe('MARC', () => {
           DataImport.uploadFile('marcFileForC350643.mrc', testData.fileName);
           JobProfiles.waitFileIsUploaded();
           JobProfiles.waitLoadingList();
-          JobProfiles.search('Default - Create SRS MARC Authority');
+          JobProfiles.search(DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(testData.fileName);
           Logs.checkJobStatus(testData.fileName, 'Completed');

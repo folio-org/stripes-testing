@@ -23,6 +23,8 @@ const profileLinkButton = Button('Link Profile');
 const newActionProfile = Pane('New action profile');
 const closeButton = Button('Close');
 
+const action = ACTION_NAMES_IN_ACTION_PROFILE.CREATE;
+
 const defaultActionProfile = {
   name: 'autotest action profile',
   typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -85,10 +87,15 @@ const getDefaultItemActionProfile = (name) => {
   return defaultItemActionProfile;
 };
 
+const clickLinkProfileButton = () => {
+  cy.do(profileLinkButton.click());
+};
+
 export default {
   getDefaultInstanceActionProfile,
   getDefaultHoldingsActionProfile,
   getDefaultItemActionProfile,
+  clickLinkProfileButton,
   fill: (specialActionProfile = defaultActionProfile) => {
     cy.do([
       nameField.fillIn(specialActionProfile.name),
@@ -101,12 +108,12 @@ export default {
 
   fillName: (profileName = defaultActionProfile.name) => cy.do(nameField.fillIn(profileName)),
 
-  chooseAction: (profileAction = ACTION_NAMES_IN_ACTION_PROFILE.CREATE) => cy.do(actionSelect.choose(profileAction)),
+  chooseAction: (profileAction = action) => cy.do(actionSelect.choose(profileAction)),
 
   saveProfile: () => cy.do(Button('Save as profile & Close').click()),
 
   linkMappingProfile: (specialMappingProfileName) => {
-    cy.do(profileLinkButton.click());
+    clickLinkProfileButton();
     SelectMappingProfile.searchProfile(specialMappingProfileName);
     SelectMappingProfile.selectProfile(specialMappingProfileName);
     cy.expect(profileLinkSection.find(profileLinkButton).has({ disabled: true }));

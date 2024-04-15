@@ -1,10 +1,12 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { calloutTypes } from '../../../../interactors';
-import { RECORD_STATUSES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
@@ -12,15 +14,13 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     const OCLCAuthentication = '100481406/PAOLF';
-    const fileName = `C356824autotestFile${getRandomPostfix()}.mrc`;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const fileName = `C356824 autotestFile${getRandomPostfix()}.mrc`;
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const oclcForImport = '912958093';
     const oclcForUpdating = '698820890';
     const updatedInstanceData = {
@@ -78,9 +78,10 @@ describe('data-import', () => {
         InventoryInstances.importWithOclc(oclcForImport);
 
         cy.visit(TopMenu.dataImportPath);
-        cy.wait(25000);
+        cy.wait(15000);
         Logs.openViewAllLogs();
         cy.reload();
+        cy.wait(10000);
         LogsViewAll.openUserIdAccordion();
         LogsViewAll.filterJobsByUser(`${user.firstName} ${user.lastName}`);
         LogsViewAll.openFileDetails('No file name');

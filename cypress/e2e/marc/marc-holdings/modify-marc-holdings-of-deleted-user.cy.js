@@ -1,5 +1,5 @@
+import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
-import { RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -21,8 +21,8 @@ describe('MARC', () => {
     };
 
     const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const propertyName = 'relatedInstanceInfo';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
+    const propertyName = 'instance';
 
     let instanceID;
 
@@ -44,8 +44,8 @@ describe('MARC', () => {
         }).then(() => {
           DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
             (response) => {
-              response.entries.forEach((record) => {
-                instanceID = record[propertyName].idList[0];
+              response.forEach((record) => {
+                instanceID = record[propertyName].id;
               });
             },
           );

@@ -27,15 +27,14 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
-    const title =
-      'Earthquakes, mudslides, fires & riots : California & graphic design, 1936-1986 / Louise Sandhaus ; with contributions by Denise Gonzales Crisp, Lorraine Wild, Michael Worthington.';
+    const title = 'Earthquakes, mudslides, fires & riots :';
     const jsonErrorMessage =
       'org.folio.rest.core.exceptions.HttpException: User is not a member of the specified acquisitions group - operation is restricted';
     const filePathForCreateOrder = 'marcBibFileForC385666.mrc';
-    const marcFileName = `C385666 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C385666 autotestFileName${getRandomPostfix()}.mrc`;
     const mappingProfile = {
       name: `C385666 Check acquisitions unit.${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,

@@ -1,6 +1,12 @@
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  RECORD_STATUSES,
+  AUTHORITY_LDR_FIELD_STATUS_DROPDOWN,
+  AUTHORITY_LDR_FIELD_TYPE_DROPDOWN,
+  AUTHORITY_LDR_FIELD_ELVL_DROPDOWN,
+  AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN,
+} from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
-import { RECORD_STATUSES } from '../../../../support/constants';
-import { JobProfiles as SettingsJobProfiles } from '../../../../support/fragments/settings/dataImport';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -8,11 +14,12 @@ import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import { JobProfiles as SettingsJobProfiles } from '../../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -21,7 +28,6 @@ describe('MARC', () => {
         authority: {
           title: 'Congress and foreign policy series',
           nonExactTitle: 'Congress',
-          ldr: '00846cz\\\\a2200241n\\\\4500',
           searchOption: 'Uniform title',
           newField: {
             title: `Test authority ${getRandomPostfix()}`,
@@ -38,14 +44,14 @@ describe('MARC', () => {
           type: 'Authorized',
         },
       };
-      const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const createdJobProfile = {
         profileName: `Update MARC authority records - 010 $a ${getRandomPostfix()}`,
         acceptedType: 'MARC',
       };
       const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
       const updatedfileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
-      const propertyName = 'relatedAuthorityInfo';
+      const propertyName = 'authority';
       let createdAuthorityID;
 
       before('Creating data', () => {
@@ -70,8 +76,8 @@ describe('MARC', () => {
 
           DataImport.uploadFileViaApi('oneMarcAuthority.mrc', fileName, jobProfileToRun).then(
             (response) => {
-              response.entries.forEach((record) => {
-                createdAuthorityID = record[propertyName].idList[0];
+              response.forEach((record) => {
+                createdAuthorityID = record[propertyName].id;
               });
             },
           );
@@ -157,7 +163,10 @@ describe('MARC', () => {
             testData.authority.searchOption,
             testData.authority.nonExactTitle,
           );
-          MarcAuthorityBrowse.checkHeadingReference(testData.authority.nonExactTitle);
+          MarcAuthorityBrowse.checkHeadingReference(
+            testData.authority.nonExactTitle,
+            testData.authority.title,
+          );
         },
       );
 
@@ -168,7 +177,15 @@ describe('MARC', () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
           MarcAuthority.edit();
-          MarcAuthority.checkLDRValue(testData.authority.ldr);
+          QuickMarcEditor.verifyBoxValuesInLDRFieldInMarcAuthorityRecord(
+            '00846',
+            AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.C,
+            AUTHORITY_LDR_FIELD_TYPE_DROPDOWN.Z,
+            '\\\\a2200241',
+            AUTHORITY_LDR_FIELD_ELVL_DROPDOWN.N,
+            AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN['\\'],
+            '\\4500',
+          );
           MarcAuthority.check008Field();
           MarcAuthority.checkRemovedTag(9);
         },

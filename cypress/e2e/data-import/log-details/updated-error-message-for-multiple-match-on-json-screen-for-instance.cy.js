@@ -1,6 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
@@ -30,12 +31,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     const testData = {
       instanceIds: [],
       marcFilePath: 'marcBibFileForC389589.mrc',
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
 
       title: "101 things I wish I'd known when I started using hypnosis / Dabney Ewin.",
       errorMessage:
@@ -118,7 +119,7 @@ describe('data-import', () => {
           name.fileName,
           testData.jobProfileToRun,
         ).then((response) => {
-          testData.instanceIds.push(response.entries[0].relatedInstanceInfo.idList[0]);
+          testData.instanceIds.push(response[0].instance.id);
         });
       });
 
@@ -215,7 +216,7 @@ describe('data-import', () => {
       'C389589  Verify the updated error message for multiple match on JSON screen for Instance: Case 1 (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const fileName = `C389589 marcFileName${getRandomPostfix()}`;
+        const fileName = `C389589 marcFileName${getRandomPostfix()}.mrc`;
 
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
@@ -237,7 +238,7 @@ describe('data-import', () => {
       'C389590 Verify the updated error message for multiple match on JSON screen for Instance: Case 2 (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const fileName = `C389590 marcFileName${getRandomPostfix()}`;
+        const fileName = `C389590 marcFileName${getRandomPostfix()}.mrc`;
 
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();

@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -20,9 +21,9 @@ describe('MARC', () => {
 
     const marcFile = {
       marc: 'marcBibFileC387461.mrc',
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       numOfRecords: 1,
-      propertyName: 'relatedInstanceInfo',
+      propertyName: 'instance',
     };
 
     const recordIDs = [];
@@ -43,8 +44,8 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                recordIDs.push(record[marcFile.propertyName].idList[0]);
+              response.forEach((record) => {
+                recordIDs.push(record[marcFile.propertyName].id);
               });
             });
 
@@ -85,11 +86,11 @@ describe('MARC', () => {
       'C358991 Verify that field which moved above "852" retains all values in the subfield text box when edit "MARC Holdings" record (Spitfire) (TaaS)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        InventoryInstances.searchBySource('MARC');
+        InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstances.searchByTitle(recordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.openHoldingView();
-        HoldingsRecordView.checkSource('MARC');
+        HoldingsRecordView.checkSource(INSTANCE_SOURCE_NAMES.MARC);
         // "Edit in quickMARC" option might not be active immediately when opening MARC Holdings
         // this option becomes active after reopening Holdings view window
         HoldingsRecordView.close();
@@ -109,11 +110,11 @@ describe('MARC', () => {
       'C387461 Add multiple 001s when editing "MARC Holdings" record (Spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        InventoryInstances.searchBySource('MARC');
+        InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstances.searchByTitle(recordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.openHoldingView();
-        HoldingsRecordView.checkSource('MARC');
+        HoldingsRecordView.checkSource(INSTANCE_SOURCE_NAMES.MARC);
         // "Edit in quickMARC" option might not be active immediately when opening MARC Holdings
         // this option becomes active after reopening Holdings view window
         HoldingsRecordView.close();
@@ -136,13 +137,13 @@ describe('MARC', () => {
       'C356843 [quickMARC] Verify that the "Save & close" button enabled when user make changes in the record. (Spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        InventoryInstances.searchBySource('MARC');
+        InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstances.searchByTitle(recordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         // "Edit in quickMARC" option might not be active immediately when opening MARC Holdings - re-opening activates it
         InventoryInstance.openHoldingView();
-        HoldingsRecordView.checkSource('MARC');
+        HoldingsRecordView.checkSource(INSTANCE_SOURCE_NAMES.MARC);
         HoldingsRecordView.close();
         InventoryInstance.waitLoading();
         InventoryInstance.openHoldingView();

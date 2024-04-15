@@ -22,11 +22,11 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     const quantityOfInvoiceLines = '1,104';
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.harrassowitz;
-    const fileName = `C347615autotestFile.${getRandomPostfix()}.edi`;
+    const fileName = `C347615 autotestFile${getRandomPostfix()}.edi`;
     const mappingProfile = {
       name: `Import Large Harrassowitz Serials Invoice ${getRandomPostfix()}`,
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
@@ -89,6 +89,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
+        cy.wait(120000);
         Logs.waitFileIsImported(fileName);
         Logs.checkImportFile(jobProfile.profileName);
         Logs.checkQuantityRecordsInFile(Logs.quantityRecordsInInvoice.firstQuantity);

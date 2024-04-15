@@ -2,16 +2,16 @@ import { HTML, including } from '@interactors/html';
 import {
   Accordion,
   Button,
-  Pane,
-  MultiSelect,
-  ValueChipRoot,
-  MultiColumnList,
-  MultiColumnListRow,
-  MultiColumnListCell,
-  MultiSelectOption,
   Callout,
-  Modal,
   Link,
+  Modal,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  MultiSelect,
+  MultiSelectOption,
+  Pane,
+  ValueChipRoot,
 } from '../../../../../interactors';
 
 const viewPane = Pane({ id: 'view-job-profile-pane' });
@@ -130,26 +130,65 @@ export default {
 
   verifyLinkedProfiles(arrayOfProfileNames, numberOfProfiles) {
     waitLoading();
-    const profileNames = [];
+    if (numberOfProfiles === 0) {
+      cy.get('[id*="branch-ROOT-MATCH"]').should('not.exist');
+      cy.expect(Accordion('Overview').has({ content: including('This list contains no items') }));
+    } else {
+      const profileNames = [];
 
-    cy.get('[data-test-profile-link]')
-      .each(($element) => {
-        cy.wrap($element)
-          .invoke('text')
-          .then((name) => {
-            profileNames.push(name);
-          });
-      })
-      .then(() => {
-        // Iterate through each element in profileNames
-        for (let i = 0; i < profileNames.length; i++) {
-          expect(profileNames[i]).to.include(arrayOfProfileNames[i]);
-        }
-        expect(numberOfProfiles).to.equal(profileNames.length);
-      });
+      cy.get('[data-test-profile-link]')
+        .each(($element) => {
+          cy.wrap($element)
+            .invoke('text')
+            .then((name) => {
+              profileNames.push(name);
+            });
+        })
+        .then(() => {
+          // Iterate through each element in profileNames
+          for (let i = 0; i < profileNames.length; i++) {
+            expect(profileNames[i]).to.include(arrayOfProfileNames[i]);
+          }
+          expect(numberOfProfiles).to.equal(profileNames.length);
+        });
+    }
   },
 
-  verifyLinkedProfilesNonMatches(arrayOfProfileNames, numberOfProfiles) {
+  verifyLinkedProfilesForMatches(arrayOfProfileNames, numberOfProfiles) {
+    waitLoading();
+    if (numberOfProfiles === 0) {
+      cy.get('[id*="branch-ROOT-MATCH"]').should('not.exist');
+      cy.get('[id^="accordion-match-ROOT-static"]').each(($element) => {
+        cy.wrap($element)
+          .invoke('text')
+          .then((text) => {
+            const initialText = text.slice(11);
+            expect(initialText).to.equal('This section contains no items');
+          });
+      });
+    } else {
+      const profileNames = [];
+
+      cy.get('[id*="branch-ROOT-MATCH"]')
+        .each(($element) => {
+          cy.wrap($element)
+            .invoke('text')
+            .then((name) => {
+              profileNames.push(name);
+            });
+        })
+        .then(() => {
+          // Iterate through each element in profileNames
+          for (let i = 0; i < profileNames.length; i++) {
+            expect(profileNames[i]).to.include(arrayOfProfileNames[i]);
+          }
+
+          expect(numberOfProfiles).to.equal(profileNames.length);
+        });
+    }
+  },
+
+  verifyLinkedProfilesForNonMatches(arrayOfProfileNames, numberOfProfiles) {
     waitLoading();
     const profileNames = [];
 
@@ -177,7 +216,7 @@ export default {
   verifyJobsUsingThisProfileSection(fileName) {
     cy.do(
       Accordion('Jobs using this profile')
-        .find(MultiColumnListCell({ content: fileName }))
+        .find(MultiColumnListCell({ content: including(fileName) }))
         .perform((element) => {
           const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
 

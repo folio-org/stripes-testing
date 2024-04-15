@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -13,13 +14,14 @@ import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Single record import', () => {
     let user;
     let instanceHRID;
+    let instanceId;
     const OCLCAuthentication = '100481406/PAOLF';
     const profileForImport = 'Inventory Single Record - Default Update Instance (Default)';
-    const fileName = `C375146autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C375146 autotestFile${getRandomPostfix()}.mrc`;
     const targetIdentifier = '1234567';
     const targetProfile = {
       name: 'OCLC WorldCat',
@@ -37,9 +39,10 @@ describe('inventory', () => {
       DataImport.uploadFileViaApi(
         'oneMarcBib.mrc',
         fileName,
-        'Default - Create instance and SRS MARC Bib',
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       ).then((response) => {
-        instanceHRID = response.entries[0].relatedInstanceInfo.hridList[0];
+        instanceHRID = response[0].instance.hrid;
+        instanceId = response[0].instance.id;
       });
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
       cy.loginAsAdmin();
@@ -70,11 +73,7 @@ describe('inventory', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+        InventoryInstance.deleteInstanceViaApi(instanceId);
       });
     });
 

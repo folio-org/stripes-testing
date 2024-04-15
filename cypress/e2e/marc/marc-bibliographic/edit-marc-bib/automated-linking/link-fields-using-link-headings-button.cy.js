@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -19,16 +20,16 @@ describe('MARC', () => {
           {
             marc: 'marcBibFileForC388536.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             numOfRecords: 1,
-            propertyName: 'relatedInstanceInfo',
+            propertyName: 'instance',
           },
           {
             marc: 'marcAuthFileForC388536.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 25,
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
           },
         ];
 
@@ -64,12 +65,12 @@ describe('MARC', () => {
             naturalId: 'no2020024230C388536',
           },
           {
-            rowIndex: 65,
+            rowIndex: 51,
             tag: '600',
             naturalId: 'n2016004081C388536',
           },
           {
-            rowIndex: 62,
+            rowIndex: 71,
             tag: '630',
             naturalId: 'no2023006889C388536',
           },
@@ -132,22 +133,22 @@ describe('MARC', () => {
             naturalId: 'n800269809',
           },
           {
-            rowIndex: 60,
+            rowIndex: 69,
             tag: '610',
             naturalId: 'nb20090244889',
           },
           {
-            rowIndex: 61,
+            rowIndex: 70,
             tag: '611',
             naturalId: 'n822167579',
           },
           {
-            rowIndex: 67,
+            rowIndex: 62,
             tag: '650',
             naturalId: 'sh20091259899',
           },
           {
-            rowIndex: 71,
+            rowIndex: 68,
             tag: '651',
             naturalId: 'sh850015319',
           },
@@ -181,8 +182,8 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].id);
               });
             });
           });

@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import { Permissions } from '../../../../support/dictionary';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -42,7 +43,7 @@ describe('MARC', () => {
       };
       const subfieldPrefix = '$a';
       const authorityPostfix = '?authRefType=Authorized&heading';
-      const jobProfileToRun = 'Default - Create SRS MARC Authority';
+      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const headerContent = {
         initialHeaderContent: {
           source: { firstName: 'ADMINISTRATOR', name: 'Diku_admin' },
@@ -66,13 +67,13 @@ describe('MARC', () => {
           marc: 'marcAuthFileForC360092.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           numOfRecords: 1,
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
         {
           marc: 'marcAuthFileForC360093.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           numOfRecords: 1,
-          propertyName: 'relatedAuthorityInfo',
+          propertyName: 'authority',
         },
       ];
       const createdAuthorityIDs = [];
@@ -82,8 +83,8 @@ describe('MARC', () => {
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
             (response) => {
-              response.entries.forEach((record) => {
-                createdAuthorityIDs.push(record[marcFile.propertyName].idList[0]);
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].id);
               });
             },
           );

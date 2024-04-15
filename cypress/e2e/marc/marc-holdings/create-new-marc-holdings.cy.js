@@ -1,3 +1,4 @@
+import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -28,7 +29,6 @@ describe('MARC', () => {
       tag866Value: 'Test',
       headerTitle: 'Create a new MARC Holdings record',
       headerSubtitle: 'New',
-      defaultLDRmask: /00000nu.{2}\\.{7}un\\4500/,
       tagLDRValueInSourceMask: /LEADER\s\d{5}[c,d,n][u,v,x,y]\s{3}22\d{5}[1,2,3,4,5,m,u,z].\s4500/,
       tag001ValueInSourceMask: /[a-z]+\d+/,
       tag004ValueInSourceMask: /[a-z]+\d+/,
@@ -50,7 +50,7 @@ describe('MARC', () => {
         '0',
         '\\\\\\\\\\\\',
       ],
-      sourceMARC: 'MARC',
+      sourceMARC: INSTANCE_SOURCE_NAMES.MARC,
       tag852callout: 'Record cannot be saved. An 852 is required.',
     };
 
@@ -177,7 +177,7 @@ describe('MARC', () => {
       'C350646 Create a new MARC Holdings record for existing "Instance" record (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        InventoryInstances.searchBySource('MARC');
+        InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstances.searchByTitle(instanceIds[1]);
         InventoryInstance.checkExpectedMARCSource();
         InventoryInstance.goToMarcHoldingRecordAdding();
@@ -214,10 +214,7 @@ describe('MARC', () => {
         QuickMarcEditor.waitLoading();
         QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);
         QuickMarcEditor.checkPaneheaderContains(testData.headerSubtitle);
-        QuickMarcEditor.checkFieldContentMatch(
-          'textarea[name="records[0].content"]',
-          testData.defaultLDRmask,
-        );
+        QuickMarcEditor.verifyInitialLDRFieldsValuesInMarcHoldingRecord();
         QuickMarcEditor.checkReadOnlyHoldingsTags();
         QuickMarcEditor.verifyHoldingsDefault008BoxesValues(testData.default008BoxesValues);
         QuickMarcEditor.verifyTagValue(5, testData.tag852);

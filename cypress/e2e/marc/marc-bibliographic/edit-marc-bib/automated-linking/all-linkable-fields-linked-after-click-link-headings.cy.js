@@ -8,6 +8,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -25,23 +26,23 @@ describe('MARC', () => {
           {
             marc: 'marcBibFileForC387538.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             numOfRecords: 1,
-            propertyName: 'relatedInstanceInfo',
+            propertyName: 'instance',
           },
           {
             marc: 'marcBibFileForC388500.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             numOfRecords: 1,
-            propertyName: 'relatedInstanceInfo',
+            propertyName: 'instance',
           },
           {
             marc: 'marcAuthFileForC387538.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: 'Default - Create SRS MARC Authority',
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 20,
-            propertyName: 'relatedAuthorityInfo',
+            propertyName: 'authority',
           },
         ];
 
@@ -89,42 +90,42 @@ describe('MARC', () => {
             type: 'Title data',
           },
           {
-            rowIndex: 65,
+            rowIndex: 51,
             tag: '600',
             naturalId: 'n2016004081C387538',
             value: 'C387538 Black Panther (Fictitious character)',
             type: 'Subject',
           },
           {
-            rowIndex: 60,
+            rowIndex: 69,
             tag: '610',
             naturalId: 'nb2009024488C387538',
             value: 'C387538 Black Panther Movement',
             type: 'Subject',
           },
           {
-            rowIndex: 61,
+            rowIndex: 70,
             tag: '611',
             naturalId: 'n82216757C387538',
             value: 'C387538 Panther Photographic International',
             type: 'Subject',
           },
           {
-            rowIndex: 62,
+            rowIndex: 71,
             tag: '630',
             naturalId: 'no2023006889C387538',
             value: 'C387538 Black Panther, Wakanda forever (Motion picture)',
             type: 'Subject',
           },
           {
-            rowIndex: 67,
+            rowIndex: 62,
             tag: '650',
             naturalId: 'sh2009125989C387538',
             value: 'C387538 Good and evil',
             type: 'Subject',
           },
           {
-            rowIndex: 71,
+            rowIndex: 68,
             tag: '651',
             naturalId: 'sh85001531C387538',
             value: 'C387538 Africa',
@@ -204,8 +205,8 @@ describe('MARC', () => {
               marcFile.fileName,
               marcFile.jobProfileToRun,
             ).then((response) => {
-              response.entries.forEach((record) => {
-                createdRecordsIDs.push(record[marcFile.propertyName].idList[0]);
+              response.forEach((record) => {
+                createdRecordsIDs.push(record[marcFile.propertyName].id);
               });
             });
           });

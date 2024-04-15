@@ -1,27 +1,32 @@
-import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 
-describe('data-import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const instanceTitle = 'Mistapim in Cambodia [microform]. Photos. by the author.';
     const error =
-      '{"error":"A new Instance was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
-    const nameMarcFileForCreate = `C359012 autotestFile.${getRandomPostfix()}.mrc`;
+      'org.folio.processing.exceptions.EventProcessingException: A new Instance was not created because the incoming record already contained a 999ff$s or 999ff$i field';
+    const nameMarcFileForCreate = `C359012 autotestFile${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -70,7 +75,7 @@ describe('data-import', () => {
           RECORD_STATUSES.ERROR,
           FileDetails.columnNameInResultList.error,
         );
-        FileDetails.openJsonScreen('No content');
+        FileDetails.openJsonScreen('The Journal of ecclesiastical history.');
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.verifyContentInTab(error);
       },

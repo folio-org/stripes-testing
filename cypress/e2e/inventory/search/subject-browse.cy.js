@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -7,15 +8,15 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Subject Browse', () => {
     const testData = {
       testValue: 'Physics projects.',
     };
 
     const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const propertyName = 'relatedInstanceInfo';
+    const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
+    const propertyName = 'instance';
 
     const createdInstanceIDs = [];
 
@@ -27,8 +28,8 @@ describe('inventory', () => {
           () => {
             DataImport.uploadFileViaApi('marcFileForC350387.mrc', fileName, jobProfileToRun).then(
               (response) => {
-                response.entries.forEach((record) => {
-                  createdInstanceIDs.push(record[propertyName].idList[0]);
+                response.forEach((record) => {
+                  createdInstanceIDs.push(record[propertyName].id);
                 });
               },
             );
