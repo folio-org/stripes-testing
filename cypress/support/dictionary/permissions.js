@@ -1109,9 +1109,4 @@ export default {
     internal: 'ui-users.settings.departments.all',
     gui: 'Settings (Users): Can create, edit, view, and delete departments',
   },
-
-  folio_admin: {
-    internal: 'folio_admin',
-    gui: 'folio_admin',
-  },
 };
