@@ -38,12 +38,14 @@ describe('Inventory', () => {
         // uncheck first, since this checkbox can be checked by default
         HridHandling.uncheckRemoveLeadingZeroesIfCheckedAndSave();
         HridHandling.checkRemoveLeadingZeroesAndSave();
+
         let date = DateTools.getFormattedDateWithTime(new Date(), { withSpace: true });
         // wait, because next steps can be failed without it
         cy.wait(5000);
         HridHandling.verifyValueInRecordDetailsSection(testData.user.username);
         HridHandling.verifyValueInRecordDetailsSection(date);
         HridHandling.uncheckRemoveLeadingZeroesAndSave();
+
         date = DateTools.getFormattedDateWithTime(new Date(), { withSpace: true });
         HridHandling.verifyValueInRecordDetailsSection(testData.user.username);
         HridHandling.verifyValueInRecordDetailsSection(date);
