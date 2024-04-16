@@ -45,6 +45,7 @@ describe('Data Import', () => {
               cy.expect(beforeFilteringCells).to.not.deep.equal(afterFilteringByJobProfileCells);
               LogsViewAll.checkByReverseChronologicalOrder();
               LogsViewAll.resetAllFilters(false);
+              cy.wait(3000);
               LogsViewAll.getAllLogsColumnsResults(jobProfileColumn).then(
                 (afterResetFilteringCells) => {
                   LogsViewAll.checkByReverseChronologicalOrder();
