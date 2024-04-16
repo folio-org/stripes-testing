@@ -109,7 +109,10 @@ describe('MARC', () => {
           MarcAuthority.getId().then((id) => {
             createdAuthorityId = id;
 
-            MarcAuthorities.checkFieldAndContentExistence(newField999.tag, 'f f');
+            MarcAuthorities.checkFieldAndContentExistence(
+              newField999.tag,
+              `${newField999.indicator0} ${newField999.indicator1}`,
+            );
             MarcAuthorities.checkFieldAndContentExistence(newField999.tag, '$s');
             MarcAuthorities.checkFieldAndContentExistence(
               newField999.tag,
