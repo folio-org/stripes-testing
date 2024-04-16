@@ -765,6 +765,10 @@ export default {
     ]);
   },
 
+  checkAuthoritySourceDropdownHasOption(optionName) {
+    cy.expect(sourceFileAccordion.find(MultiSelectOption(including(optionName))).exists());
+  },
+
   checkAuthoritySourceOptions() {
     cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
     cy.expect([
@@ -1039,6 +1043,14 @@ export default {
 
   clickAuthoritySourceAccordion() {
     cy.do([authoritySourceAccordion.clickHeader()]);
+  },
+
+  clickMultiSelectToggleButtonInAccordion(accordionName) {
+    cy.do(
+      Accordion(accordionName)
+        .find(Button({ className: including('multiSelectToggleButton') }))
+        .click(),
+    );
   },
 
   verifyAuthoritySourceAccordionCollapsed() {
