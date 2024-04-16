@@ -115,10 +115,7 @@ describe('Title Level Request', () => {
     });
 
     after('Delete test data', () => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.circulationTitleLevelRequestsPath,
-        waiter: TitleLevelRequests.waitLoading,
-      });
+      cy.getAdminToken();
       cy.wrap(requestIds).each((id) => {
         Requests.deleteRequestViaApi(id);
       });
@@ -136,7 +133,6 @@ describe('Title Level Request', () => {
       Users.deleteViaApi(testData.user.userId);
       PatronGroups.deleteViaApi(patronGroup.id);
       Locations.deleteViaApi(testData.defaultLocation);
-      TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
     });
 
     it(
@@ -171,7 +167,9 @@ describe('Title Level Request', () => {
         RequestDetail.openCancelRequestForm();
         RequestDetail.verifyCancelRequestModalDisplayed();
         // Cancel request
-        RequestDetail.confirmRequestCancellation();
+        RequestDetail.selectCancellationReason('Other');
+        RequestDetail.provideAdditionalInformationForCancelation('Other reason');
+        RequestDetail.confirmCancellation();
         RequestDetail.checkRequestStatus('Closed - Cancelled');
         // Open other request (request for the same instance)
         cy.visit(TopMenu.requestsPath);
