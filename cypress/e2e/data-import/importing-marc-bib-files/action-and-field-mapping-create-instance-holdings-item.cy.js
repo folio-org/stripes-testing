@@ -82,7 +82,7 @@ describe('Data Import', () => {
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
-          name: `C11107 autotest holdings action profile_${getRandomPostfix()}`,
+          name: `C11107 autotest item action profile_${getRandomPostfix()}`,
         },
       },
     ];
