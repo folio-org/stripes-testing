@@ -19,19 +19,19 @@ describe('MARC', () => {
       searchOption: 'Keyword',
       marcAuthIcon: 'Linked to MARC authority',
       authorityType: 'Auth/Ref',
-      searchAuthorityQueries: ['Poetry', 'Chin, Staceyann, 1972-'],
+      searchAuthorityQueries: ['C374148 Feminist poetry', 'C374148 Chin, Staceyann, 1972-'],
       recordsLinkingData: [
         {
           linkingBibFieldTag: '650',
-          authorityTitle: 'Feminist poetry',
+          authorityTitle: 'C374148 Feminist poetry',
           authorityLinkedFieldTag: '150',
-          authorityFieldValue: 'Feminist poetry',
+          authorityFieldValue: 'C374148 Feminist poetry',
         },
         {
           linkingBibFieldTag: '100',
-          authorityTitle: 'Chin, Staceyann, 1972-',
+          authorityTitle: 'C374148 Chin, Staceyann, 1972-',
           authorityLinkedFieldTag: '100',
-          authorityFieldValue: '$a Chin, Staceyann, $d 1972-',
+          authorityFieldValue: '$a C374148 Chin, Staceyann, $d 1972-',
         },
       ],
       linked100FieldValues: [
@@ -39,7 +39,7 @@ describe('MARC', () => {
         '100',
         '1',
         '\\',
-        '$a Chin, Staceyann, $d 1972-',
+        '$a C374148 Chin, Staceyann, $d 1972-',
         '$e Author $e Narrator',
         '$0 http://id.loc.gov/authorities/names/n2008052404',
         '$1 http://viaf.org/viaf/24074052',
@@ -49,10 +49,10 @@ describe('MARC', () => {
         '650',
         '\\',
         '0',
-        '$a Feminist poetry $0 http://id.loc.gov/authorities/subjects/sh85047755',
+        '$a C374148 Feminist poetry $0 http://id.loc.gov/authorities/subjects/sh85047755',
       ],
       deleteModalMessage:
-        'Are you sure you want to permanently delete the authority record:  Poetry ? If you proceed with deletion, then 1 linked bibliographic record will retain authorized value and will become uncontrolled.',
+        'Are you sure you want to permanently delete the authority record:  C374148 Poetry ? If you proceed with deletion, then 1 linked bibliographic record will retain authorized value and will become uncontrolled.',
     };
 
     const marcFiles = [
@@ -74,7 +74,7 @@ describe('MARC', () => {
         fileName: `testMarcFileC374148.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         propertyName: 'authority',
-        authorutyTitle: 'Poetry',
+        authorutyTitle: 'C374148 Poetry',
       },
     ];
 
@@ -93,16 +93,16 @@ describe('MARC', () => {
             });
           }
         });
+      });
 
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].id);
-            });
+      marcFiles.forEach((marcFile) => {
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            createdRecordIDs.push(record[marcFile.propertyName].id);
           });
         });
       });

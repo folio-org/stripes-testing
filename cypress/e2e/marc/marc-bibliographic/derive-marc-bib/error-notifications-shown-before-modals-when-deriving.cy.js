@@ -13,8 +13,6 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Derive MARC bib', () => {
       const testData = {
-        tagLDR: 'LDR',
-        tagLdrValue: '01338cas\\a2200409\\\\\\4500',
         tag022: '022',
         tag222: '222',
         tag300: '300',
@@ -84,7 +82,11 @@ describe('MARC', () => {
           InventoryInstance.deriveNewMarcBib();
 
           // #4 Delete the last character from "LDR" field.
-          QuickMarcEditor.updateExistingField(testData.tagLDR, testData.tagLdrValue.slice(0, -1));
+          QuickMarcEditor.fillEmptyTextFieldOfField(
+            0,
+            'records[0].content.ELvl',
+            '',
+          );
           // #5 Input "0" in tag box (first box) for any field.
           QuickMarcEditor.updateExistingTagName(testData.tag022, '0');
 
@@ -99,7 +101,11 @@ describe('MARC', () => {
           InteractorsTools.checkCalloutMessage(calloutLDRMessage, 'error');
 
           // #9 Input deleted value in "LDR" field.
-          QuickMarcEditor.updateExistingField(testData.tagLDR, testData.tagLdrValue);
+          QuickMarcEditor.fillEmptyTextFieldOfField(
+            0,
+            'records[0].content.ELvl',
+            '\\',
+          );
 
           // #10 Click "Save & close" button.
           QuickMarcEditor.pressSaveAndClose();
