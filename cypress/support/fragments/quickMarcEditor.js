@@ -2636,4 +2636,19 @@ export default {
       );
     });
   },
+
+  verifyAllBoxesInARowAreDisabled(rowNumber, isDisabled = true) {
+    cy.expect([
+      getRowInteractorByRowNumber(rowNumber).find(TextField('Field')).has({ disabled: isDisabled }),
+      getRowInteractorByRowNumber(rowNumber)
+        .find(TextArea({ ariaLabel: 'Subfield' }))
+        .has({ disabled: false }),
+      getRowInteractorByRowNumber(rowNumber)
+        .find(TextField('Indicator', { name: including('.indicators[0]') }))
+        .has({ disabled: false }),
+      getRowInteractorByRowNumber(rowNumber)
+        .find(TextField('Indicator', { name: including('.indicators[1]') }))
+        .has({ disabled: false }),
+    ]);
+  },
 };
