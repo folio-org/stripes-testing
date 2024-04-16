@@ -83,6 +83,12 @@ describe('Eureka', () => {
             testData.updatedRoleName,
             testData.updateRoleDescription,
           );
+          AuthorizationRoles.clickSaveButton();
+          AuthorizationRoles.checkAfterSaveEdit(
+            testData.updatedRoleName,
+            testData.updateRoleDescription,
+          );
+          AuthorizationRoles.openForEdit();
           AuthorizationRoles.selectCapabilityCheckbox(testData.originalCapabilities[1], false);
           AuthorizationRoles.selectCapabilityCheckbox(testData.capabilityToSelect);
           AuthorizationRoles.clickSaveButton();

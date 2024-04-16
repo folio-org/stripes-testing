@@ -14,29 +14,33 @@ describe('Eureka', () => {
     };
 
     before(() => {
-      cy.loginAsAdmin();
       cy.getAdminToken();
       cy.getUserGroups({ limit: 1 });
       cy.createTempUser([]).then((createdUserProperties) => {
         testData.tempUser = createdUserProperties;
+        cy.createUserGroupApi().then((group) => {
+          testData.userGroup = group;
+        });
+        cy.login(testData.tempUser.username, testData.tempUser.password);
       });
     });
 
     afterEach(() => {
+      cy.getAdminToken();
       cy.getUsers({ query: `personal.lastName="${testData.lastName}"` }).then(() => {
         Cypress.env('users').forEach((user) => {
           Users.deleteViaApi(user.id);
         });
       });
       Users.deleteViaApi(testData.tempUser.userId);
+      cy.deleteUserGroupApi(testData.userGroup.id);
     });
 
     it(
       'C442842 "User permissions" accordion is NOT shown when viewing/creating/editing user profile (eureka)',
       { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
       () => {
-        const userGroupOption =
-          Cypress.env('userGroups')[0].group + ' (' + Cypress.env('userGroups')[0].desc + ')';
+        const userGroupOption = testData.userGroup.group + ' (' + testData.userGroup.desc + ')';
         cy.visit('/users/create');
         Users.checkCreateUserPaneOpened();
         UserEdit.fillRequiredFields(

@@ -259,3 +259,16 @@ Cypress.Commands.add('getCapabilityIdViaApi', ({ type, resource, action }) => {
   });
   return cy.get('@capabId');
 });
+
+Cypress.Commands.add('getCapabilitySetIdViaApi', ({ type, resource, action }) => {
+  cy.okapiRequest({
+    path: 'capability-sets',
+    searchParams: {
+      query: `resource=="${resource}" and action==${action.toUpperCase()} and type==${type.toUpperCase()}`,
+    },
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    cy.wrap(body.capabilitySets[0].id).as('capabSetId');
+  });
+  return cy.get('@capabSetId');
+});

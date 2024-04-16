@@ -190,3 +190,33 @@ Cypress.Commands.add('getAdminSourceRecord', () => {
       return record;
     });
 });
+
+Cypress.Commands.add(
+  'createUserGroupApi',
+  ({
+    groupName = `Auto Group ${getRandomPostfix()}`,
+    description = `Description ${getRandomPostfix()}`,
+    expirationOffsetInDays = 0,
+  } = {}) => {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'groups',
+      body: {
+        group: groupName,
+        desc: description,
+        expirationOffsetInDays,
+      },
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      return body;
+    });
+  },
+);
+
+Cypress.Commands.add('deleteUserGroupApi', (groupId) => {
+  return cy.okapiRequest({
+    method: 'DELETE',
+    path: `groups/${groupId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
