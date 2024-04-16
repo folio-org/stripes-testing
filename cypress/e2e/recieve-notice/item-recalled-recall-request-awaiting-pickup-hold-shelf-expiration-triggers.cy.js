@@ -240,6 +240,7 @@ describe('Request notice triggers', () => {
           permissions.checkoutAll.gui,
           permissions.okapiTimersPatch.gui,
           permissions.checkinAll.gui,
+          permissions.uiCirculationCreateViewOverdueFinesPolicies.gui
         ],
         patronGroup.name,
       )
