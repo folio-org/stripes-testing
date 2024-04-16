@@ -11,7 +11,6 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Create MARC Authority', () => {
       const headerText = 'Create a new MARC authority record';
-      const tag999 = '999';
       const newField010 = {
         rowIndex: 3,
         tag: '010',
@@ -23,7 +22,7 @@ describe('MARC', () => {
         content: '$a 999 multiple test',
       };
       const newField999 = {
-        rowIndex: 5,
+        rowIndex: 6,
         tag: '999',
         content: '$s 999test $i multiple999',
         indicator0: 'f',
@@ -85,21 +84,21 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag(newField100.tag, newField100.content);
 
           // 4 Click on the "+" icon next to any field
+          QuickMarcEditor.addEmptyFields(5);
+
           // 5 Fill in the added field with following values (fill in in following sequence):
           // 4th box - "$s 999test $i multiple999"
           // 3rd box - "f"
           // 2nd box - "f"
           // 1st box - "999"
-          MarcAuthority.addNewField(
+          QuickMarcEditor.fillInFieldValues(
             newField999.rowIndex,
             newField999.tag,
             newField999.content,
             newField999.indicator0,
             newField999.indicator1,
           );
-          QuickMarcEditor.checkContentByTag(newField999.tag, newField999.content);
-          QuickMarcEditor.verifyIndicatorValue(newField999.tag, newField999.indicator0, 0);
-          QuickMarcEditor.verifyIndicatorValue(newField999.tag, newField999.indicator1, 1);
+          QuickMarcEditor.checkContent(newField999.content, newField999.rowIndex);
           QuickMarcEditor.verifyAllBoxesInARowAreDisabled(newField999.rowIndex);
 
           // 6 Click on the "Save & close" button
@@ -110,9 +109,13 @@ describe('MARC', () => {
           MarcAuthority.getId().then((id) => {
             createdAuthorityId = id;
 
-            MarcAuthorities.checkFieldAndContentExistence(tag999, 'f f');
-            MarcAuthorities.checkFieldAndContentExistence(tag999, '$s');
-            MarcAuthorities.checkFieldAndContentExistence(tag999, `$i ${createdAuthorityId}`);
+            MarcAuthorities.checkFieldAndContentExistence(newField999.tag, 'f f');
+            MarcAuthorities.checkFieldAndContentExistence(newField999.tag, '$s');
+            MarcAuthorities.checkFieldAndContentExistence(
+              newField999.tag,
+              `$i ${createdAuthorityId}`,
+            );
+            MarcAuthorities.verifyViewPaneContentAbsent(newField999.content);
           });
         },
       );
