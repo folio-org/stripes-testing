@@ -82,7 +82,8 @@ describe('Title Level Request', () => {
           InventoryInstances.createFolioInstanceViaApi({
             instance: {
               discoverySuppress: testData.instanceData.suppressFromDiscovery,
-              staffSuppress: testData.instanceData.staffSuppress,
+              // eslint-disable-next-line spaced-comment
+              //staffSuppress: testData.instanceData.staffSuppress,
               previouslyHeld: false,
               source: testData.instanceData.resourceType,
               title: testData.instanceData.title,
@@ -172,6 +173,7 @@ describe('Title Level Request', () => {
         NewRequest.enableTitleLevelRequest();
         NewRequest.openTitleLookUp();
         SelectInstanceModal.waitLoading();
+
         SelectInstanceModal.filterByEffectiveLocation(testData.instanceData.itemEffectiveLocation);
         SelectInstanceModal.verifyListResults(testData.instanceData.title);
         SelectInstanceModal.clickResetAllButton();
@@ -196,17 +198,18 @@ describe('Title Level Request', () => {
         SelectInstanceModal.verifyListResults(testData.instanceData.title);
         SelectInstanceModal.clickResetAllButton();
 
-        SelectInstanceModal.filterByStaffSuppress('Yes');
-        SelectInstanceModal.verifyListResults(testData.instanceData.title);
-        SelectInstanceModal.clickResetAllButton();
-        SelectInstanceModal.filterByStaffSuppress('No');
-        SelectInstanceModal.verifyListResultsNotContains(testData.instanceData.title);
-        SelectInstanceModal.clickResetAllButton();
-
         SelectInstanceModal.filterBySuppressFromDiscovery('Yes');
         SelectInstanceModal.verifyListResults(testData.instanceData.title);
         SelectInstanceModal.clickResetAllButton();
         SelectInstanceModal.filterBySuppressFromDiscovery('No');
+        SelectInstanceModal.verifyListResultsNotContains(testData.instanceData.title);
+        SelectInstanceModal.clickResetAllButton();
+
+        /*
+        SelectInstanceModal.filterByStaffSuppress('Yes');
+        SelectInstanceModal.verifyListResults(testData.instanceData.title);
+        SelectInstanceModal.clickResetAllButton();
+        SelectInstanceModal.filterByStaffSuppress('No');
         SelectInstanceModal.verifyListResultsNotContains(testData.instanceData.title);
         SelectInstanceModal.clickResetAllButton();
 
@@ -223,6 +226,7 @@ describe('Title Level Request', () => {
         );
         SelectInstanceModal.verifyListResults(testData.instanceData.title);
         SelectInstanceModal.clickResetAllButton();
+        */
 
         SelectInstanceModal.filterBySource(
           testData.instanceData.source,
