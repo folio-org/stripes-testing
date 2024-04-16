@@ -119,13 +119,11 @@ describe('Inventory', () => {
         // instanceData.statisticalCode,
         // instanceData.adminNote,
         // instanceData.instanceTitle,
-        // instanceData.instanceIdentifier,
-        // contributor: {
-        //   name: `autotest_contributor${getRandomPostfix()}`,
-        //   nameType: 'Personal name',
-        // },
-        // publication: { place: 'autotest_publication_place', date: moment.utc().format() },
-        // edition: '2023',
+        // // instanceData.instanceIdentifier,
+        // instanceData.contributor,
+        // instanceData.publication,
+        // instanceData.edition,
+
         // description: 'autotest_physical_description',
         // resourceType: 'other',
         // { key: 'Resource title', value: instanceData.title },
@@ -178,7 +176,7 @@ describe('Inventory', () => {
         //   InventoryInstance.checkInstanceDetails([
         //     // { key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO },
         // ]);
-        // });
+        //     });
       },
     );
   });

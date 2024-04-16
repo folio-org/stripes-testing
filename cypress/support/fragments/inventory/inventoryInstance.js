@@ -1181,6 +1181,7 @@ export default {
     verifyInstancePublisher(publication);
     cy.expect(KeyValue('Edition').has({ edition }));
   },
+
   getId() {
     cy.url()
       .then((url) => cy.wrap(url.split('?')[0].split('/').at(-1)))
