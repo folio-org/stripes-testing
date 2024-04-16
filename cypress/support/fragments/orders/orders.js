@@ -739,6 +739,7 @@ export default {
   },
 
   selectPendingStatusFilter: () => {
+    cy.wait(4000);
     cy.do(Checkbox({ id: 'clickable-filter-workflowStatus-pending' }).click());
   },
 
