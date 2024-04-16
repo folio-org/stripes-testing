@@ -13,10 +13,13 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import {
   ActionProfiles as SettingsActionProfiles,
@@ -32,56 +35,57 @@ describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     let instanceHrid;
-    const quantityOfItems = '11';
-    const instanceTitle = 'Protozoological abstracts.';
-    const nameMarcFile = `C356801 autotestFile${getRandomPostfix()}.mrc`;
+    const title = 'Protozoological abstracts.';
+    const marcFileName = `C430251 marcFile${getRandomPostfix()}.mrc`;
+    const filePathForUpload = 'marcBibFileForC430251.mrc';
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: {
+          name: `C430251 autotest instance mapping profile_${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-          name: `C356801 instance mapping profile ${getRandomPostfix()}`,
         },
         actionProfile: {
+          name: `C430251 autotest instance action profile_${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-          name: `C356801 instance action profile ${getRandomPostfix()}`,
         },
       },
       {
         mappingProfile: {
+          name: `C430251 autotest holdings mapping profile_${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `C356801 holdings mapping profile ${getRandomPostfix()}`,
-          pernanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
-          pernanentLocationUI: LOCATION_NAMES.ONLINE_UI,
+          permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+          permanentLocationUI: LOCATION_NAMES.ONLINE_UI,
         },
         actionProfile: {
+          name: `C430251 autotest holdings action profile_${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `C356801 holdings action profile ${getRandomPostfix()}`,
         },
       },
       {
         mappingProfile: {
+          name: `C430251 autotest item mapping profile_${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.ITEM,
-          name: `C356801 item mapping profile ${getRandomPostfix()}`,
+          materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
+          materialTypeUI: MATERIAL_TYPE_NAMES.BOOK,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           status: ITEM_STATUS_NAMES.AVAILABLE,
-          materialType: MATERIAL_TYPE_NAMES.BOOK,
         },
         actionProfile: {
+          name: `C430251 autotest item action profile_${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.ITEM,
-          name: `C356801 item action profile ${getRandomPostfix()}`,
         },
       },
     ];
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `C356801 job profile ${getRandomPostfix()}`,
+      profileName: `C430251 job profile_${getRandomPostfix()}`,
     };
 
-    before('create test data', () => {
+    before('login', () => {
       cy.createTempUser([
-        Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
-        Permissions.uiInventoryViewInstances.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
@@ -112,10 +116,22 @@ describe('Data Import', () => {
     });
 
     it(
-      'C356801 Check import summary table with "Created" actions for instance, holding and item (folijet)',
+      'C430251 Check import summary table with "Created" actions for instance, holding and item (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        // create mapping profiles
+        const columnNumbers = {
+          summary: '1',
+          srs: '2',
+          instance: '3',
+          holdings: '4',
+          item: '5',
+          authority: '6',
+          order: '7',
+          invoice: '8',
+          error: '9',
+        };
+
+        // create field mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(
           collectionOfMappingAndActionProfiles[0].mappingProfile,
@@ -124,13 +140,16 @@ describe('Data Import', () => {
         FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+        );
 
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(
           collectionOfMappingAndActionProfiles[1].mappingProfile,
         );
         NewFieldMappingProfile.fillPermanentLocation(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.pernanentLocation,
+          collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation,
         );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(
@@ -142,7 +161,7 @@ describe('Data Import', () => {
           collectionOfMappingAndActionProfiles[2].mappingProfile,
         );
         NewFieldMappingProfile.fillMaterialType(
-          `"${collectionOfMappingAndActionProfiles[2].mappingProfile.materialType}"`,
+          collectionOfMappingAndActionProfiles[2].mappingProfile.materialType,
         );
         NewFieldMappingProfile.fillPermanentLoanType(
           collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType,
@@ -171,53 +190,62 @@ describe('Data Import', () => {
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-        // upload a marc file for creating of the new instance, holding and item
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
-        DataImport.uploadFile('marcBibFileForC356801.mrc', nameMarcFile);
+        DataImport.uploadFile(filePathForUpload, marcFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(nameMarcFile);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(nameMarcFile);
-        // check created instance
+        Logs.waitFileIsImported(marcFileName);
+        Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(marcFileName);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHrid = initialInstanceHrId;
+        InventoryInstance.getAssignedHRID().then((hrid) => {
+          instanceHrid = hrid;
         });
-        InventoryInstance.checkIsInstancePresented(
-          instanceTitle,
-          collectionOfMappingAndActionProfiles[1].mappingProfile.pernanentLocationUI,
-          collectionOfMappingAndActionProfiles[2].mappingProfile.status,
-        );
+        InstanceRecordView.verifyInstanceSource('MARC');
+        InstanceRecordView.openHoldingView();
+        HoldingsRecordView.waitLoading();
+        HoldingsRecordView.close();
+        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
+        InventoryInstance.openItemByBarcode('No barcode');
+
         cy.visit(TopMenu.dataImportPath);
-        Logs.openFileDetails(nameMarcFile);
+        Logs.openFileDetails(marcFileName);
+        FileDetails.checkItemsStatusesInResultList(0, [
+          RECORD_STATUSES.CREATED,
+          RECORD_STATUSES.CREATED,
+          RECORD_STATUSES.CREATED,
+          RECORD_STATUSES.CREATED,
+        ]);
         [
-          FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.instance,
-          FileDetails.columnNameInResultList.holdings,
-          FileDetails.columnNameInResultList.item,
-        ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
+          columnNumbers.srs,
+          columnNumbers.instance,
+          columnNumbers.holdings,
+          columnNumbers.item,
+        ].forEach((column) => {
+          FileDetails.verifyColumnValuesInSummaryTable(column, ['1', '0', '0', '0']);
         });
-        // check Created counter in the Summary table
-        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
-        FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems);
-        FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems);
-        FileDetails.checkItemQuantityInSummaryTable(quantityOfItems);
-        // check Updated counter in the Summary table
-        FileDetails.checkInstanceQuantityInSummaryTable('0', 1);
-        FileDetails.checkHoldingsQuantityInSummaryTable('0', 1);
-        FileDetails.checkItemQuantityInSummaryTable('0', 1);
-        // check No action counter in the Summary table
-        FileDetails.checkInstanceQuantityInSummaryTable('0', 2);
-        FileDetails.checkHoldingsQuantityInSummaryTable('0', 2);
-        FileDetails.checkItemQuantityInSummaryTable('0', 2);
-        // check Error counter in the Summary table
-        FileDetails.checkInstanceQuantityInSummaryTable('0', 3);
-        FileDetails.checkHoldingsQuantityInSummaryTable('0', 3);
-        FileDetails.checkItemQuantityInSummaryTable('0', 3);
+        FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.error, [
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
+          '0',
+        ]);
+        [columnNumbers.authority, columnNumbers.order, columnNumbers.invoice].forEach((column) => {
+          FileDetails.verifyColumnValuesInSummaryTable(column, [
+            RECORD_STATUSES.DASH,
+            RECORD_STATUSES.DASH,
+            RECORD_STATUSES.DASH,
+            RECORD_STATUSES.DASH,
+          ]);
+        });
+        FileDetails.openJsonScreen(title);
+        JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.verifyTabsPresented();
+        JsonScreenView.verifyContentInTab(title);
+        JsonScreenView.openMarcSrsTab();
+        JsonScreenView.verifyContentInTab('"999"');
       },
     );
   });
