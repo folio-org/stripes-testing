@@ -700,11 +700,12 @@ export default {
     // that's why we need waiting until previous file will be uploaded or reload page
     let retryCount = 0;
     waitLoading();
+    cy.wait(5000);
     cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(
       (isDeleteFilesButtonExists) => {
         if (isDeleteFilesButtonExists && retryCount < maxRetries) {
           cy.reload();
-          cy.wait(4000);
+          cy.wait(40000);
           retryCount++;
         }
       },
