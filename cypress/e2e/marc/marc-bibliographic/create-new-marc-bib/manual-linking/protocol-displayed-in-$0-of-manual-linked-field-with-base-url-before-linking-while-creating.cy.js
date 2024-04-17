@@ -14,7 +14,7 @@ import InventoryViewSource from '../../../../../support/fragments/inventory/inve
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
-      describe('Automated linking', () => {
+      describe('Manual linking', () => {
         let userData = {};
 
         const testData = {
