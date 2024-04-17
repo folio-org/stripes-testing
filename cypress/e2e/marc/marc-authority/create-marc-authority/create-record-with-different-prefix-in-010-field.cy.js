@@ -5,24 +5,27 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
-// import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../../support/constants';
+import InteractorsTools from '../../../../support/utils/interactorsTools';
+import { calloutTypes } from '../../../../../interactors';
+import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Create MARC Authority', () => {
       const headerText = 'Create a new MARC authority record';
-      //   const newField010 = {
-      //     rowIndex: 4,
-      //     tag: '010',
-      //     content: '$a sj43321',
-      //   };
-      //   const newField100 = {
-      //     rowIndex: 5,
-      //     tag: '100',
-      //     content: '$a C423540 Create a new MARC authority record with not matched prefix on 010',
-      //   };
+      const newField010 = {
+        rowIndex: 4,
+        tag: '010',
+        content: '$a sj43321',
+      };
+      const newField100 = {
+        rowIndex: 5,
+        tag: '100',
+        content: '$a C423540 Create a new MARC authority record with not matched prefix on 010',
+      };
+      const errorToastNotification =
+        'Record cannot be saved. Prefix in the 010 field does not match the selected authority file.';
       const users = {};
-      let createdAuthorityId;
 
       before('Create users, data', () => {
         cy.getAdminToken();
@@ -47,7 +50,6 @@ describe('MARC', () => {
       after('Delete users, data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
-        MarcAuthority.deleteViaAPI(createdAuthorityId);
         ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
       });
 
@@ -60,6 +62,35 @@ describe('MARC', () => {
           MarcAuthorities.clickNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);
           QuickMarcEditor.verifyAuthorityLookUpButton();
+
+          // 2 Click on "Authority file look-up" hyperlink
+          QuickMarcEditor.clickAuthorityLookUpButton();
+
+          // 3 Click on the "Select authority file" placeholder in "Authority file name" dropdown and select any default "FOLIO" option, ex.:
+          // "LC Name Authority file (LCNAF)"
+          QuickMarcEditor.selectAuthorityFile(DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE);
+          QuickMarcEditor.verifyAuthorityFileSelected(
+            DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
+          );
+
+          // 4 Click on the "Save & close" button
+          QuickMarcEditor.clickSaveAndCloseInModal();
+          QuickMarcEditor.checkContentByTag('001', '');
+          QuickMarcEditor.checkFourthBoxDisabled(1);
+
+          // 5 Add 2 new fields by clicking on "+" icon and fill it as specified:
+          // 010 \\ "$a <prefix value of default authority file which does NOT match the selected option><identifier value>"
+          // ex.: "$a sj43321"
+          // 100 \\ "$a Create a new MARC authority record with not matched prefix on 010"
+          MarcAuthority.addNewField(newField010.rowIndex, newField010.tag, newField010.content);
+          MarcAuthority.addNewField(newField100.rowIndex, newField100.tag, newField100.content);
+          QuickMarcEditor.checkContentByTag(newField010.tag, newField010.content);
+          QuickMarcEditor.checkContentByTag(newField100.tag, newField100.content);
+
+          // 6 Click on the "Save & close" button
+          QuickMarcEditor.pressSaveAndClose();
+          InteractorsTools.checkCalloutMessage(errorToastNotification, calloutTypes.error);
+          QuickMarcEditor.checkPaneheaderContains(headerText);
         },
       );
     });
