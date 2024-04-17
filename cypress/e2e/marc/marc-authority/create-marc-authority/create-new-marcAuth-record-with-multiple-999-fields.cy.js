@@ -19,7 +19,7 @@ describe('MARC', () => {
       const newField100 = {
         rowIndex: 4,
         tag: '100',
-        content: '$a 999 multiple test',
+        content: '$a C423509 999 multiple test',
       };
       const newField999 = {
         rowIndex: 6,
