@@ -196,6 +196,16 @@ export default {
     eng: { id: 'clickable-filter-language-english' },
   },
 
+  searchInstancesWithOption(option, value) {
+    cy.do([
+      inventorySearchAndFilterInput.choose(including(option)),
+      inventorySearchAndFilter.fillIn(value),
+    ]);
+    this.verifySelectedSearchOption(option);
+    cy.expect([inventorySearchAndFilter.has({ value }), searchButton.has({ disabled: false })]);
+    cy.do(searchButton.click());
+  },
+
   selectResultCheckboxes(count) {
     const clickActions = [];
     for (let i = 0; i < count; i++) {
