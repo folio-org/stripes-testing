@@ -65,7 +65,7 @@ export default {
     gui: 'Find Agreement Plugin: Search agreements',
   },
   uiAgreementsFileDownload: {
-    internal: 'ui-agreements.agreements.edit',
+    internal: 'ui-agreements.agreements.file.download',
     gui: 'Agreements: File download',
   },
   // QuickMarc
@@ -74,7 +74,7 @@ export default {
     gui: 'quickMARC: Create a new MARC holdings record',
   },
   uiQuickMarcQuickMarcBibliographicEditorCreate: {
-    internal: 'ui-quick-marc.quick-marc-bibliographic-editor.create',
+    internal: 'ui-quick-marc.quick-marc-editor.create',
     gui: 'quickMARC: Create a new MARC bibliographic record',
   },
   uiQuickMarcQuickMarcEditorDuplicate: {
@@ -82,7 +82,7 @@ export default {
     gui: 'quickMARC: Derive new MARC bibliographic record',
   },
   uiQuickMarcQuickMarcBibliographicEditorAll: {
-    internal: 'ui-quick-marc.quick-marc-bibliographic-editor.all',
+    internal: 'ui-quick-marc.quick-marc-editor.all',
     gui: 'quickMARC: View, edit MARC bibliographic record',
   },
   uiQuickMarcQuickMarcHoldingsEditorAll: {
@@ -129,12 +129,12 @@ export default {
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: {
-    internal: ['inventory.all', 'Inventory: All permissions'],
+    internal: ['ui-inventory.all-permissions.TEMPORARY'],
     gui: 'Inventory: All permissions',
   },
   uiCallNumberBrowse: {
     internal: 'browse.call-numbers.instances.collection.get',
-    gui: 'Call number browse: View permissions',
+    gui: 'Call number browse: View permissions ',
   },
   uiSubjectBrowse: {
     internal: 'ui-inventory.subjects.view',
@@ -266,15 +266,19 @@ export default {
     gui: 'Settings (Inventory): Create, edit, delete formats',
   },
   crudDefinedResourceTypes: {
-    internal: 'ui-inventory.settings.nature-of-content-terms',
+    internal: 'ui-inventory.settings.instance-types',
     gui: 'Settings (Inventory): Create, edit, delete locally defined resource types',
   },
   crudResourceIdentifierTypes: {
     internal: 'ui-inventory.settings.identifier-types',
     gui: 'Settings (Inventory): Create, edit, delete resource identifier types',
   },
+  enableStaffSuppressFacet: {
+    internal: 'ui-inventory.instance.view-staff-suppressed-records',
+    gui: 'Inventory: Enable staff suppress facet',
+  },
   // Tags
-  uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
+  uiTagsPermissionAll: { internal: 'ui-tags.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
     internal: 'ui-tags.settings.view',
     gui: 'Settings (Tags): Can view tags settings',
@@ -289,7 +293,7 @@ export default {
     gui: 'Settings (Users): Can create, edit and remove all feefines-related entries',
   },
   uiUsersSettingsOwners: {
-    internal: 'ui-users.settings.owners',
+    internal: 'ui-users.settings.owners.all',
     gui: 'Settings (Users): Can create, edit and remove owners',
   },
   uiUsersEdituserservicepoints: {
@@ -328,14 +332,14 @@ export default {
     gui: 'inventory storage module - all authorities permissions',
   },
   // Circulation log
-  circulationLogAll: { internal: 'inn-reach.all', gui: 'Circulation log: All' },
+  circulationLogAll: { internal: 'ui-circulation-log.log-event.all', gui: 'Circulation log: All' },
   circulationLogView: {
     internal: 'ui-circulation-log.log-event.view',
     gui: 'Circulation log: View',
   },
   // Circulation
   uiCirculationViewCreateEditDelete: {
-    internal: 'ui-circulation.settings.circulation-rules',
+    internal: 'ui-circulation.settings.edit-circulation-rules',
     gui: 'Settings (Circ): Can create, edit and remove circulation rules',
   },
   uiCirculationSettingsNoticeTemplates: {
@@ -353,6 +357,10 @@ export default {
   uiCirculationCreateEditRemoveStaffSlips: {
     internal: 'ui-circulation.settings.staff-slips',
     gui: 'Settings (Circ): Can create, edit and remove staff slips',
+  },
+  uiCirculationCreateViewOverdueFinesPolicies: {
+    internal: 'ui-circulation.settings.view-overdue-fines-policies',
+    gui: 'Settings (Circ): Can view overdue fine policies',
   },
   // Users
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
@@ -439,7 +447,7 @@ export default {
     gui: 'Users: Can create, edit and remove patron blocks',
   },
   uiUsersCreatePatronTamplate: {
-    internal: 'ui-users.settings.patron-block-templates',
+    internal: 'ui-users.settings.patron-block-templates.all',
     gui: 'Settings (Users): Can create, edit and remove patron blocks templates',
   },
   uiUsersViewPatronGroups: {
@@ -447,15 +455,15 @@ export default {
     gui: 'Settings (Users): Can view patron groups',
   },
   uiUsersCreatePatronGroups: {
-    internal: 'ui-users.settings.usergroups',
+    internal: 'ui-users.settings.usergroups.all',
     gui: 'Settings (Users): Can create, edit and remove patron groups',
   },
   uiUsersCreatePatronLimits: {
-    internal: 'ui-users.settings.limits',
+    internal: 'ui-users.settings.limits.all',
     gui: 'Settings (Users): Can create, edit and remove patron blocks limits',
   },
   uiUsersCreatePatronConditions: {
-    internal: 'ui-users.settings.conditions',
+    internal: 'ui-users.settings.conditions.edit',
     gui: 'Settings (Users): Can view and edit patron blocks conditions',
   },
   uiUsersCanViewCustomFields: {
@@ -530,7 +538,7 @@ export default {
     gui: 'Settings (Calendar): Can delete existing calendars',
   },
   calendarEditCalendars: {
-    internal: 'ui-calendar.edit',
+    internal: 'ui-calendar.update',
     gui: 'Settings (Calendar): Can edit and reassign existing calendars',
   },
   // Data Export
@@ -718,7 +726,7 @@ export default {
   },
   // Finance
   uiFinanceFinanceViewGroup: {
-    internal: 'ui-finance.acq.unit.assignment.assign',
+    internal: 'ui-finance.group.view',
     gui: 'Finance: View group',
   },
   uiFinanceCreateAllocations: {
@@ -814,8 +822,24 @@ export default {
   },
   // Organizations
   uiOrganizationsAssignAcquisitionUnitsToNewOrganization: {
-    internal: 'ui-organizations.acqUnits.assig',
+    internal: 'ui-organizations.acqUnits.assign',
     gui: 'Organizations: Assign acquisition units to new organization',
+  },
+  uiOrganizationsViewBankingInformation: {
+    internal: 'ui-organizations.banking-information.view',
+    gui: 'Organizations: View banking information',
+  },
+  uiOrganizationsViewAndEditBankingInformation: {
+    internal: 'ui-organizations.banking-information.edit',
+    gui: 'Organizations: View and edit banking information',
+  },
+  uiOrganizationsViewEditAndCreateBankingInformation: {
+    internal: 'ui-organizations.banking-information.create',
+    gui: 'Organizations: View, edit and create banking information',
+  },
+  uiOrganizationsViewEditCreateAndDeleteBankingInformation: {
+    internal: 'ui-organizations.banking-information.delete',
+    gui: 'Organizations: View, edit, create and delete banking information',
   },
   uiOrganizationsIntegrationUsernamesAndPasswordsView: {
     internal: 'ui-organizations.integrations.creds.view',
@@ -877,11 +901,11 @@ export default {
     gui: 'Settings (Inventory): Configure single-record import',
   },
   settingsDataImportView: {
-    internal: 'ui-data-import.settings.readOnly',
+    internal: 'ui-data-import.view',
     gui: 'Data import: Can view only',
   },
   settingsDataImportEnabled: {
-    internal: 'settings.data-import.enabled',
+    internal: 'ui-data-import.settings.manage',
     gui: 'Settings (Data import): Can view, create, edit, and remove',
   },
   settingsDataImportCanViewOnly: {
@@ -889,12 +913,12 @@ export default {
     gui: 'Settings (Data import): Can view only',
   },
   settingsTenantViewLocation: {
-    internal: 'ui - tenant - settings.settings.location.view',
+    internal: 'ui-tenant-settings.settings.location.view',
     gui: 'Settings (Tenant): View locations',
   },
   settingsTenantView: {
     internal: 'ui-tenant-settings.settings.view',
-    gui: 'Settings (Tenant): View',
+    gui: 'Settings (tenant): View',
   },
   settingsCircView: {
     internal: 'ui-circulation.settings.cancellation-reasons',
@@ -933,7 +957,7 @@ export default {
     gui: 'Settings (Inventory): Create, edit, delete statistical codes',
   },
   uiSettingsHRIDHandlingCreateEditDelete: {
-    internal: 'ui-inventory.settings.hridHandling',
+    internal: 'ui-inventory.settings.hrid-handling',
     gui: 'Settings (Inventory): Create, edit and delete HRID handling',
   },
   uiSettingsManageAuthorityFiles: {
@@ -955,7 +979,7 @@ export default {
     gui: 'Settings (eholdings): Can view custom labels',
   },
   uiSettingseholdingsViewEditCreateDelete: {
-    internal: 'ui-eholdings.settings.all',
+    internal: 'ui-eholdings.settings.custom-labels.edit',
     gui: 'Settings (eholdings): Can create, edit, view, and delete custom labels',
   },
   uiSettingsEHoldingsViewSettings: {
@@ -1049,7 +1073,7 @@ export default {
   },
   consortiaSettingsConsortiumManagerDepartmentsCreateEditView: {
     internal: 'ui-users.settings.departments.create.edit.view',
-    gui: 'Settings (Users): Can create, edit, and view department',
+    gui: 'Settings (Users): Can create, edit, and view departments',
   },
   consortiaSettingsConsortiumManagerPatronGroupsAll: {
     internal: 'ui-users.settings.usergroups.all',
