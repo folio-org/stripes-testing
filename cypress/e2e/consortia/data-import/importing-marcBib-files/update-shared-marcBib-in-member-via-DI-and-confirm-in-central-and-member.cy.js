@@ -243,6 +243,7 @@ describe('Data Import', () => {
           InventorySearchAndFilter.verifyPanesExist();
           InventoryInstances.searchByTitle(testData.sharedInstanceId);
           InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
+          // TO DO: fix this check failure - 'Unknown user' is shown, possibly due to the way users are created in test
           // InventoryInstance.verifyLastUpdatedSource(
           //   users.userAProperties.firstName,
           //   users.userAProperties.lastName,
