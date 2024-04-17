@@ -11,7 +11,7 @@ describe('eHoldings', () => {
   const today = moment().utc().format('M/D/YYYY');
   describe('Title+Package', () => {
     const testData = {
-      title: 'Fish Biology',
+      title: 'Biology of Fishes',
       titleId: '',
       titleName: '',
       titlePackages: [],

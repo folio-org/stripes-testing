@@ -1339,6 +1339,14 @@ export default {
     );
   },
 
+  fillEmptyTextFieldOfField(rowIndex, fieldName, content) {
+    cy.do(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextField({ name: fieldName }))
+        .fillIn(content),
+    );
+  },
+
   updateExistingTagValue(rowIndex, newTagValue) {
     cy.do(
       QuickMarcEditorRow({ index: rowIndex })
