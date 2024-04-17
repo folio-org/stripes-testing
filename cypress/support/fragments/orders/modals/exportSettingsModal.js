@@ -7,7 +7,6 @@ import {
   MultiSelectOption,
   RadioButton,
   including,
-  matching,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 import OrderStates from '../orderStates';
@@ -66,14 +65,9 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(exportSettingsModal.absent());
   },
-  clickExportButton({ exportStarted = true } = {}) {
+  clickExportButton() {
     cy.do(exportButton.click());
+    InteractorsTools.checkCalloutMessage(OrderStates.exportJobStartedSuccessfully);
     cy.expect(exportSettingsModal.absent());
-
-    if (exportStarted) {
-      InteractorsTools.checkCalloutMessage(
-        matching(new RegExp(OrderStates.exportJobStartedSuccessfully)),
-      );
-    }
   },
 };
