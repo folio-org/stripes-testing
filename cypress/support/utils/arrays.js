@@ -34,20 +34,15 @@ export default {
   checkIsSortedAlphabetically({ array = [], accuracy = 1 } = {}) {
     cy.wait(5000);
     const result = array.reduce((acc, it) => {
-      console.log('acc.length', acc.length);
       if (acc.length) {
         const prev = acc[acc.length - 1].value;
-        console.log('prev', prev);
 
         const current = it.toLowerCase();
-        console.log('current', current);
-
         return [...acc, { value: current, order: prev.localeCompare(current) }];
       } else {
         return [{ value: it.toLowerCase(), order: 0 }];
       }
     }, []);
-    console.log('result', result);
     const invalidOrder = result.filter(({ order }) => order > 0);
     return (invalidOrder.length * 100) / array.length < accuracy;
   },

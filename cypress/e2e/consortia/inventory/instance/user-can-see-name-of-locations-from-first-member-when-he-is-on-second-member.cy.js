@@ -34,6 +34,7 @@ describe('Inventory', () => {
           cy.assignPermissionsToExistingUser(user.userId, [Permissions.inventoryAll.gui]);
           cy.resetTenant();
 
+          cy.getAdminToken();
           cy.assignAffiliationToUser(Affiliations.University, user.userId);
           cy.setTenant(Affiliations.University);
           cy.assignPermissionsToExistingUser(user.userId, [Permissions.inventoryAll.gui]);
