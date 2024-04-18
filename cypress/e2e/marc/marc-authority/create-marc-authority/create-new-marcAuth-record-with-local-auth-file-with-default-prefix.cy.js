@@ -12,7 +12,6 @@ describe('MARC', () => {
       const randomPostfix = getRandomPostfix();
       const tag001 = '001';
       const headerText = 'Create a new MARC authority record';
-      let createdAuthorityId;
       const newField = {
         rowIndex: 4,
         tag: '111',
@@ -28,6 +27,7 @@ describe('MARC', () => {
         isActive: true,
       };
       const users = {};
+      let createdAuthorityId;
 
       before('Create users, data', () => {
         cy.getAdminToken();
@@ -101,7 +101,6 @@ describe('MARC', () => {
           MarcAuthority.getId().then((id) => {
             createdAuthorityId = id;
           });
-
           MarcAuthority.contains(tag001);
           MarcAuthority.contains(`${localAuthFile.prefix}${localAuthFile.startWithNumber}`);
           MarcAuthority.contains(newField.tag);
