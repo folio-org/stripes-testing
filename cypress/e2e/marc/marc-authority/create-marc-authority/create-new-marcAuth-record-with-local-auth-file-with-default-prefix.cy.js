@@ -13,7 +13,7 @@ describe('MARC', () => {
       const tag001 = '001';
       const headerText = 'Create a new MARC authority record';
       const newField = {
-        rowIndex: 4,
+        rowIndex: 3,
         tag: '111',
         content:
           '$a C423559 Create a new MARC authority record with Local authority file which includes default prefix in it',
