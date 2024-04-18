@@ -13,6 +13,7 @@ import {
   MATERIAL_TYPE_NAMES,
   PROFILE_TYPE_NAMES,
   RECORD_STATUSES,
+  INSTANCE_STATUS_TERM_NAMES,
 } from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -21,9 +22,9 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 // import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+// import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+// import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -42,6 +43,7 @@ import ExportFieldMappingProfiles from '../../../support/fragments/data-export/e
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import DateTools from '../../../support/utils/dateTools';
 
 describe('Data Import', () => {
   describe('Log details', () => {
@@ -207,6 +209,14 @@ describe('Data Import', () => {
       ],
       deletedRelations: [],
     };
+    const jobProfileForCreate = {
+      profile: {
+        name: `C430253 create job profile ${getRandomPostfix()}`,
+        dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+      },
+      addedRelations: [],
+      deletedRelations: [],
+    };
     const exportMappingProfile = {
       name: `C430253 mapping profile ${getRandomPostfix()}`,
       holdingsTransformation: EXPORT_TRANSFORMATION_NAMES.HOLDINGS_HRID,
@@ -224,8 +234,8 @@ describe('Data Import', () => {
           name: `C430253 update instance mapping profile ${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
           catalogedDate: '###TODAY###',
-          // catalogedDateUi: DateTools.getFormattedDate({ date: new Date() }),
-          // instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
+          catalogedDateUi: DateTools.getFormattedDate({ date: new Date() }),
+          instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
           statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
           statisticalCodeUI: 'Book, print (books)',
         },
@@ -318,23 +328,23 @@ describe('Data Import', () => {
     };
 
     before('login', () => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.mappingProfilePath,
-        waiter: FieldMappingProfiles.waitLoading,
-      });
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     });
 
     it(
       'C430253 Check import summary table with "Updated" actions for instance, holding and item (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        const jobProfile = {
-          profile: {
-            // name: jobProfileNameCreate,
-            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
-          },
-          addedRelations: [],
-          deletedRelations: [],
+        const columnNumbers = {
+          summary: '1',
+          srs: '2',
+          instance: '3',
+          holdings: '4',
+          item: '5',
+          authority: '6',
+          order: '7',
+          invoice: '8',
+          error: '9',
         };
 
         const testData = [
@@ -343,7 +353,7 @@ describe('Data Import', () => {
           { mappingProfile: holdingsMappingProfile, actionProfile: holdingsActionProfile },
           { mappingProfile: itemMappingProfile, actionProfile: itemActionProfile },
         ];
-        testData.jobProfileForCreate = jobProfile;
+        testData.jobProfileForCreate = jobProfileForCreate;
 
         testData.forEach((specialPair) => {
           cy.createOnePairMappingAndActionProfiles(
@@ -358,24 +368,26 @@ describe('Data Import', () => {
             testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
           },
         );
-        DataImport.verifyUploadState();
+
         // upload a marc file for creating of the new instance, holding and item
+        DataImport.verifyUploadState();
         DataImport.uploadFile(filePath, nameMarcFileForImportCreate);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(testData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
+        cy.pause();
         Logs.waitFileIsImported(nameMarcFileForImportCreate);
-        Logs.checkJobStatus(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(nameMarcFileForImportCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForImportCreate);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         // InventoryInstance.getAssignedHRID().then((hrid) => {
-        //   instanceHrid = hrid;
+        // instanceHrid = hrid;
         // });
         InstanceRecordView.verifyInstanceSource('MARC');
         InstanceRecordView.openHoldingView();
         HoldingsRecordView.waitLoading();
         HoldingsRecordView.close();
-        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
+        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ANNEX_UI} >`);
         InventoryInstance.openItemByBarcode('No barcode');
 
         cy.visit(SettingsMenu.exportMappingProfilePath);
@@ -387,7 +399,8 @@ describe('Data Import', () => {
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.selectYesfilterStaffSuppress();
-        InventorySearchAndFilter.searchInstancesWithOption('Subject', subject);
+        InventorySearchAndFilter.searchByParameter('Subject', subject);
+        // InventorySearchAndFilter.searchByParameter('Subject', 'Test update948.1333600836313105');
         InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
@@ -402,72 +415,16 @@ describe('Data Import', () => {
 
         // create mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);
-        FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(
+        FieldMappingProfiles.createInstanceMappingProfile(
           collectionOfMappingAndActionProfiles[0].mappingProfile,
         );
-        NewFieldMappingProfile.fillCatalogedDate(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.catalogedDate,
-        );
-        NewFieldMappingProfile.fillInstanceStatusTerm(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.instanceStatus,
-        );
-        NewFieldMappingProfile.addStatisticalCode(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.statisticalCode,
-          8,
-        );
-        NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewMode(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
-        );
 
-        FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(
+        FieldMappingProfiles.createHoldingsMappingProfile(
           collectionOfMappingAndActionProfiles[1].mappingProfile,
         );
-        NewFieldMappingProfile.fillHoldingsType(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.holdingsType,
-        );
-        NewFieldMappingProfile.fillPermanentLocation(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation,
-        );
-        NewFieldMappingProfile.fillCallNumberType(
-          `"${collectionOfMappingAndActionProfiles[1].mappingProfile.callNumberType}"`,
-        );
-        NewFieldMappingProfile.fillCallNumber(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.callNumber,
-        );
-        NewFieldMappingProfile.addElectronicAccess(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.typeValue,
-          `"${collectionOfMappingAndActionProfiles[1].mappingProfile.relationship}"`,
-          collectionOfMappingAndActionProfiles[1].mappingProfile.uri,
-        );
-        NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewMode(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
-        );
 
-        FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(
+        FieldMappingProfiles.createItemMappingProfile(
           collectionOfMappingAndActionProfiles[2].mappingProfile,
-        );
-        NewFieldMappingProfile.fillMaterialType(
-          `"${collectionOfMappingAndActionProfiles[2].mappingProfile.materialType}"`,
-        );
-        NewFieldMappingProfile.addItemNotes(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.noteType,
-          collectionOfMappingAndActionProfiles[2].mappingProfile.note,
-          collectionOfMappingAndActionProfiles[2].mappingProfile.staffOnly,
-        );
-        NewFieldMappingProfile.fillPermanentLoanType(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType,
-        );
-        NewFieldMappingProfile.fillStatus(
-          `"${collectionOfMappingAndActionProfiles[2].mappingProfile.status}"`,
-        );
-        NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewMode(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.name,
         );
 
         // create action profiles
@@ -502,6 +459,51 @@ describe('Data Import', () => {
           4,
         );
         NewJobProfile.saveAndClose();
+
+        // upload the exported marc file
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.verifyUploadState();
+        DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
+        JobProfiles.search(jobProfileForUpdate.profileName);
+        JobProfiles.runImportFile();
+        cy.pause();
+        Logs.waitFileIsImported(nameMarcFileForImportUpdate);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(nameMarcFileForImportUpdate);
+        FileDetails.checkItemsStatusesInResultList(1, [
+          RECORD_STATUSES.UPDATED,
+          RECORD_STATUSES.UPDATED,
+          RECORD_STATUSES.UPDATED,
+          RECORD_STATUSES.UPDATED,
+        ]);
+        [
+          columnNumbers.srs,
+          columnNumbers.instance,
+          columnNumbers.holdings,
+          columnNumbers.item,
+        ].forEach((column) => {
+          FileDetails.verifyColumnValuesInSummaryTable(column, ['0', '1', '0', '0']);
+        });
+        FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.error, [
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
+          '0',
+        ]);
+        [columnNumbers.authority, columnNumbers.order, columnNumbers.invoice].forEach((column) => {
+          FileDetails.verifyColumnValuesInSummaryTable(column, [
+            RECORD_STATUSES.DASH,
+            RECORD_STATUSES.DASH,
+            RECORD_STATUSES.DASH,
+            RECORD_STATUSES.DASH,
+          ]);
+        });
+        // FileDetails.openJsonScreen(title);
+        // JsonScreenView.verifyJsonScreenIsOpened();
+        // JsonScreenView.verifyTabsPresented();
+        // JsonScreenView.verifyContentInTab(title);
+        // JsonScreenView.openMarcSrsTab();
+        // JsonScreenView.verifyContentInTab('"999"');
       },
     );
   });
