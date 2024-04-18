@@ -125,7 +125,6 @@ describe('Orders', () => {
         cy.reload();
         OrderLines.selectFilterOngoingPaymentStatus();
         Orders.exportResultsToCsv();
-        cy.pause();
         OrderLines.checkDownloadedFile();
       },
     );
