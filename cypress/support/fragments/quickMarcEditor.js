@@ -495,6 +495,13 @@ export default {
     ]);
   },
 
+  fillInFieldValues(rowIndex, tag, content, indicator0, indicator1) {
+    cy.get(`textarea[name="records[${rowIndex}].content"]`).clear().type(content);
+    cy.get(`input[name="records[${rowIndex}].indicators[1]"]`).type(indicator1);
+    cy.get(`input[name="records[${rowIndex}].indicators[0]"]`).type(indicator0);
+    cy.get(`input[name="records[${rowIndex}].tag"]`).type(tag);
+  },
+
   deletePenaltField() {
     const shouldBeRemovedRowNumber = 16;
     cy.expect(getRowInteractorByRowNumber(shouldBeRemovedRowNumber).exists());
@@ -1328,6 +1335,14 @@ export default {
     cy.do(
       QuickMarcEditorRow({ index: rowIndex })
         .find(TextArea({ name: fieldName }))
+        .fillIn(content),
+    );
+  },
+
+  fillEmptyTextFieldOfField(rowIndex, fieldName, content) {
+    cy.do(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextField({ name: fieldName }))
         .fillIn(content),
     );
   },
@@ -2635,5 +2650,20 @@ export default {
           .absent(),
       );
     });
+  },
+
+  verifyAllBoxesInARowAreDisabled(rowNumber, isDisabled = true) {
+    cy.expect([
+      getRowInteractorByRowNumber(rowNumber).find(TextField('Field')).has({ disabled: isDisabled }),
+      getRowInteractorByRowNumber(rowNumber)
+        .find(TextArea({ ariaLabel: 'Subfield' }))
+        .has({ disabled: isDisabled }),
+      getRowInteractorByRowNumber(rowNumber)
+        .find(TextField('Indicator', { name: including('.indicators[0]') }))
+        .has({ disabled: isDisabled }),
+      getRowInteractorByRowNumber(rowNumber)
+        .find(TextField('Indicator', { name: including('.indicators[1]') }))
+        .has({ disabled: isDisabled }),
+    ]);
   },
 };

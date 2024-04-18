@@ -5,6 +5,7 @@ import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-s
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import UsersCard from '../../../support/fragments/users/usersCard';
+import QueryModal from '../../../support/fragments/bulk-edit/query-modal';
 
 let user;
 
@@ -33,7 +34,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C413369 Verify Query tab permissions (In app items) (firebird)',
+      'C376991 Verify Query tab permissions (In app items) (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
@@ -63,6 +64,15 @@ describe('bulk-edit', () => {
         });
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
+        BulkEditSearchPane.openQuerySearch();
+        BulkEditSearchPane.isHoldingsRadioChecked(false);
+        BulkEditSearchPane.isInstancesRadioChecked(false);
+        BulkEditSearchPane.isItemsRadioChecked(false);
+        BulkEditSearchPane.verifyUsersRadioAbsent();
+        BulkEditSearchPane.verifyInputLabel(
+          'Select a record type and then click the Build query button.',
+        );
+        QueryModal.buildQueryButtonDisabled();
       },
     );
   });

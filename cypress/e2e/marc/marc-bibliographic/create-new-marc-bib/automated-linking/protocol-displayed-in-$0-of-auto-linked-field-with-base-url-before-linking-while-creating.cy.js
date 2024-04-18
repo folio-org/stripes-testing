@@ -13,60 +13,63 @@ import InventoryViewSource from '../../../../../support/fragments/inventory/inve
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
-    describe('Edit MARC bib', () => {
-      describe('Manual linking', () => {
+    describe('Create new MARC bib', () => {
+      describe('Automated linking', () => {
         let userData = {};
 
         const testData = {
+          tag245: '245',
+          tag245Content: 'Record for linking: base URL with "https://" protocol before linking',
           searchAuthorityQueries: [
-            'C436828 Whiteread, Rachel, 1963-',
-            'C436828 Martini, Carlo Maria, 1927-2012. Works. Selections',
-            'C436828 St. Louis Art Museum',
-            'C436828 Tate Britain (Gallery)',
-            'C436828 Action and adventure fiction',
+            'C436825 Whiteread, Rachel, 1963-',
+            'C436825 Martini, Carlo Maria, 1927-2012. Works. Selections',
+            'C436825 St. Louis Art Museum',
+            'C436825 Tate Britain (Gallery)',
+            'C436825 Action and adventure fiction',
           ],
-          url: 'https://',
+          calloutMessage:
+            'Field 100, 240, 655, and 710 has been linked to MARC authority record(s).',
           marcAuthIcon: 'Linked to MARC authority',
         };
 
         const linkedTags = [
           [
-            11,
+            5,
             '100',
-            '1',
             '\\',
-            '$a C436828 Whiteread, Rachel, $d 1963-',
+            '\\',
+            '$a C436825 Whiteread, Rachel, $d 1963-',
             '$e artist.',
             '$0 http://id.loc.gov/authorities/names/nr94042914',
             '',
           ],
-          [12, '240', '1', '0', '$a Works. $k Selections', '', '$0 2018019878', ''],
+          [6, '240', '\\', '\\', '$a Works. $k Selections', '', '$0 2018019878', ''],
           [
-            24,
+            7,
             '655',
             '\\',
-            '7',
-            '$a C436828 Action and adventure fiction',
+            '\\',
+            '$a C436825 Action and adventure fiction',
             '',
             '$0 https://vocabularyserver.com/gsafd/gsafd2014026217',
             '$2 lcgft',
           ],
           [
-            25,
+            8,
             '710',
-            '2',
             '\\',
-            '$a C436828 Tate Britain (Gallery)',
+            '\\',
+            '$a C436825 Tate Britain (Gallery)',
             '$e organizer, $e host institution.',
             '$0 http://linking.com/automated/tests/protocolhttp/os000208089',
             '',
           ],
           [
-            26,
+            9,
             '710',
-            '2',
             '\\',
-            '$a C436828 St. Louis Art Museum',
+            '\\',
+            '$a C436825 St. Louis Art Museum',
             '$e host institution.',
             '$0 https://linking.com/automated/tests/protocolhttps/osw790055919',
             '',
@@ -92,14 +95,7 @@ describe('MARC', () => {
 
         const marcFiles = [
           {
-            marc: 'marcBibFileForC436828.mrc',
-            fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-            numOfRecords: 1,
-            propertyName: 'instance',
-          },
-          {
-            marc: 'marcAuthFileForC436828.mrc',
+            marc: 'marcAuthFileForC436825.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 5,
@@ -107,32 +103,41 @@ describe('MARC', () => {
           },
         ];
 
-        const linkingTagAndValues = [
+        const newFields = [
           {
-            rowIndex: 11,
-            value: 'C436828 Whiteread, Rachel, 1963-',
-            tag: 100,
+            rowIndex: 4,
+            tag: '100',
+            content:
+              '$a C436825 Whiteread, Rachel, $e artist. $0 https://id.loc.gov/authorities/names/nr94042914',
           },
           {
-            rowIndex: 12,
-            value: 'C436828 Martini, Carlo Maria 1927-2012. Works. Selections',
-            tag: 240,
+            rowIndex: 5,
+            tag: '240',
+            content: '$a C436825 Works. $0 https://notspecifiedsource/2018019878',
           },
           {
-            rowIndex: 24,
-            value: 'C436828 Action and adventure fiction',
-            tag: 655,
+            rowIndex: 6,
+            tag: '655',
+            content:
+              '$a C436825 Adventire $2 lcgft $0 https://vocabularyserver.com/gsafd/gsafd2014026217',
           },
           {
-            rowIndex: 25,
-            value: 'C436828 Tate Britain (Gallery)',
-            tag: 710,
+            rowIndex: 7,
+            tag: '710',
+            content:
+              '$a C436825 Tate Britain (Gallery), $e organizer, $e host institution. $0 https://linking.com/os000208089',
           },
           {
-            rowIndex: 26,
-            value: 'C436828 St. Louis Art Museum',
-            tag: 710,
+            rowIndex: 8,
+            tag: '710',
+            content:
+              '$a C436825 St. Louis Art Museum, $e host institution. $0 https://linking.com/automated/tests/protocolhttps/osw790055919',
           },
+        ];
+
+        const linkableFields = [
+          100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810,
+          811, 830,
         ];
 
         const createdRecordIDs = [];
@@ -143,6 +148,7 @@ describe('MARC', () => {
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+            Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
@@ -187,6 +193,10 @@ describe('MARC', () => {
               });
             });
 
+            linkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, true);
+            });
+
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -197,10 +207,10 @@ describe('MARC', () => {
         after('Deleting created users, Instances', () => {
           cy.getAdminToken();
           Users.deleteViaApi(userData.userId);
-          createdRecordIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
-            else InventoryInstance.deleteInstanceViaApi(id);
-          });
+          for (let i = 0; i < 5; i++) {
+            MarcAuthority.deleteViaAPI(createdRecordIDs[i]);
+          }
+          InventoryInstance.deleteInstanceViaApi(createdRecordIDs[5]);
           // TO DO: remove `failOnStatusCode = false` after MODELINKS-210 is done
           for (let i = 0; i < 2; i++) {
             cy.deleteAuthoritySourceFileViaAPI(createdAuthSources[i], true);
@@ -208,50 +218,43 @@ describe('MARC', () => {
         });
 
         it(
-          'C436828 Protocol is displayed in subfield "$0" of manually linked field when field has base URL without protocol before linking (spitfire)',
+          'C436825 Protocol is displayed in subfield "$0" of automatically linked field when field has base URL with "https://" protocol before linking (spitfire)',
           { tags: ['criticalPath', 'spitfire'] },
           () => {
-            InventoryInstances.searchByTitle(createdRecordIDs[0]);
-            InventoryInstances.selectInstance();
-
-            InventoryInstance.editMarcBibliographicRecord();
-            QuickMarcEditor.checkPaneheaderContains('Edit MARC record');
-            QuickMarcEditor.checkValueAbsent(11, testData.url);
-            QuickMarcEditor.checkValueAbsent(12, testData.url);
-            QuickMarcEditor.checkValueAbsent(24, testData.url);
-            QuickMarcEditor.checkValueAbsent(25, testData.url);
-            QuickMarcEditor.checkValueAbsent(26, testData.url);
-            linkingTagAndValues.forEach((linking) => {
-              QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
-              MarcAuthorities.switchToSearch();
-              InventoryInstance.verifySelectMarcAuthorityModal();
-              InventoryInstance.verifySearchOptions();
-              InventoryInstance.searchResults(linking.value);
-              InventoryInstance.clickLinkButton();
-              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
+            InventoryInstance.newMarcBibRecord();
+            QuickMarcEditor.checkPaneheaderContains('Create a new MARC bib record');
+            QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
+            QuickMarcEditor.updateLDR06And07Positions();
+            newFields.forEach((newField) => {
+              MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
             });
-
+            QuickMarcEditor.clickLinkHeadingsButton();
+            QuickMarcEditor.checkCallout(testData.calloutMessage);
+            QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             linkedTags.forEach((field) => {
               QuickMarcEditor.verifyTagFieldAfterLinking(...field);
             });
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
+            InventoryInstance.getId().then((id) => {
+              createdRecordIDs.push(id);
+            });
 
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t100\t1  \t$a C436828 Whiteread, Rachel, $d 1963- $e artist. $0 http://id.loc.gov/authorities/names/nr94042914 $9`,
+              `${testData.marcAuthIcon}\n\t100\t   \t$a C436825 Whiteread, Rachel, $d 1963- $e artist. $0 http://id.loc.gov/authorities/names/nr94042914 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t240\t1 0\t$a Works. $k Selections $0 2018019878 $9`,
+              `${testData.marcAuthIcon}\n\t240\t   \t$a Works. $k Selections $0 2018019878 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t655\t  7\t$a C436828 Action and adventure fiction $0 https://vocabularyserver.com/gsafd/gsafd2014026217 $9`,
+              `${testData.marcAuthIcon}\n\t655\t   \t$a C436825 Action and adventure fiction $0 https://vocabularyserver.com/gsafd/gsafd2014026217 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436828 Tate Britain (Gallery) $e organizer, $e host institution. $0 http://linking.com/automated/tests/protocolhttp/os000208089 $9`,
+              `${testData.marcAuthIcon}\n\t710\t   \t$a C436825 Tate Britain (Gallery) $e organizer, $e host institution. $0 http://linking.com/automated/tests/protocolhttp/os000208089 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436828 St. Louis Art Museum $e host institution. $0 https://linking.com/automated/tests/protocolhttps/osw790055919 $9`,
+              `${testData.marcAuthIcon}\n\t710\t   \t$a C436825 St. Louis Art Museum $e host institution. $0 https://linking.com/automated/tests/protocolhttps/osw790055919 $9`,
             );
           },
         );

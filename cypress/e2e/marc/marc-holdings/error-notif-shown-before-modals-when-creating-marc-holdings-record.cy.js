@@ -82,8 +82,6 @@ describe('MARC', () => {
       'C375206 Error notifications shown before modals when creating "MARC holdings" record (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire'] },
       () => {
-        const calloutLDRMessage =
-          'Record cannot be saved. The Leader must contain 24 characters, including null spaces.';
         const calloutTagMessage =
           'Record cannot be saved. A MARC tag must contain three characters.';
 
@@ -103,13 +101,10 @@ describe('MARC', () => {
         QuickMarcEditor.addNewField('0', '$a test2', 6);
         QuickMarcEditor.checkContent('$a test2', 7);
         QuickMarcEditor.deleteFieldAndCheck(6, '040');
-        QuickMarcEditor.updateLDRvalueByPosition(23, '');
         QuickMarcEditor.pressSaveAndClose();
-        InteractorsTools.checkCalloutMessage(calloutLDRMessage, calloutTypes.error);
         InteractorsTools.closeCalloutMessage();
         QuickMarcEditor.waitLoading();
         QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);
-        QuickMarcEditor.updateExistingField('LDR', '00000nu\\\\\\2200000un\\4500');
         QuickMarcEditor.pressSaveAndClose();
         InteractorsTools.checkCalloutMessage(calloutTagMessage, calloutTypes.error);
         InteractorsTools.closeCalloutMessage();

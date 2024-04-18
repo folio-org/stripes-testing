@@ -1282,4 +1282,8 @@ export default {
       Checkbox({ disabled: false }).absent(),
     ]);
   },
+
+  verifyElectronicAccessElementByIndex(index, expectedText) {
+    cy.get('[class^="ElectronicAccess"]').find('td').eq(index).should('contain.text', expectedText);
+  },
 };
