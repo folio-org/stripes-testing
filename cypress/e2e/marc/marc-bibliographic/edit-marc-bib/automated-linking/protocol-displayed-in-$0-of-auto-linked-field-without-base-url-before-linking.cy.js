@@ -50,7 +50,7 @@ describe('MARC', () => {
             '7',
             '$a C436814 Action and adventure fiction',
             '',
-            '$0 https://vocabularyserver.com/gsafd/gsafd2014026217',
+            '$0 https://vocabularyserver.com/gsafd/gsafd2014026218',
             '$2 lcgft',
           ],
           [
@@ -60,7 +60,7 @@ describe('MARC', () => {
             '\\',
             '$a C436814 Tate Britain (Gallery)',
             '$e organizer, $e host institution.',
-            '$0 http://linking.com/automated/tests/protocolhttp/os000208089',
+            '$0 http://linking.com/automated/tests/protocolhttp/os000208081',
             '',
           ],
           [
@@ -70,7 +70,7 @@ describe('MARC', () => {
             '\\',
             '$a C436814 St. Louis Art Museum',
             '$e host institution.',
-            '$0 https://linking.com/automated/tests/protocolhttps/osw790055919',
+            '$0 https://linking.com/automated/tests/protocolhttps/osw790055911',
             '',
           ],
         ];
@@ -222,13 +222,13 @@ describe('MARC', () => {
               `${testData.marcAuthIcon}\n\t240\t1 0\t$a Works. $k Selections $0 2018019878 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t655\t  7\t$a C436814 Action and adventure fiction $0 https://vocabularyserver.com/gsafd/gsafd2014026217 $9`,
+              `${testData.marcAuthIcon}\n\t655\t  7\t$a C436814 Action and adventure fiction $0 https://vocabularyserver.com/gsafd/gsafd2014026218 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436814 Tate Britain (Gallery) $e organizer, $e host institution. $0 http://linking.com/automated/tests/protocolhttp/os000208089 $9`,
+              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436814 Tate Britain (Gallery) $e organizer, $e host institution. $0 http://linking.com/automated/tests/protocolhttp/os000208081 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436814 St. Louis Art Museum $e host institution. $0 https://linking.com/automated/tests/protocolhttps/osw790055919 $9`,
+              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436814 St. Louis Art Museum $e host institution. $0 https://linking.com/automated/tests/protocolhttps/osw790055911 $9`,
             );
           },
         );
