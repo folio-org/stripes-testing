@@ -1,29 +1,17 @@
-import Users from '../../../support/fragments/users/users';
+import { Heading, including } from '../../../../interactors';
 
 describe('Eureka', () => {
   describe('Login', () => {
-    const testData = {};
-
     const tokenCallRegExp = /\/authn\/token/;
-
-    before(() => {
-      cy.createTempUser([]).then((createdUserProperties) => {
-        testData.user = createdUserProperties;
-      });
-    });
-
-    after(() => {
-      cy.getAdminToken();
-      Users.deleteViaApi(testData.user.userId);
-    });
+    const samlCallRegExp = /\/saml\/check/;
 
     it(
       'C423957 Access token not shown in request body when logging in (eureka)',
       { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
       () => {
-        cy.visit('/');
         cy.intercept('GET', tokenCallRegExp).as('tokenCall');
-        cy.login(testData.user.username, testData.user.password);
+        cy.intercept('GET', samlCallRegExp).as('samlCall');
+        cy.loginAsAdmin();
         cy.wait('@tokenCall').then((call) => {
           expect(call.response.statusCode).to.eq(201);
           expect(Object.entries(call.response.body).length).to.eq(2);
@@ -35,6 +23,10 @@ describe('Eureka', () => {
           expect(
             call.response.headers['set-cookie'].filter((entry) => entry.includes('folioRefreshToken')).length,
           ).to.eq(1);
+        });
+        cy.expect(Heading(including('Welcome')).exists());
+        cy.get('@samlCall.all').then((calls) => {
+          expect(calls).to.have.length(0);
         });
       },
     );
