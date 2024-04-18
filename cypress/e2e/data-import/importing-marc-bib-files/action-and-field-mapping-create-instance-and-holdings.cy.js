@@ -33,7 +33,7 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
     const marcFileName = `C11105 autotestFile${getRandomPostfix()}.mrc`;
-    const filePathForUpload = 'marcFileNameForC11105.mrc';
+    const filePathForUpload = 'marcBibFileForC11105.mrc';
     const title = "101 things I wish I'd known when I started using hypnosis";
     const collectionOfMappingAndActionProfiles = [
       {
