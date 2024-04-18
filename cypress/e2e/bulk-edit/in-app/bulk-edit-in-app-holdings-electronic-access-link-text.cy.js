@@ -45,7 +45,6 @@ describe('bulk-edit', () => {
               electronicAccess: [
                 {
                   linkText: textWithSpecialCharacters,
-                  // relationshipId: electronicAccessRelationshipId.RESOURCE,
                   uri: 'uri.com',
                 },
               ],
@@ -89,7 +88,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.isSelectActionAbsent();
         BulkEditActions.selectOption('Link text');
-        let possibleActions = ['Clear field', 'Find', 'Replace with'];
+        let possibleActions = ['Clear field', 'Find (full field search)', 'Replace with'];
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditActions.selectSecondAction('Clear field');
         BulkEditActions.addNewBulkEditFilterString();

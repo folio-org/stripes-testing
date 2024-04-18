@@ -485,6 +485,13 @@ export default {
     cy.expect([marcViewSection.exists(), marcViewSectionContent.has({ text: including(value) })]);
   },
 
+  verifyViewPaneContentAbsent(value) {
+    cy.expect([
+      marcViewSection.exists(),
+      marcViewSectionContent.find(HTML(including(value))).absent(),
+    ]);
+  },
+
   verifyViewPaneContentExists() {
     cy.expect(marcViewSection.exists());
   },
