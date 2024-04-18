@@ -46,6 +46,7 @@ describe('Inventory', () => {
           cy.resetTenant();
 
           cy.login(testData.user.username, testData.user.password);
+          cy.pause();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(TopMenu.inventoryPath);
@@ -79,12 +80,14 @@ describe('Inventory', () => {
           testData.updatedInstanceTitle,
           FileDetails.columnNameInResultList.title,
         );
-        [
+        FileDetails.checkStatusInColumn(
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.srsMarc,
+        );
+        FileDetails.checkStatusInColumn(
+          RECORD_STATUSES.UPDATED,
           FileDetails.columnNameInResultList.instance,
-        ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
-        });
+        );
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
       },
     );
