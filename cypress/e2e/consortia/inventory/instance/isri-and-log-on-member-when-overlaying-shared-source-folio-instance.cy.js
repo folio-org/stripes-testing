@@ -46,7 +46,6 @@ describe('Inventory', () => {
           cy.resetTenant();
 
           cy.login(testData.user.username, testData.user.password);
-          cy.pause();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(TopMenu.inventoryPath);
