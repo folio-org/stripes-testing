@@ -32,30 +32,30 @@ describe('MARC', () => {
           {
             rowIndex: 5,
             tag: '800',
-            content: '$t testT $0 123 $dtestD  $a testA $0 971255',
-            boxFourth: '$a C380729 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+            content: '$t testT $0 123 $dtestD  $a testA $0 971256',
+            boxFourth: '$a C422129 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
             boxFifth: '',
             boxSixth: '$0 3052044',
             boxSeventh: '',
             searchOption: 'Personal name',
-            marcValue: 'C380729 Jackson, Peter, 1950-2022 Inspector Banks series ;',
-            markedValue: 'C380729 Kerouac, Jack,',
-            valueAfterSave: 'C380729 Jackson, Peter, Inspector Banks series ; 1950-2022',
+            marcValue: 'C422129 Jackson, Peter, 1950-2022 Inspector Banks series ;',
+            markedValue: 'C422129 Kerouac, Jack,',
+            valueAfterSave: 'C422129 Jackson, Peter, Inspector Banks series ; 1950-2022',
           },
           {
             rowIndex: 6,
             tag: '810',
             content: '$a test123',
             boxFourth:
-              '$a C380729 John Bartholomew and Son. $l English $t Bartholomew world travel series $d 1995',
+              '$a C422129 John Bartholomew and Son. $l English $t Bartholomew world travel series $d 1995',
             boxFifth: '',
             boxSixth: '$0 http://id.loc.gov/authorities/names/n84704570',
             boxSeventh: '',
             searchOption: 'Name-title',
             marcValue:
-              'C380729 John Bartholomew and Son. Bartholomew world travel series 1995 English',
+              'C422129 John Bartholomew and Son. Bartholomew world travel series 1995 English',
             valueAfterSave:
-              'C380729 John Bartholomew and Son. English Bartholomew world travel series 1995',
+              'C422129 John Bartholomew and Son. English Bartholomew world travel series 1995',
           },
         ];
 
@@ -63,7 +63,7 @@ describe('MARC', () => {
 
         const marcFiles = [
           {
-            marc: 'marcAuthFileForC380729.mrc',
+            marc: 'marcAuthFileForC422129.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 3,
@@ -132,7 +132,7 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
             MarcAuthorities.checkSearchInput(
-              'keyword exactPhrase testA estD testT or identifiers.value exactPhrase 123 or identifiers.value exactPhrase 971255',
+              'keyword exactPhrase testA estD testT or identifiers.value exactPhrase 123 or identifiers.value exactPhrase 971256',
             );
             MarcAuthorities.verifyEmptyAuthorityField();
             MarcAuthorities.checkRecordDetailPageMarkedValue(newFields[0].markedValue);
@@ -214,10 +214,10 @@ describe('MARC', () => {
             QuickMarcEditor.closeEditorPane();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C380729 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052044 $9`,
+              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C422129 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052044 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C380729 John Bartholomew and Son. $l English $t Bartholomew world travel series $d 1995 $0 http://id.loc.gov/authorities/names/n84704570 $9`,
+              `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C422129 John Bartholomew and Son. $l English $t Bartholomew world travel series $d 1995 $0 http://id.loc.gov/authorities/names/n84704570 $9`,
             );
 
             cy.visit(TopMenu.marcAuthorities);
