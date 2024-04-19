@@ -73,7 +73,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C422160 Verify Bulk Edit for Holding populated "URI" in electronic access (firebird)',
+      'C422222 Verify Bulk Edit for Holding with populated " URL relationship" in electronic access (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();

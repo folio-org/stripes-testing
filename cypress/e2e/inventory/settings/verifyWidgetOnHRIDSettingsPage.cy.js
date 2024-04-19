@@ -4,7 +4,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Settings', () => {
     const testData = {};
 
@@ -24,6 +24,7 @@ describe('Inventory', () => {
       });
     });
 
+    // this test we can't run in parallel, so it is skipped and moved to manual
     it(
       'C369055 Verify created/updated by widget on HRID Settings page (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
