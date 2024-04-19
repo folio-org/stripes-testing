@@ -9,7 +9,7 @@ import {
   TextField,
   including,
 } from '../../../../../interactors';
-import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../constants';
+import { DEFAULT_FOLIO_AUTHORITY_FILES, AUTHORITY_FILE_TEXT_FIELD_NAMES } from '../../../constants';
 
 const manageAuthorityFilesPane = Pane('Manage authority files');
 const newButton = manageAuthorityFilesPane.find(Button({ id: 'clickable-add-authorityfiles' }));
@@ -85,8 +85,12 @@ const fillBaseUrl = (baseUrl) => {
 };
 
 const switchActiveCheckbox = (isChecked = true) => {
-  cy.do(firstRow.find(activeCheckbox).click());
-  cy.expect(firstRow.find(activeCheckbox).has({ checked: isChecked }));
+  if (isChecked) {
+    cy.do(firstRow.find(activeCheckbox).click());
+    cy.expect(firstRow.find(activeCheckbox).has({ checked: isChecked }));
+  } else {
+    cy.expect(firstRow.find(activeCheckbox).has({ checked: isChecked }));
+  }
 };
 
 const checkCancelButtonEnabled = (isEnabled = true) => {
@@ -99,6 +103,10 @@ const checkSaveButtonEnabled = (isEnabled = true) => {
 
 const clickSaveButton = () => {
   cy.do(firstRow.find(saveButton).click());
+};
+
+const clickCancelButton = () => {
+  cy.do(firstRow.find(cancelButton).click());
 };
 
 const checkAfterSave = (authorityFileName) => {
@@ -118,6 +126,7 @@ export default {
   checkCancelButtonEnabled,
   checkSaveButtonEnabled,
   clickSaveButton,
+  clickCancelButton,
   checkAfterSave,
 
   fillAllFields: (name, prefix, startsWith, baseUrl, isActive) => {
@@ -139,6 +148,29 @@ export default {
       targetRow.find(editButton).exists(),
     ]);
     if (isDeletable) cy.expect(targetRow.find(deleteButton).exists());
+  },
+
+  checkSourceFileAbsent(fileName) {
+    cy.expect(manageAuthorityFilesPane.find(MultiColumnListRow(including(fileName))).absent());
+  },
+
+  checkErrorInField(fieldName, errorMessage) {
+    switch (fieldName) {
+      case AUTHORITY_FILE_TEXT_FIELD_NAMES.NAME:
+        cy.expect(nameTextField.has({ error: errorMessage }));
+        break;
+      case AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX:
+        cy.expect(prefixTextField.has({ error: errorMessage }));
+        break;
+      case AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH:
+        cy.expect(hridStartsWithTextField.has({ error: errorMessage }));
+        break;
+      case AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL:
+        cy.expect(baseUrlTextField.has({ error: errorMessage }));
+        break;
+      default:
+        break;
+    }
   },
 
   setAllDefaultFOLIOFilesToActiveViaAPI() {
