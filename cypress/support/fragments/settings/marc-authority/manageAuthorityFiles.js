@@ -153,16 +153,16 @@ export default {
   checkErrorInField(fieldName, errorMessage) {
     switch (fieldName) {
       case AUTHORITY_FILE_TEXT_FIELD_NAMES.NAME:
-        cy.expect(nameTextField.has({ error: errorMessage }));
+        cy.expect(nameTextField.has({ error: errorMessage, errorTextRed: true }));
         break;
       case AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX:
-        cy.expect(prefixTextField.has({ error: errorMessage }));
+        cy.expect(prefixTextField.has({ error: errorMessage, errorTextRed: true }));
         break;
       case AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH:
-        cy.expect(hridStartsWithTextField.has({ error: errorMessage }));
+        cy.expect([hridStartsWithTextField.has({ error: errorMessage, errorTextRed: true })]);
         break;
       case AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL:
-        cy.expect(baseUrlTextField.has({ error: errorMessage }));
+        cy.expect(baseUrlTextField.has({ error: errorMessage, errorTextRed: true }));
         break;
       default:
         break;
