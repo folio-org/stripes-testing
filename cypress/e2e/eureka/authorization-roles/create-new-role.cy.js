@@ -11,7 +11,6 @@ describe('Eureka', () => {
         roleDescription: `Description C423998 ${getRandomPostfix()}`,
         applicationName: 'app-platform-minimal',
         capabilitySet: {
-          application: 'app-platform-minimal',
           table: 'Settings',
           resource: 'UI-Tags Settings',
           action: 'View',
