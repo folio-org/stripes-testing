@@ -36,7 +36,7 @@ describe('MARC', () => {
       'C440101 Test LCCN subfield z record 7 (two spaces leading)',
       'C440101 Test LCCN subfield z record 8 (two spaces everywhere)',
       'C440101 Test LCCN subfield z record 9 (no spaces)',
-    ]
+    ];
 
     const marcFiles = [
       {
