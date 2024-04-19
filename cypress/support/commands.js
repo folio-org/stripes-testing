@@ -1,4 +1,5 @@
 require('cypress-downloadfile/lib/downloadFileCommand');
+require('@reportportal/agent-js-cypress/lib/commands/reportPortalCommands');
 
 Cypress.on('uncaught:exception', (err, runnable) => {
   // returning false here prevents Cypress from
