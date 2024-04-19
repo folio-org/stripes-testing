@@ -224,14 +224,12 @@ describe('Data Import', () => {
         Logs.waitFileIsImported(fileNameForUpdateInstance);
         Logs.checkJobStatus(fileNameForUpdateInstance, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdateInstance);
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.DASH,
+        [
           FileDetails.columnNameInResultList.srsMarc,
-        );
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.instance,
-        );
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.NO_ACTION, columnName);
+        });
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
