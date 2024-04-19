@@ -574,7 +574,7 @@ export default {
   },
 
   resetAll() {
-    cy.do(resetAllButton.click());
+    cy.do(resetAllBtn.click());
   },
 
   clickResetAllButton() {
@@ -798,7 +798,10 @@ export default {
   },
 
   verifySearchAndResetAllButtonsDisabled(state) {
-    cy.expect([searchButton.has({ disabled: state }), resetAllBtn.has({ disabled: state })]);
+    cy.expect([
+      Section({ id: 'browse-inventory-filters-pane' }).find(searchButton).has({ disabled: state }),
+      Section({ id: 'browse-inventory-filters-pane' }).find(resetAllBtn).has({ disabled: state }),
+    ]);
   },
 
   verifyNoRecordsFound() {
