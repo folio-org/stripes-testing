@@ -18,8 +18,13 @@ describe('Eureka', () => {
         },
         capabilitiesInSet: [
           {
+            table: 'Data',
+            resource: 'Configuration Entries Collection',
+            action: 'View',
+          },
+          {
             table: 'Settings',
-            resource: 'Settings Enabled',
+            resource: 'Settings Tags Enabled',
             action: 'View',
           },
           {
@@ -42,7 +47,7 @@ describe('Eureka', () => {
         ],
         expectedCounts: {
           capabilities: {
-            Data: 1,
+            Data: 2,
             Settings: 3,
           },
           capabilitySets: {
@@ -108,25 +113,38 @@ describe('Eureka', () => {
             expect(call.request.body.name).to.eq(testData.roleName);
             expect(call.request.body.description).to.eq(testData.roleDescription);
             cy.wait('@capabilitiesCall').then((callCapabs) => {
-              expect(callCapabs.request.body.capabilityIds).to.have.lengthOf(4);
+              expect(callCapabs.request.body.capabilityIds).to.have.lengthOf(5);
               expect(callCapabs.request.body.roleId).to.eq(roleId);
             });
             cy.wait('@capabilitySetsCall').then((callCapabSets) => {
-              expect(callCapabSets.request.body.capabilityIds).to.have.lengthOf(1);
+              expect(callCapabSets.request.body.capabilitySetIds).to.have.lengthOf(1);
               expect(callCapabSets.request.body.roleId).to.eq(roleId);
             });
           });
           AuthorizationRoles.checkAfterSaveCreate(testData.roleName, testData.roleDescription);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
-          AuthorizationRoles.clickOnCapabilitySetsAccordion(false);
-          // AuthorizationRoles.clickOnCapabilitiesAccordion();
-          // AuthorizationRoles.verifyEmptyCapabilitySetsAccordion();
-          // testData.capabilities.forEach((capability) => {
-          //   AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
-          // });
-          // Object.entries(testData.expectedCounts.capabilities).forEach(([table, count]) => {
-          //   AuthorizationRoles.checkCountOfCapablities(table, count);
-          // });
+          AuthorizationRoles.clickOnCapabilitySetsAccordion();
+          AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.capabilitySet);
+          AuthorizationRoles.verifyCapabilitySetCheckboxEnabled(testData.capabilitySet, false);
+          Object.entries(testData.expectedCounts.capabilitySets).forEach(([table, count]) => {
+            AuthorizationRoles.checkCountOfCapablitySets(table, count);
+          });
+          testData.absentCapabilitySetTables.forEach((table) => {
+            AuthorizationRoles.verifyCapabilitySetTableAbsent(table);
+          });
+          AuthorizationRoles.clickOnCapabilitiesAccordion();
+          testData.capabilitiesInSet.forEach((capability) => {
+            AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
+          });
+          testData.capabilitiesToSelect.forEach((capability) => {
+            AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
+          });
+          Object.entries(testData.expectedCounts.capabilities).forEach(([table, count]) => {
+            AuthorizationRoles.checkCountOfCapablities(table, count);
+          });
+          testData.absentCapabilityTables.forEach((table) => {
+            AuthorizationRoles.verifyCapabilityTableAbsent(table);
+          });
         },
       );
     });
