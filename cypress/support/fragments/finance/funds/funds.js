@@ -280,7 +280,7 @@ export default {
     ]);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(4000);
-    cy.do([Button('Save').click()]);
+    cy.do([saveAndClose.click()]);
   },
 
   addPlannedBudgetWithoutFY: (allocatedQuantity) => {

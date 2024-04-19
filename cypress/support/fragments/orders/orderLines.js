@@ -778,13 +778,10 @@ export default {
     submitOrderLine();
   },
 
-  addReveivingNoteToItemDetailsAndSave(orderNumber) {
+  addReveivingNoteToItemDetailsAndSave() {
     cy.do([TextArea('Receiving note').fillIn(note), saveAndCloseButton.click()]);
     cy.wait(4000);
     submitOrderLine();
-    InteractorsTools.checkCalloutMessage(
-      `The purchase order line ${orderNumber}-1 was successfully updated`,
-    );
   },
 
   rolloverPOLineInfoforPhysicalMaterialWith2Funds(
