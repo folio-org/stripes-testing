@@ -79,10 +79,9 @@ describe('Eureka', () => {
       after('Deleting user, role', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
-        cy.getUserRoleIdByNameApi(testData.roleName).then((roleId) => {
-          cy.deleteCapabilitiesFromRoleApi(roleId);
-          cy.deleteAuthorizationRoleApi(roleId);
-        });
+        cy.deleteCapabilitiesFromRoleApi(testData.roleId);
+        cy.deleteCapabilitySetsFromRoleApi(testData.roleId);
+        cy.deleteAuthorizationRoleApi(testData.roleId);
       });
 
       it(
