@@ -167,6 +167,7 @@ export default {
   enterHridInfo(hrid) {
     cy.do(titleLevelRequest.click());
     cy.wait(1000);
+    cy.expect(instanceHridInput.exists());
     cy.do(instanceHridInput.fillIn(hrid));
     cy.do(itemInfoSection.find(Button('Enter')).click());
   },
