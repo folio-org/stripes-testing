@@ -85,12 +85,8 @@ const fillBaseUrl = (baseUrl) => {
 };
 
 const switchActiveCheckbox = (isChecked = true) => {
-  if (isChecked) {
-    cy.do(firstRow.find(activeCheckbox).click());
-    cy.expect(firstRow.find(activeCheckbox).has({ checked: isChecked }));
-  } else {
-    cy.expect(firstRow.find(activeCheckbox).has({ checked: isChecked }));
-  }
+  cy.do(firstRow.find(activeCheckbox).click());
+  cy.expect(firstRow.find(activeCheckbox).has({ checked: isChecked }));
 };
 
 const checkCancelButtonEnabled = (isEnabled = true) => {
@@ -134,7 +130,7 @@ export default {
     fillPrefix(prefix);
     fillHridStartsWith(startsWith);
     fillBaseUrl(baseUrl);
-    switchActiveCheckbox(isActive);
+    if (isActive) switchActiveCheckbox(isActive);
   },
 
   checkSourceFileExists(name, prefix, startsWith, baseUrl, isActive, lastUpdatedBy, isDeletable) {
