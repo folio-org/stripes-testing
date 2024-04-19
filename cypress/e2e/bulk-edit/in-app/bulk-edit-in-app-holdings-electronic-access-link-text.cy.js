@@ -45,7 +45,6 @@ describe('bulk-edit', () => {
               electronicAccess: [
                 {
                   linkText: textWithSpecialCharacters,
-                  // relationshipId: electronicAccessRelationshipId.RESOURCE,
                   uri: 'uri.com',
                 },
               ],

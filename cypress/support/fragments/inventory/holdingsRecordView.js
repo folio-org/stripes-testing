@@ -209,6 +209,11 @@ export default {
   verifyElectronicAccess: (uri) => {
     cy.expect(electronicAccessAccordion.find(HTML(uri)).exists());
   },
+  verifyElectronicAccessByElementIndex: (index, content) => {
+    cy.expect(
+      electronicAccessAccordion.find(MultiColumnListCell({ columnIndex: index, content })).exists(),
+    );
+  },
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
   getRecordLastUpdatedDate: () => cy.then(() => {
     return cy
