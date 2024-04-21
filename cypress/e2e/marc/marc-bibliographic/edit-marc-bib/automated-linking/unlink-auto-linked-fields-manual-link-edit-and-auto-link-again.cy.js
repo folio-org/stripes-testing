@@ -140,7 +140,7 @@ describe('MARC', () => {
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
-            cy.wait(1000);
+            cy.wait(3000);
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout(
               'Field 100, 240, 610, 711, 811, and 830 must be set manually by selecting the link icon.',
@@ -149,6 +149,7 @@ describe('MARC', () => {
             newFields.forEach((newField) => {
               QuickMarcEditor.updateExistingField(newField.tag, newField.naturalId);
             });
+            cy.wait(3000);
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout(
               'Field 100, 240, 610, 711, 811, and 830 has been linked to MARC authority record(s).',

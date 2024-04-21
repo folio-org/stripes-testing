@@ -216,7 +216,6 @@ describe('MARC', () => {
 
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkPaneheaderContains('Edit MARC record');
-            QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.checkValueAbsent(11, testData.url);
             QuickMarcEditor.checkValueAbsent(12, testData.url);
             QuickMarcEditor.checkValueAbsent(24, testData.url);

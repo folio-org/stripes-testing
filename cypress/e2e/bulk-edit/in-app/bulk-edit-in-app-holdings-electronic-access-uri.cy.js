@@ -89,7 +89,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.selectOption('URI');
-        const possibleActions = ['Clear field', 'Find', 'Replace with'];
+        const possibleActions = ['Clear field', 'Find (full field search)', 'Replace with'];
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditActions.selectAction('Clear field');
         BulkEditActions.addNewBulkEditFilterString();
