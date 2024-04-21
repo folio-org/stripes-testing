@@ -6,6 +6,7 @@ import {
   EXPORT_TRANSFORMATION_NAMES,
   FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
+  INSTANCE_STATUS_TERM_NAMES,
   ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
   LOAN_TYPE_NAMES,
@@ -13,42 +14,42 @@ import {
   MATERIAL_TYPE_NAMES,
   PROFILE_TYPE_NAMES,
   RECORD_STATUSES,
-  INSTANCE_STATUS_TERM_NAMES,
 } from '../../../support/constants';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
+import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
+import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-// import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-// import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-// import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import {
-  //   ActionProfiles as SettingsActionProfiles,
-  //   FieldMappingProfiles as SettingsFieldMappingProfiles,
-  JobProfiles as SettingsJobProfiles,
-} from '../../../support/fragments/settings/dataImport';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
-// import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
-import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
-import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import DateTools from '../../../support/utils/dateTools';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Log details', () => {
-    // let instanceHrid;
+    let instanceHrid;
     const subject = `Test update${getRandomPostfix()}`;
+    const instanceTitle = 'Das Kantatenwerk [sound recording] / Johann Sebastian Bach.';
     const filePath = 'marcBibFileNameC430253.mrc';
     const nameMarcFileForImportCreate = `C430253 autotestFileForCreate${getRandomPostfix()}.mrc`;
     const nameForCSVFile = `C430253 autotestFile${getRandomPostfix()}.csv`;
@@ -331,6 +332,48 @@ describe('Data Import', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     });
 
+    after('delete test data', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
+      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+      cy.getAdminToken().then(() => {
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
+        collectionOfMatchProfiles.forEach((profile) => {
+          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
+        });
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
+        });
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(marcBibActionProfile.profile.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(instanceActionProfile.profile.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(holdingsActionProfile.profile.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(itemActionProfile.profile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          marcBibMappingProfile.profile.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          instanceMappingProfile.profile.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          holdingsMappingProfile.profile.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          itemMappingProfile.profile.name,
+        );
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteItemViaApi(instance.items[0].id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+      });
+    });
+
     it(
       'C430253 Check import summary table with "Updated" actions for instance, holding and item (folijet)',
       { tags: ['criticalPath', 'folijet'] },
@@ -375,14 +418,13 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(testData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
-        cy.pause();
         Logs.waitFileIsImported(nameMarcFileForImportCreate);
         Logs.checkJobStatus(nameMarcFileForImportCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForImportCreate);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        // InventoryInstance.getAssignedHRID().then((hrid) => {
-        // instanceHrid = hrid;
-        // });
+        InventoryInstance.getAssignedHRID().then((hrid) => {
+          instanceHrid = hrid;
+        });
         InstanceRecordView.verifyInstanceSource('MARC');
         InstanceRecordView.openHoldingView();
         HoldingsRecordView.waitLoading();
@@ -466,11 +508,11 @@ describe('Data Import', () => {
         DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
-        cy.pause();
         Logs.waitFileIsImported(nameMarcFileForImportUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForImportUpdate);
-        FileDetails.checkItemsStatusesInResultList(1, [
+        // Logs.openFileDetails('C430253 autotestExportedFile914.622680799507435.mrc');
+        FileDetails.checkItemsStatusesInResultList(0, [
           RECORD_STATUSES.UPDATED,
           RECORD_STATUSES.UPDATED,
           RECORD_STATUSES.UPDATED,
@@ -498,12 +540,39 @@ describe('Data Import', () => {
             RECORD_STATUSES.DASH,
           ]);
         });
-        // FileDetails.openJsonScreen(title);
-        // JsonScreenView.verifyJsonScreenIsOpened();
-        // JsonScreenView.verifyTabsPresented();
-        // JsonScreenView.verifyContentInTab(title);
-        // JsonScreenView.openMarcSrsTab();
-        // JsonScreenView.verifyContentInTab('"999"');
+        FileDetails.openJsonScreen(instanceTitle);
+        JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.verifyTabsPresented();
+        JsonScreenView.verifyContentInTab(instanceTitle);
+        JsonScreenView.openMarcSrsTab();
+        JsonScreenView.verifyContentInTab('"999"');
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(nameMarcFileForImportUpdate);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+        InstanceRecordView.verifyCatalogedDate(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.catalogedDateUi,
+        );
+        InstanceRecordView.verifyInstanceStatusTerm(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.instanceStatusTerm,
+        );
+        InstanceRecordView.verifyStatisticalCode(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.statisticalCodeUI,
+        );
+        InstanceRecordView.openHoldingView();
+        HoldingsRecordView.waitLoading();
+        HoldingsRecordView.checkPermanentLocation(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocationUI,
+        );
+        HoldingsRecordView.checkCallNumberType(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.callNumberType,
+        );
+        HoldingsRecordView.close();
+        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
+        InventoryInstance.openItemByBarcode('No barcode');
+        ItemRecordView.checkElectronicBookplateNote(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.noteUI,
+        );
       },
     );
   });
