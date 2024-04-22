@@ -226,7 +226,7 @@ describe('Data Import', () => {
           { rowNumber: 4, content: '(OCoLC)1144093654' },
           { rowNumber: 5, content: '(OCoLC)1201684651' },
           { rowNumber: 6, content: '(OCoLC)1195818788' },
-          { rowNumber: 7, content: '(OCoLC)ocn991553174' },
+          { rowNumber: 7, content: '(OCoLC)991553174' },
         ];
 
         // upload .mrc file

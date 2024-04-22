@@ -68,6 +68,10 @@ describe('Receiving', () => {
       'Vendor',
       'Requester',
       'Rush',
+      'Created by',
+      'Date created',
+      'Updated by',
+      'Date updated',
     ];
     const pieceFields = [
       'Display summary',
@@ -86,6 +90,10 @@ describe('Receiving', () => {
       'Receiving status',
       'Internal note',
       'External note',
+      'Created by (Piece)',
+      'Date created (Piece)',
+      'Updated by (Piece)',
+      'Date updated (Piece)',
     ];
 
     before('Create test order', () => {
