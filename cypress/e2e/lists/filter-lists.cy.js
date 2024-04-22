@@ -84,7 +84,16 @@ describe('lists', () => {
     };
     const recordTypesFilters = {
       accordionName: 'Record types',
-      filters: ['Loans', 'Items', 'Users', 'Purchase order lines'],
+      filters: [
+        'Loans',
+        'Items',
+        'Users',
+        'Purchase order lines',
+        'Holdings',
+        'Instances',
+        'Organizations — contact info',
+        'Organizations — vendor info',
+      ],
     };
 
     before('Create test data', () => {
@@ -94,13 +103,14 @@ describe('lists', () => {
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
 
+        cy.getUserToken(userData.username, userData.password);
+        createdLists.forEach((list) => {
+          Lists.createViaApi(list);
+        });
+
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
           waiter: Lists.waitLoading,
-        });
-
-        createdLists.forEach((list) => {
-          Lists.createViaApi(list);
         });
       });
     });

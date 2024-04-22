@@ -95,7 +95,7 @@ export default {
     cy.do([
       auListPane.find(Button(AUName)).click(),
       assignedUsersSection
-        .find(MultiColumnListCell({ row: 1, columnIndex: 2 }))
+        .find(MultiColumnListCell({ row: 0, columnIndex: 2 }))
         .find(trashButton)
         .click(),
     ]);
@@ -105,7 +105,7 @@ export default {
     cy.do([
       auListPane.find(Button(AUName)).click(),
       assignedUsersSection
-        .find(MultiColumnListCell({ row: 0, columnIndex: 2 }))
+        .find(MultiColumnListCell({ row: 1, columnIndex: 2 }))
         .find(trashButton)
         .click(),
     ]);

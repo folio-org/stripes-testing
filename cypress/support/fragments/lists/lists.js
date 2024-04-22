@@ -348,7 +348,9 @@ export default {
           });
       })
       .then(() => {
-        cy.expect(ArrayUtils.compareArrays(cells, filters)).to.equal(true);
+        cells.forEach((cell) => {
+          cy.expect(cell).to.be.oneOf(filters);
+        });
       });
   },
 
@@ -364,7 +366,9 @@ export default {
           });
       })
       .then(() => {
-        cy.expect(ArrayUtils.compareArrays(cells, filters)).to.equal(true);
+        cells.forEach((cell) => {
+          cy.expect(cell).to.be.oneOf(filters);
+        });
       });
   },
 };
