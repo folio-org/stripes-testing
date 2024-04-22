@@ -423,7 +423,7 @@ describe('Data Import', () => {
           RECORD_STATUSES.UPDATED,
         ]);
         FileDetails.checkItemsStatusesInResultList(1, [
-          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.NO_ACTION,
           RECORD_STATUSES.NO_ACTION,
           RECORD_STATUSES.NO_ACTION,
           RECORD_STATUSES.NO_ACTION,
