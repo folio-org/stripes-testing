@@ -77,7 +77,7 @@ describe('MARC', () => {
               hridStartsWithValues.secondValueError,
             );
             ManageAuthorityFiles.clickCancelButton();
-            ManageAuthorityFiles.checkSourceFileAbsent(authorityFile.name);
+            ManageAuthorityFiles.checkSourceFileExistsByName(authorityFile.name, false);
           });
         },
       );
