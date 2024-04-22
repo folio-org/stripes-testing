@@ -22,7 +22,6 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import OrderLines from '../../../support/fragments/orders/orderLines';
-import Orders from '../../../support/fragments/orders/orders';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -31,7 +30,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Log details', () => {
     let user;
-    const orderNumbers = [];
     const quantityOfOrders = '7';
     const filePathForCreateOrder = 'marcFileForC376973.mrc';
     const marcFileName = `C376973 autotestFileName${getRandomPostfix()}.mrc`;
@@ -107,7 +105,6 @@ describe('Data Import', () => {
       NewJobProfile.linkActionProfile(actionProfile);
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-      cy.logout();
 
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
@@ -116,8 +113,8 @@ describe('Data Import', () => {
         user = userProperties;
 
         cy.login(userProperties.username, userProperties.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
         });
       });
     });
@@ -128,11 +125,6 @@ describe('Data Import', () => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-        cy.wrap(orderNumbers).each((number) => {
-          Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
-            Orders.deleteOrderViaApi(orderId[0].id);
-          });
-        });
       });
     });
 
@@ -140,7 +132,6 @@ describe('Data Import', () => {
       'C376973 Verify the log details for created imported order records (folijet)',
       { tags: ['criticalPath', 'folijet', 'eurekaPhase1'] },
       () => {
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -161,12 +152,8 @@ describe('Data Import', () => {
           );
           FileDetails.openOrder(RECORD_STATUSES.CREATED, rowNumber);
           OrderLines.waitLoading();
-          OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-            const orderNumber = initialNumber.replace('-1', '');
-
-            orderNumbers.push(orderNumber);
-          });
-          cy.go('back');
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(marcFileName);
         });
       },
     );

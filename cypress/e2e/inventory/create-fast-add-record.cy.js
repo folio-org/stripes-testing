@@ -12,6 +12,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import { randomFourDigitNumber } from '../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Fast Add', () => {
@@ -119,7 +120,7 @@ describe('Inventory', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         const fastAddRecord = { ...FastAddNewRecord.fastAddNewRecordFormDetails };
-        fastAddRecord.resourceTitle = 'Journal issue';
+        fastAddRecord.resourceTitle = `Journal issue${randomFourDigitNumber()}`;
         fastAddRecord.note = 'Note For Journal Issue';
 
         cy.visit(TopMenu.inventoryPath);
