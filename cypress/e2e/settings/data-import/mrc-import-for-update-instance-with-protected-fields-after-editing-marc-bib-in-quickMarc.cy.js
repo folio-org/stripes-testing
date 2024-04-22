@@ -180,7 +180,7 @@ describe('Data Import', () => {
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.importWithOclc(oclcForImport);
         InventoryInstance.editMarcBibliographicRecord();
-        [18, 19, 20, 21, 22, 23, 24, 25, 26].forEach((fieldNumber) => {
+        [17, 18, 19, 20, 21, 22, 23, 24, 25].forEach((fieldNumber) => {
           InventoryEditMarcRecord.deleteField(fieldNumber);
         });
         InventoryEditMarcRecord.editField('$a Louisiana $2 fast', '$a Louisiana $2 fast $5 amb');

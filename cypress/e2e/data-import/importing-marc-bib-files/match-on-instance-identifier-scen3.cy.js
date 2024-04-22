@@ -228,16 +228,12 @@ describe('Data Import', () => {
         ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.DASH,
+        [
           FileDetails.columnNameInResultList.srsMarc,
-          1,
-        );
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.instance,
-          1,
-        );
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.NO_ACTION, columnName, 1);
+        });
 
         // check updated instance in Inventory
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
