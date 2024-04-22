@@ -42,6 +42,8 @@ export default HTML.extend('text field')
     errorBorder: (el) => getComputedStyle(el.querySelector('[class*=formControl]')).getPropertyValue(
       'border-color',
     ) === 'rgb(153, 0, 0)',
+    errorTextRed: (el) => getComputedStyle(el.querySelector('[class*=feedbackError-]')).getPropertyValue('color') ===
+      'rgb(153, 0, 0)',
     errorIcon: (el) => !!el.querySelector('[class*="errorIcon-"]'),
   })
   .actions({
