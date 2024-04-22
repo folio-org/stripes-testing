@@ -33,7 +33,7 @@ describe('Notes', () => {
 
   it(
     'C380447 Settings | View a note type (spitfire) (TaaS)',
-    { tags: ['extendedPath', 'spitfire', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       // * "New" button is disabled
       // * "Edit" (pencil) icon doesn't display under "Actions" column
