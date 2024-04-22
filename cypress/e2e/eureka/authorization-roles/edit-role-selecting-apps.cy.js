@@ -11,7 +11,8 @@ describe('Eureka', () => {
         roleDescription: `Description ${getRandomPostfix()}`,
         updatedRoleName: `Auto Role C430265 ${getRandomPostfix()} UPD`,
         updateRoleDescription: `Description ${getRandomPostfix()} UPD`,
-        originalApplications: ['erm-usage', 'app-platform-complete'],
+        // TO DO: rewrite using >1 original apps when more apps will be consistently available
+        originalApplications: ['app-platform-complete'],
         newApplication: 'app-platform-minimal',
         originalCapabilities: [
           {
@@ -27,27 +28,24 @@ describe('Eureka', () => {
             action: 'Execute',
           },
           {
-            application: 'erm-usage',
+            application: 'app-platform-complete',
             table: 'Data',
-            resource: 'Erm-Usage Files Item',
-            action: 'Delete',
+            resource: 'UI-Users Perms',
+            action: 'Edit',
           },
           {
-            application: 'erm-usage',
-            table: 'Data',
-            resource: 'Customreports Collection',
+            application: 'app-platform-complete',
+            table: 'Settings',
+            resource: 'Erm Settings',
             action: 'View',
           },
         ],
-        expectedCounts: {
-          Data: 2,
-        },
-        absentCapabilityTables: ['Settings', 'Procedural'],
+        absentCapabilityTables: ['Data', 'Settings', 'Procedural'],
         capabIds: [],
       };
 
       const capabilityCallRegExp = new RegExp(
-        `\\/capabilities\\?limit=\\d{1,}&query=applicationId=${testData.originalApplications[0]}-.{1,}or.{1,}applicationId=${testData.newApplication}-.{1,}`,
+        `\\/capabilities\\?limit=\\d{1,}&query=applicationId=${testData.newApplication}-.{1,}`,
       );
 
       before('Create role, user', () => {
@@ -74,10 +72,9 @@ describe('Eureka', () => {
         });
       });
 
-      afterEach(() => {
+      afterEach('Delete user, role', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
-        cy.deleteCapabilitiesFromRoleApi(testData.roleId);
         cy.deleteAuthorizationRoleApi(testData.roleId);
       });
 
@@ -100,34 +97,18 @@ describe('Eureka', () => {
           );
           AuthorizationRoles.checkSaveButton(true);
           AuthorizationRoles.clickSelectApplication();
-          AuthorizationRoles.selectApplicationInModal(testData.originalApplications[1], false);
+          AuthorizationRoles.selectApplicationInModal(testData.originalApplications[0], false);
           AuthorizationRoles.selectApplicationInModal(testData.newApplication);
           cy.intercept('GET', capabilityCallRegExp).as('capabilities');
           AuthorizationRoles.clickSaveInModal();
           cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
-          AuthorizationRoles.verifyAppNamesInCapabilityTables([
-            testData.originalApplications[0],
-            testData.newApplication,
-          ]);
-          testData.originalCapabilities
-            .filter((capability) => capability.application !== testData.originalApplications[1])
-            .forEach((capability) => {
-              AuthorizationRoles.verifyCapabilityCheckboxChecked(capability);
-            });
+          AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.newApplication]);
           AuthorizationRoles.clickSaveButton();
           AuthorizationRoles.checkAfterSaveEdit(
             testData.updatedRoleName,
             testData.updateRoleDescription,
           );
-          AuthorizationRoles.clickOnCapabilitiesAccordion();
-          testData.originalCapabilities
-            .filter((capability) => capability.application !== testData.originalApplications[1])
-            .forEach((capability) => {
-              AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
-            });
-          Object.entries(testData.expectedCounts).forEach(([table, count]) => {
-            AuthorizationRoles.checkCountOfCapablities(table, count);
-          });
+          AuthorizationRoles.clickOnCapabilitiesAccordion(false);
           testData.absentCapabilityTables.forEach((table) => {
             AuthorizationRoles.verifyCapabilityTableAbsent(table);
           });
