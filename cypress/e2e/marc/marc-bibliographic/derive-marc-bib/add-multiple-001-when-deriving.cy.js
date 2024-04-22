@@ -81,7 +81,7 @@ describe('MARC', () => {
 
           // #7 Fill in the new input field with the "001" MARC tag.
           QuickMarcEditor.updateTagNameToLockedTag(6, '001');
-          QuickMarcEditor.checkFourthBoxDisabled(6);
+          QuickMarcEditor.checkFourthBoxEditable(6, false);
 
           // #8 Click on the "Save & close" button.
           QuickMarcEditor.pressSaveAndClose();
