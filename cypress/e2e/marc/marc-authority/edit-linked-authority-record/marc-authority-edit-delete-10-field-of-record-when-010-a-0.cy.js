@@ -15,7 +15,6 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Edit linked Authority record', () => {
       let userData = {};
-
       const testData = {
         tag010: '010',
         tag100: '100',
@@ -39,9 +38,10 @@ describe('MARC', () => {
           '$0 http://id.loc.gov/authorities/names/n91074080',
           '',
         ],
-        colloutMessage: 'Cannot delete 010. It is required.',
+        calloutMessageError: 'Cannot delete 010. It is required.',
+        calloutMessageSuccessfulSaving:
+          'This record has successfully saved and is in process. Changes may not appear immediately.',
       };
-
       const marcFiles = [
         {
           marc: 'marcBibFileForC374161.mrc',
@@ -56,7 +56,6 @@ describe('MARC', () => {
           propertyName: 'authority',
         },
       ];
-
       const createdRecordIDs = [];
 
       before('Create test data', () => {
@@ -131,6 +130,7 @@ describe('MARC', () => {
           });
         });
       });
+
       after('Delete test data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(userData.userId);
@@ -163,10 +163,10 @@ describe('MARC', () => {
           QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
 
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.colloutMessage);
+          QuickMarcEditor.checkCallout(testData.calloutMessageError);
           QuickMarcEditor.closeCallout();
 
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.colloutMessage);
+          QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessageError);
           QuickMarcEditor.closeCallout();
 
           QuickMarcEditor.pressCancel();
@@ -186,6 +186,42 @@ describe('MARC', () => {
           QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
           QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(testData.tag700RowIndex);
           QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked700Field);
+
+          QuickMarcEditor.clickUnlinkIconInTagField(testData.tag700RowIndex);
+          QuickMarcEditor.confirmUnlinkingField(testData.tag700RowIndex);
+          QuickMarcEditor.verifyIconsAfterUnlinking(testData.tag700RowIndex);
+          QuickMarcEditor.verifyTagFieldAfterUnlinking(
+            testData.tag700RowIndex,
+            testData.tag700,
+            testData.linked700Field[2],
+            testData.linked700Field[3],
+            `${testData.linked700Field[4]} ${testData.linked700Field[5]} ${testData.linked700Field[6]}`,
+          );
+          QuickMarcEditor.checkFourthBoxEditable(testData.tag700RowIndex, true);
+
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkCallout(testData.calloutMessageSuccessfulSaving);
+          InventoryInstance.waitInventoryLoading();
+
+          cy.visit(TopMenu.marcAuthorities);
+          MarcAuthorities.waitLoading();
+          MarcAuthorities.searchByParameter(testData.searchOption, testData.searchValue);
+          MarcAuthorities.selectTitle(testData.authorityTitle);
+          MarcAuthorities.verifyViewPaneContentExists();
+
+          MarcAuthority.edit();
+          QuickMarcEditor.checkContent(testData.field010Value, testData.tag010RowIndex);
+          QuickMarcEditor.checkDeleteButtonExist(testData.tag010RowIndex);
+
+          QuickMarcEditor.deleteField(testData.tag010RowIndex);
+          QuickMarcEditor.afterDeleteNotification(testData.tag010);
+          QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
+          QuickMarcEditor.verifySaveAndCloseButtonEnabled();
+
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.constinueWithSaveAndCheck();
+          MarcAuthorities.waitLoading();
+          MarcAuthorities.verifyViewPaneContentAbsent(testData.tag010);
         },
       );
     });

@@ -76,7 +76,7 @@ describe('MARC', () => {
           // 4 Click on the "Save & close" button
           QuickMarcEditor.clickSaveAndCloseInModal();
           QuickMarcEditor.checkContentByTag('001', '');
-          QuickMarcEditor.checkFourthBoxDisabled(1);
+          QuickMarcEditor.checkFourthBoxEditable(1, false);
 
           // 5 Add 2 new fields by clicking on "+" icon and fill it as specified:
           // 010 \\ "$a <prefix value of default authority file which does NOT match the selected option><identifier value>"
