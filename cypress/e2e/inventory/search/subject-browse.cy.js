@@ -24,17 +24,15 @@ describe('Inventory', () => {
       cy.createTempUser([permissions.uiSubjectBrowse.gui]).then((userProperties) => {
         testData.user = userProperties;
 
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.uploadFileViaApi('marcFileForC350387.mrc', fileName, jobProfileToRun).then(
-              (response) => {
-                response.forEach((record) => {
-                  createdInstanceIDs.push(record[propertyName].id);
-                });
-              },
-            );
-          },
-        );
+        cy.getAdminToken().then(() => {
+          DataImport.uploadFileViaApi('marcFileForC350387.mrc', fileName, jobProfileToRun).then(
+            (response) => {
+              response.forEach((record) => {
+                createdInstanceIDs.push(record[propertyName].id);
+              });
+            },
+          );
+        });
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
