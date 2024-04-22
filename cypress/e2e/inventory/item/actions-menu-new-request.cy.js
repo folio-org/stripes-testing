@@ -186,7 +186,7 @@ describe('Inventory', () => {
 
     it(
       'C10946 Actions menu: New Request (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         [
           'Available',

@@ -130,11 +130,16 @@ describe('Data Import', () => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-        cy.wrap(orderNumbers).each((number) => {
-          Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumbers[0]}"` }).then(
+          (orderId) => {
             Orders.deleteOrderViaApi(orderId[0].id);
-          });
-        });
+          },
+        );
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumbers[2]}"` }).then(
+          (orderId) => {
+            Orders.deleteOrderViaApi(orderId[0].id);
+          },
+        );
       });
     });
 
@@ -151,7 +156,7 @@ describe('Data Import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
         FileDetails.checkOrderQuantityInSummaryTable(quantityOfOrders);
-        cy.wrap(ordersData).each((order) => {
+        ordersData.forEach((order) => {
           FileDetails.verifyTitle(
             order.title,
             FileDetails.columnNameInResultList.title,
@@ -167,11 +172,12 @@ describe('Data Import', () => {
           OrderLines.waitLoading();
           OrderLines.verifyOrderTitle(order.title);
           OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-            const orderNumber = initialNumber.replace('-1', '');
+            const orderNumber = initialNumber.replace(/-\d/, '');
 
             orderNumbers.push(orderNumber);
           });
-          cy.go('back');
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(marcFileName);
         });
       },
     );
