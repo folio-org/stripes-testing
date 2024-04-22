@@ -8,7 +8,6 @@ import Libraries from '../../../support/fragments/settings/tenant/location-setup
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -83,7 +82,6 @@ describe('Settings: Tenant', () => {
       testData.user = userProperties;
       cy.login(testData.user.username, testData.user.password);
       cy.wait(2000);
-      TopMenuNavigation.navigateToApp('Settings');
     });
   });
 
@@ -109,8 +107,8 @@ describe('Settings: Tenant', () => {
     'C397997 Verify that selected settings remain for "Campuses" (firebird) (TaaS)',
     { tags: ['extendedPath', 'firebird', 'eurekaPhase1'] },
     () => {
-      TenantPane.goToTenantTab();
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
+      cy.visit(SettingsMenu.tenantLocationsPath);
       // #1 Select **"Institution AB"** from Preconditions #1 in "Institution" dropdown on "Campuses" pane
       TenantPane.selectTenant(TENANTS.CAMPUSES);
       Campuses.checkEmptyTableContent();
