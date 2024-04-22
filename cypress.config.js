@@ -7,6 +7,7 @@ const { rmdir, unlink } = require('fs');
 const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
+const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
 
 module.exports = defineConfig({
   retries: {
@@ -103,6 +104,8 @@ module.exports = defineConfig({
       if ('TESTRAIL_PROJECTID' in process.env && process.env.TESTRAIL_PROJECTID === '') {
         delete process.env.TESTRAIL_PROJECTID;
       }
+
+      registerReportPortalPlugin(on, config);
 
       // eslint-disable-next-line global-require
       const grepConfig = require('@cypress/grep/src/plugin')(config);

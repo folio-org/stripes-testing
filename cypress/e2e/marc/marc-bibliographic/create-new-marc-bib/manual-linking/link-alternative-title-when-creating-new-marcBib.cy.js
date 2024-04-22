@@ -133,6 +133,7 @@ describe('MARC', () => {
               MarcAuthorityBrowse.searchBy(newField.searchOption, newField.marcValue);
               MarcAuthorities.checkRow(newField.marcValue);
               MarcAuthorities.selectTitle(newField.marcValue);
+              cy.wait(2000);
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(newField.tag, newField.rowIndex);
               QuickMarcEditor.verifyTagFieldAfterLinking(

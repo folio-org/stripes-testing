@@ -51,6 +51,7 @@
     "@cypress/request": "2.88.7",
     "@folio/eslint-config-stripes": "^6.4.0",
     "@interactors/with-cypress": "^1.0.0-rc1.3",
+    "@reportportal/agent-js-cypress": "^5.2.0",
     "@shelex/cypress-allure-plugin": "^2.40.0",
     "bigtest": "^0.14.0",
     "cypress-downloadfile": "^1.2.1",
@@ -63,12 +64,12 @@
     "fs-extra": "7.0.1",
     "globby": "^11.1.0",
     "husky": "^8.0.3",
-    "lint-staged": "^14.0.1",
     "json-2-csv": "^5.0.1",
+    "lint-staged": "^14.0.1",
     "localforage": "^1.9.0",
     "prettier": "^3.0.2",
-    "uuid": "^3.4.0",
-    "tsx": "3.14.0"
+    "tsx": "3.14.0",
+    "uuid": "^3.4.0"
   },
   "resolutions": {
     "cypress": "12.0.0",

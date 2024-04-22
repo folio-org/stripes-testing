@@ -182,7 +182,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForMatch);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForMatch, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForMatch);
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 2);
         FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 2);
@@ -224,7 +224,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForUpdate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForUpdate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdate);
         [
           FileDetails.columnNameInResultList.srsMarc,
