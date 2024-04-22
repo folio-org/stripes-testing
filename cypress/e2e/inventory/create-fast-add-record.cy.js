@@ -117,7 +117,7 @@ describe('Inventory', () => {
 
     it(
       'C16972 Create a fast add record from Inventory. Journal issue. (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'eurekaPhase1'] },
       () => {
         const fastAddRecord = { ...FastAddNewRecord.fastAddNewRecordFormDetails };
         fastAddRecord.resourceTitle = `Journal issue${randomFourDigitNumber()}`;

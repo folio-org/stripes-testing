@@ -18,7 +18,7 @@ describe('Inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
     let user;
     const testData = {
-      permanentLocation: 'Annex (KU/CC/DI/A) ',
+      permanentLocation: 'Annex (KU/CC/DI/A) Remote',
       callNumber: '123456',
       callNumberSuffix: 'AD',
       barcode: uuid(),

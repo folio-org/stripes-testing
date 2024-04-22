@@ -62,7 +62,7 @@ describe('Notes', () => {
     NoteTypes.deleteNoteTypeViaApi(testData.customNoteTypeId);
   });
 
-  it('C1304 Settings | Edit a note type (spitfire)', { tags: ['extendedPath', 'spitfire', 'eurekaPhase1'] }, () => {
+  it('C1304 Settings | Edit a note type (spitfire)', { tags: ['extendedPath', 'spitfire'] }, () => {
     cy.login(testData.userC1304Properties.username, testData.userC1304Properties.password).then(
       () => {
         cy.visit(TopMenu.notesPath);

@@ -749,7 +749,7 @@ export default {
 
   verifyActionButtonOptions() {
     cy.do(paneResultsSection.find(actionsButton).click());
-    cy.expect([Button('New').exists(), DropdownMenu().find(HTML('Show columns')).exists()]);
+    cy.expect([Button(including('New')).exists(), DropdownMenu().find(HTML('Show columns')).exists()]);
   },
 
   verifyNoExportJsonOption() {

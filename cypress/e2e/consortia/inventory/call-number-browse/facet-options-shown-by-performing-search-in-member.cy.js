@@ -61,7 +61,7 @@ describe('Inventory', () => {
 
     it(
       'C414981 Facet options shown after clicking "Reset all" in Browse and performing search in Member tenant (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire', 'eurekaPhase1'] },
+      { tags: ['criticalPathECS', 'spitfire'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();

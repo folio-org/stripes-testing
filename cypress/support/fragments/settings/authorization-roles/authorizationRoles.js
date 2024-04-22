@@ -13,11 +13,15 @@ import {
   MultiColumnListCell,
   HTML,
   Spinner,
+  KeyValue,
 } from '../../../../../interactors';
 
 const rolesPane = Pane('Authorization roles');
 const newButton = Button('+ New');
+const actionsButton = Button('Actions');
+const editButton = Button('Edit');
 const createRolePane = Pane('Create role');
+const editRolePane = Pane('Edit role');
 const roleNameInput = TextField('Name*');
 const roleDescriptionInput = TextArea('Description');
 const selectApplicationButton = Button({ id: 'find-application-trigger' });
@@ -35,6 +39,8 @@ const cancelButtonInModal = selectApplicationModal.find(Button('Cancel'));
 const capabilitiesAccordion = Accordion('Capabilities');
 const capabilitySetsAccordion = Accordion('Capability sets');
 const saveButton = Button('Save and close');
+const roleNameInView = KeyValue('Name');
+const roleDescriptionInView = KeyValue('Description');
 
 const capabilityTables = {
   Data: MultiColumnList({ dataTestId: 'capabilities-data-type' }),
@@ -81,6 +87,10 @@ export default {
 
   fillRoleNameDescription: (roleName, roleDescription = '') => {
     cy.do([roleNameInput.fillIn(roleName), roleDescriptionInput.fillIn(roleDescription)]);
+    cy.expect([
+      roleNameInput.has({ value: roleName }),
+      roleDescriptionInput.has({ value: roleDescription }),
+    ]);
   },
 
   clickSelectApplication: () => {
@@ -251,5 +261,49 @@ export default {
     );
     cy.do(targetCheckbox.click());
     cy.expect(targetCheckbox.has({ checked: true, labelText: 'Read-only' }));
+  },
+
+  openForEdit: () => {
+    cy.do([actionsButton.click(), editButton.click()]);
+    cy.expect([
+      editRolePane.exists(),
+      Spinner().absent(),
+      capabilitiesAccordion.has({ open: true }),
+      capabilitySetsAccordion.exists(),
+      saveButton.exists(),
+    ]);
+  },
+
+  checkAfterSaveEdit: (roleName, roleDescription = '') => {
+    cy.expect([
+      editRolePane.absent(),
+      Pane(roleName).exists(),
+      roleNameInView.has({ value: roleName }),
+    ]);
+    if (roleDescription) cy.expect(roleDescriptionInView.has({ value: roleDescription }));
+  },
+
+  verifyCapabilityCheckboxAbsent: ({ table, resource, action }) => {
+    cy.expect(
+      capabilitiesAccordion
+        .find(capabilityTables[table])
+        .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }))
+        .absent(),
+    );
+  },
+
+  verifyCapabilityCheckboxChecked: ({ table, resource, action }, isSelected = true) => {
+    const targetCheckbox = capabilitiesAccordion
+      .find(capabilityTables[table])
+      .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
+    cy.expect(targetCheckbox.has({ checked: isSelected }));
+  },
+
+  verifyCapabilityTableAbsent(tableName) {
+    cy.expect(capabilitiesAccordion.find(capabilityTables[tableName]).absent());
+  },
+
+  verifyCapabilitySetTableAbsent(tableName) {
+    cy.expect(capabilitySetsAccordion.find(capabilityTables[tableName]).absent());
   },
 };

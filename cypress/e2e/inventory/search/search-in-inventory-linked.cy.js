@@ -138,7 +138,7 @@ describe('Inventory', () => {
 
     it(
       'C375256 Query search | Search by "Alternative title" field of linked "MARC Bib" records (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.selectSearchOptions(
           testData.querySearchOption,
