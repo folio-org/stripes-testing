@@ -593,7 +593,6 @@ describe('MARC', () => {
                 optionsFor008FieldDropdowns.option_1();
                 break;
               default:
-                console.log('No value');
                 break;
             }
 

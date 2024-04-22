@@ -56,7 +56,7 @@ describe('Inventory', () => {
           'Sauguet, Henri, 1901-1989',
           'Henri Sauguet 1901-1989',
         ];
-
+        cy.getAdminToken();
         DataImport.uploadFileViaApi(
           'Sauguet_Henri_5_Bib_records.mrc',
           fileNameForC360548,
@@ -92,7 +92,7 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         const searchQueries = ['978-92-8000-565-9', '978-92-8011-565-9'];
-
+        cy.getAdminToken();
         DataImport.uploadFileViaApi(
           'two_bib_records_with_isbn_search_by_keyword.mrc',
           fileNameForC360555,

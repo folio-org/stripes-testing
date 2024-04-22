@@ -63,20 +63,17 @@ describe('Inventory', () => {
           }
         });
       });
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        testData.marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.instanceIDs.push(record[marcFile.propertyName].id);
-            });
+      testData.marcFiles.forEach((marcFile) => {
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            testData.instanceIDs.push(record[marcFile.propertyName].id);
           });
         });
       });
-      cy.logout();
     });
 
     after('Delete test data', () => {
