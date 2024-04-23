@@ -101,11 +101,12 @@ export default {
     ]);
   },
 
-  unAssignAdmin: (AUName) => {
+  unAssignAdmin: (AUName, rowIndex = 1) => {
+    cy.expect(auListPane.exists());
     cy.do([
       auListPane.find(Button(AUName)).click(),
       assignedUsersSection
-        .find(MultiColumnListCell({ row: 1, columnIndex: 2 }))
+        .find(MultiColumnListCell({ row: rowIndex, columnIndex: 2 }))
         .find(trashButton)
         .click(),
     ]);

@@ -73,6 +73,7 @@ describe('ui-acquisition units: Acquisition Units', () => {
         });
       });
     });
+    cy.getAdminToken();
     ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
       effectiveLocationServicePoint = servicePoints[0];
       NewLocation.createViaApi(
@@ -144,6 +145,7 @@ describe('ui-acquisition units: Acquisition Units', () => {
     Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.deleteInvoiceViaActions();
     Invoices.confirmInvoiceDeletion();
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(defaultOrder.id);
     Organizations.deleteOrganizationViaApi(organization.id);
 
@@ -153,14 +155,14 @@ describe('ui-acquisition units: Acquisition Units', () => {
     Funds.selectBudgetDetails();
     Funds.deleteBudgetViaActions();
     Funds.deleteFundViaActions();
+    cy.getAdminToken();
     Ledgers.deleteledgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
+    Users.deleteViaApi(user.userId);
 
     cy.visit(SettingsMenu.acquisitionUnitsPath);
-    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
+    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name, 0);
     AcquisitionUnits.delete(defaultAcquisitionUnit.name);
-
-    Users.deleteViaApi(user.userId);
   });
 
   it(

@@ -56,20 +56,23 @@ describe('ui-finance: Funds', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-    FinanceHelp.searchByName(defaultfund.name);
-    Funds.selectFund(defaultfund.name);
-    Funds.deleteFundViaActions();
-    FinanceHelp.searchByName(defaultfund.name);
-    Funds.checkZeroSearchResultsHeader();
-    Ledgers.deleteledgerViaApi(defaultLedger.id);
+    cy.getAdminToken().then(() => {
+      cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+      FinanceHelp.searchByName(defaultfund.name);
+      Funds.selectFund(defaultfund.name);
+      Funds.deleteFundViaActions();
+      FinanceHelp.searchByName(defaultfund.name);
+      Funds.checkZeroSearchResultsHeader();
 
-    FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
-    cy.visit(SettingsMenu.acquisitionUnitsPath);
-    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-    AcquisitionUnits.delete(defaultAcquisitionUnit.name);
+      Ledgers.deleteledgerViaApi(defaultLedger.id);
 
-    Users.deleteViaApi(user.userId);
+      FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
+      cy.visit(SettingsMenu.acquisitionUnitsPath);
+      AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name, 0);
+      AcquisitionUnits.delete(defaultAcquisitionUnit.name);
+
+      Users.deleteViaApi(user.userId);
+    });
   });
 
   it(

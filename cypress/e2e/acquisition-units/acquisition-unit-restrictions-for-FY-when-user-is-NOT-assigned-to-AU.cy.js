@@ -71,9 +71,10 @@ describe('Acquisition Units', () => {
       path: SettingsMenu.acquisitionUnitsPath,
       waiter: AcquisitionUnits.waitLoading,
     });
-    FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
-    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
+    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name, 0);
     AcquisitionUnits.delete(defaultAcquisitionUnit.name);
+    cy.getAdminToken();
+    FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
     Users.deleteViaApi(user.userId);
   });
 
