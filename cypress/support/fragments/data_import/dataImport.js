@@ -227,14 +227,6 @@ function processFileWithSplitFiles(
   });
 }
 
-function getCreatedRecordInfo(jobExecutionId) {
-  return cy.okapiRequest({
-    path: `metadata-provider/jobLogEntries/${jobExecutionId}`,
-    searchParams: { limit: 100 },
-    isDefaultSearchParamsRequired: false,
-  });
-}
-
 function getCreatedRecordInfoWithSplitFiles(jobExecutionId, recordId) {
   return cy.okapiRequest({
     path: `metadata-provider/jobLogEntries/${jobExecutionId}/records/${recordId}`,
@@ -362,31 +354,6 @@ function uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName) 
           delay: 5000,
         },
       );
-
-      getCreatedRecordInfo(jobExecutionId).then((recordResponse) => {
-        // we can get relatedInstanceInfo and in it get idList or hridList
-        const recordInfo = recordResponse.body.entries.map((entry) => ({
-          instance: {
-            id: entry.relatedInstanceInfo.length === 0 ? '' : entry.relatedInstanceInfo.idList[0],
-            hrid:
-              entry.relatedInstanceInfo.length === 0 ? '' : entry.relatedInstanceInfo.hridList[0],
-          },
-          holding: {
-            id: entry.relatedHoldingsInfo.length === 0 ? '' : entry.relatedHoldingsInfo[0].id,
-            hrid: entry.relatedHoldingsInfo.length === 0 ? '' : entry.relatedHoldingsInfo[0].hrid,
-          },
-          item: {
-            id: entry.relatedItemInfo.length === 0 ? '' : entry.relatedItemInfo[0].id,
-            hrid: entry.relatedItemInfo.length === 0 ? '' : entry.relatedItemInfo[0].hrid,
-          },
-          authority: {
-            id: entry.relatedAuthorityInfo.length === 0 ? '' : entry.relatedAuthorityInfo.idList[0],
-            hrid:
-              entry.relatedAuthorityInfo.length === 0 ? '' : entry.relatedAuthorityInfo.hridList[0],
-          },
-        }));
-        return recordInfo;
-      });
     });
   });
 }

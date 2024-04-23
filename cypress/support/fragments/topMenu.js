@@ -37,6 +37,7 @@ const listsPath = '/lists';
 const coursesPath = '/cr/courses';
 const consortiumManagerPath = '/consortia-settings';
 const settingsAuthorityFilesPath = '/settings/marc-authorities/manage-authority-files';
+const marvaEditorPath = '/marva/search';
 const dashboardPath = '/dashboard';
 const ermComparisonPath = '/comparisons-erm';
 const ermUsagePath = '/eusage';
@@ -83,11 +84,6 @@ export default {
   consortiumManagerPath,
   coursesPath,
   settingsAuthorityFilesPath,
-  dashboardPath,
-  ermComparisonPath,
-  ermUsagePath,
-  licensesPath,
-  localKbAdmin,
 
   openCheckInApp: () => {
     cy.do(Link({ href: including('/checkin') }).click());
