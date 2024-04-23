@@ -121,6 +121,7 @@ describe('ui-users-loans: Loans', () => {
     cy.createTempUser([
       permissions.uiUsersViewLoans.gui,
       permissions.uiUsersDeclareItemLost.gui,
+      permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
     ]).then(({ username, password, userId, barcode: userBarcode }) => {
       testData.userId = userId;
       UserEdit.addServicePointViaApi(
@@ -173,6 +174,7 @@ describe('ui-users-loans: Loans', () => {
   });
 
   it('C9191 Loans: Declare lost (vega)', { tags: ['smoke', 'vega', 'system', 'eurekaPhase1'] }, () => {
+    cy.getAdminToken();
     UsersCard.getApi(testData.userId).then((user) => {
       Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);
       Loans.startDeclareLost(SECOND_LOAN_ROW_INDEX);

@@ -135,6 +135,7 @@ describe('ui-users-loans: Loans', () => {
       permissions.uiUsersfeefinesView.gui,
       permissions.uiUsersView.gui,
       permissions.uiUsersDeclareItemLost.gui,
+      permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
     ]).then(({ username, password, userId, barcode }) => {
       testData.userId = userId;
       UserEdit.addServicePointViaApi(

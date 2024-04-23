@@ -128,6 +128,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
       permissions.loansView.gui,
       permissions.loansRenew.gui,
       permissions.loansRenewOverride.gui,
+      permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
     ]).then(({ username, password, userId, barcode: userBarcode }) => {
       secondUser = {
         username,
