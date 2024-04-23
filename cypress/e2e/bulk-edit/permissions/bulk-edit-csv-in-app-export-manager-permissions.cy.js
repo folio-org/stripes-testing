@@ -1,12 +1,12 @@
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import Users from '../../../support/fragments/users/users';
-import FileManager from '../../../support/utils/fileManager';
+import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import FileManager from '../../../support/utils/fileManager';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 
 let user;
 
@@ -76,24 +76,14 @@ describe('bulk-edit', () => {
       () => {
         ExportManagerSearchPane.waitLoading();
         ExportManagerSearchPane.searchByBulkEdit();
-        ExportManagerSearchPane.verifyJobAmount(user.username, 2);
-        ExportManagerSearchPane.selectJobByIndex(user.username, 0);
+        ExportManagerSearchPane.waitForJobs();
+        ExportManagerSearchPane.getElementByTextAndVerify(user.username, 2, 0);
         ExportManagerSearchPane.clickJobIdInThirdPane();
-        BulkEditFiles.verifyMatchedResultFileContent(
-          itemMatchedRecordsFileName,
-          [item.itemBarcode],
-          'barcode',
-          true,
-        );
+        ExportFile.verifyFileIncludes(itemMatchedRecordsFileName, [item.itemBarcode]);
 
-        ExportManagerSearchPane.selectJobByIndex(user.username, 1);
+        ExportManagerSearchPane.getElementByTextAndVerify(user.username, 2, 1);
         ExportManagerSearchPane.clickJobIdInThirdPane();
-        BulkEditFiles.verifyMatchedResultFileContent(
-          userMatchedRecordsFileName,
-          [user.userId],
-          'userId',
-          true,
-        );
+        ExportFile.verifyFileIncludes(userMatchedRecordsFileName, [user.userId]);
       },
     );
   });
