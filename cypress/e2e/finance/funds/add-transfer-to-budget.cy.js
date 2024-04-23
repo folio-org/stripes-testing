@@ -45,6 +45,7 @@ describe('ui-finance: Transactions', () => {
           Funds.addBudget(allocatedQuantity);
         });
 
+        cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
 
