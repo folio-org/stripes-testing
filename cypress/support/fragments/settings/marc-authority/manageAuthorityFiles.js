@@ -9,7 +9,7 @@ import {
   TextField,
   including,
 } from '../../../../../interactors';
-import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../constants';
+import { DEFAULT_FOLIO_AUTHORITY_FILES, AUTHORITY_FILE_TEXT_FIELD_NAMES } from '../../../constants';
 
 const manageAuthorityFilesPane = Pane('Manage authority files');
 const newButton = manageAuthorityFilesPane.find(Button({ id: 'clickable-add-authorityfiles' }));
@@ -97,8 +97,16 @@ const checkSaveButtonEnabled = (isEnabled = true) => {
   cy.expect(firstRow.find(saveButton).has({ disabled: !isEnabled }));
 };
 
+const checkNewButtonEnabled = (isEnabled = true) => {
+  cy.expect(newButton.has({ disabled: !isEnabled }));
+};
+
 const clickSaveButton = () => {
   cy.do(firstRow.find(saveButton).click());
+};
+
+const clickCancelButton = () => {
+  cy.do(firstRow.find(cancelButton).click());
 };
 
 const checkAfterSave = (authorityFileName) => {
@@ -117,7 +125,9 @@ export default {
   switchActiveCheckbox,
   checkCancelButtonEnabled,
   checkSaveButtonEnabled,
+  checkNewButtonEnabled,
   clickSaveButton,
+  clickCancelButton,
   checkAfterSave,
 
   fillAllFields: (name, prefix, startsWith, baseUrl, isActive) => {
@@ -125,7 +135,7 @@ export default {
     fillPrefix(prefix);
     fillHridStartsWith(startsWith);
     fillBaseUrl(baseUrl);
-    switchActiveCheckbox(isActive);
+    if (isActive) switchActiveCheckbox(isActive);
   },
 
   checkSourceFileExists(name, prefix, startsWith, baseUrl, isActive, lastUpdatedBy, isDeletable) {
@@ -139,6 +149,45 @@ export default {
       targetRow.find(editButton).exists(),
     ]);
     if (isDeletable) cy.expect(targetRow.find(deleteButton).exists());
+  },
+
+  checkSourceFileExistsByName(fileName, isExist = true) {
+    if (isExist) {
+      cy.expect(manageAuthorityFilesPane.find(MultiColumnListRow(including(fileName))).exists());
+    } else {
+      cy.expect(manageAuthorityFilesPane.find(MultiColumnListRow(including(fileName))).absent());
+    }
+  },
+
+  checkErrorInField(fieldName, errorMessage) {
+    switch (fieldName) {
+      case AUTHORITY_FILE_TEXT_FIELD_NAMES.NAME:
+        cy.expect(nameTextField.has({ error: errorMessage, errorTextRed: true }));
+        break;
+      case AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX:
+        cy.expect(prefixTextField.has({ error: errorMessage, errorTextRed: true }));
+        break;
+      case AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH:
+        cy.expect([hridStartsWithTextField.has({ error: errorMessage, errorTextRed: true })]);
+        break;
+      case AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL:
+        cy.expect(baseUrlTextField.has({ error: errorMessage, errorTextRed: true }));
+        break;
+      default:
+        break;
+    }
+  },
+
+  checkManageAuthorityFilesPaneExists(isExist = true) {
+    if (isExist) {
+      cy.expect(manageAuthorityFilesPane.exists());
+    } else {
+      cy.expect(manageAuthorityFilesPane.absent());
+    }
+  },
+
+  checkActionTableHeaderExists() {
+    cy.get('#list-column-actions').should('exist').and('have.text', 'Actions');
   },
 
   setAllDefaultFOLIOFilesToActiveViaAPI() {

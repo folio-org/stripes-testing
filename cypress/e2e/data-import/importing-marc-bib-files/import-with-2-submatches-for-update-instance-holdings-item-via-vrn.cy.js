@@ -198,8 +198,12 @@ describe('Data Import', () => {
       );
 
       cy.getAdminToken();
-      NewInstanceStatusType.createViaApi().then((initialInstanceStatusType) => {
-        testData.instanceStatusTypeId = initialInstanceStatusType.body.id;
+      InstanceStatusTypes.getViaApi({ query: '"name"=="Electronic Resource"' }).then((type) => {
+        if (type.length === 0) {
+          NewInstanceStatusType.createViaApi().then((initialInstanceStatusType) => {
+            testData.instanceStatusTypeId = initialInstanceStatusType.body.id;
+          });
+        }
       });
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
@@ -268,7 +272,11 @@ describe('Data Import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        InstanceStatusTypes.deleteViaApi(testData.instanceStatusTypeId);
+        InstanceStatusTypes.getViaApi({ query: '"name"=="Electronic Resource"' }).then((type) => {
+          if (type.length !== 0) {
+            InstanceStatusTypes.deleteViaApi(type[0].id);
+          }
+        });
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         collectionOfMatchProfiles.forEach((profile) => {

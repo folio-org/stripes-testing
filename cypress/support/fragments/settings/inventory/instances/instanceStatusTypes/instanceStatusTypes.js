@@ -32,6 +32,16 @@ function getListOfStatusTypes() {
 
 export default {
   getListOfStatusTypes,
+  getViaApi: (searchParams) => cy
+    .okapiRequest({
+      path: 'instance-statuses',
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => {
+      return response.body.instanceStatuses;
+    }),
+
   deleteViaApi: (id) => cy.okapiRequest({
     method: 'DELETE',
     path: `instance-statuses/${id}`,
