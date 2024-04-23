@@ -726,3 +726,10 @@ export const electronicAccessRelationshipName = {
   RESOURCE: 'Resource',
   VERSION_OF_RESOURCE: 'Version of resource',
 };
+
+export const AUTHORITY_FILE_TEXT_FIELD_NAMES = {
+  NAME: 'Name',
+  PREFIX: 'Prefix',
+  HRID_STARTS_WITH: 'HRID starts with',
+  BASE_URL: 'Base url',
+};

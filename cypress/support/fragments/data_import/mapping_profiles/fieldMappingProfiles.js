@@ -65,7 +65,7 @@ export default {
   },
   createInstanceMappingProfile: (mappingProfile) => {
     openNewMappingProfileForm();
-    NewFieldMappingProfile.fillInsatnceMappingProfile(mappingProfile);
+    NewFieldMappingProfile.fillInstanceMappingProfile(mappingProfile);
     FieldMappingProfileView.closeViewMode(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },

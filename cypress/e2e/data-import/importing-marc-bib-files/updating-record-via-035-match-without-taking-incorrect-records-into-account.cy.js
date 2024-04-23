@@ -186,14 +186,12 @@ describe('Data Import', () => {
         Logs.openFileDetails(fileNameForMatch);
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 2);
         FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 2);
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.NO_ACTION,
+        [
           FileDetails.columnNameInResultList.srsMarc,
-        );
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.instance,
-        );
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.NO_ACTION, columnName);
+        });
 
         // create mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);
