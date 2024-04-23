@@ -97,6 +97,10 @@ const checkSaveButtonEnabled = (isEnabled = true) => {
   cy.expect(firstRow.find(saveButton).has({ disabled: !isEnabled }));
 };
 
+const checkNewButtonEnabled = (isEnabled = true) => {
+  cy.expect(newButton.has({ disabled: !isEnabled }));
+};
+
 const clickSaveButton = () => {
   cy.do(firstRow.find(saveButton).click());
 };
@@ -121,6 +125,7 @@ export default {
   switchActiveCheckbox,
   checkCancelButtonEnabled,
   checkSaveButtonEnabled,
+  checkNewButtonEnabled,
   clickSaveButton,
   clickCancelButton,
   checkAfterSave,
@@ -146,8 +151,12 @@ export default {
     if (isDeletable) cy.expect(targetRow.find(deleteButton).exists());
   },
 
-  checkSourceFileAbsent(fileName) {
-    cy.expect(manageAuthorityFilesPane.find(MultiColumnListRow(including(fileName))).absent());
+  checkSourceFileExistsByName(fileName, isExist = true) {
+    if (isExist) {
+      cy.expect(manageAuthorityFilesPane.find(MultiColumnListRow(including(fileName))).exists());
+    } else {
+      cy.expect(manageAuthorityFilesPane.find(MultiColumnListRow(including(fileName))).absent());
+    }
   },
 
   checkErrorInField(fieldName, errorMessage) {
@@ -167,6 +176,18 @@ export default {
       default:
         break;
     }
+  },
+
+  checkManageAuthorityFilesPaneExists(isExist = true) {
+    if (isExist) {
+      cy.expect(manageAuthorityFilesPane.exists());
+    } else {
+      cy.expect(manageAuthorityFilesPane.absent());
+    }
+  },
+
+  checkActionTableHeaderExists() {
+    cy.get('#list-column-actions').should('exist').and('have.text', 'Actions');
   },
 
   setAllDefaultFOLIOFilesToActiveViaAPI() {

@@ -63,7 +63,7 @@ describe('Bulk Edit - Query', () => {
       QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.ON_ORDER);
       QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.AGED_TO_LOST);
       QueryModal.verifyQueryAreaContent(
-        `(item_status not in "${ITEM_STATUS_NAMES.ON_ORDER}","${ITEM_STATUS_NAMES.AGED_TO_LOST}")`,
+        `(item_status not in ("${ITEM_STATUS_NAMES.ON_ORDER}","${ITEM_STATUS_NAMES.AGED_TO_LOST}"))`,
       );
       QueryModal.testQueryDisabled(false);
       QueryModal.runQueryDisabled();
@@ -74,7 +74,7 @@ describe('Bulk Edit - Query', () => {
       QueryModal.chooseFromValueMultiselect(ITEM_STATUS_NAMES.AVAILABLE);
       QueryModal.chooseFromValueMultiselect(ITEM_STATUS_NAMES.MISSING);
       QueryModal.verifyQueryAreaContent(
-        `(item_status not in "${ITEM_STATUS_NAMES.AVAILABLE}","${ITEM_STATUS_NAMES.MISSING}")`,
+        `(item_status not in ("${ITEM_STATUS_NAMES.AVAILABLE}","${ITEM_STATUS_NAMES.MISSING}"))`,
       );
       QueryModal.testQueryDisabled(false);
       QueryModal.runQueryDisabled();

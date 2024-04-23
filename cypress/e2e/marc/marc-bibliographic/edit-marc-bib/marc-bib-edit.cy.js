@@ -123,11 +123,11 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingTagValue(14, testData.tag245);
           QuickMarcEditor.updateExistingTagValue(16, '');
           QuickMarcEditor.updateTagNameToLockedTag(16, testData.tag001);
-          QuickMarcEditor.checkFourthBoxDisabled(16);
+          QuickMarcEditor.checkFourthBoxEditable(16, false);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.verifyMultiple001TagCallout();
           QuickMarcEditor.verifyTagValue(16, testData.tag001);
-          QuickMarcEditor.checkFourthBoxDisabled(16);
+          QuickMarcEditor.checkFourthBoxEditable(16, false);
           QuickMarcEditor.closeWithoutSavingAfterChange();
           InventoryInstance.waitLoading();
           InventoryInstance.checkInstanceTitle(testData.instanceTitle);
