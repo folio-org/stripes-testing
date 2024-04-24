@@ -69,7 +69,7 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C380485 Create simple holdings for open order ${getRandomPostfix()}`,
-          permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
+          permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -194,7 +194,7 @@ describe('Data Import', () => {
             instanceHrid = initialInstanceHrId;
           });
           InstanceRecordView.verifyHotlinkToPOL(polNumber);
-          InstanceRecordView.verifyIsHoldingsCreated([`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`]);
+          InstanceRecordView.verifyIsHoldingsCreated([`${LOCATION_NAMES.ANNEX_UI} >`]);
           InstanceRecordView.openHoldingView();
           HoldingsRecordView.checkHoldingRecordViewOpened();
           HoldingsRecordView.checkHotlinkToPOL(polNumber);
