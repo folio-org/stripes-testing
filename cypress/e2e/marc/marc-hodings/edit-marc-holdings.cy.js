@@ -20,9 +20,9 @@ describe('MARC -> MARC Holdings', () => {
   let user;
   let instanceHrid;
   const testData = {
-    fileNameForCreateInstance: `C359241 autotestFileName.${getRandomPostfix()}`,
-    fileNameForCreateHoldings: `C359241 autotestFileName.${getRandomPostfix()}`,
-    fileName: `C359241 autotestFileName.${getRandomPostfix()}`,
+    fileNameForCreateInstance: `C359241 autotestFileName${getRandomPostfix()}.mrc`,
+    fileNameForCreateHoldings: `C359241 autotestFileName${getRandomPostfix()}.mrc`,
+    fileName: `C359241 autotestFileName${getRandomPostfix()}.mrc`,
     filePath: 'marcBibFileForC359241.mrc',
     jobProfileForRun: 'Default - Create Holdings and SRS MARC Holdings',
   };
@@ -42,34 +42,39 @@ describe('MARC -> MARC Holdings', () => {
 
   before('create test data and login', () => {
     cy.getAdminToken();
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.uploadFileViaApi('oneMarcBib.mrc', testData.fileNameForCreateInstance);
-    JobProfiles.waitFileIsImported(testData.fileNameForCreateInstance);
-    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-    Logs.openFileDetails(testData.fileNameForCreateInstance);
-    FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-    InstanceRecordView.verifyInstancePaneExists();
-    InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-      instanceHrid = initialInstanceHrId;
+    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+      DataImport.uploadFileAndRetry('oneMarcBib.mrc', testData.fileNameForCreateInstance);
+      JobProfiles.waitLoadingList();
+      JobProfiles.search('Default - Create instance and SRS MARC Bib');
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(testData.fileNameForCreateInstance);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(testData.fileNameForCreateInstance);
+      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
+      InstanceRecordView.verifyInstancePaneExists();
 
-      DataImport.editMarcFile(
-        testData.filePath,
-        testData.fileName,
-        ['in11887186'],
-        [initialInstanceHrId],
-      );
+      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+        instanceHrid = initialInstanceHrId;
+
+        DataImport.editMarcFile(
+          testData.filePath,
+          testData.fileName,
+          ['in11887186'],
+          [initialInstanceHrId],
+        );
+      });
+      // upload a marc file for creating holdings
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(testData.fileName, testData.fileNameForCreateHoldings);
+      JobProfiles.waitFileIsUploaded();
+      JobProfiles.search(testData.jobProfileForRun);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(testData.fileNameForCreateHoldings);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      cy.logout();
     });
-    // upload a marc file for creating holdings
-    cy.visit(TopMenu.dataImportPath);
-    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-    DataImport.verifyUploadState();
-    DataImport.uploadFile(testData.fileName, testData.fileNameForCreateHoldings);
-    JobProfiles.waitUploadingFile();
-    JobProfiles.search(testData.jobProfileForRun);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(testData.fileNameForCreateHoldings);
-    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-    cy.logout();
 
     cy.createTempUser([
       Permissions.inventoryAll.gui,
@@ -84,6 +89,7 @@ describe('MARC -> MARC Holdings', () => {
       InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
       InstanceRecordView.verifyInstancePaneExists();
       InstanceRecordView.openHoldingView();
+      cy.reload();
       HoldingsRecordView.checkHoldingRecordViewOpened();
     });
   });

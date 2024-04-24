@@ -111,7 +111,6 @@ const mclLinkHeader = MultiColumnListHeader({ id: 'list-column-link' });
 const mclAuthRefTypeHeader = MultiColumnListHeader({ id: 'list-column-authreftype' });
 const mclHeadingRef = MultiColumnListHeader({ id: 'list-column-headingref' });
 const mclHeadingType = MultiColumnListHeader({ id: 'list-column-headingtype' });
-const mclHeadingSourceFile = MultiColumnListHeader({ id: 'list-column-authoritysource' });
 const contributorsList = MultiColumnList({ id: 'list-contributors' });
 const buttonPrevPageDisabled = Button({
   id: 'authority-result-list-prev-paging-button',
@@ -624,7 +623,6 @@ export default {
       mclAuthRefTypeHeader.has({ content: 'Authorized/Reference' }),
       mclHeadingRef.has({ content: 'Heading/Reference' }),
       mclHeadingType.has({ content: 'Type of heading' }),
-      mclHeadingSourceFile.has({ content: 'Authority source' }),
       MultiColumnListRow({ index: 0 })
         .find(Button({ ariaLabel: 'Link' }))
         .exists(),

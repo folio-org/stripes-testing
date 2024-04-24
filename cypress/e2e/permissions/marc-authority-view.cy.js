@@ -55,7 +55,7 @@ describe('MARC Authority management', () => {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
-      InventoryInstance.searchByTitle(instanceID);
+      InventoryInstances.searchByTitle(instanceID);
       InventoryInstances.selectInstance();
       InventoryInstance.getId().then((id) => {
         instanceID = id;

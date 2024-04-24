@@ -168,17 +168,13 @@ describe('MARC -> MARC Authority', () => {
       MarcAuthorities.checkColumnAbsent('Type of heading');
       MarcAuthorities.actionsSelectCheckbox('Number of titles');
       MarcAuthorities.checkColumnAbsent('Number of titles');
-      MarcAuthorities.actionsSelectCheckbox('Authority source');
-      MarcAuthorities.checkColumnAbsent('Authority source');
 
       MarcAuthorities.actionsSelectCheckbox('Authorized/Reference');
       MarcAuthorities.actionsSelectCheckbox('Type of heading');
       MarcAuthorities.actionsSelectCheckbox('Number of titles');
-      MarcAuthorities.actionsSelectCheckbox('Authority source');
       MarcAuthorities.checkColumnExists('Authorized/Reference');
       MarcAuthorities.checkColumnExists('Type of heading');
       MarcAuthorities.checkColumnExists('Number of titles');
-      MarcAuthorities.checkColumnExists('Authority source');
 
       MarcAuthorities.clickResetAndCheck(testData.authority.searchOption);
     },
