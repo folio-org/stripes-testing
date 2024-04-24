@@ -2,6 +2,7 @@ import {
   Button,
   Callout,
   Checkbox,
+  Form,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
@@ -188,6 +189,14 @@ export default {
 
   checkActionTableHeaderExists() {
     cy.get('#list-column-actions').should('exist').and('have.text', 'Actions');
+  },
+
+  checkAuthorityFilesTableExists(isExist = true) {
+    if (isExist) {
+      cy.expect(Form(including('Authority files')).exists());
+    } else {
+      cy.expect(Form(including('Authority files')).absent());
+    }
   },
 
   setAllDefaultFOLIOFilesToActiveViaAPI() {
