@@ -64,7 +64,7 @@ describe('bulk-edit', () => {
           InventoryInstance.openHoldingView();
           HoldingsRecordView.edit();
           HoldingsRecordEdit.addHoldingsNotes(holdingsNote);
-          HoldingsRecordEdit.saveAndClose();
+          HoldingsRecordEdit.saveAndClose(true);
         });
         cy.visit(TopMenu.bulkEditPath);
       });
@@ -95,7 +95,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(...holdingsHRIDs);
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [holdingsNote]);
-        BulkEditSearchPane.changeShowColumnCheckbox('Action note');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Notes');
         BulkEditSearchPane.verifySpecificItemsMatched(holdingsNote);
 
         const location = 'Online';

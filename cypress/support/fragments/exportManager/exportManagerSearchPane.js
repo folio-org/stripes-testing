@@ -11,7 +11,7 @@ import {
   Pane,
   PaneHeader,
   SelectionOption,
-  TextField
+  TextField,
 } from '../../../../interactors';
 import ExportDetails from './exportDetails';
 
@@ -93,6 +93,9 @@ export default {
       HTML('Choose a filter or enter a search query to show results.').exists(),
     ]);
   },
+  waitForJobs() {
+    cy.expect(MultiColumnList().exists());
+  },
   checkDefaultView() {
     this.checkTabHighlighted({ tabName: 'All' });
     this.checkNoResultsMessage();
@@ -115,6 +118,21 @@ export default {
     cy.expect(MultiColumnListCell(including(content)).exists());
     cy.do(MultiColumnListRow({ index: 0 }).click());
   },
+
+  getElementByTextAndVerify(content, amount, index) {
+    const matchingElements = [];
+    cy.get('div[class*=mclRow-]')
+      .each((element) => {
+        if (Cypress.$(element).text().includes(content)) {
+          matchingElements.push(element);
+        }
+      })
+      .then(() => {
+        cy.get(matchingElements[index]).click();
+        cy.expect(matchingElements.length).to.eq(amount);
+      });
+  },
+
   selectJobByIndex(content, index) {
     cy.get('div[class*=mclRow-]')
       .contains(content)
