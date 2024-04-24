@@ -388,6 +388,7 @@ export default {
   },
 
   addNewBulkEditFilterString() {
+    cy.wait(1000);
     cy.do(plusBtn.click());
     cy.wait(1000);
   },
