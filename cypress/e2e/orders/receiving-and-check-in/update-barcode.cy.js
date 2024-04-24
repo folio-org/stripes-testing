@@ -63,6 +63,7 @@ describe('Orders: Receiving and Check-in', () => {
         });
 
         cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+        cy.getAdminToken();
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
           Orders.searchByParameter('PO number', orderNumber);
@@ -107,6 +108,7 @@ describe('Orders: Receiving and Check-in', () => {
     OrderLines.deleteOrderLine();
     // Need to wait until the order is opened before deleting it
     cy.wait(2000);
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
     Users.deleteViaApi(user.userId);
   });
