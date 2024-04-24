@@ -32,6 +32,7 @@ describe('inventory', () => {
           waiter: Orders.waitLoading,
         });
       });
+      cy.getAdminToken();
       cy.getCapabilitiesApi(10).then((capabs) => {
         cy.getCapabilitySetsApi(10).then((capabSets) => {
           cy.getUserRoleIdByNameApi(testData.roleName).then((roleId) => {
