@@ -9,7 +9,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 
 describe('MARC -> MARC Holdings', () => {
   beforeEach(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     // required with special tests, but when step into test I see 403 some time in /metadata-provider/jobExecutions request
     cy.getAdminToken();
   });
@@ -31,6 +31,7 @@ describe('MARC -> MARC Holdings', () => {
         HoldingsRecordEdit.waitLoading();
         HoldingsRecordEdit.checkReadOnlyFields();
         HoldingsRecordEdit.closeWithoutSave();
+        InventoryInstance.openHoldingView();
         HoldingsRecordView.checkReadOnlyFields();
         HoldingsRecordView.tryToDelete();
         HoldingsRecordView.duplicate();
