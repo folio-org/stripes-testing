@@ -46,6 +46,8 @@ describe('ui-finance: Transactions', () => {
         });
       });
     });
+
+    cy.getAdminToken();
     cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
     });
@@ -74,6 +76,7 @@ describe('ui-finance: Transactions', () => {
     OrderLines.deleteOrderLine();
     // Need to wait few seconds, that data will be deleted
     cy.wait(2000);
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
     cy.visit(TopMenu.fundPath);
     FinanceHelp.searchByName(defaultFund.name);

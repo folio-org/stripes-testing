@@ -48,6 +48,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLine(invoiceLine);
       Invoices.addFundDistributionToLine(invoiceLine, fund);
+      cy.getAdminToken();
       Approvals.setApprovePayValue(false);
       Invoices.approveInvoice();
       // check transactions after approve

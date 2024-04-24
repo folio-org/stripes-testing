@@ -47,6 +47,7 @@ describe('Invoices', () => {
           Funds.addBudget(allocatedQuantity);
         });
 
+        cy.getAdminToken();
         Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
           organization.id = responseOrganizations;
           invoice.accountingCode = organization.erpCode;
