@@ -29,7 +29,7 @@ describe('orders: Settings', () => {
       waiter: SettingsOrders.waitLoadingEditPONumber,
     });
     SettingsOrders.userCanEditPONumber();
-
+    cy.getAdminToken();
     cy.createTempUser([
       permissions.uiSettingsOrdersCanViewAllSettings.gui,
       permissions.uiOrdersCreate.gui,
@@ -48,6 +48,7 @@ describe('orders: Settings', () => {
       path: SettingsMenu.ordersPONumberEditPath,
       waiter: SettingsOrders.waitLoadingEditPONumber,
     });
+    cy.getAdminToken();
     SettingsOrders.userCanNotEditPONumber();
     Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
