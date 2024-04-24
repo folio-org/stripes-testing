@@ -19,7 +19,6 @@ describe('Organizations', () => {
     firstName: `2AT_FN_${getRandomPostfix()}`,
     lastName: `2AT_LN_${getRandomPostfix()}`,
   };
-
   let user;
 
   before(() => {
