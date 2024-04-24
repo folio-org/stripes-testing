@@ -45,6 +45,7 @@ describe('Orders: Inventory interaction', () => {
           defaultFund.id = fundResponse.fund.id;
 
           cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          cy.getAdminToken();
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
@@ -78,6 +79,7 @@ describe('Orders: Inventory interaction', () => {
 
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.getAdminToken();
     // Need to wait until the order is opened before deleting it
     cy.wait(2000);
     Orders.deleteOrderViaApi(firstOrder.id);

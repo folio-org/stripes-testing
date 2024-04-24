@@ -66,10 +66,11 @@ describe('Invoices', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
     cy.loginAsAdmin();
+    cy.getAdminToken();
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
+
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = firstFiscalYear.id;
