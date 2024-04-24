@@ -107,6 +107,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
           Funds.closeBudgetDetails();
         });
       });
+      cy.getAdminToken();
       Ledgers.createViaApi(secondLedger).then((secondLedgerResponse) => {
         secondLedger.id = secondLedgerResponse.id;
         secondFund.ledgerId = secondLedger.id;
