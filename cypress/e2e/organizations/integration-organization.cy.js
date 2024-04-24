@@ -31,12 +31,12 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
   const libraryEDICodeFor1Integration = getRandomPostfix();
 
   before(() => {
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+    });
     cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
-    });
-    Organizations.createOrganizationViaApi(organization).then((response) => {
-      organization.id = response;
     });
     cy.visit(TopMenu.organizationsPath);
   });
