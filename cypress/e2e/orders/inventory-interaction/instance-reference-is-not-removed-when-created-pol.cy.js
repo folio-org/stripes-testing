@@ -63,6 +63,7 @@ describe('Orders', () => {
       path: TopMenu.ordersPath,
       waiter: Orders.waitLoading,
     });
+    cy.getAdminToken();
     Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;
@@ -89,11 +90,11 @@ describe('Orders', () => {
   });
 
   after(() => {
-    cy.getAdminToken();
     cy.loginAsAdmin({
       path: TopMenu.ordersPath,
       waiter: Orders.waitLoading,
     });
+    cy.getAdminToken();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();

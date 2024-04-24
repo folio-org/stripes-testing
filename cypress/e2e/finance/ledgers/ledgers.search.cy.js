@@ -45,6 +45,7 @@ describe('ui-finance: Ledgers', () => {
   });
 
   beforeEach(() => {
+    cy.getAdminToken();
     cy.createLedgerApi({
       ...ledger,
     });
