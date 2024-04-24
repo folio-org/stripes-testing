@@ -2,6 +2,7 @@ import { Permissions } from '../../../support/dictionary';
 import { Budgets, Funds } from '../../../support/fragments/finance';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import FundDetails from '../../../support/fragments/finance/funds/fundDetails';
 
 describe('Finance', () => {
   describe('Funds', () => {
@@ -47,7 +48,7 @@ describe('Finance', () => {
       () => {
         // Open Fund from Preconditions
         Funds.searchByName(testData.fund.name);
-        const FundDetails = Funds.selectFund(testData.fund.name);
+        Funds.selectFund(testData.fund.name);
         FundDetails.checkFundDetails({
           currentBudget: { name: testData.budget.name, allocated: '$0.00' },
         });
