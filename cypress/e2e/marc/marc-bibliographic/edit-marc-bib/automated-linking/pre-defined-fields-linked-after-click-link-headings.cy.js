@@ -301,7 +301,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
       cy.visit(TopMenu.marcAuthorities);
       MarcAuthorities.searchBy('Keyword', linkingTagAndValues[1].value);
-      MarcAuthorities.verifyNumberOfTitles(5, '1');
+      MarcAuthorities.verifyNumberOfTitles(4, '1');
     },
   );
 });

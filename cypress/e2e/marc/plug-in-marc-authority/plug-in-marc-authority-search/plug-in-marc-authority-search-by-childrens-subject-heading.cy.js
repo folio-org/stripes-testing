@@ -99,7 +99,10 @@ describe('MARC -> plug-in MARC authority | Search', () => {
       MarcAuthorities.switchToSearch();
       InventoryInstance.verifySearchOptions();
       MarcAuthorities.searchBy(testData.forC359233.searchOptionA, testData.forC359233.value);
-      MarcAuthorities.checkFieldAndContentExistence('100', testData.forC359233.valueInDetailView);
+      MarcAuthorities.checkFieldAndContentExistence(
+        '100',
+        '‡a María de Jesús, ‡c de Agreda, sister, ‡d 1602-1665',
+      );
       MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359233.markedValue);
       MarcAuthorities.searchBy(testData.forC359233.searchOptionB, testData.forC359233.value);
       MarcAuthorities.checkNoResultsMessage(testData.forC359233.noResults);
