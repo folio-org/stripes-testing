@@ -54,6 +54,7 @@ describe('Orders: Inventory interaction', () => {
         });
       });
     });
+    cy.getAdminToken();
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -103,6 +104,7 @@ describe('Orders: Inventory interaction', () => {
     Orders.unOpenOrder();
     // Need to wait until the order is opened before deleting it
     cy.wait(2000);
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(firstOrder.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);

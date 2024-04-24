@@ -51,6 +51,7 @@ describe('orders: create an order', () => {
         });
       });
     });
+    cy.getAdminToken();
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -74,9 +75,9 @@ describe('orders: create an order', () => {
   });
 
   afterEach(() => {
-    cy.loginAsAdmin();
     cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
     SettingsOrders.setPurchaseOrderLinesLimit(1);
+    cy.loginAsAdmin();
     Users.deleteViaApi(user.userId);
   });
 
