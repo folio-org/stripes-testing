@@ -71,7 +71,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
           Funds.selectFund(firstFund.name);
           Funds.addBudget(allocatedQuantity);
         });
-
+        cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
 
@@ -82,6 +82,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         });
       });
     });
+    cy.getAdminToken();
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {

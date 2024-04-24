@@ -49,7 +49,7 @@ describe('Finance: Ledgers', () => {
           Funds.addBudget(allocatedQuantity);
         });
       });
-
+      cy.getAdminToken();
       // Create second Fiscal Year for Rollover
       FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
         secondFiscalYear.id = secondFiscalYearResponse.id;
