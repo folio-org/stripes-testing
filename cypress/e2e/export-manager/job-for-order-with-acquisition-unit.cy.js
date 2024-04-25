@@ -64,6 +64,7 @@ describe('orders: export', () => {
       AcquisitionUnits.assignAdmin();
       AcquisitionUnits.assignUser(user.username);
     });
+    cy.getAdminToken();
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {

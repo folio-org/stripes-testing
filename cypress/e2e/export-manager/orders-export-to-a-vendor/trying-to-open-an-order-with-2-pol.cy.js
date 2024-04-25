@@ -68,6 +68,7 @@ describe('Export Manager', () => {
       });
       SettingsOrders.setPurchaseOrderLinesLimit(2);
 
+      cy.getAdminToken();
       ServicePoints.getViaApi().then((servicePoint) => {
         servicePointId = servicePoint[0].id;
         NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -151,6 +152,7 @@ describe('Export Manager', () => {
       });
       SettingsOrders.setPurchaseOrderLinesLimit(1);
 
+      cy.getAdminToken();
       Orders.deleteOrderViaApi(order.id);
 
       Organizations.deleteOrganizationViaApi(organization.id);

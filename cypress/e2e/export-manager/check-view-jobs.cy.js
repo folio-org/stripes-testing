@@ -101,6 +101,7 @@ describe('orders: export', () => {
       UTCTime,
     );
 
+    cy.getAdminToken();
     cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
     });
@@ -132,6 +133,7 @@ describe('orders: export', () => {
     Orders.unOpenOrder();
     // Need to wait until the order is opened before deleting it
     cy.wait(2000);
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
