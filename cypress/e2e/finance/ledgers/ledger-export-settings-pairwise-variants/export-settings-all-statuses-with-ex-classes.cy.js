@@ -73,6 +73,7 @@ describe('Finance: Ledgers', () => {
           Funds.addTwoExpensesClass('Electronic', 'Print');
         });
       });
+      cy.getAdminToken();
       ServicePoints.getViaApi().then((servicePoint) => {
         servicePointId = servicePoint[0].id;
         NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {

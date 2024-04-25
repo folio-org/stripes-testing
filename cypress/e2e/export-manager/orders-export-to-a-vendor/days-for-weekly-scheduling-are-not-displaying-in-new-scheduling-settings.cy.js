@@ -101,7 +101,7 @@ describe('Export Manager', () => {
         Organizations.selectIntegration(integrationName1);
         Organizations.editIntegration();
         Organizations.changeDayOnTommorowInIntegation(tomorrowDate);
-        Organizations.closeDetailsPane();
+        Organizations.closeIntegrationPane();
         Organizations.selectIntegration(integrationName1);
         Organizations.checkChangeDayOnTommorowInIntegation(tomorrowDate);
       },

@@ -73,6 +73,7 @@ describe('orders: Edifact export', () => {
       UTCTime,
     );
 
+    cy.getAdminToken();
     cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
       cy.visit(TopMenu.ordersPath);
@@ -100,6 +101,7 @@ describe('orders: Edifact export', () => {
   after(() => {
     cy.loginAsAdmin();
     cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(organization.id);
     NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
       location.institutionId,

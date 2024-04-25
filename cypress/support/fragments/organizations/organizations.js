@@ -776,4 +776,8 @@ export default {
     cy.do(saveAndClose.click());
     cy.wait(4000);
   },
+
+  closeIntegrationPane: () => {
+    cy.do(PaneHeader({ id: 'paneHeaderintegration-view' }).find(timesButton).click());
+  },
 };

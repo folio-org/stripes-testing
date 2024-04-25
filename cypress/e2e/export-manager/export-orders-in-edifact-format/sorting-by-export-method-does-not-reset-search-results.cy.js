@@ -103,6 +103,7 @@ describe('orders: export', () => {
         UTCTime,
       );
 
+      cy.getAdminToken();
       Organizations.createOrganizationViaApi(secondOrganization).then(
         (secondOrganizationsResponse) => {
           secondOrganization.id = secondOrganizationsResponse;

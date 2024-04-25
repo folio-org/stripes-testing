@@ -42,6 +42,7 @@ describe('Finance: Ledgers', () => {
           Funds.addBudget(allocatedQuantityForFirstFund);
         });
 
+        cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
 
