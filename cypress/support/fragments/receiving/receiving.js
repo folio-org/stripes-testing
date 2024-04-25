@@ -290,6 +290,10 @@ export default {
     cy.do(Section({ id: 'pane-title-details' }).find(Link(instanceName)).click());
   },
 
+  clickTitleInstanceLink: () => {
+    cy.get('[data-testid="titleInstanceLink"]').click();
+  },
+
   selectInstanceLinkInReceive: () => {
     cy.do(Section({ id: 'pane-title-details' }).find(Link()).click());
   },
