@@ -415,7 +415,7 @@ export default {
   },
 
   closeDetailsPane: () => {
-    cy.do(PaneHeader({ id: 'paneHeaderpane-organization-details' }).find(timesButton).click());
+    cy.do(PaneHeader({ id: 'paneHeaderintegration-view' }).find(timesButton).click());
   },
 
   selectCountryFilter: () => {
