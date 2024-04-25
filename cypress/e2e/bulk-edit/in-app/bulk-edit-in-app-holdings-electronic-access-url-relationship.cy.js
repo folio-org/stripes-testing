@@ -9,14 +9,15 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
+import {
+  electronicAccessRelationshipId,
+  electronicAccessRelationshipName,
+} from '../../../support/constants';
 
 let user;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
-  uri: 'testuri.com/uri',
-  newUri: 'testuri2.com/uri',
-  lastUri: 'newuri.com',
 };
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
@@ -45,12 +46,8 @@ describe('bulk-edit', () => {
               ...holdings[0],
               electronicAccess: [
                 {
-                  linkText: '',
-                  materialsSpecification: '',
-                  publicNote: '',
-                  // Resource
-                  relationshipId: 'f5d0068e-6272-458e-8a81-b85e7b9a14aa',
-                  uri: item.uri,
+                  relationshipId: electronicAccessRelationshipId.RESOURCE,
+                  uri: 'uri.com',
                 },
               ],
             });
@@ -77,45 +74,79 @@ describe('bulk-edit', () => {
 
     it(
       'C422160 Verify Bulk Edit for Holding populated "URI" in electronic access (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
+        BulkEditSearchPane.checkForUploading(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.downloadMatchedResults();
-        ExportFile.verifyFileIncludes(matchedRecordsFileName, [`;${item.uri};`]);
-        BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
+        BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
+        ExportFile.verifyFileIncludes(matchedRecordsFileName, [
+          electronicAccessRelationshipName.RESOURCE,
+        ]);
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.selectOption('URI');
-        const possibleActions = ['Clear field', 'Find (full field search)', 'Replace with'];
+        BulkEditActions.verifyRowIcons();
+        BulkEditActions.verifyOptionsDropdown();
+        BulkEditActions.isSelectActionAbsent();
+        BulkEditActions.selectOption('URL Relationship');
+        let possibleActions = ['Clear field', 'Find (full field search)', 'Replace with'];
         BulkEditActions.verifyPossibleActions(possibleActions);
-        BulkEditActions.selectAction('Clear field');
+        BulkEditActions.selectSecondAction('Clear field');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow();
-        BulkEditActions.verifyOptionAbsentInNewRow('URI');
+        BulkEditActions.verifyOptionAbsentInNewRow('URL Relationship');
         BulkEditActions.deleteRow(1);
-        BulkEditActions.noteReplaceWith('URI', item.uri, item.newUri);
+        BulkEditActions.findValue('URL Relationship');
+        possibleActions = ['Replace with', 'Remove'];
+        BulkEditActions.verifyPossibleActions(possibleActions);
+        BulkEditActions.selectSecondAction('Remove');
+        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.selectType(electronicAccessRelationshipName.RESOURCE, 0, 0);
+        BulkEditSearchPane.isConfirmButtonDisabled(true);
         BulkEditActions.selectSecondAction('Replace with');
-        BulkEditActions.fillInSecondTextArea(item.lastUri);
+        BulkEditActions.checkTypeNotExist(electronicAccessRelationshipName.RESOURCE, 0, 1);
+        BulkEditActions.selectType(electronicAccessRelationshipName.VERSION_OF_RESOURCE, 0, 1);
+        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.selectType(electronicAccessRelationshipName.VERSION_OF_RESOURCE, 0, 0);
+        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.selectAction('Replace with');
+        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.selectType(electronicAccessRelationshipName.VERSION_OF_RESOURCE, 0, 0);
+        BulkEditSearchPane.isConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
-        BulkEditActions.verifyChangesInAreYouSureForm('Electronic access', [item.lastUri]);
+        BulkEditSearchPane.verifyInputLabel(
+          '1 records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.',
+        );
+        BulkEditActions.verifyChangesInAreYouSureForm('Electronic access', [
+          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+        ]);
         BulkEditActions.downloadPreview();
-        ExportFile.verifyFileIncludes(previewFileName, [`;${item.lastUri};`]);
+        ExportFile.verifyFileIncludes(previewFileName, [
+          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+        ]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyChangesUnderColumns('Electronic access', item.lastUri);
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          'Electronic access',
+          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+        );
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [`;${item.lastUri};`]);
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [
+          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+        ]);
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchByParameter('Holdings HRID', item.holdingsHRID);
         InventorySearchAndFilter.selectSearchResultItem();
         InventorySearchAndFilter.selectViewHoldings();
-        HoldingsRecordView.verifyElectronicAccess(item.lastUri);
+        HoldingsRecordView.verifyElectronicAccess(
+          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+        );
       },
     );
   });

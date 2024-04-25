@@ -14,10 +14,9 @@ let user;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
-  uri: 'testuri.com/uri',
-  newUri: 'testuri2.com/uri',
-  lastUri: 'newuri.com',
 };
+const publicNote = 'publicNote';
+const newPublicNote = 'new publicNote';
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
 const previewFileName = `*-Updates-Preview-${holdingUUIDsFileName}`;
@@ -45,12 +44,8 @@ describe('bulk-edit', () => {
               ...holdings[0],
               electronicAccess: [
                 {
-                  linkText: '',
-                  materialsSpecification: '',
-                  publicNote: '',
-                  // Resource
-                  relationshipId: 'f5d0068e-6272-458e-8a81-b85e7b9a14aa',
-                  uri: item.uri,
+                  publicNote,
+                  uri: 'uri.com',
                 },
               ],
             });
@@ -76,46 +71,63 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C422160 Verify Bulk Edit for Holding populated "URI" in electronic access (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      'C422240 Verify Bulk Edit for Holding populated with "URL public note" in electronic access (firebird)',
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
+        BulkEditSearchPane.checkForUploading(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.downloadMatchedResults();
-        ExportFile.verifyFileIncludes(matchedRecordsFileName, [`;${item.uri};`]);
-        BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
+        BulkEditSearchPane.verifySpecificItemsMatched(publicNote);
+        ExportFile.verifyFileIncludes(matchedRecordsFileName, [publicNote]);
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.selectOption('URI');
-        const possibleActions = ['Clear field', 'Find (full field search)', 'Replace with'];
+        BulkEditActions.verifyRowIcons();
+        BulkEditActions.verifyOptionsDropdown();
+        BulkEditActions.isSelectActionAbsent();
+        BulkEditActions.selectOption('URL public note');
+        let possibleActions = ['Clear field', 'Find (full field search)', 'Replace with'];
         BulkEditActions.verifyPossibleActions(possibleActions);
-        BulkEditActions.selectAction('Clear field');
+        BulkEditActions.selectSecondAction('Clear field');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow();
-        BulkEditActions.verifyOptionAbsentInNewRow('URI');
+        BulkEditActions.verifyOptionAbsentInNewRow('URL public note');
         BulkEditActions.deleteRow(1);
-        BulkEditActions.noteReplaceWith('URI', item.uri, item.newUri);
         BulkEditActions.selectSecondAction('Replace with');
-        BulkEditActions.fillInSecondTextArea(item.lastUri);
+        BulkEditActions.fillInSecondTextArea(publicNote);
+        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.findValue('URL public note');
+        possibleActions = ['Replace with', 'Remove'];
+        BulkEditActions.verifyPossibleActions(possibleActions);
+        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.selectSecondAction('Replace with');
+        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.fillInFirstTextArea(publicNote);
+        BulkEditActions.fillInSecondTextArea(newPublicNote);
+        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.selectSecondAction('Remove');
         BulkEditActions.confirmChanges();
-        BulkEditActions.verifyChangesInAreYouSureForm('Electronic access', [item.lastUri]);
+        BulkEditSearchPane.verifyInputLabel(
+          '1 records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.',
+        );
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '');
         BulkEditActions.downloadPreview();
-        ExportFile.verifyFileIncludes(previewFileName, [`;${item.lastUri};`]);
+        ExportFile.verifyFileIncludes(previewFileName, [';uri.com;;;"']);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyChangesUnderColumns('Electronic access', item.lastUri);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '');
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [`;${item.lastUri};`]);
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [';uri.com;;;"']);
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchByParameter('Holdings HRID', item.holdingsHRID);
         InventorySearchAndFilter.selectSearchResultItem();
         InventorySearchAndFilter.selectViewHoldings();
-        HoldingsRecordView.verifyElectronicAccess(item.lastUri);
+        HoldingsRecordView.verifyElectronicAccessByElementIndex(4, '-');
       },
     );
   });
