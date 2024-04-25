@@ -28,6 +28,7 @@ describe('orders: Test PO search', () => {
       orderLine.physical.materialType = materialType.id;
     });
     cy.loginAsAdmin();
+    cy.getAdminToken();
   });
 
   afterEach(() => {
@@ -52,6 +53,7 @@ describe('orders: Test PO search', () => {
           ),
           orderNumber,
         );
+        cy.wait(5000);
         // open order to check 'date opened' search
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

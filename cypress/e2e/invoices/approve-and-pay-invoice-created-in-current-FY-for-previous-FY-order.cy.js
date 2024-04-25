@@ -71,6 +71,7 @@ describe('Invoices', () => {
     cy.loginAsAdmin();
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
+    cy.getAdminToken();
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = firstFiscalYear.id;
@@ -225,6 +226,7 @@ describe('Invoices', () => {
       organization.status = 'Active';
       Organizations.editOrganization();
       Organizations.changeOrganizationStatus(organization.status);
+      Organizations.waitLoading();
 
       cy.visit(TopMenu.invoicesPath);
       Invoices.searchByNumber(invoice.invoiceNumber);

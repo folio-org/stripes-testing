@@ -86,6 +86,7 @@ describe('orders: Test Po line search', () => {
       orderLine.physical.materialType = materialType.id;
     });
     cy.loginAsAdmin();
+    cy.getAdminToken();
     cy.createOrderApi(order).then(() => {
       cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then((params) => {
         orderLine.acquisitionMethod = params.body.acquisitionMethods[0].id;

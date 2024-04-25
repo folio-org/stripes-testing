@@ -68,9 +68,8 @@ describe('Invoices', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
     cy.loginAsAdmin();
-
+    cy.getAdminToken();
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
       firstLedger.fiscalYearOneId = firstFiscalYear.id;
@@ -83,6 +82,7 @@ describe('Invoices', () => {
           firstFund.id = firstFundResponse.fund.id;
 
           cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          cy.getAdminToken();
           FinanceHelp.searchByName(firstFund.name);
           Funds.selectFund(firstFund.name);
           Funds.addBudget(allocatedQuantity);
