@@ -75,6 +75,7 @@ describe('Invoices', () => {
           Funds.addBudget(allocatedQuantity);
         });
         secondFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '2';
+        cy.getAdminToken();
         FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
           secondFiscalYear.id = secondFiscalYearResponse.id;
         });

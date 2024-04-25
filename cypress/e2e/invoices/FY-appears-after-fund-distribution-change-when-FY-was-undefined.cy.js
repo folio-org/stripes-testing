@@ -64,9 +64,8 @@ describe('Invoices', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
     cy.loginAsAdmin();
-
+    cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
       invoice.accountingCode = organization.erpCode;
@@ -85,6 +84,7 @@ describe('Invoices', () => {
             firstFund.id = firstFundResponse.fund.id;
 
             cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+            cy.getAdminToken();
             FinanceHelp.searchByName(firstFund.name);
             Funds.selectFund(firstFund.name);
             Funds.addBudget(allocatedQuantity);

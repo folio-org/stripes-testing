@@ -26,6 +26,7 @@ describe('orders: Close Order', () => {
       orderLine.physical.materialType = materialType.id;
     });
     cy.loginAsAdmin();
+    cy.getAdminToken();
   });
 
   after(() => {

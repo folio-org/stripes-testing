@@ -37,6 +37,8 @@ describe('Invoices', () => {
         Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then((order) => {
           testData.order = order;
 
+          Orders.updateOrderViaApi({ ...testData.order, workflowStatus: 'Open' });
+
           OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${order.poNumber}*"` }).then(
             (orderLines) => {
               testData.orderLine = orderLines[0];
