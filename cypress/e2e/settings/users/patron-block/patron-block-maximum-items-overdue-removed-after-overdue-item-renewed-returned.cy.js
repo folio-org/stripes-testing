@@ -9,6 +9,7 @@ import LoanPolicy from '../../../../support/fragments/circulation/loan-policy';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import Renewals from '../../../../support/fragments/loans/renewals';
+import TitleLevelRequests from '../../../../support/fragments/settings/circulation/titleLevelRequests';
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Conditions from '../../../../support/fragments/settings/users/conditions';
@@ -89,6 +90,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
 
     cy.getAdminToken()
       .then(() => {
+        TitleLevelRequests.enableTLRViaApi();
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);

@@ -221,7 +221,6 @@ describe('Create Item or Title level request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.disableTLRViaApi();
   });
   it(
     'C380490 Verify that user can create TLR: Recall request for instance with item statuses "Paged" and "Checked out" (vega) (Taas)',

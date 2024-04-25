@@ -128,6 +128,8 @@ describe('lists', () => {
       Lists.saveList();
       Lists.closeListDetailsPane();
       cy.wait(2000);
+      Lists.clickOnCheckbox('Inactive');
+      cy.wait(2000);
       cy.contains(listData.name).click();
       cy.wait(2000);
       Lists.actionButton();
