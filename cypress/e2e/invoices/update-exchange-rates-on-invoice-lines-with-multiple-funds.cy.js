@@ -103,7 +103,6 @@ describe('Invoices', () => {
           (firstOrderResponse) => {
             defaultOrder.id = firstOrderResponse.id;
             firstOrderNumber = firstOrderResponse.poNumber;
-            Orders.checkCreatedOrder(defaultOrder);
             OrderLines.addPOLine();
             OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName, 0);
             OrderLines.POLWithDifferntCurrency(

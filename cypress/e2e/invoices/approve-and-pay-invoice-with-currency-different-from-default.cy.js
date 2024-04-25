@@ -105,7 +105,7 @@ describe('Invoices', () => {
 
       // Select currency different from selected by default, Click "Save & close" button
       InvoiceEditForm.fillInvoiceFields({
-        currency: 'UYI (UYI)',
+        currency: 'Uruguayan Peso (UYU)',
         exchangeRate: '1',
       });
       InvoiceEditForm.clickSaveButton();
@@ -115,7 +115,7 @@ describe('Invoices', () => {
         title: testData.invoice.vendorInvoiceNo,
         invoiceInformation: [
           { key: 'Status', value: INVOICE_STATUSES.OPEN },
-          { key: 'Sub-total', value: 'UYI' },
+          { key: 'Sub-total', value: 'UYU 0.00' },
         ],
       });
 
