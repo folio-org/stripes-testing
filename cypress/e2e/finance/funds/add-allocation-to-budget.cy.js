@@ -52,6 +52,7 @@ describe('ui-finance: Transactions', () => {
     InteractorsTools.checkCalloutMessage('Budget has been deleted');
     Funds.checkIsBudgetDeleted();
 
+    cy.getAdminToken();
     Funds.deleteFundViaApi(defaultfund.id);
 
     Ledgers.deleteledgerViaApi(defaultLedger.id);

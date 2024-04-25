@@ -61,6 +61,7 @@ Cypress.Commands.add('logout', () => {
 
 Cypress.Commands.add('loginAsAdmin', (visitPath) => {
   cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'), visitPath);
+  cy.getAdminToken();
 });
 
 Cypress.Commands.add('loginAsCollegeAdmin', (visitPath) => {

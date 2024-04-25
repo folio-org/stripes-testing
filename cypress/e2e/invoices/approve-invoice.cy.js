@@ -28,6 +28,7 @@ describe('ui-invoices: Approve invoice', () => {
       waiter: SettingsInvoices.waitApprovalsLoading,
     });
     SettingsInvoices.checkApproveAndPayCheckboxIsDisabled();
+    cy.getAdminToken();
     Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` }).then(
       (organization) => {
         invoice.accountingCode = organization.erpCode;

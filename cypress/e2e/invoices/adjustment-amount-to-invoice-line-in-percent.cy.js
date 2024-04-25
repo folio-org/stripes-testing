@@ -76,6 +76,7 @@ describe('invoices: add adjustment', () => {
       });
     });
 
+    cy.getAdminToken();
     cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
       cy.visit(TopMenu.ordersPath);

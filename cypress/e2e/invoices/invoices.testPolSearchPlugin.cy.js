@@ -59,7 +59,7 @@ describe('ui-invoices: test POL search plugin', () => {
       orderLine.details.productIds[0].productIdType = productIdType.id;
     });
     cy.loginAsAdmin();
-
+    cy.getAdminToken();
     Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
       createdOrderNumber = poNumber;
     });

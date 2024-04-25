@@ -82,7 +82,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
           Funds.selectFund(firstFund.name);
           Funds.addBudget(allocatedQuantity);
         });
-
+        cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
 

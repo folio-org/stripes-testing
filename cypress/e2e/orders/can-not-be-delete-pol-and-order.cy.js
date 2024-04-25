@@ -67,6 +67,7 @@ describe('Orders', () => {
         });
       });
     });
+    cy.getAdminToken();
     ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
       effectiveLocationServicePoint = servicePoints[0];
       NewLocation.createViaApi(

@@ -43,6 +43,7 @@ describe('Orders: Receiving and Check-in', () => {
       OrderLines.addPOLine();
       OrderLines.POLineInfodorPhysicalMaterialForRecieve(orderLineTitle);
     });
+    cy.getAdminToken();
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,

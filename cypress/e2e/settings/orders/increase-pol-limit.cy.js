@@ -57,6 +57,7 @@ describe('orders: Settings', () => {
         });
 
         cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+        cy.getAdminToken();
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
         });
@@ -80,6 +81,7 @@ describe('orders: Settings', () => {
       path: SettingsMenu.ordersPurchaseOrderLinesLimit,
       waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
     });
+    cy.getAdminToken();
     SettingsOrders.setPurchaseOrderLinesLimit(1);
     Orders.deleteOrderViaApi(order.id);
 

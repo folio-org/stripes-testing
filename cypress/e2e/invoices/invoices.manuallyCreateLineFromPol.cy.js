@@ -74,6 +74,7 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
     'C2327 Create invoice line based on purchase order line (thunderjet)',
     { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
     () => {
+      cy.getAdminToken();
       Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         cy.visit(TopMenu.invoicesPath);
         Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);

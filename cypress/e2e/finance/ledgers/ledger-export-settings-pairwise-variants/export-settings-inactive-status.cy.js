@@ -43,7 +43,7 @@ describe('Finance: Ledgers', () => {
           cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
         });
       });
-
+      cy.getAdminToken();
       FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
         secondFiscalYear.id = secondFiscalYearResponse.id;
       });

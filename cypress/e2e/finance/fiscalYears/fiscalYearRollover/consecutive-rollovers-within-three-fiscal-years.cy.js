@@ -76,6 +76,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         });
       });
 
+      cy.getAdminToken();
       ServicePoints.getViaApi().then((servicePoint) => {
         servicePointId = servicePoint[0].id;
         NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -122,6 +123,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         secondFiscalYear.code,
         'None',
         'Transfer',
+        'Initial encumbrance',
       );
     });
 
@@ -198,6 +200,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         thirdFiscalYear.code,
         'None',
         'Transfer',
+        'Initial encumbrance',
       );
       Ledgers.closeRolloverInfo();
       Ledgers.selectFundInLedger(defaultFund.name);

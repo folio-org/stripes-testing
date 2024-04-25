@@ -275,6 +275,7 @@ export default {
     }
   },
   clickCancelButton(shouldModalExsist = false) {
+    cy.wait(20000);
     cy.expect(cancelButton.has({ disabled: false }));
     cy.do(cancelButton.click());
 

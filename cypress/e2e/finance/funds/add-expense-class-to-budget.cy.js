@@ -16,8 +16,8 @@ describe('ui-finance: Funds', () => {
   const allocatedQuantity = '100';
 
   before(() => {
-    cy.getAdminToken();
     cy.loginAsAdmin();
+    cy.getAdminToken();
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
 
@@ -43,6 +43,7 @@ describe('ui-finance: Funds', () => {
 
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+    cy.getAdminToken();
     FinanceHelp.searchByName(defaultfund.name);
     Funds.selectFund(defaultfund.name);
     Funds.selectBudgetDetails();

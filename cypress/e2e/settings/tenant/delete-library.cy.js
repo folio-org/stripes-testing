@@ -5,7 +5,7 @@ import Campuses from '../../../support/fragments/settings/tenant/location-setup/
 import Institutions from '../../../support/fragments/settings/tenant/location-setup/institutions';
 import Libraries from '../../../support/fragments/settings/tenant/location-setup/libraries';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import interactorsTools from '../../../support/utils/interactorsTools';
@@ -77,7 +77,7 @@ describe('Settings: Tenant', () => {
       testData.user = userProperties;
       cy.login(testData.user.username, testData.user.password);
       cy.wait(2000);
-      TopMenuNavigation.navigateToApp('Settings');
+      cy.visit(TopMenu.settingsPath);
     });
   });
 

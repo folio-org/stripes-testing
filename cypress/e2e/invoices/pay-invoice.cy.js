@@ -52,6 +52,7 @@ describe('ui-invoices: Approve invoice', () => {
                 Funds.selectFund(defaultFund.name);
                 Funds.addBudget(allocatedQuantity);
                 invoiceLine.subTotal = -subtotalValue;
+                cy.getAdminToken();
                 Approvals.setApprovePayValue(isApprovePayEnabled);
                 cy.visit(TopMenu.invoicesPath);
                 Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);

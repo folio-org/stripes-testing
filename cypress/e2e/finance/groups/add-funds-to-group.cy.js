@@ -58,7 +58,7 @@ describe('ui-finance: Groups', () => {
           Funds.selectFund(firstFund.name);
           Funds.addBudget(allocatedQuantity);
         });
-
+        cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
 
@@ -83,6 +83,7 @@ describe('ui-finance: Groups', () => {
 
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+    cy.getAdminToken();
     FinanceHelp.searchByName(firstFund.name);
     Funds.selectFund(firstFund.name);
     Funds.selectBudgetDetails();

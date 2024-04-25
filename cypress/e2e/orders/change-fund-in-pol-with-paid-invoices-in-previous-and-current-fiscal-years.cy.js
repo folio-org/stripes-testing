@@ -87,7 +87,7 @@ describe('Orders', () => {
           Funds.closeBudgetDetails();
         });
       });
-
+      cy.getAdminToken();
       Funds.createViaApi(secondFund).then((secondfundResponse) => {
         secondFund.id = secondfundResponse.fund.id;
         cy.visit(TopMenu.fundPath);

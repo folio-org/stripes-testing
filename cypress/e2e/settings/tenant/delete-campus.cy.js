@@ -3,11 +3,11 @@ import Campuses from '../../../support/fragments/settings/tenant/location-setup/
 import Institutions from '../../../support/fragments/settings/tenant/location-setup/institutions';
 import Libraries from '../../../support/fragments/settings/tenant/location-setup/libraries';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import ExceptionModal from '../../../support/fragments/settings/tenant/modals/exceptionModal';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -53,7 +53,7 @@ describe('Settings: Tenant', () => {
       testData.user = userProperties;
       cy.login(testData.user.username, testData.user.password);
       cy.wait(2000);
-      TopMenuNavigation.navigateToApp('Settings');
+      cy.visit(TopMenu.settingsPath);
     });
   });
 
