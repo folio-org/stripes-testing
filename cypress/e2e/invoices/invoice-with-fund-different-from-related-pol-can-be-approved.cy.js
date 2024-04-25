@@ -66,6 +66,7 @@ describe('Invoices', () => {
           Funds.addBudget(allocatedQuantity);
         });
         cy.visit(TopMenu.fundPath);
+        cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
 

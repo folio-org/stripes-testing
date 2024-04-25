@@ -72,7 +72,7 @@ describe('Invoices', () => {
           Funds.closeFundDetails();
           Funds.resetFundFilters();
         });
-
+        cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
 
