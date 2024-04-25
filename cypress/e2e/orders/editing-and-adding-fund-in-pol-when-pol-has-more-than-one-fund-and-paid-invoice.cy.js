@@ -79,6 +79,7 @@ describe('Orders', () => {
           Funds.addBudget(allocatedQuantity);
         });
 
+        cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
 

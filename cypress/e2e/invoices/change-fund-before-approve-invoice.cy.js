@@ -81,6 +81,7 @@ describe('Invoices', () => {
           Funds.selectFund(firstFund.name);
           Funds.addBudget(allocatedQuantityForFistFund);
         });
+        cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
           cy.visit(TopMenu.fundPath);
@@ -111,6 +112,7 @@ describe('Invoices', () => {
 
   after(() => {
     cy.loginAsAdmin();
+    cy.getAdminToken();
     cy.visit(SettingsMenu.approvalsPath);
     SettingsOrders.selectApprovalRequired();
     Users.deleteViaApi(user.userId);
@@ -120,6 +122,7 @@ describe('Invoices', () => {
     'C353596 Invoice payment is successful if order line fund distribution is changed before invoice approval (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
+      cy.getAdminToken();
       cy.createOrderApi(order).then((response) => {
         orderNumber = response.body.poNumber;
         cy.visit(TopMenu.ordersPath);

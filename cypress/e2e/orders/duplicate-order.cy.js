@@ -64,7 +64,7 @@ describe('orders: duplicate', () => {
       OrderLines.backToEditingOrder();
       Orders.openOrder();
     });
-
+    cy.getAdminToken();
     cy.createTempUser([
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersView.gui,
@@ -81,6 +81,7 @@ describe('orders: duplicate', () => {
 
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.getAdminToken();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
