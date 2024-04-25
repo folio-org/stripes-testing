@@ -34,6 +34,7 @@ export default {
     cy.do(Button(type).click());
   },
   searchByName: (name) => {
+    cy.wait(4000);
     cy.do([searchField.selectIndex('Name'), searchField.fillIn(name), Button('Search').click()]);
     cy.wait(4000);
   },

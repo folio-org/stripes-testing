@@ -122,7 +122,7 @@ describe('Orders', () => {
         Receiving.selectFromResultsList(testData.sharedInstance.title);
         Receiving.selectPieceByIndexInExpected();
         Receiving.quickReceiveInEditPieceModal();
-        Receiving.selectInstanceInReceive(testData.sharedInstance.title);
+        Receiving.clickTitleInstanceLink();
         InventoryInstance.checkInstanceTitle(testData.sharedInstance.title);
         InventoryInstance.checkInstanceHrId(secondInstanceHRID);
       },

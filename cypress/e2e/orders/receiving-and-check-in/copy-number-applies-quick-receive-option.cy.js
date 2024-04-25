@@ -36,7 +36,6 @@ describe('orders: Receiving and Check-in', () => {
     ],
   };
   const copyNumber = Helper.getRandomBarcode();
-  let orderLineTitle;
   let orderNumber;
   let circ2LocationServicePoint;
   let location;
@@ -70,8 +69,6 @@ describe('orders: Receiving and Check-in', () => {
             Orders.openOrder();
             OrderLines.getOrderLineViaApi({
               query: `poLineNumber=="*${orderNumber}*"`,
-            }).then((orderLinesResponse) => {
-              orderLineTitle = orderLinesResponse[0].titleOrPackage;
             });
           });
         },
@@ -103,7 +100,7 @@ describe('orders: Receiving and Check-in', () => {
       Receiving.fillInCopyNumberInAddPieceModal(copyNumber);
       Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePieceAdd();
-      Receiving.selectInstanceInReceive(orderLineTitle);
+      Receiving.clickTitleInstanceLink();
       InventoryInstance.openHoldingsAccordion(location.name);
       InventoryInstance.openItemByBarcodeAndIndex('No barcode');
       ItemRecordView.verifyEffectiveLocation(location.name);
