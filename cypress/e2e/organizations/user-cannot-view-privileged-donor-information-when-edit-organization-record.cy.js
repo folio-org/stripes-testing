@@ -15,10 +15,6 @@ describe('Organizations', () => {
     erpCode: `ERP-${getRandomPostfix()}`,
   };
   const firstContact = { ...NewOrganization.defaultContact };
-  const secondContact = {
-    firstName: `2AT_FN_${getRandomPostfix()}`,
-    lastName: `2AT_LN_${getRandomPostfix()}`,
-  };
   let user;
 
   before(() => {
@@ -61,13 +57,10 @@ describe('Organizations', () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.editOrganization();
-      Organizations.addNewDonorContact(secondContact);
-      Organizations.closeContact();
-      Organizations.addDonorContactToOrganization(secondContact);
-      Organizations.checkDonorContactIsAdd(secondContact);
-      Organizations.cancelOrganization();
-      Organizations.keepEditingOrganization();
-      Organizations.saveOrganization();
+      Organizations.removeDonorFromOrganization();
+      Organizations.checkIsNotaDonor(organization);
+      Organizations.editOrganization();
+      Organizations.addDonorToOrganization();
     },
   );
 });
