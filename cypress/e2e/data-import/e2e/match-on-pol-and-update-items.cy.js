@@ -62,15 +62,17 @@ describe('Data Import', () => {
     let materialTypeId;
     let user = {};
     let servicePointId;
+    const uniqueFirstInstanceTitle = `Agrarianism and capitalism in early Georgia, 1732-1743 /${getRandomPostfix()}`;
+    const uniqueSecondInstanceTitle = `Evolution of the Earth /${getRandomPostfix()}`;
     const firstItem = {
-      title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
+      title: `${uniqueFirstInstanceTitle} Jay Jordan Butler.`,
       productId: '9782266111560',
       quantity: '1',
       price: '20',
       barcode: uuid(),
     };
     const secondItem = {
-      title: 'Evolution of the Earth / Donald R. Prothero, Robert H. Dott, Jr.',
+      title: `${uniqueSecondInstanceTitle} Donald R. Prothero, Robert H. Dott, Jr.`,
       productId: '9783161484100',
       quantity: '1',
       price: '20',
@@ -359,8 +361,18 @@ describe('Data Import', () => {
           DataImport.editMarcFile(
             'marcFileForC350590.mrc',
             editedMarcFileName,
-            ['test', '242451241247'],
-            [firstOrderNumber, firstItem.barcode],
+            [
+              'Agrarianism and capitalism in early Georgia, 1732-1743 /',
+              'Evolution of the Earth /',
+              'test',
+              '242451241247',
+            ],
+            [
+              uniqueFirstInstanceTitle,
+              uniqueSecondInstanceTitle,
+              firstOrderNumber,
+              firstItem.barcode,
+            ],
           );
         });
 
@@ -422,7 +434,7 @@ describe('Data Import', () => {
           RECORD_STATUSES.UPDATED,
         ]);
         FileDetails.checkItemsStatusesInResultList(1, [
-          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.NO_ACTION,
           RECORD_STATUSES.NO_ACTION,
           RECORD_STATUSES.NO_ACTION,
           RECORD_STATUSES.NO_ACTION,
