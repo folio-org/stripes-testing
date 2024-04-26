@@ -7,6 +7,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 
 describe('MARC Authority management', () => {
   const userData = {};
@@ -15,6 +16,12 @@ describe('MARC Authority management', () => {
   const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
 
   before('Creating user', () => {
+    // This step added because when it runs checkbox "Allow title level requests" in settings/circulation/title-level-requests
+    // checked. For the test case it should be unchecked.
+    cy.getAdminToken().then(() => {
+      TitleLevelRequests.disableTLRViaApi();
+    });
+
     cy.createTempUser([
       Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
       Permissions.inventoryAll.gui,
@@ -45,6 +52,9 @@ describe('MARC Authority management', () => {
     Users.deleteViaApi(userData.id);
 
     InventoryInstance.deleteInstanceViaApi(instanceID);
+    // This step returns checkbox "Allow title level requests" in settings/circulation/title-level-requests
+    // to the state it was before this test.
+    TitleLevelRequests.enableTLRViaApi();
   });
 
   it(
@@ -55,7 +65,7 @@ describe('MARC Authority management', () => {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
-      InventoryInstance.searchByTitle(instanceID);
+      InventoryInstances.searchByTitle(instanceID);
       InventoryInstances.selectInstance();
       InventoryInstance.getId().then((id) => {
         instanceID = id;

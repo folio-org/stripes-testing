@@ -28,3 +28,16 @@ Cypress.Commands.add('getCancellationReasonsApi', (searchParams) => {
     return body.cancellationReasons;
   });
 });
+
+Cypress.Commands.add('getConfigByName', (config) => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'configurations/entries',
+    searchParams: {
+      query: `(module==SETTINGS and configName==${config})`,
+    },
+    failOnStatusCode: true,
+  }).then(({ body }) => {
+    return body;
+  });
+});

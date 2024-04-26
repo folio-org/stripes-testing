@@ -77,7 +77,9 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
       InventoryInstance.waitLoading();
       InventoryInstance.verifyInstanceTitle(testData.instanceTitle1);
       InventoryInstance.viewSource();
-      InventoryViewSource.contains(testData.expectedInSourceRow);
+      InventoryViewSource.contains(
+        '245\t1 0\t‡a Edited ‡h [Sound Recording] / ‡c Cypress Automation',
+      );
       InventoryViewSource.close();
       InventoryInstance.waitLoading();
       InventoryInstance.editMarcBibliographicRecord();

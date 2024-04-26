@@ -80,10 +80,11 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.verifyHoldingActionShowColumns();
 
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Permanent location');
         BulkEditSearchPane.changeShowColumnCheckbox('Permanent location');
         BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Permanent location');
 
-        BulkEditSearchPane.changeShowColumnCheckbox('Call number type');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Call number type');
         BulkEditSearchPane.verifyResultColumTitles('Call number type');
       },
     );
