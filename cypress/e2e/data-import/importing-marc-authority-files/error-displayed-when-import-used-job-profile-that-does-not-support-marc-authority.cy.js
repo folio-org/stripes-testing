@@ -23,13 +23,13 @@ describe('Data Import', () => {
         fileName: `C359246 marcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         errorMessage:
-          "io.vertx.core.impl.NoStackTraceThrowable: Chosen job profile 'Default - Create instance and SRS MARC Bib' does not support 'MARC_AUTHORITY' record type",
+          "Chosen job profile 'Default - Create instance and SRS MARC Bib' does not support 'MARC_AUTHORITY' record type",
       },
       {
         fileName: `C359246 marcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_HOLDINGS_AND_SRS,
         errorMessage:
-          "io.vertx.core.impl.NoStackTraceThrowable: Chosen job profile 'Default - Create Holdings and SRS MARC Holdings' does not support 'MARC_AUTHORITY' record type",
+          "Chosen job profile 'Default - Create Holdings and SRS MARC Holdings' does not support 'MARC_AUTHORITY' record type",
       },
     ];
 

@@ -137,7 +137,7 @@ describe('Data Import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.authority,
         ].forEach((column) => {
-          FileDetails.checkStatusInColumn(RECORD_STATUSES.BLANK, column);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.NO_ACTION, column);
         });
       },
     );
