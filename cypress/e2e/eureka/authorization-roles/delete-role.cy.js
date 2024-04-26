@@ -56,6 +56,7 @@ describe('Eureka', () => {
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.checkCapabilitiesAccordionCounter('10');
           AuthorizationRoles.checkCapabilitySetsAccordionCounter('3');
+          AuthorizationRoles.clickOnUsersAccordion();
           AuthorizationRoles.checkUsersAccordion(1);
           AuthorizationRoles.clickDeleteRole();
           AuthorizationRoles.cancelDeleteRole(testData.roleName);

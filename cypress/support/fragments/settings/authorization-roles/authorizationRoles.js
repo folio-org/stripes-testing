@@ -326,10 +326,6 @@ export default {
     cy.expect(capabilitySetsAccordion.has({ counter: expectedCount }));
   },
 
-  checkUsersAccordionCounter: (expectedCount) => {
-    cy.expect(usersAccordion.has({ counter: expectedCount }));
-  },
-
   checkUsersAccordion: (expectedCount = false) => {
     cy.expect(usersAccordion.has({ open: true }));
     if (expectedCount) cy.expect(usersAccordion.find(MultiColumnList({ rowCount: expectedCount })).exists());
@@ -356,5 +352,10 @@ export default {
       Pane(roleName).absent(),
       rolesPane.find(HTML(roleName, { className: including('root') })).absent(),
     ]);
+  },
+
+  clickOnUsersAccordion: (checkOpen = true) => {
+    cy.do(usersAccordion.clickHeader());
+    if (checkOpen) cy.expect(usersAccordion.has({ open: true }));
   },
 };
