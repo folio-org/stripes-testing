@@ -29,7 +29,7 @@ describe('Eureka', () => {
       after('Delete role, user', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
-        cy.deleteAuthorizationRoleApi(testData.roleId);
+        cy.deleteAuthorizationRoleApi(testData.roleId, true);
       });
 
       it(

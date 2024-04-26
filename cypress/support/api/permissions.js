@@ -177,11 +177,12 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('deleteAuthorizationRoleApi', (roleId) => {
+Cypress.Commands.add('deleteAuthorizationRoleApi', (roleId, ignoreErrors = false) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `roles/${roleId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   });
 });
 
