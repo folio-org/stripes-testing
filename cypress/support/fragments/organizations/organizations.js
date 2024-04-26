@@ -537,6 +537,14 @@ export default {
     InteractorsTools.checkCalloutMessage('The contact was saved');
   },
 
+  openPrivilegedDonorInformationSection: () => {
+    cy.do(Button({ id: 'accordion-toggle-button-privilegedDonorInformation' }).click());
+  },
+
+  verifyAddDonorButtonIsAbsent: () => {
+    cy.expect(Button('Add donor').absent());
+  },
+
   addDonorContactToOrganization: (contact) => {
     cy.do([
       Button({ id: 'accordion-toggle-button-privilegedDonorInformation' }).click(),
