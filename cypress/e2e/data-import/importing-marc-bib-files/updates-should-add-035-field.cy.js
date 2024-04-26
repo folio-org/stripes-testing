@@ -1,12 +1,12 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -78,7 +78,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    beforeEach('create user and login', () => {
+    before('Create test user', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -88,11 +88,13 @@ describe('Data Import', () => {
         Permissions.remoteStorageView.gui,
       ]).then((userProperties) => {
         user = userProperties;
+      });
+    });
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
+    beforeEach('Login', () => {
+      cy.login(user.username, user.password, {
+        path: TopMenu.dataImportPath,
+        waiter: DataImport.waitLoading,
       });
     });
 

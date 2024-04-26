@@ -14,7 +14,7 @@ describe('Data Import', () => {
     const marcFileName = `C2325 autotestFileName${getRandomPostfix()}.mrc`;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
-    before('login', () => {
+    before('Login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -29,7 +29,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });

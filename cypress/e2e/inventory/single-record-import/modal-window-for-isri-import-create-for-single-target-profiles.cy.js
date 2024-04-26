@@ -17,7 +17,7 @@ describe('Inventory', () => {
     const testIdentifier = '1234567';
     const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
 
-    before('login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiInventorySingleRecordImport.gui,
@@ -34,7 +34,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(

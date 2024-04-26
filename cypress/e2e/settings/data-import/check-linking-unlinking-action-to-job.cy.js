@@ -38,7 +38,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         testData.user = userProperties;
 

@@ -1,16 +1,16 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
 import {
+  DEFAULT_JOB_PROFILE_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import TopMenu from '../../../support/fragments/topMenu';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -19,14 +19,14 @@ describe('Data Import', () => {
     const filePathToUpload = 'marcBibFileForC11121.mrc';
     const fileName = `C11121 autotestFile${getRandomPostfix()}.mrc`;
 
-    before('login', () => {
+    before('Login', () => {
       cy.loginAsAdmin({
         path: TopMenu.dataImportPath,
         waiter: DataImport.waitLoading,
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         cy.wrap(instanceHrids).each((hrid) => {
           cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(

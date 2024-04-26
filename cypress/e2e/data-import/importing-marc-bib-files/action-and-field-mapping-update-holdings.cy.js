@@ -110,7 +110,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
@@ -192,27 +192,24 @@ describe('Data Import', () => {
       JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
 
       // upload a marc file for creating of the new instance, holding and item
-      cy.visit(TopMenu.dataImportPath);
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(filePathToUpload, marcFileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfileForCreate.profileName);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(marcFileName);
-      Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(marcFileName);
-      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-        instanceHrid = initialInstanceHrId;
+      DataImport.uploadFileViaApi(
+        filePathToUpload,
+        marcFileName,
+        jobProfileForCreate.profileName,
+      ).then((response) => {
+        instanceHrid = response[0].instance.hrid;
+      });
 
-        InstanceRecordView.openHoldingView();
-        HoldingsRecordView.getHoldingsHrId().then((initialHrId) => {
-          holdingsHrId = initialHrId;
-        });
+      cy.visit(TopMenu.dataImportPath);
+      Logs.openFileDetails(marcFileName);
+      FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
+      HoldingsRecordView.getHoldingsHrId().then((initialHrId) => {
+        holdingsHrId = initialHrId;
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
@@ -232,7 +229,6 @@ describe('Data Import', () => {
           },
         );
       });
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     });
 
     it(

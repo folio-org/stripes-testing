@@ -1,13 +1,13 @@
-import Permissions from '../../../../support/dictionary/permissions';
-import Users from '../../../../support/fragments/users/users';
-import TopMenu from '../../../../support/fragments/topMenu';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import { INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import Permissions from '../../../../support/dictionary/permissions';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {

@@ -26,7 +26,7 @@ describe('Data Import', () => {
       action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
 
-    before('create user and profile', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
@@ -37,7 +37,7 @@ describe('Data Import', () => {
       ActionProfiles.createWithoutLinkedMappingProfile(actionProfile);
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);

@@ -19,7 +19,7 @@ describe('Inventory', () => {
       instanceTitle: `Instance ${getRandomPostfix()}`,
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
@@ -76,7 +76,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         cy.getInstance({

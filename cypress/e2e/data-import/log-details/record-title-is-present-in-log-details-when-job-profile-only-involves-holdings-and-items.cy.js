@@ -61,7 +61,7 @@ describe('Data Import', () => {
       subfieldForItem: '$i',
     };
 
-    before('create test data', () => {
+    before('Create test data', () => {
       cy.getAdminToken();
       cy.loginAsAdmin()
         .then(() => {
@@ -161,7 +161,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });

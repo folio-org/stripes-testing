@@ -1,17 +1,17 @@
 import {
+  DEFAULT_JOB_PROFILE_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -23,7 +23,7 @@ describe('Data Import', () => {
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const instanceTitle = 'The Journal of ecclesiastical history.';
 
-    before('login', () => {
+    before('Login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -37,7 +37,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });

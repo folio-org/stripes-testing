@@ -108,7 +108,7 @@ describe('Data Import', () => {
       },
     ];
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
         cy.login(userProperties.username, userProperties.password);
@@ -184,7 +184,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         collectionOfMatchProfiles.forEach((profile) => {

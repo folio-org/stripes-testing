@@ -87,7 +87,7 @@ describe('Data Import', () => {
       profileName: `C376973 job profile ${getRandomPostfix()}`,
     };
 
-    before('login', () => {
+    before('Create test data and login', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
@@ -122,7 +122,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);

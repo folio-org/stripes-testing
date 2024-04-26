@@ -92,7 +92,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create test user', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -109,7 +109,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         MarcFieldProtection.getListViaApi({
           query: `"data"=="${firstProtectedFieldsData.data}"`,

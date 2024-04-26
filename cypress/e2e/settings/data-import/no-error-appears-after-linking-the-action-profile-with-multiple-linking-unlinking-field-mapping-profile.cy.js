@@ -34,7 +34,7 @@ describe('Data Import', () => {
     };
     const jobProfileName = `C422253 job profile${getRandomPostfix()}`;
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       NewJobProfile.createJobProfileWithoutLinkedProfilesViaApi(jobProfileName);
 

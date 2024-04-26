@@ -37,7 +37,7 @@ describe('Inventory', () => {
       'Record 1234567 updated. Results may take a few moments to become visible in Inventory';
     const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         DataImport.uploadFileViaApi(
           'oneMarcBib.mrc',
@@ -72,7 +72,6 @@ describe('Inventory', () => {
         targetProfile.externalId,
         targetProfile.internalId,
       );
-      cy.logout();
 
       cy.createTempUser([
         Permissions.inventoryAll.gui,
@@ -88,7 +87,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);

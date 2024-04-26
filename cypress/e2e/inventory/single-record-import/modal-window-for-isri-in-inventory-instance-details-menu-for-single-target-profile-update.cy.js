@@ -34,7 +34,7 @@ describe('Inventory', () => {
       'Record 1234567 updated. Results may take a few moments to become visible in Inventory';
     const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
 
-    before('login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         'oneMarcBib.mrc',
@@ -70,7 +70,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         InventoryInstance.deleteInstanceViaApi(instanceId);
