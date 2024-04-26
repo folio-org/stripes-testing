@@ -520,6 +520,35 @@ export default {
     InteractorsTools.checkCalloutMessage('The contact was saved');
   },
 
+  addNewDonorContact: (contact) => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-privilegedDonorInformation' }).click(),
+      Section({ id: 'privilegedDonorInformation' }).find(Button('Add donor')).click(),
+      addContacsModal.find(buttonNew).click(),
+      lastNameField.fillIn(contact.lastName),
+      firstNameField.fillIn(contact.firstName),
+      saveButtonInCotact.click(),
+    ]);
+    InteractorsTools.checkCalloutMessage('The contact was saved');
+  },
+
+  addDonorContactToOrganization: (contact) => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-privilegedDonorInformation' }).click(),
+      Section({ id: 'privilegedDonorInformation' }).find(Button('Add donor')).click(),
+      addContacsModal.find(TextField({ id: 'input-record-search' })).fillIn(contact.lastName),
+      addContacsModal.find(Button('Search')).click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
+      addContacsModal
+        .find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
+        .find(Checkbox())
+        .click(),
+      addContacsModal.find(saveButton).click(),
+    ]);
+  },
+
   deleteContact: () => {
     cy.do([actionsButton.click(), deleteButton.click(), confirmButton.click()]);
   },
@@ -608,13 +637,27 @@ export default {
     cy.do(Button('Cancel').click());
   },
 
+  keepEditingOrganization: () => {
+    cy.do(
+      Modal({ id: 'cancel-editing-confirmation' })
+        .find(Button({ id: 'clickable-cancel-editing-confirmation-confirm' }))
+        .click(),
+    );
+  },
+
   checkContactIsAdd: (contact) => {
     cy.expect(
-      contactPeopleSection
+      Section({ id: 'privilegedDonorInformation' })
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .has({ content: `${contact.lastName}, ${contact.firstName}` }),
     );
+  },
+
+  checkDonorContactIsAdd: (contact, index = 0) => {
+    cy.get('#privilegedDonorInformation [data-row-index="row-' + index + '"]').within(() => {
+      cy.get('div[class*=mclCell-]').eq(0).contains(`${contact.lastName}, ${contact.firstName}`);
+    });
   },
 
   checkInterfaceIsAdd: (defaultInterface) => {
@@ -775,6 +818,7 @@ export default {
 
   saveOrganization: () => {
     cy.do(saveAndClose.click());
+    cy.wait(6000);
   },
 
   addBankingInformation: (bankingInformation) => {

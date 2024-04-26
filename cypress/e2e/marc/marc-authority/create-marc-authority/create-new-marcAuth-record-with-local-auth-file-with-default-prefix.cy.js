@@ -82,7 +82,7 @@ describe('MARC', () => {
 
           // 4 Click on the "Save & close" button
           QuickMarcEditor.clickSaveAndCloseInModal();
-          QuickMarcEditor.checkFourthBoxDisabled(1);
+          QuickMarcEditor.checkFourthBoxEditable(1, false);
           QuickMarcEditor.checkContentByTag(
             tag001,
             `${localAuthFile.prefix}${localAuthFile.startWithNumber}`,

@@ -388,6 +388,7 @@ export default {
   },
 
   addNewBulkEditFilterString() {
+    cy.wait(1000);
     cy.do(plusBtn.click());
     cy.wait(1000);
   },
@@ -1018,5 +1019,9 @@ export default {
       .then(($select) => {
         expect($select.text()).to.not.contain(type);
       });
+  },
+
+  verifyCheckboxAbsent() {
+    cy.expect(Checkbox().absent());
   },
 };
