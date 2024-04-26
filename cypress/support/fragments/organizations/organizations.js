@@ -367,9 +367,14 @@ export default {
     cy.wait(4000);
   },
 
-  checkIsDonor: (organization) => {
+  checkIsaDonor: (organization) => {
     cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
     cy.expect(summarySection.find(donorCheckbox).is({ visible: true, disabled: false }));
+  },
+
+  checkIsNotaDonor: (organization) => {
+    cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
+    cy.expect(summarySection.find(donorCheckbox).is({ visible: true, disabled: true }));
   },
 
   expectColorFromList: () => {
