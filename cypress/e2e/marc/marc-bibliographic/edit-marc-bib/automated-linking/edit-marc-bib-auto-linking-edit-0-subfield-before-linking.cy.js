@@ -26,22 +26,22 @@ describe('MARC', () => {
         const preLinkedFields = [
           {
             tag: '650',
-            value: 'Lesbian authors',
+            value: 'C388537 Lesbian authors',
             rowIndex: 31,
             newContent:
-              '$a Lesbian authors $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh96007532',
+              '$aC388537 Lesbian authors $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh96007532',
           },
           {
             tag: '650',
-            value: 'Lesbian activists',
+            value: 'C388537 Lesbian activists',
             rowIndex: 32,
             newContent:
-              '$a Lesbian activists $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh960075325555',
+              '$aC388537 Lesbian activists $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh960075325555',
           },
         ];
         const authority = {
           searchOption: 'Keyword',
-          title: 'Lesbian activists--Jamaica--Biography',
+          title: 'C388537 Lesbian activists--Jamaica--Biography',
         };
         const marcFiles = [
           {
@@ -196,7 +196,7 @@ describe('MARC', () => {
               preLinkedFields[0].tag,
               '\\',
               '0',
-              '$a Lesbian activists',
+              '$a C388537 Lesbian activists',
               '$z Jamaica $v Biography.',
               '$0 http://id.loc.gov/authorities/subjects/sh96007532',
               '',
@@ -216,8 +216,8 @@ describe('MARC', () => {
             // #11 Click on any "MARC authority app" icon placed next to auto-linked subject name.
             cy.visit(TopMenu.marcAuthorities);
             MarcAuthorities.waitLoading();
-            MarcAuthorities.searchBy(authority.searchOption, 'Lesbian activists');
-            MarcAuthorities.selectTitle('Lesbian activists');
+            MarcAuthorities.searchBy(authority.searchOption, 'C388537 Lesbian activists');
+            MarcAuthorities.selectTitle('C388537 Lesbian activists');
             MarcAuthority.waitLoading();
           },
         );

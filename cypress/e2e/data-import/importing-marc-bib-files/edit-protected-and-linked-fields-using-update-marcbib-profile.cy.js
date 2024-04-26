@@ -94,7 +94,7 @@ describe('Data Import', () => {
       },
       {
         marc: 'marcFileForC380511.mrc',
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        fileName: `testMarcFileC380511.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 4,
         propertyName: 'authority',
@@ -103,34 +103,45 @@ describe('Data Import', () => {
     const linkingTagAndValues = [
       {
         rowIndex: 17,
-        value: 'Ludwig van, Beethoven, 1770-1827.',
+        value: 'C380511 Ludwig van, Beethoven, 1770-1827.',
         tag: '100',
       },
       {
         rowIndex: 18,
         value:
-          'Beethoven, Ludwig van, 1770-1827 Variations, piano, violin, cello, op. 44, E♭ major',
+          'C380511 Beethoven, Ludwig van, 1770-1827 Variations, piano, violin, cello, op. 44, E♭ major',
         tag: '240',
       },
       {
         rowIndex: 41,
-        value: 'Music piano',
+        value: 'C380511 Music piano',
         tag: '650',
       },
       {
         rowIndex: 50,
-        value: 'Hewitt, Angela, 1958-',
+        value: 'C380511 Hewitt, Angela, 1958-',
         tag: '700',
       },
       {
         rowIndex: 51,
-        value: 'Ludwig van, Beethoven, 1770-1827.',
+        value: 'C380511 Ludwig van, Beethoven, 1770-1827.',
         tag: '700',
       },
     ];
     const createdAuthorityIDs = [];
 
     before('Creating user', () => {
+      cy.getAdminToken();
+      MarcAuthorities.getMarcAuthoritiesViaApi({
+        limit: 100,
+        query: 'keyword="C380511*" and (authRefType==("Authorized" or "Auth/Ref"))',
+      }).then((authorities) => {
+        if (authorities) {
+          authorities.forEach(({ id }) => {
+            MarcAuthority.deleteViaAPI(id);
+          });
+        }
+      });
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
@@ -279,18 +290,18 @@ describe('Data Import', () => {
           nameForExportedMarcFile,
           nameForUpdatedMarcFile,
           [
-            'aLudwig van, Beethoven,d1770-1827ecomposer',
+            'aC380511 Ludwig van, Beethoven,d1770-1827ecomposer',
             '0id.loc.gov/authorities/names/n83130832',
-            'aMusic piano',
+            'aC380511 Music piano',
             'ewriter of supplementary textual content.',
-            'aLudwig van, Beethoven,d1770-1827iContainer of (work):0http://id.loc.gov/authorities/names/n79107741',
+            'aC380511 Ludwig van, Beethoven,d1770-1827iContainer of (work):0http://id.loc.gov/authorities/names/n79107741',
           ],
           [
-            'aBeethoven, Ludwig V.d1770-1827eAuthor',
+            'aC380511 Beethoven, Ludwig V.d1770-1827eAuthor',
             '0id.loc.gov/authorities/names/n83130833',
-            'aMusic pianocTest environment',
+            'aC380511 Music pianocTest environment',
             'eauthor of supplementary textual content.',
-            'aBeethoven, Ludwig V.d1770-1827iContainer of (work):',
+            'aC380511 Beethoven, Ludwig V.d1770-1827iContainer of (work):',
           ],
         );
 
@@ -313,7 +324,7 @@ describe('Data Import', () => {
           '100',
           '1',
           '\\',
-          '$a Ludwig van, Beethoven, $d 1770-1827',
+          '$a C380511 Ludwig van, Beethoven, $d 1770-1827',
           '$e composer.',
           '$0 http://id.loc.gov/authorities/names/n79107741',
           '',
@@ -333,7 +344,7 @@ describe('Data Import', () => {
           '650',
           '\\',
           '0',
-          '$a Music piano',
+          '$a C380511 Music piano',
           '$c Test environment',
           '$0 http://id.loc.gov/authorities/childrensSubjects/sj2021056711',
           '',
@@ -343,7 +354,7 @@ describe('Data Import', () => {
           '700',
           '1',
           '\\',
-          '$a Hewitt, Angela, $d 1958-',
+          '$a C380511 Hewitt, Angela, $d 1958-',
           '$e instrumentalist, $e writer of supplementary textual content.',
           '$0 http://id.loc.gov/authorities/names/n91099716',
           '',
@@ -353,7 +364,7 @@ describe('Data Import', () => {
           '700',
           '1',
           '2',
-          '$a Ludwig van, Beethoven, $d 1770-1827',
+          '$a C380511 Ludwig van, Beethoven, $d 1770-1827',
           '$i Container of (work):',
           '$0 http://id.loc.gov/authorities/names/n79107741',
           '',
@@ -363,14 +374,14 @@ describe('Data Import', () => {
           '700',
           '1',
           '\\',
-          '$a Hewitt, Angela, $d 1958- $e instrumentalist, $e author of supplementary textual content. $0 http://id.loc.gov/authorities/names/n91099716',
+          '$a C380511 Hewitt, Angela, $d 1958- $e instrumentalist, $e author of supplementary textual content. $0 http://id.loc.gov/authorities/names/n91099716',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
           53,
           '700',
           '1',
           '2',
-          '$a Beethoven, Ludwig V. $d 1770-1827 $i Container of (work):',
+          '$a C380511 Beethoven, Ludwig V. $d 1770-1827 $i Container of (work):',
         );
       },
     );
