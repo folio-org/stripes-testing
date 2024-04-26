@@ -447,6 +447,7 @@ export default {
   },
 
   selectStatusInSearch: (orderStatus) => {
+    cy.wait(6000);
     cy.do(Accordion({ id: 'workflowStatus' }).clickHeader());
     switch (orderStatus) {
       case 'Closed':

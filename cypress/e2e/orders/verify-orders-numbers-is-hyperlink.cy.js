@@ -81,8 +81,9 @@ describe('Orders', () => {
 
         Orders.selectFromResultsList(title);
         OrderDetails.verifyOrderTitle(`Purchase order - ${title}`);
+        OrderDetails.closeOrderDetails();
       });
-
+      Orders.resetFilters();
       Orders.selectOrderLines();
       OrderLines.verifyNoResultsMessage();
 
