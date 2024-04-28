@@ -1,7 +1,6 @@
 import {
   ACQUISITION_METHOD_NAMES,
   FOLIO_RECORD_TYPE,
-  JOB_STATUS_NAMES,
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
@@ -87,7 +86,7 @@ describe('Data Import', () => {
       profileName: `C377023 Test Order ${getRandomPostfix()}`,
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
@@ -108,17 +107,11 @@ describe('Data Import', () => {
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-      cy.visit(TopMenu.dataImportPath);
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(filePath, marcFileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfile.profileName);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(marcFileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      DataImport.uploadFileViaApi(filePath, marcFileName, jobProfile.profileName);
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -126,7 +119,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
