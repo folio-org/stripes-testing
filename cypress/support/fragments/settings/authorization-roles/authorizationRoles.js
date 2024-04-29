@@ -20,6 +20,8 @@ const rolesPane = Pane('Authorization roles');
 const newButton = Button('+ New');
 const actionsButton = Button('Actions');
 const editButton = Button('Edit');
+const deleteButton = Button('Delete');
+const cancelButton = Button('Cancel');
 const createRolePane = Pane('Create role');
 const editRolePane = Pane('Edit role');
 const roleNameInput = TextField('Name*');
@@ -47,6 +49,11 @@ const capabilityTables = {
   Settings: MultiColumnList({ dataTestId: 'capabilities-settings-type' }),
   Procedural: MultiColumnList({ dataTestId: 'capabilities-procedural-type' }),
 };
+
+const roleSearchInputField = rolesPane.find(TextField({ testid: 'search-field' }));
+const roleSearchButton = rolesPane.find(Button({ dataTestID: 'search-button' }));
+const usersAccordion = Accordion('Assigned users');
+const deleteRoleModal = Modal('Delete role');
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
@@ -190,6 +197,7 @@ export default {
     cy.do(rolesPane.find(HTML(roleName, { className: including('root') })).click());
     cy.expect([
       Pane(roleName).exists(),
+      Spinner().absent(),
       capabilitiesAccordion.has({ open: false }),
       capabilitySetsAccordion.has({ open: false }),
     ]);
@@ -305,5 +313,50 @@ export default {
 
   verifyCapabilitySetTableAbsent(tableName) {
     cy.expect(capabilitySetsAccordion.find(capabilityTables[tableName]).absent());
+  },
+
+  searchRole: (roleName) => {
+    cy.do([roleSearchInputField.fillIn(roleName), roleSearchButton.click()]);
+  },
+
+  checkCapabilitiesAccordionCounter: (expectedCount) => {
+    cy.expect(capabilitiesAccordion.has({ counter: expectedCount }));
+  },
+
+  checkCapabilitySetsAccordionCounter: (expectedCount) => {
+    cy.expect(capabilitySetsAccordion.has({ counter: expectedCount }));
+  },
+
+  checkUsersAccordion: (expectedCount = false) => {
+    cy.expect(usersAccordion.has({ open: true }));
+    if (expectedCount) cy.expect(usersAccordion.find(MultiColumnList({ rowCount: expectedCount })).exists());
+    else cy.expect(usersAccordion.find(MultiColumnList()).absent());
+  },
+
+  clickDeleteRole: () => {
+    cy.do([actionsButton.click(), deleteButton.click()]);
+    cy.expect([
+      deleteRoleModal.find(deleteButton).exists(),
+      deleteRoleModal.find(cancelButton).exists(),
+    ]);
+  },
+
+  cancelDeleteRole: (roleName) => {
+    cy.do(deleteRoleModal.find(cancelButton).click());
+    cy.expect([deleteRoleModal.absent(), Pane(roleName).exists()]);
+  },
+
+  confirmDeleteRole: (roleName) => {
+    cy.do(deleteRoleModal.find(deleteButton).click());
+    cy.expect([
+      deleteRoleModal.absent(),
+      Pane(roleName).absent(),
+      rolesPane.find(HTML(roleName, { className: including('root') })).absent(),
+    ]);
+  },
+
+  clickOnUsersAccordion: (checkOpen = true) => {
+    cy.do(usersAccordion.clickHeader());
+    if (checkOpen) cy.expect(usersAccordion.has({ open: true }));
   },
 };

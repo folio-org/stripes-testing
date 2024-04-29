@@ -57,6 +57,7 @@ export default HTML.extend('accordion')
     inputNames: (el) => [...el.querySelectorAll('input')].map((input) => input.getAttribute('name')),
     isWrapper: (el) => /accordionsWrapper/.test(el.className),
     validationMessage: (el) => el.querySelector('[class*=validationMessage]').textContent,
+    counter: (el) => el.querySelector('span[class^=badge] [class^=label]').textContent,
   })
   .actions({
     clickHeader: ({ perform }) => perform((el) => el.querySelector('[class^=labelArea-]').click()),
