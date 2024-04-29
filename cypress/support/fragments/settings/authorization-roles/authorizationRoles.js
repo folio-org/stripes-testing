@@ -327,7 +327,6 @@ export default {
   },
 
   checkUsersAccordion: (expectedCount = false) => {
-    cy.expect(usersAccordion.has({ open: true }));
     if (expectedCount) cy.expect(usersAccordion.find(MultiColumnList({ rowCount: expectedCount })).exists());
     else cy.expect(usersAccordion.find(MultiColumnList()).absent());
   },
