@@ -328,14 +328,13 @@ export default {
   },
 
   checkUsersAccordion: (expectedCount = false) => {
+    cy.expect(usersAccordion.has({ open: true }));
     if (expectedCount) cy.expect(usersAccordion.find(MultiColumnList({ rowCount: expectedCount })).exists());
     else cy.expect(usersAccordion.find(MultiColumnList()).absent());
   },
 
   clickDeleteRole: () => {
-    cy.wait(1000);
-    cy.do(actionsButton.click());
-    cy.do(deleteButton.click());
+    cy.do([actionsButton.click(), deleteButton.click()]);
     cy.expect([
       deleteRoleModal.find(deleteButton).exists(),
       deleteRoleModal.find(cancelButton).exists(),
@@ -344,7 +343,6 @@ export default {
 
   cancelDeleteRole: (roleName) => {
     cy.do(deleteRoleModal.find(cancelButton).click());
-    cy.wait(1000);
     cy.expect([deleteRoleModal.absent(), Pane(roleName).exists()]);
   },
 
