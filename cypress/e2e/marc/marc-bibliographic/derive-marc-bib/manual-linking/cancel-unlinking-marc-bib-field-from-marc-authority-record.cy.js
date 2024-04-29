@@ -139,8 +139,7 @@ describe('MARC', () => {
             InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
             QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(linkingTagAndValues[0].rowIndex);
-            // TODO: check if button not enabled is bug or not
-            // QuickMarcEditor.checkButtonSaveAndCloseEnable();
+            QuickMarcEditor.checkButtonSaveAndCloseDisabled();
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib700AfterLinkingToAuth100);
             QuickMarcEditor.checkUnlinkTooltipText(75, 'Unlink from MARC Authority record');
             QuickMarcEditor.clickUnlinkIconInTagField(linkingTagAndValues[0].rowIndex);
