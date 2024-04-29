@@ -197,6 +197,7 @@ export default {
     cy.do(rolesPane.find(HTML(roleName, { className: including('root') })).click());
     cy.expect([
       Pane(roleName).exists(),
+      Spinner().absent(),
       capabilitiesAccordion.has({ open: false }),
       capabilitySetsAccordion.has({ open: false }),
     ]);
@@ -332,7 +333,9 @@ export default {
   },
 
   clickDeleteRole: () => {
-    cy.do([actionsButton.click(), deleteButton.click()]);
+    cy.do(actionsButton.click());
+    cy.wait(1000);
+    cy.do(deleteButton.click());
     cy.expect([
       deleteRoleModal.find(deleteButton).exists(),
       deleteRoleModal.find(cancelButton).exists(),
@@ -341,6 +344,7 @@ export default {
 
   cancelDeleteRole: (roleName) => {
     cy.do(deleteRoleModal.find(cancelButton).click());
+    cy.wait(1000);
     cy.expect([deleteRoleModal.absent(), Pane(roleName).exists()]);
   },
 
