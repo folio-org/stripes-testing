@@ -279,6 +279,7 @@ Cypress.Commands.add('updateRolesForUserApi', (userId, roleIds) => {
     method: 'PUT',
     path: `roles/users/${userId}`,
     body: {
+      userId,
       roleIds: [...roleIds],
     },
     isDefaultSearchParamsRequired: false,

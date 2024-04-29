@@ -53,6 +53,8 @@ const listFeesFines = MultiColumnList({ id: 'list-accounts-history-view-feesfine
 const createRequestButton = Button('Create request');
 const openedFeesFinesLink = feesFinesAccordion.find(Link({ id: 'clickable-viewcurrentaccounts' }));
 const closedFeesFinesLink = feesFinesAccordion.find(HTML({ id: 'clickable-viewclosedaccounts' }));
+const userRolesAccordion = rootSection.find(Accordion('User roles'));
+const userRolesEmptyText = 'No user roles found';
 
 export default {
   errors,
@@ -546,5 +548,24 @@ export default {
       cy.expect(permissionAccordion.exists());
       cy.expect(permissionAccordion.has({ open: false }));
     } else cy.expect(permissionAccordion.absent());
+  },
+
+  verifyUserRolesCounter(expectedCount) {
+    cy.expect(userRolesAccordion.has({ counter: expectedCount }));
+  },
+
+  clickUserRolesAccordion(isExpanded = true) {
+    cy.do(userRolesAccordion.clickHeader());
+    cy.expect(userRolesAccordion.has({ open: isExpanded }));
+  },
+
+  verifyUserRoleNames(roleNames) {
+    roleNames.forEach((roleName) => {
+      cy.expect(userRolesAccordion.find(HTML(roleName)).exists());
+    });
+  },
+
+  verifyUserRolesAccordionEmpty() {
+    cy.expect(userRolesAccordion.find(HTML(userRolesEmptyText)).exists());
   },
 };

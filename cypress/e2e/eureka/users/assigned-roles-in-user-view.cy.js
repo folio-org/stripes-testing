@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import UsersCard from '../../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
@@ -28,9 +26,9 @@ describe('Eureka', () => {
       });
       cy.createAuthorizationRoleApi(testData.role0Name).then((role0) => {
         testData.role0Id = role0.id;
-        cy.createAuthorizationRoleApi(testData.role0Name).then((roleA) => {
+        cy.createAuthorizationRoleApi(testData.roleAName).then((roleA) => {
           testData.roleAId = roleA.id;
-          cy.createAuthorizationRoleApi(testData.role0Name).then((roleB) => {
+          cy.createAuthorizationRoleApi(testData.roleBName).then((roleB) => {
             testData.roleBId = roleB.id;
             cy.getCapabilitiesApi(2).then((capabs) => {
               cy.getCapabilitySetsApi(2).then((capabSets) => {
@@ -59,7 +57,7 @@ describe('Eureka', () => {
       cy.deleteRolesForUserApi(testData.userA.userId);
       cy.updateRolesForUserApi(testData.userB.userId, [testData.role0Id]);
       cy.login(testData.tempUser.username, testData.tempUser.password, {
-        path: TopMenu.settingsAuthorizationRoles,
+        path: TopMenu.usersPath,
         waiter: Users.waitLoading,
       });
       UsersSearchPane.searchByUsername(testData.userB.username);
@@ -83,27 +81,39 @@ describe('Eureka', () => {
       { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
       () => {
         UsersSearchPane.selectUserFromList(testData.userB.username);
+        UsersCard.verifyUserRolesCounter('1');
+        UsersCard.clickUserRolesAccordion();
+        UsersCard.verifyUserRoleNames([testData.role0Name]);
 
-        // UserEdit.verifyUserPermissionsAccordion(false);
-        // Users.saveCreatedUser();
-        // Users.checkCreateUserPaneOpened(false);
+        UsersSearchPane.searchByUsername(testData.userA.username);
+        UsersSearchPane.selectUserFromList(testData.userB.username);
+        UsersCard.verifyUserRolesCounter('0');
+        UsersCard.clickUserRolesAccordion();
+        UsersCard.verifyUserRolesAccordionEmpty();
 
-        // Users.verifyLastNameOnUserDetailsPane(testData.lastName);
-        // UsersCard.verifyUserPermissionsAccordion(false);
+        cy.visit(TopMenu.settingsAuthorizationRoles);
+        AuthorizationRoles.waitContentLoading();
+        AuthorizationRoles.searchRole(testData.roleAName);
+        AuthorizationRoles.clickOnRoleName(testData.roleAName);
+        AuthorizationRoles.clickAssignUsersButton();
+        AuthorizationRoles.selectUserInModal(testData.userA.username);
+        AuthorizationRoles.clickSaveInAssignModal();
+        AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
 
-        // UserEdit.openEdit();
-        // UserEdit.checkUserEditPaneOpened();
-        // UserEdit.verifyUserPermissionsAccordion(false);
-        // UserEdit.closeUsingIcon();
-        // UserEdit.checkUserEditPaneOpened(false);
+        AuthorizationRoles.searchRole(testData.roleBName);
+        AuthorizationRoles.clickOnRoleName(testData.roleBName);
+        AuthorizationRoles.clickAssignUsersButton();
+        AuthorizationRoles.selectUserInModal(testData.userA.username);
+        AuthorizationRoles.clickSaveInAssignModal();
+        AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
 
-        // UsersSearchPane.searchByKeywords(testData.tempUser.username);
-        // UsersSearchPane.openUser(testData.tempUser.userId);
-        // Users.verifyLastNameOnUserDetailsPane(testData.tempUser.lastName);
-        // UsersCard.verifyUserPermissionsAccordion(false);
-        // UserEdit.openEdit();
-        // UserEdit.checkUserEditPaneOpened();
-        // UserEdit.verifyUserPermissionsAccordion(false);
+        cy.visit(TopMenu.usersPath);
+        Users.waitLoading();
+        UsersSearchPane.searchByUsername(testData.userA.username);
+        UsersSearchPane.selectUserFromList(testData.userA.username);
+        UsersCard.verifyUserRolesCounter('2');
+        UsersCard.clickUserRolesAccordion();
+        UsersCard.verifyUserRoleNames([testData.roleAName, testData.roleBName]);
       },
     );
   });

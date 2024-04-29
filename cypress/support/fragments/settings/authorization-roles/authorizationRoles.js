@@ -54,6 +54,12 @@ const roleSearchInputField = rolesPane.find(TextField({ testid: 'search-field' }
 const roleSearchButton = rolesPane.find(Button({ dataTestID: 'search-button' }));
 const usersAccordion = Accordion('Assigned users');
 const deleteRoleModal = Modal('Delete role');
+const assignUsersButton = Button('Assign/Unassign');
+const assignUsersModal = Modal('Select User');
+const searchInputInAssignModal = TextField('user search');
+const searchButtonInAssignModal = assignUsersModal.find(Button('Search'));
+const saveButtonInAssignModal = assignUsersModal.find(Button('Save'));
+const resultsPaneInAssignModal = Pane('User Search Results');
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
@@ -358,5 +364,35 @@ export default {
   clickOnUsersAccordion: (checkOpen = true) => {
     cy.do(usersAccordion.clickHeader());
     if (checkOpen) cy.expect(usersAccordion.has({ open: true }));
+  },
+
+  clickAssignUsersButton: () => {
+    cy.do(assignUsersButton.click());
+    cy.expect([
+      assignUsersModal.exists(),
+      searchButtonInAssignModal.has({ disabled: true }),
+      saveButtonInAssignModal.has({ disabled: true }),
+    ]);
+  },
+
+  selectUserInModal: (username, isSelected = true) => {
+    const targetCheckbox = resultsPaneInAssignModal.find(
+      MultiColumnListRow(including(username), { isContainer: false }).find(Checkbox()),
+    );
+    cy.do([
+      searchInputInAssignModal.fillIn(username),
+      searchButtonInAssignModal.click(),
+      targetCheckbox.click(),
+    ]);
+    cy.expect(targetCheckbox.has({ checked: isSelected }));
+  },
+
+  clickSaveInAssignModal: () => {
+    cy.do(saveButtonInAssignModal.click());
+    cy.expect(assignUsersModal.absent());
+  },
+
+  verifyAssignedUser: (lastName, firstName) => {
+    cy.expect(usersAccordion.find(HTML(`${lastName}, ${firstName}`)));
   },
 };
