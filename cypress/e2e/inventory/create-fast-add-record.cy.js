@@ -10,7 +10,7 @@ import ItemRecordView from '../../support/fragments/inventory/item/itemRecordVie
 import FastAdd from '../../support/fragments/settings/inventory/instance-holdings-item/fastAdd';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { getLongDelay } from '../../support/utils/cypressTools';
+import randomFourDigitNumber, { getLongDelay } from '../../support/utils/cypressTools';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('Inventory', () => {
@@ -119,7 +119,7 @@ describe('Inventory', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         const fastAddRecord = { ...FastAddNewRecord.fastAddNewRecordFormDetails };
-        fastAddRecord.resourceTitle = 'Journal issue';
+        fastAddRecord.resourceTitle = `Journal issue${randomFourDigitNumber}`;
         fastAddRecord.note = 'Note For Journal Issue';
 
         cy.visit(TopMenu.inventoryPath);

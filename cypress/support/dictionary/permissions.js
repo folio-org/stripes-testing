@@ -871,6 +871,10 @@ export default {
     internal: 'ui-organizations.privileged-contacts.edit',
     gui: 'Organizations: can view, create, edit, delete privileged donor information',
   },
+  uiOrganizationsViewPrivilegedDonorInformation: {
+    internal: 'ui-organizations.privileged-contacts.view',
+    gui: 'Organizations: can view privileged donor information',
+  },
   uiOrganizationsViewEditDelete: {
     internal: 'ui-organizations.delete',
     gui: 'Organizations: View, edit, delete',
