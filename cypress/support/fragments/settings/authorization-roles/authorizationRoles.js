@@ -333,8 +333,8 @@ export default {
   },
 
   clickDeleteRole: () => {
-    cy.do(actionsButton.click());
     cy.wait(1000);
+    cy.do(actionsButton.click());
     cy.do(deleteButton.click());
     cy.expect([
       deleteRoleModal.find(deleteButton).exists(),
