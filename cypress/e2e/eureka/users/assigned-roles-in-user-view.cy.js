@@ -8,9 +8,9 @@ import TopMenu from '../../../support/fragments/topMenu';
 describe('Eureka', () => {
   describe('Users', () => {
     const testData = {
-      role0Name: `Auto Role 0 C443314 ${getRandomPostfix()}`,
-      roleAName: `Auto Role A C443314 ${getRandomPostfix()}`,
-      roleBName: `Auto Role B C443314 ${getRandomPostfix()}`,
+      role0Name: `Auto Role 0 C464314 ${getRandomPostfix()}`,
+      roleAName: `Auto Role A C464314 ${getRandomPostfix()}`,
+      roleBName: `Auto Role B C464314 ${getRandomPostfix()}`,
     };
 
     before('Create users, roles', () => {
