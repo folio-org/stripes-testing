@@ -1675,6 +1675,10 @@ export default {
     cy.expect(saveAndCloseButtonEnabled.exists());
   },
 
+  checkButtonSaveAndCloseDisabled() {
+    cy.expect(saveAndCloseButtonDisabled.exists());
+  },
+
   checkDeleteButtonExist(rowIndex) {
     cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).exists());
   },
