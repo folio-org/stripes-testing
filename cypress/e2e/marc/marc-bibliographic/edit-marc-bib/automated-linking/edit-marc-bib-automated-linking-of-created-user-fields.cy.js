@@ -23,13 +23,13 @@ describe('MARC', () => {
           {
             rowIndex: 32,
             tag: '700',
-            content: '$a test $0 n 83169267',
-            newContent: '$a test $0 n83169267',
+            content: '$a test $0 n 83169269',
+            newContent: '$a test $0 n83169269',
             secondBox: '2',
             thirdBox: '\\',
             fourthBox: '$a C388519Lee, Stan, $d 1922-2018',
             fifthBox: '',
-            sixthBox: '$0 http://id.loc.gov/authorities/names/n83169267',
+            sixthBox: '$0 http://id.loc.gov/authorities/names/n83169269',
             seventhBox: '',
             isLinked: true,
           },
@@ -80,7 +80,7 @@ describe('MARC', () => {
           tag: '700',
           secondBox: '2',
           thirdBox: '\\',
-          content: '$a test 4 $0 n83169267',
+          content: '$a test 4 $0 n83169269',
         };
 
         const createdRecordIDs = [];
