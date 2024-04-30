@@ -18,7 +18,6 @@ import FieldMappingProfiles from '../../../support/fragments/data_import/mapping
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -28,6 +27,7 @@ import {
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -36,8 +36,8 @@ describe('Data Import', () => {
     let instanceHRID;
     const marcFilePath = 'oneMarcBib.mrc';
     const marcFileName = `C411579 autotestFile${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `C411579 autotestFile${getRandomPostfix()}.csv`;
-    const exportedMarcFileName = `C411579 autotestFile${getRandomPostfix()}.mrc`;
+    const exportedFileName = `C411579 autotestExportedFile${getRandomPostfix()}.mrc`;
+    const updatedMarcFileName = `C411579 autotestFileForUpdate${getRandomPostfix()}.mrc`;
 
     // profiles for create
     const mappingProfile = {
@@ -70,7 +70,8 @@ describe('Data Import', () => {
         in2: 'f',
         subfield: 's',
       },
-      recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      matchCriterion: 'Exactly matches',
+      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
     };
 
     const mappingProfileForUpdate = {
@@ -99,8 +100,8 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${exportedMarcFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+      FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(`*${exportedFileName}`);
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
@@ -128,7 +129,7 @@ describe('Data Import', () => {
 
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfile);
-        NewJobProfile.linkActionProfile(actionProfile.name);
+        NewJobProfile.linkActionProfile(actionProfile);
         NewJobProfile.saveAndClose();
 
         cy.visit(TopMenu.dataImportPath);
@@ -148,19 +149,18 @@ describe('Data Import', () => {
           instanceHRID = initialInstanceHrId;
         });
 
-        // download .csv file
-        InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        InstanceRecordView.waitLoading();
+        InstanceRecordView.verifyInstanceRecordViewOpened();
+        InstanceRecordView.exportInstanceMarc();
+        cy.intercept('/data-export/quick-export').as('getHrid');
+        cy.wait('@getHrid', getLongDelay()).then((req) => {
+          const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
-        // download exported marc file
-        cy.visit(TopMenu.dataExportPath);
-        cy.getAdminToken().then(() => {
-          ExportFile.uploadFile(nameForCSVFile);
-          ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
-          ExportFile.downloadExportedMarcFile(exportedMarcFileName);
-          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+          // download exported marc file
+          cy.visit(TopMenu.dataExportPath);
+          ExportFile.downloadExportedMarcFileWithRecordHrid(expectedRecordHrid, exportedFileName);
+          FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
         });
-
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfileForUpdate);
@@ -186,11 +186,12 @@ describe('Data Import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
-        DataImport.uploadExportedFile(exportedMarcFileName);
-        JobProfiles.search(jobProfile.profileName);
+        DataImport.uploadFile(exportedFileName, updatedMarcFileName);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(exportedMarcFileName);
-        Logs.openFileDetails(exportedMarcFileName);
+        Logs.waitFileIsImported(updatedMarcFileName);
+        Logs.openFileDetails(updatedMarcFileName);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.UPDATED,
           FileDetails.columnNameInResultList.instance,

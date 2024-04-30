@@ -478,10 +478,7 @@ export default {
 
   exportInstanceMarc: () => {
     cy.wait(1000);
-    cy.do([
-      rootSection.find(actionsButton).click(),
-      Button({ id: 'quick-export-trigger' }).click(),
-    ]);
+    cy.do([rootSection.find(actionsButton).click(), Button('Export instance (MARC)').click()]);
   },
 
   verifyEditInstanceButtonAbsent() {
