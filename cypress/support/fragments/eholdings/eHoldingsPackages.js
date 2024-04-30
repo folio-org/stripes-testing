@@ -221,7 +221,7 @@ export default {
           cy.expect(body.data[0].attributes.isCustom).equals(isCustom);
         } else {
           // wait 1 second before retrying request
-          cy.wait(1000);
+          cy.wait(5000);
           checkPackage();
           timeCounter++;
         }

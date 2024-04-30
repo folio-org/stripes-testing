@@ -153,6 +153,18 @@ describe('Data Import', () => {
     const createdAuthorityIDs = [];
 
     before('Creating user and test data', () => {
+      // make sure there are no duplicate records in the system
+      cy.getAdminToken();
+      MarcAuthorities.getMarcAuthoritiesViaApi({
+        limit: 100,
+        query: 'keyword="C377006*" and (authRefType==("Authorized" or "Auth/Ref"))',
+      }).then((authorities) => {
+        if (authorities) {
+          authorities.forEach(({ id }) => {
+            MarcAuthority.deleteViaAPI(id, true);
+          });
+        }
+      });
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,

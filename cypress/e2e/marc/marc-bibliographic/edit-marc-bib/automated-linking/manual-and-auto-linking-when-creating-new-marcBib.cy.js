@@ -22,7 +22,7 @@ describe('MARC', () => {
             tag245: '245',
           },
           fieldContents: {
-            tag245Content: 'New title C388565',
+            tag245Content: 'C422149 New title',
           },
           naturalIds: {
             tag100: '0255861',
@@ -89,6 +89,16 @@ describe('MARC', () => {
 
         before(() => {
           cy.getAdminToken();
+          InventoryInstances.getInstancesViaApi({
+            limit: 100,
+            query: `title="${testData.fieldContents.tag245Content}*"`,
+          }).then((instances) => {
+            if (instances) {
+              instances.forEach(({ id }) => {
+                InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
+              });
+            }
+          });
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,

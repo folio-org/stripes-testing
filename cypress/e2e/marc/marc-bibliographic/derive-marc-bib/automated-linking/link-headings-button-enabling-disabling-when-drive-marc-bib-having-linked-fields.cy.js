@@ -21,7 +21,7 @@ describe('MARC', () => {
           ta337content: '$a video $b v $2 rdamedia $0 n91074080',
           tag130seventhBoxContent: '$0 n91074080',
           tag700content: '$a Roberts, Julia, $d 1967- $e Actor. $0 n91074080333',
-          newTag700content: '$a Roberts, Julia, $d 1967- $e Actor. $0 n91074080',
+          newTag700content: '$a Roberts, Julia, $d 1967- $e Actor. $0 n91074081',
           createdRecordIDs: [],
           errorCalloutMessage: 'Field 700 must be set manually by selecting the link icon.',
           successCalloutMessage: 'Field 700 has been linked to MARC authority record(s).',
@@ -42,7 +42,7 @@ describe('MARC', () => {
             '\\',
             '$a C388561 Roberts, Julia, $d 1967-',
             '$e Actor.',
-            '$0 http://id.loc.gov/authorities/names/n91074080',
+            '$0 http://id.loc.gov/authorities/names/n91074081',
             '',
           ],
           bib700_1AfterLinkingToAuth100: [
@@ -108,13 +108,13 @@ describe('MARC', () => {
         ];
 
         before('Creating user and data', () => {
-          // make sure there are no duplicate authority records in the system before auto-linking
+          // make sure there are no duplicate records in the system before auto-linking
           cy.getAdminToken();
           MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C388561"' }).then(
             (records) => {
               records.forEach((record) => {
                 if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
+                  MarcAuthority.deleteViaAPI(record.id, true);
                 }
               });
             },

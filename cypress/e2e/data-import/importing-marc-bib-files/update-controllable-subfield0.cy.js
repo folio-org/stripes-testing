@@ -109,7 +109,7 @@ describe('Data Import', () => {
     const linkingTagAndValues = [
       {
         rowIndex: 75,
-        value: 'Chin, Staceyann C385665',
+        value: 'C385665Chin, Staceyann',
       },
       {
         rowIndex: 76,
@@ -124,6 +124,18 @@ describe('Data Import', () => {
     const subfield = '$9';
 
     before('Creating user', () => {
+      // make sure there are no duplicate records in the system
+      cy.getAdminToken();
+      MarcAuthorities.getMarcAuthoritiesViaApi({
+        limit: 100,
+        query: 'keyword="C385665*" and (authRefType==("Authorized" or "Auth/Ref"))',
+      }).then((authorities) => {
+        if (authorities) {
+          authorities.forEach(({ id }) => {
+            MarcAuthority.deleteViaAPI(id, true);
+          });
+        }
+      });
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
@@ -221,6 +233,7 @@ describe('Data Import', () => {
         });
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
+        cy.pause();
 
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();

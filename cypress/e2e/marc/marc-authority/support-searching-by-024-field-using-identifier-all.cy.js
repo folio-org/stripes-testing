@@ -80,6 +80,7 @@ describe('MARC', () => {
       cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui])
         .then((userProperties) => {
           testData.user = userProperties;
+          // make sure there are no duplicate records in the system
           Object.values(testData.authRows).forEach((query) => {
             MarcAuthorities.getMarcAuthoritiesViaApi({
               limit: 100,
@@ -87,7 +88,7 @@ describe('MARC', () => {
             }).then((authorities) => {
               if (authorities) {
                 authorities.forEach(({ id }) => {
-                  MarcAuthority.deleteViaAPI(id);
+                  MarcAuthority.deleteViaAPI(id, true);
                 });
               }
             });

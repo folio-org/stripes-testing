@@ -34,24 +34,24 @@ describe('MARC', () => {
       };
 
       const records = [
-        'Conference & Exhibition on Biomass for Energy (2004 : Jönköping, Sweden) AdvSearch data',
-        'EPAM Ltda. AdvSearch data',
-        'American Chemical Society. Industrial and Engineering Chemistry Division AdvSearch data XML',
-        'Ekonomi Merkezi AdvSearch data',
-        'Exhibition on Biomass for Energy (2004 : Jönköping, Sweden) AdvSearch data',
-        'American Chemical Society. Division of Industrial and Engineering Chemistry AdvSearch data',
-        'EPAM AdvSearch data XML',
-        'İstanbul Üniversitesi. Ekonomi Politikaları Uygulama ve Araştırma Merkezi',
-        'XML Conference & Exhibition',
-        'Conference, AdvSearch data',
-        'ACS Division of Industrial and Engineering Chemistry XML AdvSearch data',
-        'EkonomiMerkeziEPAM',
+        'C407726 Conference & Exhibition on Biomass for Energy (2004 : Jönköping, Sweden) AdvSearch data',
+        'C407726 EPAM Ltda. AdvSearch data',
+        'C407726 American Chemical Society. Industrial and Engineering Chemistry Division AdvSearch data XML',
+        'C407726 Ekonomi Merkezi AdvSearch data',
+        'C407726 Exhibition on Biomass for Energy (2004 : Jönköping, Sweden) AdvSearch data',
+        'C407726 American Chemical Society. Division of Industrial and Engineering Chemistry AdvSearch data',
+        'C407726 EPAM AdvSearch data XML',
+        'C407726 İstanbul Üniversitesi. Ekonomi Politikaları Uygulama ve Araştırma Merkezi',
+        'C407726 XML Conference & Exhibition',
+        'C407726 Conference, AdvSearch data',
+        'C407726 ACS Division of Industrial and Engineering Chemistry XML AdvSearch data',
+        'C407726 EkonomiMerkeziEPAM',
       ];
 
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const marcFile = {
         marc: 'MarcAuthoritiesForC407726.mrc',
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        fileName: `C407726 testMarcFile.${getRandomPostfix()}.mrc`,
       };
 
       const createdAuthorityID = [];

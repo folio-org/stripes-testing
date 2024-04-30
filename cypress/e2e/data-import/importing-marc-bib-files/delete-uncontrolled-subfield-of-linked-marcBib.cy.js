@@ -120,7 +120,7 @@ describe('Data Import', () => {
     const marcFiles = [
       {
         marc: 'marcBibFileForC376967.mrc',
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        fileName: `C376967testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numOfRecords: 1,
         propertyName: 'instance',
@@ -141,6 +141,18 @@ describe('Data Import', () => {
     const createdAuthorityIDs = [];
 
     before('Creating user and test data', () => {
+      // make sure there are no duplicate records in the system
+      cy.getAdminToken();
+      MarcAuthorities.getMarcAuthoritiesViaApi({
+        limit: 100,
+        query: 'keyword="C376967*" and (authRefType==("Authorized" or "Auth/Ref"))',
+      }).then((authorities) => {
+        if (authorities) {
+          authorities.forEach(({ id }) => {
+            MarcAuthority.deleteViaAPI(id, true);
+          });
+        }
+      });
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
@@ -165,6 +177,7 @@ describe('Data Import', () => {
           .then(() => {
             cy.visit(TopMenu.inventoryPath);
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
+
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);

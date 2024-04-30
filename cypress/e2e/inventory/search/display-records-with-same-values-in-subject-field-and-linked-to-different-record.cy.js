@@ -19,8 +19,8 @@ const testData = {
   recordIDs: [],
   tags: ['650'],
   instanceRecords: [
-    "Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
-    'Black Panther : the Intergalactic Empire of Wakanda',
+    "C375224 Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
+    'C375224 Black Panther : the Intergalactic Empire of Wakanda',
   ],
   searchAuthorityQueries: ['Good and evil'],
   browseQueries: ['Good and Evil'],
@@ -55,42 +55,46 @@ describe('Inventory', () => {
   describe('Subject Browse', () => {
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        InventoryInstances.getInstancesViaApi({
+
+      InventoryInstances.getInstancesViaApi({
+        limit: 100,
+        query: 'title="C375224"',
+      }).then((instances) => {
+        if (instances) {
+          instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
+        }
+      });
+      testData.searchAuthorityQueries.forEach((query) => {
+        // make sure there are no duplicate records in the system
+        MarcAuthorities.getMarcAuthoritiesViaApi({
           limit: 100,
-          query: 'title="Black Panther"',
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
+          query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
+        }).then((authorities) => {
+          if (authorities) {
+            authorities.forEach(({ id }) => {
+              MarcAuthority.deleteViaAPI(id, true);
             });
           }
         });
-        testData.searchAuthorityQueries.forEach((query) => {
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
-              });
-            }
-          });
-        });
-        testData.marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.recordIDs.push(record[marcFile.propertyName].id);
-            });
+      });
+      testData.marcFiles.forEach((marcFile) => {
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            testData.recordIDs.push(record[marcFile.propertyName].id);
           });
         });
       });
-      cy.visit(TopMenu.inventoryPath);
+
+      cy.loginAsAdmin({
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
       for (let i = 0; i < testData.instanceRecords.length; i++) {
         InventoryInstances.searchByTitle(testData.instanceRecords[i]);
         InventoryInstances.selectInstance();
