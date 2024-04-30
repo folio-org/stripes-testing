@@ -1,51 +1,53 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { Permissions } from '../../../support/dictionary';
 import {
-  LOAN_TYPE_NAMES,
-  MATERIAL_TYPE_NAMES,
-  ITEM_STATUS_NAMES,
-  LOCATION_NAMES,
-  FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
-  JOB_STATUS_NAMES,
-  RECORD_STATUSES,
   DEFAULT_JOB_PROFILE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  ITEM_STATUS_NAMES,
+  JOB_STATUS_NAMES,
+  LOAN_TYPE_NAMES,
+  LOCATION_NAMES,
+  MATERIAL_TYPE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
-import TopMenu from '../../../support/fragments/topMenu';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let instanceHrid;
-    let exportedFileName;
     const quantityOfItems = '1';
     const fileName = `C368009 autotestFileName${getRandomPostfix()}.mrc`;
+    const exportedFileName = `C368009 autotestExportedFileName${getRandomPostfix()}.mrc`;
+    const fileNameForCreate = `C368009 autotestFileName${getRandomPostfix()}.mrc`;
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: {
@@ -199,43 +201,45 @@ describe('Data Import', () => {
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(selectedRecords);
         InventorySearchAndFilter.exportInstanceAsMarc();
+        cy.intercept('/data-export/quick-export').as('getHrid');
+        cy.wait('@getHrid', getLongDelay()).then((req) => {
+          const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
-        // download exported marc file
-        cy.visit(TopMenu.dataExportPath);
-        ExportFile.getExportedFileNameViaApi().then((name) => {
-          exportedFileName = name;
-
-          ExportFile.downloadExportedMarcFile(exportedFileName);
-          // upload the exported marc file
-          cy.visit(TopMenu.dataImportPath);
-          DataImport.verifyUploadState();
-          DataImport.uploadExportedFile(exportedFileName);
-          JobProfiles.search(jobProfile.profileName);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(exportedFileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(exportedFileName);
-          [
-            FileDetails.columnNameInResultList.holdings,
-            FileDetails.columnNameInResultList.item,
-          ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
-          });
-          FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems, 0);
-          FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 0);
-
-          // check created items
-          FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
-          HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.ANNEX_UI);
-          cy.wait(2000);
-          cy.go('back');
-          FileDetails.openItemInInventory(RECORD_STATUSES.CREATED);
-          ItemRecordView.verifyMaterialType(MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE);
-          ItemRecordView.verifyPermanentLoanType(LOAN_TYPE_NAMES.CAN_CIRCULATE);
-          ItemRecordView.verifyItemStatus(
-            collectionOfMappingAndActionProfiles[0].mappingProfile.status,
-          );
+          // download exported marc file
+          cy.visit(TopMenu.dataExportPath);
+          ExportFile.downloadExportedMarcFileWithRecordHrid(expectedRecordHrid, exportedFileName);
+          FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
         });
+        // upload the exported marc file
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(exportedFileName, fileNameForCreate);
+        JobProfiles.search(jobProfile.profileName);
+        JobProfiles.runImportFile();
+        Logs.waitFileIsImported(fileNameForCreate);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(fileNameForCreate);
+        [
+          FileDetails.columnNameInResultList.holdings,
+          FileDetails.columnNameInResultList.item,
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
+        });
+        FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems, 0);
+        FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 0);
+
+        // check created items
+        FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
+        HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.ANNEX_UI);
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(fileNameForCreate);
+        FileDetails.openItemInInventory(RECORD_STATUSES.CREATED);
+        ItemRecordView.verifyMaterialType(MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE);
+        ItemRecordView.verifyPermanentLoanType(LOAN_TYPE_NAMES.CAN_CIRCULATE);
+        ItemRecordView.verifyItemStatus(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.status,
+        );
       },
     );
   });
