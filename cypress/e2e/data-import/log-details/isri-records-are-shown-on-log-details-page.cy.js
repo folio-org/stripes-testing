@@ -1,14 +1,14 @@
 import { Permissions } from '../../../support/dictionary';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import EditTargetProfile from '../../../support/fragments/settings/inventory/integrations/editTargetProfile';
+import ViewTargetProfile from '../../../support/fragments/settings/inventory/integrations/viewTargetProfile';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import ViewTargetProfile from '../../../support/fragments/settings/inventory/integrations/viewTargetProfile';
-import EditTargetProfile from '../../../support/fragments/settings/inventory/integrations/editTargetProfile';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 
 describe('Data Import', () => {
   describe('Log details', () => {
@@ -18,7 +18,7 @@ describe('Data Import', () => {
     const oclcNumber = '1234567';
     const targetProfileName = 'OCLC WorldCat';
 
-    before('login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
@@ -31,7 +31,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         instanceHrids.forEach((instanceHrid) => {

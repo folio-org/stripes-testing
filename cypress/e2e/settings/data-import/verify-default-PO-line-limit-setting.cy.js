@@ -1,19 +1,19 @@
 import {
+  ACQUISITION_METHOD_NAMES,
   FOLIO_RECORD_TYPE,
+  ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
   VENDOR_NAMES,
-  ACQUISITION_METHOD_NAMES,
-  ORDER_FORMAT_NAMES_IN_PROFILE,
 } from '../../../support/constants';
-import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import getRandomPostfix, { randomTwoDigitNumber } from '../../../support/utils/stringTools';
-import Users from '../../../support/fragments/users/users';
 import { Permissions } from '../../../support/dictionary';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix, { randomTwoDigitNumber } from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Settings', () => {
@@ -35,7 +35,7 @@ describe('Data Import', () => {
     const randomNumber = randomTwoDigitNumber();
     const defaultPurchaseOrderLinesLimit = '"1"';
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       // Make sure that defaulted value is "1" in "Purchase order lines limit setting"
       cy.loginAsAdmin({
         path: SettingsMenu.ordersPath,
@@ -51,6 +51,7 @@ describe('Data Import', () => {
         Permissions.uiOrganizationsView.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+
         cy.login(testData.user.username, testData.user.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,

@@ -174,7 +174,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       testData.jobProfileForCreate = jobProfileForCreate;
 
@@ -206,7 +206,6 @@ describe('Data Import', () => {
       HoldingsRecordView.getHoldingsHrId().then((initialHrId) => {
         holdingsHrId = initialHrId;
       });
-      cy.logout();
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -224,7 +223,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
       cy.getAdminToken().then(() => {

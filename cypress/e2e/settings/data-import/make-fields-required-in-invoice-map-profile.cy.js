@@ -41,7 +41,7 @@ describe('Data Import', () => {
       invoiceDate: 'Invoice date*',
     };
 
-    before('login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -56,7 +56,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete user', () => {
+    after('Delete test user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });

@@ -1,9 +1,9 @@
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import { ActionProfiles as SettingsActionProfiles } from '../../../support/fragments/settings/dataImport';
 import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import { ActionProfiles as SettingsActionProfiles } from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
@@ -18,9 +18,10 @@ describe('Data Import', () => {
     };
     const calloutMessage = `The action profile "${actionProfile.name}" was successfully updated`;
 
-    before('create user', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: SettingsMenu.actionProfilePath,
           waiter: ActionProfiles.waitLoading,
@@ -32,7 +33,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);

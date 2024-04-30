@@ -39,7 +39,7 @@ describe('Inventory', () => {
     );
     let userId;
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       InventoryInteractionsDefaults.getConfigurationInventoryInteractions({
         query: '(module==ORDERS and configName==approvals)',
@@ -128,7 +128,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((res) => {
           Orders.deleteOrderViaApi(res[0].id);

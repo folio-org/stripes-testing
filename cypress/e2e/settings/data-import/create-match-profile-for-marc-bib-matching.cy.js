@@ -14,14 +14,15 @@ describe('Data Import', () => {
     let user;
     const incomingRecordType = 'MARC Bibliographic';
 
-    before('create user', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password);
       });
     });
 
-    after('delete user', () => {
+    after('Delete test user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });

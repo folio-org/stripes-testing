@@ -9,7 +9,7 @@ describe('Data Import', () => {
     let user;
     let fileExtensionName;
 
-    before('login and create test data', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password);
@@ -20,7 +20,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete user', () => {
+    after('Delete test user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });

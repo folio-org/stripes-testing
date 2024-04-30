@@ -1020,4 +1020,8 @@ export default {
         expect($select.text()).to.not.contain(type);
       });
   },
+
+  verifyCheckboxAbsent() {
+    cy.expect(Checkbox().absent());
+  },
 };
