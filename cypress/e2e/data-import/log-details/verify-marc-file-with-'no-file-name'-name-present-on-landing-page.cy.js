@@ -1,10 +1,10 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 describe('Data Import', () => {
   describe('Log details', () => {
@@ -13,20 +13,18 @@ describe('Data Import', () => {
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     };
 
-    before('Create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
+
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
       });
     });
 
-    beforeEach('Login with User', () => {
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
-      });
-    });
-
-    after('Delete test data', () => {
+    after('Delete user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
     });

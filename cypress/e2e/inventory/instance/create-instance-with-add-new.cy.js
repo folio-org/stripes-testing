@@ -9,14 +9,14 @@ describe('Inventory', () => {
   describe('Instance', () => {
     const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
 
-    before('navigate to Inventory', () => {
+    before('Login', () => {
       cy.loginAsAdmin({
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
     });
 
-    after(() => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         InventoryInstances.getInstanceIdApi({ limit: 1, query: `title="${instanceTitle}"` }).then(
           (id) => {

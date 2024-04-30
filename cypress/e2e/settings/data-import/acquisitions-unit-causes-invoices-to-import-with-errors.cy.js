@@ -4,15 +4,10 @@ import {
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   PAYMENT_METHOD,
-  VENDOR_NAMES,
   RECORD_STATUSES,
+  VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -24,11 +19,16 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import InvoiceView from '../../../support/fragments/invoices/invoiceView';
 import Invoices from '../../../support/fragments/invoices/invoices';
 import AcquisitionUnits from '../../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Settings', () => {
@@ -61,7 +61,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.EDIFACT,
     };
 
-    before('login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.assignAcqUnitsToNewInvoice.gui,
@@ -80,7 +80,8 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${editedFileForUpload}`);
       cy.loginAsAdmin();
       cy.visit(SettingsMenu.acquisitionUnitsPath);
       AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
@@ -91,7 +92,6 @@ describe('Data Import', () => {
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         Users.deleteViaApi(user.userId);
       });
-      FileManager.deleteFile(`cypress/fixtures/${editedFileForUpload}`);
     });
 
     it(

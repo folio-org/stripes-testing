@@ -96,14 +96,14 @@ describe('Data Import', () => {
       profileName: `C17025 updateEHoldingsJobProf${getRandomPostfix()}`,
     };
 
-    before('login', () => {
+    before('Login', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(
           createInstanceAndEHoldingsJobProfile.profileName,

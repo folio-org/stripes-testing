@@ -2,9 +2,9 @@ import { including } from '@interactors/html';
 
 import { Permissions } from '../../../support/dictionary';
 import {
-  SettingsDataImport,
-  FieldMappingProfiles,
   FieldMappingProfileView,
+  FieldMappingProfiles,
+  SettingsDataImport,
 } from '../../../support/fragments/settings/dataImport';
 import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -18,7 +18,7 @@ describe('Data Import', () => {
       user: {},
     };
 
-    before('Create test user', () => {
+    before('Create user', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         testData.user = userProperties;
       });

@@ -12,9 +12,10 @@ describe('Data Import', () => {
     const filesNames = ['C2378_File1.mrc', 'C2378_File2.MRC'];
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
-    before('create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -22,7 +23,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });

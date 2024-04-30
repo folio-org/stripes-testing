@@ -46,20 +46,18 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(userProperties.username, userProperties.password);
 
-        // create mapping profile
         NewFieldMappingProfile.createMappingProfileViaApi(mappingProfile.name);
-
-        // create match profile
         NewMatchProfile.createMatchProfileViaApi(matchProfile.profileName);
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);

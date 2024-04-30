@@ -69,7 +69,7 @@ describe('Data Import', () => {
         '$t Dalton (Cambridge, England) $x 1470-479X $w (DLC)   00252543 $w (OCoLC)44000666 $5 NcD',
     };
 
-    before('login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -88,7 +88,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         MarcFieldProtection.getListViaApi({ query: 'data==NcD' }).then((response) => {
           MarcFieldProtection.deleteViaApi(response[0].id);

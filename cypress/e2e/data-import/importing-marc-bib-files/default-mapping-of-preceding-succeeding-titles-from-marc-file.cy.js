@@ -23,7 +23,7 @@ describe('Data Import', () => {
       succeedingTitles: 'Liebigs Annalen der Chemie',
     };
 
-    before('create test data', () => {
+    before('Login', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     });
 

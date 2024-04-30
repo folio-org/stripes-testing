@@ -26,7 +26,7 @@ describe('MARC', () => {
       },
     };
 
-    before('Creating user', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -60,7 +60,7 @@ describe('MARC', () => {
       });
     });
 
-    after('Deleting created user', () => {
+    after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
       MarcAuthority.deleteViaAPI(testData.recordId);

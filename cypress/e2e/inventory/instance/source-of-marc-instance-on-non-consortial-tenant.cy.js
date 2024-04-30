@@ -19,7 +19,7 @@ describe('Inventory', () => {
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const fileName = `C402775 autotestFile${getRandomPostfix()}.mrc`;
 
-    before('create test data and login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then((response) => {
         instanceHrid = response[0].instance.hrid;
@@ -37,7 +37,7 @@ describe('Inventory', () => {
       );
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         InventoryInstance.deleteInstanceViaApi(instanceId);

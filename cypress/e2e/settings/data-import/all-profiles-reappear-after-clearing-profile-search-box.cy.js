@@ -1,24 +1,20 @@
-import {
-  ACCEPTED_DATA_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
-  FOLIO_RECORD_TYPE,
-} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -26,52 +22,35 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Settings', () => {
     let user;
-    const mappingProfile = {
-      name: `402365 autotest mapping profile_${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    };
-    const actionProfile = {
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-      name: `402365 autotest action profile_${getRandomPostfix()}`,
-    };
-    const matchProfile = {
-      profileName: `402365 autotest match profile_${getRandomPostfix()}`,
-      incomingRecordFields: {
-        field: '001',
-      },
-      matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-      instanceOption: NewMatchProfile.optionsList.instanceHrid,
-    };
-    const jobProfile = {
-      ...NewJobProfile.defaultJobProfile,
-      profileName: `402365 autotest job profile_${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
-    };
+    const mappingProfileName = `402365 autotest mapping profile_${getRandomPostfix()}`;
+    const actionProfileName = `402365 autotest action profile_${getRandomPostfix()}`;
+    const matchProfileName = `402365 autotest match profile_${getRandomPostfix()}`;
+    const jobProfileName = `402365 autotest job profile_${getRandomPostfix()}`;
 
-    before('create test data', () => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.mappingProfilePath,
-        waiter: FieldMappingProfiles.waitLoading,
-      });
-      // create field mapping profile
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-      NewFieldMappingProfile.save();
-      // create Action profile
-      cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(actionProfile, mappingProfile.name);
-      // create match profile
-      cy.visit(SettingsMenu.matchProfilePath);
-      MatchProfiles.createMatchProfile(matchProfile);
-      // create Job profiles
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfile(jobProfile);
-      NewJobProfile.saveAndClose();
-      cy.logout();
+    before('Create test data and login', () => {
+      cy.getAdminToken();
+      NewFieldMappingProfile.createMappingProfileViaApi(mappingProfileName).then(
+        (mappingProfileResponse) => {
+          NewActionProfile.createActionProfileViaApi(
+            actionProfileName,
+            mappingProfileResponse.body.id,
+          ).then((actionProfileResponse) => {
+            NewMatchProfile.createMatchProfileViaApi(matchProfileName).then(
+              (matchProfileResponse) => {
+                NewJobProfile.createJobProfileViaApi(
+                  jobProfileName,
+                  matchProfileResponse.body.id,
+                  actionProfileResponse.body.id,
+                );
+              },
+            );
+          });
+        },
+      );
 
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,
@@ -79,12 +58,12 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
-        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
-        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
-        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfileName);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileName);
         Users.deleteViaApi(user.userId);
       });
     });
@@ -94,9 +73,9 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
-        FieldMappingProfiles.search(mappingProfile.name);
-        FieldMappingProfileView.closeViewMode(mappingProfile.name);
-        FieldMappingProfiles.verifySearchResult(mappingProfile.name);
+        FieldMappingProfiles.search(mappingProfileName);
+        FieldMappingProfileView.closeViewMode(mappingProfileName);
+        FieldMappingProfiles.verifySearchResult(mappingProfileName);
         FieldMappingProfiles.clearSearchField();
         FieldMappingProfiles.verifySearchFieldIsEmpty();
         FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
@@ -104,8 +83,8 @@ describe('Data Import', () => {
         cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.checkListOfExistingProfilesIsDisplayed();
         ActionProfiles.verifySearchFieldIsEmpty();
-        ActionProfiles.search(actionProfile.name);
-        ActionProfiles.verifySearchResult(actionProfile.name);
+        ActionProfiles.search(actionProfileName);
+        ActionProfiles.verifySearchResult(actionProfileName);
         ActionProfiles.clearSearchField();
         ActionProfiles.verifySearchFieldIsEmpty();
         ActionProfiles.checkListOfExistingProfilesIsDisplayed();
@@ -113,8 +92,8 @@ describe('Data Import', () => {
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.verifySearchFieldIsEmpty();
-        MatchProfiles.search(matchProfile.profileName);
-        MatchProfiles.verifySearchResult(matchProfile.profileName);
+        MatchProfiles.search(matchProfileName);
+        MatchProfiles.verifySearchResult(matchProfileName);
         MatchProfiles.clearSearchField();
         MatchProfiles.verifySearchFieldIsEmpty();
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
@@ -122,8 +101,8 @@ describe('Data Import', () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.checkListOfExistingProfilesIsDisplayed();
         JobProfiles.verifySearchFieldIsEmpty();
-        JobProfiles.search(jobProfile.profileName);
-        JobProfiles.verifySearchResult(jobProfile.profileName);
+        JobProfiles.search(jobProfileName);
+        JobProfiles.verifySearchResult(jobProfileName);
         JobProfiles.clearSearchField();
         JobProfiles.verifySearchFieldIsEmpty();
         JobProfiles.checkListOfExistingProfilesIsDisplayed();

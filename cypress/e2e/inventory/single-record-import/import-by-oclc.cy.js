@@ -14,7 +14,7 @@ const OCLCAuthentication = '100481406/PAOLF';
 
 describe('Inventory', () => {
   describe('Single record import', () => {
-    before('create user', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.inventoryAll.gui,
@@ -28,11 +28,11 @@ describe('Inventory', () => {
       });
     });
 
-    beforeEach('navigate to inventory', () => {
+    beforeEach('Navigate to inventory', () => {
       cy.visit(TopMenu.inventoryPath);
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         cy.getInstance({ limit: 1, expandAll: true, query: `"oclc"=="${oclc}"` }).then(
           (instance) => {

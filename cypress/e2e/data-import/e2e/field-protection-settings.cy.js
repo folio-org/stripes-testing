@@ -96,7 +96,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    beforeEach('create test data', () => {
+    beforeEach('Create test data and login', () => {
       cy.loginAsAdmin();
       cy.getAdminToken().then(() => {
         marcFieldProtected.forEach((field) => {
@@ -115,7 +115,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteViaApi(field));
         // delete profiles

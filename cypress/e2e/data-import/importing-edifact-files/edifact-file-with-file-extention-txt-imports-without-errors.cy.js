@@ -2,18 +2,12 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   BATCH_GROUP,
   FOLIO_RECORD_TYPE,
+  INVOICE_STATUSES,
   JOB_STATUS_NAMES,
   PAYMENT_METHOD,
-  INVOICE_STATUSES,
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
-import InvoiceLineDetails from '../../../support/fragments/invoices/invoiceLineDetails';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -22,11 +16,17 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import InvoiceLineDetails from '../../../support/fragments/invoices/invoiceLineDetails';
+import Organizations from '../../../support/fragments/organizations/organizations';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import Organizations from '../../../support/fragments/organizations/organizations';
 
 describe('Data Import', () => {
   describe('Importing EDIFACT files', () => {
@@ -61,7 +61,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.EDIFACT,
     };
 
-    before('login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -69,6 +69,7 @@ describe('Data Import', () => {
         Permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+
         cy.login(testData.user.username, testData.user.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,
@@ -76,7 +77,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(testData.user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
