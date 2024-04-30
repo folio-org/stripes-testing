@@ -53,7 +53,7 @@ describe('MARC', () => {
 
         before('Creating test data', () => {
           cy.loginAsAdmin();
-          // make sure there are no duplicate authority records in the system
+          // make sure there are no duplicate records in the system
           cy.getAdminToken().then(() => {
             MarcAuthorities.getMarcAuthoritiesViaApi({
               limit: 100,
@@ -61,7 +61,7 @@ describe('MARC', () => {
             }).then((records) => {
               records.forEach((record) => {
                 if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
+                  MarcAuthority.deleteViaAPI(record.id, true);
                 }
               });
             });

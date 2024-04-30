@@ -85,12 +85,13 @@ describe('MARC', () => {
       const tomorrow = DateTools.getTomorrowDayDateForFiscalYear();
 
       before('Creating user and uploading files', () => {
+        // make sure there are no duplicate records in the system
         cy.getAdminToken();
         MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C380532"' }).then(
           (records) => {
             records.forEach((record) => {
               if (record.authRefType === 'Authorized') {
-                MarcAuthority.deleteViaAPI(record.id);
+                MarcAuthority.deleteViaAPI(record.id, true);
               }
             });
           },

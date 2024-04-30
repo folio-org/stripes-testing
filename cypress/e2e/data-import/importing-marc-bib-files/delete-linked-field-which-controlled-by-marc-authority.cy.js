@@ -132,6 +132,7 @@ describe('Data Import', () => {
     const createdAuthorityIDs = [];
 
     before('Creating user and test data', () => {
+      // make sure there are no duplicate records in the system
       cy.getAdminToken();
       MarcAuthorities.getMarcAuthoritiesViaApi({
         limit: 100,
@@ -139,7 +140,7 @@ describe('Data Import', () => {
       }).then((authorities) => {
         if (authorities) {
           authorities.forEach(({ id }) => {
-            MarcAuthority.deleteViaAPI(id);
+            MarcAuthority.deleteViaAPI(id, true);
           });
         }
       });

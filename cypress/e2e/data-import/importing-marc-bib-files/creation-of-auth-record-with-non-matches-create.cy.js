@@ -68,6 +68,7 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
+      // make sure there are no duplicate records in the system
       cy.getAdminToken().then(() => {
         MarcAuthorities.getMarcAuthoritiesViaApi({
           limit: 100,

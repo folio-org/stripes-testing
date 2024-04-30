@@ -68,14 +68,14 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
     ]).then((createdUserProperties) => {
       userData = createdUserProperties;
-
+      // make sure there are no duplicate records in the system
       MarcAuthorities.getMarcAuthoritiesViaApi({
         limit: 100,
         query: `keyword="${testData.authorityTitle}" and (authRefType==("Authorized" or "Auth/Ref"))`,
       }).then((authorities) => {
         if (authorities) {
           authorities.forEach(({ id }) => {
-            MarcAuthority.deleteViaAPI(id);
+            MarcAuthority.deleteViaAPI(id, true);
           });
         }
       });
