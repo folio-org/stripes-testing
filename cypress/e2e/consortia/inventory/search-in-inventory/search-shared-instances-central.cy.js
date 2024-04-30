@@ -7,9 +7,7 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('Inventory', () => {
@@ -63,40 +61,28 @@ describe('Inventory', () => {
           }).then((instanceData) => {
             createdInstanceIds.local.push(instanceData.instanceData.instanceId);
           });
+          cy.resetTenant();
+          cy.getAdminToken();
+          DataImport.uploadFileViaApi(
+            marcFiles.shared.marc,
+            marcFiles.shared.fileNameImported,
+            marcFiles.shared.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdInstanceIds.shared.push(record.instance.id);
+            });
+          });
 
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(
-                marcFiles.shared.marc,
-                marcFiles.shared.fileNameImported,
-              );
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFiles.shared.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFiles.shared.fileNameImported);
-              Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFiles.shared.fileNameImported);
-              Logs.getCreatedItemsID().then((link) => {
-                createdInstanceIds.shared.push(link.split('/')[5]);
-              });
-
-              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-
-              DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFiles.local.marc, marcFiles.local.fileNameImported);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFiles.local.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFiles.local.fileNameImported);
-              Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFiles.local.fileNameImported);
-              Logs.getCreatedItemsID().then((link) => {
-                createdInstanceIds.local.push(link.split('/')[5]);
-              });
-            },
-          );
+          cy.setTenant(Affiliations.College);
+          DataImport.uploadFileViaApi(
+            marcFiles.local.marc,
+            marcFiles.local.fileNameImported,
+            marcFiles.local.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdInstanceIds.local.push(record.instance.id);
+            });
+          });
 
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
