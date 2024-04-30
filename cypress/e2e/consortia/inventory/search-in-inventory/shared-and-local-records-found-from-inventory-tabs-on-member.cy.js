@@ -7,9 +7,7 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('Inventory', () => {
@@ -36,18 +34,21 @@ describe('Inventory', () => {
         marc: 'marcBibFileForC410715-Shared.mrc',
         fileName: `C410715 Central testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        propertyName: 'instance',
         tenant: tenantNames.central,
       },
       {
         marc: 'marcBibFileForC410715-Local-M1.mrc',
         fileName: `C410715 Local testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        propertyName: 'instance',
         tenant: tenantNames.university,
       },
       {
         marc: 'marcBibFileForC410715-Local-M2.mrc',
         fileName: `C410715 Local testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        propertyName: 'instance',
         tenant: tenantNames.college,
       },
     ];
@@ -88,47 +89,35 @@ describe('Inventory', () => {
           });
         })
         .then(() => {
-          cy.resetTenant();
-          cy.loginAsAdmin().then(() => {
-            marcFiles.forEach((marcFile) => {
-              cy.visit(TopMenu.dataImportPath);
-              if (marcFile.tenant === 'University') {
-                ConsortiumManager.switchActiveAffiliation(
-                  tenantNames.central,
-                  tenantNames.university,
-                );
-              } else if (marcFile.tenant === 'College') {
-                ConsortiumManager.switchActiveAffiliation(
-                  tenantNames.university,
-                  tenantNames.college,
-                );
-              }
-              DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFile.fileName);
-              Logs.getCreatedItemsID().then((link) => {
-                createdRecordIDs.push(link.split('/')[5]);
+          marcFiles.forEach((marcFile) => {
+            if (marcFile.tenant === 'University') {
+              cy.setTenant(Affiliations.University);
+            } else if (marcFile.tenant === 'College') {
+              cy.setTenant(Affiliations.College);
+            } else {
+              cy.resetTenant();
+              cy.getAdminToken();
+            }
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].id);
               });
             });
+          });
 
-            cy.login(users.userProperties.username, users.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            }).then(() => {
-              ConsortiumManager.switchActiveAffiliation(
-                tenantNames.central,
-                tenantNames.university,
-              );
-              InventoryInstances.waitContentLoading();
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
-              InventorySearchAndFilter.searchTabIsDefault();
-              InventorySearchAndFilter.instanceTabIsDefault();
-            });
+          cy.login(users.userProperties.username, users.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+            InventoryInstances.waitContentLoading();
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+            InventorySearchAndFilter.searchTabIsDefault();
+            InventorySearchAndFilter.instanceTabIsDefault();
           });
         });
     });
