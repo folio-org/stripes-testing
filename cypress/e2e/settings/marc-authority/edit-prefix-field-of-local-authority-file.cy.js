@@ -7,7 +7,7 @@ import ManageAuthorityFiles from '../../../support/fragments/settings/marc-autho
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
-    describe('Create MARC Authority', () => {
+    describe('Settings', () => {
       const randomPostfix = getRandomPostfix();
       const date = DateTools.getFormattedDateWithSlashes({ date: new Date() });
       const localAuthFile = {
