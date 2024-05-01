@@ -157,9 +157,16 @@ describe('Data Import', () => {
           cy.getAdminToken().then(() => {
             ExportFile.uploadFile(nameForCSVFile);
             ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
-            ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
-            FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-            cy.log('#####End Of Export#####');
+            ExportFile.getRecordHridOfExportedFile(nameForCSVFile).then((req) => {
+              const expectedRecordHrid = req;
+
+              // download exported marc file
+              ExportFile.downloadExportedMarcFileWithRecordHrid(
+                expectedRecordHrid,
+                nameForExportedMarcFile,
+              );
+              FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
+            });
           });
 
           // create Match profile

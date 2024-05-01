@@ -151,8 +151,16 @@ describe.skip('Data Import', () => {
         cy.visit(TopMenu.dataExportPath);
         ExportFile.uploadFile(nameForCSVFile);
         ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
-        ExportFile.downloadExportedMarcFile(nameMarcFileForUpload);
-        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+        ExportFile.getRecordHridOfExportedFile(nameForCSVFile).then((req) => {
+          const expectedRecordHrid = req;
+
+          // download exported marc file
+          ExportFile.downloadExportedMarcFileWithRecordHrid(
+            expectedRecordHrid,
+            nameMarcFileForUpload,
+          );
+          FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
+        });
 
         // create Field mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);
