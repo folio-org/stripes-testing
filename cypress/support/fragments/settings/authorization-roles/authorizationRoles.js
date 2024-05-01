@@ -14,6 +14,7 @@ import {
   HTML,
   Spinner,
   KeyValue,
+  and,
 } from '../../../../../interactors';
 
 const rolesPane = Pane('Authorization roles');
@@ -392,8 +393,20 @@ export default {
     cy.expect(assignUsersModal.absent());
   },
 
-  verifyAssignedUser: (lastName, firstName, isAssigned = true) => {
-    if (isAssigned) cy.expect(usersAccordion.find(HTML(including(`${lastName}, ${firstName}`))).exists());
-    else cy.expect(usersAccordion.find(HTML(including(`${lastName}, ${firstName}`))).absent());
+  verifyAssignedUser: (lastName, firstName, isAssigned = true, patronGroupDescr = '') => {
+    const userRow = usersAccordion.find(
+      MultiColumnListRow(and(including(`${lastName}, ${firstName}`), including(patronGroupDescr))),
+    );
+    if (isAssigned) cy.expect(userRow.exists());
+    else cy.expect(userRow.absent());
+  },
+
+  verifyAssignedUsersAccordion: () => {
+    cy.expect([
+      usersAccordion.has({ open: true }),
+      usersAccordion.find(assignUsersButton).exists(),
+      usersAccordion.find(MultiColumnListHeader('Name')).exists(),
+      usersAccordion.find(MultiColumnListHeader('Patron group')).exists(),
+    ]);
   },
 };
