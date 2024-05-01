@@ -81,7 +81,7 @@ describe('MARC', () => {
         cy.setTenant(Affiliations.College);
         MarcAuthorities.getMarcAuthoritiesViaApi({
           limit: 100,
-          query: `keyword='C404449' and (authRefType==("Authorized" or "Auth/Ref"))`,
+          query: `keyword='C404449' and (authRefType==('Authorized' or 'Auth/Ref'))`,
         }).then((authorities) => {
           if (authorities) {
             authorities.forEach(({ id }) => {
@@ -93,7 +93,7 @@ describe('MARC', () => {
         cy.getAdminToken();
         MarcAuthorities.getMarcAuthoritiesViaApi({
           limit: 100,
-          query: `keyword='C404449' and (authRefType==("Authorized" or "Auth/Ref"))`,
+          query: `keyword='C404449' and (authRefType==('Authorized' or 'Auth/Ref'))`,
         }).then((authorities) => {
           if (authorities) {
             authorities.forEach(({ id }) => {
