@@ -73,7 +73,7 @@ describe('MARC', () => {
           });
         })
         .then(() => {
-          marcFiles.forEach((marcFile, index) => {
+          marcFiles.forEach((marcFile) => {
             cy.visit(TopMenu.dataImportPath);
             if (marcFile.tenant === 'College') {
               cy.setTenant(Affiliations.College);

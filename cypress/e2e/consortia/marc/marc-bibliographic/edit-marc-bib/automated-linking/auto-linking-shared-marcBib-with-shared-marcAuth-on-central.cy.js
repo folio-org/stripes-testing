@@ -98,7 +98,7 @@ describe('MARC', () => {
               }
             });
           });
-          
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
