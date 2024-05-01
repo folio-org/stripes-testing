@@ -6,9 +6,7 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
@@ -33,6 +31,7 @@ describe('MARC', () => {
           marc: 'marcBibFileForC405927-Shared.mrc',
           fileName: `C405927 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+          propertyName: 'instance',
           numOfRecords: 3,
           tenant: 'Central Office',
         },
@@ -40,6 +39,7 @@ describe('MARC', () => {
           marc: 'marcAuthFileForC405927.mrc',
           fileName: `C405927 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+          propertyName: 'authority',
           numOfRecords: 1,
           tenant: 'Central Office',
         },
@@ -47,6 +47,7 @@ describe('MARC', () => {
           marc: 'marcBibFileForC405927-Local-M1.mrc',
           fileName: `C405927 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+          propertyName: 'instance',
           numOfRecords: 1,
           tenant: 'University',
         },
@@ -54,6 +55,7 @@ describe('MARC', () => {
           marc: 'marcBibFileForC405927-Local-M2.mrc',
           fileName: `C405927 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+          propertyName: 'instance',
           numOfRecords: 1,
           tenant: 'College',
         },
@@ -68,7 +70,7 @@ describe('MARC', () => {
 
       const linkingInTenants = [
         {
-          currentTeant: tenantNames.college,
+          currentTeant: tenantNames.central,
           openingTenat: tenantNames.university,
           linkingInstances: instancesToLinkInM1,
         },
@@ -134,29 +136,23 @@ describe('MARC', () => {
               marcFiles.forEach((marcFile) => {
                 cy.visit(TopMenu.dataImportPath);
                 if (marcFile.tenant === 'University') {
-                  ConsortiumManager.switchActiveAffiliation(
-                    tenantNames.central,
-                    tenantNames.university,
-                  );
+                  cy.setTenant(Affiliations.University);
                 } else if (marcFile.tenant === 'College') {
-                  ConsortiumManager.switchActiveAffiliation(
-                    tenantNames.university,
-                    tenantNames.college,
-                  );
+                  cy.setTenant(Affiliations.College);
+                } else {
+                  cy.resetTenant();
+                  cy.getAdminToken();
                 }
-                DataImport.verifyUploadState();
-                DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdRecordIDs.push(link.split('/')[5]);
+
+                DataImport.uploadFileViaApi(
+                  marcFile.marc,
+                  marcFile.fileName,
+                  marcFile.jobProfileToRun,
+                ).then((response) => {
+                  response.forEach((record) => {
+                    createdRecordIDs.push(record[marcFile.propertyName].id);
                   });
-                }
+                });
               });
             });
           })
