@@ -392,7 +392,8 @@ export default {
     cy.expect(assignUsersModal.absent());
   },
 
-  verifyAssignedUser: (lastName, firstName) => {
-    cy.expect(usersAccordion.find(HTML(`${lastName}, ${firstName}`)));
+  verifyAssignedUser: (lastName, firstName, isAssigned = true) => {
+    if (isAssigned) cy.expect(usersAccordion.find(HTML(including(`${lastName}, ${firstName}`))).exists());
+    else cy.expect(usersAccordion.find(HTML(including(`${lastName}, ${firstName}`))).absent());
   },
 };
