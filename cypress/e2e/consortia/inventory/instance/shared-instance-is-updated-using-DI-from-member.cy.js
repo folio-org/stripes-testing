@@ -2,9 +2,9 @@ import {
   ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
+  INSTANCE_SOURCE_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  INSTANCE_SOURCE_NAMES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';

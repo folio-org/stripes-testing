@@ -328,7 +328,7 @@ describe('Data Import', () => {
       subfieldForItem: '$a',
     };
 
-    beforeEach('create test data', () => {
+    beforeEach('Create test data and login', () => {
       cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
 
@@ -358,7 +358,7 @@ describe('Data Import', () => {
       );
     });
 
-    afterEach('delete test data', () => {
+    afterEach('Delete test data', () => {
       cy.getAdminToken().then(() => {
         // delete generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);

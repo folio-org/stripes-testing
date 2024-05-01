@@ -1,14 +1,14 @@
+import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import { RECORD_STATUSES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('Data Import', () => {
   describe('Permissions', () => {
@@ -16,7 +16,7 @@ describe('Data Import', () => {
     let instanceId;
     const fileName = `C492 marcFileName${getRandomPostfix()}.mrc`;
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         'oneMarcBib.mrc',
@@ -39,7 +39,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstance.deleteInstanceViaApi(instanceId);

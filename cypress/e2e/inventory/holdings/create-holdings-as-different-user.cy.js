@@ -21,7 +21,7 @@ describe('Inventory', () => {
       source: INSTANCE_SOURCE_NAMES.FOLIO,
     };
 
-    beforeEach(() => {
+    before('Create test data and login', () => {
       cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
         firstUser = userProperties;
       });
@@ -35,7 +35,7 @@ describe('Inventory', () => {
       });
     });
 
-    afterEach(() => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
           (instance) => {

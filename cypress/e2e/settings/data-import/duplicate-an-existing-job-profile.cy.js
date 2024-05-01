@@ -1,9 +1,9 @@
 import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import { JobProfiles as SettingsJobProfiles } from '../../../support/fragments/settings/dataImport';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import { JobProfiles as SettingsJobProfiles } from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
@@ -22,9 +22,10 @@ describe('Data Import', () => {
     const failCalloutMessage = `Job profile '${jobProfile.profileName}' already exists`;
     const successCalloutMessage = `The job profile "${jobProfileName}" was successfully created`;
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(userProperties.username, userProperties.password);
         // create Job profile
         cy.visit(SettingsMenu.jobProfilePath);
@@ -35,7 +36,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);

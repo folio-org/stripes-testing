@@ -23,7 +23,7 @@ const testData = {
 
 describe('Inventory', () => {
   describe('Holdings', () => {
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 });

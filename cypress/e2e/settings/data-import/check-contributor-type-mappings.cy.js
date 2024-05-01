@@ -1,21 +1,21 @@
+import { JOB_STATUS_NAMES, ORDER_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import DataImportJobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import { OrderLines, Orders } from '../../../support/fragments/orders';
 import {
-  SettingsDataImport,
-  JobProfiles,
   ActionProfiles,
-  FieldMappingProfiles,
   FieldMappingProfileView,
+  FieldMappingProfiles,
+  JobProfiles,
+  SettingsDataImport,
 } from '../../../support/fragments/settings/dataImport';
 import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import { OrderLines, Orders } from '../../../support/fragments/orders';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import TopMenu from '../../../support/fragments/topMenu';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { ORDER_STATUSES, JOB_STATUS_NAMES } from '../../../support/constants';
-import DataImportJobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 
 describe('Data Import', () => {
   describe('Settings', () => {
@@ -84,7 +84,7 @@ describe('Data Import', () => {
       user: {},
     };
 
-    before('Create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,

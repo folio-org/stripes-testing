@@ -35,11 +35,11 @@ describe('Data Import', () => {
       data: '*',
       source: 'User',
     };
-    before('login', () => {
+    before('Login', () => {
       cy.loginAsAdmin();
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         MarcFieldProtection.delete(protectedFieldData.protectedField);
         MarcFieldProtection.confirmDelete();
