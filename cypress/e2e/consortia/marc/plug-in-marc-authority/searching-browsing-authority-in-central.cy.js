@@ -3,11 +3,9 @@ import Affiliations, { tenantNames } from '../../../../support/dictionary/affili
 import Users from '../../../../support/fragments/users/users';
 import TopMenu from '../../../../support/fragments/topMenu';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -26,6 +24,7 @@ describe('MARC', () => {
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         title: 'C404417 Sleeping in the ground : an Inspector Banks novel / Peter Jackson.',
         tenant: tenantNames.central,
+        propertyName: 'instance',
         numOfRecords: 1,
       },
       {
@@ -33,6 +32,7 @@ describe('MARC', () => {
         fileName: `C404417 Central testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         tenant: tenantNames.central,
+        propertyName: 'authority',
         numOfRecords: 2,
       },
       {
@@ -40,6 +40,7 @@ describe('MARC', () => {
         fileName: `C404417 Local testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         tenant: tenantNames.college,
+        propertyName: 'authority',
         numOfRecords: 1,
       },
     ];
@@ -74,28 +75,22 @@ describe('MARC', () => {
         .then(() => {
           marcFiles.forEach((marcFile, index) => {
             cy.visit(TopMenu.dataImportPath);
-            if (marcFile.tenant !== tenantNames.central) {
-              ConsortiumManager.switchActiveAffiliation(
-                marcFiles[index - 1].tenant,
-                marcFile.tenant,
-              );
-              DataImport.waitLoading();
-              ConsortiumManager.checkCurrentTenantInTopMenu(marcFile.tenant);
+            if (marcFile.tenant === 'College') {
+              cy.setTenant(Affiliations.College);
+            } else {
+              cy.resetTenant();
+              cy.getAdminToken();
             }
 
-            DataImport.verifyUploadState();
-            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                createdRecordIDs.push(link.split('/')[5]);
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].id);
               });
-            }
+            });
           });
         })
         .then(() => {
