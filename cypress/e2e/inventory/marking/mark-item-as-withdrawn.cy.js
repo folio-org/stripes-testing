@@ -21,7 +21,7 @@ describe('Inventory', () => {
     let materialType = '';
     let addedCirculationRule;
 
-    before(() => {
+    before('Create test data and login', () => {
       let materialBookId;
       cy.getAdminToken();
       cy.getMaterialTypes({ query: 'name="video recording"' })
@@ -33,9 +33,7 @@ describe('Inventory', () => {
             addedCirculationRule = newRule;
           });
         });
-    });
 
-    beforeEach(() => {
       cy.createTempUser([
         Permissions.uiInventoryMarkItemsWithdrawn.gui,
         Permissions.uiRequestsCreate.gui,
@@ -68,13 +66,9 @@ describe('Inventory', () => {
       });
     });
 
-    after(() => {
-      cy.getAdminToken();
-      CirculationRules.deleteRuleViaApi(addedCirculationRule);
-    });
-
-    afterEach(() => {
+    afterEach('Delete test data', () => {
       cy.getAdminToken().then(() => {
+        CirculationRules.deleteRuleViaApi(addedCirculationRule);
         createdItems.forEach((item) => {
           cy.deleteItemViaApi(item.itemId);
         });

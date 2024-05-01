@@ -43,7 +43,7 @@ describe('Data Import', () => {
       },
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       testData.mappingProfiles.forEach((mappingProfile) => {
         NewFieldMappingProfile.createMappingProfileViaApi(mappingProfile.name);
@@ -55,7 +55,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       testData.mappingProfiles.forEach((mappingProfile) => SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name));

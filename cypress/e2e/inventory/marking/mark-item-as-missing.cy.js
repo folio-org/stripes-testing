@@ -35,7 +35,7 @@ describe('Inventory', () => {
         });
     });
 
-    beforeEach(() => {
+    beforeEach('Create test data and login', () => {
       cy.createTempUser([
         Permissions.uiInventoryMarkAsMissing.gui,
         Permissions.uiRequestsView.gui,
@@ -69,12 +69,8 @@ describe('Inventory', () => {
       });
     });
 
-    after(() => {
-      cy.getAdminToken();
+    after('Delete test data', () => {
       CirculationRules.deleteRuleViaApi(addedCirculationRule);
-    });
-
-    afterEach(() => {
       cy.getAdminToken().then(() => {
         createdItems.forEach((item) => {
           cy.deleteItemViaApi(item.itemId);

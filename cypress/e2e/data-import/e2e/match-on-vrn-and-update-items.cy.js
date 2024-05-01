@@ -38,8 +38,9 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
+    const uniquePartOfInstanceTitle = `Agrarianism and capitalism in early Georgia, 1732-1743 /${getRandomPostfix()}`;
     const item = {
-      title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
+      title: `${uniquePartOfInstanceTitle} Jay Jordan Butler.`,
       productId: `xyz${getRandomPostfix()}`,
       vrn: uuid(),
       vrnType: 'Vendor order reference number',
@@ -55,7 +56,6 @@ describe('Data Import', () => {
     let materialTypeId;
     let user = null;
     let orderNumber;
-
     const instanceMappingProfileName = `C350591 Update Instance by VRN match ${getRandomPostfix()}`;
     const holdingsMappingProfileName = `C350591 Update Holdings by VRN match ${getRandomPostfix()}`;
     const itemMappingProfileName = `C350591 Update Item by VRN match ${getRandomPostfix()}`;
@@ -226,8 +226,12 @@ describe('Data Import', () => {
         DataImport.editMarcFile(
           'marcFileForC350591.mrc',
           editedMarcFileName,
-          ['14567-1', 'xyzt124245271818912626262'],
-          [item.vrn, itemBarcode],
+          [
+            'Agrarianism and capitalism in early Georgia, 1732-1743 /',
+            '14567-1',
+            'xyzt124245271818912626262',
+          ],
+          [uniquePartOfInstanceTitle, item.vrn, itemBarcode],
         );
 
         // create field mapping profiles

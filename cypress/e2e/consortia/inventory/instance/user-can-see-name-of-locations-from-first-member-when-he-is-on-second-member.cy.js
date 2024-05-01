@@ -2,12 +2,12 @@ import uuid from 'uuid';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
+import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
