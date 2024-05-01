@@ -20,7 +20,7 @@ describe('Data Import', () => {
     const mappingProfileName = `C421995 mapping profile${getRandomPostfix()}`;
     const actionProfileName = `C421995 action profile${getRandomPostfix()}`;
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       NewFieldMappingProfile.createMappingProfileViaApi(mappingProfileName).then(
         (mappingProfileResponse) => {
@@ -32,6 +32,7 @@ describe('Data Import', () => {
       );
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password);
         cy.visit(SettingsMenu.actionProfilePath);
       });

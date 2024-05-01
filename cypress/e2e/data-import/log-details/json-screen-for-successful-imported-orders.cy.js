@@ -1,31 +1,31 @@
 import {
   ACQUISITION_METHOD_NAMES,
   FOLIO_RECORD_TYPE,
-  ORDER_STATUSES,
   JOB_STATUS_NAMES,
-  VENDOR_NAMES,
-  ORDER_FORMAT_NAMES_IN_PROFILE,
   MATERIAL_TYPE_NAMES,
+  ORDER_FORMAT_NAMES_IN_PROFILE,
+  ORDER_STATUSES,
+  VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import Orders from '../../../support/fragments/orders/orders';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
-import Orders from '../../../support/fragments/orders/orders';
 
 describe('Data Import', () => {
   describe('Log details', () => {
@@ -88,7 +88,7 @@ describe('Data Import', () => {
       profileName: `C375197 Test Order ${getRandomPostfix()}`,
     };
 
-    before('login', () => {
+    before('Create test data and login', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
@@ -123,7 +123,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(testData.user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);

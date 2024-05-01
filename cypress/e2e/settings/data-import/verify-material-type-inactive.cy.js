@@ -1,14 +1,14 @@
 import { FOLIO_RECORD_TYPE, ORDER_STATUSES } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import { Permissions } from '../../../support/dictionary';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import Users from '../../../support/fragments/users/users';
-import { Permissions } from '../../../support/dictionary';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Settings', () => {
@@ -35,7 +35,7 @@ describe('Data Import', () => {
       description: '',
     };
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         ServicePoints.createViaApi(testData.servicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
@@ -51,6 +51,7 @@ describe('Data Import', () => {
       });
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         testData.user = userProperties;
+
         cy.login(testData.user.username, testData.user.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,

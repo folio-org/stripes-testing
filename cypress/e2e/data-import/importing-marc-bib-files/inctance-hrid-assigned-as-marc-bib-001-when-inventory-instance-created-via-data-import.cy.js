@@ -22,7 +22,7 @@ describe('Data Import', () => {
     const title = 'The Journal of ecclesiastical history.';
     const resourceIdentifier = { type: 'System control number', value: '366832' };
 
-    before('login', () => {
+    before('Login', () => {
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -37,7 +37,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(

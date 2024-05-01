@@ -38,7 +38,7 @@ describe('Data Import', () => {
       },
     };
 
-    before('create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.uiInventorySingleRecordImport.gui,
@@ -52,7 +52,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
       });

@@ -18,7 +18,7 @@ describe('Inventory', () => {
       user: {},
     };
 
-    before('Create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 

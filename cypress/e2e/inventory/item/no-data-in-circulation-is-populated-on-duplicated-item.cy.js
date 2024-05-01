@@ -7,6 +7,7 @@ import CheckInPane from '../../../support/fragments/check-in-actions/checkInPane
 import ConfirmItemInModal from '../../../support/fragments/check-in-actions/confirmItemInModal';
 import CheckOutActions from '../../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../../support/fragments/checkout/checkout';
+import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -18,7 +19,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('Inventory', () => {
   describe('Item', () => {
@@ -33,7 +33,7 @@ describe('Inventory', () => {
     const newItemBarcode = uuid();
     const todayDate = moment(new Date()).format('M/D/YYYY');
 
-    before('create test data and login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
@@ -93,7 +93,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         CheckInActions.checkinItemViaApi({
           itemBarcode: itemData.barcode,

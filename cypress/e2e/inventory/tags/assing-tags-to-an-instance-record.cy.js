@@ -16,8 +16,7 @@ describe('Inventory', () => {
     };
     let instanceId;
 
-    beforeEach(() => {
-      cy.loginAsAdmin();
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 });
@@ -39,9 +38,11 @@ describe('Inventory', () => {
       cy.createTagApi(tag).then((tagId) => {
         tag.id = tagId;
       });
+
+      cy.loginAsAdmin();
     });
 
-    after(() => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         cy.deleteTagApi(tag.id);
         InventoryInstance.deleteInstanceViaApi(instanceId);

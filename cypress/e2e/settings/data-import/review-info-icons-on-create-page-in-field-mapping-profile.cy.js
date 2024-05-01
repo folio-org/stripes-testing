@@ -1,10 +1,10 @@
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 
 describe('Data Import', () => {
   describe('Settings', () => {
@@ -15,14 +15,15 @@ describe('Data Import', () => {
       typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
     };
 
-    before('create user', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password);
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test user', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
       });
