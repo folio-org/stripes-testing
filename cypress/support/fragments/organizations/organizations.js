@@ -690,6 +690,15 @@ export default {
     );
   },
 
+  checkContactIsAddToContactPeopleSection: (contact) => {
+    cy.expect(
+      Section({ id: 'contactPeopleSection' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: `${contact.lastName}, ${contact.firstName}` }),
+    );
+  },
+
   checkDonorContactIsAdd: (contact, index = 0) => {
     cy.get('#privilegedDonorInformation [data-row-index="row-' + index + '"]').within(() => {
       cy.get('div[class*=mclCell-]').eq(0).contains(`${contact.lastName}, ${contact.firstName}`);

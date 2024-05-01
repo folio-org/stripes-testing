@@ -148,7 +148,7 @@ export default {
       activated: false,
       createInventory: 'None',
       trial: false,
-      accessProvider: '',
+      accessProvider: null,
     },
     purchaseOrderId: '',
     receiptStatus: 'Pending',
