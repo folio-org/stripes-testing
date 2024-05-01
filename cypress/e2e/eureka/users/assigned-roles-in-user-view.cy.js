@@ -86,7 +86,7 @@ describe('Eureka', () => {
         UsersCard.verifyUserRoleNames([testData.role0Name]);
 
         UsersSearchPane.searchByUsername(testData.userA.username);
-        UsersSearchPane.selectUserFromList(testData.userB.username);
+        UsersSearchPane.selectUserFromList(testData.userA.username);
         UsersCard.verifyUserRolesCounter('0');
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRolesAccordionEmpty();
