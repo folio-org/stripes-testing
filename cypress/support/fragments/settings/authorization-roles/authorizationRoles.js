@@ -62,7 +62,15 @@ const searchInputInAssignModal = TextField('user search');
 const searchButtonInAssignModal = assignUsersModal.find(Button('Search'));
 const saveButtonInAssignModal = assignUsersModal.find(Button('Save'));
 const resultsPaneInAssignModal = Pane('User Search Results');
-const assignModalResultColumns = ['Name', 'Status', 'Barcode', 'Patron group', 'Username', 'Email'];
+const assignModalResultColumns = [
+  '',
+  'Name',
+  'Status',
+  'Barcode',
+  'Patron group',
+  'Username',
+  'Email',
+];
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
@@ -389,7 +397,9 @@ export default {
     ]);
     cy.expect([
       targetCheckbox.has({ checked: isSelected }),
-      resultsPaneInAssignModal.find(MultiColumnList({ columns: assignModalResultColumns })),
+      resultsPaneInAssignModal
+        .find(MultiColumnList({ columns: assignModalResultColumns }))
+        .exists(),
     ]);
   },
 
@@ -443,7 +453,9 @@ export default {
     if (resultsFound === true) {
       cy.expect([
         resultsPaneInAssignModal.find(MultiColumnListRow()).exists(),
-        resultsPaneInAssignModal.find(MultiColumnList({ columns: assignModalResultColumns })),
+        resultsPaneInAssignModal
+          .find(MultiColumnList({ columns: assignModalResultColumns }))
+          .exists(),
       ]);
     }
     if (resultsFound === false) cy.expect(resultsPaneInAssignModal.find(MultiColumnListRow()).absent());
