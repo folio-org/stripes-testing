@@ -9,13 +9,13 @@ describe('Eureka', () => {
       const testData = {
         roleAName: `Auto Role A C442836 ${getRandomPostfix()}`,
         roleBName: `Auto Role B C442836 ${getRandomPostfix()}`,
+        filtername: 'Status',
+        optionName: 'Active',
       };
 
       before('Create users, roles', () => {
         cy.getAdminToken();
         cy.getUserGroups().then(() => {
-          testData.groupADescr = Cypress.env('userGroups')[1].desc;
-          testData.groupBDescr = Cypress.env('userGroups')[0].desc;
           testData.groupAName = Cypress.env('userGroups')[1].group;
           testData.groupBName = Cypress.env('userGroups')[0].group;
           cy.createTempUser([]).then((createdUserProperties) => {
@@ -26,9 +26,12 @@ describe('Eureka', () => {
                 testData.userB = createdUserBProperties;
                 cy.createAuthorizationRoleApi(testData.roleAName).then((role) => {
                   testData.roleAId = role.id;
+                });
+                cy.createAuthorizationRoleApi(testData.roleBName).then((role) => {
+                  testData.roleBId = role.id;
                   // TO DO: rewrite when users will not have admin role assigned upon creation
                   cy.deleteRolesForUserApi(testData.userA.userId);
-                  cy.updateRolesForUserApi(testData.userB.userId, [testData.roleId]);
+                  cy.updateRolesForUserApi(testData.userB.userId, [testData.roleBId]);
                   cy.login(testData.tempUser.username, testData.tempUser.password, {
                     path: TopMenu.settingsAuthorizationRoles,
                     waiter: AuthorizationRoles.waitContentLoading,
@@ -59,27 +62,39 @@ describe('Eureka', () => {
 
           AuthorizationRoles.searchRole(testData.roleAName);
           cy.intercept(usersCallRegExpGet).as('usersGet');
-          cy.intercept('POST', '/roles/users**').as('usersPost');
-          cy.intercept('PUT', '/roles/users**').as('usersPut');
           AuthorizationRoles.clickOnRoleName(testData.roleAName);
+          AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
+          cy.wait('@usersGet').then((call) => {
+            expect(call.response.statusCode).to.eq(200);
+            expect(call.response.body.userRoles).to.have.lengthOf(0);
+          });
+          AuthorizationRoles.clickAssignUsersButton();
+          AuthorizationRoles.selectFilterOptionInAssignModal(
+            testData.filtername,
+            testData.optionName,
+            true,
+            true,
+          );
+          AuthorizationRoles.clickResetAllInAssignModal();
+          AuthorizationRoles.selectUserInModal(testData.userA.username);
+          AuthorizationRoles.selectUserInModal(testData.userB.username);
+          cy.intercept('POST', '/roles/users').as('usersPost');
+          cy.intercept('PUT', '/roles/users/*').as('usersPut');
+          AuthorizationRoles.clickSaveInAssignModal();
           AuthorizationRoles.verifyAssignedUsersAccordion();
+          AuthorizationRoles.checkUsersAccordion(2);
           AuthorizationRoles.verifyAssignedUser(
             testData.userA.lastName,
             testData.userA.firstName,
             true,
-            testData.groupADescr,
+            testData.groupAName,
           );
           AuthorizationRoles.verifyAssignedUser(
             testData.userB.lastName,
             testData.userB.firstName,
             true,
-            testData.groupBDescr,
+            testData.groupBName,
           );
-          cy.wait('@users').then((call) => {
-            expect(call.response.statusCode).to.eq(200);
-            expect(call.response.body.userRoles).to.have.lengthOf(2);
-          });
-
           cy.wait('@usersPost').its('response.statusCode').should('eq', 201);
           cy.wait('@usersPut').its('response.statusCode').should('eq', 204);
         },

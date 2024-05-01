@@ -13,8 +13,6 @@ describe('Eureka', () => {
       before('Create users, roles', () => {
         cy.getAdminToken();
         cy.getUserGroups().then(() => {
-          testData.groupADescr = Cypress.env('userGroups')[0].desc;
-          testData.groupBDescr = Cypress.env('userGroups')[1].desc;
           testData.groupAName = Cypress.env('userGroups')[0].group;
           testData.groupBName = Cypress.env('userGroups')[1].group;
           cy.createTempUser([]).then((createdUserProperties) => {
@@ -62,13 +60,13 @@ describe('Eureka', () => {
             testData.userA.lastName,
             testData.userA.firstName,
             true,
-            testData.groupADescr,
+            testData.groupAName,
           );
           AuthorizationRoles.verifyAssignedUser(
             testData.userB.lastName,
             testData.userB.firstName,
             true,
-            testData.groupBDescr,
+            testData.groupBName,
           );
           cy.wait('@users').then((call) => {
             expect(call.response.statusCode).to.eq(200);
