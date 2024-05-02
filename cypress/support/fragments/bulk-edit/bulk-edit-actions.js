@@ -81,7 +81,9 @@ export default {
   },
   selectAction(actionName, rowIndex = 0) {
     cy.do(
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose(actionName),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ dataTestID: 'select-actions-0' }))
+        .choose(actionName),
     );
   },
   selectSecondAction(actionName, rowIndex = 0) {
@@ -513,7 +515,7 @@ export default {
   },
 
   verifyItemAdminstrativeNoteActions(rowIndex = 0) {
-    const options = ['Add note', 'Remove all', 'Find', 'Change note type'];
+    const options = ['Add note', 'Remove all', 'Find (full field search)', 'Change note type'];
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
@@ -573,20 +575,25 @@ export default {
     );
   },
 
-  noteReplaceWith(noteType, oldNote, newNote, rowIndex = 0) {
+  findValue(type, rowIndex = 0) {
     cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(noteType),
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Find'),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.action)
+        .choose('Find (full field search)'),
     ]);
+  },
+
+  noteReplaceWith(noteType, oldNote, newNote, rowIndex = 0) {
+    this.findValue(noteType);
     this.fillInFirstTextArea(oldNote, rowIndex);
     this.selectSecondAction('Replace with', rowIndex);
     this.fillInSecondTextArea(newNote, rowIndex);
   },
 
   noteRemove(noteType, note, rowIndex = 0) {
+    this.findValue(noteType, rowIndex);
     cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(noteType),
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Find'),
       RepeatableFieldItem({ index: rowIndex }).find(TextArea()).fillIn(note),
       RepeatableFieldItem({ index: rowIndex })
         .find(Select({ value: '' }))
@@ -615,7 +622,7 @@ export default {
       'Remove mark as staff only',
       'Add note',
       'Remove all',
-      'Find',
+      'Find (full field search)',
       'Change note type',
       'Duplicate to',
     ];
@@ -634,7 +641,7 @@ export default {
       'Remove mark as staff only',
       'Add note',
       'Remove all',
-      'Find',
+      'Find (full field search)',
       'Change note type',
     ];
     cy.do([
@@ -997,5 +1004,19 @@ export default {
         .exists(),
       Option({ value: 'SUPPRESS_FROM_DISCOVERY' }).exists(),
     ]);
+  },
+
+  selectType(type, rowIndex = 1, whichSelect = 0) {
+    cy.get(`[class^="repeatableField"]:eq(${rowIndex}) #urlRelationship`)
+      .eq(whichSelect)
+      .select(type);
+  },
+
+  checkTypeNotExist(type, rowIndex = 1, whichSelect = 0) {
+    cy.get(`[class^="repeatableField"]:eq(${rowIndex}) #urlRelationship`)
+      .eq(whichSelect)
+      .then(($select) => {
+        expect($select.text()).to.not.contain(type);
+      });
   },
 };

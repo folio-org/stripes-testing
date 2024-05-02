@@ -15,6 +15,7 @@ import {
 } from '../../../../interactors';
 
 const buildQueryModal = Modal('Build query');
+const buildQueryButton = Button('Build query');
 const testQueryButton = Button('Test query');
 const cancelButton = Button('Cancel');
 const runQueryButton = Button('Run query');
@@ -26,6 +27,8 @@ const booleanValues = ['AND'];
 
 export const itemFieldValues = {
   instanceId: 'Instance ID',
+  itemStatus: 'Item status',
+  holdingsId: 'Holdings ID',
 };
 export const usersFieldValues = {
   expirationDate: 'User expiration date',
@@ -68,17 +71,19 @@ export const stringStoresUuidButMillionOperators = [
   'not in',
   'is null/empty',
 ];
+export const enumOperators = ['Select operator', '==', '!=', 'in', 'not in', 'is null/empty'];
 export const booleanOperators = ['Select operator', '==', '!=', 'is null/empty'];
 
 export default {
+  exists() {
+    cy.expect(buildQueryModal.exists());
+  },
   verify(firstline = true) {
-    cy.expect([
-      buildQueryModal.exists(),
-      testQueryButton.has({ disabled: true }),
-      cancelButton.has({ disabled: false }),
-      runQueryButton.has({ disabled: true }),
-      xButton.has({ disabled: false }),
-    ]);
+    this.exists();
+    this.testQueryDisabled();
+    this.cancelDisabled(false);
+    this.runQueryDisabled();
+    this.xButttonDisabled(false);
     this.verifyModalContent(firstline);
   },
 
@@ -234,6 +239,10 @@ export default {
     cy.expect(runQueryButton.has({ disabled }));
   },
 
+  xButttonDisabled(disabled = true) {
+    cy.expect(xButton.has({ disabled }));
+  },
+
   addNewRow(row = 0) {
     cy.do(RepeatableFieldItem({ index: row }).find(plusButton).click());
   },
@@ -289,5 +298,9 @@ export default {
 
   verifyClosed() {
     cy.do(buildQueryModal.absent());
+  },
+
+  buildQueryButtonDisabled(disabled = true) {
+    cy.do(buildQueryButton.has({ disabled }));
   },
 };

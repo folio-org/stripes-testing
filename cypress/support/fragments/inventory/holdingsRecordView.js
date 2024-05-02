@@ -270,4 +270,9 @@ export default {
         .exists(),
     );
   },
+  verifyElectronicAccessByElementIndex: (index, content) => {
+    cy.expect(
+      electronicAccessAccordion.find(MultiColumnListCell({ columnIndex: index, content })).exists(),
+    );
+  },
 };
