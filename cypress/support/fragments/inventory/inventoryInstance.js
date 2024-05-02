@@ -1666,4 +1666,8 @@ export default {
   verifyStaffSuppress() {
     cy.expect(HTML(including('Warning: Instance is marked staff suppressed')).exists());
   },
+
+  verifyNoStaffSuppress() {
+    cy.expect(HTML(including('Warning: Instance is marked staff suppressed')).absent());
+  },
 };
