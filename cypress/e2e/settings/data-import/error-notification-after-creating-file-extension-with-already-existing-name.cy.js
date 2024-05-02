@@ -13,14 +13,15 @@ describe('Data Import', () => {
     };
     const calloutMessage = `File extension ${testData.fileExtension} already exists`;
 
-    before('create user', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password);
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });

@@ -1662,4 +1662,12 @@ export default {
       Accordion({ id: `consortialHoldings.cs00000int_0005.${holdingsId}` }).exists(),
     ]);
   },
+
+  verifyStaffSuppress() {
+    cy.expect(HTML(including('Warning: Instance is marked staff suppressed')).exists());
+  },
+
+  verifyNoStaffSuppress() {
+    cy.expect(HTML(including('Warning: Instance is marked staff suppressed')).absent());
+  },
 };

@@ -25,11 +25,11 @@ describe('Data Import', () => {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     };
 
-    before('login', () => {
+    before('Login', () => {
       cy.loginAsAdmin();
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);

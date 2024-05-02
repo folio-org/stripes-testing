@@ -10,9 +10,10 @@ describe('Data Import', () => {
   describe('Log details', () => {
     let user;
 
-    before('Create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -20,7 +21,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('Delete test data', () => {
+    after('Delete user', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
       });

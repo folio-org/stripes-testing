@@ -1,7 +1,7 @@
 import {
+  DEFAULT_JOB_PROFILE_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -31,7 +31,7 @@ describe('Data Import', () => {
     const errorMessageForInstanceProfile =
       "Chosen job profile 'Default - Create instance and SRS MARC Bib' does not support 'MARC_HOLDING' record type";
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         filePathForUpload,
@@ -58,11 +58,11 @@ describe('Data Import', () => {
       );
     });
 
-    after('delete user', () => {
+    after('Delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstance.deleteInstanceViaApi(instanceId);
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     });
 
     it(
@@ -81,7 +81,7 @@ describe('Data Import', () => {
           JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS,
         );
         Logs.openFileDetails(fileNameForImportForMarcAuthority);
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileNameForImportForMarcAuthority);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.srsMarc,
@@ -103,7 +103,7 @@ describe('Data Import', () => {
         Logs.waitFileIsImported(editedMarcFileName);
         Logs.checkJobStatus(editedMarcFileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(editedMarcFileName);
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(editedMarcFileName);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.srsMarc,
@@ -112,7 +112,6 @@ describe('Data Import', () => {
           RECORD_STATUSES.ERROR,
           FileDetails.columnNameInResultList.error,
         );
-        FileDetails.verifyLogDetailsPageIsOpened();
         FileDetails.openJsonScreen(title);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.verifyContentInTab(errorMessageForInstanceProfile);

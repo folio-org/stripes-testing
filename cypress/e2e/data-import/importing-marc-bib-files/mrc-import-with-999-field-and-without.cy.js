@@ -1,18 +1,18 @@
 import {
+  DEFAULT_JOB_PROFILE_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -20,12 +20,13 @@ describe('Data Import', () => {
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const instanceTitle = 'Mistapim in Cambodia [microform]. Photos. by the author.';
     const error =
-      '{"error":"A new Instance was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
+      'org.folio.processing.exceptions.EventProcessingException: A new Instance was not created because the incoming record already contained a 999ff$s or 999ff$i field';
     const nameMarcFileForCreate = `C359012 autotestFile${getRandomPostfix()}.mrc`;
 
-    before('create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -33,7 +34,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
@@ -74,7 +75,7 @@ describe('Data Import', () => {
           RECORD_STATUSES.ERROR,
           FileDetails.columnNameInResultList.error,
         );
-        FileDetails.openJsonScreen('No content');
+        FileDetails.openJsonScreen('The Journal of ecclesiastical history.');
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.verifyContentInTab(error);
       },

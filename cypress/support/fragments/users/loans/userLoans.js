@@ -269,7 +269,7 @@ export default {
   getListTimersForTenant: () => cy
     .okapiRequest({
       method: 'GET',
-      path: '_/proxy/tenants/diku/timers',
+      path: `_/proxy/tenants/${Cypress.env('OKAPI_TENANT')}/timers`,
       isDefaultSearchParamsRequired: false,
     })
     .then(({ body }) => body),

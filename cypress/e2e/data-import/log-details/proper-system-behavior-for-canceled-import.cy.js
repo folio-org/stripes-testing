@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -17,7 +17,7 @@ describe('Data Import', () => {
     const secondMarcFileName = `C353638 autotestFileName${getRandomPostfix()}.mrc`;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
-    before('login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
@@ -28,7 +28,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete user', () => {
+    after('Delete user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });

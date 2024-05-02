@@ -79,12 +79,14 @@ describe('Inventory', () => {
           testData.updatedInstanceTitle,
           FileDetails.columnNameInResultList.title,
         );
-        [
+        FileDetails.checkStatusInColumn(
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.srsMarc,
+        );
+        FileDetails.checkStatusInColumn(
+          RECORD_STATUSES.UPDATED,
           FileDetails.columnNameInResultList.instance,
-        ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
-        });
+        );
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
       },
     );

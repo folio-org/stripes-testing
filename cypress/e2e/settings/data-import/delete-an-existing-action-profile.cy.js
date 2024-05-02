@@ -1,10 +1,5 @@
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import ConfirmDelete from '../../../support/fragments/data_import/action_profiles/modals/confirmDelete';
@@ -12,6 +7,11 @@ import ExceptionDelete from '../../../support/fragments/data_import/action_profi
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
@@ -32,7 +32,7 @@ describe('Data Import', () => {
 
     const calloutMessage = `The action profile "${actionProfileToDelete.name}" was successfully deleted`;
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 

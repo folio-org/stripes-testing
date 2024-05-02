@@ -717,3 +717,19 @@ export const patronGroupUuids = {
   FACULTY: '503a81cd-6c26-400f-b620-14c08943697c',
   UNDERGRAD: 'bdc2b6d4-5ceb-4a12-ab46-249b9a68473e',
 };
+
+export const electronicAccessRelationshipId = {
+  RESOURCE: 'f5d0068e-6272-458e-8a81-b85e7b9a14aa',
+};
+
+export const electronicAccessRelationshipName = {
+  RESOURCE: 'Resource',
+  VERSION_OF_RESOURCE: 'Version of resource',
+};
+
+export const AUTHORITY_FILE_TEXT_FIELD_NAMES = {
+  NAME: 'Name',
+  PREFIX: 'Prefix',
+  HRID_STARTS_WITH: 'HRID starts with',
+  BASE_URL: 'Base url',
+};

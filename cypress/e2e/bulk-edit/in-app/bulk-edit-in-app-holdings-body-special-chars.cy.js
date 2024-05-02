@@ -87,11 +87,11 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.holdingHRID);
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Note', 'Temporary location');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Note', 'Temporary location', noteType);
         BulkEditSearchPane.verifySpecificItemsMatched(holdingsNote);
 
         const location = 'Online';
-        BulkEditActions.openActions();
+        BulkEditActions.openActionsIfNotYet();
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.replaceTemporaryLocation(location, 'holdings');
         BulkEditActions.confirmChanges();

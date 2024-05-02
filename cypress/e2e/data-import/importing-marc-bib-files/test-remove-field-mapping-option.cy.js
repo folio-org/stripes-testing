@@ -159,14 +159,17 @@ describe('Data Import', () => {
       profileName: `C17033 update job profile_${getRandomPostfix()}`,
     };
 
-    before('login', () => {
+    before('Login', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
+      // delete created files
+      FileManager.deleteFile(`cypress/fixtures/${marcFileNameForCreate}`);
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
         // delete profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
@@ -188,9 +191,6 @@ describe('Data Import', () => {
         });
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
       });
-      // delete created files
-      FileManager.deleteFile(`cypress/fixtures/${marcFileNameForCreate}`);
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     });
 
     it(

@@ -1,4 +1,4 @@
-import { RECORD_STATUSES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -13,7 +13,7 @@ describe('Data Import', () => {
     const fileNameToUpload = `C2358 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
-    before('create test data', () => {
+    before('Create test data', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathToUpload, fileNameToUpload, jobProfileToRun).then(
         (response) => {
@@ -27,7 +27,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         InventoryInstance.deleteInstanceViaApi(instanceId);
       });
@@ -38,7 +38,7 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         Logs.openFileDetails(fileNameToUpload);
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileNameToUpload);
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,

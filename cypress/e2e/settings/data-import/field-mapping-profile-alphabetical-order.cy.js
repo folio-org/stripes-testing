@@ -1,13 +1,15 @@
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
+import SelectProfileModal from '../../../support/fragments/settings/dataImport/modals/selectProfileModal';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import SelectMappingProfile from '../../../support/fragments/settings/dataImport/modals/selectProfileModal';
 
 describe('Data Import', () => {
   describe('Settings', () => {
@@ -41,7 +43,7 @@ describe('Data Import', () => {
       },
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       testData.mappingProfiles.forEach((mappingProfile) => {
         NewFieldMappingProfile.createMappingProfileViaApi(mappingProfile.name);
@@ -53,7 +55,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       testData.mappingProfiles.forEach((mappingProfile) => SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name));
@@ -84,12 +86,12 @@ describe('Data Import', () => {
         FieldMappingProfiles.verifyProfilesIsSortedInAlphabeticalOrder();
 
         // #5 Select "Action profiles" -> click "Actions" button -> Select "New action profile" option
-        FieldMappingProfiles.openNewMappingProfileForm();
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.openNewActionProfileForm();
 
         // #6 Click "Link profile" button
-        NewFieldMappingProfile.clickLinkProfileButton();
-        SelectMappingProfile.waitLoading();
-        FieldMappingProfiles.verifyProfilesIsSortedInAlphabeticalOrder();
+        NewActionProfile.clickLinkProfileButton();
+        SelectProfileModal.verifyProfilesIsSortedInAlphabeticalOrder();
       },
     );
   });

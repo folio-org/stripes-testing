@@ -1,14 +1,14 @@
 import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
-import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
+import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import {
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
   ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
@@ -49,32 +49,34 @@ describe('Data Import', () => {
     };
     const calloutMessage = `The job profile "${jobProfile.profileName}" was successfully updated`;
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
+      cy.getAdminToken();
+      NewFieldMappingProfile.createMappingProfileViaApi(
+        collectionOfActionAndMappingProfiles[0].mappingProfile.name,
+      ).then((mappingProfileResponse) => {
+        NewActionProfile.createActionProfileViaApiMarc(
+          collectionOfActionAndMappingProfiles[0].actionProfile,
+          mappingProfileResponse.body.id,
+        );
+      });
+      NewFieldMappingProfile.createMappingProfileViaApi(
+        collectionOfActionAndMappingProfiles[1].mappingProfile.name,
+      ).then((mappingProfileResponse) => {
+        NewActionProfile.createActionProfileViaApiMarc(
+          collectionOfActionAndMappingProfiles[1].actionProfile,
+          mappingProfileResponse.body.id,
+        );
+      });
+      NewMatchProfile.createMatchProfileViaApi(matchProfileName);
+
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password);
 
-        NewFieldMappingProfile.createMappingProfileViaApi(
-          collectionOfActionAndMappingProfiles[0].mappingProfile.name,
-        ).then((mappingProfileResponse) => {
-          NewActionProfile.createActionProfileViaApiMarc(
-            collectionOfActionAndMappingProfiles[0].actionProfile,
-            mappingProfileResponse.body.id,
-          );
-        });
-        NewFieldMappingProfile.createMappingProfileViaApi(
-          collectionOfActionAndMappingProfiles[1].mappingProfile.name,
-        ).then((mappingProfileResponse) => {
-          NewActionProfile.createActionProfileViaApiMarc(
-            collectionOfActionAndMappingProfiles[1].actionProfile,
-            mappingProfileResponse.body.id,
-          );
-        });
-        NewMatchProfile.createMatchProfileViaApi(matchProfileName);
+        cy.login(userProperties.username, userProperties.password);
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfileName);

@@ -1,14 +1,14 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
@@ -20,7 +20,7 @@ describe('Data Import', () => {
     const getCalloutSuccessMessage = (logsCount) => `${logsCount} data import logs have been successfully deleted.`;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       for (let i = 0; i < 26; i++) {
         const fileNameToUpload = `C358137 autotestFile${getRandomPostfix()}.mrc`;
@@ -53,7 +53,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         instanceIds.forEach((id) => {
           InventoryInstance.deleteInstanceViaApi(id);
@@ -68,7 +68,7 @@ describe('Data Import', () => {
       () => {
         // need to open file for this we find it
         Logs.openViewAllLogs();
-        cy.wait(5000);
+        cy.wait(8000);
         LogsViewAll.openUserIdAccordion();
         LogsViewAll.filterJobsByUser(`${user.firstName} ${user.lastName}`);
         Logs.openFileDetailsByRowNumber();

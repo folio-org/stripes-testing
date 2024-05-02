@@ -1,17 +1,17 @@
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
-import {
-  JOB_STATUS_NAMES,
-  RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
-} from '../../../support/constants';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
@@ -23,17 +23,17 @@ describe('Data Import', () => {
         fileName: `C359246 marcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         errorMessage:
-          "io.vertx.core.impl.NoStackTraceThrowable: Chosen job profile 'Default - Create instance and SRS MARC Bib' does not support 'MARC_AUTHORITY' record type",
+          "Chosen job profile 'Default - Create instance and SRS MARC Bib' does not support 'MARC_AUTHORITY' record type",
       },
       {
         fileName: `C359246 marcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_HOLDINGS_AND_SRS,
         errorMessage:
-          "io.vertx.core.impl.NoStackTraceThrowable: Chosen job profile 'Default - Create Holdings and SRS MARC Holdings' does not support 'MARC_AUTHORITY' record type",
+          "Chosen job profile 'Default - Create Holdings and SRS MARC Holdings' does not support 'MARC_AUTHORITY' record type",
       },
     ];
 
-    before('Create test data and login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
@@ -44,7 +44,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });

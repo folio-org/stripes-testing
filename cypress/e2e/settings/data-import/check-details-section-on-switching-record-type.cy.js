@@ -1,8 +1,8 @@
 import { Permissions } from '../../../support/dictionary';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import {
-  SettingsDataImport,
   FieldMappingProfiles,
+  SettingsDataImport,
 } from '../../../support/fragments/settings/dataImport';
 import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
@@ -19,7 +19,7 @@ describe('Data Import', () => {
       user: {},
     };
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           // profile should not have any differences from one created manually

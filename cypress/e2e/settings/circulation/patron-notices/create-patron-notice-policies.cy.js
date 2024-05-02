@@ -1,7 +1,7 @@
 import NewNoticePolicy from '../../../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 // TO DO: update test with duplicate and edit methods, after PO will review test case.
-describe('ui-circulation-settings: create patron notice policies', () => {
+describe('Settings (Notices)', () => {
   const noticePolicy = { ...NewNoticePolicy.defaultUi };
   beforeEach('login', () => {
     cy.loginAsAdmin({
@@ -10,7 +10,7 @@ describe('ui-circulation-settings: create patron notice policies', () => {
     });
   });
 
-  it('C6530 Create notice policy (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
+  it('C6530 Create notice policy (volaris)', { tags: ['smoke', 'volaris', 'system'] }, () => {
     NewNoticePolicy.waitLoading();
     NewNoticePolicy.startAdding();
     NewNoticePolicy.checkInitialState();

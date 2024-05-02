@@ -5,15 +5,10 @@ import {
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
-  VENDOR_NAMES,
   RECORD_STATUSES,
+  VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -23,6 +18,11 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -87,7 +87,7 @@ describe('Data Import', () => {
       profileName: `C376973 job profile ${getRandomPostfix()}`,
     };
 
-    before('login', () => {
+    before('Create test data and login', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
@@ -116,13 +116,13 @@ describe('Data Import', () => {
         user = userProperties;
 
         cy.login(userProperties.username, userProperties.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
         });
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
@@ -140,7 +140,6 @@ describe('Data Import', () => {
       'C376973 Verify the log details for created imported order records (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -166,7 +165,8 @@ describe('Data Import', () => {
 
             orderNumbers.push(orderNumber);
           });
-          cy.go('back');
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(marcFileName);
         });
       },
     );
