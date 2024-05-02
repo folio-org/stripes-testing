@@ -26,6 +26,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { Organizations } from '../../../support/fragments/organizations';
 
 describe('Data Import', () => {
   describe('Importing EDIFACT files', () => {
@@ -68,10 +69,12 @@ describe('Data Import', () => {
         Permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
+        Organizations.createOrganizationViaApi(organization).then((response) => {
+          organization.id = response;
+          cy.login(testData.user.username, testData.user.password, {
+            path: SettingsMenu.mappingProfilePath,
+            waiter: FieldMappingProfiles.waitLoading,
+          });
         });
       });
     });
