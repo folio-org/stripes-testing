@@ -73,7 +73,7 @@ describe.skip('Inventory', () => {
     // the test is marked as Obsolete in TestRail, so it is skipped
     it(
       'C411384 (CONSORTIA) Check Holdings "Actions" menu on Central tenant for a member librarys holdings record (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet'] },
+      { tags: [] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();

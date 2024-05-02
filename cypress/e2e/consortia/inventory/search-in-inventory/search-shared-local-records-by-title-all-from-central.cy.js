@@ -9,9 +9,7 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -49,6 +47,7 @@ describe('Inventory', () => {
         fileName: `C411611 Central testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         tenant: tenantNames.central,
+        propertyName: 'instance',
         numOfRecords: 2,
         createdRecordsId: [],
       },
@@ -57,13 +56,13 @@ describe('Inventory', () => {
         fileName: `C411611 Member1 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         tenant: tenantNames.college,
+        propertyName: 'instance',
         numOfRecords: 1,
         createdRecordsId: [],
       },
     ];
 
     before('Create user, data', () => {
-      cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
         .then((userProperties) => {
           users.userProperties = userProperties;
@@ -144,33 +143,25 @@ describe('Inventory', () => {
           });
         })
         .then(() => {
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                if (marcFile.tenant === 'College') {
-                  ConsortiumManager.switchActiveAffiliation(
-                    tenantNames.central,
-                    tenantNames.college,
-                  );
-                }
-                DataImport.verifyUploadState();
-                DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileName);
-                Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    marcFile.createdRecordsId.push(link.split('/')[5]);
-                  });
-                }
+          marcFiles.forEach((marcFile) => {
+            if (marcFile.tenant === 'College') {
+              cy.setTenant(Affiliations.College);
+            } else {
+              cy.resetTenant();
+              cy.getAdminToken();
+            }
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                marcFile.createdRecordsId.push(record[marcFile.propertyName].id);
               });
-            },
-          );
+            });
+          });
         })
+
         .then(() => {
           cy.setTenant(Affiliations.College);
 

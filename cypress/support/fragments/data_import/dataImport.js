@@ -694,23 +694,26 @@ export default {
     cy.expect(deleteLogsButton.is({ disabled: true }));
   },
 
-  verifyUploadState: (maxRetries = 30) => {
+  verifyUploadState: () => {
     // multiple users to be running Data Import in the same Tenant at the same time
     // because this is possible by design
-    // that's why we need waiting until previous file will be uploaded or reload page
-    let retryCount = 0;
+    // that's why we need waiting until previous file will be uploaded, reload page and delete uploaded file
     waitLoading();
-    cy.wait(5000);
     cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(
       (isDeleteFilesButtonExists) => {
-        if (isDeleteFilesButtonExists && retryCount < maxRetries) {
+        if (isDeleteFilesButtonExists) {
+          cy.wait(5000);
           cy.reload();
-          cy.wait(40000);
-          retryCount++;
+          cy.wait(15000);
+          cy.reload();
+          cy.wait(3000);
+          cy.do(Button('Delete files').click());
+          cy.expect(Button('or choose files').exists());
         }
       },
     );
     cy.expect(sectionPaneJobsTitle.find(Button('or choose files')).exists());
+    cy.wait(3000);
   },
 
   clickResumeButton: () => {

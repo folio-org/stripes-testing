@@ -6,23 +6,27 @@ import {
   HOLDINGS_TYPE_NAMES,
   INSTANCE_STATUS_TERM_NAMES,
   ITEM_STATUS_NAMES,
+  JOB_STATUS_NAMES,
   LOAN_TYPE_NAMES,
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
-  JOB_STATUS_NAMES,
-  RECORD_STATUSES,
   ORDER_STATUSES,
+  RECORD_STATUSES,
   VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -31,17 +35,13 @@ import {
 } from '../../../support/fragments/settings/dataImport';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import InstanceStatusTypes from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/instanceStatusTypes';
+import NewInstanceStatusType from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/newInstanceStatusType';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
-import FileManager from '../../../support/utils/fileManager';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import NewInstanceStatusType from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/newInstanceStatusType';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import InstanceStatusTypes from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/instanceStatusTypes';
 import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {

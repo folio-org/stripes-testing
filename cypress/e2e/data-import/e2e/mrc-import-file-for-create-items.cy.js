@@ -75,7 +75,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.dataImportUploadAll.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -83,6 +83,7 @@ describe('Data Import', () => {
         Permissions.uiInventoryViewInstances.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
         cy.login(userProperties.username, userProperties.password);
       });
     });
@@ -112,7 +113,7 @@ describe('Data Import', () => {
       FieldMappingProfileView.closeViewMode(itemMappingProfile.name);
     };
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         // delete generated profiles

@@ -25,7 +25,7 @@ describe('Data Import', () => {
       OCLCAuthentication: '100481406/PAOLF',
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       cy.loginAsAdmin({
         path: TopMenu.inventoryPath,
@@ -68,7 +68,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(testData.user.userId);
         InventoryInstance.deleteInstanceViaApi(testData.instanceId);

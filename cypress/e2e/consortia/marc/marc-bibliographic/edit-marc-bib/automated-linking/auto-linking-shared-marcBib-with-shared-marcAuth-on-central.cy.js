@@ -6,12 +6,11 @@ import InventoryInstances from '../../../../../../support/fragments/inventory/in
 import getRandomPostfix from '../../../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
-import JobProfiles from '../../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../../support/fragments/data_import/logs/logs';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
 import QuickMarcEditor from '../../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../../../support/fragments/marcAuthority/marcAuthority';
+import MarcAuthorities from '../../../../../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -19,6 +18,7 @@ describe('MARC', () => {
       describe('Automated linking', () => {
         const testData = {
           editSharedRecordText: 'Edit shared MARC record',
+          searchQueries: ['Bate, Walter Jackson,', 'Johnson, Samuel,', 'Criticism and interpretation'],
           linked100Field: [
             9,
             '100',
@@ -70,12 +70,14 @@ describe('MARC', () => {
             marc: 'marcBibFileForC400663.mrc',
             fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+            propertyName: 'instance',
             numOfRecords: 1,
           },
           {
             marc: 'marcAuthFileForC400663.mrc',
             fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+            propertyName: 'authority',
             numOfRecords: 4,
           },
         ];
@@ -84,6 +86,18 @@ describe('MARC', () => {
 
         before('Create users, data', () => {
           cy.getAdminToken();
+          testData.searchQueries.forEach((query) => {
+            MarcAuthorities.getMarcAuthoritiesViaApi({
+              limit: 100,
+              query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
+            }).then((authorities) => {
+              if (authorities) {
+                authorities.forEach(({ id }) => {
+                  MarcAuthority.deleteViaAPI(id);
+                });
+              }
+            });
+          });
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -107,20 +121,15 @@ describe('MARC', () => {
               cy.resetTenant();
               cy.loginAsAdmin().then(() => {
                 marcFiles.forEach((marcFile) => {
-                  cy.visit(TopMenu.dataImportPath);
-                  DataImport.verifyUploadState();
-                  DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileNameImported);
-                  JobProfiles.waitLoadingList();
-                  JobProfiles.search(marcFile.jobProfileToRun);
-                  JobProfiles.runImportFile();
-                  Logs.waitFileIsImported(marcFile.fileNameImported);
-                  Logs.checkJobStatus(marcFile.fileNameImported, JOB_STATUS_NAMES.COMPLETED);
-                  Logs.openFileDetails(marcFile.fileNameImported);
-                  for (let i = 0; i < marcFile.numOfRecords; i++) {
-                    Logs.getCreatedItemsID(i).then((link) => {
-                      createdRecordIDs.push(link.split('/')[5]);
+                  DataImport.uploadFileViaApi(
+                    marcFile.marc,
+                    marcFile.fileNameImported,
+                    marcFile.jobProfileToRun,
+                  ).then((response) => {
+                    response.forEach((record) => {
+                      createdRecordIDs.push(record[marcFile.propertyName].id);
                     });
-                  }
+                  });
                 });
 
                 linkableFields.forEach((tag) => {

@@ -20,7 +20,7 @@ describe('Data Import', () => {
     const getCalloutSuccessMessage = (logsCount) => `${logsCount} data import logs have been successfully deleted.`;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       for (let i = 0; i < 26; i++) {
         const fileNameToUpload = `C358137 autotestFile${getRandomPostfix()}.mrc`;
@@ -53,7 +53,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         instanceIds.forEach((id) => {
           InventoryInstance.deleteInstanceViaApi(id);

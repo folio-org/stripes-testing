@@ -19,7 +19,7 @@ describe('Data Import', () => {
     ];
     const numberOfRecords = ['102', '202'];
 
-    before('create user and login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportCanViewOnly.gui,
@@ -34,7 +34,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete user', () => {
+    after('Delete user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });

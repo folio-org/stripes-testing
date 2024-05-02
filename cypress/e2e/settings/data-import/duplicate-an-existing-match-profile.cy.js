@@ -31,7 +31,7 @@ describe('Data Import', () => {
     const calloutMessage = `The match profile "${duplicatedMatchProfile.profileName}" was successfully created`;
     const calloutErrorMessage = 'New record not created';
 
-    before('create user and profile', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password);
@@ -41,7 +41,7 @@ describe('Data Import', () => {
       MatchProfileView.verifyMatchProfileTitleName(matchProfile.profileName);
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);

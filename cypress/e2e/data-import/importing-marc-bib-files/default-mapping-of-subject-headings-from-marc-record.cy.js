@@ -1,7 +1,7 @@
 import {
+  DEFAULT_JOB_PROFILE_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -23,7 +23,7 @@ describe('Data Import', () => {
     const filePathToUpload = 'oneMarcBib.mrc';
     const fileName = `C6692 autotestFile${getRandomPostfix()}.mrc`;
 
-    before('create user and login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
@@ -38,7 +38,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(

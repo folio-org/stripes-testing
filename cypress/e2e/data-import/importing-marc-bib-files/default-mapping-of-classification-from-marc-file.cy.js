@@ -1,18 +1,18 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { Permissions } from '../../../support/dictionary';
 import {
+  DEFAULT_JOB_PROFILE_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -22,7 +22,7 @@ describe('Data Import', () => {
     const filePathToUpload = 'marcBibFileForC6693.mrc';
     const fileName = `C6693 autotestFile${getRandomPostfix()}.mrc`;
 
-    before('create user and login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
@@ -36,7 +36,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
