@@ -1,12 +1,12 @@
-import { Permissions } from '../../../support/dictionary';
 import { ORDER_STATUSES } from '../../../support/constants';
-import { Addresses } from '../../../support/fragments/settings/tenant/general';
+import { Permissions } from '../../../support/dictionary';
 import {
-  SettingsDataImport,
-  FieldMappingProfiles,
   FieldMappingProfileView,
+  FieldMappingProfiles,
+  SettingsDataImport,
 } from '../../../support/fragments/settings/dataImport';
 import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import { Addresses } from '../../../support/fragments/settings/tenant/general';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -51,7 +51,7 @@ describe('Data Import', () => {
       user: {},
     };
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         testData.addresses.forEach((address) => Addresses.createAddressViaApi(address));
       });
@@ -92,7 +92,7 @@ describe('Data Import', () => {
         FieldMappingProfileEditForm.fillMappingProfileFields({ ...testData.mappingProfile });
 
         // Press the "Save as profile & Close" button
-        FieldMappingProfileEditForm.clickSaveAndCloseButton();
+        FieldMappingProfileEditForm.clickSaveAndCloseButton({ profileCreated: true });
 
         // Review the "Bill to address" and "Ship to address" details on the View screen
         FieldMappingProfileView.checkOrderFieldsConditions([

@@ -574,7 +574,7 @@ export default {
   },
 
   resetAll() {
-    cy.do(resetAllButton.click());
+    cy.do(resetAllBtn.click());
   },
 
   clickResetAllButton() {
@@ -749,7 +749,10 @@ export default {
 
   verifyActionButtonOptions() {
     cy.do(paneResultsSection.find(actionsButton).click());
-    cy.expect([Button(including('New')).exists(), DropdownMenu().find(HTML('Show columns')).exists()]);
+    cy.expect([
+      Button(including('New')).exists(),
+      DropdownMenu().find(HTML('Show columns')).exists(),
+    ]);
   },
 
   verifyNoExportJsonOption() {
@@ -798,7 +801,10 @@ export default {
   },
 
   verifySearchAndResetAllButtonsDisabled(state) {
-    cy.expect([searchButton.has({ disabled: state }), resetAllBtn.has({ disabled: state })]);
+    cy.expect([
+      Section({ id: 'browse-inventory-filters-pane' }).find(searchButton).has({ disabled: state }),
+      Section({ id: 'browse-inventory-filters-pane' }).find(resetAllBtn).has({ disabled: state }),
+    ]);
   },
 
   verifyNoRecordsFound() {

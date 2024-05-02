@@ -8,7 +8,7 @@ describe('Inventory', () => {
   describe('Instance', () => {
     let user;
 
-    before('create test data and login', () => {
+    before('Create user and login', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         user = userProperties;
 
@@ -19,7 +19,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });

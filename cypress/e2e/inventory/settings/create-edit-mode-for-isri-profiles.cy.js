@@ -20,7 +20,7 @@ describe('Inventory', () => {
     const firstUpdateProfileName =
       'Inventory Single Record - Default Update Instance (91f9b8d6-d80e-4727-9783-73fb53e3c786)';
 
-    before('create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.uiInventorySingleRecordImport.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -32,7 +32,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         Z3950TargetProfiles.getTargetProfileIdViaApi({

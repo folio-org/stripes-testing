@@ -124,7 +124,7 @@ describe('MARC', () => {
         QuickMarcEditor.checkEmptyFieldAdded(6);
         QuickMarcEditor.updateExistingField('', testData.tag001value);
         QuickMarcEditor.updateTagNameToLockedTag(6, '001');
-        QuickMarcEditor.checkFourthBoxDisabled(6);
+        QuickMarcEditor.checkFourthBoxEditable(6, false);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveHoldings();
         HoldingsRecordView.editInQuickMarc();

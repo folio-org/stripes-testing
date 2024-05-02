@@ -22,7 +22,6 @@ describe('Inventory', () => {
       instanceAccordions: [
         'Language',
         'Resource Type',
-        'Staff suppress',
         'Suppress from discovery',
         'Source',
         'Tags',

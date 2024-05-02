@@ -10,16 +10,17 @@ describe('Inventory', () => {
     const materialTypeName = `autoTestMaterialType.${getRandomPostfix()}`;
     const newMaterialTypeName = `autoTestMaterialType.${getRandomPostfix()}`;
 
-    before(() => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.uiCreateEditDeleteMaterialTypes.gui]).then(
         (userProperties) => {
           userId = userProperties.userId;
+
           cy.login(userProperties.username, userProperties.password);
         },
       );
     });
 
-    after(() => {
+    after('Delete user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(userId);
     });

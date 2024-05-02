@@ -13,7 +13,7 @@ describe('Inventory', () => {
   describe('Instance', () => {
     const testData = {};
 
-    before('create test data and login', () => {
+    before('Create test data', () => {
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiSettingsInstanceStatusesCreateEditDelete.gui,
@@ -27,7 +27,7 @@ describe('Inventory', () => {
       });
     });
 
-    beforeEach('login', () => {
+    beforeEach('Login', () => {
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,

@@ -31,7 +31,7 @@ const oclcRecordData = {
 
 describe('Inventory', () => {
   describe('Single record import', () => {
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
         InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
@@ -48,11 +48,12 @@ describe('Inventory', () => {
         Permissions.settingsDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password);
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         InventoryInstance.deleteInstanceViaApi(instanceRecord.instanceId);
         Users.deleteViaApi(user.userId);

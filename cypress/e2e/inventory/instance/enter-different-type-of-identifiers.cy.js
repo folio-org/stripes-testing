@@ -13,7 +13,7 @@ describe('Inventory', () => {
     let instanceId;
     let resourceIdentifier;
 
-    beforeEach('navigate to inventory', () => {
+    before('Create test data and login', () => {
       instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
       cy.getAdminToken()
         .then(() => {
@@ -35,7 +35,7 @@ describe('Inventory', () => {
       cy.loginAsAdmin();
     });
 
-    afterEach(() => {
+    after('Delete test data', () => {
       cy.getAdminToken();
       InventoryInstance.deleteInstanceViaApi(instanceId);
     });

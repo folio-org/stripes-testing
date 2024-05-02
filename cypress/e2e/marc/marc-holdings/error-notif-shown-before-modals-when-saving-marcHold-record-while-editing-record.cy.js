@@ -2,6 +2,7 @@ import {
   DEFAULT_JOB_PROFILE_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
+  MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -23,11 +24,6 @@ describe('MARC', () => {
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_HOLDINGS_AND_SRS,
       fileWithHoldingsPathForUpload: 'marcBibFileForC375187.mrc',
       editedMarcFileName: `C375187 testMarcFile${getRandomPostfix()}.mrc`,
-      tagLDR: {
-        tag: 'LDR',
-        invalidValue: '00506cy\\\\a22001574\\\\450',
-        validValue: '00506cy\\\\a22001574\\\\4500',
-      },
       tag014: {
         tag: '014',
         updatedTag: '0',
@@ -44,8 +40,6 @@ describe('MARC', () => {
         rowIndex: 9,
       },
       errors: {
-        ldrCharacterLength:
-          'Record cannot be saved. The Leader must contain 24 characters, including null spaces.',
         tagCharacterLength: 'Record cannot be saved. A MARC tag must contain three characters.',
       },
     };
@@ -134,17 +128,17 @@ describe('MARC', () => {
         QuickMarcEditor.deleteField(9);
         QuickMarcEditor.afterDeleteNotification(testData.tag866.tag);
         QuickMarcEditor.checkButtonsEnabled();
-        QuickMarcEditor.updateExistingField(testData.tagLDR.tag, testData.tagLDR.invalidValue);
-        QuickMarcEditor.checkLDRValue(testData.tagLDR.invalidValue);
         QuickMarcEditor.updateExistingField(testData.tag035.tag, testData.tag035.newContent);
         QuickMarcEditor.checkContent(testData.tag035.newContent, testData.tag035.rowIndex);
         QuickMarcEditor.updateExistingTagValue(
           testData.tag014.rowIndex,
           testData.tag014.updatedTag,
         );
-        QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.checkCallout(testData.errors.ldrCharacterLength);
-        QuickMarcEditor.updateExistingField(testData.tagLDR.tag, testData.tagLDR.validValue);
+        QuickMarcEditor.selectFieldsDropdownOption(
+          'LDR',
+          'Item',
+          MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN.I,
+        );
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkCallout(testData.errors.tagCharacterLength);
         QuickMarcEditor.updateExistingTagValue(testData.tag014.rowIndex, testData.tag014.tag);

@@ -1,16 +1,17 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
+import { DEFAULT_JOB_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import DateTools from '../../../support/utils/dateTools';
-import TopMenu from '../../../support/fragments/topMenu';
-import FileManager from '../../../support/utils/fileManager';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import Users from '../../../support/fragments/users/users';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import DateTools from '../../../support/utils/dateTools';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
@@ -24,7 +25,7 @@ describe('Data Import', () => {
       OCLCAuthentication: '100481406/PAOLF',
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       cy.loginAsAdmin({
         path: TopMenu.inventoryPath,
@@ -46,7 +47,13 @@ describe('Data Import', () => {
         });
         DataImport.verifyUploadState();
         // remove generated test file from fixtures after uploading
-        cy.uploadFileWithDefaultJobProfile(testData.fileNameForFailedImport);
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(testData.pathToStaticFile, testData.fileNameForFailedImport);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.search(DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS);
+        JobProfiles.runImportFile();
+        Logs.waitFileIsImported(testData.fileNameForFailedImport);
+        Logs.checkStatusOfJobProfile();
         cy.wait(2000);
         DataImport.uploadFileViaApi(
           testData.pathToStaticFile,
@@ -61,7 +68,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(testData.user.userId);
         InventoryInstance.deleteInstanceViaApi(testData.instanceId);

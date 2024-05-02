@@ -1,5 +1,5 @@
-import { ClassificationTypes } from '../../../support/fragments/settings/inventory';
 import { InventoryInstance, InventoryInstances } from '../../../support/fragments/inventory';
+import { ClassificationTypes } from '../../../support/fragments/settings/inventory';
 import TopMenu from '../../../support/fragments/topMenu';
 
 describe('Inventory', () => {
@@ -8,7 +8,7 @@ describe('Inventory', () => {
       classificationTypes: [],
     };
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         ClassificationTypes.getClassificationTypesViaApi().then(({ classificationTypes }) => {
           testData.classificationTypes = classificationTypes.map(({ name }) => name);

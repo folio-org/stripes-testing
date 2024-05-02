@@ -239,6 +239,16 @@ describe('Permission Sets', () => {
 
   it(
     'C404380 Verify that "Settings (Users): View all settings" works as expected Scenario 4 (volaris)',
+    { tags: ['extendedPath', 'volaris'] },
+    () => {
+      cy.visit(SettingsMenu.patronBlockTemplates);
+      PatronBlockTemplates.findPatronTemlate(patronBlockTemplate.name);
+      PermissionSets.checkEditButtonNotAvailable();
+    },
+  );
+
+  it(
+    'C404380 Verify that "Settings (Users): View all settings" works as expected Scenario 4 (volaris)',
     { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
     () => {
       cy.visit(SettingsMenu.limitsPath);

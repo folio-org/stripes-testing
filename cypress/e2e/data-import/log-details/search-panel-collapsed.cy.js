@@ -11,7 +11,7 @@ describe('Data Import', () => {
   describe('Log details', () => {
     let user;
 
-    before('Create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.dataExportEnableApp.gui,
@@ -25,9 +25,8 @@ describe('Data Import', () => {
       });
     });
 
-    after('Delete test data', () => {
+    after('Delete user', () => {
       cy.getAdminToken().then(() => {
-        LogsViewAll.expandButtonClick();
         Users.deleteViaApi(user.userId);
       });
     });

@@ -113,6 +113,7 @@ describe('MARC', () => {
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
           MarcAuthority.edit();
           QuickMarcEditor.updateExistingField(testData.tag010, testData.updatedValue);
+          cy.wait(2000);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibs(1);

@@ -44,7 +44,11 @@ describe('Multiple loans', () => {
     });
     RequestPolicy.createViaApi(requestPolicyBody);
 
-    cy.createTempUser([Permissions.loansAll.gui, Permissions.loansView.gui])
+    cy.createTempUser([
+      Permissions.loansAll.gui,
+      Permissions.loansView.gui,
+      Permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
+    ])
       .then((userProperties) => {
         userData = userProperties;
       })

@@ -16,7 +16,7 @@ describe('Inventory', () => {
     const instanceNewTitle = `C3497 new autotestInstance ${getRandomPostfix()}`;
     const itemBarcode = Helper.getRandomBarcode();
 
-    before('create test data and login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         InventoryInstances.createInstanceViaApi(instanceTitle, itemBarcode);
       });
@@ -31,7 +31,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);

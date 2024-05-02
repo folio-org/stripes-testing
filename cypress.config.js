@@ -7,6 +7,7 @@ const { rmdir, unlink } = require('fs');
 const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
+const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
 
 module.exports = defineConfig({
   retries: {
@@ -21,13 +22,14 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://kong-qlcepcon.int.aws.folio.org',
-    OKAPI_TENANT: 'fs090001sr',
+    OKAPI_HOST: 'https://kong-evrk2.int.aws.folio.org',
+    OKAPI_TENANT: 'diku2',
     diku_login: 'folio',
-    diku_password: 'folio-loc',
+    diku_password: 'folio',
     is_kiwi_release: false,
     downloadTimeout: 2000,
-    allure: 'true',
+    allure: true,
+    allureReuseAfterSpec: true,
     grepFilterSpecs: true,
     grepOmitFiltered: true,
     rtrAuth: false,
@@ -107,6 +109,8 @@ module.exports = defineConfig({
         delete process.env.TESTRAIL_PROJECTID;
       }
 
+      registerReportPortalPlugin(on, config);
+
       // eslint-disable-next-line global-require
       const grepConfig = require('@cypress/grep/src/plugin')(config);
 
@@ -117,7 +121,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://loc-pv-non-ecs-02.int.aws.folio.org',
+    baseUrl: 'https://diku2.int.aws.folio.org',
     testIsolation: false,
   },
 });

@@ -40,7 +40,6 @@ describe('MARC', () => {
             ).then((sourceId) => {
               localAuthFile.fileId = sourceId;
             });
-            ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
           })
           .then(() => {
             cy.login(users.userProperties.username, users.userProperties.password, {
@@ -48,6 +47,8 @@ describe('MARC', () => {
               waiter: MarcAuthorities.waitLoading,
             });
           });
+        cy.getAdminToken();
+        ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
       });
 
       after('Delete users, data', () => {

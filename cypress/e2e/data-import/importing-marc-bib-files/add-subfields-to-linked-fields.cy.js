@@ -98,7 +98,7 @@ describe('Data Import', () => {
         tag: 700,
       },
       {
-        rowIndex: 78,
+        rowIndex: 76,
         value: 'Lee, Stan, 1922-2018',
         tag: 700,
       },
