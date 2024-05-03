@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import permissions from '../../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
@@ -21,7 +22,7 @@ import {
   INVOICE_STATUSES,
   ORDER_STATUSES,
 } from '../../../../support/constants';
-import basicOrderLine from '../../../../support/fragments/orders/basicOrderLine';
+import BasicOrderLine from '../../../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../../../support/fragments/settings/inventory/materialTypes';
 
 describe('ui-finance: Fiscal Year Rollover', () => {
@@ -51,6 +52,9 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     reEncumber: true,
   };
   const secondOrder = {
+    id: uuid(),
+    vendor: '',
+    orderType: 'One-Time',
     approved: true,
     reEncumber: true,
   };
@@ -120,11 +124,10 @@ describe('ui-finance: Fiscal Year Rollover', () => {
                       Organizations.createOrganizationViaApi(organization).then(
                         (responseOrganizations) => {
                           organization.id = responseOrganizations;
-                          secondOrder.orderType = 'One-time';
-                          secondOrder.vendor = organization.name;
+                          secondOrder.vendor = organization.id;
                           firstOrder.vendor = organization.id;
                           const firstOrderLine = {
-                            ...basicOrderLine.defaultOrderLine,
+                            ...BasicOrderLine.defaultOrderLine,
                             cost: {
                               listUnitPrice: 100.0,
                               currency: 'USD',
@@ -146,7 +149,30 @@ describe('ui-finance: Fiscal Year Rollover', () => {
                               volumes: [],
                             },
                           };
-                          cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+                          const secondOrderLine = {
+                            ...BasicOrderLine.defaultOrderLine,
+                            id: uuid(),
+                            cost: {
+                              listUnitPrice: 10.0,
+                              currency: 'USD',
+                              discountType: 'percentage',
+                              quantityPhysical: 1,
+                              poLineEstimatedPrice: 10.0,
+                            },
+                            fundDistribution: [
+                              { code: firstFund.code, fundId: firstFund.id, value: 100 },
+                            ],
+                            locations: [
+                              { locationId: location.id, quantity: 1, quantityPhysical: 1 },
+                            ],
+                            acquisitionMethod: params.body.acquisitionMethods[0].id,
+                            physical: {
+                              createInventory: 'Instance, Holding, Item',
+                              materialType: mtypes.body.id,
+                              materialSupplier: responseOrganizations,
+                              volumes: [],
+                            },
+                          };
                           Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
                             firstOrder.id = firstOrderResponse.id;
                             firstOrderNumber = firstOrderResponse.poNumber;
@@ -157,9 +183,6 @@ describe('ui-finance: Fiscal Year Rollover', () => {
                               ...firstOrderResponse,
                               workflowStatus: ORDER_STATUSES.OPEN,
                             });
-
-                            Orders.searchByParameter('PO number', firstOrderNumber);
-                            Orders.selectFromResultsList(firstOrderNumber);
                             Invoices.createInvoiceWithInvoiceLineViaApi({
                               vendorId: organization.id,
                               fiscalYearId: firstFiscalYear.id,
@@ -177,25 +200,17 @@ describe('ui-finance: Fiscal Year Rollover', () => {
                               });
                             });
                           });
-                          cy.visit(TopMenu.ordersPath);
-                          Orders.createApprovedOrderForRollover(secondOrder, true).then(
-                            (secondOrderResponse) => {
-                              secondOrder.id = secondOrderResponse.id;
-                              secondOrderNumber = secondOrderResponse.poNumber;
-                              Orders.checkCreatedOrder(secondOrder);
-                              OrderLines.addPOLine();
-                              OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
-                              OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-                                firstFund,
-                                '10',
-                                '1',
-                                '10',
-                                location.name,
-                              );
-                              OrderLines.backToEditingOrder();
-                              Orders.openOrder();
-                            },
-                          );
+                          Orders.createOrderViaApi(secondOrder).then((secondOrderResponse) => {
+                            secondOrder.id = secondOrderResponse.id;
+                            secondOrderNumber = secondOrderResponse.poNumber;
+                            secondOrderLine.purchaseOrderId = secondOrderResponse.id;
+
+                            OrderLines.createOrderLineViaApi(secondOrderLine);
+                            Orders.updateOrderViaApi({
+                              ...secondOrderResponse,
+                              workflowStatus: ORDER_STATUSES.OPEN,
+                            });
+                          });
                         },
                       );
                     });
