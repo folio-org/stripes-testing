@@ -50,7 +50,7 @@ describe('Eureka', () => {
 
       it(
         'C446120 Delete a role with capabilities and users assigned (eureka)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
+        { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
