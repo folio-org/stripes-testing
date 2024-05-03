@@ -29,6 +29,7 @@ export const itemFieldValues = {
   instanceId: 'Instance ID',
   itemStatus: 'Item status',
   holdingsId: 'Holdings ID',
+  temporaryLocation: 'Item temporary location name',
 };
 export const usersFieldValues = {
   expirationDate: 'User expiration date',
