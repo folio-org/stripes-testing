@@ -15,7 +15,7 @@ describe('MARC', () => {
       const testData = {
         searchOption: 'LCCN',
         AUTHORIZED: 'Authorized',
-        searchQuery: '85057895'
+        searchQuery: '85057895',
       };
 
       const searchResults = [
