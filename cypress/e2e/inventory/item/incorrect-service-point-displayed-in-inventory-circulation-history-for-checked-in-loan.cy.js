@@ -6,6 +6,7 @@ import CheckInActions from '../../../support/fragments/check-in-actions/checkInA
 import ConfirmItemInModal from '../../../support/fragments/check-in-actions/confirmItemInModal';
 import Checkout from '../../../support/fragments/checkout/checkout';
 import FilterItems from '../../../support/fragments/inventory/filterItems';
+import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -16,7 +17,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('Inventory', () => {
   describe('Item', () => {
@@ -32,7 +32,7 @@ describe('Inventory', () => {
     const secondServicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
     const testData = [ITEM_STATUS_NAMES.AVAILABLE, itemData.barcode];
 
-    before('create test data and login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           ServicePoints.createViaApi(firstServicePoint);
@@ -105,7 +105,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         UserEdit.changeServicePointPreferenceViaApi(user.userId, [
           firstServicePoint.id,

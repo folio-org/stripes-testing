@@ -18,9 +18,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -88,7 +86,17 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
+      cy.getAdminToken();
+      // create Instance with source = MARC
+      DataImport.uploadFileViaApi(
+        'oneMarcBib.mrc',
+        fileName,
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      ).then((response) => {
+        instanceHrid = response[0].instance.hrid;
+      });
+
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
@@ -98,21 +106,15 @@ describe('Data Import', () => {
         user = userProperties;
 
         cy.login(user.username, user.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
-        // create Instance with source = MARC
-        DataImport.uploadFileViaApi(
-          'oneMarcBib.mrc',
-          fileName,
-          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-        ).then((response) => {
-          instanceHrid = response[0].instance.hrid;
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
         });
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
       cy.getAdminToken().then(() => {
         // delete generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
@@ -132,39 +134,25 @@ describe('Data Import', () => {
         );
         Users.deleteViaApi(user.userId);
       });
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
     });
-
-    const createItemMappingProfile = (itemMappingProfile) => {
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
-      NewFieldMappingProfile.fillMaterialType(itemMappingProfile.materialType);
-      NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
-      NewFieldMappingProfile.fillStatus(`"${itemMappingProfile.status}"`);
-      NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewMode(itemMappingProfile.name);
-    };
-
-    const createHoldingsMappingProfile = (holdingsMappingProfile) => {
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
-      NewFieldMappingProfile.fillPermanentLocation(holdingsMappingProfile.permanentLocation);
-      NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewMode(holdingsMappingProfile.name);
-    };
 
     it(
       'C368009 Verify that no created SRS is present when job profile does not have create instance action: Case 2: Create holdings and item (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profiles
-        cy.visit(SettingsMenu.mappingProfilePath);
-        createItemMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
+        FieldMappingProfiles.openNewMappingProfileForm();
+        FieldMappingProfiles.createItemMappingProfile(
+          collectionOfMappingAndActionProfiles[0].mappingProfile,
+        );
         FieldMappingProfiles.checkMappingProfilePresented(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
-        createHoldingsMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
+
+        FieldMappingProfiles.openNewMappingProfileForm();
+        FieldMappingProfiles.createHoldingsMappingProfile(
+          collectionOfMappingAndActionProfiles[1].mappingProfile,
+        );
         FieldMappingProfiles.checkMappingProfilePresented(
           collectionOfMappingAndActionProfiles[1].mappingProfile.name,
         );

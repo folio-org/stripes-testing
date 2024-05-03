@@ -11,7 +11,7 @@ describe('Data Import', () => {
     const numberOfLogsPerPage = 25;
     const getCalloutSuccessMessage = (logsCount) => `${logsCount} data import logs have been successfully deleted.`;
 
-    before('create user and login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.dataImportDeleteLogs.gui]).then((userProperties) => {
         user = userProperties;
 
@@ -22,7 +22,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete user', () => {
+    after('Delete user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });

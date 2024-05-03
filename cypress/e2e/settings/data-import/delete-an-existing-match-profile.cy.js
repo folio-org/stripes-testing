@@ -1,10 +1,10 @@
 import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import ConfirmDelete from '../../../support/fragments/settings/dataImport/matchProfiles/modals/confirmDelete';
@@ -36,7 +36,7 @@ describe('Data Import', () => {
 
     const calloutMessage = `The match profile "${matchProfileToDelete.profileName}" was successfully deleted`;
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
         NewMatchProfile.createMatchProfileViaApi(profile.createMatchProfile).then(

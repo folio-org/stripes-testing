@@ -111,6 +111,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.SHARED, true);
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, 'Yes');
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.HELD_BY);
+        cy.wait(3000);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELD_BY);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.HELD_BY, true);
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.HELD_BY, 'University');

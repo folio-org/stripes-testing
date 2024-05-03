@@ -88,7 +88,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create test data and login', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -172,14 +172,14 @@ describe('Data Import', () => {
       });
     });
 
-    beforeEach('login', () => {
+    beforeEach('Login', () => {
       cy.login(user.username, user.password, {
         path: TopMenu.dataImportPath,
         waiter: DataImport.waitLoading,
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         MarcFieldProtection.deleteViaApi(testData.protectedFieldId);
         InstanceStatusTypes.deleteViaApi(testData.instanceStatusTypeId);

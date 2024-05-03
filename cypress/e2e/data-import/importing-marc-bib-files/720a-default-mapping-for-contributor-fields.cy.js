@@ -25,7 +25,7 @@ describe('Data Import', () => {
       tag720: '720',
     };
 
-    before('create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
@@ -40,7 +40,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
         Users.deleteViaApi(testData.user.userId);

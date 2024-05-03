@@ -326,10 +326,11 @@ export default {
 
   checkActionDropdownContent() {
     const actualResArray = [];
-    const expectedContent = ['Edit', 'Print', 'Delete'];
+    const expectedContent = ['Edit', 'Export (MARC)', 'Print', 'Delete'];
     cy.do(rootSection.find(Button('Actions')).click());
     cy.expect([
       Button('Edit').has({ svgClass: including('edit') }),
+      Button('Export (MARC)').has({ svgClass: including('download') }),
       Button('Print').has({ svgClass: including('print') }),
       Button('Delete').has({ svgClass: including('trash') }),
     ]);

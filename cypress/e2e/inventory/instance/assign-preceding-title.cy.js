@@ -16,7 +16,7 @@ describe('Inventory', () => {
     const isbnValue = `ISBN test value ${getRandomPostfix()}`;
     const issnValue = `ISSN test value ${getRandomPostfix()}`;
 
-    before('navigate to Inventory', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 });
@@ -45,7 +45,7 @@ describe('Inventory', () => {
       });
     });
 
-    after(() => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         cy.getInstanceById(instanceIds[0])
           .then((body) => {

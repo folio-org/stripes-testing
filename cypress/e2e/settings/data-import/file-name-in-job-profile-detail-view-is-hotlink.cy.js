@@ -18,7 +18,7 @@ describe('Data Import', () => {
     const uniquePartOfFileName = getRandomPostfix();
     const uniqueFileName = `C380637 autotestFileName${uniquePartOfFileName}.mrc`;
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathToUpload, uniqueFileName, jobProfileToRun).then(
         (response) => {
@@ -31,11 +31,12 @@ describe('Data Import', () => {
         Permissions.settingsDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password);
       });
     });
 
-    after('delete user', () => {
+    after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstance.deleteInstanceViaApi(instanceId);

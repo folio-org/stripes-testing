@@ -16,7 +16,7 @@ describe('Data Import', () => {
     let instnaceId;
     const uniqueFileName = `C356780 autotestFileName${getRandomPostfix()}.mrc`;
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         'oneMarcBib.mrc',
@@ -40,7 +40,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         InventoryInstance.deleteInstanceViaApi(instnaceId);

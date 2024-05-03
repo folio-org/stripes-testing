@@ -208,7 +208,6 @@ describe('Data Import', () => {
       HoldingsRecordView.getHoldingsHrId().then((initialHrId) => {
         holdingsHrId = initialHrId;
       });
-      cy.logout();
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,

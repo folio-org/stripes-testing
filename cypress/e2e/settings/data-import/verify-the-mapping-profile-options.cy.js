@@ -1,4 +1,9 @@
 import { Permissions } from '../../../support/dictionary';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileEdit';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -6,11 +11,6 @@ import {
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileEdit';
 
 describe('Data Import', () => {
   describe('Settings', () => {
@@ -29,7 +29,7 @@ describe('Data Import', () => {
       'MARC Authority',
     ];
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       NewFieldMappingProfile.createMappingProfileViaApi(mappingProfileName).then(
         (mappingProfileResponse) => {

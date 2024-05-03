@@ -157,6 +157,9 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.exportedFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(users.userAProperties.userId);
@@ -171,12 +174,8 @@ describe('Data Import', () => {
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
       SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.exportedFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
     });
 
-    // https://folio-org.atlassian.net/browse/MODSOURCE-755
     it(
       'C411795 User can update "MARC Bib" in Central tenant via import and check updated in member tenant (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet'] },
