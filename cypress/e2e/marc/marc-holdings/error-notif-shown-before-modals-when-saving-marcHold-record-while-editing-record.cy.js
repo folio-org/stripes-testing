@@ -75,11 +75,11 @@ describe('MARC', () => {
       });
       // upload a marc file for creating holdings
       cy.visit(TopMenu.dataImportPath);
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(testData.editedMarcFileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(testData.jobProfileToRun);
-      JobProfiles.runImportFile();
+      DataImport.uploadFileViaApi(
+        testData.editedMarcFileName,
+        testData.editedMarcFileName,
+        testData.jobProfileToRun,
+      );
       JobProfiles.waitFileIsImported(testData.editedMarcFileName);
       Logs.openFileDetails(testData.editedMarcFileName);
       cy.logout();
@@ -134,7 +134,11 @@ describe('MARC', () => {
           testData.tag014.rowIndex,
           testData.tag014.updatedTag,
         );
-        QuickMarcEditor.selectFieldsDropdownOption('LDR', 'Item', MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN.I);
+        QuickMarcEditor.selectFieldsDropdownOption(
+          'LDR',
+          'Item',
+          MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN.I,
+        );
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkCallout(testData.errors.tagCharacterLength);
         QuickMarcEditor.updateExistingTagValue(testData.tag014.rowIndex, testData.tag014.tag);
