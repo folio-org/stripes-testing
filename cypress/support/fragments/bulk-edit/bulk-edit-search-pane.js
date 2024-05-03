@@ -1236,7 +1236,7 @@ export default {
     cy.expect(saveAndClose.has({ disabled: isDisabled }));
   },
 
-  isBuildQueryButtonDisabled(isDisabled) {
+  isBuildQueryButtonDisabled(isDisabled = true) {
     cy.expect(buildQueryButton.has({ disabled: isDisabled }));
     cy.wait(2000);
   },
