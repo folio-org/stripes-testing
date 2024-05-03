@@ -991,6 +991,14 @@ export default {
     );
   },
 
+  closeBudgetTransactionApp: (budget) => {
+    cy.do(
+      PaneHeader(budget)
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
   clickInfoInTransactionDetails: () => {
     cy.do(
       Section({ id: 'pane-transaction-details' })
