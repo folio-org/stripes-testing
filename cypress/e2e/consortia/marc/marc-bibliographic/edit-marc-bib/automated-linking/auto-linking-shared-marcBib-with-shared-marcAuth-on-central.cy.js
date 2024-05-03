@@ -18,7 +18,11 @@ describe('MARC', () => {
       describe('Automated linking', () => {
         const testData = {
           editSharedRecordText: 'Edit shared MARC record',
-          searchQueries: ['Bate, Walter Jackson,', 'Johnson, Samuel,', 'Criticism and interpretation'],
+          searchQueries: [
+            'Bate, Walter Jackson,',
+            'Johnson, Samuel,',
+            'Criticism and interpretation',
+          ],
           linked100Field: [
             9,
             '100',
