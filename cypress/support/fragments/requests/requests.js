@@ -73,6 +73,7 @@ function createRequestApi(
   const userData = {
     active: true,
     barcode: uuid(),
+    username: `testUser-${uuid()}`,
     personal: {
       preferredContactTypeId: '002',
       lastName: `testUser-${uuid()}`,
