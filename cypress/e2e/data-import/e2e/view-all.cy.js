@@ -47,6 +47,7 @@ describe('Data Import', () => {
         LogsViewAll.selectOption(option);
         // when option is "ID", search with hrId otherwise, with file name
         const term = option === 'ID' ? `${id}` : uniqueFileNameForSearch;
+        cy.wait(1000);
 
         LogsViewAll.searchWithTerm(term);
 
