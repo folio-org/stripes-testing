@@ -53,7 +53,7 @@ describe('Data Import', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(updatedFileName);
+        Logs.waitFileIsImported(updatedFileName);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(updatedFileName);
         Logs.getCreatedItemsID().then((link) => {

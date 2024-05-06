@@ -77,7 +77,7 @@ describe('MARC', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(marcFiles[1].jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFiles[1].fileName);
+        Logs.waitFileIsImported(marcFiles[1].fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFiles[1].fileName);
         Logs.getCreatedItemsID().then((link) => {
