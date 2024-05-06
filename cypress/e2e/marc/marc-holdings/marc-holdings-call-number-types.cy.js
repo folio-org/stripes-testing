@@ -1,7 +1,6 @@
 import { DEFAULT_JOB_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -107,7 +106,7 @@ describe('MARC', () => {
                 recordIDs.push(record[instanceFile.propertyName].id);
               });
             });
-            JobProfiles.waitFileIsImported(instanceFile.fileName);
+            Logs.waitFileIsImported(instanceFile.fileName);
             Logs.checkJobStatus(instanceFile.fileName, JOB_STATUS_NAMES.COMPLETED);
             Logs.openFileDetails(instanceFile.fileName);
             Logs.getCreatedItemsID().then(() => {
@@ -133,7 +132,7 @@ describe('MARC', () => {
                   holdingsFile.fileName,
                   holdingsFile.jobProfileToRun,
                 );
-                JobProfiles.waitFileIsImported(holdingsFile.fileName);
+                Logs.waitFileIsImported(holdingsFile.fileName);
                 Logs.checkJobStatus(holdingsFile.fileName, JOB_STATUS_NAMES.COMPLETED);
                 Logs.openFileDetails(holdingsFile.fileName);
                 // additional wait for holdings list to load

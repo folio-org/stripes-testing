@@ -78,7 +78,7 @@ describe('MARC', () => {
           JobProfiles.waitLoadingList();
           JobProfiles.search(DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(testData.fileName);
+          Logs.waitFileIsImported(testData.fileName);
           Logs.checkJobStatus(testData.fileName, 'Completed');
 
           cy.visit(TopMenu.marcAuthorities);

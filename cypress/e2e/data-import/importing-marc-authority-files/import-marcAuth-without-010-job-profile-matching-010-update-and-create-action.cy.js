@@ -85,6 +85,7 @@ describe('Data Import', () => {
       // create Action profile and link it to Field mapping profile
       cy.visit(SettingsMenu.actionProfilePath);
       ActionProfiles.create(actionProfile, mappingProfile.name);
+      cy.wait(3000);
 
       // create Job profile
       cy.visit(SettingsMenu.jobProfilePath);

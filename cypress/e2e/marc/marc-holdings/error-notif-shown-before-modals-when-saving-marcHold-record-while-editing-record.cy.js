@@ -80,7 +80,7 @@ describe('MARC', () => {
       JobProfiles.waitFileIsUploaded();
       JobProfiles.search(testData.jobProfileToRun);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(testData.editedMarcFileName);
+      Logs.waitFileIsImported(testData.editedMarcFileName);
       Logs.openFileDetails(testData.editedMarcFileName);
       cy.logout();
 
