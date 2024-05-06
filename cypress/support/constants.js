@@ -245,6 +245,10 @@ export const LOCATION_NAMES = {
   MAIN_LIBRARY_UI: 'Main Library',
 };
 
+export const LOCATION_IDS = {
+  ONLINE: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5',
+};
+
 export const INSTANCE_STATUS_TERM_NAMES = {
   BATCH_LOADED: 'Batch Loaded',
   CATALOGED: 'Cataloged',

@@ -30,6 +30,7 @@ import {
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import { getLongDelay } from '../../../../support/utils/cypressTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
@@ -174,19 +175,24 @@ describe('Data Import', () => {
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.verifySelectedRecords(1);
         InventorySearchAndFilter.exportInstanceAsMarc();
-        // download exported marc file
-        cy.visit(TopMenu.dataExportPath);
-        cy.wait(1000);
-        ExportFile.getExportedFileNameViaApi().then((name) => {
-          testData.marcFile.exportedFileName = name;
-          ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
-          // change exported file
-          DataImport.replace999SubfieldsInPreupdatedFile(
+        cy.intercept('/data-export/quick-export').as('getHrid');
+        cy.wait('@getHrid', getLongDelay()).then((req) => {
+          const expectedRecordHrid = req.response.body.jobExecutionHrId;
+
+          // download exported marc file
+          cy.visit(TopMenu.dataExportPath);
+          ExportFile.downloadExportedMarcFileWithRecordHrid(
+            expectedRecordHrid,
             testData.marcFile.exportedFileName,
-            testData.marcFile.marcFileForModify,
-            testData.marcFile.modifiedMarcFile,
           );
+          FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
         });
+        // change exported file
+        DataImport.replace999SubfieldsInPreupdatedFile(
+          testData.marcFile.exportedFileName,
+          testData.marcFile.marcFileForModify,
+          testData.marcFile.modifiedMarcFile,
+        );
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
