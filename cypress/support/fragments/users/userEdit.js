@@ -57,6 +57,10 @@ const cancelButton = Button('Cancel');
 const userSearch = TextField('User search');
 const userEditPane = Pane('Edit');
 const closeIcon = Button({ id: 'clickable-closenewuserdialog' });
+const resetPasswordLink = Button({ className: including('resetPasswordButton') });
+const resetPasswordModal = Modal('Reset password email sent');
+const resetPasswordInput = resetPasswordModal.find(TextField());
+const resetPasswordCopyButton = resetPasswordModal.find(Button('Copy link'));
 let totalRows;
 
 // servicePointIds is array of ids
@@ -536,5 +540,18 @@ export default {
   closeUsingIcon() {
     cy.do(closeIcon.click());
     cy.expect(userEditPane.absent);
+  },
+
+  clickResetPasswordLink() {
+    cy.do(resetPasswordLink.click());
+    cy.expect([
+      resetPasswordModal.exists(),
+      resetPasswordInput.exists(),
+      resetPasswordCopyButton.exists(),
+    ]);
+  },
+
+  verifyResetLink(expectedLink) {
+    cy.expect(resetPasswordInput.has({ value: expectedLink }));
   },
 };
