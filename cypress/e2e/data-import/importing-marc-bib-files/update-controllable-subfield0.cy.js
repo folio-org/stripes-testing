@@ -233,7 +233,6 @@ describe('Data Import', () => {
         });
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
-        cy.pause();
 
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();
@@ -276,7 +275,7 @@ describe('Data Import', () => {
           '700',
           '1',
           '\\',
-          '$a Chin, Staceyann C385665',
+          '$a C385665Chin, Staceyann',
           '$e letterer.',
           '$0 http://id.loc.gov/authorities/names/n2008052404',
           '',
