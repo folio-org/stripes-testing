@@ -460,4 +460,22 @@ export default {
     }
     if (resultsFound === false) cy.expect(resultsPaneInAssignModal.find(MultiColumnListRow()).absent());
   },
+
+  verifyCheckboxesCountInCapablityRow: ({ table, application, resource }, expectedCount) => {
+    const targetRow = capabilitiesAccordion
+      .find(capabilityTables[table])
+      .find(
+        MultiColumnListRow(including(`${application}${resource}Read-only`), { isContainer: false }),
+      );
+    cy.expect(targetRow.has({ checkboxCount: expectedCount }));
+  },
+
+  verifyCheckboxesCountInCapablitySetRow: ({ table, application, resource }, expectedCount) => {
+    const targetRow = capabilitySetsAccordion
+      .find(capabilityTables[table])
+      .find(
+        MultiColumnListRow(including(`${application}${resource}Read-only`), { isContainer: false }),
+      );
+    cy.expect(targetRow.has({ checkboxCount: expectedCount }));
+  },
 };

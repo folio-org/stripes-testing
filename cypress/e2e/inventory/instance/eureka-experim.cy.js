@@ -1,5 +1,6 @@
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Orders from '../../../support/fragments/orders/orders';
+import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
@@ -25,26 +26,50 @@ describe('eureka test', () => {
   it('experiment', () => {
     cy.createTempUser().then((user) => {
       testData.user = user;
-      cy.log(JSON.stringify(testData.user));
 
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
-    });
-    cy.getAdminToken();
-    cy.getCapabilitiesApi(10).then((capabs) => {
-      cy.getCapabilitySetsApi(10).then((capabSets) => {
-        cy.getUserRoleIdByNameApi(testData.roleName).then((roleId) => {
-          testData.roleId = roleId;
-          cy.addCapabilitiesToNewRoleApi(
-            roleId,
-            capabs.map((capab) => capab.id),
-          );
-          cy.addCapabilitySetsToNewRoleApi(
-            roleId,
-            capabSets.map((capab) => capab.id),
-          );
+      cy.getCapabilitiesApi(10).then((capabs) => {
+        cy.getCapabilitySetsApi(10).then((capabSets) => {
+          cy.getUserRoleIdByNameApi(testData.roleName).then((roleId) => {
+            testData.roleId = roleId;
+            cy.addCapabilitiesToNewRoleApi(
+              roleId,
+              capabs.map((capab) => capab.id),
+            );
+            cy.addCapabilitySetsToNewRoleApi(
+              roleId,
+              capabSets.map((capab) => capab.id),
+            );
+
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.settingsAuthorizationRoles,
+              waiter: AuthorizationRoles.waitContentLoading,
+            });
+
+            AuthorizationRoles.searchRole(testData.roleName);
+            AuthorizationRoles.clickOnRoleName(testData.roleName);
+            AuthorizationRoles.clickOnCapabilitiesAccordion();
+            AuthorizationRoles.verifyCheckboxesCountInCapablityRow(
+              { application: 'app-platform-complete', table: 'Data', resource: 'Accounts Item' },
+              5,
+            );
+            AuthorizationRoles.verifyCheckboxesCountInCapablityRow(
+              {
+                application: 'app-platform-complete',
+                table: 'Procedural',
+                resource: 'Accounts Check-Pay',
+              },
+              1,
+            );
+            AuthorizationRoles.clickOnCapabilitySetsAccordion();
+            AuthorizationRoles.verifyCheckboxesCountInCapablitySetRow(
+              {
+                application: 'app-platform-complete',
+                table: 'Data',
+                resource: 'Acquisitions-Units Memberships',
+              },
+              5,
+            );
+          });
         });
       });
     });
