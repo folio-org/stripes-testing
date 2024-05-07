@@ -56,6 +56,7 @@ describe('Inventory', () => {
     ];
 
     before('Creating data', () => {
+      cy.getAdminToken();
       testsIds.forEach((testId) => {
         InventoryInstances.getInstancesViaApi({
           limit: 100,
