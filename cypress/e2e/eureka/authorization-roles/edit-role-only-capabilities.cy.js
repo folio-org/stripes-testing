@@ -235,7 +235,7 @@ describe('Eureka', () => {
             expect(call.response.statusCode).to.eq(204);
             expect(call.request.body.capabilitySetIds).to.have.lengthOf(2);
           });
-          AuthorizationRoles.checkCapabilitiesAccordionCounter('2');
+          AuthorizationRoles.checkCapabilitySetsAccordionCounter('2');
           AuthorizationRoles.checkCapabilitiesAccordionCounter('14');
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.originalCapabilitySets[1]);
