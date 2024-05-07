@@ -1,8 +1,6 @@
-import { DEFAULT_JOB_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import DataImport from '../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../support/fragments/data_import/logs/logs';
 import EHoldingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import EHoldingSearch from '../../support/fragments/eholdings/eHoldingsSearch';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -40,16 +38,14 @@ describe('eHoldings', () => {
       marcFiles.forEach((marcFile) => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(marcFile.fileName);
-            Logs.getCreatedItemsID().then((link) => {
-              createdRecordIDs.push(link.split('/')[5]);
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdRecordIDs.push(record.instance.id);
+              });
             });
           },
         );
