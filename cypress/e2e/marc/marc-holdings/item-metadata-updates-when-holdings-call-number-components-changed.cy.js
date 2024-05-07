@@ -80,11 +80,11 @@ describe('MARC', () => {
         });
       });
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(marcFiles[1].editedFileName, marcFiles[1].fileName);
-      JobProfiles.waitLoadingList();
-      JobProfiles.search(marcFiles[1].jobProfileToRun);
-      JobProfiles.runImportFile();
+      DataImport.uploadFileViaApi(
+        marcFiles[1].editedFileName,
+        marcFiles[1].fileName,
+        marcFiles[1].jobProfileToRun,
+      );
       JobProfiles.waitFileIsImported(marcFiles[1].fileName);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFiles[1].fileName);
