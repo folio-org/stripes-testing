@@ -29,6 +29,7 @@ import {
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import { getLongDelay } from '../../../../support/utils/cypressTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
@@ -182,30 +183,33 @@ describe('Data Import', () => {
       'C405532 Adding/deleting fields and subfields when updating shared "MARC Bib" in member tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
-        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instanceId);
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.verifySelectedRecords(1);
         InventorySearchAndFilter.exportInstanceAsMarc();
+        cy.intercept('/data-export/quick-export').as('getHrid');
+        cy.wait('@getHrid', getLongDelay()).then((req) => {
+          const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
-        // download exported marc file
-        cy.setTenant(Affiliations.College).then(() => {
-          // use cy.getToken function to get toket for current tenant
-          cy.getCollegeAdminToken();
-          cy.visit(TopMenu.dataExportPath);
-          cy.wait(2000);
-          ExportFile.getExportedFileNameViaApi().then((name) => {
-            testData.marcFile.exportedFileName = name;
-
-            ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
-            // change exported file
-            DataImport.replace999SubfieldsInPreupdatedFile(
+          // download exported marc file
+          cy.setTenant(Affiliations.College).then(() => {
+            // use cy.getToken function to get toket for current tenant
+            cy.getCollegeAdminToken();
+            cy.visit(TopMenu.dataExportPath);
+            ExportFile.downloadExportedMarcFileWithRecordHrid(
+              expectedRecordHrid,
               testData.marcFile.exportedFileName,
-              testData.marcFile.marcFileForModify,
-              testData.marcFile.modifiedMarcFile,
             );
+            FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
           });
         });
+        // change exported file
+        DataImport.replace999SubfieldsInPreupdatedFile(
+          testData.marcFile.exportedFileName,
+          testData.marcFile.marcFileForModify,
+          testData.marcFile.modifiedMarcFile,
+        );
 
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
@@ -243,7 +247,7 @@ describe('Data Import', () => {
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.verifyPanesExist();
-        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName, testData.contributorType);
         InventoryInstance.verifyContributorAbsent(testData.absentContributorName);
