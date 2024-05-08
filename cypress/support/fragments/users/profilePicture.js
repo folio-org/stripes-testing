@@ -46,10 +46,10 @@ export default {
   },
 
   verifyPictureIsSet() {
-    cy.expect(ProfilePictureCard({ testId: profileCardCss }).has({ src: including(externalPictureUrl) }));
+    cy.expect(ProfilePictureCard({ testId: 'profile-picture' }).has({ src: including(externalPictureUrl) }));
   },
 
   verifyPictureIsRemoved() {
-    cy.expect(ProfilePictureCard({ testId: profileCardCss }).has({ src: not(including(externalPictureUrl)) }));
+    cy.expect(ProfilePictureCard({ testId: 'profile-picture' }).has({ src: not(including(externalPictureUrl)) }));
   }
 };
