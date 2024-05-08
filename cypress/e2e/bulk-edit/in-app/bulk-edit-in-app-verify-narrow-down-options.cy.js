@@ -88,7 +88,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyItemOptions();
 
         BulkEditActions.verifyItemAdminstrativeNoteActions(0);
-        BulkEditActions.selectAction('Remove all', 0);
+        BulkEditActions.selectSecondAction('Remove all', 0);
         BulkEditSearchPane.isConfirmButtonDisabled(false);
         cy.wait(1000);
         function performBulkEditOptionActions(option) {
@@ -98,7 +98,7 @@ describe('bulk-edit', () => {
             BulkEditActions.isDisabledRowIcons(false);
             // Click "Select option" dropdown on the added row
             BulkEditActions.verifyTheOptionsAfterSelectedOption(option[i], i);
-            BulkEditActions.selectAction('Mark as staff only', i);
+            BulkEditActions.selectSecondAction('Mark as staff only', i);
             BulkEditSearchPane.isConfirmButtonDisabled(false);
           }
           removeItem(options);

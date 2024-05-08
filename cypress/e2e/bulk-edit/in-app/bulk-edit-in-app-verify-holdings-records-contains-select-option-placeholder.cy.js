@@ -50,7 +50,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C365617 Verify that In app bulk edit form  for holdings records contains "Select option" placeholder for Options dropdown (firebird) (TaaS)',
+      'C365617 Verify that In app bulk edit form for holdings records contains "Select option" placeholder for Options dropdown (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Item barcodes');
@@ -66,7 +66,7 @@ describe('bulk-edit', () => {
         BulkEditActions.isSelectActionAbsent();
 
         BulkEditActions.selectOption('Temporary holdings location');
-        BulkEditActions.selectAction('Clear field', 0);
+        BulkEditActions.selectSecondAction('Clear field', 0);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditSearchPane.isConfirmButtonDisabled(true);
         BulkEditActions.verifyNewBulkEditRow();

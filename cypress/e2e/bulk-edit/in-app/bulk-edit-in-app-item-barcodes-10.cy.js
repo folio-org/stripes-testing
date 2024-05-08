@@ -19,7 +19,8 @@ for (let i = 0; i < 5; i++) {
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 let fileContent = '';
 
-describe('bulk-edit', () => {
+// Test cannot be automated after test case update
+describe.skip('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
