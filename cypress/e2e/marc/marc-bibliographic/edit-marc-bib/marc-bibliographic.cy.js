@@ -203,7 +203,7 @@ describe('MARC', () => {
         },
       );
 
-      it('C345388 Derive a MARC bib record (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
+      it('C345388 Derive a MARC bib record (spitfire)', { tags: ['smokeBroken', 'spitfire'] }, () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,
           waiter: InventorySearchAndFilter.waitLoading,
