@@ -1,8 +1,6 @@
-import { DEFAULT_JOB_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -91,23 +89,15 @@ describe('MARC', () => {
           [instanceHRID, instanceHRID, instanceHRID, instanceHRID, instanceHRID, instanceHRID],
         );
       });
-
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(testData.editedHoldingsFileName, holdingsFile.fileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(holdingsFile.jobProfileToRun);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(holdingsFile.fileName);
-      Logs.checkJobStatus(holdingsFile.fileName, JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(holdingsFile.fileName);
-      // additional wait for holdings list to load
-      cy.wait(2000);
-      for (let i = 1; i <= holdingsFile.numOfRecords; i++) {
-        Logs.getCreatedItemLinkByNumber(i).then((createdLink) => {
-          recordIDs.push(createdLink.split('/')[6]);
+      DataImport.uploadFileViaApi(
+        testData.editedHoldingsFileName,
+        holdingsFile.fileName,
+        holdingsFile.jobProfileToRun,
+      ).then((response) => {
+        response.forEach((record) => {
+          recordIDs.push(record.holding.id);
         });
-      }
+      });
 
       cy.createTempUser([
         Permissions.inventoryAll.gui,
