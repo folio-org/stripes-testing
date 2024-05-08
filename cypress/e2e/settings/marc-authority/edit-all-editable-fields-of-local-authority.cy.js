@@ -122,8 +122,8 @@ describe('MARC', () => {
           ManageAuthorityFiles.checkAfterSaveEditedFile(fieldsToUpdate.name);
           ManageAuthorityFiles.checkSourceFileExists(
             fieldsToUpdate.name,
-            localAuthFile.prefix,
-            localAuthFile.startWithNumber,
+            fieldsToUpdate.prefix,
+            fieldsToUpdate.startWithNumber,
             fieldsToUpdate.baseUrl,
             false,
             `${date} by ${user.lastName}, ${user.firstName}`,
