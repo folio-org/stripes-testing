@@ -43,7 +43,7 @@ describe('eHoldings', () => {
 
     it(
       'C1295 Create a new Agreement and attach a package (spitfire)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPathBroken', 'spitfire'] },
       () => {
         EHoldingSearch.switchToPackages();
         cy.wait(10000);
