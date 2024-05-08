@@ -6,9 +6,7 @@ import InventoryInstances from '../../../../../support/fragments/inventory/inven
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
@@ -48,24 +46,28 @@ describe('MARC', () => {
         {
           marc: 'marcBibFileForC410775.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+          propertyName: 'instance',
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           tenant: 'Central Office',
         },
         {
           marc: 'marcAuthFileForC410775-Shared.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+          propertyName: 'authority',
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           tenant: 'Central Office',
         },
         {
           marc: 'marcAuthFileForC410775-Local-M1.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+          propertyName: 'authority',
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           tenant: 'University',
         },
         {
           marc: 'marcAuthFileForC410775-Local-M2.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+          propertyName: 'authority',
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           tenant: 'College',
         },
@@ -129,36 +131,25 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.resetTenant();
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                if (marcFile.tenant === 'University') {
-                  ConsortiumManager.switchActiveAffiliation(
-                    tenantNames.central,
-                    tenantNames.university,
-                  );
-                } else if (marcFile.tenant === 'College') {
-                  ConsortiumManager.switchActiveAffiliation(
-                    tenantNames.university,
-                    tenantNames.college,
-                  );
-                }
-                DataImport.verifyUploadState();
-                DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                JobProfiles.waitFileIsImported(marcFile.fileName);
-                Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
+            marcFiles.forEach((marcFile) => {
+              if (marcFile.tenant === 'University') {
+                cy.setTenant(Affiliations.University);
+              } else if (marcFile.tenant === 'College') {
+                cy.setTenant(Affiliations.College);
+              }
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
               });
+            });
 
-              linkableFields.forEach((tag) => {
-                QuickMarcEditor.setRulesForField(tag, true);
-              });
+            linkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, true);
             });
           })
           .then(() => {
@@ -212,7 +203,7 @@ describe('MARC', () => {
         'C410775 Derive new Local MARC bib record from shadow Instance with "MARC" source and link it in Member tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire'] },
         () => {
-          InventoryInstances.searchByTitle('c573889c-4ac4-432f-86ad-9de618296919');
+          InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstance.checkPresentedText(testData.instanceTitle);
           InventoryInstance.checkSharedTextInDetailView();
           InventoryInstance.checkExpectedMARCSource();
