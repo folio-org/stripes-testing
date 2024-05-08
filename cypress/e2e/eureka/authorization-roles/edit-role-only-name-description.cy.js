@@ -116,7 +116,7 @@ describe('Eureka', () => {
             AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
           });
           Object.entries(testData.expectedCounts.capabilities).forEach(([table, count]) => {
-            AuthorizationRoles.checkCountOfCapablities(table, count);
+            AuthorizationRoles.checkCountOfCapabilityRows(table, count);
           });
 
           cy.get('@capabilitiesCall.all').then((calls) => {

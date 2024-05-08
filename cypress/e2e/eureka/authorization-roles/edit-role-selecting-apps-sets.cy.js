@@ -73,6 +73,12 @@ describe('Eureka', () => {
             resource: 'Settings Tags Enabled',
             action: 'View',
           },
+          {
+            application: 'app-platform-minimal',
+            table: 'Data',
+            resource: 'Configuration Entries Collection',
+            action: 'View',
+          },
         ],
         newCapabilities: [
           {
@@ -83,18 +89,25 @@ describe('Eureka', () => {
           },
           {
             application: 'app-platform-minimal',
-            table: 'Settings',
-            resource: 'Module Notes Enabled',
-            action: 'View',
+            table: 'Data',
+            resource: 'UI-Tags',
+            action: 'Edit',
+          },
+          {
+            application: 'app-platform-minimal',
+            table: 'Data',
+            resource: 'UI-Tags',
+            action: 'Manage',
           },
         ],
-        expectedCounts: {
+        expectedRowCounts: {
           capabilitySets: {
             Settings: 1,
           },
           capabilities: {
-            Settings: 3,
+            Settings: 2,
             Procedural: 1,
+            Data: 2,
           },
         },
         absentCapabilitySetTables: ['Data', 'Procedural'],
@@ -193,15 +206,22 @@ describe('Eureka', () => {
             AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
           });
 
-          Object.entries(testData.expectedCounts.capabilitySets).forEach(([table, count]) => {
-            AuthorizationRoles.checkCountOfCapablitySets(table, count);
+          Object.entries(testData.expectedRowCounts.capabilitySets).forEach(([table, count]) => {
+            AuthorizationRoles.checkCountOfCapabilitySetRows(table, count);
           });
           testData.absentCapabilitySetTables.forEach((capabilitySetTable) => {
             AuthorizationRoles.verifyCapabilitySetTableAbsent(capabilitySetTable);
           });
-          Object.entries(testData.expectedCounts.capabilities).forEach(([table, count]) => {
-            AuthorizationRoles.checkCountOfCapablities(table, count);
+          AuthorizationRoles.verifyCheckboxesCountInCapabilitySetRow(testData.newCapabilitySet, 1);
+          Object.entries(testData.expectedRowCounts.capabilities).forEach(([table, count]) => {
+            AuthorizationRoles.checkCountOfCapabilityRows(table, count);
           });
+          testData.newCapabilitiesInSet.forEach((capability) => {
+            AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(capability, 1);
+          });
+          AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(testData.newCapabilities[0], 1);
+          // 2 checkboxes for the same row because same resource but different actions
+          AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(testData.newCapabilities[1], 2);
         },
       );
     });

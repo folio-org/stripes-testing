@@ -104,7 +104,7 @@ describe('Eureka', () => {
             testData.capabilityToSelect,
           );
           Object.entries(testData.expectedCounts).forEach(([table, count]) => {
-            AuthorizationRoles.checkCountOfCapablities(table, count);
+            AuthorizationRoles.checkCountOfCapabilityRows(table, count);
           });
         },
       );

@@ -171,10 +171,10 @@ describe('Eureka', () => {
             AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
           });
           Object.entries(testData.expectedCounts.capabilities).forEach(([table, count]) => {
-            AuthorizationRoles.checkCountOfCapablities(table, count);
+            AuthorizationRoles.checkCountOfCapabilityRows(table, count);
           });
           Object.entries(testData.expectedCounts.capabilitySets).forEach(([table, count]) => {
-            AuthorizationRoles.checkCountOfCapablitySets(table, count);
+            AuthorizationRoles.checkCountOfCapabilitySetRows(table, count);
           });
         },
       );

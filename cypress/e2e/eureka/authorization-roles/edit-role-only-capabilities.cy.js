@@ -241,7 +241,7 @@ describe('Eureka', () => {
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.originalCapabilitySets[1]);
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.newCapabilitySet);
           Object.entries(testData.expectedCounts.capabilitySets).forEach(([table, count]) => {
-            AuthorizationRoles.checkCountOfCapablitySets(table, count);
+            AuthorizationRoles.checkCountOfCapabilitySetRows(table, count);
           });
           AuthorizationRoles.verifyCapabilitySetTableAbsent(testData.absentCapabilitySetTable);
         },
