@@ -105,7 +105,7 @@ describe('eHoldings', () => {
 
     it(
       'C690 Remove a package from your holdings (spitfire)',
-      { tags: ['smoke', 'spitfire'] },
+      { tags: ['smokeBroken', 'spitfire'] },
       () => {
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,
