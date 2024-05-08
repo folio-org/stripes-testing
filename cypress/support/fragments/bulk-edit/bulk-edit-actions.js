@@ -585,7 +585,7 @@ export default {
   },
 
   noteReplaceWith(noteType, oldNote, newNote, rowIndex = 0) {
-    this.findValue(noteType);
+    this.findValue(noteType, rowIndex);
     this.fillInFirstTextArea(oldNote, rowIndex);
     this.selectSecondAction('Replace with', rowIndex);
     this.fillInSecondTextArea(newNote, rowIndex);
