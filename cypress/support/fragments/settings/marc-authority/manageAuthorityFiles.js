@@ -293,6 +293,40 @@ export default {
     }
   },
 
+  switchActiveCheckboxInFile(authorityFileName, isChecked) {
+    cy.do(
+      TextField({ value: authorityFileName }).perform((element) => {
+        const rowNumber = element.closest('[data-row-index]').getAttribute('data-row-index');
+        const targetRow = manageAuthorityFilesPane.find(getEditableListRow(rowNumber));
+
+        cy.do(targetRow.find(activeCheckbox).click());
+        cy.expect(targetRow.find(activeCheckbox).has({ checked: isChecked }));
+      }),
+    );
+  },
+
+  checkSaveButtonEnabledInFile(authorityFileName, isEnabled = true) {
+    cy.do(
+      TextField({ value: authorityFileName }).perform((element) => {
+        const rowNumber = element.closest('[data-row-index]').getAttribute('data-row-index');
+        const targetRow = manageAuthorityFilesPane.find(getEditableListRow(rowNumber));
+
+        cy.expect(targetRow.find(saveButton).has({ disabled: !isEnabled }));
+      }),
+    );
+  },
+
+  checkCancelButtonEnabledInFile(authorityFileName, isEnabled = true) {
+    cy.do(
+      TextField({ value: authorityFileName }).perform((element) => {
+        const rowNumber = element.closest('[data-row-index]').getAttribute('data-row-index');
+        const targetRow = manageAuthorityFilesPane.find(getEditableListRow(rowNumber));
+
+        cy.expect(targetRow.find(cancelButton).has({ disabled: !isEnabled }));
+      }),
+    );
+  },
+
   setAllDefaultFOLIOFilesToActiveViaAPI() {
     Object.values(DEFAULT_FOLIO_AUTHORITY_FILES).forEach((fileName) => {
       cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
