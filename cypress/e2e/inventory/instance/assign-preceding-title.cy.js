@@ -74,7 +74,7 @@ describe('Inventory', () => {
         InventoryInstance.editInstance();
         InstanceRecordEdit.addExistingPrecedingTitle(instanceTitle2);
         InstanceRecordEdit.saveAndClose();
-        InventoryInstance.checkPrecedingTitle(0, instanceTitle2, '', '');
+        InventoryInstance.checkPrecedingTitle(0, instanceTitle2, '-', '-');
       },
     );
   });

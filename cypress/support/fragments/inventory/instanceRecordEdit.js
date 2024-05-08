@@ -120,17 +120,17 @@ export default {
     );
   },
 
-  addIdentifier: (identifier, value) => {
+  addIdentifier: (identifier, value, identifierLine = 0) => {
     cy.expect(identifierAccordion.exists());
     cy.do(Button('Add identifier').click());
     cy.expect(Select('Type*').exists());
     cy.expect(TextField('Identifier').exists());
     cy.do(
       identifierAccordion
-        .find(Select({ name: 'identifiers[0].identifierTypeId' }))
+        .find(Select({ name: `identifiers[${identifierLine}].identifierTypeId` }))
         .choose(identifier),
     );
-    cy.do(TextField({ name: 'identifiers[0].value' }).fillIn(value));
+    cy.do(TextField({ name: `identifiers[${identifierLine}].value` }).fillIn(value));
     cy.do(saveAndCloseButton.click());
   },
 

@@ -4,32 +4,47 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import QueryModal, { itemFieldValues } from '../../../support/fragments/bulk-edit/query-modal';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import { LOCATION_NAMES, LOCATION_IDS } from '../../../support/constants';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Checkout from '../../../support/fragments/checkout/checkout';
+import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
+import FileManager from '../../../support/utils/fileManager';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 
 let user;
+let servicePointId;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   barcode: getRandomPostfix(),
 };
+const matchedRecordsFileName = '*-Matched-Records-Query-*';
 
 describe('Bulk Edit - Query', () => {
   before('create test data', () => {
     cy.getAdminToken();
     cy.createTempUser([
-      permissions.bulkEditEdit.gui,
+      permissions.bulkEditView.gui,
       permissions.uiInventoryViewCreateEditItems.gui,
       permissions.bulkEditQueryView.gui,
     ]).then((userProperties) => {
       user = userProperties;
 
       InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-      cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-        (res) => {
-          res.temporaryLocation = { id: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5' };
-          cy.updateItemViaApi(res);
-        },
-      );
+      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
+        .then((servicePoints) => {
+          servicePointId = servicePoints[0].id;
+        })
+        .then(() => {
+          UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
+          Checkout.checkoutItemViaApi({
+            itemBarcode: item.barcode,
+            servicePointId,
+            userBarcode: user.barcode,
+          });
+        });
       cy.login(user.username, user.password, {
         path: TopMenu.bulkEditPath,
         waiter: BulkEditSearchPane.waitLoading,
@@ -40,11 +55,17 @@ describe('Bulk Edit - Query', () => {
   after('delete test data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(user.userId);
+    CheckInActions.checkinItemViaApi({
+      itemBarcode: item.barcode,
+      servicePointId,
+      checkInDate: new Date().toISOString(),
+    });
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
+    FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName);
   });
 
   it(
-    'C440063 Render preview after query executed (Items - Edit) (firebird)',
+    'C436737 Render preview after query executed (Items - View) (firebird)',
     { tags: ['criticalPath', 'firebird'] },
     () => {
       BulkEditSearchPane.openQuerySearch();
@@ -52,16 +73,17 @@ describe('Bulk Edit - Query', () => {
       BulkEditSearchPane.clickBuildQueryButton();
       QueryModal.verify();
       QueryModal.verifyFieldsSortedAlphabetically();
-      QueryModal.selectField(itemFieldValues.temporaryLocation);
-      QueryModal.verifySelectedField(itemFieldValues.temporaryLocation);
-      QueryModal.verifyQueryAreaContent('(item_temporary_location_name  )');
+      QueryModal.selectField(itemFieldValues.itemStatus);
+      QueryModal.verifySelectedField(itemFieldValues.itemStatus);
+      QueryModal.verifyQueryAreaContent('(item_status  )');
       QueryModal.verifyOperatorColumn();
-      QueryModal.selectOperator('==');
-      QueryModal.verifyQueryAreaContent('(item_temporary_location_name == )');
+      QueryModal.selectOperator('in');
+      QueryModal.verifyQueryAreaContent('(item_status in )');
       QueryModal.verifyValueColumn();
-      QueryModal.chooseValueSelect(LOCATION_NAMES.ONLINE_UI);
+      QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.CHECKED_OUT);
+      QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.AGED_TO_LOST);
       QueryModal.verifyQueryAreaContent(
-        `(item_temporary_location_name == "${LOCATION_IDS.ONLINE}")`,
+        `(item_status in ("${ITEM_STATUS_NAMES.CHECKED_OUT}","${ITEM_STATUS_NAMES.AGED_TO_LOST}"))`,
       );
       QueryModal.testQueryDisabled(false);
       QueryModal.runQueryDisabled();
@@ -74,20 +96,9 @@ describe('Bulk Edit - Query', () => {
       BulkEditSearchPane.isHoldingsRadioChecked(false);
       BulkEditSearchPane.isInstancesRadioChecked(false);
       BulkEditSearchPane.isItemsRadioChecked(true);
-      BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
-      BulkEditSearchPane.verifyActionsDropdownScrollable();
-      BulkEditSearchPane.searchColumnName('note');
-      const columnNameNote = 'Action note';
-      BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(columnNameNote);
-      BulkEditSearchPane.verifyResultColumTitles(columnNameNote);
-      BulkEditSearchPane.searchColumnName('fewoh', false);
-      BulkEditSearchPane.clearSearchColumnNameTextfield();
-      BulkEditSearchPane.verifyActionsDropdownScrollable();
-      const columnName = 'Item HRID';
-      BulkEditSearchPane.searchColumnName(columnName);
-      BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(columnName);
-      BulkEditSearchPane.changeShowColumnCheckbox(columnName);
-      BulkEditSearchPane.verifyResultColumTitlesDoNotInclude(columnName);
+      BulkEditActions.downloadMatchedResults();
+      BulkEditActions.startBulkEditAbsent();
+      ExportFile.verifyFileIncludes(matchedRecordsFileName, [item.barcode]);
     },
   );
 });
