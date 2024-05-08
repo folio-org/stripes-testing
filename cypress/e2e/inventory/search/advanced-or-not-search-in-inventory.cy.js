@@ -85,7 +85,8 @@ describe('Inventory', () => {
       });
     });
 
-    it(
+    // skip the duplicated test case
+    it.skip(
       'C422016 Search Instances using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
