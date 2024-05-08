@@ -4,23 +4,34 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
 import DateTools from '../../../support/utils/dateTools';
 import ManageAuthorityFiles from '../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
+import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Settings', () => {
       const randomPostfix = getRandomPostfix();
+      const title = `C436853 Test title ${randomPostfix}`;
       const date = DateTools.getFormattedDateWithSlashes({ date: new Date() });
       const localAuthFile = {
-        name: `C436839 auth source file active ${randomPostfix}`,
+        name: `C436853 auth source file active ${randomPostfix}`,
         prefix: getRandomLetters(6),
-        newPrefix: `test${getRandomLetters(4)}`,
-        startWithNumber: '1',
+        hridStartsWith: '1',
         baseUrl: '',
         source: 'Local',
         isActive: true,
         createdByAdmin: `${date} by ADMINISTRATOR, Diku_admin`,
       };
+      const newBaseUrls = [
+        `http://testing/field/baseurl/positivetest4${getRandomLetters(4)}/`,
+        `https://testing/field/baseurl/positivetest5${getRandomLetters(4)}/`,
+        '',
+        `https://testing/field/baseurl/positivetest6${getRandomLetters(4)}/`,
+      ];
+      const fields = [{ tag: '100', content: `$a ${title}`, indicators: ['\\', '\\'] }];
+      const BASEURL = 'Base URL';
       let user;
+      let createdAuthorityId;
 
       before('Create users, data', () => {
         cy.getAdminToken();
@@ -31,11 +42,20 @@ describe('MARC', () => {
           .then(() => {
             cy.createAuthoritySourceFileUsingAPI(
               localAuthFile.prefix,
-              localAuthFile.startWithNumber,
+              localAuthFile.hridStartsWith,
               localAuthFile.name,
               localAuthFile.isActive,
             ).then((sourceId) => {
               localAuthFile.id = sourceId;
+            });
+          })
+          .then(() => {
+            MarcAuthorities.createMarcAuthorityViaAPI(
+              localAuthFile.prefix,
+              localAuthFile.hridStartsWith,
+              fields,
+            ).then((createdRecordId) => {
+              createdAuthorityId = createdRecordId;
             });
           });
       });
@@ -43,11 +63,12 @@ describe('MARC', () => {
       after('Delete users, data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userId);
-        cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id);
+        MarcAuthority.deleteViaAPI(createdAuthorityId, true);
+        cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id, true);
       });
 
       it(
-        'C436839 Edit "Prefix" field of Local "Authority file" which does not have assigned "MARC authority" records (spitfire)',
+        'C436853 Edit "Base URL" field of Local "Authority file" which has assigned "MARC authority" records (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           // 1 Go to "Settings" app >> "MARC authority" >> "Manage authority files"
@@ -60,41 +81,58 @@ describe('MARC', () => {
           ManageAuthorityFiles.checkSourceFileExists(
             localAuthFile.name,
             localAuthFile.prefix,
-            localAuthFile.startsWith,
+            localAuthFile.hridStartsWith,
             localAuthFile.baseUrl,
             localAuthFile.isActive,
             localAuthFile.createdByAdmin,
             true,
           );
 
-          // 2 Click on the "Edit" (pencil) icon of "Local" authority file
+          // 2 Click on the "Edit" (pencil) icon of "Local" authority file which has assigned "MARC authority" records.
           ManageAuthorityFiles.clickEditButton(localAuthFile.name);
           ManageAuthorityFiles.checkRowEditableInEditMode(
             localAuthFile.name,
             localAuthFile.prefix,
-            localAuthFile.startWithNumber,
+            localAuthFile.hridStartsWith,
             localAuthFile.baseUrl,
             localAuthFile.source,
             localAuthFile.createdByAdmin,
           );
           ManageAuthorityFiles.checkNewButtonEnabled(false);
 
-          // 3 Update value in editable "Prefix" field with unique valid value, ex.: "Prefix" = "test"
-          ManageAuthorityFiles.editField(localAuthFile.name, 'Prefix', localAuthFile.newPrefix);
+          // 3 Update value in editable "Base URL" field with unique valid value, ex.:
+          // "Base URL" = "http://testing/field/baseurl/positivetest4"
+          ManageAuthorityFiles.editField(localAuthFile.name, BASEURL, newBaseUrls[0]);
 
           // 4 Click on the "Save" button
           ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthFile.name);
           ManageAuthorityFiles.checkAfterSaveEditedFile(localAuthFile.name);
           ManageAuthorityFiles.checkSourceFileExists(
             localAuthFile.name,
-            localAuthFile.newPrefix,
+            localAuthFile.prefix,
             localAuthFile.startWithNumber,
-            localAuthFile.baseUrl,
+            newBaseUrls[0],
             localAuthFile.isActive,
             `${date} by ${user.lastName}, ${user.firstName}`,
             true,
           );
-          ManageAuthorityFiles.checkEditButtonInRow(localAuthFile.name);
+
+          // Steps 5 - 7
+          newBaseUrls.slice(1).forEach((newBaseUrl) => {
+            ManageAuthorityFiles.clickEditButton(localAuthFile.name);
+            ManageAuthorityFiles.editField(localAuthFile.name, BASEURL, newBaseUrl);
+            ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthFile.name);
+            ManageAuthorityFiles.checkAfterSaveEditedFile(localAuthFile.name);
+            ManageAuthorityFiles.checkSourceFileExists(
+              localAuthFile.name,
+              localAuthFile.prefix,
+              localAuthFile.startWithNumber,
+              newBaseUrl,
+              localAuthFile.isActive,
+              `${date} by ${user.lastName}, ${user.firstName}`,
+              true,
+            );
+          });
         },
       );
     });
