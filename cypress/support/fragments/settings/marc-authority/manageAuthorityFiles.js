@@ -226,6 +226,17 @@ export default {
     );
   },
 
+  clickCancelButtonAfterEditingFile(authorityFileName) {
+    cy.do(
+      TextField({ value: authorityFileName }).perform((element) => {
+        const rowNumber = element.closest('[data-row-index]').getAttribute('data-row-index');
+        cy.do(
+          manageAuthorityFilesPane.find(getEditableListRow(rowNumber)).find(cancelButton).click(),
+        );
+      }),
+    );
+  },
+
   editField(authorityFileName, fieldName, fieldValue) {
     cy.do(
       TextField({ value: authorityFileName }).perform((element) => {
@@ -240,13 +251,15 @@ export default {
     );
   },
 
-  checkRowEditableAfterClickEditButton(
+  checkRowEditableInEditMode(
     authorityFileName,
     prefix,
     hridStartsWith,
     baseUrl,
     source,
     createdByUser,
+    isCancelButtonDisabled = false,
+    isSaveButtonDisabled = true,
   ) {
     cy.do(
       TextField({ value: authorityFileName }).perform((element) => {
@@ -262,8 +275,8 @@ export default {
         cy.expect(targetRow.find(activeCheckbox).has({ disabled: false }));
         cy.expect(targetRow.find(sourceCell).has({ content: source }));
         cy.expect(targetRow.find(MultiColumnListCell(including(createdByUser))).exists());
-        cy.expect(targetRow.find(cancelButton).has({ disabled: false }));
-        cy.expect(targetRow.find(saveButton).has({ disabled: true }));
+        cy.expect(targetRow.find(cancelButton).has({ disabled: isCancelButtonDisabled }));
+        cy.expect(targetRow.find(saveButton).has({ disabled: isSaveButtonDisabled }));
       }),
     );
   },
@@ -278,6 +291,40 @@ export default {
     } else {
       cy.expect(Form(including('Authority files')).absent());
     }
+  },
+
+  switchActiveCheckboxInFile(authorityFileName, isChecked) {
+    cy.do(
+      TextField({ value: authorityFileName }).perform((element) => {
+        const rowNumber = element.closest('[data-row-index]').getAttribute('data-row-index');
+        const targetRow = manageAuthorityFilesPane.find(getEditableListRow(rowNumber));
+
+        cy.do(targetRow.find(activeCheckbox).click());
+        cy.expect(targetRow.find(activeCheckbox).has({ checked: isChecked }));
+      }),
+    );
+  },
+
+  checkSaveButtonEnabledInFile(authorityFileName, isEnabled = true) {
+    cy.do(
+      TextField({ value: authorityFileName }).perform((element) => {
+        const rowNumber = element.closest('[data-row-index]').getAttribute('data-row-index');
+        const targetRow = manageAuthorityFilesPane.find(getEditableListRow(rowNumber));
+
+        cy.expect(targetRow.find(saveButton).has({ disabled: !isEnabled }));
+      }),
+    );
+  },
+
+  checkCancelButtonEnabledInFile(authorityFileName, isEnabled = true) {
+    cy.do(
+      TextField({ value: authorityFileName }).perform((element) => {
+        const rowNumber = element.closest('[data-row-index]').getAttribute('data-row-index');
+        const targetRow = manageAuthorityFilesPane.find(getEditableListRow(rowNumber));
+
+        cy.expect(targetRow.find(cancelButton).has({ disabled: !isEnabled }));
+      }),
+    );
   },
 
   setAllDefaultFOLIOFilesToActiveViaAPI() {
