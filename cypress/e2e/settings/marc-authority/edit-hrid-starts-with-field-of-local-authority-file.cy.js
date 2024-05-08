@@ -20,6 +20,7 @@ describe('MARC', () => {
         createdByAdmin: `${date} by ADMINISTRATOR, Diku_admin`,
       };
       const newHridStartsWith = ['787', '100', '9'];
+      const HRID_STARTS_WITH = 'HRID starts with';
       let user;
 
       before('Create users, data', () => {
@@ -79,9 +80,31 @@ describe('MARC', () => {
           );
           ManageAuthorityFiles.checkNewButtonEnabled(false);
 
-          // Steps 3 - 6
-          newHridStartsWith.forEach((hridStartsWith) => {
-            ManageAuthorityFiles.editField(localAuthFile.name, 'HRID starts with', hridStartsWith);
+          // 3 Update value in editable "HRID starts with" field with unique valid value, ex.:
+          // "HRID starts with" = "787"
+          ManageAuthorityFiles.editField(
+            localAuthFile.name,
+            HRID_STARTS_WITH,
+            newHridStartsWith[0],
+          );
+
+          // 4 Click on the "Save" button
+          ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthFile.name);
+          ManageAuthorityFiles.checkAfterSaveEditedFile(localAuthFile.name);
+          ManageAuthorityFiles.checkSourceFileExists(
+            localAuthFile.name,
+            localAuthFile.prefix,
+            newHridStartsWith[0],
+            localAuthFile.baseUrl,
+            localAuthFile.isActive,
+            `${date} by ${user.lastName}, ${user.firstName}`,
+            true,
+          );
+
+          // Steps 5 - 6
+          newHridStartsWith.slice(1).forEach((hridStartsWith) => {
+            ManageAuthorityFiles.clickEditButton(localAuthFile.name);
+            ManageAuthorityFiles.editField(localAuthFile.name, HRID_STARTS_WITH, hridStartsWith);
             ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthFile.name);
             ManageAuthorityFiles.checkAfterSaveEditedFile(localAuthFile.name);
             ManageAuthorityFiles.checkSourceFileExists(
