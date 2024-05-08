@@ -91,11 +91,7 @@ describe('MARC', () => {
           );
           ManageAuthorityFiles.checkNewButtonEnabled(false);
 
-          // 3 Update all editable fields with unique valid value, ex:
-          // "Name" = "Local source Updated by user (all fields)"
-          // "Prefix" = "testing"
-          // "HRID starts with" = "12000"
-          // "Base URL" = "https://testing/field/baseurl/positivetest3"
+          // 3 Update all editable fields with unique valid value
           // Change the state of "Active" checkbox to opposite
           ManageAuthorityFiles.editField(localAuthFile.name, fieldTitles.NAME, fieldsToUpdate.name);
           ManageAuthorityFiles.editField(
