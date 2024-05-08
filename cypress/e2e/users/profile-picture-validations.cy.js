@@ -34,7 +34,7 @@ describe('profile-picture-validation', () => {
       'C446093 Update profile picture via local storage or external Url (volaris)',
       { tags: ['smokeBroken', 'volaris'] },
       () => {
-        UsersSearchPane.searchByLastName(testUser.lastname);
+        UsersSearchPane.searchByUsername(testUser.username);
         UsersCard.waitLoading();
         UserEdit.openEdit();
         ProfileCard.verifyProfileCardIsPresent();
@@ -49,7 +49,7 @@ describe('profile-picture-validation', () => {
       'C442795, C442796 Verify that profile picture and associated update options display appropriately with Users: Can view, edit, and delete profile pictures',
       { tags: ['smokeBroken', 'volaris'] },
       () => {
-        UsersSearchPane.searchByLastName(testUser.lastname);
+        UsersSearchPane.searchByUsername(testUser.username);
         UsersCard.waitLoading();
         UserEdit.openEdit();
         ProfileCard.verifyProfileCardIsPresent();
