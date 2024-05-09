@@ -8,6 +8,7 @@ import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-a
 import DateTools from '../../../../support/utils/dateTools';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 const afterThreeMonthsDate = DateTools.getAfterThreeMonthsDateObj();
@@ -89,32 +90,16 @@ describe('Bulk Edit - Logs', () => {
       );
 
       BulkEditSearchPane.downloadFileWithProposedChanges();
-      BulkEditFiles.verifyMatchedResultFileContent(
-        previewOfProposedChangesFileName,
-        ['graduate'],
-        'patronGroup',
-        true,
-      );
-      BulkEditFiles.verifyMatchedResultFileContent(
-        previewOfProposedChangesFileName,
-        [newExpirationDate.dateWithDashes],
-        'expirationDate',
-        true,
-      );
+      ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, [
+        'graduate',
+        newExpirationDate.dateWithDashes,
+      ]);
 
       BulkEditSearchPane.downloadFileWithUpdatedRecords();
-      BulkEditFiles.verifyMatchedResultFileContent(
-        updatedRecordsFileName,
-        ['graduate'],
-        'patronGroup',
-        true,
-      );
-      BulkEditFiles.verifyMatchedResultFileContent(
-        updatedRecordsFileName,
-        [newExpirationDate.dateWithDashes],
-        'expirationDate',
-        true,
-      );
+      ExportFile.verifyFileIncludes(updatedRecordsFileName, [
+        'graduate',
+        newExpirationDate.dateWithDashes,
+      ]);
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.searchByUsername(user.username);
