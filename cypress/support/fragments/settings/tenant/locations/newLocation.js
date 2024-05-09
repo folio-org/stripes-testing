@@ -101,6 +101,7 @@ export default {
       path: `locations/${locationId}`,
       method: 'DELETE',
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
     Libraries.deleteViaApi(libraryId);
     Campuses.deleteViaApi(campusId);

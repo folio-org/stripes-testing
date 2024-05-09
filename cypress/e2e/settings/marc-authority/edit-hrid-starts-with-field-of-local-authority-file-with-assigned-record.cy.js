@@ -1,27 +1,36 @@
 import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
+import getRandomPostfix, {
+  getRandomLetters,
+  randomFourDigitNumber,
+} from '../../../support/utils/stringTools';
 import DateTools from '../../../support/utils/dateTools';
 import ManageAuthorityFiles from '../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
+import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Settings', () => {
       const randomPostfix = getRandomPostfix();
+      const title = `C436852 Test title ${randomPostfix}`;
       const date = DateTools.getFormattedDateWithSlashes({ date: new Date() });
       const localAuthFile = {
-        name: `C436840 auth source file active ${randomPostfix}`,
+        name: `C436852 auth source file active ${randomPostfix}`,
         prefix: getRandomLetters(6),
-        hridStartsWithNumber: '1',
+        hridStartsWith: '1',
+        newHridStartsWith: `${randomFourDigitNumber()}`,
         baseUrl: '',
         source: 'Local',
         isActive: true,
         createdByAdmin: `${date} by ADMINISTRATOR, Diku_admin`,
       };
-      const newHridStartsWith = ['787', '100', '9'];
-      const HRID_STARTS_WITH = 'HRID starts with';
+      const fields = [{ tag: '100', content: `$a ${title}`, indicators: ['\\', '\\'] }];
+      const errorToastNotification = `Changes to ${localAuthFile.name} cannot be saved. Existing authority records are already assigned to this authority file.`;
       let user;
+      let createdAuthorityId;
 
       before('Create users, data', () => {
         cy.getAdminToken();
@@ -32,11 +41,20 @@ describe('MARC', () => {
           .then(() => {
             cy.createAuthoritySourceFileUsingAPI(
               localAuthFile.prefix,
-              localAuthFile.hridStartsWithNumber,
+              localAuthFile.hridStartsWith,
               localAuthFile.name,
               localAuthFile.isActive,
             ).then((sourceId) => {
               localAuthFile.id = sourceId;
+            });
+          })
+          .then(() => {
+            MarcAuthorities.createMarcAuthorityViaAPI(
+              localAuthFile.prefix,
+              localAuthFile.hridStartsWith,
+              fields,
+            ).then((createdRecordId) => {
+              createdAuthorityId = createdRecordId;
             });
           });
       });
@@ -44,11 +62,12 @@ describe('MARC', () => {
       after('Delete users, data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userId);
-        cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id);
+        MarcAuthority.deleteViaAPI(createdAuthorityId, true);
+        cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id, true);
       });
 
       it(
-        'C436840 Edit "HRID starts with" field of Local "Authority file" which does not have assigned "MARC authority" records (spitfire)',
+        'C436852 Edit "HRID starts with" field of Local "Authority file" which has assigned "MARC authority" records (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           // 1 Go to "Settings" app >> "MARC authority" >> "Manage authority files"
@@ -61,62 +80,57 @@ describe('MARC', () => {
           ManageAuthorityFiles.checkSourceFileExists(
             localAuthFile.name,
             localAuthFile.prefix,
-            localAuthFile.hridStartsWithNumber,
+            localAuthFile.hridStartsWith,
             localAuthFile.baseUrl,
             localAuthFile.isActive,
             localAuthFile.createdByAdmin,
             true,
           );
 
-          // 2 Click on the "Edit" (pencil) icon of "Local" authority file
+          // 2 Click on the "Edit" (pencil) icon of "Local" authority file which has assigned "MARC authority" records
           ManageAuthorityFiles.clickEditButton(localAuthFile.name);
           ManageAuthorityFiles.checkRowEditableInEditMode(
             localAuthFile.name,
             localAuthFile.prefix,
-            localAuthFile.hridStartsWithNumber,
+            localAuthFile.hridStartsWith,
             localAuthFile.baseUrl,
             localAuthFile.source,
             localAuthFile.createdByAdmin,
           );
           ManageAuthorityFiles.checkNewButtonEnabled(false);
 
-          // 3 Update value in editable "HRID starts with" field with unique valid value, ex.:
-          // "HRID starts with" = "787"
+          // 3 Update value in editable "HRID starts with" field with unique valid value, ex.: "HRID starts with" = "110"
           ManageAuthorityFiles.editField(
             localAuthFile.name,
-            HRID_STARTS_WITH,
-            newHridStartsWith[0],
+            'HRID starts with',
+            localAuthFile.newHridStartsWith,
           );
 
           // 4 Click on the "Save" button
           ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthFile.name);
-          ManageAuthorityFiles.checkAfterSaveEditedFile(localAuthFile.name);
+          InteractorsTools.checkCalloutErrorMessage(errorToastNotification);
+          ManageAuthorityFiles.checkRowEditableInEditMode(
+            localAuthFile.name,
+            localAuthFile.prefix,
+            localAuthFile.newHridStartsWith,
+            localAuthFile.baseUrl,
+            localAuthFile.source,
+            localAuthFile.createdByAdmin,
+            false,
+            false,
+          );
+
+          // 5 Click on the "Cancel" button
+          ManageAuthorityFiles.clickCancelButtonAfterEditingFile(localAuthFile.name);
           ManageAuthorityFiles.checkSourceFileExists(
             localAuthFile.name,
             localAuthFile.prefix,
-            newHridStartsWith[0],
+            localAuthFile.hridStartsWith,
             localAuthFile.baseUrl,
             localAuthFile.isActive,
-            `${date} by ${user.lastName}, ${user.firstName}`,
+            localAuthFile.createdByAdmin,
             true,
           );
-
-          // Steps 5 - 6
-          newHridStartsWith.slice(1).forEach((hridStartsWith) => {
-            ManageAuthorityFiles.clickEditButton(localAuthFile.name);
-            ManageAuthorityFiles.editField(localAuthFile.name, HRID_STARTS_WITH, hridStartsWith);
-            ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthFile.name);
-            ManageAuthorityFiles.checkAfterSaveEditedFile(localAuthFile.name);
-            ManageAuthorityFiles.checkSourceFileExists(
-              localAuthFile.name,
-              localAuthFile.prefix,
-              hridStartsWith,
-              localAuthFile.baseUrl,
-              localAuthFile.isActive,
-              `${date} by ${user.lastName}, ${user.firstName}`,
-              true,
-            );
-          });
         },
       );
     });

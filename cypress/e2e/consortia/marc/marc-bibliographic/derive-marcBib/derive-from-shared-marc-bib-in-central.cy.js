@@ -1,9 +1,7 @@
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
@@ -32,7 +30,7 @@ describe('MARC', () => {
       const marcFile = {
         marc: 'marcBibFileC402767.mrc',
         fileNameImported: `testMarcFileC402767.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES,
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       };
 
       const users = {};
@@ -58,18 +56,13 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.resetTenant();
-            cy.loginAsAdmin().then(() => {
-              cy.visit(TopMenu.dataImportPath);
-              DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileNameImported);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFile.fileNameImported);
-              Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFile.fileNameImported);
-              Logs.getCreatedItemsID().then((link) => {
-                createdInstanceIDs.push(link.split('/')[5]);
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileNameImported,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdInstanceIDs.push(record.instance.id);
               });
             });
 
