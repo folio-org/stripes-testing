@@ -39,7 +39,7 @@ describe('Inventory', () => {
             testData.instanceId = response[0].instance.id;
 
             InventoryInstance.shareInstanceViaApi(
-              testData.response[0].instance.id,
+              testData.instanceId,
               testData.consortiaId,
               Affiliations.College,
               Affiliations.Consortia,
@@ -51,7 +51,7 @@ describe('Inventory', () => {
             Locations.createViaApi(collegeLocationData).then((location) => {
               testData.collegeLocation = location;
               InventoryHoldings.createHoldingRecordViaApi({
-                instanceId: testData.instanceIds[0],
+                instanceId: testData.instanceId,
                 permanentLocationId: testData.collegeLocation.id,
               }).then((holding) => {
                 testData.holding = holding;
@@ -89,7 +89,6 @@ describe('Inventory', () => {
       cy.setTenant(Affiliations.College);
       InventoryHoldings.deleteHoldingRecordViaApi(testData.holding.id);
       Locations.deleteViaApi(testData.collegeLocation);
-      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
       InventoryInstance.deleteInstanceViaApi(testData.instanceId);
     });
 
