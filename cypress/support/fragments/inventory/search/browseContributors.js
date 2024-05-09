@@ -67,7 +67,14 @@ const nameTypeClear = typeSelect.find(Button({ icon: 'times-circle-solid' }));
 const actionsButton = Button('Actions');
 const rowContributorName = (ContributorName, contributorNameType) => MultiColumnListRow(`${ContributorName}${contributorNameType}1`);
 
+const searchRecordByName = (recordName) => {
+  cy.do(recordSearch.fillIn(recordName));
+  cy.expect(recordSearch.has({ value: recordName }));
+  cy.do(searchButton.click());
+};
+
 export default {
+  searchRecordByName,
   defaultInstanceAWithContributor,
   defaultInstanceZWithContributor,
   getInstancesWithContributor(titles = ['_a_', '_z_']) {
@@ -191,12 +198,8 @@ export default {
   },
 
   browse(contributorName) {
-    this.searchRecordByName(contributorName);
-  },
-  searchRecordByName(recordName) {
-    cy.do(recordSearch.fillIn(recordName));
-    cy.expect(recordSearch.has({ value: recordName }));
-    cy.do(searchButton.click());
+    cy.wait(1500);
+    searchRecordByName(contributorName);
   },
 
   verifySearchTerm(contributorName) {

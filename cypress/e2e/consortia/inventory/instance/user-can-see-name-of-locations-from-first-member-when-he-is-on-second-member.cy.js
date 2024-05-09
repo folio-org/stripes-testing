@@ -109,6 +109,7 @@ describe('Inventory', () => {
       'C423392 (CONSORTIA) User can see the the name of locations from Member tenant when he is on the second Member tenant (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet'] },
       () => {
+        cy.wait(5000);
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.verifyConsortiaHoldingsAccordion();
