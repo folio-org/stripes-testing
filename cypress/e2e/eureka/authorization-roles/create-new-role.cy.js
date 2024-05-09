@@ -23,7 +23,7 @@ describe('Eureka', () => {
           },
           {
             table: 'Settings',
-            resource: 'Settings Tags Enabled',
+            resource: 'Settings Enabled',
             action: 'View',
           },
           {
@@ -39,15 +39,15 @@ describe('Eureka', () => {
             action: 'Delete',
           },
           {
-            table: 'Settings',
-            resource: 'Module Notes Enabled',
-            action: 'View',
+            table: 'Data',
+            resource: 'Addresstypes Item',
+            action: 'Edit',
           },
         ],
-        expectedCounts: {
+        expectedRowCounts: {
           capabilities: {
             Data: 2,
-            Settings: 3,
+            Settings: 2,
           },
           capabilitySets: {
             Settings: 1,
@@ -124,12 +124,13 @@ describe('Eureka', () => {
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.capabilitySet);
           AuthorizationRoles.verifyCapabilitySetCheckboxEnabled(testData.capabilitySet, false);
-          Object.entries(testData.expectedCounts.capabilitySets).forEach(([table, count]) => {
-            AuthorizationRoles.checkCountOfCapablitySets(table, count);
+          Object.entries(testData.expectedRowCounts.capabilitySets).forEach(([table, count]) => {
+            AuthorizationRoles.checkCountOfCapabilitySetRows(table, count);
           });
           testData.absentCapabilitySetTables.forEach((table) => {
             AuthorizationRoles.verifyCapabilitySetTableAbsent(table);
           });
+          AuthorizationRoles.verifyCheckboxesCountInCapabilitySetRow(testData.capabilitySet, 1);
           AuthorizationRoles.clickOnCapabilitiesAccordion();
           testData.capabilitiesInSet.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
@@ -137,12 +138,20 @@ describe('Eureka', () => {
           testData.capabilitiesToSelect.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
           });
-          Object.entries(testData.expectedCounts.capabilities).forEach(([table, count]) => {
-            AuthorizationRoles.checkCountOfCapablities(table, count);
+          Object.entries(testData.expectedRowCounts.capabilities).forEach(([table, count]) => {
+            AuthorizationRoles.checkCountOfCapabilityRows(table, count);
           });
           testData.absentCapabilityTables.forEach((table) => {
             AuthorizationRoles.verifyCapabilityTableAbsent(table);
           });
+          testData.capabilitiesInSet.forEach((capability) => {
+            AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(capability, 1);
+          });
+          // 2 checkboxes for the same row because same resource but different actions
+          AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(
+            testData.capabilitiesToSelect[0],
+            2,
+          );
         },
       );
     });

@@ -15,6 +15,7 @@ import {
   Spinner,
   KeyValue,
   and,
+  or,
 } from '../../../../../interactors';
 
 const rolesPane = Pane('Authorization roles');
@@ -107,6 +108,7 @@ export default {
       capabilitySetsAccordion.exists(),
       saveButton.has({ disabled: true }),
     ]);
+    cy.wait(1000);
   },
 
   fillRoleNameDescription: (roleName, roleDescription = '') => {
@@ -230,11 +232,11 @@ export default {
     if (checkOpen) cy.expect(capabilitySetsAccordion.has({ open: true }));
   },
 
-  checkCountOfCapablities: (table, expectedCount) => {
+  checkCountOfCapabilityRows: (table, expectedCount) => {
     cy.expect(capabilitiesAccordion.find(capabilityTables[table]).has({ rowCount: expectedCount }));
   },
 
-  checkCountOfCapablitySets: (table, expectedCount) => {
+  checkCountOfCapabilitySetRows: (table, expectedCount) => {
     cy.expect(
       capabilitySetsAccordion.find(capabilityTables[table]).has({ rowCount: expectedCount }),
     );
@@ -461,20 +463,32 @@ export default {
     if (resultsFound === false) cy.expect(resultsPaneInAssignModal.find(MultiColumnListRow()).absent());
   },
 
-  verifyCheckboxesCountInCapablityRow: ({ table, application, resource }, expectedCount) => {
+  verifyCheckboxesCountInCapabilityRow: ({ table, application, resource }, expectedCount) => {
     const targetRow = capabilitiesAccordion
       .find(capabilityTables[table])
       .find(
-        MultiColumnListRow(including(`${application}${resource}Read-only`), { isContainer: false }),
+        MultiColumnListRow(
+          or(
+            including(`${application}${resource}Read-only`),
+            including(`${application}${resource}No value set`),
+          ),
+          { isContainer: false },
+        ),
       );
     cy.expect(targetRow.has({ checkboxCount: expectedCount }));
   },
 
-  verifyCheckboxesCountInCapablitySetRow: ({ table, application, resource }, expectedCount) => {
+  verifyCheckboxesCountInCapabilitySetRow: ({ table, application, resource }, expectedCount) => {
     const targetRow = capabilitySetsAccordion
       .find(capabilityTables[table])
       .find(
-        MultiColumnListRow(including(`${application}${resource}Read-only`), { isContainer: false }),
+        MultiColumnListRow(
+          or(
+            including(`${application}${resource}Read-only`),
+            including(`${application}${resource}No value set`),
+          ),
+          { isContainer: false },
+        ),
       );
     cy.expect(targetRow.has({ checkboxCount: expectedCount }));
   },
