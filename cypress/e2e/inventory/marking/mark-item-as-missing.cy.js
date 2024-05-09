@@ -70,8 +70,8 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
-      CirculationRules.deleteRuleViaApi(addedCirculationRule);
       cy.getAdminToken().then(() => {
+        CirculationRules.deleteRuleViaApi(addedCirculationRule);
         createdItems.forEach((item) => {
           cy.deleteItemViaApi(item.itemId);
         });

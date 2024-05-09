@@ -418,6 +418,7 @@ export default {
   },
 
   saveUUIDs() {
+    cy.wait(1500);
     InventoryActions.open();
     cy.do(InventoryActions.options.saveUUIDs.click());
   },

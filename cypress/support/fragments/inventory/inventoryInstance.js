@@ -986,10 +986,10 @@ export default {
     );
   },
 
-  checkInstanceIdentifier: (identifier) => {
+  checkInstanceIdentifier: (identifier, rowIndex = 0) => {
     cy.expect(
       identifiersAccordion
-        .find(identifiers.find(MultiColumnListRow({ index: 0 })))
+        .find(identifiers.find(MultiColumnListRow({ index: rowIndex })))
         .find(MultiColumnListCell({ columnIndex: 1 }))
         .has({ content: identifier }),
     );
@@ -1091,6 +1091,7 @@ export default {
       method: REQUEST_METHOD.DELETE,
       path: `instance-storage/instances/${id}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
 
