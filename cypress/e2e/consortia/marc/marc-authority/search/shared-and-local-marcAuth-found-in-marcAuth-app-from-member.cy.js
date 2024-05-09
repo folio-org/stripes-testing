@@ -3,11 +3,9 @@ import Affiliations, { tenantNames } from '../../../../../support/dictionary/aff
 import Users from '../../../../../support/fragments/users/users';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 
@@ -83,44 +81,34 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.resetTenant();
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                if (marcFile.tenant === 'University') {
-                  ConsortiumManager.switchActiveAffiliation(
-                    tenantNames.central,
-                    tenantNames.university,
-                  );
-                } else if (marcFile.tenant === 'College') {
-                  ConsortiumManager.switchActiveAffiliation(
-                    tenantNames.university,
-                    tenantNames.college,
-                  );
-                }
-                DataImport.verifyUploadState();
-                DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileNameImported);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                Logs.waitFileIsImported(marcFile.fileNameImported);
-                Logs.checkJobStatus(marcFile.fileNameImported, JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(marcFile.fileNameImported);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdRecordIDs.push(link.split('/')[5]);
+            marcFiles.forEach((marcFile) => {
+              if (marcFile.tenant === 'University') {
+                cy.setTenant(Affiliations.University);
+              } else if (marcFile.tenant === 'College') {
+                cy.setTenant(Affiliations.College);
+              }
+
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileNameImported,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdRecordIDs.push(record.authority.id);
                 });
               });
+            });
 
-              cy.login(users.userProperties.username, users.userProperties.password, {
-                path: TopMenu.marcAuthorities,
-                waiter: MarcAuthorities.waitLoading,
-              }).then(() => {
-                ConsortiumManager.switchActiveAffiliation(
-                  tenantNames.central,
-                  tenantNames.university,
-                );
-                MarcAuthorities.waitLoading();
-                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
-              });
+            cy.login(users.userProperties.username, users.userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            }).then(() => {
+              ConsortiumManager.switchActiveAffiliation(
+                tenantNames.central,
+                tenantNames.university,
+              );
+              MarcAuthorities.waitLoading();
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
             });
           });
       });

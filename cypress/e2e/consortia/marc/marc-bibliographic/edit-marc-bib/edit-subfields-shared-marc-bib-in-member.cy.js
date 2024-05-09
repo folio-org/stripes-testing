@@ -7,9 +7,7 @@ import getRandomPostfix, { randomFourDigitNumber } from '../../../../../support/
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -79,20 +77,14 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.resetTenant();
-              cy.loginAsAdmin().then(() => {
-                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-                marcFiles.forEach((marcFile) => {
-                  cy.visit(TopMenu.dataImportPath);
-                  DataImport.verifyUploadState();
-                  DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileNameImported);
-                  JobProfiles.waitLoadingList();
-                  JobProfiles.search(marcFile.jobProfileToRun);
-                  JobProfiles.runImportFile();
-                  Logs.waitFileIsImported(marcFile.fileNameImported);
-                  Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-                  Logs.openFileDetails(marcFile.fileNameImported);
-                  Logs.getCreatedItemsID().then((link) => {
-                    createdRecordIDs.push(link.split('/')[5]);
+              marcFiles.forEach((marcFile) => {
+                DataImport.uploadFileViaApi(
+                  marcFile.marc,
+                  marcFile.fileNameImported,
+                  marcFile.jobProfileToRun,
+                ).then((response) => {
+                  response.forEach((record) => {
+                    createdRecordIDs.push(record.instance.id);
                   });
                 });
               });
