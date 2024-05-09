@@ -59,7 +59,7 @@ describe.skip('Data Import', () => {
           physicalUnitPrice: '"20"',
           quantityPhysical: '"1"',
           currency: 'USD',
-          electronicUnitPrice: '25',
+          electronicUnitPrice: '"25"',
           quantityElectronic: '"1"',
           locationName: `"${LOCATION_NAMES.ANNEX}"`,
           locationQuantityPhysical: '"1"',
