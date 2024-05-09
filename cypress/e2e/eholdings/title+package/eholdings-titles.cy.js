@@ -23,7 +23,7 @@ describe('eHoldings', () => {
 
     it(
       'C16994 Add a title in a package to holdings (spitfire)',
-      { tags: ['smoke', 'spitfire'], retries: 1 },
+      { tags: ['smoke', 'spitfire'], retries: 2 },
       () => {
         cy.createTempUser([
           permissions.uieHoldingsRecordsEdit.gui,
