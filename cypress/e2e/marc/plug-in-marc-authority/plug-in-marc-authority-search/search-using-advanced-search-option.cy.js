@@ -24,7 +24,7 @@ describe('MARC', () => {
           'Interborough Rapid Transit Company Powerhouse (New York, N.Y.)',
         ],
         advancesSearchQuery:
-          'identifiers.value exactPhrase n80094057 or personalNameTitle exactPhrase Dunning, Mike or corporateNameTitle exactPhrase Interborough Rapid Transit Company Powerhouse (New York, N.Y.) or nameTitle exactPhrase Lovecraft, H. P. (Howard Phillips), 1890-1937. Herbert West, reanimator',
+          'identifiers.value exactPhrase n  80094057 or personalNameTitle exactPhrase Dunning, Mike or corporateNameTitle exactPhrase Interborough Rapid Transit Company Powerhouse (New York, N.Y.) or nameTitle exactPhrase Lovecraft, H. P. (Howard Phillips), 1890-1937. Herbert West, reanimator',
         partialAdvancesSearchQuery:
           'personalNameTitle exactPhrase Dunning, Mike or corporateNameTitle exactPhrase Interborough Rapid Transit Company Powerhouse (New York, N.Y.) or nameTitle exactPhrase Lovecraft, H. P. (Howard Phillips), 1890-1937. Herbert West, reanimator',
         authRows: {
