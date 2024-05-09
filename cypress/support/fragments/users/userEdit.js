@@ -316,6 +316,7 @@ export default {
       method: 'GET',
       path: `service-points-users?query="userId"="${userId}"`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     })
     .then((servicePointsUsers) => {
       cy.okapiRequest({
