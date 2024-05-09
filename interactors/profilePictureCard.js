@@ -6,4 +6,4 @@ export default HTML.extend('image')
     alt: (el) => el.getAttribute('alt'),
     testId: (el) => el.getAttribute('data-testid'),
     src: (el) => el.getAttribute('src'),
-  })
+  });
