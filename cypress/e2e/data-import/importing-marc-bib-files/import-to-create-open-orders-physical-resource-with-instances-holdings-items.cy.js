@@ -55,6 +55,7 @@ describe('data-import', () => {
           receivingWorkflow: 'Synchronized',
           physicalUnitPrice: '"20"',
           quantityPhysical: '"1"',
+          materialType: MATERIAL_TYPE_NAMES.BOOK,
           currency: 'USD',
           locationName: `"${LOCATION_NAMES.ANNEX}"`,
           locationQuantityPhysical: '"1"',
@@ -79,7 +80,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C380474 Create simple item for open order ${getRandomPostfix()}`,
-          materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
+          materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           status: ITEM_STATUS_NAMES.AVAILABLE,
         },
