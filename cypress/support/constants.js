@@ -221,7 +221,7 @@ export const RECEIVING_WORKFLOW_NAMES = {
 };
 
 export const ACQUISITION_METHOD_NAMES = {
-  APPROVAL_PLAN: 'Approval Plan',
+  APPROVAL_PLAN: 'Approval plan',
   DDA: 'Demand driven acquisitions (DDA)',
   DEPOSITORY: 'Depository',
   EBA: 'Evidence based acquisitions (EBA)',

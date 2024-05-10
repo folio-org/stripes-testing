@@ -1,5 +1,4 @@
 import {
-  ACQUISITION_METHOD_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
@@ -53,7 +52,7 @@ describe.skip('Data Import', () => {
           approved: true,
           vendor: VENDOR_NAMES.GOBI,
           title: '245$a',
-          acquisitionMethod: ACQUISITION_METHOD_NAMES.APPROVAL_PLAN,
+          acquisitionMethod: 'Approval Plan',
           orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PE_MIX,
           receivingWorkflow: 'Synchronized',
           physicalUnitPrice: '"20"',
