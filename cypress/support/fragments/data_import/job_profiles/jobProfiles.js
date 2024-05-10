@@ -100,6 +100,7 @@ export default {
   },
   waitFileIsUploaded: () => {
     cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
+    cy.wait(5000);
   },
 
   checkJobProfilePresented: (jobProfileTitle) => {
