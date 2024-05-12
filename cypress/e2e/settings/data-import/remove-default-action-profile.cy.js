@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, EXISTING_RECORD_NAMES } from '../../../support/constants';
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -23,7 +23,7 @@ describe('Data Import', () => {
         subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_AUTHORITY,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_AUTHORITY,
     };
 
     before('Create test data', () => {

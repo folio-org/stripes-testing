@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
@@ -65,7 +65,7 @@ describe('Data Import', () => {
       qualifierType: 'Begins with',
       qualifierValue: '(OCoLC)',
       compareValue: 'Numerics only',
-      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       existingRecordOption: NewMatchProfile.optionsList.identifierOCLC,
       compareValueInComparison: 'Numerics only',
     };

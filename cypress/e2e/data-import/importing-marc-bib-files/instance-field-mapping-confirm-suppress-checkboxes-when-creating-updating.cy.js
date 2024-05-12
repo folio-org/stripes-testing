@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
@@ -164,7 +164,7 @@ describe('Data Import', () => {
             field: '001',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+          existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
           instanceOption: NewMatchProfile.optionsList.instanceHrid,
         };
 

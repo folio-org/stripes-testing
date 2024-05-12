@@ -1,4 +1,4 @@
-import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import {
   JobProfiles as SettingsJobProfiles,
@@ -27,7 +27,7 @@ describe('Data Import', () => {
         field: '001',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const profile = {
       createJobProfile: `autotest jobProfileForCreate.${getRandomPostfix()}`,

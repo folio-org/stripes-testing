@@ -1,5 +1,5 @@
 import {
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
@@ -93,7 +93,7 @@ describe('Data Import', () => {
         in2: 'f',
         subfield: 's',
       },
-      recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfileName = `C411794 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
 

@@ -1,6 +1,6 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
@@ -40,7 +40,7 @@ describe('Data Import', () => {
         field: '001',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       instanceOption: NewMatchProfile.optionsList.instanceHrid,
     };
     const jobProfile = {

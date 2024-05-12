@@ -3,7 +3,7 @@ import uuid from 'uuid';
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   ORDER_STATUSES,
   VENDOR_NAMES,
   RECORD_STATUSES,
@@ -70,15 +70,15 @@ describe('Data Import', () => {
     const matchProfiles = [
       {
         name: instanceMatchProfileName,
-        existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+        existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       },
       {
         name: holdingsMatchProfileName,
-        existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+        existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
       },
       {
         name: itemMatchProfileName,
-        existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+        existingRecordType: EXISTING_RECORD_NAMES.ITEM,
       },
     ];
 

@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   LOCATION_NAMES,
@@ -73,14 +73,14 @@ describe('Data Import', () => {
       profile: {
         name: instanceMappingProfileNameForCreate,
         incomingRecordType: recordType,
-        existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+        existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       },
     };
     const holdingsMappingProfileForCreate = {
       profile: {
         name: holdingsMappingProfileNameForCreate,
         incomingRecordType: recordType,
-        existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+        existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
         mappingDetails: {
           name: 'holdings',
           recordType: 'HOLDINGS',
@@ -99,7 +99,7 @@ describe('Data Import', () => {
       profile: {
         name: itemMappingProfileNameForCreate,
         incomingRecordType: recordType,
-        existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+        existingRecordType: EXISTING_RECORD_NAMES.ITEM,
         mappingDetails: {
           name: 'item',
           recordType: 'ITEM',
@@ -209,7 +209,7 @@ describe('Data Import', () => {
         subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+      existingRecordType: EXISTING_RECORD_NAMES.ITEM,
       itemOption: NewMatchProfile.optionsList.itemHrid,
     };
     const itemMappingProfileForUpdate = {

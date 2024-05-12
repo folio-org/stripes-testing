@@ -1,4 +1,4 @@
-import { EXISTING_RECORDS_NAMES } from '../../../../support/constants';
+import { EXISTING_RECORD_NAMES } from '../../../../support/constants';
 import { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -25,7 +25,7 @@ describe('Inventory', () => {
         subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const detailsOptions = ['INSTANCE', 'MARC_BIBLIOGRAPHIC', 'MARC_AUTHORITY'];
 

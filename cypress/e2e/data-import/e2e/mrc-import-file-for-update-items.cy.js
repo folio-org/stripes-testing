@@ -2,7 +2,7 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
   CALL_NUMBER_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   EXPORT_TRANSFORMATION_NAMES,
   FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
@@ -66,7 +66,7 @@ describe('Data Import', () => {
         id: '',
         name: nameMarcBibMappingProfile,
         incomingRecordType: recordType,
-        existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+        existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
         mappingDetails: {
           name: 'holdings',
           recordType: 'MARC_BIBLIOGRAPHIC',
@@ -98,7 +98,7 @@ describe('Data Import', () => {
         id: '',
         name: nameInstanceMappingProfile,
         incomingRecordType: recordType,
-        existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+        existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       },
     };
 
@@ -107,7 +107,7 @@ describe('Data Import', () => {
         id: '',
         name: nameHoldingsMappingProfile,
         incomingRecordType: recordType,
-        existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+        existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
         mappingDetails: {
           name: 'holdings',
           recordType: 'HOLDINGS',
@@ -128,7 +128,7 @@ describe('Data Import', () => {
         id: '',
         name: nameItemMappingProfile,
         incomingRecordType: recordType,
-        existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+        existingRecordType: EXISTING_RECORD_NAMES.ITEM,
         mappingDetails: {
           name: 'item',
           recordType: 'ITEM',
@@ -284,7 +284,7 @@ describe('Data Import', () => {
             field: '001',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+          existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
         },
       },
       {
@@ -295,7 +295,7 @@ describe('Data Import', () => {
             subfield: 'a',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+          existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
           holdingsOption: NewMatchProfile.optionsList.holdingsHrid,
         },
       },
@@ -307,7 +307,7 @@ describe('Data Import', () => {
             subfield: 'a',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+          existingRecordType: EXISTING_RECORD_NAMES.ITEM,
           itemOption: NewMatchProfile.optionsList.itemHrid,
         },
       },
