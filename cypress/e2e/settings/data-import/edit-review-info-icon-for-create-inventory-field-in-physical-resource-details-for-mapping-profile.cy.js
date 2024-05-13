@@ -1,15 +1,15 @@
 import {
+  ACQUISITION_METHOD_NAMES,
   FOLIO_RECORD_TYPE,
+  ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
   VENDOR_NAMES,
-  ACQUISITION_METHOD_NAMES,
-  ORDER_FORMAT_NAMES_IN_PROFILE,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
@@ -30,14 +30,15 @@ describe('Data Import', () => {
       receivingWorkflow: 'Synchronized',
     };
 
-    before('create user', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password);
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);

@@ -92,7 +92,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create test user', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -109,7 +109,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
         MarcFieldProtection.getListViaApi({
@@ -180,7 +180,7 @@ describe('Data Import', () => {
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.importWithOclc(oclcForImport);
         InventoryInstance.editMarcBibliographicRecord();
-        [18, 19, 20, 21, 22, 23, 24, 25, 26].forEach((fieldNumber) => {
+        [17, 18, 19, 20, 21, 22, 23, 24, 25].forEach((fieldNumber) => {
           InventoryEditMarcRecord.deleteField(fieldNumber);
         });
         InventoryEditMarcRecord.editField('$a Louisiana $2 fast', '$a Louisiana $2 fast $5 amb');

@@ -2,11 +2,11 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -143,7 +143,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    beforeEach('create test data', () => {
+    beforeEach('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         MarcFieldProtection.getListViaApi({
           query: `"field"=="${protectedFields.firstField}"`,
@@ -183,7 +183,7 @@ describe('Data Import', () => {
       cy.loginAsAdmin();
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
       FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);

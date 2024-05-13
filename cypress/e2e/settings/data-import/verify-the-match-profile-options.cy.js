@@ -27,11 +27,12 @@ describe('Data Import', () => {
     };
     const recordItems = ['INSTANCE', 'HOLDINGS', 'ITEM', 'MARC_BIBLIOGRAPHIC', 'MARC_AUTHORITY'];
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       NewMatchProfile.createMatchProfileViaApiMarc(matchProfile);
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password);
         cy.visit(SettingsMenu.matchProfilePath);
       });

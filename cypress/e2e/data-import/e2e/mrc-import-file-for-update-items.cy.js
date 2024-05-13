@@ -202,7 +202,7 @@ describe('Data Import', () => {
       subfieldForItem: '$a',
     };
 
-    before('create test data', () => {
+    beforeEach('Create test data and login', () => {
       cy.getAdminToken();
       NewFieldMappingProfile.createModifyMarcBibMappingProfileViaApi(
         marcBibMappingProfileForCreate,
@@ -264,7 +264,7 @@ describe('Data Import', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     });
 
-    after('delete test data', () => {
+    afterEach('Delete test data', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
@@ -365,6 +365,7 @@ describe('Data Import', () => {
           // download .csv file
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.selectYesfilterStaffSuppress();
+          cy.wait(1500);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           InventorySearchAndFilter.saveUUIDs();
           ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');

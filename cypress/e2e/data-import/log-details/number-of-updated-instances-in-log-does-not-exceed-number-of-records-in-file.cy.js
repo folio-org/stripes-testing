@@ -1,10 +1,10 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -89,7 +89,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -97,6 +97,7 @@ describe('Data Import', () => {
         Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,
@@ -104,7 +105,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       // delete created file in fixtures
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {

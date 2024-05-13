@@ -1,37 +1,38 @@
 import {
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
-  DEFAULT_JOB_PROFILE_NAMES,
   RECORD_STATUSES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import TopMenu from '../../../../support/fragments/topMenu';
-import getRandomPostfix from '../../../../support/utils/stringTools';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import NewActionProfile from '../../../../support/fragments/data_import/action_profiles/newActionProfile';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import NewFieldMappingProfile from '../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import Users from '../../../../support/fragments/users/users';
-import FileManager from '../../../../support/utils/fileManager';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
 } from '../../../../support/fragments/settings/dataImport';
-import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import { getLongDelay } from '../../../../support/utils/cypressTools';
+import FileManager from '../../../../support/utils/fileManager';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -175,82 +176,83 @@ describe('Data Import', () => {
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.verifySelectedRecords(1);
         InventorySearchAndFilter.exportInstanceAsMarc();
+        cy.intercept('/data-export/quick-export').as('getHrid');
+        cy.wait('@getHrid', getLongDelay()).then((req) => {
+          const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
-        // download exported marc file
-        cy.setTenant(Affiliations.College).then(() => {
-          // use cy.getToken function to get toket for current tenant
-          cy.getCollegeAdminToken();
-          cy.visit(TopMenu.dataExportPath);
-          cy.wait(2000);
-          ExportFile.getExportedFileNameViaApi().then((name) => {
-            testData.marcFile.exportedFileName = name;
-
-            ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
-            // change exported file
-            DataImport.editMarcFile(
+          // download exported marc file
+          cy.setTenant(Affiliations.College).then(() => {
+            // use cy.getToken function to get toket for current tenant
+            cy.getCollegeAdminToken();
+            cy.visit(TopMenu.dataExportPath);
+            ExportFile.downloadExportedMarcFileWithRecordHrid(
+              expectedRecordHrid,
               testData.marcFile.exportedFileName,
-              testData.marcFile.modifiedMarcFile,
-              [testData.instanceTitle, 'Proceedings'],
-              [testData.updatedInstanceTitle, 'Proceedings Updated'],
             );
-
-            // upload the exported and edited marc file
-            cy.visit(TopMenu.dataImportPath);
-            DataImport.verifyUploadState();
-            DataImport.uploadExportedFile(testData.marcFile.modifiedMarcFile);
-            JobProfiles.waitFileIsUploaded();
-            JobProfiles.search(jobProfileName);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(testData.marcFile.modifiedMarcFile);
-            FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
-            InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
-            InventoryInstance.verifyLastUpdatedSource(
-              users.userAProperties.firstName,
-              users.userAProperties.lastName,
-            );
-            cy.logout();
-
-            cy.login(users.userBProperties.username, users.userBProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            InventorySearchAndFilter.verifyPanesExist();
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            InventoryInstances.searchByTitle(testData.updatedInstanceTitle);
-            InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
-            InventoryInstance.verifyLastUpdatedSource(
-              users.userAProperties.firstName,
-              users.userAProperties.lastName,
-            );
-            InventoryInstance.editMarcBibliographicRecord();
-            QuickMarcEditor.checkContentByTag(testData.field245.tag, testData.field245.content);
-            QuickMarcEditor.checkContentByTag(testData.field500.tag, testData.field500.content);
-            QuickMarcEditor.checkSourceValue(
-              users.userAProperties.firstName,
-              users.userAProperties.lastName,
-            );
-            cy.logout();
-
-            cy.login(users.userBProperties.username, users.userBProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
-            InventorySearchAndFilter.verifyPanesExist();
-            InventoryInstances.searchByTitle(testData.updatedInstanceTitle);
-            InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
-            InventoryInstance.verifyLastUpdatedSource(
-              users.userAProperties.firstName,
-              users.userAProperties.lastName,
-            );
-            InventoryInstance.viewSource();
-            InventoryViewSource.contains(testData.field245.content);
-            InventoryViewSource.contains(testData.field500.content);
+            FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
           });
         });
+        // change exported file
+        DataImport.editMarcFile(
+          testData.marcFile.exportedFileName,
+          testData.marcFile.modifiedMarcFile,
+          [testData.instanceTitle, 'Proceedings'],
+          [testData.updatedInstanceTitle, 'Proceedings Updated'],
+        );
+
+        // upload the exported and edited marc file
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.verifyUploadState();
+        DataImport.uploadExportedFile(testData.marcFile.modifiedMarcFile);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.search(jobProfileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(testData.marcFile.modifiedMarcFile);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+        InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
+        InventoryInstance.verifyLastUpdatedSource(
+          users.userAProperties.firstName,
+          users.userAProperties.lastName,
+        );
+
+        cy.login(users.userBProperties.username, users.userBProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        InventorySearchAndFilter.verifyPanesExist();
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        InventoryInstances.searchByTitle(testData.updatedInstanceTitle);
+        InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
+        InventoryInstance.verifyLastUpdatedSource(
+          users.userAProperties.firstName,
+          users.userAProperties.lastName,
+        );
+        InventoryInstance.editMarcBibliographicRecord();
+        QuickMarcEditor.checkContentByTag(testData.field245.tag, testData.field245.content);
+        QuickMarcEditor.checkContentByTag(testData.field500.tag, testData.field500.content);
+        QuickMarcEditor.checkSourceValue(
+          users.userAProperties.firstName,
+          users.userAProperties.lastName,
+        );
+
+        cy.login(users.userBProperties.username, users.userBProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+        InventorySearchAndFilter.verifyPanesExist();
+        InventoryInstances.searchByTitle(testData.updatedInstanceTitle);
+        InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
+        InventoryInstance.verifyLastUpdatedSource(
+          users.userAProperties.firstName,
+          users.userAProperties.lastName,
+        );
+        InventoryInstance.viewSource();
+        InventoryViewSource.contains(testData.field245.content);
+        InventoryViewSource.contains(testData.field500.content);
       },
     );
   });

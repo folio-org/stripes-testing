@@ -10,6 +10,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
 
 describe('ui-finance: Transactions', () => {
   const firstFund = { ...Funds.defaultUiFund };
@@ -22,15 +23,23 @@ describe('ui-finance: Transactions', () => {
   };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const allocatedQuantity = '50';
+  const firstBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 50,
+  };
+  const secondBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 50,
+  };
   let user;
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
-      defaultFiscalYear.id = response.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
+      defaultFiscalYear.id = firstFiscalYearResponse.id;
+      firstBudget.fiscalYearId = firstFiscalYearResponse.id;
+      secondBudget.fiscalYearId = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         firstFund.ledgerId = defaultLedger.id;
@@ -38,20 +47,14 @@ describe('ui-finance: Transactions', () => {
 
         Funds.createViaApi(firstFund).then((fundResponse) => {
           firstFund.id = fundResponse.fund.id;
+          firstBudget.fundId = fundResponse.fund.id;
+          Budgets.createViaApi(firstBudget);
 
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(firstFund.name);
-          Funds.selectFund(firstFund.name);
-          Funds.addBudget(allocatedQuantity);
-        });
-
-        Funds.createViaApi(secondFund).then((secondFundResponse) => {
-          secondFund.id = secondFundResponse.fund.id;
-
-          cy.visit(TopMenu.fundPath);
-          FinanceHelp.searchByName(secondFund.name);
-          Funds.selectFund(secondFund.name);
-          Funds.addBudget(allocatedQuantity);
+          Funds.createViaApi(secondFund).then((secondFundResponse) => {
+            secondFund.id = secondFundResponse.fund.id;
+            secondBudget.fundId = secondFundResponse.fund.id;
+            Budgets.createViaApi(secondBudget);
+          });
         });
       });
     });
@@ -75,7 +78,7 @@ describe('ui-finance: Transactions', () => {
       Funds.selectBudgetDetails();
       Funds.transfer(firstFund, secondFund);
       InteractorsTools.checkCalloutMessage(
-        `$10.00 was successfully transferred to the budget ${firstFund.code}-${defaultFiscalYear.code}`,
+        `$10.00 was successfully transferred to the budget ${firstBudget.name}`,
       );
       Funds.viewTransactions();
       Funds.checkTransactionList(firstFund.code);

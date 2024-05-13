@@ -105,7 +105,7 @@ describe('Data Import', () => {
       },
     ];
 
-    before('login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       InventorySearchAndFilter.getInstancesByIdentifierViaApi(oclcNumber.value).then(
         (instances) => {
@@ -122,7 +122,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(
           collectionOfJobProfiles[0].jobProfile.profileName,

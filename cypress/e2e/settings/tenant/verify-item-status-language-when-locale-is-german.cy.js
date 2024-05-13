@@ -1,15 +1,15 @@
-import Helper from '../../../support/fragments/finance/financeHelper';
 import { Permissions } from '../../../support/dictionary';
+import Helper from '../../../support/fragments/finance/financeHelper';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TemporarySessionLocale from '../../../support/fragments/settings/developer/session-locale/temporarySessionLocale';
+import { Localization } from '../../../support/fragments/settings/tenant/general';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import { Localization } from '../../../support/fragments/settings/tenant/general';
-import TemporarySessionLocale from '../../../support/fragments/settings/developer/session-locale/temporarySessionLocale';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('Settings', () => {
   describe('Tenant', () => {
@@ -27,7 +27,7 @@ describe('Settings', () => {
       accordionHeaderLanguageValue: 'Bestand: Main Library',
     };
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         InventoryInstances.createInstanceViaApi(instanceTitle, itemBarcode);
       });

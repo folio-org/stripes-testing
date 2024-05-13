@@ -129,14 +129,14 @@ describe('Data Import', () => {
       profileName: `C11110 autotest job profile.${getRandomPostfix()}`,
     };
 
-    before('create test data', () => {
+    before('Login', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {

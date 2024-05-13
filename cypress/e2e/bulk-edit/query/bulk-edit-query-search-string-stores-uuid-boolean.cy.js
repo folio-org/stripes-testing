@@ -65,22 +65,22 @@ describe('Bulk Edit - Query', () => {
       QueryModal.verifyQueryAreaContent('(user_patron_group in )');
       QueryModal.verifyValueColumn();
       QueryModal.fillInValueMultiselect(patronGroupNames.STAFF);
-      QueryModal.verifyQueryAreaContent(`(user_patron_group in "${patronGroupUuids.STAFF}")`);
+      QueryModal.verifyQueryAreaContent(`(user_patron_group in ("${patronGroupUuids.STAFF}"))`);
       QueryModal.testQueryDisabled(false);
       QueryModal.runQueryDisabled();
       QueryModal.chooseFromValueMultiselect(patronGroupNames.FACULTY);
       QueryModal.verifyQueryAreaContent(
-        `(user_patron_group in "${patronGroupUuids.STAFF}","${patronGroupUuids.FACULTY}")`,
+        `(user_patron_group in ("${patronGroupUuids.STAFF}","${patronGroupUuids.FACULTY}"))`,
       );
       QueryModal.testQueryDisabled(false);
       QueryModal.runQueryDisabled();
       QueryModal.removeValueFromMultiselect(patronGroupNames.STAFF);
       QueryModal.removeValueFromMultiselect(patronGroupNames.FACULTY);
-      QueryModal.verifyQueryAreaContent('(user_patron_group in )');
+      QueryModal.verifyQueryAreaContent('(user_patron_group in ())');
       QueryModal.testQueryDisabled();
       QueryModal.runQueryDisabled();
       QueryModal.chooseFromValueMultiselect(patronGroupNames.UNDERGRAD);
-      QueryModal.verifyQueryAreaContent(`(user_patron_group in "${patronGroupUuids.UNDERGRAD}")`);
+      QueryModal.verifyQueryAreaContent(`(user_patron_group in ("${patronGroupUuids.UNDERGRAD}"))`);
       QueryModal.testQueryDisabled(false);
       QueryModal.runQueryDisabled();
       QueryModal.addNewRow();
@@ -91,7 +91,7 @@ describe('Bulk Edit - Query', () => {
       QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
       QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, true);
       QueryModal.verifyQueryAreaContent(
-        `(user_patron_group in "${patronGroupUuids.UNDERGRAD}") AND (  )`,
+        `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (  )`,
       );
       QueryModal.testQueryDisabled();
       QueryModal.runQueryDisabled();
@@ -100,7 +100,7 @@ describe('Bulk Edit - Query', () => {
       QueryModal.verifyOperatorsList(booleanOperators, 1);
       QueryModal.selectOperator('==', 1);
       QueryModal.verifyQueryAreaContent(
-        `(user_patron_group in "${patronGroupUuids.UNDERGRAD}") AND (user_active == )`,
+        `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (user_active == )`,
       );
       QueryModal.verifyValueColumn();
       QueryModal.testQueryDisabled();
@@ -109,7 +109,7 @@ describe('Bulk Edit - Query', () => {
       QueryModal.testQueryDisabled(false);
       QueryModal.runQueryDisabled();
       QueryModal.verifyQueryAreaContent(
-        `(user_patron_group in "${patronGroupUuids.UNDERGRAD}") AND (user_active == "true")`,
+        `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (user_active == "true")`,
       );
       QueryModal.addNewRow(1);
       QueryModal.verifyBooleanColumn(2);
@@ -124,7 +124,7 @@ describe('Bulk Edit - Query', () => {
       QueryModal.verifyOperatorsList(booleanOperators, 2);
       QueryModal.selectOperator('!=', 2);
       QueryModal.verifyQueryAreaContent(
-        `(user_patron_group in "${patronGroupUuids.UNDERGRAD}") AND (user_active == "true") AND (user_active != )`,
+        `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (user_active == "true") AND (user_active != )`,
       );
       QueryModal.verifyValueColumn();
       QueryModal.testQueryDisabled();
@@ -133,11 +133,11 @@ describe('Bulk Edit - Query', () => {
       QueryModal.testQueryDisabled(false);
       QueryModal.runQueryDisabled();
       QueryModal.verifyQueryAreaContent(
-        `(user_patron_group in "${patronGroupUuids.UNDERGRAD}") AND (user_active == "true") AND (user_active != "false")`,
+        `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (user_active == "true") AND (user_active != "false")`,
       );
       QueryModal.clickGarbage(2);
       QueryModal.verifyQueryAreaContent(
-        `(user_patron_group in "${patronGroupUuids.UNDERGRAD}") AND (user_active == "true")`,
+        `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (user_active == "true")`,
       );
       QueryModal.testQueryDisabled(false);
       QueryModal.runQueryDisabled();

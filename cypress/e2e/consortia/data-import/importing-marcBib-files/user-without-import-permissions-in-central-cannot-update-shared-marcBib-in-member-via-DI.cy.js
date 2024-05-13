@@ -31,6 +31,7 @@ import NewLocation from '../../../../support/fragments/settings/tenant/locations
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import { getLongDelay } from '../../../../support/utils/cypressTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
@@ -186,40 +187,43 @@ describe('Data Import', () => {
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.verifySelectedRecords(1);
         InventorySearchAndFilter.exportInstanceAsMarc();
+        cy.intercept('/data-export/quick-export').as('getHrid');
+        cy.wait('@getHrid', getLongDelay()).then((req) => {
+          const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
-        // download exported marc file
-        cy.setTenant(Affiliations.College).then(() => {
-          // use cy.getToken function to get toket for current tenant
-          cy.getCollegeAdminToken();
-          cy.visit(TopMenu.dataExportPath);
-          cy.wait(2000);
-          ExportFile.getExportedFileNameViaApi().then((name) => {
-            testData.marcFile.exportedFileName = name;
-
-            ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
-            // change exported file
-            DataImport.editMarcFile(
+          // download exported marc file
+          cy.setTenant(Affiliations.College).then(() => {
+            // use cy.getToken function to get toket for current tenant
+            cy.getCollegeAdminToken();
+            cy.visit(TopMenu.dataExportPath);
+            ExportFile.downloadExportedMarcFileWithRecordHrid(
+              expectedRecordHrid,
               testData.marcFile.exportedFileName,
-              testData.marcFile.modifiedMarcFile,
-              ['Proceedings'],
-              ['Proceedings Updated'],
             );
-            // upload the exported and edited marc file
-            cy.visit(TopMenu.dataImportPath);
-            DataImport.verifyUploadState();
-            DataImport.uploadExportedFile(testData.marcFile.modifiedMarcFile);
-            JobProfiles.waitFileIsUploaded();
-            JobProfiles.search(jobProfileName);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-
-            cy.visit(TopMenu.inventoryPath);
-            InventoryInstances.searchByTitle(testData.instanceTitle);
-            InventoryInstance.viewSource();
-            InventoryViewSource.notContains(testData.field500Content);
+            FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
           });
         });
+        // change exported file
+        DataImport.editMarcFile(
+          testData.marcFile.exportedFileName,
+          testData.marcFile.modifiedMarcFile,
+          ['Proceedings'],
+          ['Proceedings Updated'],
+        );
+        // upload the exported and edited marc file
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.verifyUploadState();
+        DataImport.uploadExportedFile(testData.marcFile.modifiedMarcFile);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.search(jobProfileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+
+        cy.visit(TopMenu.inventoryPath);
+        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventoryInstance.viewSource();
+        InventoryViewSource.notContains(testData.field500Content);
       },
     );
   });

@@ -51,7 +51,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create user and login', () => {
+    before('Create test user and login', () => {
       // change 010$a to unique
       DataImport.editMarcFile(filePathToUpload, modifiedMarcFile, ['50033023'], [unique010$a]);
 
@@ -67,7 +67,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${modifiedMarcFile}`);
       cy.getAdminToken().then(() => {
@@ -137,7 +137,7 @@ describe('Data Import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.authority,
         ].forEach((column) => {
-          FileDetails.checkStatusInColumn(RECORD_STATUSES.BLANK, column);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.NO_ACTION, column);
         });
       },
     );

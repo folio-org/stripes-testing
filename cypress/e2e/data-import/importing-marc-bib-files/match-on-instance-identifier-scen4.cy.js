@@ -1,12 +1,12 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -89,7 +89,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create test data', () => {
+    before('Create test data', () => {
       cy.getAdminToken().then(() => {
         InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
           (instances) => {
@@ -109,6 +109,7 @@ describe('Data Import', () => {
         Permissions.settingsDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -224,14 +225,12 @@ describe('Data Import', () => {
         Logs.waitFileIsImported(fileNameForUpdateInstance);
         Logs.checkJobStatus(fileNameForUpdateInstance, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdateInstance);
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.DASH,
+        [
           FileDetails.columnNameInResultList.srsMarc,
-        );
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.instance,
-        );
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.NO_ACTION, columnName);
+        });
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,

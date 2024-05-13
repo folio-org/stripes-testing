@@ -11,8 +11,7 @@ describe('Data Import', () => {
     const filePathForUpload = 'oneMarcBib.mrc';
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
-    before(() => {
-      cy.getAdminToken();
+    before('Login', () => {
       cy.loginAsAdmin();
     });
 

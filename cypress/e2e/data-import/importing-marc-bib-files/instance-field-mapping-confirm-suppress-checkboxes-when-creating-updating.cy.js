@@ -56,7 +56,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create test data', () => {
+    before('Create test data', () => {
       cy.getAdminToken();
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
@@ -83,7 +83,7 @@ describe('Data Import', () => {
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);

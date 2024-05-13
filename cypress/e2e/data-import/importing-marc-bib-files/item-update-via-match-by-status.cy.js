@@ -136,7 +136,7 @@ describe('Data Import', () => {
       name: `C357552 Item HRID ${getRandomPostfix()}`,
     };
 
-    before('create test data', () => {
+    before('Create test data', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -164,7 +164,10 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpdate}`);
+      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpdate}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);

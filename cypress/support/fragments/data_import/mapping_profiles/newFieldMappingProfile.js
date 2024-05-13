@@ -380,6 +380,21 @@ const addStatisticalCode = (name, number, action) => {
     TextField('Statistical code').fillIn(`"${name}"`),
   ]);
 };
+const addItemNotes = (noteType, note, staffOnly) => {
+  const noteFieldName = 'profile.mappingDetails.mappingFields[25].repeatableFieldAction';
+  const selectName =
+    'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction';
+
+  cy.do([
+    Select({ name: noteFieldName }).focus(),
+    Select({ name: noteFieldName }).choose(actions.addTheseToExisting),
+    Button('Add item note').click(),
+    noteTypeField.fillIn(noteType),
+    TextField('Note').fillIn(note),
+    Select({ name: selectName }).focus(),
+    Select({ name: selectName }).choose(staffOnly),
+  ]);
+};
 
 export default {
   getDefaultInstanceMappingProfile,
@@ -417,15 +432,22 @@ export default {
   addStatisticalCode,
   selectActionForStatisticalCode,
   save,
+  addItemNotes,
   waitLoading: () => {
     cy.expect(mappingProfilesForm.exists());
   },
 
-  fillInsatnceMappingProfile: (profile) => {
+  fillInstanceMappingProfile: (profile) => {
     // Summary section
     fillSummaryInMappingProfile(profile);
+    if (profile.catalogedDate) {
+      cy.do(catalogedDateField.fillIn(profile.catalogedDate));
+    }
     if (profile.instanceStatusTerm) {
       fillInstanceStatusTerm(profile.instanceStatusTerm);
+    }
+    if (profile.statisticalCode) {
+      addStatisticalCode(profile.statisticalCode, 8);
     }
     save();
     cy.expect(saveButton.absent());
@@ -440,6 +462,27 @@ export default {
     if (profile.holdingsType) {
       fillHoldingsType(profile.holdingsType);
     }
+    if (profile.callNumberType) {
+      cy.do(TextField('Call number type').fillIn(`"${profile.callNumberType}"`));
+    }
+    if (profile.callNumber) {
+      cy.do(TextField('Call number').fillIn(profile.callNumber));
+    }
+    if (profile.relationship) {
+      cy.get('[name="profile.mappingDetails.mappingFields[23].repeatableFieldAction"]').select(
+        'Add these to existing',
+      );
+      cy.do([
+        Button('Add electronic access').click(),
+        TextField('Relationship').fillIn(`"${profile.relationship}"`),
+      ]);
+    }
+    if (profile.uri) {
+      cy.do(TextField('URI').fillIn(profile.uri));
+    }
+    if (profile.linkText) {
+      cy.do(TextField('Link text').fillIn(profile.linkText));
+    }
     save();
     cy.expect(saveButton.absent());
   },
@@ -448,7 +491,7 @@ export default {
     // Summary section
     fillSummaryInMappingProfile(profile);
     if (profile.materialType) {
-      fillMaterialType(profile.materialType);
+      fillMaterialType(`"${profile.materialType}"`);
     }
     if (profile.permanentLoanType) {
       fillPermanentLoanType(profile.permanentLoanType);
@@ -458,6 +501,9 @@ export default {
     }
     if (profile.statisticalCode) {
       addStatisticalCode(profile.statisticalCode, 6);
+    }
+    if (profile.noteType) {
+      addItemNotes(profile.noteType, profile.note, profile.staffOnly);
     }
     save();
     cy.expect(saveButton.absent());
@@ -923,22 +969,6 @@ export default {
       Button('Add holdings note').click(),
       noteTypeField.fillIn(type),
       TextField('Note').fillIn(`"${note}"`),
-      Select({ name: selectName }).focus(),
-      Select({ name: selectName }).choose(staffOnly),
-    ]);
-  },
-
-  addItemNotes: (noteType, note, staffOnly) => {
-    const noteFieldName = 'profile.mappingDetails.mappingFields[25].repeatableFieldAction';
-    const selectName =
-      'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction';
-
-    cy.do([
-      Select({ name: noteFieldName }).focus(),
-      Select({ name: noteFieldName }).choose(actions.addTheseToExisting),
-      Button('Add item note').click(),
-      noteTypeField.fillIn(noteType),
-      TextField('Note').fillIn(note),
       Select({ name: selectName }).focus(),
       Select({ name: selectName }).choose(staffOnly),
     ]);

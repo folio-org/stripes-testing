@@ -13,7 +13,7 @@ describe('Data Import', () => {
     const fileNameToUpload = `C2358 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
-    before('create test data', () => {
+    before('Create test data', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathToUpload, fileNameToUpload, jobProfileToRun).then(
         (response) => {
@@ -27,7 +27,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         InventoryInstance.deleteInstanceViaApi(instanceId);
       });

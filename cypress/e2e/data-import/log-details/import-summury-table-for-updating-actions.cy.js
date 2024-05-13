@@ -223,14 +223,14 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('login', () => {
+    before('Login', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);

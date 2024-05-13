@@ -62,7 +62,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField('', testData.fieldContents.tag001Content);
 
           QuickMarcEditor.updateTagNameToLockedTag(5, testData.tags.tag001);
-          QuickMarcEditor.checkFourthBoxDisabled(5);
+          QuickMarcEditor.checkFourthBoxEditable(5, false);
 
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();

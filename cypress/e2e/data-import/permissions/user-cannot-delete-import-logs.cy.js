@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -14,7 +14,7 @@ describe('Data Import', () => {
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const fileName = `C353641 autotestFile${getRandomPostfix()}.mrc`;
 
-    before('create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
@@ -25,7 +25,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });

@@ -1,15 +1,15 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
+import { DEFAULT_JOB_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -34,7 +34,7 @@ describe('Data Import', () => {
       },
     ];
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       // need to edit file for creating unique instance title
       DataImport.editMarcFile(
         filePathToUpload,
@@ -56,7 +56,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${editedFileForUpload}`);
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);

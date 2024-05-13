@@ -1,4 +1,4 @@
-import { TARGET_PROFILE_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, TARGET_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryEditMarcRecord from '../../../support/fragments/inventory/inventoryEditMarcRecord';
@@ -32,7 +32,7 @@ describe('Data Import', () => {
       'Notice et cote du catalogue de la Bibliothèque nationale de France $u http://catalogue.bnf.fr/ark:/12148/cb371881758';
     const fileName = `C358968 autotestFile${getRandomPostfix()}.mrc`;
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi('marcFileForC358968.mrc', fileName, jobProfileToRun).then(
         (response) => {
@@ -62,7 +62,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         MarcFieldProtection.getListViaApi({
           query: `"field"=="${protectedFieldData.protectedField}"`,

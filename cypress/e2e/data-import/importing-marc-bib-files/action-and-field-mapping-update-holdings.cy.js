@@ -110,7 +110,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
@@ -204,7 +204,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);

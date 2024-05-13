@@ -31,6 +31,7 @@ import Locations from '../../../../support/fragments/settings/tenant/location-se
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import { getLongDelay } from '../../../../support/utils/cypressTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
@@ -97,7 +98,7 @@ describe('Data Import', () => {
     };
     const jobProfileName = `C411794 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         testData.marcFile.marc,
@@ -142,24 +143,16 @@ describe('Data Import', () => {
           },
         );
         // adding Holdings for shared Instance
-        cy.getInstance({
-          limit: 1,
-          expandAll: true,
-          query: `"title"=="${testData.instanceTitle}"`,
-        }).then((instance) => {
-          testData.instanceIdOnMemberTenant = instance.id;
-
-          const collegeLocationData = Locations.getDefaultLocation({
-            servicePointId: ServicePoints.getDefaultServicePoint().id,
-          }).location;
-          Locations.createViaApi(collegeLocationData).then((location) => {
-            testData.collegeLocation = location;
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: instance.id,
-              permanentLocationId: testData.collegeLocation.id,
-            }).then((holding) => {
-              testData.holding = holding;
-            });
+        const collegeLocationData = Locations.getDefaultLocation({
+          servicePointId: ServicePoints.getDefaultServicePoint().id,
+        }).location;
+        Locations.createViaApi(collegeLocationData).then((location) => {
+          testData.collegeLocation = location;
+          InventoryHoldings.createHoldingRecordViaApi({
+            instanceId: testData.sharedInstanceId,
+            permanentLocationId: testData.collegeLocation.id,
+          }).then((holding) => {
+            testData.holding = holding;
           });
         });
         cy.resetTenant();
@@ -205,24 +198,34 @@ describe('Data Import', () => {
       'C411794 Adding/deleting fields and subfields when updating Shadow "MARC Bib" in member tenant via Data Import (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet'] },
       () => {
-        InventoryInstances.searchByTitle(testData.instanceIdOnMemberTenant);
+        InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.verifySelectedRecords(1);
         InventorySearchAndFilter.exportInstanceAsMarc();
-        // download exported marc file
-        cy.visit(TopMenu.dataExportPath);
-        cy.wait(1000);
-        ExportFile.getExportedFileNameViaApi().then((name) => {
-          testData.marcFile.exportedFileName = name;
-          ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
-          // change exported file
-          DataImport.replace999SubfieldsInPreupdatedFile(
-            testData.marcFile.exportedFileName,
-            testData.marcFile.marcFileForModify,
-            testData.marcFile.modifiedMarcFile,
-          );
+        cy.intercept('/data-export/quick-export').as('getHrid');
+        cy.wait('@getHrid', getLongDelay()).then((req) => {
+          const expectedRecordHrid = req.response.body.jobExecutionHrId;
+
+          // download exported marc file
+          cy.setTenant(Affiliations.College).then(() => {
+            // use cy.getToken function to get toket for current tenant
+            cy.getCollegeAdminToken();
+            cy.visit(TopMenu.dataExportPath);
+            ExportFile.downloadExportedMarcFileWithRecordHrid(
+              expectedRecordHrid,
+              testData.marcFile.exportedFileName,
+            );
+            FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
+          });
         });
+
+        // change exported file
+        DataImport.replace999SubfieldsInPreupdatedFile(
+          testData.marcFile.exportedFileName,
+          testData.marcFile.marcFileForModify,
+          testData.marcFile.modifiedMarcFile,
+        );
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
@@ -233,6 +236,7 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
+        cy.resetTenant();
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.searchByTitle(testData.sharedInstanceId[0]);
@@ -256,7 +260,7 @@ describe('Data Import', () => {
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName);
         InventoryInstance.verifyContributorAbsent(testData.absentContributorName);

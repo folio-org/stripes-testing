@@ -31,7 +31,7 @@ describe('Data Import', () => {
     const errorMessageForInstanceProfile =
       "Chosen job profile 'Default - Create instance and SRS MARC Bib' does not support 'MARC_HOLDING' record type";
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         filePathForUpload,
@@ -58,7 +58,7 @@ describe('Data Import', () => {
       );
     });
 
-    after('delete user', () => {
+    after('Delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);

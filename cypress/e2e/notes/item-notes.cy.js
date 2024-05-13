@@ -1,11 +1,11 @@
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../support/utils/stringTools';
-import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordEdit from '../../support/fragments/inventory/item/itemRecordEdit';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Item', () => {
@@ -19,7 +19,7 @@ describe('Inventory', () => {
       staffOnly: true,
     };
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       ServicePoints.createViaApi(testData.servicePoint);
       testData.defaultLocation = Locations.getDefaultLocation({

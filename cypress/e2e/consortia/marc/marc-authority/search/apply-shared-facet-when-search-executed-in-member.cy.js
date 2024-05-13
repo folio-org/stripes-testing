@@ -4,14 +4,11 @@ import Users from '../../../../../support/fragments/users/users';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import {
-  JOB_STATUS_NAMES,
   MARC_AUTHORITY_SEARCH_OPTIONS,
   DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../../../support/constants';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthoritiesSearch from '../../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
@@ -104,32 +101,21 @@ describe('MARC', () => {
             ]);
           })
           .then(() => {
-            cy.loginAsAdmin({
-              path: TopMenu.dataImportPath,
-              waiter: DataImport.waitLoading,
-            });
-          })
-          .then(() => {
-            marcFiles.forEach((marcFile, index) => {
-              if (marcFile.tenant !== tenantNames.central) {
-                ConsortiumManager.switchActiveAffiliation(
-                  marcFiles[index - 1].tenant,
-                  marcFile.tenant,
-                );
-                DataImport.waitLoading();
-                ConsortiumManager.checkCurrentTenantInTopMenu(marcFile.tenant);
+            cy.resetTenant();
+            marcFiles.forEach((marcFile) => {
+              if (marcFile.tenant === 'College') {
+                cy.setTenant(Affiliations.College);
+              } else if (marcFile.tenant === 'University') {
+                cy.setTenant(Affiliations.University);
               }
-
-              DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFile.fileName);
-              Logs.getCreatedItemsID().then((link) => {
-                marcFile.createdAuthorityID = link.split('/')[5];
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  marcFile.createdAuthorityID = record.authority.id;
+                });
               });
             });
           })

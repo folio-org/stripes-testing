@@ -1,12 +1,12 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -88,7 +88,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
           (instances) => {
@@ -113,6 +113,7 @@ describe('Data Import', () => {
         Permissions.remoteStorageView.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
+
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -120,7 +121,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         // delete profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
@@ -228,16 +229,12 @@ describe('Data Import', () => {
         ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.DASH,
+        [
           FileDetails.columnNameInResultList.srsMarc,
-          1,
-        );
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.instance,
-          1,
-        );
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.NO_ACTION, columnName, 1);
+        });
 
         // check updated instance in Inventory
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);

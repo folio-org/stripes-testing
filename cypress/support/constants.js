@@ -245,6 +245,10 @@ export const LOCATION_NAMES = {
   MAIN_LIBRARY_UI: 'Main Library',
 };
 
+export const LOCATION_IDS = {
+  ONLINE: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5',
+};
+
 export const INSTANCE_STATUS_TERM_NAMES = {
   BATCH_LOADED: 'Batch Loaded',
   CATALOGED: 'Cataloged',
@@ -729,4 +733,11 @@ export const electronicAccessRelationshipId = {
 export const electronicAccessRelationshipName = {
   RESOURCE: 'Resource',
   VERSION_OF_RESOURCE: 'Version of resource',
+};
+
+export const AUTHORITY_FILE_TEXT_FIELD_NAMES = {
+  NAME: 'Name',
+  PREFIX: 'Prefix',
+  HRID_STARTS_WITH: 'HRID starts with',
+  BASE_URL: 'Base url',
 };

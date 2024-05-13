@@ -7,35 +7,35 @@ import SettingsFinance from '../../../support/fragments/settings/finance/setting
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
 
 describe('ui-finance: Funds', () => {
   const firstExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
-  const defaultfund = { ...Funds.defaultUiFund };
+  const defaultFund = { ...Funds.defaultUiFund };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const allocatedQuantity = '100';
-
+  const defaultBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 100,
+  };
   before(() => {
     cy.getAdminToken();
     cy.loginAsAdmin();
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
 
-    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
-      defaultFiscalYear.id = response.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
+      defaultFiscalYear.id = firstFiscalYearResponse.id;
+      defaultBudget.fiscalYearId = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
-        defaultfund.ledgerId = defaultLedger.id;
+        defaultFund.ledgerId = defaultLedger.id;
 
-        Funds.createViaApi(defaultfund).then((fundResponse) => {
-          defaultfund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultfund.name);
-          Funds.selectFund(defaultfund.name);
-          Funds.addBudget(allocatedQuantity);
+        Funds.createViaApi(defaultFund).then((fundResponse) => {
+          defaultFund.id = fundResponse.fund.id;
+          defaultBudget.fundId = fundResponse.fund.id;
+          Budgets.createViaApi(defaultBudget);
         });
       });
     });
@@ -43,8 +43,8 @@ describe('ui-finance: Funds', () => {
 
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-    FinanceHelp.searchByName(defaultfund.name);
-    Funds.selectFund(defaultfund.name);
+    FinanceHelp.searchByName(defaultFund.name);
+    Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
     Funds.editBudget();
     Funds.deleteExpensesClass();
@@ -52,7 +52,7 @@ describe('ui-finance: Funds', () => {
     InteractorsTools.checkCalloutMessage('Budget has been deleted');
     Funds.checkIsBudgetDeleted();
 
-    Funds.deleteFundViaApi(defaultfund.id);
+    Funds.deleteFundViaApi(defaultFund.id);
 
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.deleteExpenseClass(firstExpenseClass);
@@ -67,14 +67,12 @@ describe('ui-finance: Funds', () => {
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       cy.visit(TopMenu.fundPath);
-      FinanceHelp.searchByName(defaultfund.name);
-      Funds.selectFund(defaultfund.name);
+      FinanceHelp.searchByName(defaultFund.name);
+      Funds.selectFund(defaultFund.name);
       Funds.selectBudgetDetails();
       Funds.editBudget();
       Funds.addExpensesClass(firstExpenseClass.name);
-      InteractorsTools.checkCalloutMessage(
-        `Budget ${defaultfund.code}-${defaultFiscalYear.code} has been saved`,
-      );
+      InteractorsTools.checkCalloutMessage(`Budget ${defaultBudget.name} has been saved`);
     },
   );
 });

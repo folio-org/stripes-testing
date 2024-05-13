@@ -65,6 +65,7 @@ describe('Data Import', () => {
 
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,
@@ -72,7 +73,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.name);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);

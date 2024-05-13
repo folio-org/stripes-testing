@@ -88,7 +88,7 @@ describe('Data Import', () => {
       profileName: `C377023 Test Order ${getRandomPostfix()}`,
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
@@ -118,6 +118,7 @@ describe('Data Import', () => {
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -125,7 +126,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);

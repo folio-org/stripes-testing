@@ -11,7 +11,7 @@ describe('Data Import', () => {
     const firstUploadFile = `C2357 autotestFile${getRandomPostfix()}.mrc`;
     const secondUploadFile = `C2357 autotestFile.${getRandomPostfix()}.csv`;
 
-    before('create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
@@ -22,7 +22,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${firstUploadFile}`);

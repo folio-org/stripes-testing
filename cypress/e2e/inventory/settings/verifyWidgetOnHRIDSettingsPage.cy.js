@@ -8,7 +8,7 @@ describe.skip('Inventory', () => {
   describe('Settings', () => {
     const testData = {};
 
-    before('Create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.uiUsersView.gui,
         Permissions.uiSettingsHRIDHandlingCreateEditDelete.gui,
@@ -18,7 +18,7 @@ describe.skip('Inventory', () => {
       });
     });
 
-    after('Delete test data', () => {
+    after('Delete user', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(testData.user.userId);
       });

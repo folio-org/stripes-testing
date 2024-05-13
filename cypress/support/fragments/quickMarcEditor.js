@@ -1245,7 +1245,7 @@ export default {
   selectFieldsDropdownOption(tag, dropdownLabel, option) {
     cy.do(
       QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: dropdownLabel }))
+        .find(Select({ label: including(dropdownLabel) }))
         .choose(option),
     );
   },
@@ -1253,7 +1253,7 @@ export default {
   verifyFieldsDropdownOption(tag, dropdownLabel, option) {
     cy.expect(
       QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: dropdownLabel }))
+        .find(Select({ label: including(dropdownLabel) }))
         .has({ content: including(option) }),
     );
   },
@@ -1261,7 +1261,7 @@ export default {
   verifyDropdownOptionChecked(tag, dropdownLabel, option) {
     cy.expect(
       QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: dropdownLabel }))
+        .find(Select({ label: including(dropdownLabel) }))
         .has({ checkedOptionText: option }),
     );
   },
@@ -1445,18 +1445,6 @@ export default {
       .join('');
   },
 
-  updateAllDefaultValuesIn008TagInAuthority() {
-    validRecord.tag008AuthorityBytesProperties.getAllProperties().forEach((byteProperty) => {
-      cy.do(
-        QuickMarcEditorRow({ tagValue: '008' })
-          .find(byteProperty.interactor)
-          .fillIn(byteProperty.newValue),
-      );
-    });
-    QuickMarcEditor.pressSaveAndClose();
-    return validRecord.tag008AuthorityBytesProperties.getNewValueSourceLine();
-  },
-
   clearTag008Holdings() {
     tag008HoldingsBytesProperties.getUsualProperties().forEach((byteProperty) => {
       cy.do(
@@ -1625,14 +1613,6 @@ export default {
     ]);
   },
 
-  checkLDRValue(ldrValue = validRecord.ldrValue) {
-    cy.expect(
-      getRowInteractorByTagName('LDR')
-        .find(TextArea({ ariaLabel: 'Subfield' }))
-        .has({ textContent: ldrValue }),
-    );
-  },
-
   checkAuthority008SubfieldsLength() {
     validRecord.tag008AuthorityBytesProperties
       .getAllProperties()
@@ -1761,12 +1741,20 @@ export default {
     cy.expect(calloutAfterSaveAndClose.absent());
   },
 
-  checkFourthBoxDisabled(rowIndex) {
-    cy.expect(
-      getRowInteractorByRowNumber(rowIndex)
-        .find(TextArea({ ariaLabel: 'Subfield' }))
-        .has({ disabled: true }),
-    );
+  checkFourthBoxEditable(rowIndex, isEditable = true) {
+    if (isEditable) {
+      cy.expect(
+        getRowInteractorByRowNumber(rowIndex)
+          .find(TextArea({ ariaLabel: 'Subfield' }))
+          .has({ disabled: !isEditable }),
+      );
+    } else {
+      cy.expect(
+        getRowInteractorByRowNumber(rowIndex)
+          .find(TextArea({ ariaLabel: 'Subfield' }))
+          .has({ disabled: !isEditable }),
+      );
+    }
   },
 
   verifyNoFieldWithContent(content) {
@@ -2443,7 +2431,7 @@ export default {
   verifyDropdownValueOfLDRIsValid(dropdownLabel, isValid = true) {
     cy.expect(
       QuickMarcEditorRow({ tagValue: 'LDR' })
-        .find(Select({ label: dropdownLabel }))
+        .find(Select({ label: including(dropdownLabel) }))
         .has({ valid: isValid }),
     );
   },

@@ -1,6 +1,6 @@
 import { EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import { SettingsDataImport, MatchProfiles } from '../../../support/fragments/settings/dataImport';
+import { MatchProfiles, SettingsDataImport } from '../../../support/fragments/settings/dataImport';
 import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';

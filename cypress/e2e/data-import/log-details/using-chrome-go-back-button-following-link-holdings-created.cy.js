@@ -42,7 +42,7 @@ describe('Data Import', () => {
       profileName: `C353587 job profile${getRandomPostfix()}`,
     };
 
-    before('create user and login', () => {
+    before('Create test data', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
@@ -84,7 +84,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete user', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -112,15 +112,11 @@ describe('Data Import', () => {
           FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InventoryInstance.getAssignedHRID().then((hrId) => {
-          instanceHrid = hrId;
-
-          InstanceRecordView.waitLoading();
-          InstanceRecordView.verifyInstancePaneExists();
-          cy.go('back');
-          FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
-          HoldingsRecordView.checkHoldingRecordViewOpened();
-        });
+        InstanceRecordView.waitLoading();
+        InstanceRecordView.verifyInstancePaneExists();
+        cy.go('back');
+        FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
+        HoldingsRecordView.checkHoldingRecordViewOpened();
       },
     );
   });

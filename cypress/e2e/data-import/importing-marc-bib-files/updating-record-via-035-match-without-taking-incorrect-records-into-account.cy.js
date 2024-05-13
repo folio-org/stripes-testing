@@ -1,11 +1,11 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -83,7 +83,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create user and login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -117,7 +117,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
@@ -186,14 +186,12 @@ describe('Data Import', () => {
         Logs.openFileDetails(fileNameForMatch);
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 2);
         FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 2);
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.NO_ACTION,
+        [
           FileDetails.columnNameInResultList.srsMarc,
-        );
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.instance,
-        );
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.NO_ACTION, columnName);
+        });
 
         // create mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);

@@ -72,12 +72,14 @@ describe('Data Import', () => {
         marc: 'marcBibFileForC411802.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        propertyName: 'instance',
         numOfRecords: 1,
       },
       {
         marc: 'marcAuthFileForC411802.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+        propertyName: 'authority',
         numOfRecords: 3,
       },
     ];
@@ -136,6 +138,16 @@ describe('Data Import', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
+      MarcAuthorities.getMarcAuthoritiesViaApi({
+        limit: 100,
+        query: 'keyword="C411802" and (authRefType==("Authorized" or "Auth/Ref"))',
+      }).then((authorities) => {
+        if (authorities) {
+          authorities.forEach(({ id }) => {
+            MarcAuthority.deleteViaAPI(id, true);
+          });
+        }
+      });
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -167,26 +179,21 @@ describe('Data Import', () => {
         })
         .then(() => {
           cy.resetTenant();
-          cy.loginAsAdmin().then(() => {
-            marcFiles.forEach((marcFile) => {
-              cy.visit(TopMenu.dataImportPath);
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, 'Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  createdAuthorityIDs.push(link.split('/')[5]);
-                });
-              }
+          cy.getAdminToken();
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].id);
+              });
             });
           });
         })
         .then(() => {
+          cy.loginAsAdmin();
           cy.visit(TopMenu.inventoryPath);
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();

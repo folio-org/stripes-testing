@@ -22,7 +22,7 @@ describe('Organizations', () => {
       Organizations.addNewContact(contact);
       Organizations.closeContact();
       Organizations.addContactToOrganization(contact);
-      Organizations.checkContactIsAdd(contact);
+      Organizations.checkContactIsAddToContactPeopleSection(contact);
     });
     cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
       user = userProperties;
