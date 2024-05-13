@@ -159,7 +159,7 @@ describe('Create Item or Title level request', () => {
       NewRequest.verifyRequestInformation(REQUEST_TYPES.HOLD);
       NewRequest.saveRequestAndClose();
       NewRequest.verifyErrorMessage('This request was not placed successfully');
-      NewRequest.checkRequestIsNotAllowedModal();
+      NewRequest.checkRequestAlreadyHasOpenRequestForInstanceItemModal();
     },
   );
 });
