@@ -13,7 +13,7 @@ describe('Bulk Edit - Query', () => {
     cy.getAdminToken();
     cy.createTempUser([
       permissions.bulkEditEdit.gui,
-      permissions.uiInventoryViewCreateEditItems.gui,
+      permissions.inventoryAll.gui,
       permissions.bulkEditQueryView.gui,
     ]).then((userProperties) => {
       user = userProperties;
