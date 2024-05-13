@@ -206,9 +206,8 @@ describe('Loan Details', () => {
     // Pay fee fines
     UserAllFeesFines.goToOpenFeeFines();
     UserAllFeesFines.selectAllFeeFines();
-    FeeFinesDetails.openActions().then(() => {
-      FeeFinesDetails.openPayModal();
-    });
+    FeeFinesDetails.openActions();
+    FeeFinesDetails.openPayModal();
     PayFeeFine.checkAmount(200);
     PayFeeFine.setPaymentMethod(testData.paymentMethod);
     PayFeeFine.setAmount(200);

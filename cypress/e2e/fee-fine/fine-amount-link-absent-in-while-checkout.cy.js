@@ -101,9 +101,8 @@ describe('Fee fine amout link in checkout', () => {
     CheckOutActions.checkOutUser(userData.barcode);
     CheckOutActions.openFeeFineLink('9.00', userData.userId);
     UserFeeFines.openFeeFine();
-    FeeFinesDetails.openActions().then(() => {
-      FeeFinesDetails.openPayModal();
-    });
+    FeeFinesDetails.openActions();
+    FeeFinesDetails.openPayModal();
     PayFeeFaine.checkAmount(9);
     PayFeeFaine.setPaymentMethod(paymentMethod);
     PayFeeFaine.setAmount(9);
