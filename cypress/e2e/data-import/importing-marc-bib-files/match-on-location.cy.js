@@ -40,6 +40,9 @@ describe('Data Import', () => {
     const recordType = 'MARC_BIBLIOGRAPHIC';
     const rowNumbers = [0, 1, 2];
     const instanceHrids = [];
+    const instanceIds = [];
+    const holdingsIds = [];
+    const itemIds = [];
     // elements for update items
     const noteForHoldingsMappingProfile = 'This note for holdings mapping profile';
     const noteForItemMappingProfile = 'This note for item mapping profile';
@@ -246,7 +249,6 @@ describe('Data Import', () => {
 
     before('create test data', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin();
       testData.jobProfileForCreate = jobProfileForCreate;
 
       testData.forEach((specialPair) => {
@@ -264,51 +266,24 @@ describe('Data Import', () => {
       );
 
       // upload a marc file for creating of the new instance, holding and item
-      cy.visit(TopMenu.dataImportPath);
-      DataImport.verifyUploadState();
-      DataImport.uploadFile('marcFileForC17027.mrc', marcFileForCreate);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(testData.jobProfileForCreate.profile.name);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(marcFileForCreate);
-      Logs.openFileDetails(marcFileForCreate);
-      rowNumbers.forEach((rowNumber) => {
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.CREATED,
-          FileDetails.columnNameInResultList.srsMarc,
-          rowNumber,
-        );
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.CREATED,
-          FileDetails.columnNameInResultList.instance,
-          rowNumber,
-        );
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.CREATED,
-          FileDetails.columnNameInResultList.holdings,
-          rowNumber,
-        );
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.CREATED,
-          FileDetails.columnNameInResultList.item,
-          rowNumber,
-        );
-      });
-      FileDetails.checkItemsQuantityInSummaryTable(0, '3');
-      // collect instance hrids
-      rowNumbers.forEach((rowNumber) => {
-        // need to wait until page will be opened in loop
-        cy.wait(3000);
-        cy.visit(TopMenu.dataImportPath);
-        Logs.openFileDetails(marcFileForCreate);
-        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, rowNumber);
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHrids.push(initialInstanceHrId);
+      DataImport.uploadFileViaApi(
+        'marcFileForC17027.mrc',
+        marcFileForCreate,
+        testData.jobProfileForCreate.profile.name,
+      ).then((response) => {
+        response.forEach((hrids) => instanceHrids.push(hrids.instance.hrid));
+        response.forEach((ids) => {
+          instanceIds.push(ids.instance.id);
+          holdingsIds.push(ids.holding.id);
+          itemIds.push(ids.item.id);
         });
       });
     });
 
     after('delete test data', () => {
+      // delete created files
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${fileNameAfterUpdate}`);
       cy.getAdminToken().then(() => {
         // delete profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profile.name);
@@ -342,18 +317,9 @@ describe('Data Import', () => {
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
           itemMappingProfileForUpdate.name,
         );
-        // delete created files
-        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-        FileManager.deleteFile(`cypress/fixtures/${fileNameAfterUpdate}`);
-        instanceHrids.forEach((hrid) => {
-          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
-            (instance) => {
-              cy.deleteItemViaApi(instance.items[0].id);
-              cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-              InventoryInstance.deleteInstanceViaApi(instance.id);
-            },
-          );
-        });
+        itemIds.forEach((id) => cy.deleteItemViaApi(id));
+        holdingsIds.forEach((id) => cy.deleteHoldingRecordViaApi(id));
+        instanceIds.forEach((id) => InventoryInstance.deleteInstanceViaApi(id));
       });
     });
 

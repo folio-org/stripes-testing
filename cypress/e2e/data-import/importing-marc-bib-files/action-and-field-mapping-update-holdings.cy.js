@@ -6,13 +6,11 @@ import {
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
   LOCATION_NAMES,
-  RECORD_STATUSES,
 } from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -38,6 +36,8 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
     let holdingsHrId;
+    let instanceId;
+    let holdingsId;
     const filePathToUpload = 'marcBibFileForC11106.mrc';
     const editedMarcFileName = `C11106 autotestFileName${getRandomPostfix()}.mrc`;
     const marcFileName = `C11106 autotestFileName${getRandomPostfix()}.mrc`;
@@ -192,27 +192,20 @@ describe('Data Import', () => {
       JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
 
       // upload a marc file for creating of the new instance, holding and item
-      cy.visit(TopMenu.dataImportPath);
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(filePathToUpload, marcFileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfileForCreate.profileName);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(marcFileName);
-      Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(marcFileName);
-      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-        instanceHrid = initialInstanceHrId;
-
-        InstanceRecordView.openHoldingView();
-        HoldingsRecordView.getHoldingsHrId().then((initialHrId) => {
-          holdingsHrId = initialHrId;
-        });
+      DataImport.uploadFileViaApi(
+        filePathToUpload,
+        marcFileName,
+        jobProfileForCreate.profileName,
+      ).then((response) => {
+        instanceHrid = response[0].instance.hrid;
+        instanceId = response[0].instance.id;
+        holdingsHrId = response[0].holdings.hrid;
+        holdingsId = response[0].holdings.id;
       });
     });
 
     after('delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
@@ -225,14 +218,9 @@ describe('Data Import', () => {
         });
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+        cy.deleteHoldingRecordViaApi(holdingsId);
+        InventoryInstance.deleteInstanceViaApi(instanceId);
       });
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     });
 
     it(

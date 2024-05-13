@@ -15,7 +15,7 @@ import {
   TextArea,
   TextField,
 } from '../../../../../../interactors';
-import { EXISTING_RECORDS_NAMES } from '../../../../constants';
+import { EXISTING_RECORD_NAMES } from '../../../../constants';
 
 const criterionValueTypeList = SelectionList({ id: 'sl-container-criterion-value-type' });
 const criterionValueTypeButton = Button({ id: 'criterion-value-type' });
@@ -421,7 +421,7 @@ export default {
                   staticValueDetails: null,
                   dataValueType: 'VALUE_FROM_RECORD',
                 },
-                existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+                existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
                 existingMatchExpression: {
                   fields: [
                     {
@@ -435,7 +435,7 @@ export default {
               },
             ],
             name: nameProfile,
-            existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+            existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
           },
           addedRelations: [],
           deletedRelations: [],

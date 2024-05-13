@@ -1,7 +1,6 @@
 import {
   ACQUISITION_METHOD_NAMES,
   FOLIO_RECORD_TYPE,
-  JOB_STATUS_NAMES,
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
@@ -17,6 +16,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import {
   ActionProfiles as SettingsActionProfiles,
@@ -31,6 +31,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Permissions', () => {
     let user;
+    let instanceId;
     const filePath = 'marcBibFileForC377023.mrc';
     const marcFileName = `C377023 autotestFileName${getRandomPostfix()}.mrc`;
     const title = 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.';
@@ -108,14 +109,12 @@ describe('Data Import', () => {
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-      cy.visit(TopMenu.dataImportPath);
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(filePath, marcFileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfile.profileName);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(marcFileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      // upload a marc file for creating of the new instance
+      DataImport.uploadFileViaApi(filePath, marcFileName, jobProfile.profileName).then(
+        (response) => {
+          instanceId = response[0].instance.id;
+        },
+      );
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
@@ -132,6 +131,7 @@ describe('Data Import', () => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
+        InventoryInstance.deleteInstanceViaApi(instanceId);
       });
     });
 

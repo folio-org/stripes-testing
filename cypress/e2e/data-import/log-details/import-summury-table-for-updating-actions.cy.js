@@ -2,7 +2,7 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
   CALL_NUMBER_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   EXPORT_TRANSFORMATION_NAMES,
   FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
@@ -12,13 +12,13 @@ import {
   LOAN_TYPE_NAMES,
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
-  PROFILE_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -48,10 +48,9 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Log details', () => {
-    let instanceHrid;
-    const recordType = 'MARC_BIBLIOGRAPHIC';
-    const holdingsPermanentLocation = 'Annex';
-    const itemStatus = ITEM_STATUS_NAMES.AVAILABLE;
+    let instanceHrid = null;
+    const mappingProfileIds = [];
+    const actionProfileIds = [];
     const quantityOfItems = '1';
     const instanceTitle =
       'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
@@ -62,184 +61,58 @@ describe('Data Import', () => {
     const jobProfileNameForExport = `C356802 job profile.${getRandomPostfix()}`;
     // profiles for creating instance, holdings, item
     const marcBibMappingProfileForCreate = {
-      profile: {
-        id: '',
-        name: `C356802 create marcBib mapping profile ${getRandomPostfix()}`,
-        incomingRecordType: recordType,
-        existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
-        mappingDetails: {
-          name: 'holdings',
-          recordType: 'MARC_BIBLIOGRAPHIC',
-          marcMappingDetails: [
-            {
-              order: 0,
-              action: 'ADD',
-              field: {
-                field: '650',
-                indicator2: '4',
-                subfields: [
-                  {
-                    subfield: 'a',
-                    data: {
-                      text: 'Test update',
-                    },
-                  },
-                ],
-              },
-            },
-          ],
-          marcMappingOption: 'MODIFY',
-        },
-      },
+      name: `C356802 create marcBib mapping profile ${getRandomPostfix()}`,
+      updatingText: `Test update ${getRandomPostfix()}`,
+      subfield: 'a',
+      fieldNumber: '650',
+      indicator2: '4',
     };
     const instanceMappingProfileForCreate = {
-      profile: {
-        id: '',
-        name: `C356802 create instance mapping profile ${getRandomPostfix()}`,
-        incomingRecordType: recordType,
-        existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-      },
+      name: `C356802 create instance mapping profile ${getRandomPostfix()}`,
     };
     const holdingsMappingProfileForCreate = {
-      profile: {
-        id: '',
-        name: `C356802 create holdings mapping profile ${getRandomPostfix()}`,
-        incomingRecordType: recordType,
-        existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
-        mappingDetails: {
-          name: 'holdings',
-          recordType: 'HOLDINGS',
-          mappingFields: [
-            {
-              name: 'permanentLocationId',
-              enabled: true,
-              path: 'holdings.permanentLocationId',
-              value: '"Annex (KU/CC/DI/A)"',
-            },
-          ],
-        },
-      },
+      name: `C356802 create holdings mapping profile ${getRandomPostfix()}`,
+      permanentLocation: 'Main Library (KU/CC/DI/M)',
     };
     const itemMappingProfileForCreate = {
-      profile: {
-        id: '',
-        name: `C356802 create item mapping profile ${getRandomPostfix()}`,
-        incomingRecordType: recordType,
-        existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
-        mappingDetails: {
-          name: 'item',
-          recordType: 'ITEM',
-          mappingFields: [
-            {
-              name: 'materialType.id',
-              enabled: true,
-              path: 'item.materialType.id',
-              value: '"book"',
-              acceptedValues: { '1a54b431-2e4f-452d-9cae-9cee66c9a892': 'book' },
-            },
-            {
-              name: 'permanentLoanType.id',
-              enabled: true,
-              path: 'item.permanentLoanType.id',
-              value: '"Can circulate"',
-              acceptedValues: { '2b94c631-fca9-4892-a730-03ee529ffe27': 'Can circulate' },
-            },
-            { name: 'status.name', enabled: true, path: 'item.status.name', value: '"Available"' },
-          ],
-        },
-      },
+      name: `C356802 create item mapping profile ${getRandomPostfix()}`,
+      materialType: 'book',
+      permanentLoanType: 'Can circulate',
+      status: 'Available',
     };
-    const marcBibActionProfileForCreate = {
-      profile: {
-        id: '',
-        name: `C356802 create marcBib action profile ${getRandomPostfix()}`,
-        action: 'MODIFY',
-        folioRecord: recordType,
-      },
-      addedRelations: [
-        {
-          masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
-          detailProfileId: '',
-          detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
-        },
-      ],
-      deletedRelations: [],
-    };
-    const instanceActionProfileForCreate = {
-      profile: {
-        id: '',
-        name: `C356802 create instance action profile ${getRandomPostfix()}`,
-        action: 'CREATE',
-        folioRecord: 'INSTANCE',
-      },
-      addedRelations: [
-        {
-          masterProfileId: null,
-          masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
-          detailProfileId: '',
-          detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
-        },
-      ],
-      deletedRelations: [],
-    };
-    const holdingsActionProfileForCreate = {
-      profile: {
-        id: '',
-        name: `C356802 create holdings action profile ${getRandomPostfix()}`,
-        action: 'CREATE',
-        folioRecord: 'HOLDINGS',
-      },
-      addedRelations: [
-        {
-          masterProfileId: null,
-          masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
-          detailProfileId: '',
-          detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
-        },
-      ],
-      deletedRelations: [],
-    };
-    const itemActionProfileForCreate = {
-      profile: {
-        id: '',
-        name: `C356802 create item action profile ${getRandomPostfix()}`,
-        action: 'CREATE',
-        folioRecord: 'ITEM',
-      },
-      addedRelations: [
-        {
-          masterProfileId: null,
-          masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
-          detailProfileId: '',
-          detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
-        },
-      ],
-      deletedRelations: [],
-    };
-    const jobProfileForCreate = {
-      profile: {
-        name: `C356802 create job profile ${getRandomPostfix()}`,
-        dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
-      },
-      addedRelations: [],
-      deletedRelations: [],
-    };
-    // TODO redesine classes inherites
-    const testData = [
+    const actionProfilesForCreate = [
       {
-        mappingProfile: marcBibMappingProfileForCreate,
-        actionProfile: marcBibActionProfileForCreate,
+        actionProfile: {
+          name: `C356802 create marcBib action profile ${getRandomPostfix()}`,
+          action: 'MODIFY',
+          folioRecordType: 'MARC_BIBLIOGRAPHIC',
+        },
       },
       {
-        mappingProfile: instanceMappingProfileForCreate,
-        actionProfile: instanceActionProfileForCreate,
+        actionProfile: {
+          name: `C356802 create instance action profile ${getRandomPostfix()}`,
+          action: 'CREATE',
+          folioRecordType: 'INSTANCE',
+        },
       },
       {
-        mappingProfile: holdingsMappingProfileForCreate,
-        actionProfile: holdingsActionProfileForCreate,
+        actionProfile: {
+          name: `C356802 create holdings action profile ${getRandomPostfix()}`,
+          action: 'CREATE',
+          folioRecordType: 'HOLDINGS',
+        },
       },
-      { mappingProfile: itemMappingProfileForCreate, actionProfile: itemActionProfileForCreate },
+      {
+        actionProfile: {
+          name: `C356802 create item action profile ${getRandomPostfix()}`,
+          action: 'CREATE',
+          folioRecordType: 'ITEM',
+        },
+      },
     ];
+    const jobProfileForCreate = {
+      name: `C356802 create job profile ${getRandomPostfix()}`,
+    };
     // create Field mapping profile for export
     const exportMappingProfile = {
       name: `C356802 mapping profile ${getRandomPostfix()}`,
@@ -316,7 +189,7 @@ describe('Data Import', () => {
             field: '001',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+          existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
         },
       },
       {
@@ -327,7 +200,7 @@ describe('Data Import', () => {
             subfield: 'h',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+          existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
           holdingsOption: NewMatchProfile.optionsList.holdingsHrid,
         },
       },
@@ -339,7 +212,7 @@ describe('Data Import', () => {
             subfield: 'i',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+          existingRecordType: EXISTING_RECORD_NAMES.ITEM,
           itemOption: NewMatchProfile.optionsList.itemHrid,
         },
       },
@@ -362,35 +235,17 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       cy.getAdminToken().then(() => {
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.name);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         collectionOfMatchProfiles.forEach((profile) => {
           SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
         });
-        SettingsActionProfiles.deleteActionProfileByNameViaApi(
-          marcBibActionProfileForCreate.profile.name,
-        );
-        SettingsActionProfiles.deleteActionProfileByNameViaApi(
-          instanceActionProfileForCreate.profile.name,
-        );
-        SettingsActionProfiles.deleteActionProfileByNameViaApi(
-          holdingsActionProfileForCreate.profile.name,
-        );
-        SettingsActionProfiles.deleteActionProfileByNameViaApi(
-          itemActionProfileForCreate.profile.name,
-        );
-        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
-          marcBibMappingProfileForCreate.profile.name,
-        );
-        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
-          instanceMappingProfileForCreate.profile.name,
-        );
-        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
-          holdingsMappingProfileForCreate.profile.name,
-        );
-        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
-          itemMappingProfileForCreate.profile.name,
-        );
+        actionProfileIds.forEach((id) => {
+          SettingsActionProfiles.deleteActionProfileViaApi(id);
+        });
+        mappingProfileIds.forEach((id) => {
+          SettingsFieldMappingProfiles.deleteMappingProfileViaApi(id);
+        });
         collectionOfMappingAndActionProfiles.forEach((profile) => {
           SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
           SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
@@ -411,30 +266,69 @@ describe('Data Import', () => {
       'C356802 Check import summary table with "Updated" actions for instance, holding and item (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        // create profiles via API
-        cy.getAdminToken();
-        testData.jobProfileForCreate = jobProfileForCreate;
+        NewFieldMappingProfile.createModifyMarcBibMappingProfileViaApi(
+          marcBibMappingProfileForCreate,
+        ).then((mappingProfileResponse) => {
+          mappingProfileIds.push(mappingProfileResponse.body.id);
 
-        testData.forEach((specialPair) => {
-          cy.createOnePairMappingAndActionProfiles(
-            specialPair.mappingProfile,
-            specialPair.actionProfile,
-          ).then((idActionProfile) => {
-            cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
+          NewActionProfile.createActionProfileViaApi(
+            actionProfilesForCreate[0].actionProfile,
+            mappingProfileResponse.body.id,
+          ).then((actionProfileResponse) => {
+            actionProfileIds.push(actionProfileResponse.body.id);
           });
         });
-        SettingsJobProfiles.createJobProfileViaApi(testData.jobProfileForCreate).then(
-          (bodyWithjobProfile) => {
-            testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
-          },
-        );
+        NewFieldMappingProfile.createInstanceMappingProfileViaApi(
+          instanceMappingProfileForCreate,
+        ).then((mappingProfileResponse) => {
+          mappingProfileIds.push(mappingProfileResponse.body.id);
+
+          NewActionProfile.createActionProfileViaApi(
+            actionProfilesForCreate[1].actionProfile,
+            mappingProfileResponse.body.id,
+          ).then((actionProfileResponse) => {
+            actionProfileIds.push(actionProfileResponse.body.id);
+          });
+        });
+        NewFieldMappingProfile.createHoldingsMappingProfileViaApi(
+          holdingsMappingProfileForCreate,
+        ).then((mappingProfileResponse) => {
+          mappingProfileIds.push(mappingProfileResponse.body.id);
+
+          NewActionProfile.createActionProfileViaApi(
+            actionProfilesForCreate[2].actionProfile,
+            mappingProfileResponse.body.id,
+          ).then((actionProfileResponse) => {
+            actionProfileIds.push(actionProfileResponse.body.id);
+          });
+        });
+        NewFieldMappingProfile.createItemMappingProfileViaApi(itemMappingProfileForCreate)
+          .then((mappingProfileResponse) => {
+            mappingProfileIds.push(mappingProfileResponse.body.id);
+
+            NewActionProfile.createActionProfileViaApi(
+              actionProfilesForCreate[3].actionProfile,
+              mappingProfileResponse.body.id,
+            ).then((actionProfileResponse) => {
+              actionProfileIds.push(actionProfileResponse.body.id);
+            });
+          })
+          .then(() => {
+            NewJobProfile.createJobProfileWithLinkedFourActionProfilesViaApi(
+              jobProfileForCreate,
+              actionProfileIds[0],
+              actionProfileIds[1],
+              actionProfileIds[2],
+              actionProfileIds[3],
+            );
+          });
 
         // upload a marc file for creating of the new instance, holding and item
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
         JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(testData.jobProfileForCreate.profile.name);
+        JobProfiles.search(jobProfileForCreate.name);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameMarcFileForImportCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -447,11 +341,9 @@ describe('Data Import', () => {
 
           InventoryInstance.checkIsInstancePresented(
             instanceTitle,
-            holdingsPermanentLocation,
-            itemStatus,
+            LOCATION_NAMES.MAIN_LIBRARY_UI,
+            ITEM_STATUS_NAMES.AVAILABLE,
           );
-          cy.wait(2000);
-          cy.go('back');
 
           cy.visit(SettingsMenu.exportMappingProfilePath);
           ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
@@ -616,8 +508,9 @@ describe('Data Import', () => {
         InstanceRecordView.verifyStatisticalCode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.statisticalCodeUI,
         );
-        cy.wait(2000);
-        cy.go('back');
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(nameMarcFileForImportUpdate);
         FileDetails.openHoldingsInInventory(RECORD_STATUSES.UPDATED);
         HoldingsRecordView.checkHoldingsType(
           collectionOfMappingAndActionProfiles[1].mappingProfile.holdingsType,
@@ -634,8 +527,9 @@ describe('Data Import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile.relationship,
           'https://www.test.org/bro/10.230',
         );
-        cy.wait(2000);
-        cy.go('back');
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(nameMarcFileForImportUpdate);
         FileDetails.openItemInInventory(RECORD_STATUSES.UPDATED);
         ItemRecordView.verifyMaterialType(
           collectionOfMappingAndActionProfiles[2].mappingProfile.materialType,

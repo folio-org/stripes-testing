@@ -1,30 +1,25 @@
-import {
-  FOLIO_RECORD_TYPE,
-  JOB_STATUS_NAMES,
-  LOCATION_NAMES,
-  RECORD_STATUSES,
-} from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, LOCATION_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 
 describe('Data Import', () => {
   describe('Log details', () => {
@@ -70,15 +65,10 @@ describe('Data Import', () => {
       NewJobProfile.linkActionProfile(actionProfile);
       NewJobProfile.saveAndClose();
 
-      // upload a marc file for creating of the new instance, holding and item
-      cy.visit(TopMenu.dataImportPath);
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(filePath, fileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfile.profileName);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(fileName);
-      Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED);
+      // upload a marc file for creating of the new instance, holding
+      DataImport.uploadFileViaApi(filePath, fileName, jobProfile.profileName).then((response) => {
+        instanceHrid = response[0].instance.hrid;
+      });
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,

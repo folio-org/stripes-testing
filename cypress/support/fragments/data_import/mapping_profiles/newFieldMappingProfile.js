@@ -25,9 +25,10 @@ import {
 } from '../../../../../interactors';
 import {
   ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
+  INCOMING_RECORD_NAMES,
 } from '../../../constants';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -278,7 +279,7 @@ const getDefaultInstanceMappingProfile = (name) => {
     profile: {
       name,
       incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
     },
   };
   return defaultInstanceMappingProfile;
@@ -288,7 +289,7 @@ const getDefaultHoldingsMappingProfile = (name, permLocation) => {
     profile: {
       name,
       incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-      existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+      existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
       mappingDetails: {
         name: 'holdings',
         recordType: 'HOLDINGS',
@@ -310,7 +311,7 @@ const getDefaultItemMappingProfile = (name) => {
     profile: {
       name,
       incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-      existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+      existingRecordType: EXISTING_RECORD_NAMES.ITEM,
       mappingDetails: {
         name: 'item',
         recordType: 'ITEM',
@@ -1126,17 +1127,170 @@ export default {
     cy.wait(2000);
   },
 
-  createMappingProfileViaApi: (nameProfile) => {
+  // createMappingProfileViaApi: (nameProfile) => {
+  //   return cy
+  //     .okapiRequest({
+  //       method: 'POST',
+  //       path: 'data-import-profiles/mappingProfiles',
+  //       body: {
+  //         profile: {
+  //           name: nameProfile,
+  //           incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+  //           existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+  //         },
+  //       },
+  //       isDefaultSearchParamsRequired: false,
+  //     })
+  //     .then(({ response }) => {
+  //       return response;
+  //     });
+  // },
+
+  createModifyMarcBibMappingProfileViaApi: (profile) => {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'data-import-profiles/mappingProfiles',
         body: {
           profile: {
-            name: nameProfile,
-            incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-            existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+            name: profile.name,
+            incomingRecordType: INCOMING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+            existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+            mappingDetails: {
+              name: 'marcBib',
+              recordType: 'MARC_BIBLIOGRAPHIC',
+              marcMappingDetails: [
+                {
+                  order: 0,
+                  field: {
+                    subfields: [
+                      {
+                        subaction: null,
+                        data: {
+                          text: profile.updatingText,
+                        },
+                        subfield: profile.subfield,
+                      },
+                    ],
+                    field: profile.fieldNumber,
+                    indicator2: profile.indicator2,
+                  },
+                  action: 'ADD',
+                },
+              ],
+              marcMappingOption: 'MODIFY',
+            },
           },
+          addedRelations: [],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  createInstanceMappingProfileViaApi: (profile) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/mappingProfiles',
+        body: {
+          profile: {
+            name: profile.name,
+            incomingRecordType: INCOMING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+            existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+          },
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  createHoldingsMappingProfileViaApi: (profile) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/mappingProfiles',
+        body: {
+          profile: {
+            name: profile.name,
+            incomingRecordType: INCOMING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+            existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
+            mappingDetails: {
+              name: 'holdings',
+              recordType: 'HOLDINGS',
+              mappingFields: [
+                {
+                  name: 'permanentLocationId',
+                  enabled: true,
+                  path: 'holdings.permanentLocationId',
+                  value: `"${profile.permanentLocation}"`,
+                  subfields: [],
+                  acceptedValues: {
+                    'fcd64ce1-6995-48f0-840e-89ffa2288371': profile.permanentLocation,
+                  },
+                },
+              ],
+            },
+          },
+          addedRelations: [],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  createItemMappingProfileViaApi: (profile) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/mappingProfiles',
+        body: {
+          profile: {
+            name: profile.name,
+            incomingRecordType: INCOMING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+            existingRecordType: EXISTING_RECORD_NAMES.ITEM,
+            mappingDetails: {
+              name: 'item',
+              recordType: 'ITEM',
+              mappingFields: [
+                {
+                  name: 'materialType.id',
+                  enabled: true,
+                  path: 'item.materialType.id',
+                  value: `"${profile.materialType}"`,
+                  subfields: [],
+                  acceptedValues: { '1a54b431-2e4f-452d-9cae-9cee66c9a892': profile.materialType },
+                },
+                {
+                  name: 'permanentLoanType.id',
+                  enabled: true,
+                  path: 'item.permanentLoanType.id',
+                  value: `"${profile.permanentLoanType}"`,
+                  subfields: [],
+                  acceptedValues: {
+                    '2b94c631-fca9-4892-a730-03ee529ffe27': profile.permanentLoanType,
+                  },
+                },
+                {
+                  name: 'status.name',
+                  enabled: true,
+                  path: 'item.status.name',
+                  value: `"${profile.status}"`,
+                  subfields: [],
+                },
+              ],
+            },
+          },
+          addedRelations: [],
+          deletedRelations: [],
         },
         isDefaultSearchParamsRequired: false,
       })
