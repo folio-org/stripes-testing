@@ -12,8 +12,6 @@ import MarcAuthorities from '../../../../../../support/fragments/marcAuthority/m
 import MarcAuthorityBrowse from '../../../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 import getRandomPostfix from '../../../../../../support/utils/stringTools';
 import DataImport from '../../../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
 
 describe('MARC', () => {
@@ -87,25 +85,21 @@ describe('MARC', () => {
               ]);
             })
             .then(() => {
-              cy.resetTenant();
               cy.login(users.userAProperties.username, users.userAProperties.password, {
                 path: TopMenu.dataImportPath,
                 waiter: DataImport.waitLoading,
               });
+              cy.resetTenant();
               marcFiles.forEach((marcFile) => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-                JobProfiles.waitLoadingList();
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                JobProfiles.waitFileIsImported(marcFile.fileName);
-                Logs.checkStatusOfJobProfile('Completed');
-                Logs.openFileDetails(marcFile.fileName);
-                for (let i = 0; i < marcFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((link) => {
-                    createdRecordsID.push(link.split('/')[5]);
+                DataImport.uploadFileViaApi(
+                  marcFile.marc,
+                  marcFile.fileName,
+                  marcFile.jobProfileToRun,
+                ).then((response) => {
+                  response.forEach((record) => {
+                    createdRecordsID.push(record.authority.id);
                   });
-                }
+                });
               });
             });
         });

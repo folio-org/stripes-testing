@@ -225,6 +225,7 @@ Cypress.Commands.add('deleteHoldingRecordViaApi', (holdingsRecordId) => {
     method: 'DELETE',
     path: `holdings-storage/holdings/${holdingsRecordId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   });
 });
 
@@ -278,6 +279,7 @@ Cypress.Commands.add('deleteItemViaApi', (itemId) => {
     method: 'DELETE',
     path: `inventory/items/${itemId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   });
 });
 

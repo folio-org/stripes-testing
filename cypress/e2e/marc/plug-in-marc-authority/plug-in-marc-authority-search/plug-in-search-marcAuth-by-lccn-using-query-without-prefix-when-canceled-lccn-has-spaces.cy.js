@@ -15,21 +15,21 @@ describe('MARC', () => {
       const testData = {
         searchOption: 'LCCN',
         AUTHORIZED: 'Authorized',
-        searchQueryWithoutAsteriks: '85057895',
-        searchQueryWithAsteriks: '*85057895',
+        searchQueryWithoutAsteriks: '766384',
+        searchQueryWithAsteriks: '*766384',
       };
 
-      const searchResultWithoutAsteriks = 'C440115 Test LCCN subfield a record 10 (digits only)';
+      const searchResultWithoutAsteriks = 'C440122 Test LCCN subfield z record 10 (digits only)';
       const searchResultsWithAsteriks = [
-        'C440115 Test LCCN subfield a record 1 (two leading spaces, one trailing space, two internal spaces)',
-        'C440115 Test LCCN subfield a record 2 (one space internal)',
-        'C440115 Test LCCN subfield a record 3 (two spaces internal)',
-        'C440115 Test LCCN subfield a record 4 (one space trailing)',
-        'C440115 Test LCCN subfield a record 5 (two spaces trailing)',
-        'C440115 Test LCCN subfield a record 6 (one space leading)',
-        'C440115 Test LCCN subfield a record 7 (two spaces leading)',
-        'C440115 Test LCCN subfield a record 8 (two spaces everywhere)',
-        'C440115 Test LCCN subfield a record 9 (no spaces)',
+        'C440122 Test LCCN subfield z record 1 (two leading spaces, one trailing space, two internal spaces)',
+        'C440122 Test LCCN subfield z record 2 (one space internal)',
+        'C440122 Test LCCN subfield z record 3 (two spaces internal)',
+        'C440122 Test LCCN subfield z record 4 (one space trailing)',
+        'C440122 Test LCCN subfield z record 5 (two spaces trailing)',
+        'C440122 Test LCCN subfield z record 6 (one space leading)',
+        'C440122 Test LCCN subfield z record 7 (two spaces leading)',
+        'C440122 Test LCCN subfield z record 8 (two spaces everywhere)',
+        'C440122 Test LCCN subfield z record 9 (no spaces)',
       ];
 
       const marcFiles = [
@@ -41,7 +41,7 @@ describe('MARC', () => {
           propertyName: 'instance',
         },
         {
-          marc: 'marcAuthFileForC440115.mrc',
+          marc: 'marcAuthFileForC440122.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 10,
@@ -91,7 +91,7 @@ describe('MARC', () => {
       });
 
       it(
-        'C440115 MARC Authority plug-in | Search by "LCCN" option using a query without prefix (numbers only) when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (spitfire)',
+        'C440122 MARC Authority plug-in | Search by "LCCN" option using a query without prefix (numbers only) when "Canceled LCCN" (010 $z) has (leading, internal, trailing) spaces. (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
@@ -100,10 +100,15 @@ describe('MARC', () => {
           InventoryInstance.verifyAndClickLinkIcon('700');
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySearchOptions();
-
-          MarcAuthorities.searchByParameter(testData.searchOption, testData.searchQueryWithoutAsteriks);
+          MarcAuthorities.searchByParameter(
+            testData.searchOption,
+            testData.searchQueryWithoutAsteriks,
+          );
           MarcAuthorities.checkAfterSearch(testData.AUTHORIZED, searchResultWithoutAsteriks);
-          MarcAuthorities.searchByParameter(testData.searchOption, testData.searchQueryWithAsteriks);
+          MarcAuthorities.searchByParameter(
+            testData.searchOption,
+            testData.searchQueryWithAsteriks,
+          );
           searchResultsWithAsteriks.forEach((result) => {
             MarcAuthorities.checkAfterSearch(testData.AUTHORIZED, result);
           });

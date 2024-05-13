@@ -1,5 +1,4 @@
 import permissions from '../../../support/dictionary/permissions';
-import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
@@ -14,11 +13,12 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
 
 describe('Finance: Funds', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const firstLedger = { ...Ledgers.defaultUiLedger };
-  const firstFund = { ...Funds.defaultUiFund };
+  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+  const defaultLedger = { ...Ledgers.defaultUiLedger };
+  const defaultFund = { ...Funds.defaultUiFund };
   const firstOrder = {
     ...NewOrder.defaultOngoingTimeOrder,
     orderType: 'Ongoing',
@@ -31,27 +31,29 @@ describe('Finance: Funds', () => {
     instanceName: `testBulkEdit_${getRandomPostfix()}`,
     itemBarcode: getRandomPostfix(),
   };
-  firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
-  const allocatedQuantity = '100';
+  const defaultBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 100,
+  };
+  defaultFiscalYear.code = defaultFiscalYear.code.slice(0, -1) + '1';
   let user;
   let servicePointId;
   let location;
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      firstLedger.fiscalYearOneId = firstFiscalYear.id;
-      Ledgers.createViaApi(firstLedger).then((ledgerResponse) => {
-        firstLedger.id = ledgerResponse.id;
-        firstFund.ledgerId = firstLedger.id;
-        Funds.createViaApi(firstFund).then((fundResponse) => {
-          firstFund.id = fundResponse.fund.id;
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(firstFund.name);
-          Funds.selectFund(firstFund.name);
-          Funds.addBudget(allocatedQuantity);
-          Funds.closeBudgetDetails();
+    FiscalYears.createViaApi(defaultFiscalYear).then((defaultFiscalYearResponse) => {
+      defaultFiscalYear.id = defaultFiscalYearResponse.id;
+      defaultBudget.fiscalYearId = defaultFiscalYearResponse.id;
+      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        defaultFund.ledgerId = defaultLedger.id;
+
+        Funds.createViaApi(defaultFund).then((fundResponse) => {
+          defaultFund.id = fundResponse.fund.id;
+          defaultBudget.fundId = fundResponse.fund.id;
+          Budgets.createViaApi(defaultBudget);
         });
       });
     });
@@ -100,7 +102,7 @@ describe('Finance: Funds', () => {
         OrderLines.addPOLine();
         OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName, 0);
         OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-          firstFund,
+          defaultFund,
           '100',
           '2',
           '200',
@@ -108,7 +110,7 @@ describe('Finance: Funds', () => {
         );
         OrderLines.backToEditingOrder();
         Orders.openOrder();
-        Orders.checkOrderIsNotOpened(firstFund.code);
+        Orders.checkOrderIsNotOpened(defaultFund.code);
       });
     },
   );
