@@ -52,7 +52,7 @@ describe('Inventory', () => {
             const requestBody = body;
             requestBody.precedingTitles = [];
 
-            // reset precedingTitles to get rid of tables dependencies and be able to delete the instances
+            // reset precedingTitles to get hrid of tables dependencies and be able to delete the instances
             cy.updateInstance(requestBody);
           })
           .then(() => {

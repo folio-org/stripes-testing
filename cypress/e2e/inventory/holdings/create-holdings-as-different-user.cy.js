@@ -28,6 +28,7 @@ describe('Inventory', () => {
 
       cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
         secondUser = userProperties;
+
         cy.login(secondUser.username, secondUser.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
@@ -59,8 +60,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
         cy.expect(MultiColumnListCell({ row: 0, content: recordsData.instanceTitle }).exists());
 
-        // logout and login as a different user
-        cy.logout();
+        // login as a different user
         cy.login(firstUser.username, firstUser.password);
 
         cy.visit(TopMenu.inventoryPath);

@@ -151,6 +151,8 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
+      // delete created files
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
         Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
           Orders.deleteOrderViaApi(orderId[0].id);
@@ -178,8 +180,6 @@ describe('Data Import', () => {
             profile.mappingProfile.name,
           );
         });
-        // delete created files
-        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
         Users.deleteViaApi(user.userId);
       });
     });

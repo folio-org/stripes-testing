@@ -105,6 +105,8 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
+      // delete created file in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
         cy.wrap(fieldProtectionIds).each((id) => {
           MarcFieldProtection.deleteViaApi(id);
@@ -123,8 +125,6 @@ describe('Data Import', () => {
           },
         );
       });
-      // delete created file in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     });
 
     it(

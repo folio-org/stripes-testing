@@ -14,6 +14,7 @@ describe('Data Import', () => {
     before('Create test data', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: TopMenu.settingsPath,
           waiter: SettingsPane.waitLoading,

@@ -184,6 +184,9 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
+      // delete created files
+      FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
+      FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
       cy.getAdminToken().then(() => {
         MarcFieldProtection.deleteViaApi(firstFieldId);
         MarcFieldProtection.deleteViaApi(secondFieldId);
@@ -203,9 +206,6 @@ describe('Data Import', () => {
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
           instanceMappingProfileOverride.name,
         );
-        // delete created files
-        FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
-        FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (instance) => {
             InventoryInstance.deleteInstanceViaApi(instance.id);

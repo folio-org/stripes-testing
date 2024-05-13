@@ -116,6 +116,9 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
+      // delete created files
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${fileNameForUpdate}`);
       cy.getAdminToken().then(() => {
         marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteViaApi(field));
         // delete profiles
@@ -132,9 +135,6 @@ describe('Data Import', () => {
           },
         );
       });
-      // delete created files
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${fileNameForUpdate}`);
     });
 
     const createInstanceMappingProfileForCreate = (instanceMappingProfile) => {

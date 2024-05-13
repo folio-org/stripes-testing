@@ -267,6 +267,7 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${testData.editedMarcFileName}`);
       cy.getAdminToken().then(() => {
         InstanceStatusTypes.deleteViaApi(testData.instanceStatusTypeId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
@@ -295,7 +296,6 @@ describe('Data Import', () => {
           },
         );
       });
-      FileManager.deleteFile(`cypress/fixtures/${testData.editedMarcFileName}`);
     });
 
     it(

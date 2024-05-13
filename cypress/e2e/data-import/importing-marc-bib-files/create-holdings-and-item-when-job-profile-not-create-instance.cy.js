@@ -111,6 +111,8 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
       cy.getAdminToken().then(() => {
         // delete generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
@@ -130,8 +132,6 @@ describe('Data Import', () => {
         );
         Users.deleteViaApi(user.userId);
       });
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
     });
 
     const createItemMappingProfile = (itemMappingProfile) => {

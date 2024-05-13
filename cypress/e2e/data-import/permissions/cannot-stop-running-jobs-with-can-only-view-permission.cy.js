@@ -26,6 +26,7 @@ describe('Data Import', () => {
         Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         userB = userProperties;
+
         cy.login(userB.username, userB.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,

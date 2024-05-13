@@ -88,6 +88,9 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
+      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       cy.getAdminToken().then(() => {
         // clean up generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
@@ -98,9 +101,6 @@ describe('Data Import', () => {
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileForExport.name);
       });
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
-      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     });
 
     it(

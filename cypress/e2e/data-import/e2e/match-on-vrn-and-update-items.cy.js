@@ -153,12 +153,12 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
         Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((order) => {
           Orders.deleteOrderViaApi(order[0].id);
         });
         Users.deleteViaApi(user.userId);
-        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
         // delete generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfilesData.name);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(instanceMatchProfileName);

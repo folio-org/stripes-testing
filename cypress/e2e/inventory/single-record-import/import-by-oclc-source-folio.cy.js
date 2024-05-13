@@ -48,6 +48,7 @@ describe('Inventory', () => {
         Permissions.settingsDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password);
       });
     });

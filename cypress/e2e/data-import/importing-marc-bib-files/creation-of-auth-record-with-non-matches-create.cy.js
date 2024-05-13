@@ -68,6 +68,8 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
+      // delete created files
+      FileManager.deleteFile(`cypress/fixtures/${modifiedMarcFile}`);
       cy.getAdminToken().then(() => {
         MarcAuthorities.getMarcAuthoritiesViaApi({
           limit: 100,
@@ -82,8 +84,6 @@ describe('Data Import', () => {
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
-        // delete created files
-        FileManager.deleteFile(`cypress/fixtures/${modifiedMarcFile}`);
       });
     });
 

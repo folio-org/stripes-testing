@@ -57,6 +57,7 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${editedFileForUpload}`);
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         instanceHrids.forEach((hrid) => {
@@ -67,7 +68,6 @@ describe('Data Import', () => {
           );
         });
       });
-      FileManager.deleteFile(`cypress/fixtures/${editedFileForUpload}`);
     });
 
     it(

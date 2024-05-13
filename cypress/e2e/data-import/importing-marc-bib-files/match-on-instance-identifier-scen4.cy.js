@@ -117,15 +117,15 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
+      // delete created files
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForCreate}`);
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForUpdate}`);
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         Users.deleteViaApi(user.userId);
-        // delete created files
-        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForCreate}`);
-        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForUpdate}`);
         InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
           (instances) => {
             instances.forEach(({ id }) => {

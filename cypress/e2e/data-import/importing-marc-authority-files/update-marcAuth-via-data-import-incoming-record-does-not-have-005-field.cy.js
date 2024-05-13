@@ -102,6 +102,8 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${testData.editedFileNameForCreate}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.editedFileNameForUpdate}`);
       cy.getAdminToken();
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
@@ -109,8 +111,6 @@ describe('Data Import', () => {
       SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
       Users.deleteViaApi(testData.user.userId);
       MarcAuthority.deleteViaAPI(testData.createdRecordIDs[0]);
-      FileManager.deleteFile(`cypress/fixtures/${testData.editedFileNameForCreate}`);
-      FileManager.deleteFile(`cypress/fixtures/${testData.editedFileNameForUpdate}`);
     });
 
     it(

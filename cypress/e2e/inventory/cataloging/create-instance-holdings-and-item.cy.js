@@ -14,7 +14,7 @@ describe('Inventory', () => {
     const testData = {
       barcode,
       callNumber: '331.2',
-      instanceTitle: `autotest_instance_title_${barcode}`,
+      instanceTitle: `C3505 autotest_instance_title_${barcode}`,
       user: {},
     };
 
