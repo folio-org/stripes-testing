@@ -37,7 +37,7 @@ describe('profile-picture-validation', () => {
       UserEdit.openEdit();
       ProfileCard.verifyProfileCardIsPresent();
       ProfileCard.expandUpdateDropDown();
-      ProfileCard.verifyLocalUploadbuttonIsPresent();
+      ProfileCard.verifyLocalUploadButtonIsPresent();
       ProfileCard.setPictureFromExternalUrl();
       ProfileCard.verifyPictureIsSet();
     },

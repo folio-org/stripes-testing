@@ -14,10 +14,11 @@ export default {
   },
 
   expandUpdateDropDown() {
+    // eslint-disable-next-line cypress/no-force
     cy.do(cy.get(updateDropDownCss).click({ force: true }));
   },
 
-  verifyLocalUploadbuttonIsPresent() {
+  verifyLocalUploadButtonIsPresent() {
     cy.expect(localFileButton.exists());
   },
 
@@ -32,6 +33,7 @@ export default {
   },
 
   saveAndClose() {
+    // eslint-disable-next-line cypress/no-force
     cy.get('#clickable-save').click({ force: true });
   },
 
