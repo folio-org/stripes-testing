@@ -1167,6 +1167,7 @@ export default {
   },
 
   openHoldingsAccordion: (location) => {
+    cy.wait(2000);
     cy.do(Button(including(location)).click());
     cy.wait(6000);
   },
