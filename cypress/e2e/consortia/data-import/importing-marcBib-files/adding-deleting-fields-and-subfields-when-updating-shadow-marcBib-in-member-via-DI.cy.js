@@ -177,6 +177,9 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.exportedFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
@@ -189,9 +192,6 @@ describe('Data Import', () => {
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
       SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.exportedFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
     });
 
     it(
@@ -210,7 +210,6 @@ describe('Data Import', () => {
           // download exported marc file
           cy.setTenant(Affiliations.College).then(() => {
             // use cy.getToken function to get toket for current tenant
-            cy.getCollegeAdminToken();
             cy.visit(TopMenu.dataExportPath);
             ExportFile.downloadExportedMarcFileWithRecordHrid(
               expectedRecordHrid,
@@ -236,10 +235,9 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
-        cy.resetTenant();
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstances.searchByTitle(testData.sharedInstanceId[0]);
+        InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName);
         InventoryInstance.verifyContributorAbsent(testData.absentContributorName);
