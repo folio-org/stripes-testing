@@ -10,7 +10,7 @@ import ServicePoints from '../../../../support/fragments/settings/tenant/service
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Instance', () => {
     let user;
     const testData = {
@@ -68,9 +68,10 @@ describe('Inventory', () => {
       InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
     });
 
+    // the test is marked as Obsolete in TestRail, so it is skipped
     it(
       'C411384 (CONSORTIA) Check Holdings "Actions" menu on Central tenant for a member librarys holdings record (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet'] },
+      { tags: [] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();

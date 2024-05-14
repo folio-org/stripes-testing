@@ -6,11 +6,6 @@ import {
   MATERIAL_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
-import {
-  JobProfiles as SettingsJobProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -23,6 +18,11 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -67,14 +67,14 @@ describe('Data Import', () => {
       profileName: `C11122 autotest job profile_${getRandomPostfix()}`,
     };
 
-    before('Creating user', () => {
+    before('Login', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         collectionOfMappingAndActionProfiles.forEach((profile) => {

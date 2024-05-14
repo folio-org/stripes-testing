@@ -141,14 +141,14 @@ describe('Data Import', () => {
       profileName: `C17036 SUCCEED update job profile_${getRandomPostfix()}`,
     };
 
-    before('login', () => {
+    before('Login', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {

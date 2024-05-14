@@ -349,6 +349,11 @@ const fillInvoiceLineDescription = (description) => {
 const fillSummaryDescription = (text) => {
   cy.do(Accordion('Summary').find(TextArea('Description')).fillIn(text));
 };
+const fillMaterialType = (type) => cy.do(materialTypeField.fillIn(type));
+const fillStatus = (itemStatus) => cy.do(TextField('Status').fillIn(itemStatus));
+const fillPermanentLoanType = (loanType) => cy.do(TextField('Permanent loan type').fillIn(`"${loanType}"`));
+const fillInstanceStatusTerm = (statusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED) => cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`));
+const fillHoldingsType = (type) => cy.do(TextField('Holdings type').fillIn(`"${type}"`));
 const selectAdminNotesAction = (numberOfmappingField, action = actions.addTheseToExisting) => {
   // number needs for using this method in filling fields for holdings and item profiles
   const adminNoteFieldName = `profile.mappingDetails.mappingFields[${numberOfmappingField}].repeatableFieldAction`;
@@ -356,6 +361,37 @@ const selectAdminNotesAction = (numberOfmappingField, action = actions.addTheseT
   cy.do([
     Select({ name: adminNoteFieldName }).focus(),
     Select({ name: adminNoteFieldName }).choose(action),
+  ]);
+};
+const selectActionForStatisticalCode = (number, action = actions.addTheseToExisting) => {
+  // number needs for using this method in filling fields for holdings and item profiles
+  const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
+
+  cy.do([
+    Select({ name: statisticalCodeFieldName }).focus(),
+    Select({ name: statisticalCodeFieldName }).choose(action),
+  ]);
+};
+const addStatisticalCode = (name, number, action) => {
+  selectActionForStatisticalCode(number, action);
+  cy.do([
+    Button('Add statistical code').click(),
+    TextField('Statistical code').fillIn(`"${name}"`),
+  ]);
+};
+const addItemNotes = (noteType, note, staffOnly) => {
+  const noteFieldName = 'profile.mappingDetails.mappingFields[25].repeatableFieldAction';
+  const selectName =
+    'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction';
+
+  cy.do([
+    Select({ name: noteFieldName }).focus(),
+    Select({ name: noteFieldName }).choose(actions.addTheseToExisting),
+    Button('Add item note').click(),
+    noteTypeField.fillIn(noteType),
+    TextField('Note').fillIn(note),
+    Select({ name: selectName }).focus(),
+    Select({ name: selectName }).choose(staffOnly),
   ]);
 };
 
@@ -385,11 +421,91 @@ export default {
   fillSummaryDescription,
   fillInvoiceLineDescription,
   fillFolioRecordType,
+  fillMaterialType,
+  fillPermanentLoanType,
+  fillStatus,
+  fillInstanceStatusTerm,
+  fillHoldingsType,
   selectOrganizationByName,
   selectAdminNotesAction,
+  addStatisticalCode,
+  selectActionForStatisticalCode,
   save,
+  addItemNotes,
   waitLoading: () => {
     cy.expect(mappingProfilesForm.exists());
+  },
+
+  fillInstanceMappingProfile: (profile) => {
+    // Summary section
+    fillSummaryInMappingProfile(profile);
+    if (profile.catalogedDate) {
+      cy.do(catalogedDateField.fillIn(profile.catalogedDate));
+    }
+    if (profile.instanceStatusTerm) {
+      fillInstanceStatusTerm(profile.instanceStatusTerm);
+    }
+    if (profile.statisticalCode) {
+      addStatisticalCode(profile.statisticalCode, 8);
+    }
+    save();
+    cy.expect(saveButton.absent());
+  },
+
+  fillHoldingsMappingProfile: (profile) => {
+    // Summary section
+    fillSummaryInMappingProfile(profile);
+    if (profile.permanentLocation) {
+      cy.do(permanentLocationField.fillIn(profile.permanentLocation));
+    }
+    if (profile.holdingsType) {
+      fillHoldingsType(profile.holdingsType);
+    }
+    if (profile.callNumberType) {
+      cy.do(TextField('Call number type').fillIn(`"${profile.callNumberType}"`));
+    }
+    if (profile.callNumber) {
+      cy.do(TextField('Call number').fillIn(profile.callNumber));
+    }
+    if (profile.relationship) {
+      cy.get('[name="profile.mappingDetails.mappingFields[23].repeatableFieldAction"]').select(
+        'Add these to existing',
+      );
+      cy.do([
+        Button('Add electronic access').click(),
+        TextField('Relationship').fillIn(`"${profile.relationship}"`),
+      ]);
+    }
+    if (profile.uri) {
+      cy.do(TextField('URI').fillIn(profile.uri));
+    }
+    if (profile.linkText) {
+      cy.do(TextField('Link text').fillIn(profile.linkText));
+    }
+    save();
+    cy.expect(saveButton.absent());
+  },
+
+  fillItemMappingProfile: (profile) => {
+    // Summary section
+    fillSummaryInMappingProfile(profile);
+    if (profile.materialType) {
+      fillMaterialType(`"${profile.materialType}"`);
+    }
+    if (profile.permanentLoanType) {
+      fillPermanentLoanType(profile.permanentLoanType);
+    }
+    if (profile.status) {
+      fillStatus(`"${profile.status}"`);
+    }
+    if (profile.statisticalCode) {
+      addStatisticalCode(profile.statisticalCode, 6);
+    }
+    if (profile.noteType) {
+      addItemNotes(profile.noteType, profile.note, profile.staffOnly);
+    }
+    save();
+    cy.expect(saveButton.absent());
   },
 
   fillMappingProfile: (specialMappingProfile = defaultMappingProfile) => {
@@ -708,26 +824,8 @@ export default {
     );
   },
 
-  selectActionForStatisticalCode(number, action = actions.addTheseToExisting) {
-    // number needs for using this method in filling fields for holdings and item profiles
-    const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
-
-    cy.do([
-      Select({ name: statisticalCodeFieldName }).focus(),
-      Select({ name: statisticalCodeFieldName }).choose(action),
-    ]);
-  },
-
-  addStatisticalCode(name, number, action) {
-    this.selectActionForStatisticalCode(number, action);
-    cy.do([
-      Button('Add statistical code').click(),
-      TextField('Statistical code').fillIn(`"${name}"`),
-    ]);
-  },
-
   addStatisticalCodeWithSeveralCodes(firstCode, secondCode, number, action) {
-    this.selectActionForStatisticalCode(number, action);
+    selectActionForStatisticalCode(number, action);
     cy.do([
       Button('Add statistical code').click(),
       TextField({
@@ -849,15 +947,10 @@ export default {
 
   fillPermanentLocation: (location) => cy.do(permanentLocationField.fillIn(location)),
   fillCatalogedDate: (date = catalogedDate) => cy.do(catalogedDateField.fillIn(date)),
-  fillInstanceStatusTerm: (statusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED) => cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`)),
-  fillHoldingsType: (type) => cy.do(TextField('Holdings type').fillIn(`"${type}"`)),
   fillCallNumberType: (type) => cy.do(TextField('Call number type').fillIn(type)),
   fillCallNumberPrefix: (prefix) => cy.do(TextField('Call number prefix').fillIn(prefix)),
   fillcallNumberSuffix: (sufix) => cy.do(TextField('Call number suffix').fillIn(sufix)),
-  fillStatus: (itemStatus) => cy.do(TextField('Status').fillIn(itemStatus)),
-  fillPermanentLoanType: (loanType) => cy.do(TextField('Permanent loan type').fillIn(`"${loanType}"`)),
   fillTemporaryLoanType: (loanType) => cy.do(TextField('Temporary loan type').fillIn(loanType)),
-  fillMaterialType: (type) => cy.do(materialTypeField.fillIn(type)),
   fillIllPolicy: (policy) => cy.do(TextField('ILL policy').fillIn(`"${policy}"`)),
   fillBatchGroup: (group) => cy.do(batchGroupField.fillIn(group)),
   fillPaymentMethod: (method) => cy.do(paymentMethodField.fillIn(method)),
@@ -875,22 +968,6 @@ export default {
       Button('Add holdings note').click(),
       noteTypeField.fillIn(type),
       TextField('Note').fillIn(`"${note}"`),
-      Select({ name: selectName }).focus(),
-      Select({ name: selectName }).choose(staffOnly),
-    ]);
-  },
-
-  addItemNotes: (noteType, note, staffOnly) => {
-    const noteFieldName = 'profile.mappingDetails.mappingFields[25].repeatableFieldAction';
-    const selectName =
-      'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction';
-
-    cy.do([
-      Select({ name: noteFieldName }).focus(),
-      Select({ name: noteFieldName }).choose(actions.addTheseToExisting),
-      Button('Add item note').click(),
-      noteTypeField.fillIn(noteType),
-      TextField('Note').fillIn(note),
       Select({ name: selectName }).focus(),
       Select({ name: selectName }).choose(staffOnly),
     ]);

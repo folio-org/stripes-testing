@@ -358,6 +358,10 @@ export default {
     internal: 'ui-circulation.settings.staff-slips',
     gui: 'Settings (Circ): Can create, edit and remove staff slips',
   },
+  uiCirculationCreateViewOverdueFinesPolicies: {
+    internal: 'ui-circulation.settings.view-overdue-fines-policies',
+    gui: 'Settings (Circ): Can view overdue fine policies',
+  },
   // Users
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUsersView: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
@@ -825,6 +829,18 @@ export default {
     internal: 'ui-organizations.banking-information.view',
     gui: 'Organizations: View banking information',
   },
+  uiOrganizationsViewAndEditBankingInformation: {
+    internal: 'ui-organizations.banking-information.edit',
+    gui: 'Organizations: View and edit banking information',
+  },
+  uiOrganizationsViewEditAndCreateBankingInformation: {
+    internal: 'ui-organizations.banking-information.create',
+    gui: 'Organizations: View, edit and create banking information',
+  },
+  uiOrganizationsViewEditCreateAndDeleteBankingInformation: {
+    internal: 'ui-organizations.banking-information.delete',
+    gui: 'Organizations: View, edit, create and delete banking information',
+  },
   uiOrganizationsIntegrationUsernamesAndPasswordsView: {
     internal: 'ui-organizations.integrations.creds.view',
     gui: 'Organizations: Integration usernames and passwords: view',
@@ -850,6 +866,14 @@ export default {
   uiOrganizationsViewEditCreate: {
     internal: 'ui-organizations.create',
     gui: 'Organizations: View, edit, create',
+  },
+  uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation: {
+    internal: 'ui-organizations.privileged-contacts.edit',
+    gui: 'Organizations: can view, create, edit, delete privileged donor information',
+  },
+  uiOrganizationsViewPrivilegedDonorInformation: {
+    internal: 'ui-organizations.privileged-contacts.view',
+    gui: 'Organizations: can view privileged donor information',
   },
   uiOrganizationsViewEditDelete: {
     internal: 'ui-organizations.delete',

@@ -265,7 +265,7 @@ export default {
         .fillIn(allocatedQuantity.toString()),
     ]);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.do([Button('Save').click()]);
+    cy.do([Button('Save & close').click()]);
     cy.wait(6000);
   },
 
@@ -280,7 +280,7 @@ export default {
     ]);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(4000);
-    cy.do([Button('Save').click()]);
+    cy.do([saveAndClose.click()]);
   },
 
   addPlannedBudgetWithoutFY: (allocatedQuantity) => {
@@ -293,7 +293,7 @@ export default {
     ]);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(4000);
-    cy.do([Button('Save').click()]);
+    cy.do([Button('Save & close').click()]);
   },
 
   viewTransactions: () => {
@@ -986,6 +986,14 @@ export default {
   closeTransactionApp: (fund, fiscalYear) => {
     cy.do(
       PaneHeader(`${fund.code}-${fiscalYear.code}`)
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
+  closeBudgetTransactionApp: (budget) => {
+    cy.do(
+      PaneHeader(budget)
         .find(Button({ icon: 'times' }))
         .click(),
     );

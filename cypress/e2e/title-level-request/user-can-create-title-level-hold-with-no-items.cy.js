@@ -6,7 +6,6 @@ import Requests from '../../support/fragments/requests/requests';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -24,10 +23,6 @@ describe('Title Level Request', () => {
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
       instanceId = InventoryInstances.createInstanceViaApi(instanceTitle, itemBarcode);
-      cy.loginAsAdmin({
-        path: SettingsMenu.circulationTitleLevelRequestsPath,
-        waiter: TitleLevelRequests.waitLoading,
-      });
       ServicePoints.createViaApi(testData.userServicePoint);
       cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
         (instance) => {
@@ -37,7 +32,6 @@ describe('Title Level Request', () => {
         },
       );
       TitleLevelRequests.enableTLRViaApi();
-      TitleLevelRequests.uncheckFailToCreateHoldForBlockedRequestCheckBox();
       testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
       Location.createViaApi(testData.defaultLocation);
     });

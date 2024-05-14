@@ -166,7 +166,14 @@ export default {
 
   enterHridInfo(hrid) {
     cy.do(titleLevelRequest.click());
-    cy.do(instanceHridInput.fillIn(hrid));
+    cy.wait(1000);
+    try {
+      cy.do(instanceHridInput.fillIn(hrid));
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e);
+      cy.do(instanceHridInput.fillIn(hrid));
+    }
     cy.do(itemInfoSection.find(Button('Enter')).click());
   },
 

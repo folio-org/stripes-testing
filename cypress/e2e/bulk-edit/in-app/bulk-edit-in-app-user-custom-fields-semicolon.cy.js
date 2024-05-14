@@ -122,6 +122,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
 
+        BulkEditActions.openActions();
         BulkEditActions.openActionsIfNotYet();
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.fillExpirationDate(today);
@@ -136,6 +137,7 @@ describe('bulk-edit', () => {
           'Custom fields',
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         );
+        BulkEditActions.openActions();
         BulkEditActions.openActionsIfNotYet();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [

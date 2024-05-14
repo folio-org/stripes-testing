@@ -56,7 +56,7 @@ describe('Data Import', () => {
       fundDistributionSource: 'Use fund distribution field mappings',
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         cy.wrap([
           firstExpencseClassData,
@@ -79,7 +79,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         expenseClassIds.forEach((id) => {
           SettingsFinance.deleteViaApi(id);

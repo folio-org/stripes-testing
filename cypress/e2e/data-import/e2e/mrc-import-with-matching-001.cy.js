@@ -1,11 +1,11 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -67,7 +67,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.dataImportUploadAll.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -83,7 +83,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         // clean up generated profiles
@@ -128,8 +128,16 @@ describe('Data Import', () => {
         cy.getAdminToken();
         ExportFile.uploadFile(nameForCSVFile);
         ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
-        ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
-        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+        ExportFile.getRecordHridOfExportedFile(nameForCSVFile).then((req) => {
+          const expectedRecordHrid = req;
+
+          // download exported marc file
+          ExportFile.downloadExportedMarcFileWithRecordHrid(
+            expectedRecordHrid,
+            nameForExportedMarcFile,
+          );
+          FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
+        });
 
         // create Match profile
         cy.visit(SettingsMenu.matchProfilePath);

@@ -97,7 +97,10 @@ export default {
   waitLoading,
   defaultJobProfile,
 
-  fillProfileName: (profileName) => cy.do(nameField.fillIn(profileName)),
+  fillProfileName: (profileName) => {
+    cy.wait(1500);
+    cy.do(nameField.fillIn(profileName));
+  },
   fillDescription: (description) => cy.do(TextArea({ name: 'profile.description' }).fillIn(description)),
 
   fillJobProfile: (specialJobProfile = defaultJobProfile) => {

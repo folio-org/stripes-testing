@@ -1,38 +1,39 @@
 import {
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Users from '../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../support/utils/stringTools';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import NewActionProfile from '../../../../support/fragments/data_import/action_profiles/newActionProfile';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import NewFieldMappingProfile from '../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import FileManager from '../../../../support/utils/fileManager';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../../support/fragments/settings/dataImport';
+import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 import BrowseSubjects from '../../../../support/fragments/inventory/search/browseSubjects';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../../support/fragments/settings/dataImport';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
-import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import { getLongDelay } from '../../../../support/utils/cypressTools';
+import FileManager from '../../../../support/utils/fileManager';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -97,7 +98,7 @@ describe('Data Import', () => {
     };
     const jobProfileName = `C411794 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         testData.marcFile.marc,
@@ -142,24 +143,16 @@ describe('Data Import', () => {
           },
         );
         // adding Holdings for shared Instance
-        cy.getInstance({
-          limit: 1,
-          expandAll: true,
-          query: `"title"=="${testData.instanceTitle}"`,
-        }).then((instance) => {
-          testData.instanceIdOnMemberTenant = instance.id;
-
-          const collegeLocationData = Locations.getDefaultLocation({
-            servicePointId: ServicePoints.getDefaultServicePoint().id,
-          }).location;
-          Locations.createViaApi(collegeLocationData).then((location) => {
-            testData.collegeLocation = location;
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: instance.id,
-              permanentLocationId: testData.collegeLocation.id,
-            }).then((holding) => {
-              testData.holding = holding;
-            });
+        const collegeLocationData = Locations.getDefaultLocation({
+          servicePointId: ServicePoints.getDefaultServicePoint().id,
+        }).location;
+        Locations.createViaApi(collegeLocationData).then((location) => {
+          testData.collegeLocation = location;
+          InventoryHoldings.createHoldingRecordViaApi({
+            instanceId: testData.sharedInstanceId,
+            permanentLocationId: testData.collegeLocation.id,
+          }).then((holding) => {
+            testData.holding = holding;
           });
         });
         cy.resetTenant();
@@ -205,24 +198,34 @@ describe('Data Import', () => {
       'C411794 Adding/deleting fields and subfields when updating Shadow "MARC Bib" in member tenant via Data Import (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet'] },
       () => {
-        InventoryInstances.searchByTitle(testData.instanceIdOnMemberTenant);
+        InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.verifySelectedRecords(1);
         InventorySearchAndFilter.exportInstanceAsMarc();
-        // download exported marc file
-        cy.visit(TopMenu.dataExportPath);
-        cy.wait(1000);
-        ExportFile.getExportedFileNameViaApi().then((name) => {
-          testData.marcFile.exportedFileName = name;
-          ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
-          // change exported file
-          DataImport.replace999SubfieldsInPreupdatedFile(
-            testData.marcFile.exportedFileName,
-            testData.marcFile.marcFileForModify,
-            testData.marcFile.modifiedMarcFile,
-          );
+        cy.intercept('/data-export/quick-export').as('getHrid');
+        cy.wait('@getHrid', getLongDelay()).then((req) => {
+          const expectedRecordHrid = req.response.body.jobExecutionHrId;
+
+          // download exported marc file
+          cy.setTenant(Affiliations.College).then(() => {
+            // use cy.getToken function to get toket for current tenant
+            cy.getCollegeAdminToken();
+            cy.visit(TopMenu.dataExportPath);
+            ExportFile.downloadExportedMarcFileWithRecordHrid(
+              expectedRecordHrid,
+              testData.marcFile.exportedFileName,
+            );
+            FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
+          });
         });
+
+        // change exported file
+        DataImport.replace999SubfieldsInPreupdatedFile(
+          testData.marcFile.exportedFileName,
+          testData.marcFile.marcFileForModify,
+          testData.marcFile.modifiedMarcFile,
+        );
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
@@ -233,6 +236,7 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
+        cy.resetTenant();
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.searchByTitle(testData.sharedInstanceId[0]);
@@ -256,7 +260,7 @@ describe('Data Import', () => {
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName);
         InventoryInstance.verifyContributorAbsent(testData.absentContributorName);

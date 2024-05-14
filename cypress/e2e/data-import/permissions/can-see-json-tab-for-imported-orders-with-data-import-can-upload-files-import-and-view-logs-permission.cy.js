@@ -1,19 +1,13 @@
 import {
   ACQUISITION_METHOD_NAMES,
   FOLIO_RECORD_TYPE,
-  JOB_STATUS_NAMES,
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
-  VENDOR_NAMES,
   RECORD_STATUSES,
+  VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -23,6 +17,11 @@ import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScre
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import OrderLines from '../../../support/fragments/orders/orderLines';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -87,7 +86,7 @@ describe('Data Import', () => {
       profileName: `C377023 Test Order ${getRandomPostfix()}`,
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
@@ -108,17 +107,11 @@ describe('Data Import', () => {
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-      cy.visit(TopMenu.dataImportPath);
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(filePath, marcFileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfile.profileName);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(marcFileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      DataImport.uploadFileViaApi(filePath, marcFileName, jobProfile.profileName);
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -126,7 +119,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
@@ -139,7 +132,7 @@ describe('Data Import', () => {
       'C377023 A user can see JSON tab for imported Orders with "Data import: Can upload files, import, and view logs" permission (folijet)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const message = `Import Log for Record 1 (${title})`;
+        const message = `Import Log for Record 01 (${title})`;
 
         Logs.openFileDetails(marcFileName);
         FileDetails.openJsonScreen(title);

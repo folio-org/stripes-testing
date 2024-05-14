@@ -1,9 +1,9 @@
-import { Permissions } from '../../../support/dictionary';
 import { ORDER_STATUSES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import {
-  SettingsDataImport,
-  FieldMappingProfiles,
   FieldMappingProfileView,
+  FieldMappingProfiles,
+  SettingsDataImport,
 } from '../../../support/fragments/settings/dataImport';
 import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -46,7 +46,7 @@ describe('Data Import', () => {
       user: {},
     };
 
-    before('Create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         testData.user = userProperties;
 

@@ -7,6 +7,7 @@ const { rmdir, unlink } = require('fs');
 const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
+const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
 
 module.exports = defineConfig({
   retries: {
@@ -27,7 +28,8 @@ module.exports = defineConfig({
     diku_password: 'admin',
     is_kiwi_release: false,
     downloadTimeout: 2000,
-    allure: 'true',
+    allure: true,
+    allureReuseAfterSpec: true,
     grepFilterSpecs: true,
     grepOmitFiltered: true,
     rtrAuth: true,
@@ -104,10 +106,12 @@ module.exports = defineConfig({
         delete process.env.TESTRAIL_PROJECTID;
       }
 
-      const configCloud = await cloudPlugin(on, config);
+      registerReportPortalPlugin(on, config);
 
       // eslint-disable-next-line global-require
-      const result = require('@cypress/grep/src/plugin')(configCloud);
+      const grepConfig = require('@cypress/grep/src/plugin')(config);
+
+      const result = await cloudPlugin(on, grepConfig);
 
       // eslint-disable-next-line global-require
       await require('cypress-testrail-simple/src/plugin')(on, config);

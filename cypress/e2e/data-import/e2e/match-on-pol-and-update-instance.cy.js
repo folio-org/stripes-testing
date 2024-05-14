@@ -4,6 +4,7 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   ACTION_NAMES_IN_ACTION_PROFILE,
   CALL_NUMBER_TYPE_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
@@ -14,7 +15,6 @@ import {
   ORDER_FORMAT_NAMES,
   RECORD_STATUSES,
   VENDOR_NAMES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -130,7 +130,7 @@ describe('Data Import', () => {
       createInventory: 'None',
     };
 
-    before('login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -150,7 +150,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
           Orders.deleteOrderViaApi(orderId[0].id);
@@ -323,7 +323,7 @@ describe('Data Import', () => {
           RECORD_STATUSES.CREATED,
         ]);
         FileDetails.checkItemsStatusesInResultList(1, [
-          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.NO_ACTION,
           RECORD_STATUSES.NO_ACTION,
         ]);
 

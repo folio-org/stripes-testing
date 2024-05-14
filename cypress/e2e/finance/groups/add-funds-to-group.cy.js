@@ -8,6 +8,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
 
 Cypress.on('uncaught:exception', () => false);
 
@@ -28,7 +29,14 @@ describe('ui-finance: Groups', () => {
     code: getRandomPostfix(),
     status: 'Active',
   };
-  const allocatedQuantity = '50';
+  const firstBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 50,
+  };
+  const secondBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 50,
+  };
   let user;
 
   before(() => {
@@ -36,7 +44,8 @@ describe('ui-finance: Groups', () => {
     FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
       defaultFiscalYear.id = response.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-
+      firstBudget.fiscalYearId = defaultFiscalYear.id;
+      secondBudget.fiscalYearId = defaultFiscalYear.id;
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         firstFund.ledgerId = defaultLedger.id;
@@ -52,20 +61,14 @@ describe('ui-finance: Groups', () => {
 
         Funds.createViaApi(firstFund).then((firstFundResponse) => {
           firstFund.id = firstFundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(firstFund.name);
-          Funds.selectFund(firstFund.name);
-          Funds.addBudget(allocatedQuantity);
+          firstBudget.fundId = firstFundResponse.fund.id;
+          Budgets.createViaApi(firstBudget);
         });
 
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
-
-          cy.visit(TopMenu.fundPath);
-          FinanceHelp.searchByName(secondFund.name);
-          Funds.selectFund(secondFund.name);
-          Funds.addBudget(allocatedQuantity);
+          secondBudget.fundId = secondFundResponse.fund.id;
+          Budgets.createViaApi(secondBudget);
         });
       });
     });

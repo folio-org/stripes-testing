@@ -1,14 +1,14 @@
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  NewMatchProfile,
-} from '../../../support/fragments/settings/dataImport';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import {
+  NewMatchProfile,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
@@ -59,7 +59,7 @@ describe('Inventory', () => {
     const targetProfileName = `C374176 autotest profile${getRandomPostfix()}`;
     let profileId;
 
-    before('login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           // create job profiles for create
@@ -127,7 +127,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach((profile) => {
           SettingsJobProfiles.deleteJobProfileByNameViaApi(profile.createJobProfile);

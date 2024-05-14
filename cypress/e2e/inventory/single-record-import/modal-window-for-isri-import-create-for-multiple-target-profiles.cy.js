@@ -1,10 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -13,6 +8,11 @@ import InventoryActions from '../../../support/fragments/inventory/inventoryActi
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import SingleRecordImportModal from '../../../support/fragments/inventory/singleRecordImportModal';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -33,7 +33,7 @@ describe('Inventory', () => {
     const testIdentifier = '1234567';
     const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiInventorySingleRecordImport.gui,
@@ -73,7 +73,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(profile.createJobProfile);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.createActionProfile);

@@ -1,12 +1,13 @@
 import {
   Button,
-  Modal,
-  TextField,
-  MultiColumnListCell,
-  matching,
-  including,
   HTML,
+  Modal,
+  MultiColumnListCell,
+  TextField,
+  including,
+  matching,
 } from '../../../../../../interactors';
+import ArrayUtils from '../../../../utils/arrays';
 
 const selectProfileModal = Modal({ header: matching(/Select (?:Action|Field Mapping) Profiles/) });
 
@@ -26,5 +27,21 @@ export default {
       selectProfileModal.find(MultiColumnListCell({ content: including(profileName) })).click(),
     );
     cy.expect(selectProfileModal.absent());
+  },
+  verifyProfilesIsSortedInAlphabeticalOrder: () => {
+    const cells = [];
+    cy.get('#list-plugin-find-records')
+      .find('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .each(($row) => {
+        cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
+          .invoke('text')
+          .then((cellValue) => {
+            cy.wait(1000);
+            cells.push(cellValue);
+            cy.log(cellValue);
+          });
+      })
+      .then(() => cy.expect(ArrayUtils.checkIsSortedAlphabetically({ array: cells })).to.equal(true));
   },
 };

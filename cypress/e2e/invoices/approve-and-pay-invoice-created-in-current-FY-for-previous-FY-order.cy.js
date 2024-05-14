@@ -59,7 +59,7 @@ describe('Invoices', () => {
     subTotal: '2',
   };
   const allocatedQuantity = '100';
-  const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
+  const periodStartForFirstFY = DateTools.getCurrentDateInPreviusMonthForFiscalYearOnUIEdit();
   const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
   const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
   const periodEndForSecondFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();

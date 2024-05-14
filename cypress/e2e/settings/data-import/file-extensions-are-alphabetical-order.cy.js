@@ -13,17 +13,18 @@ describe('Data Import', () => {
       importStatus: 'Block import',
     };
 
-    before('login and create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.settingsDataImportView.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password);
       });
     });
 
-    after('delete user', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         FileExtensionView.delete(testData.fileExtension);
         Users.deleteViaApi(user.userId);

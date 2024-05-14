@@ -165,6 +165,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
         permissions.checkinAll.gui,
         permissions.checkoutAll.gui,
         permissions.uiUsersView.gui,
+        permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
       ],
       patronGroup.name,
     )

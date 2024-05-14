@@ -118,6 +118,7 @@ export default {
   },
 
   updateOrderViaApi(order) {
+    cy.wait(2000);
     return cy.okapiRequest({
       method: 'PUT',
       path: `orders/composite-orders/${order.id}`,
@@ -739,6 +740,7 @@ export default {
   },
 
   selectPendingStatusFilter: () => {
+    cy.wait(4000);
     cy.do(Checkbox({ id: 'clickable-filter-workflowStatus-pending' }).click());
   },
 

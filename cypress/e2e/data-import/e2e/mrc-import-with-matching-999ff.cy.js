@@ -83,11 +83,11 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('login', () => {
+    before('Login', () => {
       cy.loginAsAdmin();
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         // clean up generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
@@ -157,9 +157,16 @@ describe('Data Import', () => {
           cy.getAdminToken().then(() => {
             ExportFile.uploadFile(nameForCSVFile);
             ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
-            ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
-            FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-            cy.log('#####End Of Export#####');
+            ExportFile.getRecordHridOfExportedFile(nameForCSVFile).then((req) => {
+              const expectedRecordHrid = req;
+
+              // download exported marc file
+              ExportFile.downloadExportedMarcFileWithRecordHrid(
+                expectedRecordHrid,
+                nameForExportedMarcFile,
+              );
+              FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
+            });
           });
 
           // create Match profile

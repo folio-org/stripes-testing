@@ -6,12 +6,11 @@ import InventoryInstances from '../../../../../../support/fragments/inventory/in
 import getRandomPostfix from '../../../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
-import JobProfiles from '../../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../../support/fragments/data_import/logs/logs';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
 import QuickMarcEditor from '../../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../../../support/fragments/marcAuthority/marcAuthority';
+import MarcAuthorities from '../../../../../../support/fragments/marcAuthority/marcAuthorities';
 import InventoryHoldings from '../../../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import ServicePoints from '../../../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Locations from '../../../../../../support/fragments/settings/tenant/location-setup/locations';
@@ -28,7 +27,7 @@ describe('MARC', () => {
             '100',
             '1',
             '\\',
-            '$a Bate, Walter Jackson, $d 1918-1999',
+            '$a C410818 Bate, Walter Jackson, $d 1918-1999',
             '',
             '$0 http://id.loc.gov/authorities/names/n79039769410818C410818',
             '',
@@ -38,7 +37,7 @@ describe('MARC', () => {
             '600',
             '1',
             '0',
-            '$a Johnson, Samuel, $d 1709-1784',
+            '$a C410818 Johnson, Samuel, $d 1709-1784',
             '$x Criticism and interpretation.',
             '$0 http://id.loc.gov/authorities/names/n78095825410818C410818',
             '',
@@ -48,7 +47,7 @@ describe('MARC', () => {
             '600',
             '1',
             '7',
-            '$a Johnson, Samuel, $d 1709-1784',
+            '$a C410818 Johnson, Samuel, $d 1709-1784',
             '',
             '$0 http://id.worldcat.org/fast/fst00029184410818C410818',
             '$2 fast',
@@ -58,7 +57,7 @@ describe('MARC', () => {
             '650',
             '\\',
             '7',
-            '$a Criticism and interpretation',
+            '$a C410818 Criticism and interpretation',
             '',
             '$0 http://id.worldcat.org/fast/fst01198648410818C410818',
             '$2 fast',
@@ -73,23 +72,26 @@ describe('MARC', () => {
         const marcFiles = [
           {
             marc: 'marcBibFileForC410818-Shared.mrc',
-            fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
+            fileNameImported: `testMarcFileC410818.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             numOfRecords: 1,
+            propertyName: 'instance',
             tenant: 'Central Office',
           },
           {
             marc: 'marcAuthFileForC410818-Shared.mrc',
-            fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
+            fileNameImported: `testMarcFileC410818.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 4,
+            propertyName: 'authority',
             tenant: 'Central Office',
           },
           {
             marc: 'marcAuthFileForC410818-Local.mrc',
-            fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
+            fileNameImported: `testMarcFileC410818.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
+            propertyName: 'authority',
             tenant: 'College',
           },
         ];
@@ -98,6 +100,16 @@ describe('MARC', () => {
 
         before('Create users, data', () => {
           cy.getAdminToken();
+          MarcAuthorities.getMarcAuthoritiesViaApi({
+            limit: 100,
+            query: 'keyword="C410818" and (authRefType==("Authorized" or "Auth/Ref"))',
+          }).then((authorities) => {
+            if (authorities) {
+              authorities.forEach(({ id }) => {
+                MarcAuthority.deleteViaAPI(id, true);
+              });
+            }
+          });
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -118,31 +130,21 @@ describe('MARC', () => {
               ]);
             })
             .then(() => {
-              cy.resetTenant();
-              cy.loginAsAdmin().then(() => {
-                marcFiles.forEach((marcFile) => {
-                  cy.visit(TopMenu.dataImportPath);
-                  if (marcFile.tenant === 'College') {
-                    ConsortiumManager.switchActiveAffiliation(
-                      tenantNames.central,
-                      tenantNames.college,
-                    );
-                    DataImport.waitLoading();
-                    ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-                  }
-                  DataImport.verifyUploadState();
-                  DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileNameImported);
-                  JobProfiles.waitLoadingList();
-                  JobProfiles.search(marcFile.jobProfileToRun);
-                  JobProfiles.runImportFile();
-                  Logs.waitFileIsImported(marcFile.fileNameImported);
-                  Logs.checkJobStatus(marcFile.fileNameImported, JOB_STATUS_NAMES.COMPLETED);
-                  Logs.openFileDetails(marcFile.fileNameImported);
-                  for (let i = 0; i < marcFile.numOfRecords; i++) {
-                    Logs.getCreatedItemsID(i).then((link) => {
-                      createdRecordIDs.push(link.split('/')[5]);
-                    });
-                  }
+              marcFiles.forEach((marcFile) => {
+                if (marcFile.tenant === 'College') {
+                  cy.setTenant(Affiliations.College);
+                } else {
+                  cy.resetTenant();
+                  cy.getAdminToken();
+                }
+                DataImport.uploadFileViaApi(
+                  marcFile.marc,
+                  marcFile.fileNameImported,
+                  marcFile.jobProfileToRun,
+                ).then((response) => {
+                  response.forEach((record) => {
+                    createdRecordIDs.push(record[marcFile.propertyName].id);
+                  });
                 });
 
                 linkableFields.forEach((tag) => {

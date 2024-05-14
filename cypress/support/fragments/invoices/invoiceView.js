@@ -161,6 +161,7 @@ export default {
       this.checkInvoiceLinesTableContent(invoiceLines);
     }
   },
+
   checkFieldsHasCopyIcon(fields = []) {
     fields.forEach(({ label }) => {
       cy.expect(

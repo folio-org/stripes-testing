@@ -57,6 +57,31 @@ describe('Data Import', () => {
     };
 
     before('login', () => {
+      cy.getAdminToken();
+      // create protection fields
+      MarcFieldProtection.createViaApi({
+        field: '*',
+        indicator1: '*',
+        indicator2: '*',
+        subfield: '5',
+        data: 'NcD',
+        source: 'USER',
+      }).then((resp) => {
+        const id = resp.id;
+        fieldsForDeleteIds.push(id);
+      });
+      MarcFieldProtection.createViaApi({
+        field: fieldsForDelete[2],
+        indicator1: '*',
+        indicator2: '*',
+        subfield: '*',
+        data: '*',
+        source: 'USER',
+      }).then((resp) => {
+        const id = resp.id;
+        fieldsForDeleteIds.push(id);
+      });
+
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -89,31 +114,6 @@ describe('Data Import', () => {
       'C350678 MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1 (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        cy.getAdminToken();
-        // create protection fields
-        MarcFieldProtection.createViaApi({
-          field: '*',
-          indicator1: '*',
-          indicator2: '*',
-          subfield: '5',
-          data: 'NcD',
-          source: 'USER',
-        }).then((resp) => {
-          const id = resp.id;
-          fieldsForDeleteIds.push(id);
-        });
-        MarcFieldProtection.createViaApi({
-          field: fieldsForDelete[2],
-          indicator1: '*',
-          indicator2: '*',
-          subfield: '*',
-          data: '*',
-          source: 'USER',
-        }).then((resp) => {
-          const id = resp.id;
-          fieldsForDeleteIds.push(id);
-        });
-
         // create mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();

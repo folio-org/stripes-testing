@@ -350,14 +350,14 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('login', () => {
+    before('Login', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
@@ -450,8 +450,6 @@ describe('Data Import', () => {
             holdingsPermanentLocation,
             itemStatus,
           );
-          cy.wait(2000);
-          cy.go('back');
 
           cy.visit(SettingsMenu.exportMappingProfilePath);
           ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
@@ -616,8 +614,9 @@ describe('Data Import', () => {
         InstanceRecordView.verifyStatisticalCode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.statisticalCodeUI,
         );
-        cy.wait(2000);
-        cy.go('back');
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(nameMarcFileForImportUpdate);
         FileDetails.openHoldingsInInventory(RECORD_STATUSES.UPDATED);
         HoldingsRecordView.checkHoldingsType(
           collectionOfMappingAndActionProfiles[1].mappingProfile.holdingsType,
@@ -634,8 +633,9 @@ describe('Data Import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile.relationship,
           'https://www.test.org/bro/10.230',
         );
-        cy.wait(2000);
-        cy.go('back');
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(nameMarcFileForImportUpdate);
         FileDetails.openItemInInventory(RECORD_STATUSES.UPDATED);
         ItemRecordView.verifyMaterialType(
           collectionOfMappingAndActionProfiles[2].mappingProfile.materialType,

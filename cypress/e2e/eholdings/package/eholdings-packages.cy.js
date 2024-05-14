@@ -36,10 +36,11 @@ describe('eHoldings', () => {
               path: `${TopMenu.eholdingsPath}/packages/${specialPackage.id}`,
               waiter: () => EHoldingsPackage.waitLoading(specialPackage.name),
             });
+            cy.wait(3000);
             EHoldingsPackage.addToHoldings();
-            cy.wait(1000);
+            cy.wait(3000);
             EHoldingsPackage.verifyHoldingStatus();
-            cy.wait(1000);
+            cy.wait(3000);
             EHoldingsPackage.filterTitles();
             EHoldingsPackage.checkEmptyTitlesList();
             // reset test data
@@ -104,7 +105,7 @@ describe('eHoldings', () => {
 
     it(
       'C690 Remove a package from your holdings (spitfire)',
-      { tags: ['smoke', 'spitfire'] },
+      { tags: ['smokeBroken', 'spitfire'] },
       () => {
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,

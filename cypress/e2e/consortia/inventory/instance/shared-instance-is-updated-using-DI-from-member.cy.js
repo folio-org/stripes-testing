@@ -2,9 +2,9 @@ import {
   ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
+  INSTANCE_SOURCE_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  INSTANCE_SOURCE_NAMES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
@@ -35,6 +35,7 @@ import NewMatchProfile from '../../../../support/fragments/settings/dataImport/m
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import { getLongDelay } from '../../../../support/utils/cypressTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
@@ -94,16 +95,21 @@ describe('Inventory', () => {
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);
           InventorySearchAndFilter.exportInstanceAsMarc();
+          cy.intercept('/data-export/quick-export').as('getHrid');
+          cy.wait('@getHrid', getLongDelay()).then((req) => {
+            const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
-          // use cy.getToken function to get toket for current tenant
-          cy.getCollegeAdminToken();
-          // download exported marc file
-          cy.visit(TopMenu.dataExportPath);
-          cy.wait(2000);
-          ExportFile.getExportedFileNameViaApi().then((name) => {
-            testData.exportedFileName = name;
-
-            ExportFile.downloadExportedMarcFile(testData.exportedFileName);
+            // download exported marc file
+            cy.setTenant(Affiliations.College).then(() => {
+              // use cy.getToken function to get toket for current tenant
+              cy.getCollegeAdminToken();
+              cy.visit(TopMenu.dataExportPath);
+              ExportFile.downloadExportedMarcFileWithRecordHrid(
+                expectedRecordHrid,
+                testData.marcFile.exportedFileName,
+              );
+              FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
+            });
           });
           cy.resetTenant();
         });

@@ -8,9 +8,7 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -39,12 +37,14 @@ describe('Inventory', () => {
         fileNameImported: `testMarcFileC405549.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         tenant: 'Central Office',
+        propertyName: 'instance',
       },
       {
         marc: 'marcBibFileForC402334Local.mrc',
         fileNameImported: `testMarcFileC405549.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         tenant: 'College',
+        propertyName: 'instance',
       },
     ];
 
@@ -83,20 +83,20 @@ describe('Inventory', () => {
             marcFiles.forEach((marcFile) => {
               cy.visit(TopMenu.dataImportPath);
               if (marcFile.tenant === 'College') {
-                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-                DataImport.waitLoading();
-                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+                cy.setTenant(Affiliations.College);
+              } else {
+                cy.resetTenant();
+                cy.getAdminToken();
               }
-              DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileNameImported);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFile.fileNameImported);
-              Logs.checkJobStatus(marcFile.fileNameImported, JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFile.fileNameImported);
-              Logs.getCreatedItemsID().then((link) => {
-                createdRecordIDs.push(link.split('/')[5]);
+
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileNameImported,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
+                });
               });
             });
           });
