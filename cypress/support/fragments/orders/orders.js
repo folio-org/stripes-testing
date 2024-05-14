@@ -118,6 +118,7 @@ export default {
   },
 
   updateOrderViaApi(order) {
+    cy.wait(2000);
     return cy.okapiRequest({
       method: 'PUT',
       path: `orders/composite-orders/${order.id}`,

@@ -14,6 +14,10 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import Budgets from '../../../../support/fragments/finance/budgets/budgets';
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../../support/constants';
+import BasicOrderLine from '../../../../support/fragments/orders/basicOrderLine';
+import MaterialTypes from '../../../../support/fragments/settings/inventory/materialTypes';
 
 describe('ui-finance: Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -43,7 +47,10 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     reEncumber: true,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  const allocatedQuantity = '100';
+  const budget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 100,
+  };
   const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
   const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
   const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
@@ -59,6 +66,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+      budget.fiscalYearId = firstFiscalYearResponse.id;
       secondFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '2';
       thirdFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '3';
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
@@ -67,64 +75,85 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
+          budget.fundId = fundResponse.fund.id;
+          Budgets.createViaApi(budget);
 
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-          Funds.closeBudgetDetails();
-        });
-      });
+          FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
+            secondFiscalYear.id = secondFiscalYearResponse.id;
+          });
+          FiscalYears.createViaApi(thirdFiscalYear).then((thirdFiscalYearResponse) => {
+            thirdFiscalYear.id = thirdFiscalYearResponse.id;
+          });
 
-      ServicePoints.getViaApi().then((servicePoint) => {
-        servicePointId = servicePoint[0].id;
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-          location = res;
-        });
-      });
+          ServicePoints.getViaApi().then((servicePoint) => {
+            servicePointId = servicePoint[0].id;
+            NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+              location = res;
 
-      FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
-        secondFiscalYear.id = secondFiscalYearResponse.id;
-      });
-      FiscalYears.createViaApi(thirdFiscalYear).then((thirdFiscalYearResponse) => {
-        thirdFiscalYear.id = thirdFiscalYearResponse.id;
-      });
+              MaterialTypes.createMaterialTypeViaApi(MaterialTypes.getDefaultMaterialType()).then(
+                (mtypes) => {
+                  cy.getAcquisitionMethodsApi({
+                    query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+                  }).then((params) => {
+                    Organizations.createOrganizationViaApi(organization).then(
+                      (responseOrganizations) => {
+                        organization.id = responseOrganizations;
+                        defaultOrder.vendor = organization.id;
+                        const firstOrderLine = {
+                          ...BasicOrderLine.defaultOrderLine,
+                          cost: {
+                            listUnitPrice: 10.0,
+                            currency: 'USD',
+                            discountType: 'percentage',
+                            quantityPhysical: 1,
+                            poLineEstimatedPrice: 10.0,
+                          },
+                          fundDistribution: [
+                            { code: defaultFund.code, fundId: defaultFund.id, value: 100 },
+                          ],
+                          locations: [
+                            { locationId: location.id, quantity: 1, quantityPhysical: 1 },
+                          ],
+                          acquisitionMethod: params.body.acquisitionMethods[0].id,
+                          physical: {
+                            createInventory: 'Instance, Holding, Item',
+                            materialType: mtypes.body.id,
+                            materialSupplier: responseOrganizations,
+                            volumes: [],
+                          },
+                        };
+                        Orders.createOrderViaApi(defaultOrder).then((firstOrderResponse) => {
+                          defaultOrder.id = firstOrderResponse.id;
+                          firstOrderLine.purchaseOrderId = firstOrderResponse.id;
 
-      Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-        organization.id = responseOrganizations;
-      });
-      defaultOrder.vendor = organization.name;
+                          OrderLines.createOrderLineViaApi(firstOrderLine);
+                          Orders.updateOrderViaApi({
+                            ...firstOrderResponse,
+                            workflowStatus: ORDER_STATUSES.OPEN,
+                          });
+                        });
+                      },
+                    );
+                  });
+                },
+              );
+            });
+          });
 
-      cy.visit(TopMenu.ordersPath);
-      Orders.createApprovedOrderForRollover(defaultOrder, true, false).then(
-        (firstOrderResponse) => {
-          defaultOrder.id = firstOrderResponse.id;
-          Orders.checkCreatedOrder(defaultOrder);
-          OrderLines.addPOLine();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 8);
-          OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-            defaultFund,
-            '10',
-            '1',
-            '10',
-            location.name,
+          cy.loginAsAdmin({ path: TopMenu.ledgerPath, waiter: Ledgers.waitLoading });
+          cy.visit(TopMenu.ledgerPath);
+          FinanceHelp.searchByName(defaultLedger.name);
+          Ledgers.selectLedger(defaultLedger.name);
+          Ledgers.rollover();
+          Ledgers.fillInRolloverInfoForOngoingOrdersWithAllocations(
+            secondFiscalYear.code,
+            'None',
+            'Transfer',
+            'Initial encumbrance',
           );
-          OrderLines.backToEditingOrder();
-          Orders.openOrder();
-        },
-      );
-
-      cy.visit(TopMenu.ledgerPath);
-      FinanceHelp.searchByName(defaultLedger.name);
-      Ledgers.selectLedger(defaultLedger.name);
-      Ledgers.rollover();
-      Ledgers.fillInRolloverInfoForOngoingOrdersWithAllocations(
-        secondFiscalYear.code,
-        'None',
-        'Transfer',
-      );
+        });
+      });
     });
-
     cy.createTempUser([
       permissions.uiFinanceExecuteFiscalYearRollover.gui,
       permissions.uiFinanceViewEditFiscalYear.gui,

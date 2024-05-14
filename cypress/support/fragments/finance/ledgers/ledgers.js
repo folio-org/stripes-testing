@@ -164,6 +164,7 @@ export default {
       Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Initial encumbrance'),
     ]);
+    cy.wait(6000);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
     cy.wait(4000);
     this.continueRollover();
