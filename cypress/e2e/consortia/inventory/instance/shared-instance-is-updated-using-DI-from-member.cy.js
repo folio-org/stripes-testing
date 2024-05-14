@@ -41,7 +41,9 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    const testData = {};
+    const testData = {
+      exportedFileName: `C411726 exportedTestMarcFile${getRandomPostfix()}.mrc`,
+    };
     const mappingProfile = {
       name: `C411726 Update instance adding stat code${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -106,7 +108,7 @@ describe('Inventory', () => {
               cy.visit(TopMenu.dataExportPath);
               ExportFile.downloadExportedMarcFileWithRecordHrid(
                 expectedRecordHrid,
-                testData.marcFile.exportedFileName,
+                testData.exportedFileName,
               );
               FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
             });
@@ -137,6 +139,8 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${testData.exportedFileName}`);
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
@@ -145,8 +149,6 @@ describe('Inventory', () => {
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
       SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${testData.exportedFileName}`);
     });
 
     it(

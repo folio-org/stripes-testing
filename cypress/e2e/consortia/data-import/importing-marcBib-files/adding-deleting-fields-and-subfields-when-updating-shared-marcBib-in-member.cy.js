@@ -45,7 +45,7 @@ describe('Data Import', () => {
       },
       contributorName: 'Coates, Ta-Nehisi (C405532)',
       contributorType: 'Producer',
-      absentContributorName: 'Stelfreeze, Brian (to be removed)',
+      absentContributorName: 'C405532Stelfreeze, Brian (to be removed)',
       subjects: [
         { row: 0, column: 0, name: 'Black Panther (Fictitious character) C405532' },
         { row: 1, column: 0, name: 'New Subject C405532' },
@@ -194,7 +194,6 @@ describe('Data Import', () => {
           // download exported marc file
           cy.setTenant(Affiliations.College).then(() => {
             // use cy.getToken function to get toket for current tenant
-            cy.getCollegeAdminToken();
             cy.visit(TopMenu.dataExportPath);
             ExportFile.downloadExportedMarcFileWithRecordHrid(
               expectedRecordHrid,
@@ -220,7 +219,7 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.central);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.verifyPanesExist();
         InventoryInstances.searchByTitle(testData.instanceId);
