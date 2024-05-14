@@ -78,7 +78,7 @@ describe('Inventory', () => {
       'C411387 (CONSORTIA) Check member instance and central consortial instance when member holdings & item are added to a shared instance (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet'] },
       () => {
-        InventoryInstances.searchByTitle(testData.instance.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InventoryInstance.createHoldingsRecord(
@@ -107,8 +107,10 @@ describe('Inventory', () => {
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
         InventorySearchAndFilter.searchInstanceByHRID(testData.instanceHRID);
         InventoryInstance.waitLoading();
-        InventoryInstance.verifyConsortiaHoldingsAccordion(true);
+        InventoryInstance.verifyConsortiaHoldingsAccordion(false);
+        InventoryInstance.expandConsortiaHoldings();
         InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.College);
+        InventoryInstance.expandMemberSubHoldings(Affiliations.College);
         InventoryInstance.openHoldingsAccordion(testData.collegeLocation.name);
         InventoryInstance.checkIsItemCreated(testData.itemBarcode);
       },
