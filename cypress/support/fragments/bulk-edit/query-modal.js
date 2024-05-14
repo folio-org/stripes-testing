@@ -25,6 +25,9 @@ const trashButton = Button({ icon: 'trash' });
 
 const booleanValues = ['AND'];
 
+export const holdingsFieldValues = {
+  instanceUuid: 'Instance UUID',
+};
 export const itemFieldValues = {
   instanceId: 'Instance ID',
   itemStatus: 'Item status',
