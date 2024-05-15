@@ -133,7 +133,7 @@ describe('Data Import', () => {
       });
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       // create Match profile
-      NewMatchProfile.createMatchProfileViaApiMarc(matchProfile);
+      NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile);
       // create Field mapping profile
       NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile);
       // create Action profile and link it to Field mapping profile

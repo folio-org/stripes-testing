@@ -148,7 +148,7 @@ describe('Data Import', () => {
         );
 
         // create Match profile
-        NewMatchProfile.createMatchProfileViaApiMarc(matchProfile);
+        NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile);
         // create Field mapping profile
         NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile);
         // create Action profile and link it to Field mapping profile

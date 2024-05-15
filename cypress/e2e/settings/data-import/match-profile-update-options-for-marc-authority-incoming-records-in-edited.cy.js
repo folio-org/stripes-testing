@@ -35,7 +35,7 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      NewMatchProfile.createMatchProfileViaApiMarc(matchProfile);
+      NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile);
 
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;

@@ -1157,6 +1157,7 @@ export default {
     cy.wait(2000);
   },
 
+  // TODO delete
   // createMappingProfileViaApi: (nameProfile) => {
   //   return cy
   //     .okapiRequest({

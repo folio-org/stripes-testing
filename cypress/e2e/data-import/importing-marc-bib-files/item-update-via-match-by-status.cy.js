@@ -168,9 +168,6 @@ describe('Data Import', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpdate}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpdate}`);
-      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         // delete generated profiles

@@ -52,7 +52,9 @@ describe('Data Import', () => {
             actionProfile,
             mappingProfileResponse.body.id,
           ).then((actionProfileResponse) => {
-            NewMatchProfile.createMatchProfileViaApi(matchProfile).then((matchProfileResponse) => {
+            NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(
+              matchProfile,
+            ).then((matchProfileResponse) => {
               NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
                 jobProfile.name,
                 matchProfileResponse.body.id,
@@ -116,8 +118,8 @@ describe('Data Import', () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.checkListOfExistingProfilesIsDisplayed();
         JobProfiles.verifySearchFieldIsEmpty();
-        JobProfiles.search(jobProfile.profileName);
-        JobProfiles.verifySearchResult(jobProfile.profileName);
+        JobProfiles.search(jobProfile.name);
+        JobProfiles.verifySearchResult(jobProfile.name);
         JobProfiles.clearSearchField();
         JobProfiles.verifySearchFieldIsEmpty();
         JobProfiles.checkListOfExistingProfilesIsDisplayed();

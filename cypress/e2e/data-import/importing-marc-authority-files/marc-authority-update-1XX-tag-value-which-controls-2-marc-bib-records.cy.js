@@ -139,7 +139,7 @@ describe('Data Import', () => {
       cy.loginAsAdmin()
         .then(() => {
           // create Match profile
-          NewMatchProfile.createMatchProfileViaApiMarc(matchProfile);
+          NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile);
 
           // create Field mapping profile
           NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile);
