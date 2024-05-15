@@ -18,7 +18,7 @@ describe('Inventory', () => {
   describe('Instance', () => {
     const marcFile = {
       marc: 'oneMarcBib.mrc',
-      fileNameImported: `C418582 autotestFileName${getRandomPostfix()}.mrc`,
+      fileName: `C418582 autotestFileName${getRandomPostfix()}.mrc`,
       editedFileName: `C418582 editedAutotestFileName${getRandomPostfix()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       instanceTitle:
@@ -40,18 +40,17 @@ describe('Inventory', () => {
         [marcFile.newInstanceTitle],
       );
       cy.getAdminToken();
-      cy.loginAsAdmin();
-      ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-      ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+      cy.setTenant(Affiliations.College);
       DataImport.uploadFileViaApi(
-        testData.marcFile.marc,
-        testData.marcFile.fileName,
-        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        marcFile.editedFileName,
+        marcFile.fileName,
+        marcFile.jobProfileToRun,
       ).then((response) => {
         testData.instanceId = response[0].instance.id;
       });
       cy.resetTenant();
 
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.uiInventorySingleRecordImport.gui,
         Permissions.uiInventoryViewCreateEditInstances.gui,
@@ -79,18 +78,12 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${marcFile.editedFileName}`);
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       cy.setTenant(Affiliations.College);
-      cy.getInstance({
-        limit: 1,
-        expandAll: true,
-        query: `"hrid"=="${testData.instanceHRID}"`,
-      }).then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-      FileManager.deleteFile(`cypress/fixtures/${marcFile.editedFileName}`);
+      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
     });
 
     it(
