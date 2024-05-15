@@ -62,16 +62,16 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      NewFieldMappingProfile.createMappingProfileViaApi(
-        collectionOfActionAndMappingProfiles[0].mappingProfile.name,
+      NewFieldMappingProfile.createInstanceMappingProfileViaApi(
+        collectionOfActionAndMappingProfiles[0].mappingProfile,
       ).then((mappingProfileResponse) => {
         NewActionProfile.createActionProfileViaApi(
           collectionOfActionAndMappingProfiles[0].actionProfile,
           mappingProfileResponse.body.id,
         );
       });
-      NewFieldMappingProfile.createMappingProfileViaApi(
-        collectionOfActionAndMappingProfiles[1].mappingProfile.name,
+      NewFieldMappingProfile.createInstanceMappingProfileViaApi(
+        collectionOfActionAndMappingProfiles[1].mappingProfile,
       ).then((mappingProfileResponse) => {
         NewActionProfile.createActionProfileViaApi(
           collectionOfActionAndMappingProfiles[1].actionProfile,

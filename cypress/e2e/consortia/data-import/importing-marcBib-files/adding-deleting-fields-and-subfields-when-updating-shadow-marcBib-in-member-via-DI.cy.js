@@ -126,7 +126,7 @@ describe('Data Import', () => {
         ]);
         NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
           (mappingProfileResponse) => {
-            NewActionProfile.createActionProfileViaApiMarc(
+            NewActionProfile.createActionProfileViaApi(
               actionProfile,
               mappingProfileResponse.body.id,
             ).then((actionProfileResponse) => {

@@ -65,7 +65,7 @@ describe('Data Import', () => {
 
         cy.login(userProperties.username, userProperties.password);
 
-        NewFieldMappingProfile.createMappingProfileViaApi(mappingProfile.name);
+        NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile);
         NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(
           matchProfile,
         );

@@ -298,37 +298,6 @@ export default {
     cy.expect(saveAndCloseButton.absent());
   },
 
-  createJobProfileViaApi: (nameProfile, matchProfileId, actProfileId) => {
-    return cy.okapiRequest({
-      method: 'POST',
-      path: 'data-import-profiles/jobProfiles',
-      body: {
-        profile: {
-          name: nameProfile,
-          dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
-        },
-        addedRelations: [
-          {
-            masterProfileId: null,
-            masterProfileType: PROFILE_TYPE_NAMES.JOB_PROFILE,
-            detailProfileId: matchProfileId,
-            detailProfileType: PROFILE_TYPE_NAMES.MATCH_PROFILE,
-            order: 0,
-          },
-          {
-            masterProfileId: null,
-            masterProfileType: PROFILE_TYPE_NAMES.JOB_PROFILE,
-            detailProfileId: actProfileId,
-            detailProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
-            order: 1,
-          },
-        ],
-        deletedRelations: [],
-      },
-      isDefaultSearchParamsRequired: false,
-    });
-  },
-
   createJobProfileWithLinkedActionProfileViaApi: (nameProfile, actProfileId) => {
     return cy
       .okapiRequest({
@@ -389,6 +358,50 @@ export default {
               detailWrapperId: null,
               detailProfileType: 'ACTION_PROFILE',
               order: 1,
+            },
+          ],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((responce) => {
+        return responce.body.id;
+      });
+  },
+
+  createJobProfileWithLinkedMatchAndActionProfilesViaApi: (
+    profileName,
+    matchProfileId,
+    actionProfileId,
+  ) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/jobProfiles',
+        body: {
+          profile: {
+            name: profileName,
+            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+          },
+          addedRelations: [
+            {
+              masterProfileId: null,
+              masterWrapperId: null,
+              masterProfileType: 'JOB_PROFILE',
+              detailProfileId: matchProfileId,
+              detailWrapperId: null,
+              detailProfileType: 'MATCH_PROFILE',
+              order: 0,
+            },
+            {
+              masterProfileId: matchProfileId,
+              masterWrapperId: null,
+              masterProfileType: 'MATCH_PROFILE',
+              detailProfileId: actionProfileId,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
+              order: 0,
+              reactTo: 'MATCH',
             },
           ],
           deletedRelations: [],
@@ -533,50 +546,6 @@ export default {
               detailProfileId: matchProfileId,
               detailProfileType: PROFILE_TYPE_NAMES.MATCH_PROFILE,
               order: 0,
-            },
-          ],
-          deletedRelations: [],
-        },
-        isDefaultSearchParamsRequired: false,
-      })
-      .then((responce) => {
-        return responce.body.id;
-      });
-  },
-
-  createJobProfileWithLinkedMatchAndActionProfilesViaApi: (
-    profileName,
-    matchProfileId,
-    actionProfileId,
-  ) => {
-    return cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'data-import-profiles/jobProfiles',
-        body: {
-          profile: {
-            name: profileName,
-            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
-          },
-          addedRelations: [
-            {
-              masterProfileId: null,
-              masterWrapperId: null,
-              masterProfileType: 'JOB_PROFILE',
-              detailProfileId: matchProfileId,
-              detailWrapperId: null,
-              detailProfileType: 'MATCH_PROFILE',
-              order: 0,
-            },
-            {
-              masterProfileId: matchProfileId,
-              masterWrapperId: null,
-              masterProfileType: 'MATCH_PROFILE',
-              detailProfileId: actionProfileId,
-              detailWrapperId: null,
-              detailProfileType: 'ACTION_PROFILE',
-              order: 0,
-              reactTo: 'MATCH',
             },
           ],
           deletedRelations: [],

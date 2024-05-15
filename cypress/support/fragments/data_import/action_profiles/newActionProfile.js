@@ -88,62 +88,6 @@ export default {
       });
   },
 
-  // createActionProfileViaApi: (nameMapProfile, mapProfileId, profileAction = 'CREATE') => {
-  //   return cy
-  //     .okapiRequest({
-  //       method: 'POST',
-  //       path: 'data-import-profiles/actionProfiles',
-  //       body: {
-  //         profile: {
-  //           name: nameMapProfile,
-  //           action: profileAction,
-  //           folioRecord: 'INSTANCE',
-  //         },
-  //         addedRelations: [
-  //           {
-  //             masterProfileId: null,
-  //             masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
-  //             detailProfileId: mapProfileId,
-  //             detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
-  //           },
-  //         ],
-  //         deletedRelations: [],
-  //       },
-  //       isDefaultSearchParamsRequired: false,
-  //     })
-  //     .then(({ response }) => {
-  //       return response;
-  //     });
-  // },
-
-  // createActionProfileViaApiMarc: (profile, mapProfileId) => {
-  //   return cy
-  //     .okapiRequest({
-  //       method: 'POST',
-  //       path: 'data-import-profiles/actionProfiles',
-  //       body: {
-  //         profile: {
-  //           name: profile.name,
-  //           action: profile.action,
-  //           folioRecord: profile.folioRecordType,
-  //         },
-  //         addedRelations: [
-  //           {
-  //             masterProfileId: null,
-  //             masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
-  //             detailProfileId: mapProfileId,
-  //             detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
-  //           },
-  //         ],
-  //         deletedRelations: [],
-  //       },
-  //       isDefaultSearchParamsRequired: false,
-  //     })
-  //     .then(({ response }) => {
-  //       return response;
-  //     });
-  // },
-
   verifyPreviouslyCreatedDataIsDisplayed: (profile) => {
     cy.expect([
       Pane('New action profile').exists(),

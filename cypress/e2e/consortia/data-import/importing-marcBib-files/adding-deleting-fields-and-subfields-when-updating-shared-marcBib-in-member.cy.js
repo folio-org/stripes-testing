@@ -140,7 +140,7 @@ describe('Data Import', () => {
           cy.setTenant(Affiliations.College);
           NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
             (mappingProfileResponse) => {
-              NewActionProfile.createActionProfileViaApiMarc(
+              NewActionProfile.createActionProfileViaApi(
                 actionProfile,
                 mappingProfileResponse.body.id,
               ).then((actionProfileResponse) => {

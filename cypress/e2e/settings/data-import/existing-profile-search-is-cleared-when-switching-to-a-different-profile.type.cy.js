@@ -53,7 +53,7 @@ describe('Data Import', () => {
             NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(
               matchProfile,
             ).then((matchProfileResponse) => {
-              NewJobProfile.createJobProfileViaApi(
+              NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
                 jobProfileName,
                 matchProfileResponse.body.id,
                 actionProfileResponse.body.id,

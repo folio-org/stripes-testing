@@ -92,7 +92,7 @@ describe('Data Import', () => {
         });
 
         // create 3 action profiles linked to mapping profile
-        NewFieldMappingProfile.createMappingProfileViaApi(mappingProfile.name).then(
+        NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile).then(
           (mappingProfileResponse) => {
             collectionOfActionProfiles.forEach((profile) => {
               NewActionProfile.createActionProfileViaApi(

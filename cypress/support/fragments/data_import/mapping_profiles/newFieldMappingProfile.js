@@ -1157,26 +1157,6 @@ export default {
     cy.wait(2000);
   },
 
-  // TODO delete
-  // createMappingProfileViaApi: (nameProfile) => {
-  //   return cy
-  //     .okapiRequest({
-  //       method: 'POST',
-  //       path: 'data-import-profiles/mappingProfiles',
-  //       body: {
-  //         profile: {
-  //           name: nameProfile,
-  //           incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-  //           existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
-  //         },
-  //       },
-  //       isDefaultSearchParamsRequired: false,
-  //     })
-  //     .then(({ response }) => {
-  //       return response;
-  //     });
-  // },
-
   createModifyMarcBibMappingProfileViaApi: (profile) => {
     return cy
       .okapiRequest({
