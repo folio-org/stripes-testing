@@ -7,6 +7,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { getLongDelay } from '../../../support/utils/cypressTools';
+import { LOCATION_IDS } from '../../../support/constants';
 
 let user;
 const items = [];
@@ -41,8 +42,7 @@ describe.skip('bulk-edit', () => {
             expandAll: true,
             query: `"barcode"=="${item.secondItemBarcode}"`,
           }).then((res) => {
-            // Annex
-            res.temporaryLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
+            res.temporaryLocation = { id: LOCATION_IDS.ANNEX };
             cy.updateItemViaApi(res);
           });
 
