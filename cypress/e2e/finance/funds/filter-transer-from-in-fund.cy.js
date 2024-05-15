@@ -9,7 +9,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import Budgets from '../../../support/fragments/finance/budgets/budgets';
 
 describe('ui-finance: Funds', () => {
-  const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
@@ -43,6 +43,7 @@ describe('ui-finance: Funds', () => {
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         firstFund.ledgerId = defaultLedger.id;
+        secondFund.ledgerId = defaultLedger.id;
 
         Funds.createViaApi(firstFund).then((fundResponse) => {
           firstFund.id = fundResponse.fund.id;
