@@ -1,6 +1,6 @@
 describe('fse-agreements', () => {
   beforeEach(() => {
-    // hide sensitive data from the report
+    // hide sensitive data from the allure report
     cy.allure().logCommandSteps(false);
     cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.allure().logCommandSteps();
