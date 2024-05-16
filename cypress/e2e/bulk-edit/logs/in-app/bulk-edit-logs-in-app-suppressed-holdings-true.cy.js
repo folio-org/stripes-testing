@@ -12,6 +12,7 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import { LOCATION_IDS } from '../../../../support/constants';
 
 let user;
 const instanceHRIDFileName = `instanceHRIDFileName${getRandomPostfix()}.csv`;
@@ -45,8 +46,8 @@ describe('Bulk Edit - Logs', () => {
         item.holdingsHRID = holdings[0].hrid;
         cy.updateHoldingRecord(holdings[0].id, {
           ...holdings[0],
-          permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
-          temporaryLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+          permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
+          temporaryLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
         });
       });
       cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${item.instanceId}"` }).then(

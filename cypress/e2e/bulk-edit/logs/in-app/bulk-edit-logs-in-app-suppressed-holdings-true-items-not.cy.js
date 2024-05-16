@@ -12,9 +12,7 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-
-// TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
-Cypress.on('uncaught:exception', () => false);
+import { LOCATION_IDS } from '../../../../support/constants';
 
 let user;
 const instanceHRIDFileName = `instanceHRID_${getRandomPostfix()}.csv`;
@@ -49,20 +47,16 @@ describe('Bulk Edit - Logs', () => {
         cy.updateHoldingRecord(holdings[0].id, {
           ...holdings[0],
           discoverySuppress: true,
-          permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
-          temporaryLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+          permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
+          temporaryLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
         });
       });
       cy.getInstanceById(item.instanceId).then((body) => {
         body.discoverySuppress = true;
         cy.updateInstance(body);
+        item.instanceHRID = body.hrid;
+        FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, body.hrid);
       });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${item.instanceId}"` }).then(
-        (instance) => {
-          item.instanceHRID = instance.hrid;
-          FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, item.instanceHRID);
-        },
-      );
       cy.login(user.username, user.password, {
         path: TopMenu.bulkEditPath,
         waiter: BulkEditSearchPane.waitLoading,
