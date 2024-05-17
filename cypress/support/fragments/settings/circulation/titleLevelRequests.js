@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import { Pane, Button, Select, Checkbox, NavListItem, Modal } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
@@ -102,7 +103,17 @@ export default {
 
   updateTLRSettingViaApi(allow = true) {
     cy.getConfigByName('TLR').then((body) => {
-      const config = body.configs[0];
+      const newConfig = body.configs.length === 0;
+      let config = body.configs[0];
+      if (newConfig) {
+        config = {
+          value:
+            '{"titleLevelRequestsFeatureEnabled":true,"createTitleLevelRequestsByDefault":false,"tlrHoldShouldFollowCirculationRules":false,"confirmationPatronNoticeTemplateId":null,"cancellationPatronNoticeTemplateId":null,"expirationPatronNoticeTemplateId":null}',
+          module: 'SETTINGS',
+          configName: 'TLR',
+          id: uuid(),
+        };
+      }
       if (allow) {
         config.value = config.value.replace(
           '"titleLevelRequestsFeatureEnabled":false,',
@@ -114,19 +125,29 @@ export default {
           '"titleLevelRequestsFeatureEnabled":false,',
         );
       }
-      cy.okapiRequest({
-        method: 'PUT',
-        path: `configurations/entries/${config.id}`,
-        isDefaultSearchParamsRequired: false,
-        failOnStatusCode: false,
-        body: {
-          id: config.id,
-          module: config.module,
-          configName: config.configName,
-          enabled: true,
-          value: config.value,
-        },
-      });
+      if (newConfig) {
+        cy.okapiRequest({
+          method: 'POST',
+          path: 'configurations/entries',
+          isDefaultSearchParamsRequired: false,
+          failOnStatusCode: false,
+          body: config,
+        });
+      } else {
+        cy.okapiRequest({
+          method: 'PUT',
+          path: `configurations/entries/${config.id}`,
+          isDefaultSearchParamsRequired: false,
+          failOnStatusCode: false,
+          body: {
+            id: config.id,
+            module: config.module,
+            configName: config.configName,
+            enabled: true,
+            value: config.value,
+          },
+        });
+      }
     });
   },
 };
