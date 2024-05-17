@@ -89,7 +89,7 @@ describe('Title Level Request. Request Detail', () => {
             expandAll: true,
             query: `"id"=="${instanceData.instanceId}"`,
           }).then((instance) => {
-            cy.wait(5000).then(() => {
+            cy.wait(3000).then(() => {
               instanceHRID = instance.hrid;
             });
           });
