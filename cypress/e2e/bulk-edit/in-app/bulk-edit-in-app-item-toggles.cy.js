@@ -8,6 +8,7 @@ import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { LOCATION_IDS } from '../../../support/constants';
 
 let user;
 const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
@@ -31,8 +32,7 @@ describe('bulk-edit', () => {
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
           (res) => {
             item.hrid = res.hrid;
-            // Annex
-            res.temporaryLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
+            res.temporaryLocation = { id: LOCATION_IDS.ANNEX };
             InventoryItems.editItemViaApi(res);
             FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, item.hrid);
           },
