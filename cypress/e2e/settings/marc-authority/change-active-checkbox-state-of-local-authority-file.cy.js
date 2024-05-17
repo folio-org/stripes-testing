@@ -11,13 +11,12 @@ describe('MARC', () => {
       const randomPostfix = getRandomPostfix();
       const date = DateTools.getFormattedDateWithSlashes({ date: new Date() });
       const localAuthFile = {
-        name: `C436839 auth source file active ${randomPostfix}`,
+        name: `C436842 auth source file ${randomPostfix}`,
         prefix: getRandomLetters(6),
-        newPrefix: `test${getRandomLetters(4)}`,
-        startWithNumber: '1',
+        hridStartsWith: '1',
         baseUrl: '',
         source: 'Local',
-        isActive: true,
+        isActive: false,
         createdByAdmin: `${date} by ADMINISTRATOR, Diku_admin`,
       };
       let user;
@@ -31,7 +30,7 @@ describe('MARC', () => {
           .then(() => {
             cy.createAuthoritySourceFileUsingAPI(
               localAuthFile.prefix,
-              localAuthFile.startWithNumber,
+              localAuthFile.hridStartsWith,
               localAuthFile.name,
               localAuthFile.isActive,
             ).then((sourceId) => {
@@ -43,11 +42,11 @@ describe('MARC', () => {
       after('Delete users, data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userId);
-        cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id);
+        cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id, true);
       });
 
       it(
-        'C436839 Edit "Prefix" field of Local "Authority file" which does not have assigned "MARC authority" records (spitfire)',
+        'C436842 Change "Active" checkbox state of Local "Authority file" which does not have assigned "MARC authority" records (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           // 1 Go to "Settings" app >> "MARC authority" >> "Manage authority files"
@@ -60,7 +59,7 @@ describe('MARC', () => {
           ManageAuthorityFiles.checkSourceFileExists(
             localAuthFile.name,
             localAuthFile.prefix,
-            localAuthFile.startsWith,
+            localAuthFile.hridStartsWith,
             localAuthFile.baseUrl,
             localAuthFile.isActive,
             localAuthFile.createdByAdmin,
@@ -72,30 +71,60 @@ describe('MARC', () => {
           ManageAuthorityFiles.checkRowEditableInEditMode(
             localAuthFile.name,
             localAuthFile.prefix,
-            localAuthFile.startWithNumber,
+            localAuthFile.hridStartsWith,
             localAuthFile.baseUrl,
-            localAuthFile.isActive,
+            false,
             localAuthFile.source,
             localAuthFile.createdByAdmin,
           );
           ManageAuthorityFiles.checkNewButtonEnabled(false);
 
-          // 3 Update value in editable "Prefix" field with unique valid value, ex.: "Prefix" = "test"
-          ManageAuthorityFiles.editField(localAuthFile.name, 'Prefix', localAuthFile.newPrefix);
+          // 3 Check "Active" checkbox
+          ManageAuthorityFiles.switchActiveCheckboxInFile(localAuthFile.name, true);
+          ManageAuthorityFiles.checkSaveButtonEnabledInFile(localAuthFile.name);
+          ManageAuthorityFiles.checkCancelButtonEnabledInFile(localAuthFile.name);
 
           // 4 Click on the "Save" button
           ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthFile.name);
           ManageAuthorityFiles.checkAfterSaveEditedFile(localAuthFile.name);
           ManageAuthorityFiles.checkSourceFileExists(
             localAuthFile.name,
-            localAuthFile.newPrefix,
+            localAuthFile.prefix,
             localAuthFile.startWithNumber,
             localAuthFile.baseUrl,
-            localAuthFile.isActive,
+            true,
             `${date} by ${user.lastName}, ${user.firstName}`,
             true,
           );
-          ManageAuthorityFiles.checkEditButtonInRow(localAuthFile.name);
+
+          // 5 Click on the "Edit" (pencil) icon of "Local" authority file again
+          ManageAuthorityFiles.clickEditButton(localAuthFile.name);
+          ManageAuthorityFiles.checkRowEditableInEditMode(
+            localAuthFile.name,
+            localAuthFile.prefix,
+            localAuthFile.hridStartsWith,
+            localAuthFile.baseUrl,
+            true,
+            localAuthFile.source,
+            `${date} by ${user.lastName}, ${user.firstName}`,
+          );
+          ManageAuthorityFiles.checkNewButtonEnabled(false);
+
+          // 6 Uncheck "Active" checkbox
+          ManageAuthorityFiles.switchActiveCheckboxInFile(localAuthFile.name, false);
+
+          // 7 Click on the "Save" button
+          ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthFile.name);
+          ManageAuthorityFiles.checkAfterSaveEditedFile(localAuthFile.name);
+          ManageAuthorityFiles.checkSourceFileExists(
+            localAuthFile.name,
+            localAuthFile.prefix,
+            localAuthFile.startWithNumber,
+            localAuthFile.baseUrl,
+            false,
+            `${date} by ${user.lastName}, ${user.firstName}`,
+            true,
+          );
         },
       );
     });
