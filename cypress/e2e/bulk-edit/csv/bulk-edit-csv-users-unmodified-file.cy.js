@@ -5,6 +5,7 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
+import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
@@ -65,10 +66,10 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyDownloadChangedRecordsAbsent();
 
         BulkEditSearchPane.openLogsSearch();
-        BulkEditSearchPane.verifyLogsPane();
-        BulkEditSearchPane.checkUsersCheckbox();
-        BulkEditSearchPane.clickActionsRunBy(user.username);
-        BulkEditSearchPane.verifyLogsRowActionWhenNoChangesApplied();
+        BulkEditLogs.verifyLogsPane();
+        BulkEditLogs.checkUsersCheckbox();
+        BulkEditLogs.clickActionsRunBy(user.username);
+        BulkEditLogs.verifyLogsRowActionWhenNoChangesApplied();
       },
     );
   });

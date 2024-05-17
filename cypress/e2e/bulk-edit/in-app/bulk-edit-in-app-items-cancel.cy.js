@@ -11,6 +11,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import { LOCATION_IDS } from '../../../support/constants';
+import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 const invalidItemUUID = getRandomPostfix();
@@ -108,7 +109,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.itemId);
 
         BulkEditSearchPane.openLogsSearch();
-        BulkEditSearchPane.verifyLogsPane();
+        BulkEditLogs.verifyLogsPane();
         BulkEditSearchPane.openIdentifierSearch();
         BulkEditSearchPane.verifyMatchedResults(item.itemId);
 

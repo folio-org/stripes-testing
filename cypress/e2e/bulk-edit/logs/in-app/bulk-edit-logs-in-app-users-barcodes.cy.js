@@ -8,6 +8,7 @@ import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-a
 import DateTools from '../../../../support/utils/dateTools';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
+import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 const afterThreeMonthsDate = DateTools.getAfterThreeMonthsDateObj();
@@ -22,104 +23,108 @@ const newExpirationDate = {
   dateWithDashes: DateTools.getFormattedDate({ date: afterThreeMonthsDate }),
 };
 
-describe('Bulk Edit - Logs', () => {
-  before('create test data', () => {
-    cy.createTempUser([
-      permissions.bulkEditLogsView.gui,
-      permissions.bulkEditUpdateRecords.gui,
-      permissions.uiUserEdit.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
+describe('bulk-edit', () => {
+  describe('logs', () => {
+    describe('in-app approach', () => {
+      before('create test data', () => {
+        cy.createTempUser([
+          permissions.bulkEditLogsView.gui,
+          permissions.bulkEditUpdateRecords.gui,
+          permissions.uiUserEdit.gui,
+        ]).then((userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+          FileManager.createFile(`cypress/fixtures/${validUserBarcodesFileName}`, user.barcode);
+        });
       });
-      FileManager.createFile(`cypress/fixtures/${validUserBarcodesFileName}`, user.barcode);
+
+      after('delete test data', () => {
+        cy.getAdminToken();
+        FileManager.deleteFile(`cypress/fixtures/${validUserBarcodesFileName}`);
+        Users.deleteViaApi(user.userId);
+        FileManager.deleteFileFromDownloadsByMask(
+          validUserBarcodesFileName,
+          `*${matchedRecordsFileName}`,
+          previewOfProposedChangesFileName,
+          updatedRecordsFileName,
+        );
+      });
+
+      it(
+        'C375244 Verify generated Logs files for Users In app -- only valid (firebird)',
+        { tags: ['smoke', 'firebird'] },
+        () => {
+          BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
+          BulkEditSearchPane.uploadFile(validUserBarcodesFileName);
+          BulkEditSearchPane.waitFileUploading();
+          BulkEditActions.downloadMatchedResults();
+
+          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.verifyBulkEditForm();
+          BulkEditActions.fillExpirationDate(newExpirationDate.date);
+          BulkEditActions.addNewBulkEditFilterString();
+          BulkEditActions.fillPatronGroup('graduate (Graduate Student)', 1);
+          BulkEditActions.confirmChanges();
+          BulkEditActions.downloadPreview();
+          BulkEditActions.commitChanges();
+          BulkEditSearchPane.waitFileUploading();
+          BulkEditActions.openActions();
+          BulkEditActions.downloadChangedCSV();
+
+          BulkEditSearchPane.openLogsSearch();
+          BulkEditLogs.verifyLogsPane();
+          BulkEditLogs.checkUsersCheckbox();
+          BulkEditLogs.clickActionsRunBy(user.username);
+          BulkEditLogs.verifyLogsRowActionWhenCompleted();
+
+          BulkEditLogs.downloadFileUsedToTrigger();
+          BulkEditFiles.verifyCSVFileRows(validUserBarcodesFileName, [user.barcode]);
+
+          BulkEditLogs.downloadFileWithMatchingRecords();
+          BulkEditFiles.verifyMatchedResultFileContent(
+            `*${matchedRecordsFileName}`,
+            [user.barcode],
+            'userBarcode',
+            true,
+          );
+
+          BulkEditLogs.downloadFileWithProposedChanges();
+          BulkEditFiles.verifyMatchedResultFileContent(
+            previewOfProposedChangesFileName,
+            ['graduate'],
+            'patronGroup',
+            true,
+          );
+          BulkEditFiles.verifyMatchedResultFileContent(
+            previewOfProposedChangesFileName,
+            [newExpirationDate.dateWithDashes],
+            'expirationDate',
+            true,
+          );
+
+          BulkEditLogs.downloadFileWithUpdatedRecords();
+          BulkEditFiles.verifyMatchedResultFileContent(
+            updatedRecordsFileName,
+            ['graduate'],
+            'patronGroup',
+            true,
+          );
+          BulkEditFiles.verifyMatchedResultFileContent(
+            updatedRecordsFileName,
+            [newExpirationDate.dateWithDashes],
+            'expirationDate',
+            true,
+          );
+
+          cy.visit(TopMenu.usersPath);
+          UsersSearchPane.searchByUsername(user.username);
+          Users.verifyPatronGroupOnUserDetailsPane('graduate');
+          Users.verifyExpirationDateOnUserDetailsPane(newExpirationDate.dateWithSlashes);
+        },
+      );
     });
   });
-
-  after('delete test data', () => {
-    cy.getAdminToken();
-    FileManager.deleteFile(`cypress/fixtures/${validUserBarcodesFileName}`);
-    Users.deleteViaApi(user.userId);
-    FileManager.deleteFileFromDownloadsByMask(
-      validUserBarcodesFileName,
-      `*${matchedRecordsFileName}`,
-      previewOfProposedChangesFileName,
-      updatedRecordsFileName,
-    );
-  });
-
-  it(
-    'C375244 Verify generated Logs files for Users In app -- only valid (firebird)',
-    { tags: ['smoke', 'firebird'] },
-    () => {
-      BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
-      BulkEditSearchPane.uploadFile(validUserBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.downloadMatchedResults();
-
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.verifyBulkEditForm();
-      BulkEditActions.fillExpirationDate(newExpirationDate.date);
-      BulkEditActions.addNewBulkEditFilterString();
-      BulkEditActions.fillPatronGroup('graduate (Graduate Student)', 1);
-      BulkEditActions.confirmChanges();
-      BulkEditActions.downloadPreview();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.openActions();
-      BulkEditActions.downloadChangedCSV();
-
-      BulkEditSearchPane.openLogsSearch();
-      BulkEditSearchPane.verifyLogsPane();
-      BulkEditSearchPane.checkUsersCheckbox();
-      BulkEditSearchPane.clickActionsRunBy(user.username);
-      BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
-
-      BulkEditSearchPane.downloadFileUsedToTrigger();
-      BulkEditFiles.verifyCSVFileRows(validUserBarcodesFileName, [user.barcode]);
-
-      BulkEditSearchPane.downloadFileWithMatchingRecords();
-      BulkEditFiles.verifyMatchedResultFileContent(
-        `*${matchedRecordsFileName}`,
-        [user.barcode],
-        'userBarcode',
-        true,
-      );
-
-      BulkEditSearchPane.downloadFileWithProposedChanges();
-      BulkEditFiles.verifyMatchedResultFileContent(
-        previewOfProposedChangesFileName,
-        ['graduate'],
-        'patronGroup',
-        true,
-      );
-      BulkEditFiles.verifyMatchedResultFileContent(
-        previewOfProposedChangesFileName,
-        [newExpirationDate.dateWithDashes],
-        'expirationDate',
-        true,
-      );
-
-      BulkEditSearchPane.downloadFileWithUpdatedRecords();
-      BulkEditFiles.verifyMatchedResultFileContent(
-        updatedRecordsFileName,
-        ['graduate'],
-        'patronGroup',
-        true,
-      );
-      BulkEditFiles.verifyMatchedResultFileContent(
-        updatedRecordsFileName,
-        [newExpirationDate.dateWithDashes],
-        'expirationDate',
-        true,
-      );
-
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.searchByUsername(user.username);
-      Users.verifyPatronGroupOnUserDetailsPane('graduate');
-      Users.verifyExpirationDateOnUserDetailsPane(newExpirationDate.dateWithSlashes);
-    },
-  );
 });
