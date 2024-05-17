@@ -146,12 +146,12 @@ describe('MARC', () => {
             QuickMarcEditor.checkUnlinkModal(testData.tag700);
             QuickMarcEditor.cancelUnlinkingField();
             QuickMarcEditor.checkDeleteModalClosed();
-            QuickMarcEditor.checkButtonSaveAndCloseEnable();
+            QuickMarcEditor.checkButtonSaveAndCloseDisabled();
             QuickMarcEditor.clickUnlinkIconInTagField(linkingTagAndValues[0].rowIndex);
             QuickMarcEditor.checkUnlinkModal(testData.tag700);
             InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
             QuickMarcEditor.checkDeleteModalClosed();
-            QuickMarcEditor.checkButtonSaveAndCloseEnable();
+            QuickMarcEditor.checkButtonSaveAndCloseDisabled();
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(linkingTagAndValues[0].rowIndex);
             QuickMarcEditor.clickViewMarcAuthorityIconInTagField(linkingTagAndValues[0].rowIndex);
             MarcAuthorities.checkFieldAndContentExistence(testData.tag100, testData.tag100content);
@@ -159,6 +159,7 @@ describe('MARC', () => {
             cy.go('back');
             cy.wait(1000);
             QuickMarcEditor.clickKeepLinkingButton();
+            QuickMarcEditor.updateExistingField('100', '$a Coates, Ta-Nehisi, $e creator.');
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkCallout('Record created.');
             InstanceRecordView.verifyInstancePaneExists();

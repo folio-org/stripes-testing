@@ -84,7 +84,7 @@ describe('MARC', () => {
         };
 
         const createdRecordIDs = [];
-        const naturalIds = ['n83169267', 'no2021056177', 'nb98017694'];
+        const naturalIds = ['n83169267', 'no2021056177', 'nb98017694', 'n83169269'];
         const marcFiles = [
           {
             marc: 'marcBibFileForC388519.mrc',

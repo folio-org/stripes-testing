@@ -67,6 +67,18 @@ describe('MARC', () => {
         ];
 
         before('Creating user', () => {
+          // make sure there are no duplicate records in the system
+          cy.getAdminToken();
+          MarcAuthorities.getMarcAuthoritiesViaApi({
+            limit: 100,
+            query: 'keyword="C375084" and (authRefType==("Authorized" or "Auth/Ref"))',
+          }).then((authorities) => {
+            if (authorities) {
+              authorities.forEach(({ id }) => {
+                MarcAuthority.deleteViaAPI(id, true);
+              });
+            }
+          });
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
