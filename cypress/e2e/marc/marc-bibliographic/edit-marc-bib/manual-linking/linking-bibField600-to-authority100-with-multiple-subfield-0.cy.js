@@ -76,6 +76,8 @@ describe('MARC', () => {
         ];
 
         before('Creating user and data', () => {
+          // make sure there are no duplicate records in the system
+          cy.getAdminToken();
           MarcAuthorities.getMarcAuthoritiesViaApi({
             limit: 100,
             query: 'keyword="C380753" and (authRefType==("Authorized"))',
