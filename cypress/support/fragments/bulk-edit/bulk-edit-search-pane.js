@@ -456,6 +456,10 @@ export default {
     cy.do(usersCheckbox.click());
   },
 
+  checkInstancesCheckbox() {
+    cy.do(instancesCheckbox.click());
+  },
+
   holdingsRadioIsDisabled(isDisabled) {
     cy.expect(holdingsRadio.has({ disabled: isDisabled }));
   },
@@ -1088,6 +1092,16 @@ export default {
       triggerBtn.exists(),
       matchingRecordsBtn.exists(),
       errorsEncounteredBtn.exists(),
+      previewPorposedChangesBtn.exists(),
+      updatedRecordBtn.exists(),
+      errorsCommittingBtn.exists(),
+    ]);
+  },
+
+  verifyLogsRowActionWithoutMatchingErrorWithCommittingErrors() {
+    cy.expect([
+      triggerBtn.exists(),
+      matchingRecordsBtn.exists(),
       previewPorposedChangesBtn.exists(),
       updatedRecordBtn.exists(),
       errorsCommittingBtn.exists(),
