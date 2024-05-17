@@ -11,6 +11,7 @@ import UserEdit from '../../../../support/fragments/users/userEdit';
 import Checkout from '../../../../support/fragments/checkout/checkout';
 import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
+import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 let servicePointId;
@@ -20,73 +21,77 @@ const item = {
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 
-describe('Bulk Edit - Logs', () => {
-  before('create test data', () => {
-    cy.createTempUser([
-      permissions.bulkEditView.gui,
-      permissions.bulkEditEdit.gui,
-      permissions.bulkEditLogsView.gui,
-      permissions.inventoryAll.gui,
-      permissions.exportManagerAll.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
-        .then((servicePoints) => {
-          servicePointId = servicePoints[0].id;
-        })
-        .then(() => {
-          UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
-          Checkout.checkoutItemViaApi({
-            itemBarcode: item.barcode,
-            servicePointId,
-            userBarcode: user.barcode,
+describe('bulk-edit', () => {
+  describe('logs', () => {
+    describe('in-app approach', () => {
+      before('create test data', () => {
+        cy.createTempUser([
+          permissions.bulkEditView.gui,
+          permissions.bulkEditEdit.gui,
+          permissions.bulkEditLogsView.gui,
+          permissions.inventoryAll.gui,
+          permissions.exportManagerAll.gui,
+        ]).then((userProperties) => {
+          user = userProperties;
+          InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+          ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
+            .then((servicePoints) => {
+              servicePointId = servicePoints[0].id;
+            })
+            .then(() => {
+              UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
+              Checkout.checkoutItemViaApi({
+                itemBarcode: item.barcode,
+                servicePointId,
+                userBarcode: user.barcode,
+              });
+              FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
+            });
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
           });
-          FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
         });
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
-      });
-    });
-  });
-
-  after('delete test data', () => {
-    cy.getAdminToken();
-    CheckInActions.checkinItemViaApi({
-      itemBarcode: item.barcode,
-      servicePointId,
-      checkInDate: new Date().toISOString(),
-    });
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
-    Users.deleteViaApi(user.userId);
-    FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
-  });
-
-  it(
-    'C380443 Verify the correctness of the Bulk Edit job status in Logs tab (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
-    () => {
-      BulkEditSearchPane.checkItemsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
-      BulkEditSearchPane.uploadFile(itemBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.openActions();
-
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.replaceItemStatus('Available');
-      BulkEditActions.confirmChanges();
-      cy.intercept('/bulk-operations/*').as('commitChanges');
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.verifyReasonForError('New status value "Available" is not allowed');
-      cy.wait('@commitChanges', getLongDelay()).then((res) => {
-        expect(res.response.body.status).to.eq('COMPLETED_WITH_ERRORS');
       });
 
-      BulkEditSearchPane.openLogsSearch();
-      BulkEditSearchPane.checkItemsCheckbox();
-      BulkEditSearchPane.verifyLogStatus(user.username, 'Completed with errors');
-    },
-  );
+      after('delete test data', () => {
+        cy.getAdminToken();
+        CheckInActions.checkinItemViaApi({
+          itemBarcode: item.barcode,
+          servicePointId,
+          checkInDate: new Date().toISOString(),
+        });
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
+        Users.deleteViaApi(user.userId);
+        FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
+      });
+
+      it(
+        'C380443 Verify the correctness of the Bulk Edit job status in Logs tab (firebird) (TaaS)',
+        { tags: ['extendedPath', 'firebird'] },
+        () => {
+          BulkEditSearchPane.checkItemsRadio();
+          BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+
+          BulkEditSearchPane.uploadFile(itemBarcodesFileName);
+          BulkEditSearchPane.waitFileUploading();
+          BulkEditActions.openActions();
+
+          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.replaceItemStatus('Available');
+          BulkEditActions.confirmChanges();
+          cy.intercept('/bulk-operations/*').as('commitChanges');
+          BulkEditActions.commitChanges();
+          BulkEditSearchPane.verifyReasonForError('New status value "Available" is not allowed');
+          cy.wait('@commitChanges', getLongDelay()).then((res) => {
+            expect(res.response.body.status).to.eq('COMPLETED_WITH_ERRORS');
+          });
+
+          BulkEditSearchPane.openLogsSearch();
+          BulkEditLogs.checkItemsCheckbox();
+          BulkEditLogs.verifyLogStatus(user.username, 'Completed with errors');
+        },
+      );
+    });
+  });
 });

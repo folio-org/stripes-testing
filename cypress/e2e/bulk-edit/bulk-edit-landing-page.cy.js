@@ -7,6 +7,7 @@ import BulkEditSearchPane, {
   holdingsIdentifiers,
 } from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import Users from '../../support/fragments/users/users';
+import BulkEditLogs from '../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 
@@ -49,7 +50,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
 
       // verify panes
-      BulkEditSearchPane.verifyRecordTypesSortedAlphabetically(false);
+      BulkEditSearchPane.verifyRecordTypesSortedAlphabetically();
       BulkEditSearchPane.verifyPanesBeforeImport();
       BulkEditSearchPane.verifyBulkEditPaneItems();
       BulkEditSearchPane.verifySetCriteriaPaneItems();
@@ -83,8 +84,8 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.openLogsSearch();
       BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs', 'Query');
       BulkEditSearchPane.verifySpecificTabHighlighted('Logs');
-      BulkEditSearchPane.verifyLogsPane();
-      BulkEditSearchPane.verifyRecordTypesSortedAlphabetically();
+      BulkEditLogs.verifyLogsPane();
+      BulkEditLogs.verifyRecordTypesSortedAlphabetically();
     },
   );
 });

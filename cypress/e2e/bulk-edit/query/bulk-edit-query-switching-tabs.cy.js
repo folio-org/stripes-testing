@@ -10,6 +10,7 @@ import UserEdit from '../../../support/fragments/users/userEdit';
 import Checkout from '../../../support/fragments/checkout/checkout';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 let servicePointId;
@@ -118,8 +119,8 @@ describe('Bulk Edit - Query', () => {
       QueryModal.buildQueryButtonDisabled(false);
       BulkEditSearchPane.verifyInputLabel('Click the Build query button to build the query.');
       BulkEditSearchPane.openLogsSearch();
-      BulkEditSearchPane.checkLogsCheckbox('New');
-      BulkEditSearchPane.resetAll();
+      BulkEditLogs.checkLogsCheckbox('New');
+      BulkEditLogs.resetAll();
       BulkEditSearchPane.openQuerySearch();
       BulkEditSearchPane.isUsersRadioChecked();
     },
