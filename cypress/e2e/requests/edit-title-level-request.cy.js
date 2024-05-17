@@ -138,10 +138,8 @@ describe('Title Level Request', () => {
       );
       ServicePoints.deleteViaApi(servicePoint1.id);
       ServicePoints.deleteViaApi(servicePoint2.id);
-      // eslint-disable-next-line no-console
-    } catch (e) {
-      console.log(e);
-    }
+    // eslint-disable-next-line no-console
+    } catch (e) { console.log(e); }
   });
 
   it(
