@@ -45,6 +45,7 @@ describe('Browse in Inventory', () => {
 
   before('Creating data', () => {
     // make sure there are no duplicate records in the system
+    cy.getAdminToken();
     MarcAuthorities.getMarcAuthoritiesViaApi({
       limit: 100,
       query: 'keyword="C388531" and (authRefType==("Authorized" or "Auth/Ref"))',

@@ -76,6 +76,16 @@ describe('MARC', () => {
         ];
 
         before('Creating user and data', () => {
+          MarcAuthorities.getMarcAuthoritiesViaApi({
+            limit: 100,
+            query: 'keyword="C380753" and (authRefType==("Authorized"))',
+          }).then((authorities) => {
+            if (authorities) {
+              authorities.forEach(({ id }) => {
+                MarcAuthority.deleteViaAPI(id, true);
+              });
+            }
+          });
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

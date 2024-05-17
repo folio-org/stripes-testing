@@ -93,6 +93,18 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before('Importing data', () => {
+      // make sure there are no duplicate records in the system
+      InventoryInstances.getInstancesViaApi({
+        limit: 100,
+        query: 'title="MSEARCH-466"',
+      }).then((instances) => {
+        if (instances) {
+          instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
+        }
+      });
+
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 

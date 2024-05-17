@@ -131,7 +131,7 @@ describe('MARC', () => {
             rowIndex: 17,
             tag: '700',
             content:
-              '$aLee, Stan,$d1922-2018,$ecreator.$0 http://id.loc.gov/authorities/names/n83169267C389489',
+              '$aC389489 Lee, Stan,$d1922-2018,$ecreator.$0 http://id.loc.gov/authorities/names/n83169267C389489',
             isLinked: true,
           },
           {
@@ -194,6 +194,16 @@ describe('MARC', () => {
                 });
               });
             });
+          });
+          InventoryInstances.getInstancesViaApi({
+            limit: 100,
+            query: 'title="C389489*"',
+          }).then((instances) => {
+            if (instances) {
+              instances.forEach(({ id }) => {
+                InventoryInstance.deleteInstanceViaApi(id);
+              });
+            }
           });
 
           cy.createTempUser([
@@ -269,6 +279,7 @@ describe('MARC', () => {
             // 7 Add new eligible for linking fields, by clicking "+" icon next to any field and filling first and fourth box of appeared row with following values
             newFields.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
+              cy.wait(1000);
             });
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             // 8 Click on the "Link headings" button.
@@ -299,10 +310,12 @@ describe('MARC', () => {
               BrowseContributors.select();
               // Fill in the search box with contributor name from any linked field, ex.: "Lee, Stan, 1922-2018"
               // Click on the "Search" button.
-              BrowseContributors.browse('Lee, Stan, 1922-2018');
-              BrowseSubjects.checkRowWithValueAndAuthorityIconExists('Lee, Stan, 1922-2018');
+              BrowseContributors.browse('C389489 Lee, Stan, 1922-2018');
+              BrowseSubjects.checkRowWithValueAndAuthorityIconExists(
+                'C389489 Lee, Stan, 1922-2018',
+              );
               // 11 Click on the highlighted in bold contributor in the browse result list.
-              BrowseSubjects.selectInstanceWithAuthorityIcon('Lee, Stan, 1922-2018');
+              BrowseSubjects.selectInstanceWithAuthorityIcon('C389489 Lee, Stan, 1922-2018');
               // 12 Open detail view of created by user "Instance" record
               InventoryInstances.selectInstanceById(createdInstanceID);
               // Click on the "Actions" in the third pane >> Select "View source".

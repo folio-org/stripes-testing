@@ -15,7 +15,7 @@ describe('MARC', () => {
       const testData = {
         forC359206: {
           lcControlNumberA: 'n  00000911',
-          lcControlNumberB: 'n  79125030',
+          lcControlNumberB: 'n  79125031',
           searchOption: 'Identifier (all)',
           valueA: 'Erbil, H. Yıldırım',
           valueB: 'Twain, Mark,',
