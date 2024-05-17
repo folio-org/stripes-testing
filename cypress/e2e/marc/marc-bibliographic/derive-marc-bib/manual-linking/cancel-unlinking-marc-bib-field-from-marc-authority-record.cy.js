@@ -139,15 +139,14 @@ describe('MARC', () => {
             InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
             QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(linkingTagAndValues[0].rowIndex);
-            // TODO: check if button not enabled is bug or not
-            // QuickMarcEditor.checkButtonSaveAndCloseEnable();
+            QuickMarcEditor.verifySaveAndCloseButtonDisabled();
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib700AfterLinkingToAuth100);
             QuickMarcEditor.checkUnlinkTooltipText(75, 'Unlink from MARC Authority record');
             QuickMarcEditor.clickUnlinkIconInTagField(linkingTagAndValues[0].rowIndex);
             QuickMarcEditor.checkUnlinkModal(testData.tag700);
             QuickMarcEditor.cancelUnlinkingField();
             QuickMarcEditor.checkDeleteModalClosed();
-            QuickMarcEditor.checkButtonSaveAndCloseEnable();
+            QuickMarcEditor.verifySaveAndCloseButtonDisabled();
             QuickMarcEditor.clickUnlinkIconInTagField(linkingTagAndValues[0].rowIndex);
             QuickMarcEditor.checkUnlinkModal(testData.tag700);
             InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
@@ -161,6 +160,7 @@ describe('MARC', () => {
             cy.wait(1000);
             QuickMarcEditor.clickKeepLinkingButton();
             QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.updateExistingField('100', '$a Coates, Ta-Nehisi, $e creator.');
             QuickMarcEditor.checkCallout('Record created.');
             InstanceRecordView.verifyInstancePaneExists();
             InstanceRecordView.verifyContributorNameWithMarcAppIcon(
