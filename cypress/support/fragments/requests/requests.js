@@ -339,10 +339,11 @@ export default {
 
   addTag(tag) {
     waitLoadingTags();
+    cy.wait(1000);
     cy.do(tagsPane.find(MultiSelect({ ariaLabelledby: 'input-tag-label' })).choose(tag));
     // TODO investigate what to wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000);
+    cy.wait(3000);
   },
 
   addNewTag(tag) {
@@ -361,7 +362,7 @@ export default {
     cy.expect(tagsPane.find(ValueChipRoot(tag)).exists());
   },
 
-  REQUEST_TYPE_CELL: { columnIndex: 5 },
+  REQUEST_TYPE_CELL: { columnIndex: 6 },
   verifyIsFilteredByRequestType(requestType) {
     const values = [];
     cy.get('[data-row-index]')

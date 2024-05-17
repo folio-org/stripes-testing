@@ -89,7 +89,9 @@ describe('Title Level Request. Request Detail', () => {
             expandAll: true,
             query: `"id"=="${instanceData.instanceId}"`,
           }).then((instance) => {
-            instanceHRID = instance.hrid;
+            cy.wait(3000).then(() => {
+              instanceHRID = instance.hrid;
+            });
           });
         });
       })
