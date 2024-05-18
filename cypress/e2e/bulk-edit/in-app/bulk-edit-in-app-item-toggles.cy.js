@@ -9,6 +9,7 @@ import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { LOCATION_IDS } from '../../../support/constants';
+import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
@@ -73,21 +74,21 @@ describe('bulk-edit', () => {
           'Completed with errors',
           'Failed',
         ];
-        statuses.forEach((status) => BulkEditSearchPane.checkLogsCheckbox(status));
+        statuses.forEach((status) => BulkEditLogs.checkLogsCheckbox(status));
 
-        BulkEditSearchPane.checkHoldingsCheckbox();
-        BulkEditSearchPane.checkUsersCheckbox();
-        BulkEditSearchPane.checkItemsCheckbox();
-        BulkEditSearchPane.fillLogsStartDate(today, today);
-        BulkEditSearchPane.applyStartDateFilters();
-        BulkEditSearchPane.fillLogsEndDate(today, today);
-        BulkEditSearchPane.applyEndDateFilters();
-        BulkEditSearchPane.verifyLogResultsFound();
+        BulkEditLogs.checkHoldingsCheckbox();
+        BulkEditLogs.checkUsersCheckbox();
+        BulkEditLogs.checkItemsCheckbox();
+        BulkEditLogs.fillLogsStartDate(today, today);
+        BulkEditLogs.applyStartDateFilters();
+        BulkEditLogs.fillLogsEndDate(today, today);
+        BulkEditLogs.applyEndDateFilters();
+        BulkEditLogs.verifyLogResultsFound();
         BulkEditSearchPane.openIdentifierSearch();
         BulkEditSearchPane.verifyMatchedResults(item.hrid);
         BulkEditSearchPane.openLogsSearch();
-        BulkEditSearchPane.resetAll();
-        BulkEditSearchPane.verifyLogsPane();
+        BulkEditLogs.resetAll();
+        BulkEditLogs.verifyLogsPane();
         BulkEditSearchPane.openIdentifierSearch();
         BulkEditSearchPane.verifyMatchedResults(item.hrid);
         BulkEditSearchPane.openIdentifierSearch();
@@ -100,20 +101,20 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyChangedResults(item.hrid);
         BulkEditSearchPane.openLogsSearch();
-        BulkEditSearchPane.verifyLogsPane();
-        statuses.forEach((status) => BulkEditSearchPane.checkLogsCheckbox(status));
-        BulkEditSearchPane.checkHoldingsCheckbox();
-        BulkEditSearchPane.checkUsersCheckbox();
-        BulkEditSearchPane.checkItemsCheckbox();
-        BulkEditSearchPane.fillLogsStartDate(today, today);
-        BulkEditSearchPane.applyStartDateFilters();
-        BulkEditSearchPane.fillLogsEndDate(today, today);
-        BulkEditSearchPane.applyEndDateFilters();
-        BulkEditSearchPane.verifyLogResultsFound();
+        BulkEditLogs.verifyLogsPane();
+        statuses.forEach((status) => BulkEditLogs.checkLogsCheckbox(status));
+        BulkEditLogs.checkHoldingsCheckbox();
+        BulkEditLogs.checkUsersCheckbox();
+        BulkEditLogs.checkItemsCheckbox();
+        BulkEditLogs.fillLogsStartDate(today, today);
+        BulkEditLogs.applyStartDateFilters();
+        BulkEditLogs.fillLogsEndDate(today, today);
+        BulkEditLogs.applyEndDateFilters();
+        BulkEditLogs.verifyLogResultsFound();
         BulkEditSearchPane.openIdentifierSearch();
         BulkEditSearchPane.verifyChangedResults(item.hrid);
         BulkEditSearchPane.openLogsSearch();
-        BulkEditSearchPane.resetAll();
+        BulkEditLogs.resetAll();
         BulkEditSearchPane.openIdentifierSearch();
         BulkEditSearchPane.verifyChangedResults(item.hrid);
       },

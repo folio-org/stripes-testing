@@ -2,6 +2,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import users from '../../../support/fragments/users/users';
+import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 
@@ -33,9 +34,9 @@ describe('bulk-edit', () => {
       { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.openLogsSearch();
-        BulkEditSearchPane.verifyLogsPane();
-        BulkEditSearchPane.checkUsersCheckbox();
-        BulkEditSearchPane.logActionsIsAbsent();
+        BulkEditLogs.verifyLogsPane();
+        BulkEditLogs.checkUsersCheckbox();
+        BulkEditLogs.logActionsIsAbsent();
       },
     );
   });
