@@ -25,7 +25,16 @@ const saveAndCloseButton = rootSection.find(Button('Save & close'));
 
 const deafultResouceType = 'text';
 
+const fillResourceTitle = (resourceTitle) => {
+  cy.do(TextArea('Resource title*').fillIn(resourceTitle));
+};
+const fillResourceType = (resourceType = deafultResouceType) => {
+  cy.do(Select('Resource type*').choose(resourceType));
+};
+
 export default {
+  fillResourceTitle,
+  fillResourceType,
   checkExpectedOCLCPresence(OCLCNumber) {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
@@ -36,8 +45,8 @@ export default {
     resourceTitle = `autotest_instance_title_${getRandomPostfix()}`,
     resourceType = deafultResouceType,
   ) {
-    cy.do(TextArea('Resource title*').fillIn(resourceTitle));
-    cy.do(Select('Resource type*').choose(resourceType));
+    fillResourceTitle(resourceTitle);
+    fillResourceType(resourceType);
     cy.wait(300);
   },
   fillInstanceFields({
