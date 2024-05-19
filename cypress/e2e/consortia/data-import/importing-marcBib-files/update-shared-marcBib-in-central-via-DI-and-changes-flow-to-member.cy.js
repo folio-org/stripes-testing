@@ -59,7 +59,6 @@ describe('Data Import', () => {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     };
     const actionProfile = {
-      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       name: `C405534 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       action: 'UPDATE',
       folioRecordType: 'MARC_BIBLIOGRAPHIC',

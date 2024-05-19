@@ -29,6 +29,7 @@ import {
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   INCOMING_RECORD_NAMES,
+  LOCATION_NAMES,
 } from '../../../constants';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -116,7 +117,6 @@ const actionsFieldMappingsForMarc = {
   update: 'Updates',
 };
 
-const permanentLocation = '"Annex (KU/CC/DI/A)"';
 const materialType = '"book"';
 const permanentLoanType = '"Can circulate"';
 const status = '"In process"';
@@ -126,7 +126,7 @@ const catalogedDate = '###TODAY###';
 const defaultMappingProfile = {
   name: `autotest${FOLIO_RECORD_TYPE.INSTANCE}${getRandomPostfix()}`,
   typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-  location: permanentLocation,
+  location: `"${LOCATION_NAMES.ANNEX_UI}"`,
   material: materialType,
   loan: permanentLoanType,
   statusField: status,
@@ -274,76 +274,6 @@ const fillSummaryForMarcAuthInMappingProfile = (specialMappingProfile = defaultM
 const fillFolioRecordType = (profile) => {
   cy.do(existingRecordType.choose(profile.typeValue));
 };
-const getDefaultInstanceMappingProfile = (name) => {
-  const defaultInstanceMappingProfile = {
-    profile: {
-      name,
-      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
-    },
-  };
-  return defaultInstanceMappingProfile;
-};
-const getDefaultHoldingsMappingProfile = (name, permLocation) => {
-  const defaultHoldingsMappingProfile = {
-    profile: {
-      name,
-      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-      existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
-      mappingDetails: {
-        name: 'holdings',
-        recordType: 'HOLDINGS',
-        mappingFields: [
-          {
-            name: 'permanentLocationId',
-            enabled: true,
-            path: 'holdings.permanentLocationId',
-            value: `"${permLocation}"`,
-          },
-        ],
-      },
-    },
-  };
-  return defaultHoldingsMappingProfile;
-};
-const getDefaultItemMappingProfile = (name) => {
-  const defaultItemMappingProfile = {
-    profile: {
-      name,
-      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-      existingRecordType: EXISTING_RECORD_NAMES.ITEM,
-      mappingDetails: {
-        name: 'item',
-        recordType: 'ITEM',
-        mappingFields: [
-          {
-            name: 'materialType.id',
-            enabled: true,
-            path: 'item.materialType.id',
-            value: '"book"',
-            acceptedValues: { '1a54b431-2e4f-452d-9cae-9cee66c9a892': 'book' },
-          },
-          {
-            name: 'permanentLoanType.id',
-            enabled: true,
-            path: 'item.permanentLoanType.id',
-            value: '"Can circulate"',
-            acceptedValues: { '2b94c631-fca9-4892-a730-03ee529ffe27': 'Can circulate' },
-          },
-          { name: 'status.name', enabled: true, path: 'item.status.name', value: '"Available"' },
-          {
-            name: 'permanentLocation.id',
-            enabled: 'true',
-            path: 'item.permanentLocation.id',
-            value: `"${permanentLocation}"`,
-            acceptedValues: { 'fcd64ce1-6995-48f0-840e-89ffa2288371': 'Main Library (KU/CC/DI/M)' },
-          },
-        ],
-      },
-    },
-  };
-  return defaultItemMappingProfile;
-};
 const fillInvoiceLineDescription = (description) => {
   cy.do(Accordion('Invoice line information').find(TextField('Description*')).fillIn(description));
 };
@@ -397,11 +327,7 @@ const addItemNotes = (noteType, note, staffOnly) => {
 };
 
 export default {
-  getDefaultInstanceMappingProfile,
-  getDefaultHoldingsMappingProfile,
-  getDefaultItemMappingProfile,
   incomingRecordType,
-  permanentLocation,
   materialType,
   permanentLoanType,
   statusField: status,
@@ -1222,6 +1148,25 @@ export default {
   },
 
   createHoldingsMappingProfileViaApi: (profile) => {
+    // eslint-disable-next-line no-unused-vars
+    let locationId;
+
+    if (profile.permanentLocation === LOCATION_NAMES.MAIN_LIBRARY_UI) {
+      cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then((res) => {
+        locationId = res.id;
+      });
+    }
+    if (profile.permanentLocation === LOCATION_NAMES.ANNEX_UI) {
+      cy.getLocations({ query: `name="${LOCATION_NAMES.ANNEX}"` }).then((res) => {
+        locationId = res.id;
+      });
+    }
+    if (profile.permanentLocation === LOCATION_NAMES.ONLINE_UI) {
+      cy.getLocations({ query: `name="${LOCATION_NAMES.ONLINE}"` }).then((res) => {
+        locationId = res.id;
+      });
+    }
+
     return cy
       .okapiRequest({
         method: 'POST',
@@ -1242,7 +1187,7 @@ export default {
                   value: `"${profile.permanentLocation}"`,
                   subfields: [],
                   acceptedValues: {
-                    'fcd64ce1-6995-48f0-840e-89ffa2288371': profile.permanentLocation,
+                    locationId: profile.permanentLocation,
                   },
                 },
               ],
