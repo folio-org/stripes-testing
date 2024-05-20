@@ -18,7 +18,8 @@ describe('Inventory', () => {
       marcFileName: `C410924 marcFileName${getRandomPostfix()}.mrc`,
     };
     const testData = {
-      newInstanceTitle: `C410924 instanceTitle${getRandomPostfix()}`,
+      newResourceTitle: `C410924 instanceTitle${getRandomPostfix()}`,
+      newResourceType: 'notated movement',
       source: INSTANCE_SOURCE_NAMES.FOLIO,
     };
 
@@ -41,7 +42,7 @@ describe('Inventory', () => {
         cy.setTenant(Affiliations.College);
         cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.inventoryAll.gui]);
 
-        cy.login(testData.user1.username, testData.user1.password, {
+        cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
@@ -73,10 +74,10 @@ describe('Inventory', () => {
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
         InstanceRecordView.duplicate();
-        InventoryNewInstance.fillResourceTitle(testData.newInstanceTitle);
-        InventoryNewInstance.fillResourceType();
+        InventoryNewInstance.fillResourceTitle(testData.newResourceTitle);
+        InventoryNewInstance.fillResourceType(testData.newResourceType);
         InventoryNewInstance.clickSaveAndCloseButton();
-        InventoryInstance.waitInstanceRecordViewOpened(testData.newInstanceTitle);
+        InventoryInstance.waitInstanceRecordViewOpened(testData.newResourceTitle);
         InventoryInstance.checkInstanceDetails([{ key: 'Source', value: testData.source }]);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           testData.instanceHrid = initialInstanceHrId;
