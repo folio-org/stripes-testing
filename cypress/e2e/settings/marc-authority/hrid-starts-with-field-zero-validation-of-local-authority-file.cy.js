@@ -85,6 +85,7 @@ describe('MARC', () => {
           // 3 Click on the "Save" button in "Actions" column
           ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthFile.name);
           ManageAuthorityFiles.checkErrorInField(
+            localAuthFile.name,
             AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH,
             errorHridRequired,
           );
@@ -98,6 +99,7 @@ describe('MARC', () => {
           );
           ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthFile.name);
           ManageAuthorityFiles.checkErrorInField(
+            localAuthFile.name,
             AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH,
             errorHridStartsWithZero,
           );
@@ -126,6 +128,7 @@ describe('MARC', () => {
           );
           ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthFile.name);
           ManageAuthorityFiles.checkErrorInField(
+            localAuthFile.name,
             AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH,
             errorHridStartsWithZero,
           );
@@ -140,6 +143,7 @@ describe('MARC', () => {
           );
           ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthFile.name);
           ManageAuthorityFiles.checkErrorInField(
+            localAuthFile.name,
             AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH,
             errorHridStartsWithZero,
           );
