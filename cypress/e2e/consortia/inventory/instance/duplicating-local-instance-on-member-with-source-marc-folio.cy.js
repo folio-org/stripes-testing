@@ -27,15 +27,15 @@ describe('Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       cy.setTenant(Affiliations.College);
+      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+        testData.instanceC410923 = instanceData;
+      });
       DataImport.uploadFileViaApi(
         marcFile.marc,
         marcFile.marcFileName,
         DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       ).then((response) => {
         testData.instanceC410924 = response[0].instance;
-      });
-      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-        testData.instanceC410923 = instanceData;
       });
 
       cy.resetTenant();
@@ -81,7 +81,7 @@ describe('Inventory', () => {
     });
 
     it(
-      'C410923 (CONSORTIA) Duplicating local instance on Member tenant with Source MARC (folijet)',
+      'C410923 (CONSORTIA) Duplicating local instance on Member tenant with Source FOLIO (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceC410923.instanceId);
