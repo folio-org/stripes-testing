@@ -18,20 +18,24 @@ describe('Inventory', () => {
       marcFileName: `C410924 marcFileName${getRandomPostfix()}.mrc`,
     };
     const testData = {
-      newResourceTitle: `C410924 instanceTitle${getRandomPostfix()}`,
+      newResourceTitleC410923: `C410923 instanceTitle${getRandomPostfix()}`,
+      newResourceTitleC410924: `C410924 instanceTitle${getRandomPostfix()}`,
       newResourceType: 'notated movement',
       source: INSTANCE_SOURCE_NAMES.FOLIO,
     };
 
-    before('Create test data and login', () => {
+    before('Create test data', () => {
       cy.getAdminToken();
       cy.setTenant(Affiliations.College);
+      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+        testData.instanceC410923 = instanceData;
+      });
       DataImport.uploadFileViaApi(
         marcFile.marc,
         marcFile.marcFileName,
         DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       ).then((response) => {
-        testData.instanceId = response[0].instance.id;
+        testData.instanceC410924 = response[0].instance;
       });
 
       cy.resetTenant();
@@ -41,17 +45,16 @@ describe('Inventory', () => {
         cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
         cy.setTenant(Affiliations.College);
         cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.inventoryAll.gui]);
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-        InventoryInstances.searchByTitle(testData.instanceId);
-        InventoryInstances.selectInstance();
-        InventoryInstance.waitLoading();
       });
+    });
+
+    beforeEach('Login', () => {
+      cy.login(testData.user.username, testData.user.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
+      ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+      ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
     });
 
     after('Delete test data', () => {
@@ -59,28 +62,58 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       cy.setTenant(Affiliations.College);
-      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+      InventoryInstance.deleteInstanceViaApi(testData.instanceC410923.instanceId);
+      InventoryInstance.deleteInstanceViaApi(testData.instanceC410924.id);
       cy.getInstance({
         limit: 1,
         expandAll: true,
-        query: `"hrid"=="${testData.instanceHrid}"`,
+        query: `"hrid"=="${testData.instanceC410923Hrid}"`,
+      }).then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"hrid"=="${testData.instanceC410924Hrid}"`,
       }).then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
     });
 
     it(
+      'C410923 (CONSORTIA) Duplicating local instance on Member tenant with Source FOLIO (folijet)',
+      { tags: ['extendedPathECS', 'folijet'] },
+      () => {
+        InventoryInstances.searchByTitle(testData.instanceC410923.instanceId);
+        InventoryInstances.selectInstance();
+        InventoryInstance.waitLoading();
+        InstanceRecordView.duplicate();
+        InventoryNewInstance.fillResourceTitle(testData.newResourceTitleC410923);
+        InventoryNewInstance.fillResourceType(testData.newResourceType);
+        InventoryNewInstance.clickSaveAndCloseButton();
+        InventoryInstance.waitInstanceRecordViewOpened(testData.newResourceTitleC410923);
+        InventoryInstance.checkInstanceDetails([{ key: 'Source', value: testData.source }]);
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+          testData.instanceC410923Hrid = initialInstanceHrId;
+        });
+      },
+    );
+
+    it(
       'C410924 (CONSORTIA) Duplicating local instance on Member tenant with Source MARC (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
+        InventoryInstances.searchByTitle(testData.instanceC410924.id);
+        InventoryInstances.selectInstance();
+        InventoryInstance.waitLoading();
         InstanceRecordView.duplicate();
-        InventoryNewInstance.fillResourceTitle(testData.newResourceTitle);
+        InventoryNewInstance.fillResourceTitle(testData.newResourceTitleC410924);
         InventoryNewInstance.fillResourceType(testData.newResourceType);
         InventoryNewInstance.clickSaveAndCloseButton();
-        InventoryInstance.waitInstanceRecordViewOpened(testData.newResourceTitle);
+        InventoryInstance.waitInstanceRecordViewOpened(testData.newResourceTitleC410924);
         InventoryInstance.checkInstanceDetails([{ key: 'Source', value: testData.source }]);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          testData.instanceHrid = initialInstanceHrId;
+          testData.instanceC410924Hrid = initialInstanceHrId;
         });
       },
     );
