@@ -13,14 +13,14 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 describe('Inventory', () => {
   describe('Instance', () => {
     const testData = {
-      newInstanceTitle: `C410924 instanceTitle${getRandomPostfix()}`,
+      newInstanceTitleC410925: `C410925 instanceTitle${getRandomPostfix()}`,
       source: INSTANCE_SOURCE_NAMES.FOLIO,
     };
 
-    before('Create test data and login', () => {
+    before('Create test data', () => {
       cy.getAdminToken();
       InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-        testData.instance = instanceData;
+        testData.instanceC410925 = instanceData;
       });
 
       cy.resetTenant();
@@ -30,29 +30,28 @@ describe('Inventory', () => {
         cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
         cy.setTenant(Affiliations.College);
         cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.inventoryAll.gui]);
-
-        cy.login(testData.user1.username, testData.user1.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-        InventoryInstances.searchByTitle(testData.instance.instanceId);
-        InventoryInstances.selectInstance();
-        InventoryInstance.waitLoading();
       });
+    });
+
+    beforeEach('Login', () => {
+      cy.login(testData.user.username, testData.user.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
+      ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+      ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
     });
 
     after('Delete test data', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+      InventoryInstance.deleteInstanceViaApi(testData.instanceC410925.instanceId);
       cy.setTenant(Affiliations.College);
       cy.getInstance({
         limit: 1,
         expandAll: true,
-        query: `"hrid"=="${testData.instanceHrid}"`,
+        query: `"hrid"=="${testData.instanceHridC410925}"`,
       }).then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
@@ -62,14 +61,17 @@ describe('Inventory', () => {
       'C410925 (CONSORTIA) Duplicating shared instance on Member tenant with Source FOLIO (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
+        InventoryInstances.searchByTitle(testData.instanceC410925.instanceId);
+        InventoryInstances.selectInstance();
+        InventoryInstance.waitLoading();
         InstanceRecordView.duplicate();
-        InventoryNewInstance.fillResourceTitle(testData.newInstanceTitle);
+        InventoryNewInstance.fillResourceTitle(testData.newInstanceTitleC410925);
         InventoryNewInstance.fillResourceType();
         InventoryNewInstance.clickSaveAndCloseButton();
-        InventoryInstance.waitInstanceRecordViewOpened(testData.newInstanceTitle);
+        InventoryInstance.waitInstanceRecordViewOpened(testData.newInstanceTitleC410925);
         InventoryInstance.checkInstanceDetails([{ key: 'Source', value: testData.source }]);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          testData.instanceHrid = initialInstanceHrId;
+          testData.instanceHridC410925 = initialInstanceHrId;
         });
       },
     );
