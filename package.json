@@ -19,7 +19,8 @@
     "lint:fix": "eslint --fix --quiet",
     "prettier": "prettier .",
     "prettier:fix": "prettier --write",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "extract-permissions": "node extractSourcePermissions.js && node filterObsoletePermissions.js"
   },
   "husky": {
     "hooks": {
