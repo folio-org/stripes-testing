@@ -4,14 +4,11 @@ import Users from '../../../../../support/fragments/users/users';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import {
-  JOB_STATUS_NAMES,
   MARC_AUTHORITY_BROWSE_OPTIONS,
   DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../../../support/constants';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthorityBrowse from '../../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
@@ -31,6 +28,7 @@ describe('MARC', () => {
           affiliation: Affiliations.Consortia,
           numOfRecords: 2,
           createdRecordIDs: [],
+          propertyName: 'authority',
         },
         {
           marc: 'marcAuthFileForC404449LocalMember1.mrc',
@@ -40,6 +38,7 @@ describe('MARC', () => {
           affiliation: Affiliations.College,
           numOfRecords: 2,
           createdRecordIDs: [],
+          propertyName: 'authority',
         },
         {
           marc: 'marcAuthFileForC404449LocalMember2.mrc',
@@ -49,6 +48,7 @@ describe('MARC', () => {
           affiliation: Affiliations.University,
           numOfRecords: 2,
           createdRecordIDs: [],
+          propertyName: 'authority',
         },
       ];
       const sharedAuthorityRecord1FromCentralTenant = {
@@ -78,7 +78,29 @@ describe('MARC', () => {
       };
 
       before('Create users, data', () => {
+        cy.setTenant(Affiliations.College);
+        MarcAuthorities.getMarcAuthoritiesViaApi({
+          limit: 100,
+          query: 'keyword="C404449" and (authRefType==("Authorized" or "Auth/Ref"))',
+        }).then((authorities) => {
+          if (authorities) {
+            authorities.forEach(({ id }) => {
+              MarcAuthority.deleteViaAPI(id);
+            });
+          }
+        });
+        cy.resetTenant();
         cy.getAdminToken();
+        MarcAuthorities.getMarcAuthoritiesViaApi({
+          limit: 100,
+          query: 'keyword="C404449" and (authRefType==("Authorized" or "Auth/Ref"))',
+        }).then((authorities) => {
+          if (authorities) {
+            authorities.forEach(({ id }) => {
+              MarcAuthority.deleteViaAPI(id);
+            });
+          }
+        });
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui])
           .then((userProperties) => {
             users.userProperties = userProperties;
@@ -101,29 +123,25 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            marcFiles.forEach((marcFile, index) => {
-              if (marcFile.tenant !== tenantNames.central) {
-                ConsortiumManager.switchActiveAffiliation(
-                  marcFiles[index - 1].tenant,
-                  marcFile.tenant,
-                );
-                DataImport.waitLoading();
-                ConsortiumManager.checkCurrentTenantInTopMenu(marcFile.tenant);
+            marcFiles.forEach((marcFile) => {
+              if (marcFile.tenant === 'University') {
+                cy.setTenant(Affiliations.University);
+              } else if (marcFile.tenant === 'College') {
+                cy.setTenant(Affiliations.College);
+              } else {
+                cy.resetTenant();
+                cy.getAdminToken();
               }
 
-              DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFile.fileName);
-              Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  marcFile.createdRecordIDs.push(link.split('/')[5]);
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  marcFile.createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
-              }
+              });
             });
           })
           .then(() => {
@@ -245,6 +263,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
+          cy.wait(3000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.eq(sharedRecordsCount);
           });
@@ -292,6 +311,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
+          cy.wait(3000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.eq(sharedRecordsCount);
           });
@@ -332,6 +352,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
+          cy.wait(3000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.eq(sharedRecordsCount);
           });
@@ -373,6 +394,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
+          cy.wait(3000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.not.eq(sharedRecordsCount);
 
@@ -401,6 +423,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
+          cy.wait(3000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.not.eq(sharedRecordsCount);
 
@@ -426,6 +449,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
+          cy.wait(3000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.not.eq(sharedRecordsCount);
           });

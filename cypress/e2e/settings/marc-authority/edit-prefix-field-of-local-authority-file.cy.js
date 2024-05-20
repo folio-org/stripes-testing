@@ -69,11 +69,12 @@ describe('MARC', () => {
 
           // 2 Click on the "Edit" (pencil) icon of "Local" authority file
           ManageAuthorityFiles.clickEditButton(localAuthFile.name);
-          ManageAuthorityFiles.checkRowEditableAfterClickEditButton(
+          ManageAuthorityFiles.checkRowEditableInEditMode(
             localAuthFile.name,
             localAuthFile.prefix,
             localAuthFile.startWithNumber,
             localAuthFile.baseUrl,
+            localAuthFile.isActive,
             localAuthFile.source,
             localAuthFile.createdByAdmin,
           );

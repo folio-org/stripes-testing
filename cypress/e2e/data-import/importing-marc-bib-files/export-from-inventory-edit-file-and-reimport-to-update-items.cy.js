@@ -328,7 +328,16 @@ describe('Data Import', () => {
           cy.getAdminToken();
           ExportFile.uploadFile(nameForCSVFile);
           ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
-          ExportFile.downloadExportedMarcFile(nameMarcFileForUpload);
+          ExportFile.getRecordHridOfExportedFile(nameForCSVFile).then((req) => {
+            const expectedRecordHrid = req;
+
+            // download exported marc file
+            ExportFile.downloadExportedMarcFileWithRecordHrid(
+              expectedRecordHrid,
+              nameMarcFileForUpload,
+            );
+            FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
+          });
 
           // change file using item hrid for 945 field
           DataImport.editMarcFile(

@@ -1,4 +1,5 @@
 import './acq-units';
+import './agreements';
 import './auth';
 import './circulation';
 import './finance';
