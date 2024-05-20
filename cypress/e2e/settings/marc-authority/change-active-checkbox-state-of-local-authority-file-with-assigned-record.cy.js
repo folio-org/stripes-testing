@@ -4,23 +4,27 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
 import DateTools from '../../../support/utils/dateTools';
 import ManageAuthorityFiles from '../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
+import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Settings', () => {
       const randomPostfix = getRandomPostfix();
+      const title = `C436854 Test title ${randomPostfix}`;
       const date = DateTools.getFormattedDateWithSlashes({ date: new Date() });
       const localAuthFile = {
-        name: `C436839 auth source file active ${randomPostfix}`,
+        name: `C436854 auth source file active ${randomPostfix}`,
         prefix: getRandomLetters(6),
-        newPrefix: `test${getRandomLetters(4)}`,
-        startWithNumber: '1',
+        hridStartsWith: '1',
         baseUrl: '',
         source: 'Local',
         isActive: true,
         createdByAdmin: `${date} by ADMINISTRATOR, Diku_admin`,
       };
+      const fields = [{ tag: '100', content: `$a ${title}`, indicators: ['\\', '\\'] }];
       let user;
+      let createdAuthorityId;
 
       before('Create users, data', () => {
         cy.getAdminToken();
@@ -31,11 +35,20 @@ describe('MARC', () => {
           .then(() => {
             cy.createAuthoritySourceFileUsingAPI(
               localAuthFile.prefix,
-              localAuthFile.startWithNumber,
+              localAuthFile.hridStartsWith,
               localAuthFile.name,
               localAuthFile.isActive,
             ).then((sourceId) => {
               localAuthFile.id = sourceId;
+            });
+          })
+          .then(() => {
+            MarcAuthorities.createMarcAuthorityViaAPI(
+              localAuthFile.prefix,
+              localAuthFile.hridStartsWith,
+              fields,
+            ).then((createdRecordId) => {
+              createdAuthorityId = createdRecordId;
             });
           });
       });
@@ -43,11 +56,12 @@ describe('MARC', () => {
       after('Delete users, data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userId);
-        cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id);
+        MarcAuthority.deleteViaAPI(createdAuthorityId, true);
+        cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id, true);
       });
 
       it(
-        'C436839 Edit "Prefix" field of Local "Authority file" which does not have assigned "MARC authority" records (spitfire)',
+        'C436854 Change "Active" checkbox state of Local "Authority file" which has assigned "MARC authority" records (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           // 1 Go to "Settings" app >> "MARC authority" >> "Manage authority files"
@@ -60,19 +74,19 @@ describe('MARC', () => {
           ManageAuthorityFiles.checkSourceFileExists(
             localAuthFile.name,
             localAuthFile.prefix,
-            localAuthFile.startsWith,
+            localAuthFile.hridStartsWith,
             localAuthFile.baseUrl,
             localAuthFile.isActive,
             localAuthFile.createdByAdmin,
             true,
           );
 
-          // 2 Click on the "Edit" (pencil) icon of "Local" authority file
+          // 2 Click on the "Edit" (pencil) icon of "Local" authority file which has assigned "MARC authority" records
           ManageAuthorityFiles.clickEditButton(localAuthFile.name);
           ManageAuthorityFiles.checkRowEditableInEditMode(
             localAuthFile.name,
             localAuthFile.prefix,
-            localAuthFile.startWithNumber,
+            localAuthFile.hridStartsWith,
             localAuthFile.baseUrl,
             localAuthFile.isActive,
             localAuthFile.source,
@@ -80,22 +94,44 @@ describe('MARC', () => {
           );
           ManageAuthorityFiles.checkNewButtonEnabled(false);
 
-          // 3 Update value in editable "Prefix" field with unique valid value, ex.: "Prefix" = "test"
-          ManageAuthorityFiles.editField(localAuthFile.name, 'Prefix', localAuthFile.newPrefix);
+          // 3 Check "Active" checkbox
+          ManageAuthorityFiles.switchActiveCheckboxInFile(localAuthFile.name, false);
+          ManageAuthorityFiles.checkSaveButtonEnabledInFile(localAuthFile.name);
+          ManageAuthorityFiles.checkCancelButtonEnabledInFile(localAuthFile.name);
 
           // 4 Click on the "Save" button
           ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthFile.name);
           ManageAuthorityFiles.checkAfterSaveEditedFile(localAuthFile.name);
           ManageAuthorityFiles.checkSourceFileExists(
             localAuthFile.name,
-            localAuthFile.newPrefix,
+            localAuthFile.prefix,
             localAuthFile.startWithNumber,
             localAuthFile.baseUrl,
-            localAuthFile.isActive,
+            false,
             `${date} by ${user.lastName}, ${user.firstName}`,
             true,
           );
-          ManageAuthorityFiles.checkEditButtonInRow(localAuthFile.name);
+
+          // 5 Update "Active" checkbox state of edited "Local" authority file one more time:
+          // Click on the "Edit" (pencil) icon of "Local" authority file.
+          // Check "Active" checkbox
+          // Click on the "Save" button
+          ManageAuthorityFiles.clickEditButton(localAuthFile.name);
+          ManageAuthorityFiles.switchActiveCheckboxInFile(
+            localAuthFile.name,
+            localAuthFile.isActive,
+          );
+          ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthFile.name);
+          ManageAuthorityFiles.checkAfterSaveEditedFile(localAuthFile.name);
+          ManageAuthorityFiles.checkSourceFileExists(
+            localAuthFile.name,
+            localAuthFile.prefix,
+            localAuthFile.startWithNumber,
+            localAuthFile.baseUrl,
+            true,
+            `${date} by ${user.lastName}, ${user.firstName}`,
+            true,
+          );
         },
       );
     });

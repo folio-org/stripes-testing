@@ -94,6 +94,7 @@ describe('MARC', () => {
             localAuthFile.prefix,
             localAuthFile.hridStartsWith,
             localAuthFile.baseUrl,
+            localAuthFile.isActive,
             localAuthFile.source,
             localAuthFile.createdByAdmin,
           );
@@ -114,6 +115,7 @@ describe('MARC', () => {
             localAuthFile.prefix,
             localAuthFile.newHridStartsWith,
             localAuthFile.baseUrl,
+            localAuthFile.isActive,
             localAuthFile.source,
             localAuthFile.createdByAdmin,
             false,

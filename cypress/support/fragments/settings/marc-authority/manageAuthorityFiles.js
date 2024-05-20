@@ -256,6 +256,7 @@ export default {
     prefix,
     hridStartsWith,
     baseUrl,
+    isActive,
     source,
     createdByUser,
     isCancelButtonDisabled = false,
@@ -272,7 +273,7 @@ export default {
           targetRow.find(hridStartsWithTextField).has({ value: hridStartsWith, disabled: false }),
         );
         cy.expect(targetRow.find(baseUrlTextField).has({ value: baseUrl, disabled: false }));
-        cy.expect(targetRow.find(activeCheckbox).has({ disabled: false }));
+        cy.expect(targetRow.find(activeCheckbox).has({ checked: isActive, disabled: false }));
         cy.expect(targetRow.find(sourceCell).has({ content: source }));
         cy.expect(targetRow.find(MultiColumnListCell(including(createdByUser))).exists());
         cy.expect(targetRow.find(cancelButton).has({ disabled: isCancelButtonDisabled }));
