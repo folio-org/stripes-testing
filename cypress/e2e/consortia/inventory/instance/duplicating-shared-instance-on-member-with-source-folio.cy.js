@@ -13,7 +13,8 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 describe('Inventory', () => {
   describe('Instance', () => {
     const testData = {
-      newInstanceTitleC410925: `C410925 instanceTitle${getRandomPostfix()}`,
+      newResourceTitleC410925: `C410925 instanceTitle${getRandomPostfix()}`,
+      newResourceType: 'notated movement',
       source: INSTANCE_SOURCE_NAMES.FOLIO,
     };
 
@@ -51,7 +52,7 @@ describe('Inventory', () => {
       cy.getInstance({
         limit: 1,
         expandAll: true,
-        query: `"hrid"=="${testData.instanceHridC410925}"`,
+        query: `"hrid"=="${testData.instanceC410925Hrid}"`,
       }).then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
@@ -65,13 +66,13 @@ describe('Inventory', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InstanceRecordView.duplicate();
-        InventoryNewInstance.fillResourceTitle(testData.newInstanceTitleC410925);
-        InventoryNewInstance.fillResourceType();
+        InventoryNewInstance.fillResourceTitle(testData.newResourceTitleC410925);
+        InventoryNewInstance.fillResourceType(testData.newResourceType);
         InventoryNewInstance.clickSaveAndCloseButton();
-        InventoryInstance.waitInstanceRecordViewOpened(testData.newInstanceTitleC410925);
+        InventoryInstance.waitInstanceRecordViewOpened(testData.newResourceTitleC410925);
         InventoryInstance.checkInstanceDetails([{ key: 'Source', value: testData.source }]);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          testData.instanceHridC410925 = initialInstanceHrId;
+          testData.instanceC410925Hrid = initialInstanceHrId;
         });
       },
     );
