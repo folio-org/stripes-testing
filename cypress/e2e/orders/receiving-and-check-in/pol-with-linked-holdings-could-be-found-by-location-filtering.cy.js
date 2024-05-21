@@ -242,7 +242,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   });
 
   it(
-    'C357580 Order line with linked Holdings could be found by "Location" filtering facet on "Receiving" pane (thunderjet) (TaaS)',
+    'C466170 Order line with linked Holdings could be found by "Location" filtering facet on "Receiving" pane (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Receiving.selectLocationInFilters(location.name);
