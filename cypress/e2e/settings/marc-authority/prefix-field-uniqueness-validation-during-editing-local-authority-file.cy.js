@@ -98,6 +98,7 @@ describe('MARC', () => {
           // 3 Click on the "Save" button
           ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthFiles[0].name);
           ManageAuthorityFiles.checkErrorInField(
+            localAuthFiles[0].name,
             AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX,
             errorPrefixUniqueness,
           );
@@ -126,6 +127,7 @@ describe('MARC', () => {
           );
           ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthFiles[0].name);
           ManageAuthorityFiles.checkErrorInField(
+            localAuthFiles[0].name,
             AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX,
             errorPrefixUniqueness,
           );
