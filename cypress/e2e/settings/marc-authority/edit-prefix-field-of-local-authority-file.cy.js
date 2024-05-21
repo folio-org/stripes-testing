@@ -74,6 +74,7 @@ describe('MARC', () => {
             localAuthFile.prefix,
             localAuthFile.startWithNumber,
             localAuthFile.baseUrl,
+            localAuthFile.isActive,
             localAuthFile.source,
             localAuthFile.createdByAdmin,
           );

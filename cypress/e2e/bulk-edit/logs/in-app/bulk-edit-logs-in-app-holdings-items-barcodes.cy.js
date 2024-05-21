@@ -13,6 +13,7 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 let tempLocation;
@@ -53,221 +54,227 @@ const instance2 = {
   defaultLocation: '',
 };
 
-describe('Bulk Edit - Logs', () => {
-  before('create test data', () => {
-    cy.createTempUser([
-      permissions.bulkEditLogsView.gui,
-      permissions.bulkEditView.gui,
-      permissions.bulkEditEdit.gui,
-      permissions.inventoryAll.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
+describe('bulk-edit', () => {
+  describe('logs', () => {
+    describe('in-app approach', () => {
+      before('create test data', () => {
+        cy.createTempUser([
+          permissions.bulkEditLogsView.gui,
+          permissions.bulkEditView.gui,
+          permissions.bulkEditEdit.gui,
+          permissions.inventoryAll.gui,
+        ]).then((userProperties) => {
+          user = userProperties;
 
-      cy.getAdminToken()
-        .then(() => {
-          cy.getInstanceTypes({ limit: 2 }).then((instanceTypes) => {
-            instance.instanceTypeId = instanceTypes[0].id;
-            instance2.instanceTypeId = instanceTypes[1].id;
-          });
-          cy.getHoldingTypes({ limit: 2 }).then((res) => {
-            instance.holdingTypeId = res[0].id;
-            instance2.holdingTypeId = res[1].id;
-          });
-          cy.getLocations({ limit: 1 }).then((res) => {
-            instance.locationId = res.id;
-            instance2.locationId = res.id;
-          });
-          cy.getLoanTypes({ limit: 2 }).then((res) => {
-            instance.loanTypeId = res[0].id;
-            instance2.loanTypeId = res[1].id;
-          });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
-            instance.materialTypeId = res.id;
-            instance2.materialTypeId = res.id;
-          });
-          const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
-          const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation();
-          tempLocation = ServicePoints.getDefaultServicePointWithPickUpLocation();
-          tempLocation2 = ServicePoints.getDefaultServicePointWithPickUpLocation();
-          instance.defaultLocation = Location.getDefaultLocation(servicePoint.id);
-          instance2.defaultLocation = Location.getDefaultLocation(servicePoint2.id);
-          tempLocation = Location.getDefaultLocation(tempLocation.id);
-          tempLocation2 = Location.getDefaultLocation(tempLocation2.id);
-          [
-            instance.defaultLocation,
-            instance2.defaultLocation,
-            tempLocation,
-            tempLocation2,
-          ].forEach((location) => Location.createViaApi(location));
-        })
-        .then(() => {
-          // Creating first instance
-          InventoryInstances.createFolioInstanceViaApi({
-            instance: {
-              instanceTypeId: instance.instanceTypeId,
-              title: instance.title,
-            },
-            holdings: [
-              {
-                holdingsTypeId: instance.holdingTypeId,
-                permanentLocationId: instance.defaultLocation.id,
-                temporaryLocationId: tempLocation.id,
-              },
-            ],
-            items: [
-              {
-                barcode: item.barcode,
-                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                permanentLoanType: { id: instance.loanTypeId },
-                materialType: { id: instance.materialTypeId },
-              },
-            ],
-          })
-            .then((specialInstanceIds) => {
-              instance.id = specialInstanceIds.instanceId;
-            })
-            // Creating second instance
+          cy.getAdminToken()
             .then(() => {
+              cy.getInstanceTypes({ limit: 2 }).then((instanceTypes) => {
+                instance.instanceTypeId = instanceTypes[0].id;
+                instance2.instanceTypeId = instanceTypes[1].id;
+              });
+              cy.getHoldingTypes({ limit: 2 }).then((res) => {
+                instance.holdingTypeId = res[0].id;
+                instance2.holdingTypeId = res[1].id;
+              });
+              cy.getLocations({ limit: 1 }).then((res) => {
+                instance.locationId = res.id;
+                instance2.locationId = res.id;
+              });
+              cy.getLoanTypes({ limit: 2 }).then((res) => {
+                instance.loanTypeId = res[0].id;
+                instance2.loanTypeId = res[1].id;
+              });
+              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                instance.materialTypeId = res.id;
+                instance2.materialTypeId = res.id;
+              });
+              const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
+              const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation();
+              tempLocation = ServicePoints.getDefaultServicePointWithPickUpLocation();
+              tempLocation2 = ServicePoints.getDefaultServicePointWithPickUpLocation();
+              instance.defaultLocation = Location.getDefaultLocation(servicePoint.id);
+              instance2.defaultLocation = Location.getDefaultLocation(servicePoint2.id);
+              tempLocation = Location.getDefaultLocation(tempLocation.id);
+              tempLocation2 = Location.getDefaultLocation(tempLocation2.id);
+              [
+                instance.defaultLocation,
+                instance2.defaultLocation,
+                tempLocation,
+                tempLocation2,
+              ].forEach((location) => Location.createViaApi(location));
+            })
+            .then(() => {
+              // Creating first instance
               InventoryInstances.createFolioInstanceViaApi({
                 instance: {
-                  instanceTypeId: instance2.instanceTypeId,
-                  title: instance2.title,
+                  instanceTypeId: instance.instanceTypeId,
+                  title: instance.title,
                 },
                 holdings: [
                   {
-                    holdingsTypeId: instance2.holdingTypeId,
-                    permanentLocationId: instance2.defaultLocation.id,
-                    temporaryLocationId: tempLocation2.id,
+                    holdingsTypeId: instance.holdingTypeId,
+                    permanentLocationId: instance.defaultLocation.id,
+                    temporaryLocationId: tempLocation.id,
                   },
                 ],
                 items: [
                   {
-                    barcode: item2.barcode,
+                    barcode: item.barcode,
                     status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                    permanentLoanType: { id: instance2.loanTypeId },
-                    materialType: { id: instance2.materialTypeId },
+                    permanentLoanType: { id: instance.loanTypeId },
+                    materialType: { id: instance.materialTypeId },
                   },
                 ],
               })
                 .then((specialInstanceIds) => {
-                  instance2.id = specialInstanceIds.instanceId;
+                  instance.id = specialInstanceIds.instanceId;
                 })
+                // Creating second instance
                 .then(() => {
-                  FileManager.createFile(
-                    `cypress/fixtures/${itemBarcodesFileName}`,
-                    `${item.barcode}\n${item2.barcode}`,
-                  );
+                  InventoryInstances.createFolioInstanceViaApi({
+                    instance: {
+                      instanceTypeId: instance2.instanceTypeId,
+                      title: instance2.title,
+                    },
+                    holdings: [
+                      {
+                        holdingsTypeId: instance2.holdingTypeId,
+                        permanentLocationId: instance2.defaultLocation.id,
+                        temporaryLocationId: tempLocation2.id,
+                      },
+                    ],
+                    items: [
+                      {
+                        barcode: item2.barcode,
+                        status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                        permanentLoanType: { id: instance2.loanTypeId },
+                        materialType: { id: instance2.materialTypeId },
+                      },
+                    ],
+                  })
+                    .then((specialInstanceIds) => {
+                      instance2.id = specialInstanceIds.instanceId;
+                    })
+                    .then(() => {
+                      FileManager.createFile(
+                        `cypress/fixtures/${itemBarcodesFileName}`,
+                        `${item.barcode}\n${item2.barcode}`,
+                      );
+                    });
                 });
             });
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
       });
+
+      after('delete test data', () => {
+        cy.getAdminToken();
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item2.barcode);
+        Users.deleteViaApi(user.userId);
+        FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
+        FileManager.deleteFileFromDownloadsByMask(
+          itemBarcodesFileName,
+          `*${matchedRecordsFileName}`,
+          previewOfProposedChangesFileName,
+          updatedRecordsFileName,
+        );
+      });
+
+      it(
+        'C375300 Verify generated Logs files for Holdings In app -- only valid Item barcodes (firebird)',
+        { tags: ['smoke', 'firebird'] },
+        () => {
+          BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Item barcodes');
+          BulkEditSearchPane.uploadFile(itemBarcodesFileName);
+          BulkEditSearchPane.waitFileUploading();
+
+          BulkEditActions.downloadMatchedResults();
+          BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+            'Instance (Title, Publisher, Publication date)',
+          );
+          BulkEditSearchPane.verifyResultColumTitles(
+            'Instance (Title, Publisher, Publication date)',
+          );
+
+          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.replaceTemporaryLocation(tempLocation.name, 'holdings', 0);
+          BulkEditActions.addNewBulkEditFilterString();
+          BulkEditActions.replacePermanentLocation('Online (E)', 'holdings', 1);
+
+          BulkEditActions.confirmChanges();
+          BulkEditActions.downloadPreview();
+          BulkEditActions.commitChanges();
+          BulkEditSearchPane.waitFileUploading();
+          BulkEditActions.openActions();
+          BulkEditActions.downloadChangedCSV();
+
+          BulkEditSearchPane.openLogsSearch();
+          BulkEditLogs.checkHoldingsCheckbox();
+          BulkEditLogs.clickActionsRunBy(user.username);
+          BulkEditLogs.verifyLogsRowActionWhenCompleted();
+
+          BulkEditLogs.downloadFileUsedToTrigger();
+          BulkEditFiles.verifyCSVFileRows(itemBarcodesFileName, [item.barcode, item2.barcode]);
+
+          BulkEditLogs.downloadFileWithMatchingRecords();
+          BulkEditFiles.verifyMatchedResultFileContent(
+            `*${matchedRecordsFileName}`,
+            [item.barcode, item2.barcode],
+            'holdingsItemBarcode',
+            true,
+          );
+
+          BulkEditLogs.downloadFileWithProposedChanges();
+          BulkEditFiles.verifyMatchedResultFileContent(
+            previewOfProposedChangesFileName,
+            [tempLocation.name, tempLocation.name],
+            'temporaryLocation',
+            true,
+          );
+          BulkEditFiles.verifyMatchedResultFileContent(
+            previewOfProposedChangesFileName,
+            ['Online', 'Online'],
+            'permanentLocation',
+            true,
+          );
+
+          BulkEditLogs.downloadFileWithUpdatedRecords();
+          BulkEditFiles.verifyMatchedResultFileContent(
+            updatedRecordsFileName,
+            [tempLocation.name, tempLocation.name],
+            'temporaryLocation',
+            true,
+          );
+          BulkEditFiles.verifyMatchedResultFileContent(
+            updatedRecordsFileName,
+            ['Online', 'Online'],
+            'permanentLocation',
+            true,
+          );
+
+          // Go to inventory app and verify changes
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.switchToItem();
+          InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
+          ItemRecordView.closeDetailView();
+          InventorySearchAndFilter.selectSearchResultItem();
+          InventorySearchAndFilter.selectViewHoldings();
+          InventoryInstance.verifyHoldingsPermanentLocation('Online');
+          InventoryInstance.verifyHoldingsTemporaryLocation(tempLocation.name);
+          InventoryInstance.closeHoldingsView();
+
+          InventorySearchAndFilter.searchByParameter('Barcode', item2.barcode);
+          ItemRecordView.closeDetailView();
+          InventorySearchAndFilter.selectSearchResultItem();
+          InventorySearchAndFilter.selectViewHoldings();
+          InventoryInstance.verifyHoldingsPermanentLocation('Online');
+          InventoryInstance.verifyHoldingsTemporaryLocation(tempLocation.name);
+        },
+      );
     });
   });
-
-  after('delete test data', () => {
-    cy.getAdminToken();
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item2.barcode);
-    Users.deleteViaApi(user.userId);
-    FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
-    FileManager.deleteFileFromDownloadsByMask(
-      itemBarcodesFileName,
-      `*${matchedRecordsFileName}`,
-      previewOfProposedChangesFileName,
-      updatedRecordsFileName,
-    );
-  });
-
-  it(
-    'C375300 Verify generated Logs files for Holdings In app -- only valid Item barcodes (firebird)',
-    { tags: ['smoke', 'firebird'] },
-    () => {
-      BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Item barcodes');
-      BulkEditSearchPane.uploadFile(itemBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
-
-      BulkEditActions.downloadMatchedResults();
-      BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
-        'Instance (Title, Publisher, Publication date)',
-      );
-      BulkEditSearchPane.verifyResultColumTitles('Instance (Title, Publisher, Publication date)');
-
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.replaceTemporaryLocation(tempLocation.name, 'holdings', 0);
-      BulkEditActions.addNewBulkEditFilterString();
-      BulkEditActions.replacePermanentLocation('Online (E)', 'holdings', 1);
-
-      BulkEditActions.confirmChanges();
-      BulkEditActions.downloadPreview();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.openActions();
-      BulkEditActions.downloadChangedCSV();
-
-      BulkEditSearchPane.openLogsSearch();
-      BulkEditSearchPane.checkHoldingsCheckbox();
-      BulkEditSearchPane.clickActionsRunBy(user.username);
-      BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
-
-      BulkEditSearchPane.downloadFileUsedToTrigger();
-      BulkEditFiles.verifyCSVFileRows(itemBarcodesFileName, [item.barcode, item2.barcode]);
-
-      BulkEditSearchPane.downloadFileWithMatchingRecords();
-      BulkEditFiles.verifyMatchedResultFileContent(
-        `*${matchedRecordsFileName}`,
-        [item.barcode, item2.barcode],
-        'holdingsItemBarcode',
-        true,
-      );
-
-      BulkEditSearchPane.downloadFileWithProposedChanges();
-      BulkEditFiles.verifyMatchedResultFileContent(
-        previewOfProposedChangesFileName,
-        [tempLocation.name, tempLocation.name],
-        'temporaryLocation',
-        true,
-      );
-      BulkEditFiles.verifyMatchedResultFileContent(
-        previewOfProposedChangesFileName,
-        ['Online', 'Online'],
-        'permanentLocation',
-        true,
-      );
-
-      BulkEditSearchPane.downloadFileWithUpdatedRecords();
-      BulkEditFiles.verifyMatchedResultFileContent(
-        updatedRecordsFileName,
-        [tempLocation.name, tempLocation.name],
-        'temporaryLocation',
-        true,
-      );
-      BulkEditFiles.verifyMatchedResultFileContent(
-        updatedRecordsFileName,
-        ['Online', 'Online'],
-        'permanentLocation',
-        true,
-      );
-
-      // Go to inventory app and verify changes
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
-      ItemRecordView.closeDetailView();
-      InventorySearchAndFilter.selectSearchResultItem();
-      InventorySearchAndFilter.selectViewHoldings();
-      InventoryInstance.verifyHoldingsPermanentLocation('Online');
-      InventoryInstance.verifyHoldingsTemporaryLocation(tempLocation.name);
-      InventoryInstance.closeHoldingsView();
-
-      InventorySearchAndFilter.searchByParameter('Barcode', item2.barcode);
-      ItemRecordView.closeDetailView();
-      InventorySearchAndFilter.selectSearchResultItem();
-      InventorySearchAndFilter.selectViewHoldings();
-      InventoryInstance.verifyHoldingsPermanentLocation('Online');
-      InventoryInstance.verifyHoldingsTemporaryLocation(tempLocation.name);
-    },
-  );
 });

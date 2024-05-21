@@ -6,6 +6,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { LOCATION_IDS } from '../../../support/constants';
 
 let user;
 const item = {
@@ -34,8 +35,7 @@ describe('bulk-edit', () => {
         }).then((holdings) => {
           cy.updateHoldingRecord(holdings[0].id, {
             ...holdings[0],
-            // Online
-            temporaryLocationId: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5',
+            temporaryLocationId: LOCATION_IDS.ONLINE,
           });
         });
         cy.login(user.username, user.password, {
