@@ -1,7 +1,4 @@
-import Affiliations from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -13,24 +10,19 @@ describe('Inventory', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.getConsortiaId().then((consortiaId) => {
-        testData.consortiaId = consortiaId;
-      });
-      cy.setTenant(Affiliations.College);
       InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
         testData.instance = instanceData;
-        InventoryInstance.shareInstanceViaApi(
-          testData.instance.instanceId,
-          testData.consortiaId,
-          Affiliations.College,
-          Affiliations.Consortia,
-        );
       });
 
       cy.resetTenant();
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
         (userProperties) => {
           testData.user = userProperties;
+
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         },
       );
     });
@@ -38,29 +30,20 @@ describe('Inventory', () => {
     after('Delete test data', () => {
       cy.resetTenant();
       cy.getAdminToken();
-      cy.setTenant(Affiliations.College);
       InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-      cy.resetTenant();
       Users.deleteViaApi(testData.user.userId);
     });
 
     it(
-      'C404355 (CONSORTIA) Verify the header of a shared Instance on edit page for the Central tenant (consortia) (folijet)',
+      'C404385 (CONSORTIA) Verify the header of a shared Instance on the Central tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-
-        InstanceRecordView.edit();
-        InstanceRecordEdit.waitLoading();
-
-        InstanceRecordEdit.checkInstanceHeader(` Edit shared instance • ${testData.instance.instanceTitle}`);
+        InventoryInstance.checkInstanceHeader(
+          `Shared instance • ${testData.instance.instanceTitle} `,
+        );
       },
     );
   });

@@ -1,8 +1,9 @@
-import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
+import Affiliations from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
+import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 
@@ -30,11 +31,6 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
         (userProperties) => {
           testData.user = userProperties;
-          cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
-          cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(testData.user.userId, [
-            Permissions.uiInventoryViewCreateEditInstances.gui,
-          ]);
         },
       );
     });
@@ -49,23 +45,23 @@ describe('Inventory', () => {
     });
 
     it(
-      'C404384 (CONSORTIA) Verify the header of a shared Instance on the Member tenant (consortia) (folijet)',
+      'C404355 (CONSORTIA) Verify the header of a shared Instance on edit page for the Central tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
-        cy.login(testData.user.username, testData.user.password);
-
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-
-        cy.visit(TopMenu.inventoryPath);
-        InventoryInstances.waitContentLoading();
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
 
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InventoryInstance.checkInstanceHeader(
-          `Shared instance • ${testData.instance.instanceTitle} `,
+
+        InstanceRecordView.edit();
+        InstanceRecordEdit.waitLoading();
+
+        InstanceRecordEdit.checkInstanceHeader(
+          ` Edit shared instance • ${testData.instance.instanceTitle}`,
         );
       },
     );
