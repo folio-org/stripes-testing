@@ -1,6 +1,7 @@
-import { INSTANCE_SOURCE_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -9,7 +10,6 @@ import ConsortiumManager from '../../../../support/fragments/settings/consortium
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import DataImport from '../../../../support/fragments/data_import/dataImport';
 
 describe('Inventory', () => {
   describe('Instance', () => {
