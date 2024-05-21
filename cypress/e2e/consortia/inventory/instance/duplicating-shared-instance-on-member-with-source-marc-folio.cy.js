@@ -13,14 +13,15 @@ import DataImport from '../../../../support/fragments/data_import/dataImport';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    const testData = {
-      newInstanceTitleC410925: `C410925 instanceTitle${getRandomPostfix()}`,
-      newInstanceTitleC410926: `C410926 instanceTitle${getRandomPostfix()}`,
-      source: INSTANCE_SOURCE_NAMES.FOLIO,
-    };
     const marcFile = {
       marc: 'oneMarcBib.mrc',
       marcFileName: `C410926 marcFileName${getRandomPostfix()}.mrc`,
+    };
+    const testData = {
+      newResourceTitleC410925: `C410925 instanceTitle${getRandomPostfix()}`,
+      newResourceTitleC410926: `C410926 instanceTitle${getRandomPostfix()}`,
+      newResourceType: 'notated movement',
+      source: INSTANCE_SOURCE_NAMES.FOLIO,
     };
 
     before('Create test data', () => {
@@ -59,10 +60,23 @@ describe('Inventory', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-      cy.setTenant(Affiliations.College);
       InventoryInstance.deleteInstanceViaApi(testData.instanceC410925.instanceId);
       InventoryInstance.deleteInstanceViaApi(testData.instanceC410926.id);
+      cy.setTenant(Affiliations.College);
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"hrid"=="${testData.instanceC410925Hrid}"`,
+      }).then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"hrid"=="${testData.instanceC410926Hrid}"`,
+      }).then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
     });
 
     it(
@@ -73,11 +87,14 @@ describe('Inventory', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InstanceRecordView.duplicate();
-        InventoryNewInstance.fillResourceTitle(testData.newInstanceTitleC410925);
-        InventoryNewInstance.fillResourceType();
+        InventoryNewInstance.fillResourceTitle(testData.newResourceTitleC410925);
+        InventoryNewInstance.fillResourceType(testData.newResourceType);
         InventoryNewInstance.clickSaveAndCloseButton();
-        InventoryInstance.waitInstanceRecordViewOpened(testData.newInstanceTitleC410925);
+        InventoryInstance.waitInstanceRecordViewOpened(testData.newResourceTitleC410925);
         InventoryInstance.checkInstanceDetails([{ key: 'Source', value: testData.source }]);
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+          testData.instanceC410925Hrid = initialInstanceHrId;
+        });
       },
     );
 
@@ -89,11 +106,14 @@ describe('Inventory', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InstanceRecordView.duplicate();
-        InventoryNewInstance.fillResourceTitle(testData.newInstanceTitleC410926);
-        InventoryNewInstance.fillResourceType();
+        InventoryNewInstance.fillResourceTitle(testData.newResourceTitleC410926);
+        InventoryNewInstance.fillResourceType(testData.newResourceType);
         InventoryNewInstance.clickSaveAndCloseButton();
-        InventoryInstance.waitInstanceRecordViewOpened(testData.newInstanceTitleC410926);
+        InventoryInstance.waitInstanceRecordViewOpened(testData.newResourceTitleC410926);
         InventoryInstance.checkInstanceDetails([{ key: 'Source', value: testData.source }]);
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+          testData.instanceC410926Hrid = initialInstanceHrId;
+        });
       },
     );
   });
