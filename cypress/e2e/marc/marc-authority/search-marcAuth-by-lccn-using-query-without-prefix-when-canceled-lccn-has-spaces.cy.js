@@ -79,7 +79,10 @@ describe('MARC', () => {
       'C440118 Search for "MARC authority" by "LCCN" option using a query without prefix (numbers only) when "Canceled LCCN" (010 $z) has (leading, internal, trailing) spaces". (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        MarcAuthorities.searchByParameter(testData.searchOption, testData.searchQueryWithoutAsteriks);
+        MarcAuthorities.searchByParameter(
+          testData.searchOption,
+          testData.searchQueryWithoutAsteriks,
+        );
         MarcAuthorities.checkAfterSearch(testData.AUTHORIZED, searchResultWithoutAsteriks);
         MarcAuthorities.searchByParameter(testData.searchOption, testData.searchQueryWithAsteriks);
         searchResultsWithAsteriks.forEach((result) => {

@@ -203,40 +203,44 @@ describe('MARC', () => {
         },
       );
 
-      it('C345388 Derive a MARC bib record (spitfire)', { tags: ['smokeBroken', 'spitfire'] }, () => {
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventorySearchAndFilter.waitLoading,
-        });
-        InventoryActions.import();
-        InventoryInstance.getId().then((id) => {
-          testData.instanceID = id;
-        });
-
-        InventoryInstance.getAssignedHRID().then((instanceHRID) => {
-          InventoryInstance.deriveNewMarcBib();
-          const expectedCreatedValue = QuickMarcEditor.addNewField();
-
-          QuickMarcEditor.deletePenaltField().then((deletedTag) => {
-            const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
-
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.deleteConfirmationPresented();
-            QuickMarcEditor.confirmDelete();
-
-            InventoryInstance.checkUpdatedHRID(instanceHRID);
-            InventoryInstance.checkExpectedMARCSource();
-            InventoryInstance.checkPresentedText(expectedUpdatedValue);
-
-            // Wait for the content to be loaded.
-            cy.wait(4000);
-            InventoryInstance.viewSource();
-            InventoryViewSource.contains(expectedCreatedValue);
-            InventoryViewSource.contains(expectedUpdatedValue);
-            InventoryViewSource.notContains(deletedTag);
+      it(
+        'C345388 Derive a MARC bib record (spitfire)',
+        { tags: ['smokeBroken', 'spitfire'] },
+        () => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventorySearchAndFilter.waitLoading,
           });
-        });
-      });
+          InventoryActions.import();
+          InventoryInstance.getId().then((id) => {
+            testData.instanceID = id;
+          });
+
+          InventoryInstance.getAssignedHRID().then((instanceHRID) => {
+            InventoryInstance.deriveNewMarcBib();
+            const expectedCreatedValue = QuickMarcEditor.addNewField();
+
+            QuickMarcEditor.deletePenaltField().then((deletedTag) => {
+              const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
+
+              QuickMarcEditor.pressSaveAndClose();
+              QuickMarcEditor.deleteConfirmationPresented();
+              QuickMarcEditor.confirmDelete();
+
+              InventoryInstance.checkUpdatedHRID(instanceHRID);
+              InventoryInstance.checkExpectedMARCSource();
+              InventoryInstance.checkPresentedText(expectedUpdatedValue);
+
+              // Wait for the content to be loaded.
+              cy.wait(4000);
+              InventoryInstance.viewSource();
+              InventoryViewSource.contains(expectedCreatedValue);
+              InventoryViewSource.contains(expectedUpdatedValue);
+              InventoryViewSource.notContains(deletedTag);
+            });
+          });
+        },
+      );
     });
   });
 });
