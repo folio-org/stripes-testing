@@ -737,5 +737,5 @@ export const AUTHORITY_FILE_TEXT_FIELD_NAMES = {
   NAME: 'Name',
   PREFIX: 'Prefix',
   HRID_STARTS_WITH: 'HRID starts with',
-  BASE_URL: 'Base url',
+  BASE_URL: 'Base URL',
 };

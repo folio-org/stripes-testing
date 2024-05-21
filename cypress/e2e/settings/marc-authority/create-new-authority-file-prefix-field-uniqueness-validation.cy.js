@@ -80,6 +80,7 @@ describe('MARC', () => {
             ManageAuthorityFiles.checkSaveButtonEnabled();
             ManageAuthorityFiles.clickSaveButton();
             ManageAuthorityFiles.checkErrorInField(
+              authorityFileUnuniquePrefix.name,
               AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX,
               errorPrefixUnique,
             );
