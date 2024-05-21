@@ -66,7 +66,7 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InstanceRecordView.verifyInstanceSource('MARC');
+        InstanceRecordView.verifyInstanceSource(testData.instanceSource);
         InstanceRecordView.viewSource();
         InstanceRecordView.verifySrsMarcRecord();
         InventoryViewSource.contains('Shared MARC bibliographic record');
