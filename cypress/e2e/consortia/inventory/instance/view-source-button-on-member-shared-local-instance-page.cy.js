@@ -9,6 +9,7 @@ import ConsortiumManager from '../../../../support/fragments/settings/consortium
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -47,6 +48,7 @@ describe('Inventory', () => {
         });
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
       });
     });
 
@@ -64,8 +66,10 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
+        InstanceRecordView.verifyInstanceSource('MARC');
         InstanceRecordView.viewSource();
         InstanceRecordView.verifySrsMarcRecord();
+        InventoryViewSource.contains('Shared MARC bibliographic record');
       },
     );
   });
