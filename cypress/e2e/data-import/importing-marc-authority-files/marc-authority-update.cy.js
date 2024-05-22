@@ -230,7 +230,7 @@ describe('Data Import', () => {
         InventoryInstance.verifyRecordStatus('Automated linking update');
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          60,
+          59,
           '700',
           '0',
           '\\',
