@@ -15,6 +15,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import Budgets from '../../support/fragments/finance/budgets/budgets';
 
 describe('ui-orders: Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -35,7 +36,14 @@ describe('ui-orders: Orders', () => {
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
-  const allocatedQuantity = '1000';
+  const firstBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 1000,
+  };
+  const secondBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 1000,
+  };
   let user;
   let orderNumber;
   let servicePointId;
@@ -47,6 +55,8 @@ describe('ui-orders: Orders', () => {
     FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
       defaultFiscalYear.id = response.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+      firstBudget.fiscalYearId = response.id;
+      secondBudget.fiscalYearId = response.id;
 
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
@@ -56,19 +66,15 @@ describe('ui-orders: Orders', () => {
         Funds.createViaApi(firstFund).then((fundResponse) => {
           firstFund.id = fundResponse.fund.id;
 
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(firstFund.name);
-          Funds.selectFund(firstFund.name);
-          Funds.addBudget(allocatedQuantity);
+          firstBudget.fundId = fundResponse.fund.id;
+          Budgets.createViaApi(firstBudget);
         });
 
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
 
-          cy.visit(TopMenu.fundPath);
-          FinanceHelp.searchByName(secondFund.name);
-          Funds.selectFund(secondFund.name);
-          Funds.addBudget(allocatedQuantity);
+          secondBudget.fundId = secondFundResponse.fund.id;
+          Budgets.createViaApi(secondBudget);
         });
       });
     });
@@ -86,7 +92,7 @@ describe('ui-orders: Orders', () => {
       defaultOrder.vendor = organization.name;
     });
     defaultOrder.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
+    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.createApprovedOrderForRollover(defaultOrder, true, false).then((orderResponse) => {
       defaultOrder.id = orderResponse.id;
       orderNumber = orderResponse.poNumber;
