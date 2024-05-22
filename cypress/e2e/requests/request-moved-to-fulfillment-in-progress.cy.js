@@ -15,7 +15,6 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
