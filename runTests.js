@@ -1,3 +1,4 @@
+/* eslint-disable spaced-comment */
 /* eslint-disable no-useless-concat */
 /* eslint-disable no-console */
 
@@ -212,23 +213,27 @@ function integrateReportPortal() {
 
 async function startTests() {
   // Set number of threads
-  process.env.threads = 5;
-  // Set tags 'tag1', 'tag1+tag2', for more patterns please refer to the https://www.npmjs.com/package/@cypress/grep
-  process.env.grepTags = 't123';
-  // Set to delete allure report folder before run
-  process.env.deleteAllureReportFolder = true;
-  // Set to integrate results to the TestRail (update config below)
-  process.env.integrateTestRail = false;
-  // Set to integrate results to the ReportPortal (update config below)
-  process.env.integrateReportPortal = false;
-  // Set to use chunks
-  process.env.useChunks = false;
-  // Set docker image name
-  process.env.dockerImage = 'test123';
+  //process.env.threads = 5;
 
+  // Set tags 'tag1', 'tag1+tag2', for more patterns please refer to the https://www.npmjs.com/package/@cypress/grep
+  //process.env.grepTags = 't123';
   cypressGrepConfig.env.grepTags = process.env.grepTags;
 
-  // eslint-disable-next-line spaced-comment
+  // Set to delete allure report folder before run
+  process.env.deleteAllureReportFolder = false;
+
+  // Set to integrate results to the TestRail (update config below)
+  process.env.integrateTestRail = false;
+
+  // Set to integrate results to the ReportPortal (update config below)
+  process.env.integrateReportPortal = false;
+
+  // Set to use chunks
+  process.env.useChunks = false;
+
+  // Set docker image name
+  //process.env.dockerImage = 'test123';
+
   //process.env.CI_BUILD_ID = 'rt03';
 
   integrateTestRail();
