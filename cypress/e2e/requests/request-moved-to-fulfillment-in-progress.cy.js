@@ -38,11 +38,7 @@ describe('Title Level Request', () => {
     cy.getAdminToken();
     ServicePoints.createViaApi(testData.servicePoint);
     ServicePoints.createViaApi(testData.servicePoint2);
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
-    TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+    TitleLevelRequests.enableTLRViaApi();
     testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
     Location.createViaApi(testData.defaultLocation).then((location) => {
       InventoryInstances.createFolioInstancesViaApi({
@@ -110,10 +106,10 @@ describe('Title Level Request', () => {
     'C350425 Check that request goes to "Fulfillment in progress" if the items status has changed to "In progress" (vega) (TaaS)',
     { tags: ['criticalPath', 'vega'] },
     () => {
-      SwitchServicePoint.switchServicePoint(testData.servicePoint2.name);
-      SwitchServicePoint.checkIsServicePointSwitched(testData.servicePoint2.name);
       cy.visit(TopMenu.checkInPath);
       CheckInActions.waitLoading();
+      SwitchServicePoint.switchServicePoint(testData.servicePoint2.name);
+      SwitchServicePoint.checkIsServicePointSwitched(testData.servicePoint2.name);
       CheckInActions.checkInItem(testData.folioInstances[0].barcodes[0]);
       InTransit.verifyModalTitle();
       InTransit.unselectCheckboxPrintSlip();

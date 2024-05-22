@@ -56,7 +56,7 @@ const availableOptions = {
 export default {
   waitLoading: (type = 'staff') => {
     cy.expect([
-      Pane({ id: 'instance-details', title: 'Request Detail' }).exists(),
+      Pane({ id: 'instance-details', title: 'Request details' }).exists(),
       requestDetailsSection.find(titleInformationSection).exists(),
       requestDetailsSection.find(itemInformationSection).exists(),
       requestDetailsSection.find(requestInfoSection).exists(),
