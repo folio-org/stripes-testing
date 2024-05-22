@@ -10,7 +10,7 @@ const startTime = new Date().getTime();
 
 const cypressGrepConfig = {
   env: {
-    grepTags: 't1',
+    grepTags: 'tag',
     grepFilterSpecs: true,
     grepOmitFiltered: true,
   },
@@ -24,12 +24,14 @@ function removeRootPath(path) {
 
 function parseTests(useChunks = false) {
   // eslint-disable-next-line global-require
-  const filteredTests = require('@cypress/grep/src/plugin')(cypressGrepConfig).specPattern;
+  let filteredTests = require('@cypress/grep/src/plugin')(cypressGrepConfig).specPattern;
 
   if (filteredTests === 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}') {
     const message = 'No tests found for tags: ' + process.env.grepTags;
     throw new Error(message);
   }
+
+  filteredTests = filteredTests.map((filteredTest) => removeRootPath(filteredTest));
 
   console.log('Config:');
   console.log(cypressGrepConfig);
@@ -62,13 +64,11 @@ function parseTests(useChunks = false) {
     console.log('Number of tests in one chunk: ' + perChunk);
   }
 
-  const testGroups = filteredTests
-    .map((filteredTest) => removeRootPath(filteredTest))
-    .reduce((all, one, i) => {
-      const ch = Math.floor(i / perChunk);
-      all[ch] = [].concat(all[ch] || [], one);
-      return all;
-    }, []);
+  const testGroups = filteredTests.reduce((all, one, i) => {
+    const ch = Math.floor(i / perChunk);
+    all[ch] = [].concat(all[ch] || [], one);
+    return all;
+  }, []);
 
   const parsedTests = testGroups.map((testGroup) => {
     return testGroup.join(',');
@@ -84,24 +84,31 @@ function execTest(test) {
   // eslint-disable-next-line global-require
   const exec = require('child_process').exec;
 
-  const cp = exec(
-    `npx cypress run --browser chrome --headed --spec "${test}"`,
-    (err, stdout, stderr) => {
-      if (err) {
-        console.log('Error: ' + test);
-        console.log(err);
-        failedTests.push({
-          name: test,
-          code: err.code,
-        });
-        return;
-      }
+  let cmd = `npx cypress run --browser chrome --headed --spec "${test}"`;
 
-      // the *entire* stdout and stderr (buffered)
-      console.log(`stdout: ${stdout}`);
-      console.log(`stderr: ${stderr}`);
-    },
-  );
+  if (process.env.dockerImage) {
+    cmd = `docker run -i --rm -v ´$pwd´:/e2e -w /e2e ${process.env.dockerImage} cypress run --browser chrome --spec "${test}"`;
+
+    if (process.platform === 'win32') {
+      cmd = cmd.replace('´$pwd´', '"%cd%"');
+    }
+  }
+
+  const cp = exec(cmd, (err, stdout, stderr) => {
+    if (err) {
+      console.log('Error: ' + test);
+      console.log(err);
+      failedTests.push({
+        name: test,
+        code: err.code,
+      });
+      return;
+    }
+
+    // the *entire* stdout and stderr (buffered)
+    console.log(`stdout: ${stdout}`);
+    console.log(`stderr: ${stderr}`);
+  });
   procArray.set(cp.pid, cp.pid);
   cp.on('exit', () => {
     completedTests.push(test);
@@ -111,7 +118,7 @@ function execTest(test) {
 
 function wait(testName) {
   if (procArray.size >= Number(process.env.threads)) {
-    setTimeout(wait, 10000, testName);
+    setTimeout(wait, 30000, testName);
   } else {
     execTest(testName);
   }
@@ -134,31 +141,33 @@ function runTask() {
 }
 
 function waitForEnd() {
+  const date = new Date(0);
+  date.setSeconds(Math.trunc((new Date().getTime() - startTime) / 1000));
+  const logStats =
+    'All tests: ' +
+    totalNumberOfAllTests +
+    '\t' +
+    'Completed tests: ' +
+    completedTests.length +
+    ' (' +
+    ((completedTests.length / totalNumberOfAllTests) * 100).toFixed(2) +
+    ' %)' +
+    '\t' +
+    'Failed tests: ' +
+    failedTests.length +
+    ' (' +
+    ((failedTests.length / totalNumberOfAllTests) * 100).toFixed(2) +
+    ' %)' +
+    '\t' +
+    'Total run time: ' +
+    date.toISOString().substring(11, 19);
   if (procArray.size > 0 || tests.length > 0) {
-    console.log(
-      'All tests: ' +
-        totalNumberOfAllTests +
-        '\t' +
-        'Completed tests: ' +
-        completedTests.length +
-        ' (' +
-        Math.trunc((completedTests.length / totalNumberOfAllTests) * 100) +
-        ' %)' +
-        '\t' +
-        'Failed tests: ' +
-        failedTests.length +
-        ' (' +
-        Math.trunc((failedTests.length / totalNumberOfAllTests) * 100) +
-        ' %)' +
-        '\t' +
-        'Total run time: ' +
-        Math.trunc((new Date().getTime() - startTime) / 1000) +
-        ' sec',
-    );
-    setTimeout(waitForEnd, 30000);
+    console.log(logStats);
+    setTimeout(waitForEnd, 60000);
   } else {
     console.log(new Date().toLocaleString());
-    console.log('Done all tests');
+    console.log('All tests completed!');
+    console.log(logStats);
     console.log('Failed tests:');
     console.log(failedTests);
   }
@@ -177,7 +186,7 @@ function deleteAllureReportFolder() {
   }
 }
 
-async function integrateTestRail() {
+function integrateTestRail() {
   if (process.env.integrateTestRail === 'true') {
     process.env.TESTRAIL_HOST = 'https://foliotest.testrail.io';
     process.env.TESTRAIL_USERNAME = 'SpecialEBS-FOLKaratetestsfailure@epam.com';
@@ -187,29 +196,48 @@ async function integrateTestRail() {
   }
 }
 
+function integrateReportPortal() {
+  if (process.env.integrateReportPortal === 'true') {
+    process.env.reporter = '@reportportal/agent-js-cypress';
+    process.env.reporterOptions.endpoint = 'https://poc-report-portal.ci.folio.org/api/v1';
+    process.env.reporterOptions.apiKey =
+      'karate_YTzxxZQCTouIhffBDFYf9VFjLPdLn5sSumAN9Fs7SB64EIu3wrPFgbXHPc1OGs0Q';
+    process.env.reporterOptions.launch = 'runNightlyCypressTests';
+    process.env.reporterOptions.project = 'cypress-nightly';
+    process.env.reporterOptions.description = 'CYPRESS scheduled tests';
+    process.env.reporterOptions.autoMerge = true;
+    process.env.reporterOptions.parallel = true;
+    process.env.reporterOptions.attributes = [{ key: 'build', value: '1' }];
+  }
+}
+
 async function startTests() {
   // Set number of threads
-  process.env.threads = 2;
+  process.env.threads = 5;
   // Set tags 'tag1', 'tag1+tag2', for more patterns please refer to the https://www.npmjs.com/package/@cypress/grep
-  process.env.grepTags = 't1';
+  process.env.grepTags = 't123';
   // Set to delete allure report folder before run
   process.env.deleteAllureReportFolder = true;
   // Set to integrate results to the TestRail (update config below)
   process.env.integrateTestRail = false;
+  // Set to integrate results to the ReportPortal (update config below)
+  process.env.integrateReportPortal = false;
   // Set to use chunks
   process.env.useChunks = false;
+  // Set docker image name
+  process.env.dockerImage = 'test123';
 
   cypressGrepConfig.env.grepTags = process.env.grepTags;
 
   // eslint-disable-next-line spaced-comment
   //process.env.CI_BUILD_ID = 'rt03';
 
-  console.log(new Date().toLocaleString());
   integrateTestRail();
+  integrateReportPortal();
   deleteAllureReportFolder();
 
   runTask();
-  setTimeout(waitForEnd, 10000);
+  setTimeout(waitForEnd, 60000);
 }
 
 startTests();
