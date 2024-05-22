@@ -146,7 +146,7 @@ describe('MARC', () => {
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.checkPaneheaderContains(`Source: ${testData.autoUpdateUserName}`);
           QuickMarcEditor.verifyTagFieldAfterLinking(
-            52,
+            51,
             '655',
             '\\',
             '7',
