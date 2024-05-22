@@ -188,9 +188,9 @@ function deleteAllureReportFolder() {
 
 function integrateTestRail() {
   if (process.env.integrateTestRail === 'true') {
-    process.env.TESTRAIL_HOST = 'https://foliotest.testrail.io';
-    process.env.TESTRAIL_USERNAME = 'SpecialEBS-FOLKaratetestsfailure@epam.com';
-    process.env.TESTRAIL_PASSWORD = 'Folio-lsp11';
+    process.env.TESTRAIL_HOST = 'XXXXXXXXXX';
+    process.env.TESTRAIL_USERNAME = 'XXXXXXXXXX';
+    process.env.TESTRAIL_PASSWORD = 'XXXXXXXXXX';
     process.env.TESTRAIL_PROJECTID = 14;
     process.env.TESTRAIL_RUN_ID = 2108;
   }
@@ -199,9 +199,8 @@ function integrateTestRail() {
 function integrateReportPortal() {
   if (process.env.integrateReportPortal === 'true') {
     process.env.reporter = '@reportportal/agent-js-cypress';
-    process.env.reporterOptions.endpoint = 'https://poc-report-portal.ci.folio.org/api/v1';
-    process.env.reporterOptions.apiKey =
-      'karate_YTzxxZQCTouIhffBDFYf9VFjLPdLn5sSumAN9Fs7SB64EIu3wrPFgbXHPc1OGs0Q';
+    process.env.reporterOptions.endpoint = 'XXXXXXXXXX';
+    process.env.reporterOptions.apiKey = 'XXXXXXXXXX';
     process.env.reporterOptions.launch = 'runNightlyCypressTests';
     process.env.reporterOptions.project = 'cypress-nightly';
     process.env.reporterOptions.description = 'CYPRESS scheduled tests';
