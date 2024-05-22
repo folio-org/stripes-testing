@@ -211,6 +211,7 @@ export default {
       method: 'DELETE',
       path: `lists/${id}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
 

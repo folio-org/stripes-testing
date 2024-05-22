@@ -51,14 +51,16 @@ export default {
     });
   },
   startDeclareLost() {
+    cy.wait(500);
     cy.do(DeclareLostButton.click());
   },
   finishDeclareLost(additionalInformation) {
+    cy.wait(500);
     cy.do([
       DeclareLostModal.find(TextArea('Additional information*')).fillIn(additionalInformation),
       DeclareLostModal.find(Button('Confirm')).click(),
     ]);
-
+    cy.wait(500);
     this.checkDeclareLostModalAbsent();
   },
   checkDeclareLostModalAbsent() {
@@ -264,11 +266,15 @@ export default {
   },
   payFeeFine(amount, paymentMethod) {
     FeeFinesDetails.openActions();
+    cy.wait(500);
     FeeFinesDetails.openPayModal();
+    cy.wait(500);
     PayFeeFaine.checkAmount(amount);
+    cy.wait(500);
     PayFeeFaine.setPaymentMethod(paymentMethod);
     PayFeeFaine.setAmount(amount);
     PayFeeFaine.checkRestOfPay(amount);
+    cy.wait(500);
     PayFeeFaine.submitAndConfirm();
   },
 };

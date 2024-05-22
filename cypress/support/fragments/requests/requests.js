@@ -33,7 +33,7 @@ import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 import Helper from '../finance/financeHelper';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
-const requestDetailsSection = Pane({ title: 'Request Detail' });
+const requestDetailsSection = Pane({ title: 'Request details' });
 const appsButton = Button({ id: 'app-list-dropdown-toggle' });
 const requestsPane = Pane({ title: 'Requests' });
 const requestQueuePane = Pane({ id: 'request-queue' });
