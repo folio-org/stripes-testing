@@ -23,7 +23,7 @@ import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Title Level Request. Request Detail', () => {
+describe('Title Level Request. Request detail', () => {
   let userData = {};
   let userForTLR = {};
   const requestIds = [];

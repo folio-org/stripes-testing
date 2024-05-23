@@ -10,6 +10,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { ITEM_NOTES } from '../../../support/constants';
 
 let user;
 const notes = {
@@ -51,12 +52,12 @@ describe('bulk-edit', () => {
 
             itemData.notes = [
               {
-                itemNoteTypeId: '0e40884c-3523-4c6d-8187-d578e3d2794e',
+                itemNoteTypeId: ITEM_NOTES.ACTION_NOTE,
                 note: notes.actionOne,
                 staffOnly: true,
               },
               {
-                itemNoteTypeId: '0e40884c-3523-4c6d-8187-d578e3d2794e',
+                itemNoteTypeId: ITEM_NOTES.ACTION_NOTE,
                 note: notes.actionTwo,
                 staffOnly: false,
               },
