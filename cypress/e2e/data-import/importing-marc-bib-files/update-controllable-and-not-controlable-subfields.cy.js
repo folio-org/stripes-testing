@@ -221,28 +221,28 @@ describe('Data Import', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          33,
+          32,
           '100',
           '1',
           '\\',
           '$a C385671 Coates, T, $e narrator $0 id.loc.gov/authorities/names/n2008001084',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          75,
+          74,
           '700',
           '1',
           '\\',
           '$a Chin, Staceyann, $e letterer. $0 test123',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          76,
+          75,
           '700',
           '1',
           '\\',
           '$a Lee, Steve, $d 1922-2018, $e narrator $0 id.loc.gov/authorities/names/n2008001084',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          77,
+          76,
           '700',
           '1',
           '\\',

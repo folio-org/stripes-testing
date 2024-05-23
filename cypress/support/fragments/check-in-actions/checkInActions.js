@@ -186,7 +186,7 @@ export default {
 
   openRequestDetails: (itemBarcode) => {
     cy.do([availableActionsButton.click(), requestDetailsButton.click()]);
-    cy.expect(Pane(including('Request Detail')).exists());
+    cy.expect(Pane(including('Request details')).exists());
     cy.expect(HTML(including(itemBarcode)).exists());
   },
 

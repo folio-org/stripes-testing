@@ -4,6 +4,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
 import DateTools from '../../../support/utils/dateTools';
 import ManageAuthorityFiles from '../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
+import { AUTHORITY_FILE_TEXT_FIELD_NAMES } from '../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -69,18 +70,23 @@ describe('MARC', () => {
 
           // 2 Click on the "Edit" (pencil) icon of "Local" authority file
           ManageAuthorityFiles.clickEditButton(localAuthFile.name);
-          ManageAuthorityFiles.checkRowEditableAfterClickEditButton(
+          ManageAuthorityFiles.checkRowEditableInEditMode(
             localAuthFile.name,
             localAuthFile.prefix,
             localAuthFile.startWithNumber,
             localAuthFile.baseUrl,
+            localAuthFile.isActive,
             localAuthFile.source,
             localAuthFile.createdByAdmin,
           );
           ManageAuthorityFiles.checkNewButtonEnabled(false);
 
           // 3 Update value in editable "Prefix" field with unique valid value, ex.: "Prefix" = "test"
-          ManageAuthorityFiles.editField(localAuthFile.name, 'Prefix', localAuthFile.newPrefix);
+          ManageAuthorityFiles.editField(
+            localAuthFile.name,
+            AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX,
+            localAuthFile.newPrefix,
+          );
 
           // 4 Click on the "Save" button
           ManageAuthorityFiles.clickSaveButtonAfterEditingFile(localAuthFile.name);

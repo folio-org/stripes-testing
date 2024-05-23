@@ -6,6 +6,7 @@ import BulkEditSearchPane, {
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let firstUser;
 let secondUser;
@@ -61,11 +62,11 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
         BulkEditSearchPane.verifyPanesBeforeImport();
         BulkEditSearchPane.openLogsSearch();
-        BulkEditSearchPane.verifyLogsPane();
-        BulkEditSearchPane.checkHoldingsCheckbox();
-        BulkEditSearchPane.checkUsersCheckbox();
-        BulkEditSearchPane.checkItemsCheckbox();
-        BulkEditSearchPane.logActionsIsAbsent();
+        BulkEditLogs.verifyLogsPane();
+        BulkEditLogs.checkHoldingsCheckbox();
+        BulkEditLogs.checkUsersCheckbox();
+        BulkEditLogs.checkItemsCheckbox();
+        BulkEditLogs.logActionsIsAbsent();
 
         cy.login(secondUser.username, secondUser.password, {
           path: TopMenu.bulkEditPath,
@@ -98,7 +99,7 @@ describe('bulk-edit', () => {
         });
 
         BulkEditSearchPane.openLogsSearch();
-        BulkEditSearchPane.verifyLogsPane();
+        BulkEditLogs.verifyLogsPane();
       },
     );
   });

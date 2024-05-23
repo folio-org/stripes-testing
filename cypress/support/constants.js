@@ -245,6 +245,12 @@ export const LOCATION_NAMES = {
   MAIN_LIBRARY_UI: 'Main Library',
 };
 
+export const LOCATION_IDS = {
+  ANNEX: '53cf956f-c1df-410b-8bea-27f712cca7c0',
+  ONLINE: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5',
+  POPULAR_READING_COLLECTION: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+};
+
 export const INSTANCE_STATUS_TERM_NAMES = {
   BATCH_LOADED: 'Batch Loaded',
   CATALOGED: 'Cataloged',
@@ -731,5 +737,5 @@ export const AUTHORITY_FILE_TEXT_FIELD_NAMES = {
   NAME: 'Name',
   PREFIX: 'Prefix',
   HRID_STARTS_WITH: 'HRID starts with',
-  BASE_URL: 'Base url',
+  BASE_URL: 'Base URL',
 };
