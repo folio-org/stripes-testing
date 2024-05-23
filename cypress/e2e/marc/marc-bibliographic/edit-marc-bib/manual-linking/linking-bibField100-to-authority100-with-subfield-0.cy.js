@@ -110,7 +110,7 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
             QuickMarcEditor.verifyTagFieldAfterLinking(
-              33,
+              32,
               '100',
               '1',
               '\\',

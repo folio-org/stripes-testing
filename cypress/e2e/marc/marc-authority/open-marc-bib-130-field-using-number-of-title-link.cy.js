@@ -16,7 +16,7 @@ describe('MARC', () => {
     const testData = {
       tag: '130',
       marcValue: 'Bible. Polish. Biblia Płocka 1992',
-      rowIndex: 17,
+      rowIndex: 16,
       searchOption: 'Uniform title',
       instanceTitle: 'Prayer Bible : English Standard Version.',
     };

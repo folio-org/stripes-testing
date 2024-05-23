@@ -95,7 +95,7 @@ export default {
   },
 
   saveRequestAndClose: () => cy.do(saveAndCloseButton.click()),
-  waitLoading: () => cy.expect(Pane({ title: 'Request Detail' }).exists()),
+  waitLoading: () => cy.expect(Pane({ title: 'Request details' }).exists()),
 
   createNewRequest(newRequest) {
     openNewRequestPane();
