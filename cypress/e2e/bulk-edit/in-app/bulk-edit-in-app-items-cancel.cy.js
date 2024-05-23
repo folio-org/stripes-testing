@@ -10,6 +10,8 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
+import { LOCATION_IDS } from '../../../support/constants';
+import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 const invalidItemUUID = getRandomPostfix();
@@ -39,10 +41,8 @@ describe('bulk-edit', () => {
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
           (res) => {
             item.itemId = res.id;
-            // Online
-            res.permanentLocation = { id: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5' };
-            // Online
-            res.temporaryLocation = { id: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5' };
+            res.permanentLocation = { id: LOCATION_IDS.ONLINE };
+            res.temporaryLocation = { id: LOCATION_IDS.ONLINE };
             cy.updateItemViaApi(res);
             FileManager.createFile(
               `cypress/fixtures/${itemUUIDsFileName}`,
@@ -109,7 +109,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.itemId);
 
         BulkEditSearchPane.openLogsSearch();
-        BulkEditSearchPane.verifyLogsPane();
+        BulkEditLogs.verifyLogsPane();
         BulkEditSearchPane.openIdentifierSearch();
         BulkEditSearchPane.verifyMatchedResults(item.itemId);
 

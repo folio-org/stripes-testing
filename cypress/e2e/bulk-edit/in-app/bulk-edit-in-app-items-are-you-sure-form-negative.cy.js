@@ -7,6 +7,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { LOCATION_IDS } from '../../../support/constants';
 
 let user;
 const barcode = `barcode-${getRandomPostfix()}`;
@@ -14,8 +15,8 @@ const item = {
   instanceName: `instanceName-${getRandomPostfix()}`,
   firstBarcode: barcode,
   secondBarcode: `secondBarcode_${barcode}`,
-  annexId: '53cf956f-c1df-410b-8bea-27f712cca7c0',
-  popularId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+  annexId: LOCATION_IDS.ANNEX,
+  popularId: LOCATION_IDS.POPULAR_READING_COLLECTION,
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 

@@ -188,23 +188,40 @@ export default {
     }
   },
 
-  checkErrorInField(fieldName, errorMessage) {
-    switch (fieldName) {
-      case AUTHORITY_FILE_TEXT_FIELD_NAMES.NAME:
-        cy.expect(nameTextField.has({ error: errorMessage, errorTextRed: true }));
-        break;
-      case AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX:
-        cy.expect(prefixTextField.has({ error: errorMessage, errorTextRed: true }));
-        break;
-      case AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH:
-        cy.expect([hridStartsWithTextField.has({ error: errorMessage, errorTextRed: true })]);
-        break;
-      case AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL:
-        cy.expect(baseUrlTextField.has({ error: errorMessage, errorTextRed: true }));
-        break;
-      default:
-        break;
-    }
+  checkErrorInField(authorityFileName, fieldName, errorMessage) {
+    cy.do(
+      TextField({ value: authorityFileName }).perform((element) => {
+        const rowNumber = element.closest('[data-row-index]').getAttribute('data-row-index');
+        const targetRow = manageAuthorityFilesPane.find(getEditableListRow(rowNumber));
+
+        switch (fieldName) {
+          case AUTHORITY_FILE_TEXT_FIELD_NAMES.NAME:
+            cy.expect(
+              targetRow.find(nameTextField).has({ error: errorMessage, errorTextRed: true }),
+            );
+            break;
+          case AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX:
+            cy.expect(
+              targetRow.find(prefixTextField).has({ error: errorMessage, errorTextRed: true }),
+            );
+            break;
+          case AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH:
+            cy.expect(
+              targetRow
+                .find(hridStartsWithTextField)
+                .has({ error: errorMessage, errorTextRed: true }),
+            );
+            break;
+          case AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL:
+            cy.expect(
+              targetRow.find(baseUrlTextField).has({ error: errorMessage, errorTextRed: true }),
+            );
+            break;
+          default:
+            break;
+        }
+      }),
+    );
   },
 
   checkManageAuthorityFilesPaneExists(isExist = true) {
@@ -256,6 +273,7 @@ export default {
     prefix,
     hridStartsWith,
     baseUrl,
+    isActive,
     source,
     createdByUser,
     isCancelButtonDisabled = false,
@@ -272,7 +290,7 @@ export default {
           targetRow.find(hridStartsWithTextField).has({ value: hridStartsWith, disabled: false }),
         );
         cy.expect(targetRow.find(baseUrlTextField).has({ value: baseUrl, disabled: false }));
-        cy.expect(targetRow.find(activeCheckbox).has({ disabled: false }));
+        cy.expect(targetRow.find(activeCheckbox).has({ checked: isActive, disabled: false }));
         cy.expect(targetRow.find(sourceCell).has({ content: source }));
         cy.expect(targetRow.find(MultiColumnListCell(including(createdByUser))).exists());
         cy.expect(targetRow.find(cancelButton).has({ disabled: isCancelButtonDisabled }));

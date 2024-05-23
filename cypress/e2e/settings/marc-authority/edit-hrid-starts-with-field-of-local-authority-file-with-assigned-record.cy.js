@@ -10,6 +10,7 @@ import ManageAuthorityFiles from '../../../support/fragments/settings/marc-autho
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import { AUTHORITY_FILE_TEXT_FIELD_NAMES } from '../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -94,6 +95,7 @@ describe('MARC', () => {
             localAuthFile.prefix,
             localAuthFile.hridStartsWith,
             localAuthFile.baseUrl,
+            localAuthFile.isActive,
             localAuthFile.source,
             localAuthFile.createdByAdmin,
           );
@@ -102,7 +104,7 @@ describe('MARC', () => {
           // 3 Update value in editable "HRID starts with" field with unique valid value, ex.: "HRID starts with" = "110"
           ManageAuthorityFiles.editField(
             localAuthFile.name,
-            'HRID starts with',
+            AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH,
             localAuthFile.newHridStartsWith,
           );
 
@@ -114,6 +116,7 @@ describe('MARC', () => {
             localAuthFile.prefix,
             localAuthFile.newHridStartsWith,
             localAuthFile.baseUrl,
+            localAuthFile.isActive,
             localAuthFile.source,
             localAuthFile.createdByAdmin,
             false,

@@ -70,7 +70,9 @@ describe('Inventory', () => {
         InstanceRecordView.edit();
         InstanceRecordEdit.waitLoading();
 
-        InstanceRecordEdit.checkInstanceHeader(` Edit shared instance • ${testData.instance.instanceTitle}`);
+        InstanceRecordEdit.checkInstanceHeader(
+          ` Edit shared instance • ${testData.instance.instanceTitle}`,
+        );
       },
     );
   });

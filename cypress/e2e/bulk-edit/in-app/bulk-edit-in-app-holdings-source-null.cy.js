@@ -9,6 +9,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { LOCATION_IDS } from '../../../support/constants';
 
 let user;
 const holdingHRIDsFileName = `holdingHRIDs-${getRandomPostfix()}.csv`;
@@ -39,8 +40,7 @@ describe('bulk-edit', () => {
           item.holdingHRID = holdings[0].hrid;
           cy.updateHoldingRecord(holdings[0].id, {
             ...holdings[0],
-            // Popular Reading Collection
-            temporaryLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+            temporaryLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
             sourceId: null,
           });
           FileManager.createFile(`cypress/fixtures/${holdingHRIDsFileName}`, holdings[0].hrid);

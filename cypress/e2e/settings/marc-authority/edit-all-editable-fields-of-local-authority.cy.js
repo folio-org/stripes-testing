@@ -4,6 +4,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
 import DateTools from '../../../support/utils/dateTools';
 import ManageAuthorityFiles from '../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
+import { AUTHORITY_FILE_TEXT_FIELD_NAMES } from '../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -25,12 +26,6 @@ describe('MARC', () => {
         prefix: getRandomLetters(7),
         hridStartsWith: '12000',
         baseUrl: `https://testing/field/baseurl/positivetest3${getRandomLetters(4)}/`,
-      };
-      const fieldTitles = {
-        NAME: 'Name',
-        PREFIX: 'Prefix',
-        HRID_STARTS_WITH: 'HRID starts with',
-        BASEURL: 'Base URL',
       };
       let user;
 
@@ -86,6 +81,7 @@ describe('MARC', () => {
             localAuthFile.prefix,
             localAuthFile.hridStartsWith,
             localAuthFile.baseUrl,
+            localAuthFile.isActive,
             localAuthFile.source,
             localAuthFile.createdByAdmin,
           );
@@ -93,20 +89,24 @@ describe('MARC', () => {
 
           // 3 Update all editable fields with unique valid value
           // Change the state of "Active" checkbox to opposite
-          ManageAuthorityFiles.editField(localAuthFile.name, fieldTitles.NAME, fieldsToUpdate.name);
+          ManageAuthorityFiles.editField(
+            localAuthFile.name,
+            AUTHORITY_FILE_TEXT_FIELD_NAMES.NAME,
+            fieldsToUpdate.name,
+          );
           ManageAuthorityFiles.editField(
             fieldsToUpdate.name,
-            fieldTitles.PREFIX,
+            AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX,
             fieldsToUpdate.prefix,
           );
           ManageAuthorityFiles.editField(
             fieldsToUpdate.name,
-            fieldTitles.HRID_STARTS_WITH,
+            AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH,
             fieldsToUpdate.hridStartsWith,
           );
           ManageAuthorityFiles.editField(
             fieldsToUpdate.name,
-            fieldTitles.BASEURL,
+            AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL,
             fieldsToUpdate.baseUrl,
           );
           ManageAuthorityFiles.switchActiveCheckboxInFile(fieldsToUpdate.name, false);
