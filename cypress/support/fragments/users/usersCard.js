@@ -19,6 +19,7 @@ import {
   SelectionList,
   TextArea,
   TextField,
+  Spinner,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
@@ -551,7 +552,10 @@ export default {
   },
 
   verifyUserRolesCounter(expectedCount) {
-    cy.expect(userRolesAccordion.has({ counter: expectedCount }));
+    cy.expect([
+      userRolesAccordion.find(Spinner()).absent(),
+      userRolesAccordion.has({ counter: expectedCount }),
+    ]);
   },
 
   clickUserRolesAccordion(isExpanded = true) {

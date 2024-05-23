@@ -19,6 +19,9 @@ import {
   TextArea,
   TextField,
   Spinner,
+  ListItem,
+  List,
+  or,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
@@ -61,6 +64,14 @@ const resetPasswordLink = Button({ className: including('resetPasswordButton') }
 const resetPasswordModal = Modal('Reset password email sent');
 const resetPasswordInput = resetPasswordModal.find(TextField());
 const resetPasswordCopyButton = resetPasswordModal.find(Button('Copy link'));
+const userRolesAccordion = userEditPane.find(Accordion('User roles'));
+const addRolesButton = Button({ dataTestID: 'add-roles-button' });
+const unassignAllRolesButton = Button({ dataTestID: 'unassign-all-roles-button' });
+const selectRolesModal = Modal('Select user roles');
+const roleAssignmentFilter = selectRolesModal.find(
+  Accordion({ id: including('Role assigment status') }),
+);
+const rolesPane = selectRolesModal.find(Pane('User roles'));
 let totalRows;
 
 // servicePointIds is array of ids
@@ -553,5 +564,73 @@ export default {
 
   verifyResetLink(expectedLink) {
     cy.expect(resetPasswordInput.has({ value: expectedLink }));
+  },
+
+  verifyUserRolesCounter(expectedCount) {
+    cy.expect(userRolesAccordion.has({ counter: expectedCount }));
+  },
+
+  clickUserRolesAccordion(isExpanded = true) {
+    cy.do(userRolesAccordion.clickHeader());
+    cy.expect([
+      userRolesAccordion.has({ open: isExpanded }),
+      addRolesButton.exists(),
+      unassignAllRolesButton.has({ disabled: or(true, false) }),
+    ]);
+  },
+
+  verifyUserRolesAccordionEmpty() {
+    cy.expect(userRolesAccordion.find(ListItem()).absent());
+  },
+
+  clickAddUserRolesButton() {
+    cy.do(userRolesAccordion.find(addRolesButton).click());
+    cy.expect(selectRolesModal.exists());
+  },
+
+  verifySelectRolesModal() {
+    cy.expect([
+      selectRolesModal.find(userSearch).exists(),
+      selectRolesModal.find(searchButton).has({ disabled: true }),
+      selectRolesModal.find(saveAndCloseBtn).exists(),
+      selectRolesModal.find(cancelButton).exists(),
+      rolesPane.exists(),
+      roleAssignmentFilter.exists(),
+    ]);
+  },
+
+  selectRoleInModal(roleName, isSelected = true) {
+    const targetCheckbox = MultiColumnListRow(including(roleName), { isContainer: false }).find(
+      Checkbox(),
+    );
+    cy.do([
+      selectRolesModal.find(userSearch).fillIn(roleName),
+      selectRolesModal.find(searchButton).click(),
+      targetCheckbox.click(),
+    ]);
+    cy.expect(targetCheckbox.has({ checked: isSelected }));
+  },
+
+  saveAndCloseRolesModal() {
+    cy.do(selectRolesModal.find(saveAndCloseBtn).click());
+    cy.expect(selectRolesModal.absent());
+  },
+
+  verifyUserRoleNames(roleNames) {
+    roleNames.forEach((roleName) => {
+      cy.expect(
+        userRolesAccordion
+          .find(
+            ListItem(including(roleName)).find(
+              Button({ id: including('clickable-remove-user-role') }),
+            ),
+          )
+          .exists(),
+      );
+    });
+  },
+
+  verifyUserRolesRowsCount(expectedCount) {
+    cy.expect(userRolesAccordion.find(List()).has({ count: expectedCount }));
   },
 };
