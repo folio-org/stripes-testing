@@ -104,6 +104,7 @@ export default {
     cy.do(Button('Requester look-up').click());
     this.checkModalExists(true);
     this.filterRequesterLookup(patronGroupName);
+    cy.wait(1000);
     this.selectUser(username);
     this.checkModalExists(false);
     this.verifyRequesterDetailsPopulated(username, patronGroupName);
@@ -113,6 +114,7 @@ export default {
     newRequest.chooseRequestType(REQUEST_TYPES.PAGE);
     Requests.verifyFulfillmentPreference();
     newRequest.choosePickupServicePoint(servicePointName);
+    cy.wait(1000);
     newRequest.saveRequestAndClose();
     Requests.verifyRequestsPage();
     this.verifyNewRequest();

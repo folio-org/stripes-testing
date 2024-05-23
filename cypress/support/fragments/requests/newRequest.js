@@ -95,7 +95,7 @@ export default {
   },
 
   saveRequestAndClose: () => cy.do(saveAndCloseButton.click()),
-  waitLoading: () => cy.expect(Pane({ title: 'Request Detail' }).exists()),
+  waitLoading: () => cy.expect(Pane({ title: 'Request details' }).exists()),
 
   createNewRequest(newRequest) {
     openNewRequestPane();
@@ -167,7 +167,13 @@ export default {
   enterHridInfo(hrid) {
     cy.do(titleLevelRequest.click());
     cy.wait(1000);
-    cy.do(instanceHridInput.fillIn(hrid));
+    try {
+      cy.do(instanceHridInput.fillIn(hrid));
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e);
+      cy.do(instanceHridInput.fillIn(hrid));
+    }
     cy.do(itemInfoSection.find(Button('Enter')).click());
   },
 

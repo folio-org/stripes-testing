@@ -40,12 +40,12 @@ describe('MARC', () => {
 
     const linkingTagForFirstMarcBib = [
       {
-        rowIndex: 17,
+        rowIndex: 16,
         value: 'Chin, Staceyann, 1972- C369084',
         tag: 100,
       },
       {
-        rowIndex: 28,
+        rowIndex: 27,
         value: 'Chin, Staceyann, 1972- C369084',
         tag: 600,
       },
@@ -53,12 +53,12 @@ describe('MARC', () => {
 
     const linkingTagForSecondMarcBib = [
       {
-        rowIndex: 11,
+        rowIndex: 10,
         value: 'Chin, Staceyann, 1972- C369084',
         tag: 100,
       },
       {
-        rowIndex: 19,
+        rowIndex: 18,
         value: 'Feminist poetry C369084',
         tag: 650,
       },
@@ -168,14 +168,14 @@ describe('MARC', () => {
         InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Subject');
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          11,
+          10,
           '100',
           '1',
           '\\',
           '$a Chin, Staceyann, $d 1972- C369084 $e Author $e Narrator $0 http://id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          19,
+          18,
           '650',
           '\\',
           '0',
@@ -193,14 +193,14 @@ describe('MARC', () => {
         InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Subject');
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          17,
+          16,
           '100',
           '1',
           '\\',
           '$a Chin, Staceyann, $d 1972- C369084 $e author. $0 http://id.loc.gov/authorities/names/n2008052404',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          28,
+          27,
           '600',
           '1',
           '0',

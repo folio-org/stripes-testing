@@ -7,6 +7,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import { LOCATION_IDS } from '../../support/constants';
 
 let userId;
 const item = {
@@ -44,8 +45,7 @@ describe('Inventory', () => {
       }).then((holdings) => {
         cy.updateHoldingRecord(holdings[0].id, {
           ...holdings[0],
-          // Popular Reading Collection
-          permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+          permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
         });
       });
       cy.getHoldings({
@@ -54,8 +54,7 @@ describe('Inventory', () => {
       }).then((holdings) => {
         cy.updateHoldingRecord(holdings[0].id, {
           ...holdings[0],
-          // Annex
-          permanentLocationId: '53cf956f-c1df-410b-8bea-27f712cca7c0',
+          permanentLocationId: LOCATION_IDS.ANNEX,
         });
       });
     });

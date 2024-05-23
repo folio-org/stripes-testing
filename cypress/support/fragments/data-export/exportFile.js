@@ -230,4 +230,14 @@ export default {
     });
     uploadFile(downloadedFile);
   },
+
+  getRecordHridOfExportedFile(fileName) {
+    return cy
+      .get('#job-logs-list')
+      .contains('div[class^="mclCell-"]', fileName.replace('.csv', ''))
+      .then((elem) => {
+        const hridElement = elem.parent().find('[class*="mclCell-"]:nth-child(10)');
+        return +hridElement[0].innerText;
+      });
+  },
 };
