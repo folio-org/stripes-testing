@@ -9,6 +9,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { ITEM_NOTES } from '../../../support/constants';
 
 let user;
 const notes = {
@@ -40,26 +41,22 @@ describe('bulk-edit', () => {
 
             itemData.notes = [
               {
-                // "Copy note" Item note type
-                itemNoteTypeId: '1dde7141-ec8a-4dae-9825-49ce14c728e7',
+                itemNoteTypeId: ITEM_NOTES.COPY_NOTE,
                 note: notes.copyNote,
                 staffOnly: false,
               },
               {
-                // "Copy note" Item note type staffOnly
-                itemNoteTypeId: '1dde7141-ec8a-4dae-9825-49ce14c728e7',
+                itemNoteTypeId: ITEM_NOTES.COPY_NOTE,
                 note: notes.copyNoteStaffOnly,
                 staffOnly: true,
               },
               {
-                // "Electronic bookplate" Item note type
-                itemNoteTypeId: 'f3ae3823-d096-4c65-8734-0c1efd2ffea8',
+                itemNoteTypeId: ITEM_NOTES.ELECTRONIC_BOOKPLATE_NOTE,
                 note: notes.electronicBookplateNote,
                 staffOnly: false,
               },
               {
-                // "Electronic bookplate" Item note type staffOnly
-                itemNoteTypeId: 'f3ae3823-d096-4c65-8734-0c1efd2ffea8',
+                itemNoteTypeId: ITEM_NOTES.ELECTRONIC_BOOKPLATE_NOTE,
                 note: notes.electronicBookplateNoteStaffOnly,
                 staffOnly: true,
               },

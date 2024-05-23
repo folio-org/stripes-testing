@@ -94,7 +94,7 @@ describe('Data Import', () => {
     ];
 
     const linkingTagAndValues = {
-      rowIndex: 17,
+      rowIndex: 16,
       value: 'C375098 Chin, Staceyann, 1972-',
       tag: '100',
     };
@@ -253,7 +253,7 @@ describe('Data Import', () => {
         InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Contributor');
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          19,
+          18,
           '100',
           '1',
           '\\',
@@ -263,7 +263,7 @@ describe('Data Import', () => {
           '$4 prf.',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          20,
+          19,
           '245',
           '1',
           '4',

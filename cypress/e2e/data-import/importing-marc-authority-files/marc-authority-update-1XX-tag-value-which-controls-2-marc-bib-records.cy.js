@@ -50,7 +50,7 @@ describe('Data Import', () => {
       modifiedMarcFile: `C374167 editedMarcFile${getRandomPostfix()}.mrc`,
       uploadModifiedMarcFile: `C374167 testMarcFile${getRandomPostfix()}.mrc`,
       updated700Field: [
-        65,
+        64,
         '700',
         '1',
         '\\',
@@ -105,13 +105,13 @@ describe('Data Import', () => {
     ];
     const linkingTagForFirstMarcBib = [
       {
-        rowIndex: 65,
+        rowIndex: 64,
         value: '374167 DiCaprio',
         tag: 700,
       },
     ];
 
-    const linkingTagForSecondMarcBib = [{ rowIndex: 22, value: '374167 DiCaprio', tag: 700 }];
+    const linkingTagForSecondMarcBib = [{ rowIndex: 21, value: '374167 DiCaprio', tag: 700 }];
     const twoMarcBibsToLink = [
       {
         marcBibRecord: 'C374167 Titanic / written and directed by James Cameron.',
@@ -281,7 +281,7 @@ describe('Data Import', () => {
         InventoryInstance.checkInstanceTitle(twoMarcBibsToLink[0].marcBibRecord);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
-        QuickMarcEditor.verifyIconsAfterUnlinking(65);
+        QuickMarcEditor.verifyIconsAfterUnlinking(64);
         QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.updated700Field);
         QuickMarcEditor.closeEditorPane();
         InventoryInstances.searchByTitle(testData.createdRecordIDs[1]);

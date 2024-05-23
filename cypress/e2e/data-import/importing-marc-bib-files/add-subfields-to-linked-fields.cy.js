@@ -88,17 +88,17 @@ describe('Data Import', () => {
     ];
     const linkingTagAndValues = [
       {
-        rowIndex: 33,
+        rowIndex: 32,
         value: 'Coates, Ta-Nehisi',
         tag: 100,
       },
       {
-        rowIndex: 75,
+        rowIndex: 74,
         value: 'Chin, Staceyann, C385673',
         tag: 700,
       },
       {
-        rowIndex: 76,
+        rowIndex: 75,
         value: 'Lee, Stan, 1922-2018',
         tag: 700,
       },
@@ -233,7 +233,7 @@ describe('Data Import', () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          33,
+          32,
           '100',
           '1',
           '\\',
@@ -243,7 +243,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          75,
+          74,
           '700',
           '1',
           '\\',
@@ -253,7 +253,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          76,
+          75,
           '700',
           '1',
           '\\',

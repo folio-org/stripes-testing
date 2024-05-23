@@ -120,7 +120,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
         requestId = intercept.response.body.id;
         cy.location('pathname').should('eq', `/requests/view/${requestId}`);
       });
-      Requests.closePane('Request Detail');
+      Requests.closePane('Request detail');
     });
   });
 
