@@ -303,6 +303,7 @@ export default {
   },
 
   saveAndClose() {
+    cy.wait(1000);
     cy.do(saveAndCloseBtn.click());
   },
 
