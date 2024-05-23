@@ -10,6 +10,7 @@ import ManageAuthorityFiles from '../../../support/fragments/settings/marc-autho
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import { AUTHORITY_FILE_TEXT_FIELD_NAMES } from '../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -36,12 +37,6 @@ describe('MARC', () => {
         baseUrl: `http://testing/field/baseurl/positivetest6${getRandomLetters(4)}/`,
       };
       const errorToastNotification = `Changes to ${localAuthFile.name} cannot be saved. Existing authority records are already assigned to this authority file.`;
-      const fieldTitles = {
-        NAME: 'Name',
-        PREFIX: 'Prefix',
-        HRID_STARTS_WITH: 'HRID starts with',
-        BASEURL: 'Base URL',
-      };
       let user;
       let createdAuthorityId;
 
@@ -120,20 +115,24 @@ describe('MARC', () => {
           // "HRID starts with" = "125"
           // "Base URL" = "http://testing/field/baseurl/positivetest6"
           // Change the state of "Active" checkbox to opposite.
-          ManageAuthorityFiles.editField(localAuthFile.name, fieldTitles.NAME, fieldsToUpdate.name);
+          ManageAuthorityFiles.editField(
+            localAuthFile.name,
+            AUTHORITY_FILE_TEXT_FIELD_NAMES.NAME,
+            fieldsToUpdate.name,
+          );
           ManageAuthorityFiles.editField(
             fieldsToUpdate.name,
-            fieldTitles.PREFIX,
+            AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX,
             fieldsToUpdate.prefix,
           );
           ManageAuthorityFiles.editField(
             fieldsToUpdate.name,
-            fieldTitles.HRID_STARTS_WITH,
+            AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH,
             fieldsToUpdate.hridStartsWith,
           );
           ManageAuthorityFiles.editField(
             fieldsToUpdate.name,
-            fieldTitles.BASEURL,
+            AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL,
             fieldsToUpdate.baseUrl,
           );
           ManageAuthorityFiles.switchActiveCheckboxInFile(fieldsToUpdate.name, false);
@@ -184,10 +183,14 @@ describe('MARC', () => {
           // "Name" = "Local assigned source Updated by user (all fields)"
           // "Base URL" = "http://testing/field/baseurl/positivetest6"
           // Change the state of "Active" checkbox to opposite.
-          ManageAuthorityFiles.editField(localAuthFile.name, fieldTitles.NAME, fieldsToUpdate.name);
+          ManageAuthorityFiles.editField(
+            localAuthFile.name,
+            AUTHORITY_FILE_TEXT_FIELD_NAMES.NAME,
+            fieldsToUpdate.name,
+          );
           ManageAuthorityFiles.editField(
             fieldsToUpdate.name,
-            fieldTitles.BASEURL,
+            AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL,
             fieldsToUpdate.baseUrl,
           );
           ManageAuthorityFiles.switchActiveCheckboxInFile(fieldsToUpdate.name, false);

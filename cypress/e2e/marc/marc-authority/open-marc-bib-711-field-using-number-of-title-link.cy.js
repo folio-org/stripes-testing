@@ -16,7 +16,7 @@ describe('MARC', () => {
     const testData = {
       tag: '711',
       marcValue: 'Mostly Mozart Festival. sonet',
-      rowIndex: 29,
+      rowIndex: 28,
       searchOption: 'Keyword',
       instanceTitle:
         'Clarinet concerto no. 1, op. 73 [sound recording] / Weber. Andante, K. 315 / Mozart. Theme & variations / Rossini.',

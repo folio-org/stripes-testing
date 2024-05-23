@@ -101,9 +101,15 @@ describe('MARC', () => {
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySearchOptions();
 
-          MarcAuthorities.searchByParameter(testData.searchOption, testData.searchQueryWithoutAsteriks);
+          MarcAuthorities.searchByParameter(
+            testData.searchOption,
+            testData.searchQueryWithoutAsteriks,
+          );
           MarcAuthorities.checkAfterSearch(testData.AUTHORIZED, searchResultWithoutAsteriks);
-          MarcAuthorities.searchByParameter(testData.searchOption, testData.searchQueryWithAsteriks);
+          MarcAuthorities.searchByParameter(
+            testData.searchOption,
+            testData.searchQueryWithAsteriks,
+          );
           searchResultsWithAsteriks.forEach((result) => {
             MarcAuthorities.checkAfterSearch(testData.AUTHORIZED, result);
           });

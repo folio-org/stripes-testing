@@ -53,7 +53,9 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InventoryInstance.checkInstanceHeader(`Local instance • ${testData.instance.instanceTitle} `);
+        InventoryInstance.checkInstanceHeader(
+          `Local instance • ${testData.instance.instanceTitle} `,
+        );
       },
     );
   });
