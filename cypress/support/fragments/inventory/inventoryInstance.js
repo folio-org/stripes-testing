@@ -185,6 +185,7 @@ const pressAddHoldingsButton = () => {
 };
 
 const waitLoading = () => {
+  cy.wait(1000);
   cy.get('#pane-instancedetails').within(() => {
     cy.contains('button', 'Action').should('exist');
   });

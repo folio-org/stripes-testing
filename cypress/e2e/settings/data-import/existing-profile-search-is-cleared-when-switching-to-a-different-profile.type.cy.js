@@ -24,7 +24,7 @@ describe('Data Import', () => {
     const mappingProfileName = `C402332 autotest mapping profile_${getRandomPostfix()}`;
     const actionProfileName = `C402332 autotest action profile_${getRandomPostfix()}`;
     const matchProfileName = `C402332 autotest match profile_${getRandomPostfix()}`;
-    const jobProfileName = `C2332 autotest job profile ${getRandomPostfix()}`;
+    const jobProfileName = `C402332 autotest job profile ${getRandomPostfix()}`;
 
     before('Create test data and login', () => {
       cy.getAdminToken();
