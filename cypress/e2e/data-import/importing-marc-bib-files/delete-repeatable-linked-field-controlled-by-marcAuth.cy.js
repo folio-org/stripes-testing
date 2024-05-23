@@ -119,7 +119,7 @@ describe('Data Import', () => {
       },
     ];
     const linkingTagAndValues = {
-      rowIndex: 28,
+      rowIndex: 27,
       value: 'C375108 Chin, Staceyann,',
       tag: '600',
     };
