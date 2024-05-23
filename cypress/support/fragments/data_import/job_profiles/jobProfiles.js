@@ -87,7 +87,7 @@ export default {
   },
 
   runImportFile: () => {
-    cy.wait(1000);
+    cy.wait(5000);
     cy.do([actionsButton.click(), runButton.click()]);
     cy.expect(Modal('Are you sure you want to run this job?').find(runButton).exists());
     cy.do(Modal('Are you sure you want to run this job?').find(runButton).click());
