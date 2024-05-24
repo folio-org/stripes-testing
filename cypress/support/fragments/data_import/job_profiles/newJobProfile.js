@@ -294,6 +294,7 @@ export default {
   },
 
   saveAndClose: () => {
+    cy.wait(1000);
     cy.do(saveAndCloseButton.click());
     cy.expect(saveAndCloseButton.absent());
   },

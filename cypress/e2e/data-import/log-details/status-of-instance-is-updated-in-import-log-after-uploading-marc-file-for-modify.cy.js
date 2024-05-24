@@ -35,7 +35,7 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { getLongDelay } from '../../../support/utils/cypressTools';
 
-describe('Data Import', () => {
+describe.skip('Data Import', () => {
   describe('Log details', () => {
     let user;
     let instanceHrid;
@@ -113,9 +113,10 @@ describe('Data Import', () => {
       });
     });
 
+    // the test is marked as Obsolete in TestRail, so it is skipped
     it(
       'C357027 Check that status of instance is updated in the Import log after uploading MARC file for modify (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: [] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateInstance, fileNameForCreate);

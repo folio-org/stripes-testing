@@ -1,5 +1,4 @@
 import permissions from '../../../support/dictionary/permissions';
-import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
@@ -14,13 +13,16 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UserEdit from '../../../support/fragments/users/userEdit';
-import InteractorsTools from '../../../support/utils/interactorsTools';
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../support/constants';
+import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 
 describe('Orders: Inventory interaction', () => {
-  const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
-  const firstOrder = {
+  const defaultOrder = {
     ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
@@ -28,61 +30,88 @@ describe('Orders: Inventory interaction', () => {
     reEncumber: true,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  const allocatedQuantity = '100';
+  const firstBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 100,
+  };
   let user;
-  let orderNumber;
+  let firstOrderNumber;
   let servicePointId;
   let location;
 
   before(() => {
     cy.getAdminToken();
-
-    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
-      defaultFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
+      firstFiscalYear.id = firstFiscalYearResponse.id;
+      firstBudget.fiscalYearId = firstFiscalYearResponse.id;
+      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
 
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
+          firstBudget.fundId = fundResponse.fund.id;
+          Budgets.createViaApi(firstBudget);
+          ServicePoints.getViaApi().then((servicePoint) => {
+            servicePointId = servicePoint[0].id;
+            NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+              location = res;
 
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
+              MaterialTypes.createMaterialTypeViaApi(MaterialTypes.getDefaultMaterialType()).then(
+                (mtypes) => {
+                  cy.getAcquisitionMethodsApi({
+                    query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+                  }).then((params) => {
+                    // Prepare 2 Open Orders for Rollover
+                    Organizations.createOrganizationViaApi(organization).then(
+                      (responseOrganizations) => {
+                        organization.id = responseOrganizations;
+                        defaultOrder.vendor = organization.id;
+                        const firstOrderLine = {
+                          ...BasicOrderLine.defaultOrderLine,
+                          cost: {
+                            listUnitPrice: 40.0,
+                            currency: 'USD',
+                            discountType: 'percentage',
+                            quantityPhysical: 1,
+                            poLineEstimatedPrice: 40.0,
+                          },
+                          fundDistribution: [
+                            { code: defaultFund.code, fundId: defaultFund.id, value: 100 },
+                          ],
+                          locations: [
+                            { locationId: location.id, quantity: 1, quantityPhysical: 1 },
+                          ],
+                          acquisitionMethod: params.body.acquisitionMethods[0].id,
+                          physical: {
+                            createInventory: 'Instance, Holding, Item',
+                            materialType: mtypes.body.id,
+                            materialSupplier: responseOrganizations,
+                            volumes: [],
+                          },
+                        };
+                        Orders.createOrderViaApi(defaultOrder).then((firstOrderResponse) => {
+                          defaultOrder.id = firstOrderResponse.id;
+                          firstOrderLine.purchaseOrderId = firstOrderResponse.id;
+                          firstOrderNumber = firstOrderResponse.poNumber;
+                          defaultOrder.poNumber = firstOrderResponse.poNumber;
+                          OrderLines.createOrderLineViaApi(firstOrderLine);
+                          Orders.updateOrderViaApi({
+                            ...firstOrderResponse,
+                            workflowStatus: ORDER_STATUSES.OPEN,
+                          });
+                        });
+                      },
+                    );
+                  });
+                },
+              );
+            });
+          });
         });
       });
     });
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
-
-    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-      organization.id = responseOrganizations;
-    });
-    firstOrder.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
-    Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
-      firstOrder.id = firstOrderResponse.id;
-      orderNumber = firstOrderResponse.poNumber;
-      Orders.checkCreatedOrder(firstOrder);
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-      OrderLines.fillInPOLineInfoForPhysicalResourceWithPaymentNotRequired(
-        defaultFund,
-        '20',
-        '1',
-        '20',
-        location.name,
-      );
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-    });
-
     cy.createTempUser([
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersView.gui,
@@ -97,34 +126,31 @@ describe('Orders: Inventory interaction', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    Orders.unOpenOrder();
-    // Need to wait until the order is opened before deleting it
+    cy.getAdminToken();
+
+    Orders.updateOrderViaApi({
+      ...defaultOrder,
+      workflowStatus: ORDER_STATUSES.PENDING,
+    });
     cy.wait(2000);
-    Orders.deleteOrderViaApi(firstOrder.id);
+
+    OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${defaultOrder.poNumber}*"` }).then(
+      (orderLines) => {
+        OrderLines.deleteOrderLineViaApi(orderLines[0].id);
+      },
+    );
+    Orders.deleteOrderViaApi(defaultOrder.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
-    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-      location.institutionId,
-      location.campusId,
-      location.libraryId,
-      location.id,
-    );
-    cy.visit(TopMenu.fundPath);
-    FinanceHelp.searchByName(defaultFund.name);
-    Funds.selectFund(defaultFund.name);
-    Funds.selectBudgetDetails();
-    Funds.deleteBudgetViaActions();
-    InteractorsTools.checkCalloutMessage('Budget has been deleted');
-    Funds.checkIsBudgetDeleted();
+    cy.wait(2000);
+
+    Budgets.deleteViaApi(firstBudget.id);
 
     Funds.deleteFundViaApi(defaultFund.id);
 
     Ledgers.deleteledgerViaApi(defaultLedger.id);
 
-    FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
+    FiscalYears.deleteFiscalYearViaApi(firstFiscalYear.id);
 
     Users.deleteViaApi(user.userId);
   });
@@ -133,8 +159,8 @@ describe('Orders: Inventory interaction', () => {
     'C367948: "Inventory: Create order from instance" permission does not grant delete POL permission (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
+      Orders.searchByParameter('PO number', firstOrderNumber);
+      Orders.selectFromResultsList(firstOrderNumber);
       Orders.deleteButtonInOrderIsAbsent();
       OrderLines.selectPOLInOrder();
       OrderLines.deleteButtonInOrderLineIsAbsent();
@@ -154,8 +180,8 @@ describe('Orders: Inventory interaction', () => {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
       });
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
+      Orders.searchByParameter('PO number', firstOrderNumber);
+      Orders.selectFromResultsList(firstOrderNumber);
       Orders.deleteButtonInOrderIsAbsent();
       OrderLines.selectPOLInOrder();
       OrderLines.deleteButtonInOrderLineIsAbsent();

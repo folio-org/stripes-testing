@@ -40,7 +40,7 @@ describe('Data Import', () => {
       existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       existingMatchExpressionValue: 'instance.hrid',
     };
-    const jobProfileName = `C2332 autotest job profile ${getRandomPostfix()}`;
+    const jobProfileName = `C402332 autotest job profile ${getRandomPostfix()}`;
 
     before('Create test data and login', () => {
       cy.getAdminToken();

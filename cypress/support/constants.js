@@ -741,5 +741,20 @@ export const AUTHORITY_FILE_TEXT_FIELD_NAMES = {
   NAME: 'Name',
   PREFIX: 'Prefix',
   HRID_STARTS_WITH: 'HRID starts with',
-  BASE_URL: 'Base url',
+  BASE_URL: 'Base URL',
+};
+
+export const HOLDING_NOTES = {
+  ACTION_NOTE: 'd6510242-5ec3-42ed-b593-3585d2e48fd6',
+  ELECTRONIC_BOOKPLATE_NOTE: '88914775-f677-4759-b57b-1a33b90b24e0',
+  BINDING_NOTE: 'e19eabab-a85c-4aef-a7b2-33bd9acef24e',
+  PROVENANCE_NOTE: 'db9b4787-95f0-4e78-becf-26748ce6bdeb',
+};
+
+export const ITEM_NOTES = {
+  ACTION_NOTE: '0e40884c-3523-4c6d-8187-d578e3d2794e',
+  BINDING_NOTE: '87c450be-2033-41fb-80ba-dd2409883681',
+  NOTE_NOTE: '8d0a5eca-25de-4391-81a9-236eeefdd20b',
+  COPY_NOTE: '1dde7141-ec8a-4dae-9825-49ce14c728e7',
+  ELECTRONIC_BOOKPLATE_NOTE: 'f3ae3823-d096-4c65-8734-0c1efd2ffea8',
 };

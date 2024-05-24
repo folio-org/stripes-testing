@@ -138,6 +138,87 @@ const getEditableListRow = (rowNumber) => {
   return EditableListRow({ index: +rowNumber.split('-')[1] });
 };
 
+const getTargetRowWithFile = (authorityFileName) => {
+  return manageAuthorityFilesPane.find(
+    MultiColumnListRow({ innerHTML: including(authorityFileName) }),
+  );
+};
+
+const defaultFolioAuthorityFiles = [
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.ART_AND_ARCHITECTURE_THESAURUS,
+    prefix: 'aatg,aat',
+    startsWith: '',
+    baseUrl: 'http://vocab.getty.edu/aat/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.FACETED_APPLICATION_OF_SUBJECT_TERMINOLOGY,
+    prefix: 'fst',
+    startsWith: '',
+    baseUrl: 'http://id.worldcat.org/fast/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.GSAFD_GENRE_TERMS,
+    prefix: 'gsafd',
+    startsWith: '',
+    baseUrl: 'https://vocabularyserver.com/gsafd/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.LC_CHILDREN_SUBJECT_HEADINGS,
+    prefix: 'sj',
+    startsWith: '',
+    baseUrl: 'http://id.loc.gov/authorities/childrensSubjects/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.LC_DEMOGRAPHIC_GROUP_TERMS,
+    prefix: 'dg',
+    startsWith: '',
+    baseUrl: 'http://id.loc.gov/authorities/demographicTerms/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.LC_GENRE_FORM_TERMS,
+    prefix: 'gf',
+    startsWith: '',
+    baseUrl: 'http://id.loc.gov/authorities/genreForms/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.LC_MEDIUM_OF_PERFORMANCE_THESAURUS_FOR_MUSIC,
+    prefix: 'mp',
+    startsWith: '',
+    baseUrl: 'http://id.loc.gov/authorities/performanceMediums/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
+    prefix: 'n,nb,nr,no,ns',
+    startsWith: '',
+    baseUrl: 'http://id.loc.gov/authorities/names/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.LC_SUBJECT_HEADINGS,
+    prefix: 'sh',
+    startsWith: '',
+    baseUrl: 'http://id.loc.gov/authorities/subjects/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.MEDICAL_SUBJECT_HEADINGS,
+    prefix: 'D',
+    startsWith: '',
+    baseUrl: 'https://id.nlm.nih.gov/mesh/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.RARE_BOOKS_AND_MANUSCRIPTS_SECTION,
+    prefix: 'rbmscv',
+    startsWith: '',
+    baseUrl: '',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.THESAURUS_FOR_GRAPHIC_MATERIALS,
+    prefix: 'lcgtm,tgm',
+    startsWith: '',
+    baseUrl: 'http://id.loc.gov/vocabulary/graphicMaterials/',
+  },
+];
+
 export default {
   waitLoading,
   clickNewButton,
@@ -168,7 +249,8 @@ export default {
   },
 
   checkSourceFileExists(name, prefix, startsWith, baseUrl, isActive, lastUpdatedBy, isDeletable) {
-    const targetRow = manageAuthorityFilesPane.find(MultiColumnListRow(including(name)));
+    const targetRow = getTargetRowWithFile(name);
+
     cy.expect([
       targetRow.find(MultiColumnListCell(prefix)).exists(),
       targetRow.find(MultiColumnListCell(startsWith)).exists(),
@@ -188,19 +270,25 @@ export default {
     }
   },
 
-  checkErrorInField(fieldName, errorMessage) {
+  checkErrorInField(authorityFileName, fieldName, errorMessage) {
+    const targetRow = getTargetRowWithFile(authorityFileName);
+
     switch (fieldName) {
       case AUTHORITY_FILE_TEXT_FIELD_NAMES.NAME:
-        cy.expect(nameTextField.has({ error: errorMessage, errorTextRed: true }));
+        cy.expect(targetRow.find(nameTextField).has({ error: errorMessage, errorTextRed: true }));
         break;
       case AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX:
-        cy.expect(prefixTextField.has({ error: errorMessage, errorTextRed: true }));
+        cy.expect(targetRow.find(prefixTextField).has({ error: errorMessage, errorTextRed: true }));
         break;
       case AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH:
-        cy.expect([hridStartsWithTextField.has({ error: errorMessage, errorTextRed: true })]);
+        cy.expect(
+          targetRow.find(hridStartsWithTextField).has({ error: errorMessage, errorTextRed: true }),
+        );
         break;
       case AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL:
-        cy.expect(baseUrlTextField.has({ error: errorMessage, errorTextRed: true }));
+        cy.expect(
+          targetRow.find(baseUrlTextField).has({ error: errorMessage, errorTextRed: true }),
+        );
         break;
       default:
         break;
@@ -216,25 +304,15 @@ export default {
   },
 
   clickSaveButtonAfterEditingFile(authorityFileName) {
-    cy.do(
-      TextField({ value: authorityFileName }).perform((element) => {
-        const rowNumber = element.closest('[data-row-index]').getAttribute('data-row-index');
-        cy.do(
-          manageAuthorityFilesPane.find(getEditableListRow(rowNumber)).find(saveButton).click(),
-        );
-      }),
-    );
+    const targetRow = getTargetRowWithFile(authorityFileName);
+
+    cy.do(targetRow.find(saveButton).click());
   },
 
   clickCancelButtonAfterEditingFile(authorityFileName) {
-    cy.do(
-      TextField({ value: authorityFileName }).perform((element) => {
-        const rowNumber = element.closest('[data-row-index]').getAttribute('data-row-index');
-        cy.do(
-          manageAuthorityFilesPane.find(getEditableListRow(rowNumber)).find(cancelButton).click(),
-        );
-      }),
-    );
+    const targetRow = getTargetRowWithFile(authorityFileName);
+
+    cy.do(targetRow.find(cancelButton).click());
   },
 
   editField(authorityFileName, fieldName, fieldValue) {
@@ -262,24 +340,46 @@ export default {
     isCancelButtonDisabled = false,
     isSaveButtonDisabled = true,
   ) {
-    cy.do(
-      TextField({ value: authorityFileName }).perform((element) => {
-        const rowNumber = element.closest('[data-row-index]').getAttribute('data-row-index');
-        const targetRow = manageAuthorityFilesPane.find(getEditableListRow(rowNumber));
+    const targetRow = getTargetRowWithFile(authorityFileName);
 
-        cy.expect(targetRow.find(nameTextField).has({ value: authorityFileName, disabled: false }));
-        cy.expect(targetRow.find(prefixTextField).has({ value: prefix, disabled: false }));
-        cy.expect(
-          targetRow.find(hridStartsWithTextField).has({ value: hridStartsWith, disabled: false }),
-        );
-        cy.expect(targetRow.find(baseUrlTextField).has({ value: baseUrl, disabled: false }));
-        cy.expect(targetRow.find(activeCheckbox).has({ checked: isActive, disabled: false }));
-        cy.expect(targetRow.find(sourceCell).has({ content: source }));
-        cy.expect(targetRow.find(MultiColumnListCell(including(createdByUser))).exists());
-        cy.expect(targetRow.find(cancelButton).has({ disabled: isCancelButtonDisabled }));
-        cy.expect(targetRow.find(saveButton).has({ disabled: isSaveButtonDisabled }));
-      }),
-    );
+    cy.expect([
+      targetRow.find(nameTextField).has({ value: authorityFileName, disabled: false }),
+      targetRow.find(prefixTextField).has({ value: prefix, disabled: false }),
+      targetRow.find(hridStartsWithTextField).has({ value: hridStartsWith, disabled: false }),
+      targetRow.find(baseUrlTextField).has({ value: baseUrl, disabled: false }),
+      targetRow.find(activeCheckbox).has({ checked: isActive, disabled: false }),
+      targetRow.find(sourceCell).has({ content: source }),
+      targetRow.find(MultiColumnListCell(including(createdByUser))).exists(),
+      targetRow.find(cancelButton).has({ disabled: isCancelButtonDisabled }),
+      targetRow.find(saveButton).has({ disabled: isSaveButtonDisabled }),
+    ]);
+  },
+
+  checkRowEditableInEditModeInFolioFile(
+    authorityFileName,
+    prefix,
+    hridStartsWith,
+    baseUrl,
+    isActive,
+    isCancelButtonDisabled = false,
+    isSaveButtonDisabled = true,
+  ) {
+    const targetRow = getTargetRowWithFile(authorityFileName);
+
+    cy.expect([
+      targetRow.find(MultiColumnListCell(prefix)).exists(),
+      targetRow.find(MultiColumnListCell(hridStartsWith)).exists(),
+      targetRow.find(baseUrlTextField).has({ value: baseUrl, disabled: false }),
+      targetRow.find(activeCheckbox).has({ checked: isActive, disabled: false }),
+      targetRow.find(cancelButton).has({ disabled: isCancelButtonDisabled }),
+      targetRow.find(saveButton).has({ disabled: isSaveButtonDisabled }),
+    ]);
+  },
+
+  checkLastUpdatedByUser(authorityFileName, userName) {
+    const targetRow = getTargetRowWithFile(authorityFileName);
+
+    cy.expect(targetRow.find(MultiColumnListCell(including(userName))).exists());
   },
 
   checkActionTableHeaderExists() {
@@ -295,37 +395,38 @@ export default {
   },
 
   switchActiveCheckboxInFile(authorityFileName, isChecked) {
-    cy.do(
-      TextField({ value: authorityFileName }).perform((element) => {
-        const rowNumber = element.closest('[data-row-index]').getAttribute('data-row-index');
-        const targetRow = manageAuthorityFilesPane.find(getEditableListRow(rowNumber));
+    const targetRow = getTargetRowWithFile(authorityFileName);
 
-        cy.do(targetRow.find(activeCheckbox).click());
-        cy.expect(targetRow.find(activeCheckbox).has({ checked: isChecked }));
-      }),
-    );
+    cy.do(targetRow.find(activeCheckbox).click());
+    cy.expect(targetRow.find(activeCheckbox).has({ checked: isChecked }));
   },
 
   checkSaveButtonEnabledInFile(authorityFileName, isEnabled = true) {
-    cy.do(
-      TextField({ value: authorityFileName }).perform((element) => {
-        const rowNumber = element.closest('[data-row-index]').getAttribute('data-row-index');
-        const targetRow = manageAuthorityFilesPane.find(getEditableListRow(rowNumber));
+    const targetRow = getTargetRowWithFile(authorityFileName);
 
-        cy.expect(targetRow.find(saveButton).has({ disabled: !isEnabled }));
-      }),
-    );
+    cy.expect(targetRow.find(saveButton).has({ disabled: !isEnabled }));
   },
 
   checkCancelButtonEnabledInFile(authorityFileName, isEnabled = true) {
-    cy.do(
-      TextField({ value: authorityFileName }).perform((element) => {
-        const rowNumber = element.closest('[data-row-index]').getAttribute('data-row-index');
-        const targetRow = manageAuthorityFilesPane.find(getEditableListRow(rowNumber));
+    const targetRow = getTargetRowWithFile(authorityFileName);
 
-        cy.expect(targetRow.find(cancelButton).has({ disabled: !isEnabled }));
-      }),
-    );
+    cy.expect(targetRow.find(cancelButton).has({ disabled: !isEnabled }));
+  },
+
+  checkDefaultSourceFilesExist() {
+    defaultFolioAuthorityFiles.forEach((defaultFolioAuthorityFile) => {
+      const targetRow = manageAuthorityFilesPane.find(
+        MultiColumnListRow(including(defaultFolioAuthorityFile.name)),
+      );
+      cy.expect([
+        targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.prefix)).exists(),
+        targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.startsWith)).exists(),
+        targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.baseUrl)).exists(),
+        targetRow.find(sourceCell).has({ content: 'FOLIO' }),
+        targetRow.find(activeCheckbox).has({ disabled: true }),
+        targetRow.find(editButton).exists(),
+      ]);
+    });
   },
 
   setAllDefaultFOLIOFilesToActiveViaAPI() {
