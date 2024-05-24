@@ -46,7 +46,6 @@ describe('MARC', () => {
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const headerContent = {
         initialHeaderContent: {
-          source: { firstName: 'ADMINISTRATOR', name: 'Diku_admin' },
           marcData: {
             headingTypeFrom1XX: 'C360092 Jackson, Peter,',
             headingType: 'Personal name',
@@ -77,9 +76,13 @@ describe('MARC', () => {
         },
       ];
       const createdAuthorityIDs = [];
+      let adminUser;
 
       before('Upload files', () => {
         cy.getAdminToken();
+        cy.getAdminSourceRecord().then((record) => {
+          adminUser = record;
+        });
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
             (response) => {
@@ -128,7 +131,7 @@ describe('MARC', () => {
           // Verify initial state of edit view
           QuickMarcEditor.checkHeaderFirstLine(
             headerContent.initialHeaderContent.marcData,
-            headerContent.initialHeaderContent.source,
+            adminUser,
           );
           QuickMarcEditor.checkButtonsDisabled();
 
@@ -144,7 +147,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
             headerContent.editedHeaderContent.marcData,
-            headerContent.editedHeaderContent.source,
+            `${headerContent.editedHeaderContent.source.firstName}, ${headerContent.editedHeaderContent.source.name}`,
           );
 
           // Add field and verify button states updated
@@ -156,7 +159,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
             headerContent.editedHeaderContent.marcData,
-            headerContent.editedHeaderContent.source,
+            `${headerContent.editedHeaderContent.source.firstName}, ${headerContent.editedHeaderContent.source.name}`,
           );
 
           // Delete added field and verify states
@@ -174,7 +177,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
             headerContent.editedHeaderContent.marcData,
-            headerContent.editedHeaderContent.source,
+            `${headerContent.editedHeaderContent.source.firstName}, ${headerContent.editedHeaderContent.source.name}`,
           );
 
           // Restore deleted field and verify states
@@ -192,7 +195,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
             headerContent.editedHeaderContent.marcData,
-            headerContent.editedHeaderContent.source,
+            `${headerContent.editedHeaderContent.source.firstName}, ${headerContent.editedHeaderContent.source.name}`,
           );
 
           // Edit 010 field and verify states updated
