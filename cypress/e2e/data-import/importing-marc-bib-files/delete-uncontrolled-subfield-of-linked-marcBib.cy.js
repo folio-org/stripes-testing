@@ -40,7 +40,7 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {
       updated100Field: [
-        20,
+        19,
         '100',
         '1',
         '\\',
@@ -50,7 +50,7 @@ describe('Data Import', () => {
         '',
       ],
       updated245Field: [
-        21,
+        20,
         '245',
         '1',
         '4',
@@ -134,7 +134,7 @@ describe('Data Import', () => {
       },
     ];
     const linkingTagAndValues = {
-      rowIndex: 17,
+      rowIndex: 16,
       value: 'C376967 Chin, Staceyann, 1972-',
       tag: '100',
     };
