@@ -15,10 +15,9 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../support/constants';
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
-import Receiving from '../../support/fragments/receiving/receiving';
 
 describe('Orders', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -46,29 +45,15 @@ describe('Orders', () => {
     approved: true,
     reEncumber: true,
   };
-  const thirdOrder = {
-    ...NewOrder.getDefaultOngoingOrder,
-    orderType: 'Ongoing',
-    ongoing: { isSubscription: false, manualRenewal: false },
-    approved: true,
-    reEncumber: true,
-    id: uuid(),
-  };
-  const fourthOrder = {
-    ...NewOrder.getDefaultOngoingOrder,
-    orderType: 'Ongoing',
-    ongoing: { isSubscription: false, manualRenewal: false },
-    approved: true,
-    reEncumber: true,
-    id: uuid(),
-  };
   const secondOrder = {
-    id: uuid(),
-    vendor: '',
-    orderType: 'One-Time',
+    ...NewOrder.getDefaultOngoingOrder,
+    orderType: 'Ongoing',
+    ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
     reEncumber: true,
+    id: uuid(),
   };
+
   const organization = { ...NewOrganization.defaultUiOrganizations };
   firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
   const firstBudget = {
@@ -80,8 +65,6 @@ describe('Orders', () => {
   let secondOrderNumber;
   let servicePointId;
   let location;
-  let thirdOrderNumber;
-  let fourthOrderNumber;
 
   before(() => {
     cy.getAdminToken();
@@ -117,8 +100,6 @@ describe('Orders', () => {
                         organization.id = responseOrganizations;
                         secondOrder.vendor = organization.id;
                         firstOrder.vendor = organization.id;
-                        thirdOrder.vendor = organization.id;
-                        fourthOrder.vendor = organization.id;
                         const firstOrderLine = {
                           ...BasicOrderLine.defaultOrderLine,
                           cost: {
@@ -142,65 +123,18 @@ describe('Orders', () => {
                             volumes: [],
                           },
                         };
-                        const secondOrderLine = {
-                          ...BasicOrderLine.defaultOrderLine,
-                          id: uuid(),
-                          cost: {
-                            listUnitPrice: 10.0,
-                            currency: 'USD',
-                            discountType: 'percentage',
-                            quantityPhysical: 1,
-                            poLineEstimatedPrice: 10.0,
-                          },
-                          fundDistribution: [
-                            { code: firstFund.code, fundId: firstFund.id, value: 100 },
-                          ],
-                          locations: [
-                            { locationId: location.id, quantity: 1, quantityPhysical: 1 },
-                          ],
-                          acquisitionMethod: params.body.acquisitionMethods[0].id,
-                          physical: {
-                            createInventory: 'Instance, Holding, Item',
-                            materialType: mtypes.body.id,
-                            materialSupplier: responseOrganizations,
-                            volumes: [],
-                          },
-                        };
                         Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
                           firstOrder.id = firstOrderResponse.id;
                           firstOrderNumber = firstOrderResponse.poNumber;
                           firstOrderLine.purchaseOrderId = firstOrderResponse.id;
                           OrderLines.createOrderLineViaApi(firstOrderLine);
                         });
+                        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
                         Orders.createOrderViaApi(secondOrder).then((secondOrderResponse) => {
                           secondOrder.id = secondOrderResponse.id;
                           secondOrderNumber = secondOrderResponse.poNumber;
-                          secondOrderLine.purchaseOrderId = secondOrderResponse.id;
-                          OrderLines.createOrderLineViaApi(secondOrderLine);
-                        });
-                        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-                        Orders.createOrderViaApi(thirdOrder).then((thirdOrderResponse) => {
-                          thirdOrder.id = thirdOrderResponse.id;
-                          thirdOrderNumber = thirdOrderResponse.poNumber;
-                          Orders.searchByParameter('PO number', thirdOrderNumber);
-                          Orders.selectFromResultsList(thirdOrderNumber);
-                          OrderLines.addPOLine();
-                          OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-                          OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-                            firstFund,
-                            '50',
-                            '1',
-                            '50',
-                            location.name,
-                          );
-                          OrderLines.backToEditingOrder();
-                          Orders.resetFilters();
-                        });
-                        Orders.createOrderViaApi(fourthOrder).then((fourthOrderResponse) => {
-                          fourthOrder.id = fourthOrderResponse.id;
-                          fourthOrderNumber = fourthOrderResponse.poNumber;
-                          Orders.searchByParameter('PO number', fourthOrderNumber);
-                          Orders.selectFromResultsList(fourthOrderNumber);
+                          Orders.searchByParameter('PO number', secondOrderNumber);
+                          Orders.selectFromResultsList(secondOrderNumber);
                           OrderLines.addPOLine();
                           OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
                           OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
@@ -224,14 +158,11 @@ describe('Orders', () => {
       });
     });
 
-    cy.createTempUser([
-      permissions.inventoryAll.gui,
-      permissions.uiReceivingViewEditCreate.gui,
-    ]).then((userProperties) => {
+    cy.createTempUser([permissions.uiOrdersEdit.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.receivingPath,
-        waiter: Receiving.waitLoading,
+        path: TopMenu.orderLinesPath,
+        waiter: OrderLines.waitLoading,
       });
     });
   });
@@ -245,11 +176,26 @@ describe('Orders', () => {
     'C451533 Order line with linked Holdings could be found by "Location" filtering facet on "Order lines" pane (thunderjet) (TaaS)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
-      Receiving.selectLocationInFilters(location.name);
-      Receiving.checkExistingPOLInReceivingList(`${firstOrderNumber}-1`);
-      Receiving.checkExistingPOLInReceivingList(`${secondOrderNumber}-1`);
-      Receiving.checkExistingPOLInReceivingList(`${thirdOrderNumber}-1`);
-      Receiving.checkExistingPOLInReceivingList(`${fourthOrderNumber}-1`);
+      OrderLines.resetFilters();
+      OrderLines.selectLocationInFilters(location.name);
+      OrderLines.checkExistingPOLInOrderLinesList(`${firstOrderNumber}-1`);
+      OrderLines.checkExistingPOLInOrderLinesList(`${secondOrderNumber}-1`);
+      OrderLines.selectOrders();
+      Orders.searchByParameter('PO number', firstOrderNumber);
+      Orders.selectFromResultsList(firstOrderNumber);
+      Orders.openOrder();
+      Orders.checkOrderStatus(ORDER_STATUSES.OPEN);
+      Orders.closeThirdPane();
+      Orders.searchByParameter('PO number', secondOrderNumber);
+      Orders.selectFromResultsList(secondOrderNumber);
+      Orders.openOrder();
+      Orders.checkOrderStatus(ORDER_STATUSES.OPEN);
+      Orders.closeThirdPane();
+      Orders.selectOrderLines();
+      OrderLines.resetFilters();
+      OrderLines.selectLocationInFilters(location.name);
+      OrderLines.checkExistingPOLInOrderLinesList(`${firstOrderNumber}-1`);
+      OrderLines.checkExistingPOLInOrderLinesList(`${secondOrderNumber}-1`);
     },
   );
 });
