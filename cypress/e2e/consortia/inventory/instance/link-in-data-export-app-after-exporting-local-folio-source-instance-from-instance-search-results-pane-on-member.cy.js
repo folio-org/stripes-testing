@@ -41,13 +41,13 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      FileManager.deleteFileFromDownloadsByMask(testData.fileName);
+      FileManager.deleteFile(`cypress/fixtures/${testData.fileName}`);
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       cy.setTenant(Affiliations.College);
       InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-      FileManager.deleteFileFromDownloadsByMask(testData.fileName);
-      FileManager.deleteFile(`cypress/fixtures/${testData.fileName}`);
     });
 
     it(

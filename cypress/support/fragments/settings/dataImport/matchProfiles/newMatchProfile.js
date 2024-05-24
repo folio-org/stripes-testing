@@ -1,4 +1,3 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
 import { HTML, including } from '@interactors/html';
 import { not } from 'bigtest';
 import {
@@ -15,7 +14,6 @@ import {
   TextArea,
   TextField,
 } from '../../../../../../interactors';
-import { EXISTING_RECORDS_NAMES } from '../../../../constants';
 
 const criterionValueTypeList = SelectionList({ id: 'sl-container-criterion-value-type' });
 const criterionValueTypeButton = Button({ id: 'criterion-value-type' });
@@ -213,7 +211,7 @@ export default {
   fillExistingRecordSections,
 
   saveAndClose: () => cy.do(Button('Save as profile & Close').click()),
-
+  close: () => cy.do(closeButton.click()),
   fillMatchProfileForm: ({
     profileName,
     incomingRecordFields,
@@ -397,56 +395,6 @@ export default {
     selectExistingRecordField(existingRecordOption);
   },
 
-  createMatchProfileViaApi: (nameProfile) => {
-    return cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'data-import-profiles/matchProfiles',
-        body: {
-          profile: {
-            incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-            matchDetails: [
-              {
-                incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-                incomingMatchExpression: {
-                  fields: [
-                    {
-                      label: 'field',
-                      value: '001',
-                    },
-                    { label: 'indicator1', value: '' },
-                    { label: 'indicator2', value: '' },
-                    { label: 'recordSubfield', value: '' },
-                  ],
-                  staticValueDetails: null,
-                  dataValueType: 'VALUE_FROM_RECORD',
-                },
-                existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-                existingMatchExpression: {
-                  fields: [
-                    {
-                      label: 'field',
-                      value: 'instance.hrid',
-                    },
-                  ],
-                  dataValueType: 'VALUE_FROM_RECORD',
-                },
-                matchCriterion: 'EXACTLY_MATCHES',
-              },
-            ],
-            name: nameProfile,
-            existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-          },
-          addedRelations: [],
-          deletedRelations: [],
-        },
-        isDefaultSearchParamsRequired: false,
-      })
-      .then(({ response }) => {
-        return response;
-      });
-  },
-
   createMatchProfileWithIncomingAndExistingRecordsViaApi: ({
     profileName,
     incomingRecordFields,
@@ -467,22 +415,10 @@ export default {
                 incomingRecordType: recordType,
                 incomingMatchExpression: {
                   fields: [
-                    {
-                      label: 'field',
-                      value: incomingRecordFields.field,
-                    },
-                    {
-                      label: 'indicator1',
-                      value: incomingRecordFields.in1,
-                    },
-                    {
-                      label: 'indicator2',
-                      value: incomingRecordFields.in2,
-                    },
-                    {
-                      label: 'recordSubfield',
-                      value: incomingRecordFields.subfield,
-                    },
+                    { label: 'field', value: incomingRecordFields.field },
+                    { label: 'indicator1', value: incomingRecordFields.in1 },
+                    { label: 'indicator2', value: incomingRecordFields.in2 },
+                    { label: 'recordSubfield', value: incomingRecordFields.subfield },
                   ],
                   staticValueDetails: null,
                   dataValueType: 'VALUE_FROM_RECORD',
@@ -490,19 +426,10 @@ export default {
                 existingRecordType: recordType,
                 existingMatchExpression: {
                   fields: [
-                    {
-                      label: 'field',
-                      value: existingRecordFields.field,
-                    },
-                    {
-                      label: 'indicator1',
-                      value: existingRecordFields.in1,
-                    },
+                    { label: 'field', value: existingRecordFields.field },
+                    { label: 'indicator1', value: existingRecordFields.in1 },
                     { label: 'indicator2', value: existingRecordFields.in2 },
-                    {
-                      label: 'recordSubfield',
-                      value: existingRecordFields.subfield,
-                    },
+                    { label: 'recordSubfield', value: existingRecordFields.subfield },
                   ],
                   staticValueDetails: null,
                   dataValueType: 'VALUE_FROM_RECORD',
@@ -588,83 +515,6 @@ export default {
       });
   },
 
-  createMatchProfileViaApiMarc: ({
-    profileName,
-    incomingRecordFields,
-    existingRecordFields,
-    recordType,
-  }) => {
-    return cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'data-import-profiles/matchProfiles',
-        body: {
-          profile: {
-            incomingRecordType: recordType,
-            matchDetails: [
-              {
-                incomingRecordType: recordType,
-                incomingMatchExpression: {
-                  fields: [
-                    {
-                      label: 'field',
-                      value: incomingRecordFields.field,
-                    },
-                    {
-                      label: 'indicator1',
-                      value: incomingRecordFields.in1,
-                    },
-                    {
-                      label: 'indicator2',
-                      value: incomingRecordFields.in2,
-                    },
-                    {
-                      label: 'recordSubfield',
-                      value: incomingRecordFields.subfield,
-                    },
-                  ],
-                  staticValueDetails: null,
-                  dataValueType: 'VALUE_FROM_RECORD',
-                },
-                existingRecordType: recordType,
-                existingMatchExpression: {
-                  fields: [
-                    {
-                      label: 'field',
-                      value: existingRecordFields.field,
-                    },
-                    {
-                      label: 'indicator1',
-                      value: existingRecordFields.in1,
-                    },
-                    {
-                      label: 'indicator2',
-                      value: existingRecordFields.in2,
-                    },
-                    {
-                      label: 'recordSubfield',
-                      value: existingRecordFields.subfield,
-                    },
-                  ],
-                  staticValueDetails: null,
-                  dataValueType: 'VALUE_FROM_RECORD',
-                },
-                matchCriterion: 'EXACTLY_MATCHES',
-              },
-            ],
-            name: profileName,
-            existingRecordType: recordType,
-          },
-          addedRelations: [],
-          deletedRelations: [],
-        },
-        isDefaultSearchParamsRequired: false,
-      })
-      .then(({ response }) => {
-        return response;
-      });
-  },
-
   checkCalloutMessage: (message) => {
     cy.expect(Callout({ textContent: including(message) }).exists());
   },
@@ -727,5 +577,4 @@ export default {
       }),
     ]);
   },
-  close: () => cy.do(closeButton.click()),
 };

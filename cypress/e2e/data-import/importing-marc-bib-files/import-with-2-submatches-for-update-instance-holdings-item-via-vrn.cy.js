@@ -1,7 +1,7 @@
 import {
   ACQUISITION_METHOD_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
   INSTANCE_STATUS_TERM_NAMES,
@@ -155,7 +155,7 @@ describe('Data Import', () => {
             subfield: 'c',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+          existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
           instanceOption: NewMatchProfile.optionsList.vrn,
         },
       },
@@ -167,7 +167,7 @@ describe('Data Import', () => {
             subfield: 'c',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+          existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
           holdingsOption: NewMatchProfile.optionsList.vrn,
         },
       },
@@ -179,7 +179,7 @@ describe('Data Import', () => {
             subfield: 'c',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+          existingRecordType: EXISTING_RECORD_NAMES.ITEM,
           itemOption: NewMatchProfile.optionsList.vrn,
         },
       },
@@ -271,6 +271,7 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${testData.editedMarcFileName}`);
       cy.getAdminToken().then(() => {
         InstanceStatusTypes.getViaApi({ query: '"name"=="Electronic Resource"' }).then((type) => {
           if (type.length !== 0) {
@@ -303,7 +304,6 @@ describe('Data Import', () => {
           },
         );
       });
-      FileManager.deleteFile(`cypress/fixtures/${testData.editedMarcFileName}`);
     });
 
     it(

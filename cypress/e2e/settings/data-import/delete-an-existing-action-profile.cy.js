@@ -26,8 +26,12 @@ describe('Data Import', () => {
     };
     const profile = {
       createJobProfile: `autotest jobProfileForCreate.${getRandomPostfix()}`,
-      createActionProfile: `autotest actionProfileForCreate${getRandomPostfix()}`,
-      createMappingProfile: `autotest mappingProfileForCreate${getRandomPostfix()}`,
+      createActionProfile: {
+        name: `autotest actionProfileForCreate${getRandomPostfix()}`,
+        action: 'CREATE',
+        folioRecordType: 'INSTANCE',
+      },
+      createMappingProfile: { name: `autotest mappingProfileForCreate${getRandomPostfix()}` },
     };
 
     const calloutMessage = `The action profile "${actionProfileToDelete.name}" was successfully deleted`;
@@ -36,24 +40,24 @@ describe('Data Import', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
-        NewFieldMappingProfile.createMappingProfileViaApi(profile.createMappingProfile).then(
-          (mappingProfileResponse) => {
-            NewActionProfile.createActionProfileViaApi(
-              profile.createActionProfile,
-              mappingProfileResponse.body.id,
-            ).then((actionProfileResponse) => {
-              NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
-                profile.createJobProfile,
-                actionProfileResponse.body.id,
-              );
-            });
+        NewFieldMappingProfile.createInstanceMappingProfileViaApi(
+          profile.createMappingProfile,
+        ).then((mappingProfileResponse) => {
+          NewActionProfile.createActionProfileViaApi(
+            profile.createActionProfile,
+            mappingProfileResponse.body.id,
+          ).then((actionProfileResponse) => {
+            NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
+              profile.createJobProfile,
+              actionProfileResponse.body.id,
+            );
+          });
 
-            cy.login(user.username, user.password, {
-              path: SettingsMenu.actionProfilePath,
-              waiter: ActionProfiles.waitLoading,
-            });
-          },
-        );
+          cy.login(user.username, user.password, {
+            path: SettingsMenu.actionProfilePath,
+            waiter: ActionProfiles.waitLoading,
+          });
+        });
       });
       ActionProfiles.createWithoutLinkedMappingProfile(actionProfileToDelete);
     });
@@ -71,8 +75,8 @@ describe('Data Import', () => {
       'C2346 Delete an existing action profile (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        ActionProfiles.search(profile.createActionProfile);
-        ActionProfiles.selectActionProfileFromList(profile.createActionProfile);
+        ActionProfiles.search(profile.createActionProfile.name);
+        ActionProfiles.selectActionProfileFromList(profile.createActionProfile.name);
         ActionProfileView.delete();
         ConfirmDelete.confirmDeleteActionProfile();
         ExceptionDelete.verifyExceptionMessage();
