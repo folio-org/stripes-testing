@@ -91,8 +91,10 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSelectApplication();
           AuthorizationRoles.selectApplicationInModal(testData.firstApplicationName);
           AuthorizationRoles.selectApplicationInModal(testData.secondApplicationName);
+          cy.wait(1000);
           cy.intercept('GET', capabilityCallRegExp).as('capabilities');
           AuthorizationRoles.clickSaveInModal();
+          AuthorizationRoles.waitCapabilitiesShown();
           cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
           // TO DO: uncomment the following step when applications will be divided into multiple small entities
           // Currently, two apps used here include all existing capabilities/sets, and handling them requires unreasonable amount of resources
@@ -103,6 +105,7 @@ describe('Eureka', () => {
           testData.capabilities.forEach((capability) => {
             AuthorizationRoles.selectCapabilityCheckbox(capability);
           });
+          cy.wait(1000);
           AuthorizationRoles.clickSaveButton();
           AuthorizationRoles.checkAfterSaveCreate(testData.roleName, testData.roleDescription);
           AuthorizationRoles.clickOnRoleName(testData.roleName);

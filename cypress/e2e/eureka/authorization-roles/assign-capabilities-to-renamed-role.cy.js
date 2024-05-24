@@ -83,6 +83,7 @@ describe('Eureka', () => {
             testData.updatedRoleName,
             testData.updateRoleDescription,
           );
+          cy.wait(1000);
           AuthorizationRoles.clickSaveButton();
           AuthorizationRoles.checkAfterSaveEdit(
             testData.updatedRoleName,
@@ -91,6 +92,7 @@ describe('Eureka', () => {
           AuthorizationRoles.openForEdit();
           AuthorizationRoles.selectCapabilityCheckbox(testData.originalCapabilities[1], false);
           AuthorizationRoles.selectCapabilityCheckbox(testData.capabilityToSelect);
+          cy.wait(1000);
           AuthorizationRoles.clickSaveButton();
           AuthorizationRoles.checkAfterSaveEdit(
             testData.updatedRoleName,

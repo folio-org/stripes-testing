@@ -179,6 +179,7 @@ describe('Eureka', () => {
           AuthorizationRoles.selectApplicationInModal(testData.newApplication);
           cy.intercept('GET', capabilitiesCallRegExp).as('capabilities');
           cy.intercept('GET', capabilitySetsCallRegExp).as('capabilitySets');
+          cy.wait(1000);
           AuthorizationRoles.clickSaveInModal();
           cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
           cy.wait('@capabilitySets').its('response.statusCode').should('eq', 200);

@@ -492,4 +492,8 @@ export default {
       );
     cy.expect(targetRow.has({ checkboxCount: expectedCount }));
   },
+
+  waitCapabilitiesShown: () => {
+    cy.expect(capabilitiesAccordion.find(MultiColumnListRow()).exists());
+  },
 };
