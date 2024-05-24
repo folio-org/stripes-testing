@@ -18,15 +18,18 @@ describe('MARC', () => {
         baseUrl: '',
         source: 'Local',
         isActive: true,
-        createdByAdmin: `${date} by ADMINISTRATOR, Diku_admin`,
       };
       const newHridStartsWith = ['', '05', '0', '001'];
       const errorHridRequired = 'Error saving data. HRID starts with is required.';
       const errorHridStartsWithZero = 'Error saving data. HRID cannot start with zero.';
+      let adminUser;
       let user;
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        cy.getAdminSourceRecord().then((record) => {
+          adminUser = record;
+        });
         cy.createTempUser([Permissions.uiSettingsManageAuthorityFiles.gui])
           .then((userProperties) => {
             user = userProperties;
@@ -68,7 +71,7 @@ describe('MARC', () => {
             localAuthFile.baseUrl,
             localAuthFile.isActive,
             localAuthFile.source,
-            localAuthFile.createdByAdmin,
+            `${date} by ${adminUser}`,
           );
           ManageAuthorityFiles.checkSaveButtonEnabledInFile(localAuthFile.name, false);
           ManageAuthorityFiles.checkCancelButtonEnabledInFile(localAuthFile.name);
@@ -112,7 +115,7 @@ describe('MARC', () => {
             localAuthFile.hridStartsWith,
             localAuthFile.baseUrl,
             localAuthFile.isActive,
-            localAuthFile.createdByAdmin,
+            `${date} by ${adminUser}`,
             true,
           );
 
@@ -156,7 +159,7 @@ describe('MARC', () => {
             localAuthFile.hridStartsWith,
             localAuthFile.baseUrl,
             localAuthFile.isActive,
-            localAuthFile.createdByAdmin,
+            `${date} by ${adminUser}`,
             true,
           );
         },
