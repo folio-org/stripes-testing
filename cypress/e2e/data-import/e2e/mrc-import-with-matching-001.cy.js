@@ -1,8 +1,8 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  EXISTING_RECORD_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
-  EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
   RECORD_STATUSES,
@@ -48,7 +48,7 @@ describe('Data Import', () => {
         field: '001',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const mappingProfile = {
       name: `autoTestMappingProf.${getRandomPostfix()}`,
@@ -84,6 +84,9 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
+      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         // clean up generated profiles
@@ -91,9 +94,6 @@ describe('Data Import', () => {
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-        // delete created files in fixtures
-        FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
-        FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       });
     });
 

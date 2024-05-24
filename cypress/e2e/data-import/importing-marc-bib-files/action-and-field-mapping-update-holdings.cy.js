@@ -1,18 +1,16 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
   LOCATION_NAMES,
-  RECORD_STATUSES,
 } from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -38,6 +36,8 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
     let holdingsHrId;
+    let instanceId;
+    let holdingsId;
     const filePathToUpload = 'marcBibFileForC11106.mrc';
     const editedMarcFileName = `C11106 autotestFileName${getRandomPostfix()}.mrc`;
     const marcFileName = `C11106 autotestFileName${getRandomPostfix()}.mrc`;
@@ -101,7 +101,7 @@ describe('Data Import', () => {
         subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+      existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
       holdingsOption: NewMatchProfile.optionsList.holdingsHrid,
     };
     const jobProfileForUpdate = {
@@ -198,13 +198,9 @@ describe('Data Import', () => {
         jobProfileForCreate.profileName,
       ).then((response) => {
         instanceHrid = response[0].instance.hrid;
-      });
-
-      cy.visit(TopMenu.dataImportPath);
-      Logs.openFileDetails(marcFileName);
-      FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
-      HoldingsRecordView.getHoldingsHrId().then((initialHrId) => {
-        holdingsHrId = initialHrId;
+        instanceId = response[0].instance.id;
+        holdingsHrId = response[0].holdings.hrid;
+        holdingsId = response[0].holdings.id;
       });
     });
 
@@ -222,12 +218,8 @@ describe('Data Import', () => {
         });
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+        cy.deleteHoldingRecordViaApi(holdingsId);
+        InventoryInstance.deleteInstanceViaApi(instanceId);
       });
     });
 

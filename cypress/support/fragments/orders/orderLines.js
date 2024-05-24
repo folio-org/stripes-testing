@@ -110,6 +110,7 @@ const lineDetails = Section({ id: 'lineDetails' });
 const poLineDetails = {
   receiptStatus: lineDetails.find(Select('Receipt status')),
 };
+const selectLocationsModal = Modal('Select locations');
 
 const submitOrderLine = () => {
   cy.wait(4000);
@@ -143,6 +144,10 @@ const expandActionsDropdownInPOL = () => {
 };
 
 export default {
+  checkExistingPOLInOrderLinesList: (POL) => {
+    cy.wait(4000);
+    cy.expect(searchResultsPane.find(MultiColumnListCell(POL)).exists());
+  },
   submitOrderLine,
   checkQuantityPhysical,
   checkQuantityElectronic,
@@ -157,10 +162,12 @@ export default {
     cy.do([orderLineButton.click()]);
   },
   waitLoading() {
+    cy.wait(6000);
     cy.expect([
       Pane({ id: 'order-lines-filters-pane' }).exists(),
       Pane({ id: 'order-lines-results-pane' }).exists(),
     ]);
+    cy.wait(4000);
   },
 
   selectFund: (fundName) => {
@@ -170,6 +177,7 @@ export default {
   },
 
   resetFilters: () => {
+    cy.wait(4000);
     cy.do(filtersPane.find(Button('Reset all')).click());
   },
 
@@ -2310,5 +2318,23 @@ export default {
   clickTitleLookUp() {
     cy.do(Button('Title look-up').click());
     SelectInstanceModal.waitLoading();
+  },
+
+  selectLocationInFilters: (locationName) => {
+    cy.wait(4000);
+    cy.do([
+      Button({ id: 'accordion-toggle-button-pol-location-filter' }).click(),
+      Button('Location look-up').click(),
+      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
+      Button('Search').click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
+      selectLocationsModal.find(Button('Save')).click(),
+    ]);
+  },
+  selectOrders: () => {
+    cy.do(Section({ id: 'order-lines-filters-pane' }).find(Button('Orders')).click());
   },
 };
