@@ -115,10 +115,10 @@ describe.skip('Data Import', () => {
       });
     });
 
-    // test is skiped because of https://issues.folio.org/browse/MODSOURMAN-968
+    // the test is marked as Obsolete in TestRail, so it is skipped
     it(
       'C345423 Verify the possibility to modify MARC Bibliographic record (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: [] },
       () => {
         DataImport.verifyUploadState();
         // upload a marc file for creating of the new instance, holding and item

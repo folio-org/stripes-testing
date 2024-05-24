@@ -110,11 +110,15 @@ export default {
 
   chooseAction: (profileAction = action) => cy.do(actionSelect.choose(profileAction)),
 
-  saveProfile: () => cy.do(Button('Save as profile & Close').click()),
+  saveProfile: () => {
+    cy.wait(1000);
+    cy.do(Button('Save as profile & Close').click());
+  },
 
   linkMappingProfile: (specialMappingProfileName) => {
     clickLinkProfileButton();
     SelectMappingProfile.searchProfile(specialMappingProfileName);
+    cy.wait(1500);
     SelectMappingProfile.selectProfile(specialMappingProfileName);
     cy.expect(profileLinkSection.find(profileLinkButton).has({ disabled: true }));
     cy.do(Button('Save as profile & Close').click());
