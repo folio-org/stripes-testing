@@ -65,8 +65,10 @@ describe('Data Import', () => {
       NewJobProfile.linkActionProfile(actionProfile);
       NewJobProfile.saveAndClose();
 
-      // upload a marc file for creating of the new instance, holding and item
-      DataImport.uploadFileViaApi(filePath, fileName, jobProfile.profileName);
+      // upload a marc file for creating of the new instance, holding
+      DataImport.uploadFileViaApi(filePath, fileName, jobProfile.profileName).then((response) => {
+        instanceHrid = response[0].instance.hrid;
+      });
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -110,15 +112,11 @@ describe('Data Import', () => {
           FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InventoryInstance.getAssignedHRID().then((hrId) => {
-          instanceHrid = hrId;
-
-          InstanceRecordView.waitLoading();
-          InstanceRecordView.verifyInstancePaneExists();
-          cy.go('back');
-          FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
-          HoldingsRecordView.checkHoldingRecordViewOpened();
-        });
+        InstanceRecordView.waitLoading();
+        InstanceRecordView.verifyInstancePaneExists();
+        cy.go('back');
+        FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
+        HoldingsRecordView.checkHoldingRecordViewOpened();
       },
     );
   });

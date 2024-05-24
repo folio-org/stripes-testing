@@ -1,4 +1,4 @@
-import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { MatchProfiles, SettingsDataImport } from '../../../support/fragments/settings/dataImport';
 import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
@@ -45,7 +45,7 @@ describe('Data Import', () => {
         const MatchProfileEditForm = MatchProfiles.clickCreateNewMatchProfile();
 
         // Click on "Holdings" option as the "Existing records" type
-        MatchProfileEditForm.selectExistingRecordType(EXISTING_RECORDS_NAMES.HOLDINGS);
+        MatchProfileEditForm.selectExistingRecordType(EXISTING_RECORD_NAMES.HOLDINGS);
 
         // Dropdown list opens and correct options appears
         MatchProfileEditForm.verifyIncomingRecordsDropdown(
@@ -67,7 +67,7 @@ describe('Data Import', () => {
         const MatchProfileEditForm = MatchProfiles.clickCreateNewMatchProfile();
 
         // Click on "MARC Bibliographic" option as the "Existing records" type
-        MatchProfileEditForm.selectExistingRecordType(EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC);
+        MatchProfileEditForm.selectExistingRecordType(EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC);
 
         // Dropdown list opens and correct options appears
         MatchProfileEditForm.verifyIncomingRecordsDropdown(
@@ -89,7 +89,7 @@ describe('Data Import', () => {
         const MatchProfileEditForm = MatchProfiles.clickCreateNewMatchProfile();
 
         // Click on "Item" option as the "Existing records" type
-        MatchProfileEditForm.selectExistingRecordType(EXISTING_RECORDS_NAMES.ITEM);
+        MatchProfileEditForm.selectExistingRecordType(EXISTING_RECORD_NAMES.ITEM);
 
         // Dropdown list opens and correct options appears
         MatchProfileEditForm.verifyIncomingRecordsDropdown(
