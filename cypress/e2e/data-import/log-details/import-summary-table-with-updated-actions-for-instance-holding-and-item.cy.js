@@ -442,7 +442,6 @@ describe('Data Import', () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.selectYesfilterStaffSuppress();
         InventorySearchAndFilter.searchByParameter('Subject', subject);
-        // InventorySearchAndFilter.searchByParameter('Subject', 'Test update948.1333600836313105');
         InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
@@ -511,7 +510,6 @@ describe('Data Import', () => {
         Logs.waitFileIsImported(nameMarcFileForImportUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForImportUpdate);
-        // Logs.openFileDetails('C430253 autotestExportedFile914.622680799507435.mrc');
         FileDetails.checkItemsStatusesInResultList(0, [
           RECORD_STATUSES.UPDATED,
           RECORD_STATUSES.UPDATED,

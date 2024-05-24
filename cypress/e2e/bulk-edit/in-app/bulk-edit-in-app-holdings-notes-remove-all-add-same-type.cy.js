@@ -10,6 +10,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import { HOLDING_NOTES } from '../../../support/constants';
 
 let user;
 
@@ -53,14 +54,12 @@ describe('bulk-edit', () => {
               administrativeNotes: [notes.admin],
               notes: [
                 {
-                  // Binding
-                  holdingsNoteTypeId: 'e19eabab-a85c-4aef-a7b2-33bd9acef24e',
+                  holdingsNoteTypeId: HOLDING_NOTES.BINDING_NOTE,
                   note: notes.binding,
                   staffOnly: false,
                 },
                 {
-                  // Provenance
-                  holdingsNoteTypeId: 'db9b4787-95f0-4e78-becf-26748ce6bdeb',
+                  holdingsNoteTypeId: HOLDING_NOTES.PROVENANCE_NOTE,
                   note: notes.provenance,
                   staffOnly: false,
                 },
