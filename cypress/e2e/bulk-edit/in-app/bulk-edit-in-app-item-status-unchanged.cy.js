@@ -10,6 +10,7 @@ import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { LOCATION_IDS } from '../../../support/constants';
 
 let user;
 let servicePointId;
@@ -42,9 +43,8 @@ describe('bulk-edit', () => {
             cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
               (res) => {
                 const itemData = res;
-                // Annex location
-                itemData.permanentLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
-                itemData.temporaryLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
+                itemData.permanentLocation = { id: LOCATION_IDS.ANNEX };
+                itemData.temporaryLocation = { id: LOCATION_IDS.ANNEX };
                 // Selected loan type
                 itemData.permanentLoanType = { id: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845' };
                 itemData.temporaryLoanType = { id: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845' };

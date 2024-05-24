@@ -1,7 +1,8 @@
-import Affiliations from '../../../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 
@@ -26,37 +27,40 @@ describe('Inventory', () => {
       });
 
       cy.resetTenant();
-      cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
-        (userProperties) => {
-          testData.user = userProperties;
-        },
-      );
+      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+        testData.user = userProperties;
+
+        cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+        cy.setTenant(Affiliations.College);
+        cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.inventoryAll.gui]);
+
+        cy.login(testData.user.username, testData.user.password);
+
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+      });
     });
 
     after('Delete test data', () => {
       cy.resetTenant();
       cy.getAdminToken();
+      Users.deleteViaApi(testData.user.userId);
       cy.setTenant(Affiliations.College);
       InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-      cy.resetTenant();
-      Users.deleteViaApi(testData.user.userId);
     });
 
     it(
-      'C404385 (CONSORTIA) Verify the header of a shared Instance on the Central tenant (consortia) (folijet)',
+      'C411615 (CONSORTIA) Verify the Consortial holdings accordion on shadow Instance in Member Tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.visit(TopMenu.inventoryPath);
+        InventoryInstances.waitContentLoading();
 
-        InventoryInstances.searchByTitle(testData.instance.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InventoryInstance.checkInstanceHeader(
-          `Shared instance • ${testData.instance.instanceTitle} `,
-        );
+        InventoryInstance.verifyConsortiaHoldingsAccordion();
       },
     );
   });

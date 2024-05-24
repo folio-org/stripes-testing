@@ -16,7 +16,7 @@ describe('MARC', () => {
     const testData = {
       tag: '650',
       marcValue: 'Speaking Oratory debating',
-      rowIndex: 15,
+      rowIndex: 14,
       searchOption: 'Keyword',
       instanceTitle:
         'Abraham Lincoln, by Lillian Hertz. Prize essay in Alexander Hamilton junior high school P.S. 186, June 24, 1927.',

@@ -1,15 +1,15 @@
-import Permissions from '../../../../support/dictionary/permissions';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import Users from '../../../../support/fragments/users/users';
-import TopMenu from '../../../../support/fragments/topMenu';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
-import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
-import InteractorsTools from '../../../../support/utils/interactorsTools';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
+import Permissions from '../../../../support/dictionary/permissions';
+import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import InteractorsTools from '../../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -44,8 +44,11 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
-      InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+      cy.resetTenant();
+      cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
+      cy.setTenant(Affiliations.College);
+      InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
     });
 
     it(

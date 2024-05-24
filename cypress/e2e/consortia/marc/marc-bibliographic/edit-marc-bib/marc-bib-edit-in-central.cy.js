@@ -1,9 +1,7 @@
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
@@ -63,24 +61,20 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.resetTenant();
-            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-              () => {
-                DataImport.verifyUploadState();
-                DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileNameImported);
-                JobProfiles.search(marcFile.jobProfileToRun);
-                JobProfiles.runImportFile();
-                JobProfiles.waitFileIsImported(marcFile.fileNameImported);
-                Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(marcFile.fileNameImported);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdInstanceID = link.split('/')[5];
-                });
-                cy.login(users.userAProperties.username, users.userAProperties.password, {
-                  path: TopMenu.inventoryPath,
-                  waiter: InventoryInstances.waitContentLoading,
-                });
-              },
-            );
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileNameImported,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdInstanceID = record.instance.id;
+              });
+            });
+
+            cy.login(users.userAProperties.username, users.userAProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
       });
 
@@ -102,7 +96,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkPaneheaderContains(testData.sharedPaneheaderText);
           QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245UpdatedValue);
           QuickMarcEditor.updateExistingField(testData.tag500, testData.tag500UpdatedValue);
-          QuickMarcEditor.moveFieldUp(17);
+          QuickMarcEditor.moveFieldUp(18);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.updatedTitle);
@@ -138,8 +132,8 @@ describe('MARC', () => {
             users.userAProperties.firstName,
             users.userAProperties.lastName,
           );
-          QuickMarcEditor.verifyTagValue(16, testData.tag504);
-          QuickMarcEditor.verifyTagValue(17, testData.tag500);
+          QuickMarcEditor.verifyTagValue(17, testData.tag504);
+          QuickMarcEditor.verifyTagValue(18, testData.tag500);
         },
       );
     });
