@@ -97,7 +97,7 @@ export default {
       () => this.getAutomatedPatronBlocksApi(userId),
       (body) => body.automatedPatronBlocks.length > 0,
       {
-        limit: 18,
+        limit: Math.trunc(secondsToWait / 10),
         timeout: secondsToWait * 1000,
         delay: 10000,
       },
