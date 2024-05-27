@@ -2,7 +2,7 @@
 import {
   ACTION_NAMES_IN_ACTION_PROFILE,
   CALL_NUMBER_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   LOCATION_NAMES,
@@ -83,7 +83,7 @@ describe('Data Import', () => {
         subfield: 'u',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+      existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
       holdingsOption: NewMatchProfile.optionsList.uri,
     };
 

@@ -18,7 +18,6 @@ describe('MARC', () => {
         baseUrl: '',
         source: 'Local',
         isActive: true,
-        createdByAdmin: `${date} by ADMINISTRATOR, Diku_admin`,
       };
 
       const fieldsToUpdate = {
@@ -27,10 +26,14 @@ describe('MARC', () => {
         hridStartsWith: '12000',
         baseUrl: `https://testing/field/baseurl/positivetest3${getRandomLetters(4)}/`,
       };
+      let adminUser;
       let user;
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        cy.getAdminSourceRecord().then((record) => {
+          adminUser = record;
+        });
         cy.createTempUser([Permissions.uiSettingsManageAuthorityFiles.gui])
           .then((userProperties) => {
             user = userProperties;
@@ -70,7 +73,7 @@ describe('MARC', () => {
             localAuthFile.hridStartsWith,
             localAuthFile.baseUrl,
             localAuthFile.isActive,
-            localAuthFile.createdByAdmin,
+            `${date} by ${adminUser}`,
             true,
           );
 
@@ -83,7 +86,7 @@ describe('MARC', () => {
             localAuthFile.baseUrl,
             localAuthFile.isActive,
             localAuthFile.source,
-            localAuthFile.createdByAdmin,
+            `${date} by ${adminUser}`,
           );
           ManageAuthorityFiles.checkNewButtonEnabled(false);
 

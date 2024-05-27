@@ -29,72 +29,11 @@ const defaultActionProfile = {
   name: 'autotest action profile',
   typeValue: FOLIO_RECORD_TYPE.INSTANCE,
 };
-const getDefaultInstanceActionProfile = (name) => {
-  const defaultInstanceActionProfile = {
-    profile: {
-      name,
-      action: 'CREATE',
-      folioRecord: 'INSTANCE',
-    },
-    addedRelations: [
-      {
-        masterProfileId: null,
-        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
-        detailProfileId: '',
-        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
-      },
-    ],
-    deletedRelations: [],
-  };
-  return defaultInstanceActionProfile;
-};
-const getDefaultHoldingsActionProfile = (name) => {
-  const defaultHoldingsActionProfile = {
-    profile: {
-      name,
-      action: 'CREATE',
-      folioRecord: 'HOLDINGS',
-    },
-    addedRelations: [
-      {
-        masterProfileId: null,
-        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
-        detailProfileId: '',
-        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
-      },
-    ],
-    deletedRelations: [],
-  };
-  return defaultHoldingsActionProfile;
-};
-const getDefaultItemActionProfile = (name) => {
-  const defaultItemActionProfile = {
-    profile: {
-      name,
-      action: 'CREATE',
-      folioRecord: 'ITEM',
-    },
-    addedRelations: [
-      {
-        masterProfileId: null,
-        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
-        detailProfileId: '',
-        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
-      },
-    ],
-    deletedRelations: [],
-  };
-  return defaultItemActionProfile;
-};
-
 const clickLinkProfileButton = () => {
   cy.do(profileLinkButton.click());
 };
 
 export default {
-  getDefaultInstanceActionProfile,
-  getDefaultHoldingsActionProfile,
-  getDefaultItemActionProfile,
   clickLinkProfileButton,
   fill: (specialActionProfile = defaultActionProfile) => {
     cy.do([
@@ -125,35 +64,7 @@ export default {
     cy.expect(Pane('Action profiles').find(Button('Actions')).exists());
   },
 
-  createActionProfileViaApi: (nameMapProfile, mapProfileId, profileAction = 'CREATE') => {
-    return cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'data-import-profiles/actionProfiles',
-        body: {
-          profile: {
-            name: nameMapProfile,
-            action: profileAction,
-            folioRecord: 'INSTANCE',
-          },
-          addedRelations: [
-            {
-              masterProfileId: null,
-              masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
-              detailProfileId: mapProfileId,
-              detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
-            },
-          ],
-          deletedRelations: [],
-        },
-        isDefaultSearchParamsRequired: false,
-      })
-      .then(({ response }) => {
-        return response;
-      });
-  },
-
-  createActionProfileViaApiMarc: (profile, mapProfileId) => {
+  createActionProfileViaApi: (profile, mappingProfileId) => {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -168,7 +79,7 @@ export default {
             {
               masterProfileId: null,
               masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
-              detailProfileId: mapProfileId,
+              detailProfileId: mappingProfileId,
               detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
             },
           ],

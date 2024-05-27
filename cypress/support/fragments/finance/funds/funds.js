@@ -67,6 +67,8 @@ const addTransferModal = Modal({ id: 'add-transfer-modal' });
 const closeWithoutSavingButton = Button('Close without saving');
 const addExpenseClassButton = Button({ id: 'budget-status-expense-classes-add-button' });
 const saveAndClose = Button('Save & close');
+const fundFormSection = Section({ id: 'pane-fund-form' });
+const locationSection = Section({ id: 'locations' });
 
 export default {
   defaultUiFund: {
@@ -137,6 +139,43 @@ export default {
       saveAndCloseButton.click(),
     ]);
     this.waitForFundDetailsLoading();
+  },
+
+  save() {
+    cy.do(saveAndCloseButton.click());
+  },
+
+  fillInRequiredFields(fund) {
+    cy.do([
+      nameField.fillIn(fund.name),
+      codeField.fillIn(fund.code),
+      externalAccountField.fillIn(fund.externalAccountNo),
+      ledgerSelection.open(),
+      SelectionList().select(fund.ledgerName),
+    ]);
+  },
+
+  newFund() {
+    cy.wait(2000);
+    cy.do(Section({ id: 'fund-results-pane' }).find(newButton).click());
+  },
+
+  clickRestrictByLocationsCheckbox() {
+    cy.wait(4000);
+    cy.do(fundFormSection.find(Checkbox({ name: 'fund.restrictByLocations' })).click());
+    cy.wait(4000);
+  },
+
+  varifyLocationSectionExist() {
+    cy.expect(fundFormSection.find(locationSection).exists());
+  },
+
+  varifyLocationSectionAbsent() {
+    cy.expect(fundFormSection.find(locationSection).absent());
+  },
+
+  varifyLocationRequiredError() {
+    cy.expect(locationSection.find(HTML(including('Locations must be assigned'))).exists());
   },
 
   cancelCreatingFundWithTransfers(defaultFund, defaultLedger, firstFund, secondFund) {
@@ -824,6 +863,10 @@ export default {
     cy.wait(4000);
     cy.do([Select({ id: 'budget-status' }).choose(statusName), saveAndCloseButton.click()]);
     InteractorsTools.checkCalloutMessage(`Budget ${fund.code}-${fiscalYear.code} has been saved`);
+  },
+
+  varifyFundIsSaved: () => {
+    InteractorsTools.checkCalloutMessage('Fund has been saved');
   },
 
   addExpensesClass: (firstExpenseClassName) => {
