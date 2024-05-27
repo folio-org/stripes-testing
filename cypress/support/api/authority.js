@@ -102,6 +102,22 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
+  'updateBaseUrlInAuthoritySourceFileViaAPI',
+  (authorityFileId, version, newBaseUrl) => {
+    cy.okapiRequest({
+      method: REQUEST_METHOD.PATCH,
+      path: `authority-source-files/${authorityFileId}`,
+      body: {
+        id: authorityFileId,
+        baseUrl: newBaseUrl,
+        _version: version,
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+);
+
+Cypress.Commands.add(
   'createAuthoritySourceFileViaAPI',
   ({
     name = `Test auth source file ${getRandomPostfix()}`,
