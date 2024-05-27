@@ -61,7 +61,7 @@ describe('MARC', () => {
         Users.deleteViaApi(user.userId);
         MarcAuthority.deleteViaAPI(createdAuthorityId, true);
         ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(folioAuthorityFile.name);
-        ManageAuthorityFiles.updateBaseUrlInAuthoritySourceFileViaAPI(
+        ManageAuthorityFiles.updateBaseUrlInAuthorityFileViaApi(
           folioAuthorityFile.name,
           folioAuthorityFile.baseUrl,
         );

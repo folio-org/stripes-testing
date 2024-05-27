@@ -466,7 +466,7 @@ export default {
     });
   },
 
-  updateBaseUrlInAuthoritySourceFileViaAPI(fileName, newBaseUrl) {
+  updateBaseUrlInAuthorityFileViaApi(fileName, newBaseUrl) {
     cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
       cy.updateBaseUrlInAuthoritySourceFileViaAPI(body.id, body._version + 1, newBaseUrl);
     });
