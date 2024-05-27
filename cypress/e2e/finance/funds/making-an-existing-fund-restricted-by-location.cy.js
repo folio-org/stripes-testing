@@ -18,6 +18,7 @@ describe('ui-finance: Funds', () => {
 
   before(() => {
     cy.getAdminToken();
+
     FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
       defaultFiscalYear.id = response.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
