@@ -30,12 +30,14 @@ describe('ui-finance: Funds', () => {
         });
       });
     });
+
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
         location = res;
       });
     });
+
     cy.createTempUser([permissions.uiFinanceViewEditCreateFundAndBudget.gui]).then(
       (userProperties) => {
         user = userProperties;
