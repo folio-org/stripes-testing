@@ -72,6 +72,9 @@ const roleAssignmentFilter = selectRolesModal.find(
   Accordion({ id: including('Role assigment status') }),
 );
 const rolesPane = selectRolesModal.find(Pane('User roles'));
+const unassignAllRolesModal = Modal('Unassign all user roles');
+const yesButton = Button('Yes');
+const noButton = Button('No');
 let totalRows;
 
 // servicePointIds is array of ids
@@ -90,6 +93,7 @@ export default {
   addServicePointsViaApi,
 
   openEdit() {
+    cy.wait(1000);
     cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
   },
 
@@ -633,5 +637,28 @@ export default {
 
   verifyUserRolesRowsCount(expectedCount) {
     cy.expect(userRolesAccordion.find(List()).has({ count: expectedCount }));
+  },
+
+  removeOneRole(roleName) {
+    cy.do(
+      userRolesAccordion
+        .find(
+          ListItem(including(roleName)).find(
+            Button({ id: including('clickable-remove-user-role') }),
+          ),
+        )
+        .click(),
+    );
+  },
+
+  unassignAllRoles(isConfirmed = true) {
+    cy.do(userRolesAccordion.find(unassignAllRolesButton).click());
+    cy.expect([
+      unassignAllRolesModal.find(yesButton).exists(),
+      unassignAllRolesModal.find(noButton).exists(),
+    ]);
+    if (isConfirmed) cy.do(unassignAllRolesModal.find(yesButton).click());
+    else cy.do(unassignAllRolesModal.find(noButton).click());
+    cy.expect(unassignAllRolesModal.absent());
   },
 };
