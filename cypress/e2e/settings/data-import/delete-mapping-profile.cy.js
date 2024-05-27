@@ -17,15 +17,23 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Settings', () => {
     let user;
-    const notLinkedMappingProfile = `C2353_autotest_mappingProfile${getRandomStringCode(160)}`;
-    const linkedMappingProfile = `C2353_autotest_mappingProfile${getRandomPostfix()}`;
-    const actionProfile = `C2353_autotest_actionProfile${getRandomPostfix()}`;
+    const notLinkedMappingProfile = {
+      name: `C2353_autotest_mappingProfile${getRandomStringCode(160)}`,
+    };
+    const linkedMappingProfile = {
+      name: `C2353_autotest_mappingProfile${getRandomPostfix()}`,
+    };
+    const actionProfile = {
+      name: `C2353_autotest_actionProfile${getRandomPostfix()}`,
+      action: 'CREATE',
+      folioRecordType: 'INSTANCE',
+    };
     const jobProfile = `C2353_autotest_jobProfile${getRandomPostfix()}`;
 
     before('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         // create mapping profile profile linked to action profile
-        NewFieldMappingProfile.createMappingProfileViaApi(linkedMappingProfile)
+        NewFieldMappingProfile.createInstanceMappingProfileViaApi(linkedMappingProfile)
           .then((mappingProfileResponse) => {
             NewActionProfile.createActionProfileViaApi(
               actionProfile,
@@ -39,7 +47,7 @@ describe('Data Import', () => {
             );
           });
         // create not linked mapping profile
-        NewFieldMappingProfile.createMappingProfileViaApi(notLinkedMappingProfile);
+        NewFieldMappingProfile.createInstanceMappingProfileViaApi(notLinkedMappingProfile);
       });
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
@@ -51,8 +59,8 @@ describe('Data Import', () => {
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile);
-        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile);
-        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(linkedMappingProfile);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(linkedMappingProfile.name);
         Users.deleteViaApi(user.userId);
       });
     });
@@ -63,20 +71,20 @@ describe('Data Import', () => {
       () => {
         cy.visit(SettingsMenu.mappingProfilePath);
 
-        FieldMappingProfiles.search(linkedMappingProfile);
-        FieldMappingProfiles.selectMappingProfileFromList(linkedMappingProfile);
+        FieldMappingProfiles.search(linkedMappingProfile.name);
+        FieldMappingProfiles.selectMappingProfileFromList(linkedMappingProfile.name);
 
-        FieldMappingProfileView.delete(linkedMappingProfile);
+        FieldMappingProfileView.delete(linkedMappingProfile.name);
         FieldMappingProfileView.verifyCannotDeleteModalOpened();
         FieldMappingProfileView.closeCannotDeleteModal();
-        FieldMappingProfileView.closeViewMode(linkedMappingProfile);
+        FieldMappingProfileView.closeViewMode(linkedMappingProfile.name);
 
-        FieldMappingProfiles.search(notLinkedMappingProfile);
-        FieldMappingProfiles.selectMappingProfileFromList(notLinkedMappingProfile);
+        FieldMappingProfiles.search(notLinkedMappingProfile.name);
+        FieldMappingProfiles.selectMappingProfileFromList(notLinkedMappingProfile.name);
 
-        FieldMappingProfileView.delete(notLinkedMappingProfile);
-        FieldMappingProfiles.checkSuccessDelitionCallout(notLinkedMappingProfile);
-        FieldMappingProfiles.search(notLinkedMappingProfile);
+        FieldMappingProfileView.delete(notLinkedMappingProfile.name);
+        FieldMappingProfiles.checkSuccessDelitionCallout(notLinkedMappingProfile.name);
+        FieldMappingProfiles.search(notLinkedMappingProfile.name);
         FieldMappingProfiles.verifyMappingProfileAbsent();
       },
     );

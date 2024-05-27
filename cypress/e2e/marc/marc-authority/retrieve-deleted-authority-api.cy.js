@@ -145,7 +145,7 @@ describe('MARC', () => {
             .filter((rec, index) => index < 10)
             .forEach((record) => {
               expect(record).to.not.have.property('source');
-              expect(record.identifiers.length).to.equal(0);
+              expect(record).to.not.have.property('identifiers');
               expect(record).to.not.have.property('sourceFileId');
               expect(record).to.not.have.property('naturalId');
               expect(record).to.not.have.property('metadata');
