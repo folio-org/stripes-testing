@@ -26,15 +26,18 @@ describe('MARC', () => {
         baseUrl: '',
         source: 'Local',
         isActive: true,
-        createdByAdmin: `${date} by ADMINISTRATOR, Diku_admin`,
       };
       const fields = [{ tag: '100', content: `$a ${title}`, indicators: ['\\', '\\'] }];
       const errorToastNotification = `Changes to ${localAuthFile.name} cannot be saved. Existing authority records are already assigned to this authority file.`;
+      let adminUser;
       let user;
       let createdAuthorityId;
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        cy.getAdminSourceRecord().then((record) => {
+          adminUser = record;
+        });
         cy.createTempUser([Permissions.uiSettingsManageAuthorityFiles.gui])
           .then((userProperties) => {
             user = userProperties;
@@ -84,7 +87,7 @@ describe('MARC', () => {
             localAuthFile.hridStartsWith,
             localAuthFile.baseUrl,
             localAuthFile.isActive,
-            localAuthFile.createdByAdmin,
+            `${date} by ${adminUser}`,
             true,
           );
 
@@ -97,7 +100,7 @@ describe('MARC', () => {
             localAuthFile.baseUrl,
             localAuthFile.isActive,
             localAuthFile.source,
-            localAuthFile.createdByAdmin,
+            `${date} by ${adminUser}`,
           );
           ManageAuthorityFiles.checkNewButtonEnabled(false);
 
@@ -118,7 +121,7 @@ describe('MARC', () => {
             localAuthFile.baseUrl,
             localAuthFile.isActive,
             localAuthFile.source,
-            localAuthFile.createdByAdmin,
+            `${date} by ${adminUser}`,
             false,
             false,
           );
@@ -131,7 +134,7 @@ describe('MARC', () => {
             localAuthFile.hridStartsWith,
             localAuthFile.baseUrl,
             localAuthFile.isActive,
-            localAuthFile.createdByAdmin,
+            `${date} by ${adminUser}`,
             true,
           );
         },

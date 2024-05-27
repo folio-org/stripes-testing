@@ -1,3 +1,4 @@
+import { EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -31,9 +32,24 @@ describe('Data Import', () => {
     let user;
 
     // profile names for creating
-    const mappingProfileName = `C353645_mapping_profile_${getRandomPostfix()}`;
-    const actionProfileName = `C353645_action_profile_${getRandomPostfix()}`;
-    const matchProfileName = `C353645_match_profile_${getRandomPostfix()}`;
+    const mappingProfile = { name: `C353645_mapping_profile_${getRandomPostfix()}` };
+    const actionProfile = {
+      name: `C353645_action_profile_${getRandomPostfix()}`,
+      action: 'CREATE',
+      folioRecordType: 'INSTANCE',
+    };
+    const matchProfile = {
+      profileName: `C353645_match_profile_${getRandomPostfix()}`,
+      incomingRecordFields: {
+        field: '001',
+        in1: '',
+        in2: '',
+        subfield: '',
+      },
+      recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+      existingMatchExpressionValue: 'instance.hrid',
+    };
     const jobProfileName = `C353645_job_profile_${getRandomPostfix()}`;
     const fileExtensionName = '.dat';
 
@@ -41,21 +57,21 @@ describe('Data Import', () => {
       cy.createTempUser([Permissions.settingsDataImportCanViewOnly.gui]).then((userProperties) => {
         user = userProperties;
 
-        NewFieldMappingProfile.createMappingProfileViaApi(mappingProfileName).then(
+        NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile).then(
           (mappingProfileResponse) => {
             NewActionProfile.createActionProfileViaApi(
-              actionProfileName,
+              actionProfile,
               mappingProfileResponse.body.id,
             ).then((actionProfileResponse) => {
-              NewMatchProfile.createMatchProfileViaApi(matchProfileName).then(
-                (matchProfileResponse) => {
-                  NewJobProfile.createJobProfileViaApi(
-                    jobProfileName,
-                    matchProfileResponse.body.id,
-                    actionProfileResponse.body.id,
-                  );
-                },
-              );
+              NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(
+                matchProfile,
+              ).then((matchProfileResponse) => {
+                NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+                  jobProfileName,
+                  matchProfileResponse.body.id,
+                  actionProfileResponse.body.id,
+                );
+              });
             });
           },
         );
@@ -70,9 +86,9 @@ describe('Data Import', () => {
       cy.getAdminToken().then(() => {
         // delete generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
-        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfileName);
-        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfileName);
-        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         Users.deleteViaApi(user.userId);
       });
     });
@@ -92,24 +108,24 @@ describe('Data Import', () => {
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.verifyActionMenuAbsent();
-        MatchProfiles.search(matchProfileName);
-        MatchProfiles.selectMatchProfileFromList(matchProfileName);
+        MatchProfiles.search(matchProfile.profileName);
+        MatchProfiles.selectMatchProfileFromList(matchProfile.profileName);
         MatchProfileView.verifyMatchProfileOpened();
-        MatchProfiles.verifyActionMenuAbsent(matchProfileName);
+        MatchProfiles.verifyActionMenuAbsent(matchProfile.profileName);
 
         cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.checkListOfExistingProfilesIsDisplayed();
         ActionProfiles.verifyActionMenuAbsent();
-        ActionProfiles.search(actionProfileName);
-        ActionProfiles.selectActionProfileFromList(actionProfileName);
+        ActionProfiles.search(actionProfile.name);
+        ActionProfiles.selectActionProfileFromList(actionProfile.name);
         ActionProfileView.verifyActionProfileOpened();
         ActionProfileView.verifyActionMenuAbsent();
 
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
         FieldMappingProfiles.verifyActionMenuAbsent();
-        FieldMappingProfiles.search(mappingProfileName);
-        FieldMappingProfiles.selectMappingProfileFromList(mappingProfileName);
+        FieldMappingProfiles.search(mappingProfile.name);
+        FieldMappingProfiles.selectMappingProfileFromList(mappingProfile.name);
         FieldMappingProfileView.verifyMappingProfileOpened();
         FieldMappingProfileView.verifyActionMenuAbsent();
 
