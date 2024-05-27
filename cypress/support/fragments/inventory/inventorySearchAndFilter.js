@@ -19,6 +19,7 @@ import {
   Select,
   TextArea,
   TextField,
+  not,
 } from '../../../../interactors';
 import { BROWSE_CALL_NUMBER_OPTIONS } from '../../constants';
 import DateTools from '../../utils/dateTools';
@@ -725,6 +726,19 @@ export default {
   verifyPanesExist() {
     cy.expect(paneFilterSection.exists());
     cy.expect(paneResultsSection.exists());
+  },
+
+  verifySearchOptionIncluded(searchOption, optionShown = true) {
+    if (optionShown) cy.expect(searchTypeDropdown.has({ content: including(searchOption) }));
+    else cy.expect(searchTypeDropdown.has({ content: not(including(searchOption)) }));
+  },
+
+  verifyDefaultSearchOptionSelected(defaultSearchOptionValue) {
+    cy.expect(searchTypeDropdown.has({ value: defaultSearchOptionValue }));
+  },
+
+  clickSearchOptionSelect() {
+    cy.do(searchTypeDropdown.click());
   },
 
   selectViewHoldings: () => cy.do(viewHoldingButton.click()),
