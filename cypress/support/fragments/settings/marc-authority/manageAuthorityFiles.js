@@ -329,6 +329,15 @@ export default {
     );
   },
 
+  editBaseUrlInFolioFile(authorityFileName, fieldName, fieldValue) {
+    const targetRow = getTargetRowWithFile(authorityFileName);
+
+    cy.do(targetRow.find(TextField({ placeholder: fieldName })).fillIn(fieldValue));
+    cy.expect(targetRow.find(TextField({ placeholder: fieldName })).has({ value: fieldValue }));
+    cy.expect(targetRow.find(cancelButton).has({ disabled: false }));
+    cy.expect(targetRow.find(saveButton).has({ disabled: false }));
+  },
+
   checkRowEditableInEditMode(
     authorityFileName,
     prefix,
@@ -454,6 +463,12 @@ export default {
   unsetAuthorityFileAsActiveViaApi(fileName) {
     cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
       cy.setActiveAuthoritySourceFileViaAPI(body.id, body._version + 1, false);
+    });
+  },
+
+  updateBaseUrlInAuthoritySourceFileViaAPI(fileName, newBaseUrl) {
+    cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
+      cy.updateBaseUrlInAuthoritySourceFileViaAPI(body.id, body._version + 1, newBaseUrl);
     });
   },
 };
