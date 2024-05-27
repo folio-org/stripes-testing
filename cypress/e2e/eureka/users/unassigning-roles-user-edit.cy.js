@@ -1,7 +1,6 @@
 import Users from '../../../support/fragments/users/users';
 import UsersCard from '../../../support/fragments/users/usersCard';
 import UserEdit from '../../../support/fragments/users/userEdit';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -70,7 +69,6 @@ describe('Eureka', () => {
         path: `${TopMenu.usersPath}/preview/${testData.userA.userId}`,
         waiter: UsersCard.waitLoading,
       });
-      UsersSearchPane.searchByUsername(testData.userA.username);
     });
 
     after('Delete roles, users', () => {
