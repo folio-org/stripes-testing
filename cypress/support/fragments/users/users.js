@@ -182,6 +182,13 @@ export default {
     });
   },
 
+  checkPatronIsNotBlockedViaApi(userId) {
+    this.getAutomatedPatronBlocksApi(userId).then((body) => {
+      cy.wrap(body.automatedPatronBlocks.length).should('eq', 0);
+      cy.expect(TextField({ value: 'Patron has block(s) in place' }).absent());
+    });
+  },
+
   verifyFullNameIsDisplayedCorrectly(fullName) {
     cy.expect(Section({ id: 'pane-userdetails' }).find(HTML(fullName)).exists());
   },

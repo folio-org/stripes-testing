@@ -14,7 +14,7 @@ module.exports = defineConfig({
     runMode: 0,
     openMode: 0,
   },
-  numTestsKeptInMemory: 1,
+  numTestsKeptInMemory: 5,
   viewportWidth: 1920,
   viewportHeight: 1080,
   video: false,
@@ -22,7 +22,7 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://folio-snapshot-2-okapi.dev.folio.org',
+    OKAPI_HOST: 'https://folio-testing-cypress-okapi.ci.folio.org',
     OKAPI_TENANT: 'diku',
     diku_login: 'diku_admin',
     diku_password: 'admin',
@@ -118,7 +118,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://folio-snapshot-2.dev.folio.org',
+    baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
     testIsolation: false,
   },
 });
