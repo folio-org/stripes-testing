@@ -387,6 +387,7 @@ export default {
   },
 
   checkRequestType(requestType) {
+    cy.wait(500);
     if (requestType === REQUEST_TYPES.PAGE) {
       this.selectPagesRequestType();
     } else if (requestType === REQUEST_TYPES.HOLD) {
@@ -394,6 +395,7 @@ export default {
     } else if (requestType === REQUEST_TYPES.RECALL) {
       this.selectRecallsRequestType();
     }
+    cy.wait(500);
   },
 
   checkRequestStatus(requestStatus) {
