@@ -1,8 +1,11 @@
 import { including } from '@interactors/html';
+import { recurse } from 'cypress-recurse';
 import {
   Accordion,
   Button,
+  Callout,
   Dropdown,
+  HTML,
   KeyValue,
   MultiColumnListCell,
   Pane,
@@ -10,8 +13,6 @@ import {
   Section,
   Select,
   TextField,
-  Callout,
-  HTML,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -77,6 +78,30 @@ export default {
       .then(({ body }) => {
         return body.users;
       });
+  },
+
+  getAutomatedPatronBlocksApi(userId) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `automated-patron-blocks/${userId}`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => {
+        return body;
+      });
+  },
+
+  waitForAutomatedPatronBlocksForUser(userId, secondsToWait) {
+    recurse(
+      () => this.getAutomatedPatronBlocksApi(userId),
+      (body) => body.automatedPatronBlocks.length > 0,
+      {
+        limit: 18,
+        timeout: secondsToWait * 1000,
+        delay: 10000,
+      },
+    );
   },
 
   createViaUi: (userData) => {

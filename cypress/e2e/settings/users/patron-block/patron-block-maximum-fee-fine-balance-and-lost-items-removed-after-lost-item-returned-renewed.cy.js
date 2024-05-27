@@ -269,9 +269,9 @@ describe('Patron Block: Lost items', () => {
       });
     });
     cy.login(userData.username, userData.password);
-    // needed for the "Lost Item Fee Policy" so patron can recieve fee/fine
+    // needed for the "Lost Item Fee Policy" so patron can receive fee/fine
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(100000);
+    cy.wait(20000);
     cy.visit(SettingsMenu.conditionsPath);
   });
 
@@ -333,10 +333,10 @@ describe('Patron Block: Lost items', () => {
     () => {
       const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum outstanding fee/fine balance', '624');
+      Users.waitForAutomatedPatronBlocksForUser(userData.userId, 4 * 60);
       findPatron();
       UsersCard.waitLoading();
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
-
       const itemForRenew = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
       UsersCard.viewCurrentLoans();
       UserLoans.openLoanDetails(itemForRenew.barcode);
@@ -357,6 +357,7 @@ describe('Patron Block: Lost items', () => {
     () => {
       const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum outstanding fee/fine balance', '624');
+      Users.waitForAutomatedPatronBlocksForUser(userData.userId, 4 * 60);
       findPatron();
       UsersCard.waitLoading();
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
@@ -378,6 +379,7 @@ describe('Patron Block: Lost items', () => {
     () => {
       const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum number of lost items', '4');
+      Users.waitForAutomatedPatronBlocksForUser(userData.userId, 4 * 60);
       findPatron();
       UsersCard.waitLoading();
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
@@ -402,6 +404,7 @@ describe('Patron Block: Lost items', () => {
     () => {
       const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum number of lost items', '4');
+      Users.waitForAutomatedPatronBlocksForUser(userData.userId, 4 * 60);
       findPatron();
       UsersCard.waitLoading();
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
