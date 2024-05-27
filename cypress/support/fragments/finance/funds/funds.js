@@ -69,6 +69,8 @@ const addExpenseClassButton = Button({ id: 'budget-status-expense-classes-add-bu
 const saveAndClose = Button('Save & close');
 const fundFormSection = Section({ id: 'pane-fund-form' });
 const locationSection = Section({ id: 'locations' });
+const editButton = Button('Edit');
+const selectLocationsModal = Modal('Select locations');
 
 export default {
   defaultUiFund: {
@@ -166,6 +168,19 @@ export default {
     cy.wait(4000);
   },
 
+  addLocationToFund(locationName) {
+    cy.do([
+      locationSection.find(Button({ id: 'fund-locations' })).click(),
+      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
+      Button('Search').click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
+      selectLocationsModal.find(Button('Save')).click(),
+    ]);
+  },
+
   varifyLocationSectionExist() {
     cy.expect(fundFormSection.find(locationSection).exists());
   },
@@ -212,7 +227,7 @@ export default {
   addGroupToFund: (group) => {
     cy.do([
       actionsButton.click(),
-      Button('Edit').click(),
+      editButton.click(),
       MultiSelect({ label: 'Group' }).select([group]),
       saveAndCloseButton.click(),
     ]);
@@ -222,7 +237,7 @@ export default {
   addTransferTo: (fund) => {
     cy.do([
       actionsButton.click(),
-      Button('Edit').click(),
+      editButton.click(),
       MultiSelect({ label: 'Transfer to' }).select([fund]),
       saveAndCloseButton.click(),
     ]);
@@ -856,7 +871,7 @@ export default {
 
   editBudget: () => {
     cy.wait(4000);
-    cy.do([actionsButton.click(), Button('Edit').click()]);
+    cy.do([actionsButton.click(), editButton.click()]);
   },
 
   changeStatusOfBudget: (statusName, fund, fiscalYear) => {
@@ -1051,7 +1066,7 @@ export default {
   },
 
   addAUToFund: (AUName) => {
-    cy.do([actionsButton.click(), Button('Edit').click()]);
+    cy.do([actionsButton.click(), editButton.click()]);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(4000);
     cy.do([
