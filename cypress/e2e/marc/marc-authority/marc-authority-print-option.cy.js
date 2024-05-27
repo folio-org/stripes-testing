@@ -61,7 +61,7 @@ describe('MARC', () => {
       Users.deleteViaApi(testData.userProperties.userId);
     });
     it(
-      'C380635 "Print" option is located below "Edit" option in "Actions" menu for "MARC authority" record (spitfire) (TaaS)',
+      'C380635 "Print" option is located below "Export (MARC)" option in "Actions" menu for "MARC authority" record (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire'] },
       () => {
         MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.searchInput);

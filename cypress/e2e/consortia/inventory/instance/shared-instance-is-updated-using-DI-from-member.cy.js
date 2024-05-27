@@ -1,6 +1,6 @@
 import {
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_SOURCE_NAMES,
   JOB_STATUS_NAMES,
@@ -35,12 +35,15 @@ import NewMatchProfile from '../../../../support/fragments/settings/dataImport/m
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import { getLongDelay } from '../../../../support/utils/cypressTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    const testData = {};
+    const testData = {
+      exportedFileName: `C411726 exportedTestMarcFile${getRandomPostfix()}.mrc`,
+    };
     const mappingProfile = {
       name: `C411726 Update instance adding stat code${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -61,7 +64,7 @@ describe('Inventory', () => {
         subfield: 'i',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       existingRecordOption: NewMatchProfile.optionsList.instanceUuid,
     };
     const jobProfile = {
@@ -94,16 +97,21 @@ describe('Inventory', () => {
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);
           InventorySearchAndFilter.exportInstanceAsMarc();
+          cy.intercept('/data-export/quick-export').as('getHrid');
+          cy.wait('@getHrid', getLongDelay()).then((req) => {
+            const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
-          // use cy.getToken function to get toket for current tenant
-          cy.getCollegeAdminToken();
-          // download exported marc file
-          cy.visit(TopMenu.dataExportPath);
-          cy.wait(2000);
-          ExportFile.getExportedFileNameViaApi().then((name) => {
-            testData.exportedFileName = name;
-
-            ExportFile.downloadExportedMarcFile(testData.exportedFileName);
+            // download exported marc file
+            cy.setTenant(Affiliations.College).then(() => {
+              // use cy.getToken function to get toket for current tenant
+              cy.getCollegeAdminToken();
+              cy.visit(TopMenu.dataExportPath);
+              ExportFile.downloadExportedMarcFileWithRecordHrid(
+                expectedRecordHrid,
+                testData.exportedFileName,
+              );
+              FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
+            });
           });
           cy.resetTenant();
         });
@@ -131,6 +139,8 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${testData.exportedFileName}`);
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
@@ -139,8 +149,6 @@ describe('Inventory', () => {
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
       SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${testData.exportedFileName}`);
     });
 
     it(

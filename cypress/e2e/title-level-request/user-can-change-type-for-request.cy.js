@@ -18,7 +18,7 @@ import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Title Level Request. Request Detail', () => {
+describe('Title Level Request. Request detail', () => {
   let instanceHRID;
   const unchecked = false;
   let requestId;
@@ -89,7 +89,9 @@ describe('Title Level Request. Request Detail', () => {
             expandAll: true,
             query: `"id"=="${instanceData.instanceId}"`,
           }).then((instance) => {
-            instanceHRID = instance.hrid;
+            cy.wait(3000).then(() => {
+              instanceHRID = instance.hrid;
+            });
           });
         });
       })

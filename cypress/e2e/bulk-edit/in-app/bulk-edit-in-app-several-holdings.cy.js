@@ -6,6 +6,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { LOCATION_IDS } from '../../../support/constants';
 
 let user;
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
@@ -42,8 +43,7 @@ describe('bulk-edit', () => {
           item.holdingId = holdings[0].id;
           cy.updateHoldingRecord(holdings[0].id, {
             ...holdings[0],
-            // Popular Reading Collection
-            temporaryLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+            temporaryLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
           });
         });
 
@@ -59,8 +59,7 @@ describe('bulk-edit', () => {
           item2.holdingId = holdings[0].id;
           cy.updateHoldingRecord(holdings[0].id, {
             ...holdings[0],
-            // Annex
-            temporaryLocationId: '53cf956f-c1df-410b-8bea-27f712cca7c0',
+            temporaryLocationId: LOCATION_IDS.ANNEX,
           });
           FileManager.createFile(
             `cypress/fixtures/${validHoldingUUIDsFileName}`,

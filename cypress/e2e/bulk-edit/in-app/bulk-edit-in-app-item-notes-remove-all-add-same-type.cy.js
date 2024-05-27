@@ -10,6 +10,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { ITEM_NOTES } from '../../../support/constants';
 
 let user;
 
@@ -52,12 +53,12 @@ describe('bulk-edit', () => {
 
             res.notes = [
               {
-                itemNoteTypeId: '1dde7141-ec8a-4dae-9825-49ce14c728e7',
+                itemNoteTypeId: ITEM_NOTES.COPY_NOTE,
                 note: notes.copy,
                 staffOnly: false,
               },
               {
-                itemNoteTypeId: 'f3ae3823-d096-4c65-8734-0c1efd2ffea8',
+                itemNoteTypeId: ITEM_NOTES.ELECTRONIC_BOOKPLATE_NOTE,
                 note: notes.electronicBookplate,
                 staffOnly: false,
               },

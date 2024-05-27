@@ -2,7 +2,7 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
   DEFAULT_JOB_PROFILE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   RECORD_STATUSES,
 } from '../../../support/constants';
@@ -70,7 +70,7 @@ describe.skip('Data Import', () => {
         field: '001',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -115,10 +115,10 @@ describe.skip('Data Import', () => {
       });
     });
 
-    // test is skiped because of https://issues.folio.org/browse/MODSOURMAN-968
+    // the test is marked as Obsolete in TestRail, so it is skipped
     it(
       'C345423 Verify the possibility to modify MARC Bibliographic record (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: [] },
       () => {
         DataImport.verifyUploadState();
         // upload a marc file for creating of the new instance, holding and item
@@ -151,8 +151,16 @@ describe.skip('Data Import', () => {
         cy.visit(TopMenu.dataExportPath);
         ExportFile.uploadFile(nameForCSVFile);
         ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
-        ExportFile.downloadExportedMarcFile(nameMarcFileForUpload);
-        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+        ExportFile.getRecordHridOfExportedFile(nameForCSVFile).then((req) => {
+          const expectedRecordHrid = req;
+
+          // download exported marc file
+          ExportFile.downloadExportedMarcFileWithRecordHrid(
+            expectedRecordHrid,
+            nameMarcFileForUpload,
+          );
+          FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
+        });
 
         // create Field mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);

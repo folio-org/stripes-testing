@@ -9,6 +9,7 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import { ITEM_NOTES } from '../../../support/constants';
 
 let user;
 const notes = {
@@ -45,12 +46,12 @@ describe('bulk-edit', () => {
 
             itemData.notes = [
               {
-                itemNoteTypeId: '0e40884c-3523-4c6d-8187-d578e3d2794e',
+                itemNoteTypeId: ITEM_NOTES.ACTION_NOTE,
                 note: notes.action,
                 staffOnly: true,
               },
               {
-                itemNoteTypeId: '1dde7141-ec8a-4dae-9825-49ce14c728e7',
+                itemNoteTypeId: ITEM_NOTES.COPY_NOTE,
                 note: notes.copy,
                 staffOnly: false,
               },

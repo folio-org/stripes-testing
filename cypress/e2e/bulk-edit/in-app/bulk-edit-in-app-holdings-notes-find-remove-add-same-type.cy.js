@@ -11,6 +11,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import { HOLDING_NOTES } from '../../../support/constants';
 
 let user;
 const notes = {
@@ -51,14 +52,12 @@ describe('bulk-edit', () => {
               administrativeNotes: [notes.admin],
               notes: [
                 {
-                  // Action note
-                  holdingsNoteTypeId: 'd6510242-5ec3-42ed-b593-3585d2e48fd6',
+                  holdingsNoteTypeId: HOLDING_NOTES.ACTION_NOTE,
                   note: notes.action,
                   staffOnly: false,
                 },
                 {
-                  // Electronic bookplate note
-                  holdingsNoteTypeId: '88914775-f677-4759-b57b-1a33b90b24e0',
+                  holdingsNoteTypeId: HOLDING_NOTES.ELECTRONIC_BOOKPLATE_NOTE,
                   note: notes.elbook,
                   staffOnly: false,
                 },

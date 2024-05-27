@@ -20,15 +20,14 @@ describe('MARC', () => {
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numberOfRecords: 2,
       },
-      positiveSearchQueries: [
-        // Search doesn't work with values with slash at the end
-        // https://issues.folio.org/browse/UISAUTCOMP-103
-        'bslw85033655\\',
+      positiveSearchQueries: ['bslw85033655*', 'nb2006354903*', 'bslw85033881', 'nt2316353105'],
+      negativeSearchQueries: [
+        'bslw85033655',
+        'bslw85033881\\',
+        'nt2316353105*',
+        'nb2006354903',
         'nb2006354903\\',
-        'bslw85033881',
-        'nt2316353105',
       ],
-      negativeSearchQueries: ['bslw85033655', 'bslw85033881\\', 'nt2316353105\\', 'nb2006354903'],
       searchResults: ['Cowlitz people', 'Cree people'],
     };
     const createdAuthorityID = [];
