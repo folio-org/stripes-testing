@@ -33,7 +33,7 @@ import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 import Helper from '../finance/financeHelper';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
-const requestDetailsSection = Pane({ title: 'Request Detail' });
+const requestDetailsSection = Pane({ title: 'Request details' });
 const appsButton = Button({ id: 'app-list-dropdown-toggle' });
 const requestsPane = Pane({ title: 'Requests' });
 const requestQueuePane = Pane({ id: 'request-queue' });
@@ -387,6 +387,7 @@ export default {
   },
 
   checkRequestType(requestType) {
+    cy.wait(500);
     if (requestType === REQUEST_TYPES.PAGE) {
       this.selectPagesRequestType();
     } else if (requestType === REQUEST_TYPES.HOLD) {
@@ -394,6 +395,7 @@ export default {
     } else if (requestType === REQUEST_TYPES.RECALL) {
       this.selectRecallsRequestType();
     }
+    cy.wait(500);
   },
 
   checkRequestStatus(requestStatus) {

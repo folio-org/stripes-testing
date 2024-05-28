@@ -131,18 +131,23 @@ export default {
   },
 
   cancelMultipleCheckOutModal: () => {
+    cy.wait(500);
     cy.do(modal.find(Button('Cancel')).click());
     cy.expect(modal.absent());
   },
 
   openLoanDetails() {
     cy.do(actionsButton.click());
+    cy.wait(500);
     cy.do(Button('Loan details').click());
+    cy.wait(500);
     cy.expect(Pane({ id: 'pane-loandetails' }).exists());
   },
 
   openCheckOutNotes() {
+    cy.wait(500);
     cy.do(actionsButton.click());
+    cy.wait(500);
     cy.expect(checkOutNotesButton.exists());
     cy.do(checkOutNotesButton.click());
   },

@@ -1,4 +1,4 @@
-import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import {
@@ -27,11 +27,26 @@ describe('Data Import', () => {
         field: '001',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+    };
+    const matchProfileToCreate = {
+      profileName: `autotest matchProfileForCreate${getRandomPostfix()}`,
+      incomingRecordFields: {
+        field: '001',
+        in1: '',
+        in2: '',
+        subfield: '',
+      },
+      existingRecordFields: {
+        field: '001',
+        in1: '',
+        in2: '',
+        subfield: '',
+      },
+      recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const profile = {
       createJobProfile: `autotest jobProfileForCreate.${getRandomPostfix()}`,
-      createMatchProfile: `autotest matchProfileForCreate${getRandomPostfix()}`,
     };
 
     const calloutMessage = `The match profile "${matchProfileToDelete.profileName}" was successfully deleted`;
@@ -39,14 +54,15 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
-        NewMatchProfile.createMatchProfileViaApi(profile.createMatchProfile).then(
-          (matchProfileResponse) => {
-            NewJobProfile.createJobProfileWithLinkedMatchProfileViaApi(
-              profile.createJobProfile,
-              matchProfileResponse.body.id,
-            );
-          },
-        );
+
+        NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
+          matchProfileToCreate,
+        ).then((matchProfileResponse) => {
+          NewJobProfile.createJobProfileWithLinkedMatchProfileViaApi(
+            profile.createJobProfile,
+            matchProfileResponse.body.id,
+          );
+        });
         cy.login(user.username, user.password);
         cy.visit(SettingsMenu.matchProfilePath);
       });
@@ -66,8 +82,8 @@ describe('Data Import', () => {
       'C2341 Delete an existing match profile (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        MatchProfiles.search(profile.createMatchProfile);
-        MatchProfiles.selectMatchProfileFromList(profile.createMatchProfile);
+        MatchProfiles.search(matchProfileToCreate.profileName);
+        MatchProfiles.selectMatchProfileFromList(matchProfileToCreate.profileName);
         MatchProfileView.delete();
         ConfirmDelete.delete();
         ExceptionDelete.verifyExceptionMessage();

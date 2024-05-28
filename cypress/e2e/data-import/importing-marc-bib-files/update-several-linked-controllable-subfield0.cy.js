@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
   RECORD_STATUSES,
@@ -68,7 +68,7 @@ describe('Data Import', () => {
         subfield: 's',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -93,17 +93,17 @@ describe('Data Import', () => {
     ];
     const linkingTagAndValues = [
       {
-        rowIndex: 75,
+        rowIndex: 74,
         value: 'C385667 Chin, Staceyann, 1972-',
         tag: '700',
       },
       {
-        rowIndex: 76,
+        rowIndex: 75,
         value: 'C385667 Lee, Stan, 1922-2018',
         tag: '700',
       },
       {
-        rowIndex: 77,
+        rowIndex: 76,
         value: 'C385667 Kirby, Jack',
         tag: '700',
       },
@@ -146,7 +146,7 @@ describe('Data Import', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
             });
-            QuickMarcEditor.clickArrowDownButton(76);
+            QuickMarcEditor.clickArrowDownButton(75);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           })
@@ -258,21 +258,21 @@ describe('Data Import', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          75,
+          74,
           '700',
           '1',
           '\\',
           '$a C385667 Chin, S-nn, $d 1972- $e letterer. $0 http://id.loc.gov/authorities/names/n2008052404123',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          76,
+          75,
           '700',
           '1',
           '\\',
           '$a C385667 Kirby, Steve, $e creator. $0 http://id.loc.gov/authorities/names/n77020008123',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          77,
+          76,
           '700',
           '1',
           '\\',

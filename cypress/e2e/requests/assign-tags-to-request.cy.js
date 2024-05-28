@@ -44,7 +44,7 @@ describe('ui-requests: Assign Tags to Request', () => {
     Requests.openTagsPane();
     Requests.addTag(tag);
     Requests.closePane('Tags');
-    Requests.closePane('Request Detail');
+    Requests.closePane('Request details');
     Requests.findCreatedRequest(instanceData.instanceTitle);
     Requests.selectFirstRequest(instanceData.instanceTitle);
     Requests.openTagsPane();
