@@ -6,9 +6,13 @@ describe('fse-agreements', () => {
     cy.allure().logCommandSteps();
   });
 
-  it('TC195097 - Get agreement with active status', { tags: ['sanity', 'fse', 'api'] }, () => {
-    cy.getAgreementsByStatus('active').then((response) => {
-      cy.expect(response.status).to.eq(200);
-    });
-  });
+  it(
+    'TC195097 - Get agreement with active status',
+    { tags: ['sanity', 'fse', 'api', 'agreements'] },
+    () => {
+      cy.getAgreementsByStatus('active').then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
 });
