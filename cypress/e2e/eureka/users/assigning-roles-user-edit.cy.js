@@ -74,7 +74,7 @@ describe('Eureka', () => {
 
     it(
       'C466113 Assigning roles to a user when editing user (eureka)',
-      { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
+      { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
       () => {
         UsersSearchPane.selectUserFromList(testData.userA.username);
         UsersCard.verifyUserRolesCounter('0');
