@@ -1,0 +1,163 @@
+import Users from '../../../support/fragments/users/users';
+import TopMenu from '../../../support/fragments/topMenu';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+
+describe('Eureka', () => {
+  describe('Settings', () => {
+    describe('Authorization roles', () => {
+      const testData = {
+        roleName: `Auto Role C464313 ${getRandomPostfix()}`,
+        applicationName: 'app-platform-complete',
+        capabilitySets: [
+          {
+            table: 'Data',
+            resource: 'Acquisitions-Units Memberships',
+            action: 'Manage',
+          },
+          {
+            table: 'Procedural',
+            resource: 'UI-Invoice Pay',
+            action: 'Execute',
+          },
+        ],
+        capabilitiesInSets: [
+          {
+            table: 'Data',
+            resource: 'Acquisitions-Units Memberships Collection',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Acquisitions-Units Memberships Item',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Acquisitions-Units Memberships Item',
+            action: 'Edit',
+          },
+          {
+            table: 'Data',
+            resource: 'Acquisitions-Units Memberships Item',
+            action: 'Create',
+          },
+          {
+            table: 'Data',
+            resource: 'Acquisitions-Units Memberships Item',
+            action: 'Delete',
+          },
+          {
+            table: 'Data',
+            resource: 'Finance Expense-Classes Item',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Finance Funds Item',
+            action: 'View',
+          },
+          {
+            table: 'Procedural',
+            resource: 'Invoice Item Pay',
+            action: 'Execute',
+          },
+        ],
+        expectedRowCounts: {
+          capabilitySets: {
+            Data: 1,
+            Procedural: 1,
+          },
+          capabilities: {
+            Data: 4,
+            Procedural: 1,
+          },
+        },
+        absentCapabilitySetTable: 'Settings',
+        capabSetIds: [],
+        capabIds: [],
+      };
+
+      testData.capabilitySets.forEach((set) => {
+        set.application = testData.applicationName;
+      });
+      testData.capabilitiesInSets.forEach((capab) => {
+        capab.application = testData.applicationName;
+      });
+
+      before('Create role, user', () => {
+        cy.createTempUser([]).then((createdUserProperties) => {
+          testData.user = createdUserProperties;
+          cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
+            testData.roleId = role.id;
+            testData.capabilitiesInSets.forEach((capability) => {
+              capability.type = capability.table;
+              cy.getCapabilityIdViaApi(capability).then((capabId) => {
+                testData.capabIds.push(capabId);
+              });
+            });
+            testData.capabilitySets.forEach((capabilitySet) => {
+              capabilitySet.type = capabilitySet.table;
+              cy.getCapabilitySetIdViaApi(capabilitySet).then((capabSetId) => {
+                testData.capabSetIds.push(capabSetId);
+              });
+            });
+          });
+        });
+      });
+
+      before('Login', () => {
+        cy.addCapabilitySetsToNewRoleApi(testData.roleId, testData.capabSetIds);
+        cy.login(testData.user.username, testData.user.password, {
+          path: `${TopMenu.settingsAuthorizationRoles}/${testData.roleId}`,
+          waiter: AuthorizationRoles.verifyRoleViewPane,
+        });
+      });
+
+      after('Delete user, role', () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.user.userId);
+        cy.deleteCapabilitySetsFromRoleApi(testData.roleId);
+        cy.deleteAuthorizationRoleApi(testData.roleId);
+      });
+
+      it(
+        'C464313 Verify capabilities shown for a role created via API with only capability set assigned (eureka)',
+        { tags: ['extendedPath', 'eureka', 'eurekaPhase1'] },
+        () => {
+          AuthorizationRoles.clickOnCapabilitySetsAccordion();
+          testData.capabilitySets.forEach((set) => {
+            AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set);
+          });
+
+          AuthorizationRoles.clickOnCapabilitiesAccordion();
+          testData.capabilitiesInSets.forEach((capability) => {
+            AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
+          });
+
+          Object.entries(testData.expectedRowCounts.capabilitySets).forEach(([table, count]) => {
+            AuthorizationRoles.checkCountOfCapabilitySetRows(table, count);
+          });
+          AuthorizationRoles.verifyCapabilitySetTableAbsent(testData.absentCapabilitySetTable);
+          testData.capabilitySets.forEach((set) => {
+            AuthorizationRoles.verifyCheckboxesCountInCapabilitySetRow(set, 1);
+          });
+
+          Object.entries(testData.expectedRowCounts.capabilities).forEach(([table, count]) => {
+            AuthorizationRoles.checkCountOfCapabilityRows(table, count);
+          });
+          AuthorizationRoles.verifyCapabilityTableAbsent(testData.absentCapabilitySetTable);
+          testData.capabilitiesInSets
+            .filter((capab, index) => index < 1 && index > 4)
+            .forEach((capability) => {
+              AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(capability, 1);
+            });
+          AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(
+            testData.capabilitiesInSets[1],
+            4,
+          );
+        },
+      );
+    });
+  });
+});
