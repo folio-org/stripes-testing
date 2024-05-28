@@ -474,7 +474,9 @@ export default {
 
   deleteAuthoritySourceFileByNameViaApi(fileName) {
     cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
-      if (body.id) cy.deleteAuthoritySourceFileViaAPI(body.id, true);
+      if (body.totalRecords !== 0) {
+        cy.deleteAuthoritySourceFileViaAPI(body.id, true);
+      }
     });
   },
 };
