@@ -18,7 +18,7 @@ describe('MARC', () => {
         baseUrl: '',
         source: 'Local',
         isActive: true,
-        createdByAdmin: `${date} by ADMINISTRATOR, Diku_admin`,
+        createdByAdmin: `${date} by FolioLast, FolioFirst`,
       };
       let user;
 
