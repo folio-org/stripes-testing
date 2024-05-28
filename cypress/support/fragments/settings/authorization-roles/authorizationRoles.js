@@ -496,4 +496,13 @@ export default {
   waitCapabilitiesShown: () => {
     cy.expect(capabilitiesAccordion.find(MultiColumnListRow()).exists());
   },
+
+  verifyRoleViewPane: (roleName) => {
+    cy.expect([
+      Pane(roleName).exists(),
+      Spinner().absent(),
+      capabilitiesAccordion.has({ open: false }),
+      capabilitySetsAccordion.has({ open: false }),
+    ]);
+  },
 };
