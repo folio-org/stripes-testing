@@ -94,18 +94,18 @@ export default {
   },
 
   enableTLRViaApi() {
-    this.updateTLRSettingViaApi(true);
+    this.updateTLRSettingViaApi({ titleLevelRequestsFeatureEnabled: true });
   },
 
   disableTLRViaApi() {
-    this.updateTLRSettingViaApi(false);
+    this.updateTLRSettingViaApi({ titleLevelRequestsFeatureEnabled: true });
   },
 
-  updateTLRSettingViaApi(allow = true) {
+  updateTLRSettingViaApi(newSettings) {
     cy.getConfigByName('TLR').then((body) => {
-      const newConfig = body.configs.length === 0;
       let config = body.configs[0];
-      if (newConfig) {
+
+      if (body.configs.length === 0) {
         config = {
           value:
             '{"titleLevelRequestsFeatureEnabled":true,"createTitleLevelRequestsByDefault":false,"tlrHoldShouldFollowCirculationRules":false,"confirmationPatronNoticeTemplateId":null,"cancellationPatronNoticeTemplateId":null,"expirationPatronNoticeTemplateId":null}',
@@ -113,19 +113,10 @@ export default {
           configName: 'TLR',
           id: uuid(),
         };
-      }
-      if (allow) {
-        config.value = config.value.replace(
-          '"titleLevelRequestsFeatureEnabled":false,',
-          '"titleLevelRequestsFeatureEnabled":true,',
-        );
-      } else {
-        config.value = config.value.replace(
-          '"titleLevelRequestsFeatureEnabled":true,',
-          '"titleLevelRequestsFeatureEnabled":false,',
-        );
-      }
-      if (newConfig) {
+
+        const newValue = { ...JSON.parse(config.value), ...newSettings };
+        config.value = JSON.stringify(newValue);
+
         cy.okapiRequest({
           method: 'POST',
           path: 'configurations/entries',
@@ -134,6 +125,9 @@ export default {
           body: config,
         });
       } else {
+        const newValue = { ...JSON.parse(config.value), ...newSettings };
+        config.value = JSON.stringify(newValue);
+
         cy.okapiRequest({
           method: 'PUT',
           path: `configurations/entries/${config.id}`,
