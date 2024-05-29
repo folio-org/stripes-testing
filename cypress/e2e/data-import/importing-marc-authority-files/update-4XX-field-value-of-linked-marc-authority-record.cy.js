@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
@@ -52,7 +52,7 @@ describe('Data Import', () => {
       modifiedMarcFile: `C374187 editedMarcFile${getRandomPostfix()}.mrc`,
       uploadModifiedMarcFile: `C374187 testMarcFile${getRandomPostfix()}.mrc`,
       updated700Field: [
-        62,
+        61,
         '700',
         '0',
         '\\',
@@ -91,7 +91,7 @@ describe('Data Import', () => {
         subfield: 's',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_AUTHORITY,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_AUTHORITY,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -116,7 +116,7 @@ describe('Data Import', () => {
       },
     ];
     const linkingTagAndValue = {
-      rowIndex: 62,
+      rowIndex: 61,
       value: 'C374187 Elizabeth',
       tag: '700',
     };
@@ -167,7 +167,7 @@ describe('Data Import', () => {
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
-        InventoryInstance.verifyAndClickLinkIconByIndex(62);
+        InventoryInstance.verifyAndClickLinkIconByIndex(61);
         MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
         InventoryInstance.searchResults(linkingTagAndValue.value);
@@ -271,7 +271,7 @@ describe('Data Import', () => {
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
-        QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(62);
+        QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(61);
         QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated700Field);
       },
     );

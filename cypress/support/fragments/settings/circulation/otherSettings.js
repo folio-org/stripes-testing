@@ -1,4 +1,5 @@
-import { Pane, Checkbox, Label, Form, Button, TextField } from '../../../../../interactors';
+import uuid from 'uuid';
+import { Button, Checkbox, Form, Label, Pane, TextField } from '../../../../../interactors';
 
 const checkoutForm = Form({ id: 'checkout-form' });
 const timeoutDurationTextField = TextField({ id: 'checkoutTimeoutDuration' });
@@ -57,21 +58,40 @@ export default {
         path: 'configurations/entries?query=(module==CHECKOUT%20and%20configName==other_settings)',
         isDefaultSearchParamsRequired: false,
       })
-      .then((otherSetingsResp) => {
-        const configs = otherSetingsResp.body.configs[0];
-        const newValue = { ...JSON.parse(configs.value), ...params };
-        cy.okapiRequest({
-          method: 'PUT',
-          path: `configurations/entries/${configs.id}`,
-          body: {
-            id: configs.id,
-            module: configs.module,
-            configName: configs.configName,
-            enabled: configs.enabled,
-            value: JSON.stringify(newValue),
-          },
-          isDefaultSearchParamsRequired: false,
-        });
+      .then((otherSettingsResp) => {
+        const newConfig = otherSettingsResp.body.configs.length === 0;
+        let config = otherSettingsResp.body.configs[0];
+
+        if (newConfig) {
+          config = {
+            value:
+              '{"audioAlertsEnabled":false,"audioTheme":"classic","checkoutTimeout":true,"checkoutTimeoutDuration":3,"prefPatronIdentifier":"barcode,username","useCustomFieldsAsIdentifiers":false,"wildcardLookupEnabled":false}',
+            module: 'CHECKOUT',
+            configName: 'other_settings',
+            id: uuid(),
+          };
+          cy.okapiRequest({
+            method: 'POST',
+            path: 'configurations/entries',
+            isDefaultSearchParamsRequired: false,
+            failOnStatusCode: false,
+            body: config,
+          });
+        } else {
+          const newValue = { ...JSON.parse(config.value), ...params };
+          cy.okapiRequest({
+            method: 'PUT',
+            path: `configurations/entries/${config.id}`,
+            body: {
+              id: config.id,
+              module: config.module,
+              configName: config.configName,
+              enabled: config.enabled,
+              value: JSON.stringify(newValue),
+            },
+            isDefaultSearchParamsRequired: false,
+          });
+        }
       });
   },
 };

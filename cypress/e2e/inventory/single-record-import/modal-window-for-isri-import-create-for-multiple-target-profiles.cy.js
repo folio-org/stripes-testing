@@ -26,8 +26,14 @@ describe('Inventory', () => {
     let instanceHRID;
     const profile = {
       createJobProfile: `Inventory Single Record - Default Create Instance.${getRandomPostfix()}`,
-      createActionProfile: `autotest actionProfileForCreate${getRandomPostfix()}`,
-      createMappingProfile: `autotest mappingProfileForCreate${getRandomPostfix()}`,
+      createActionProfile: {
+        name: `autotest actionProfileForCreate${getRandomPostfix()}`,
+        action: 'CREATE',
+        folioRecordType: 'INSTANCE',
+      },
+      createMappingProfile: {
+        name: `autotest mappingProfileForCreate${getRandomPostfix()}`,
+      },
     };
     const targetProfileName = `C375122 autotest profile${getRandomPostfix()}`;
     const testIdentifier = '1234567';
@@ -42,34 +48,34 @@ describe('Inventory', () => {
         user = userProperties;
 
         // create job profile for create
-        NewFieldMappingProfile.createMappingProfileViaApi(profile.createMappingProfile).then(
-          (mappingProfileResponse) => {
-            NewActionProfile.createActionProfileViaApi(
-              profile.createActionProfile,
-              mappingProfileResponse.body.id,
-            )
-              .then((actionProfileResponse) => {
-                NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
-                  profile.createJobProfile,
-                  actionProfileResponse.body.id,
-                );
-              })
-              .then((id) => {
-                createJobProfileId = id;
+        NewFieldMappingProfile.createInstanceMappingProfileViaApi(
+          profile.createMappingProfile,
+        ).then((mappingProfileResponse) => {
+          NewActionProfile.createActionProfileViaApi(
+            profile.createActionProfile,
+            mappingProfileResponse.body.id,
+          )
+            .then((actionProfileResponse) => {
+              NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
+                profile.createJobProfile,
+                actionProfileResponse.body.id,
+              );
+            })
+            .then((id) => {
+              createJobProfileId = id;
 
-                Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(targetProfileName, [
-                  createJobProfileId,
-                ]).then((initialId) => {
-                  profileId = initialId;
-                });
+              Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(targetProfileName, [
+                createJobProfileId,
+              ]).then((initialId) => {
+                profileId = initialId;
               });
-
-            cy.login(user.username, user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
             });
-          },
-        );
+
+          cy.login(user.username, user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+        });
       });
     });
 

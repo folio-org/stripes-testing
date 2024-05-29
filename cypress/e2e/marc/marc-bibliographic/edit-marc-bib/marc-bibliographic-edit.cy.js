@@ -168,6 +168,7 @@ describe('MARC', () => {
           MarcAuthority.addNewField(8, testData.tags.tag655, '$b Different row', '1', '/');
           MarcAuthority.addNewField(9, testData.tags.tag655, '$b Row without indicator', '1', '/');
           MarcAuthority.addNewField(10, testData.tags.tag755, '$b Different row', '1', '/');
+          cy.wait(2000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           cy.visit(SettingsMenu.marcFieldProtectionPath);

@@ -3,7 +3,6 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import NewInvoice from '../../../support/fragments/invoices/newInvoice';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
@@ -15,6 +14,9 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../support/constants';
+import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 
 describe('ui-finance: Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
@@ -29,14 +31,13 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
   const defaultOrder = {
-    ...NewOrder.defaultOneTimeOrder,
+    ...NewOrder.getDefaultOngoingOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
     reEncumber: true,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  const invoice = { ...NewInvoice.defaultUiInvoice };
   const todayDate = DateTools.getCurrentDate();
   const allocatedQuantityForCurrentBudget = '1000';
   const allocatedQuantityForPlannedBudget = '500';
@@ -66,39 +67,64 @@ describe('ui-finance: Fiscal Year Rollover', () => {
           Funds.closeBudgetDetails();
           Funds.addPlannedBudget(allocatedQuantityForPlannedBudget, secondFiscalYear.code);
           Funds.closeBudgetDetails();
+          ServicePoints.getViaApi().then((servicePoint) => {
+            servicePointId = servicePoint[0].id;
+            NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+              location = res;
+
+              MaterialTypes.createMaterialTypeViaApi(MaterialTypes.getDefaultMaterialType()).then(
+                (mtypes) => {
+                  cy.getAcquisitionMethodsApi({
+                    query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+                  }).then((params) => {
+                    // Prepare 2 Open Orders for Rollover
+                    Organizations.createOrganizationViaApi(organization).then(
+                      (responseOrganizations) => {
+                        organization.id = responseOrganizations;
+                        defaultOrder.vendor = organization.id;
+                        const firstOrderLine = {
+                          ...BasicOrderLine.defaultOrderLine,
+                          cost: {
+                            listUnitPrice: 150.0,
+                            currency: 'USD',
+                            discountType: 'percentage',
+                            quantityPhysical: 1,
+                            poLineEstimatedPrice: 150.0,
+                          },
+                          fundDistribution: [
+                            { code: defaultFund.code, fundId: defaultFund.id, value: 100 },
+                          ],
+                          locations: [
+                            { locationId: location.id, quantity: 1, quantityPhysical: 1 },
+                          ],
+                          acquisitionMethod: params.body.acquisitionMethods[0].id,
+                          physical: {
+                            createInventory: 'Instance, Holding, Item',
+                            materialType: mtypes.body.id,
+                            materialSupplier: responseOrganizations,
+                            volumes: [],
+                          },
+                        };
+                        Orders.createOrderViaApi(defaultOrder).then((firstOrderResponse) => {
+                          defaultOrder.id = firstOrderResponse.id;
+                          firstOrderLine.purchaseOrderId = firstOrderResponse.id;
+
+                          OrderLines.createOrderLineViaApi(firstOrderLine);
+                          Orders.updateOrderViaApi({
+                            ...firstOrderResponse,
+                            workflowStatus: ORDER_STATUSES.OPEN,
+                          });
+                        });
+                      },
+                    );
+                  });
+                },
+              );
+            });
+          });
         });
       });
     });
-    cy.getAdminToken();
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
-
-    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-      organization.id = responseOrganizations;
-      invoice.accountingCode = organization.erpCode;
-    });
-    defaultOrder.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
-    Orders.createApprovedOrderForRollover(defaultOrder, true, false).then((firstOrderResponse) => {
-      defaultOrder.id = firstOrderResponse.id;
-      Orders.checkCreatedOrder(defaultOrder);
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-        defaultFund,
-        '150',
-        '1',
-        '150',
-        location.name,
-      );
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-    });
-
     cy.createTempUser([
       permissions.uiFinanceExecuteFiscalYearRollover.gui,
       permissions.uiFinanceViewFundAndBudget.gui,

@@ -1,7 +1,6 @@
-import { DEFAULT_JOB_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -75,6 +74,32 @@ describe('MARC', () => {
     const recordIDs = [];
 
     before('Creating user, data', () => {
+      cy.getAdminToken();
+      DataImport.uploadFileViaApi(
+        instanceFile.marc,
+        instanceFile.fileName,
+        instanceFile.jobProfileToRun,
+      ).then((response) => {
+        recordIDs.push(response[0].instance.id);
+        const instanceHRID = response[0].instance.hrid;
+
+        DataImport.editMarcFile(
+          holdingsFile.marc,
+          testData.editedHoldingsFileName,
+          testData.holdingsHRIDPlaceholders,
+          [instanceHRID, instanceHRID, instanceHRID, instanceHRID, instanceHRID, instanceHRID],
+        );
+      });
+      DataImport.uploadFileViaApi(
+        testData.editedHoldingsFileName,
+        holdingsFile.fileName,
+        holdingsFile.jobProfileToRun,
+      ).then((response) => {
+        response.forEach((record) => {
+          recordIDs.push(record.holding.id);
+        });
+      });
+
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -95,61 +120,10 @@ describe('MARC', () => {
           cy.updateHridHandlingSettingsViaApi(newSettings);
         });
 
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.uploadFileViaApi(
-              instanceFile.marc,
-              instanceFile.fileName,
-              instanceFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                recordIDs.push(record[instanceFile.propertyName].id);
-              });
-            });
-            Logs.waitFileIsImported(instanceFile.fileName);
-            Logs.checkJobStatus(instanceFile.fileName, JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(instanceFile.fileName);
-            Logs.getCreatedItemsID().then(() => {
-              cy.getInstanceHRID(recordIDs[0]).then((instanceHRID) => {
-                DataImport.editMarcFile(
-                  holdingsFile.marc,
-                  testData.editedHoldingsFileName,
-                  testData.holdingsHRIDPlaceholders,
-                  [
-                    instanceHRID,
-                    instanceHRID,
-                    instanceHRID,
-                    instanceHRID,
-                    instanceHRID,
-                    instanceHRID,
-                  ],
-                );
-
-                cy.visit(TopMenu.dataImportPath);
-                DataImport.waitLoading();
-                DataImport.uploadFileViaApi(
-                  testData.editedHoldingsFileName,
-                  holdingsFile.fileName,
-                  holdingsFile.jobProfileToRun,
-                );
-                Logs.waitFileIsImported(holdingsFile.fileName);
-                Logs.checkJobStatus(holdingsFile.fileName, JOB_STATUS_NAMES.COMPLETED);
-                Logs.openFileDetails(holdingsFile.fileName);
-                // additional wait for holdings list to load
-                cy.wait(2000);
-                for (let i = 0; i < holdingsFile.numOfRecords; i++) {
-                  Logs.getCreatedItemsID(i).then((createdLink) => {
-                    recordIDs.push(createdLink.split('/')[6]);
-                  });
-                }
-              });
-              cy.login(createdUserProperties.username, createdUserProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-            });
-          },
-        );
+        cy.login(createdUserProperties.username, createdUserProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
       });
     });
 

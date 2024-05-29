@@ -1,4 +1,4 @@
-import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
+import { ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
@@ -42,7 +42,18 @@ describe('Data Import', () => {
         },
       },
     ];
-    const matchProfileName = `C423385 match profile ${getRandomPostfix()}`;
+    const matchProfile = {
+      profileName: `C423385 match profile ${getRandomPostfix()}`,
+      incomingRecordFields: {
+        field: '001',
+        in1: '',
+        in2: '',
+        subfield: '',
+      },
+      recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+      existingMatchExpressionValue: 'instance.hrid',
+    };
     const jobProfile = {
       profileName: `C423385 autotest job profile ${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
@@ -51,23 +62,23 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      NewFieldMappingProfile.createMappingProfileViaApi(
-        collectionOfActionAndMappingProfiles[0].mappingProfile.name,
+      NewFieldMappingProfile.createInstanceMappingProfileViaApi(
+        collectionOfActionAndMappingProfiles[0].mappingProfile,
       ).then((mappingProfileResponse) => {
-        NewActionProfile.createActionProfileViaApiMarc(
+        NewActionProfile.createActionProfileViaApi(
           collectionOfActionAndMappingProfiles[0].actionProfile,
           mappingProfileResponse.body.id,
         );
       });
-      NewFieldMappingProfile.createMappingProfileViaApi(
-        collectionOfActionAndMappingProfiles[1].mappingProfile.name,
+      NewFieldMappingProfile.createInstanceMappingProfileViaApi(
+        collectionOfActionAndMappingProfiles[1].mappingProfile,
       ).then((mappingProfileResponse) => {
-        NewActionProfile.createActionProfileViaApiMarc(
+        NewActionProfile.createActionProfileViaApi(
           collectionOfActionAndMappingProfiles[1].actionProfile,
           mappingProfileResponse.body.id,
         );
       });
-      NewMatchProfile.createMatchProfileViaApi(matchProfileName);
+      NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(matchProfile);
 
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
@@ -79,7 +90,7 @@ describe('Data Import', () => {
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
-        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         collectionOfActionAndMappingProfiles.forEach((profile) => {
           SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
           SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
@@ -96,7 +107,7 @@ describe('Data Import', () => {
       () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfile);
-        NewJobProfile.linkMatchProfile(matchProfileName);
+        NewJobProfile.linkMatchProfile(matchProfile.profileName);
         NewJobProfile.linkActionProfileForMatches(
           collectionOfActionAndMappingProfiles[0].actionProfile.name,
         );
@@ -109,7 +120,7 @@ describe('Data Import', () => {
         JobProfileView.verifyJobProfileOpened();
         JobProfileView.verifyLinkedProfiles(
           [
-            matchProfileName,
+            matchProfile.profileName,
             collectionOfActionAndMappingProfiles[0].actionProfile.name,
             collectionOfActionAndMappingProfiles[1].actionProfile.name,
           ],
@@ -129,7 +140,7 @@ describe('Data Import', () => {
         JobProfileEdit.saveAndClose();
         JobProfileView.verifyLinkedProfiles(
           [
-            matchProfileName,
+            matchProfile.profileName,
             collectionOfActionAndMappingProfiles[1].actionProfile.name,
             collectionOfActionAndMappingProfiles[0].actionProfile.name,
           ],

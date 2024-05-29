@@ -6,9 +6,10 @@ import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
 
 describe('ui-finance: Funds', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
@@ -26,15 +27,19 @@ describe('ui-finance: Funds', () => {
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
 
-  const allocatedQuantity = '1000';
+  const defaultBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 1000,
+  };
   let user;
 
   before(() => {
     cy.getAdminToken();
     // create first Fiscal Year and prepere 2 Funds for Rollover
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((defaultFiscalYearResponse) => {
+      defaultFiscalYear.id = defaultFiscalYearResponse.id;
+      defaultBudget.fiscalYearId = defaultFiscalYearResponse.id;
+      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         firstFund.ledgerId = defaultLedger.id;
@@ -42,15 +47,12 @@ describe('ui-finance: Funds', () => {
 
         Funds.createViaApi(firstFund).then((fundResponse) => {
           firstFund.id = fundResponse.fund.id;
+          defaultBudget.fundId = fundResponse.fund.id;
+          Budgets.createViaApi(defaultBudget);
 
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(firstFund.name);
-          Funds.selectFund(firstFund.name);
-          Funds.addBudget(allocatedQuantity);
-        });
-        cy.getAdminToken();
-        Funds.createViaApi(secondFund).then((secondFundResponse) => {
-          secondFund.id = secondFundResponse.fund.id;
+          Funds.createViaApi(secondFund).then((secondFundResponse) => {
+            secondFund.id = secondFundResponse.fund.id;
+          });
         });
       });
     });
@@ -81,7 +83,7 @@ describe('ui-finance: Funds', () => {
 
     Ledgers.deleteledgerViaApi(defaultLedger.id);
 
-    FiscalYears.deleteFiscalYearViaApi(firstFiscalYear.id);
+    FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
 
     Users.deleteViaApi(user.userId);
   });

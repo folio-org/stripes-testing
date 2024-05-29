@@ -75,12 +75,12 @@ describe('MARC', () => {
       });
       // upload a marc file for creating holdings
       cy.visit(TopMenu.dataImportPath);
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(testData.editedMarcFileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(testData.jobProfileToRun);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(testData.editedMarcFileName);
+      DataImport.uploadFileViaApi(
+        testData.editedMarcFileName,
+        testData.editedMarcFileName,
+        testData.jobProfileToRun,
+      );
+      JobProfiles.waitFileIsImported(testData.editedMarcFileName);
       Logs.openFileDetails(testData.editedMarcFileName);
       cy.logout();
 

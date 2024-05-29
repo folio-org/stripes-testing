@@ -117,6 +117,7 @@ Cypress.Commands.add('createLinkedProfiles', (testData) => {
   });
 });
 
+// TODO redesign
 Cypress.Commands.add('createOnePairMappingAndActionProfiles', (mappingProfile, actionProfile) => {
   FieldMappingProfiles.createMappingProfileViaApi(mappingProfile).then((bodyWithMappingProfile) => {
     actionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;

@@ -7,6 +7,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { getLongDelay } from '../../../support/utils/cypressTools';
+import { LOCATION_IDS } from '../../../support/constants';
 
 let user;
 const items = [];
@@ -19,7 +20,8 @@ for (let i = 0; i < 5; i++) {
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 let fileContent = '';
 
-describe('bulk-edit', () => {
+// Test cannot be automated after test case update
+describe.skip('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
@@ -41,8 +43,7 @@ describe('bulk-edit', () => {
             expandAll: true,
             query: `"barcode"=="${item.secondItemBarcode}"`,
           }).then((res) => {
-            // Annex
-            res.temporaryLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
+            res.temporaryLocation = { id: LOCATION_IDS.ANNEX };
             cy.updateItemViaApi(res);
           });
 
@@ -51,8 +52,7 @@ describe('bulk-edit', () => {
             expandAll: true,
             query: `"barcode"=="${item.itemBarcode}"`,
           }).then((res) => {
-            // Annex
-            res.temporaryLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
+            res.temporaryLocation = { id: LOCATION_IDS.ANNEX };
             cy.updateItemViaApi(res);
           });
         });

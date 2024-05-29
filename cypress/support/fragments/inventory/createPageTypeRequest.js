@@ -49,6 +49,7 @@ export default {
 
   clickItemBarcodeLink(barcode) {
     cy.do(Link(barcode).click());
+    cy.wait(500);
     this.verifyInventoryDetailsPage(barcode);
   },
 
@@ -112,10 +113,12 @@ export default {
 
   saveAndClose(servicePointName = 'Circ Desk 1') {
     newRequest.chooseRequestType(REQUEST_TYPES.PAGE);
+    cy.wait(500);
     Requests.verifyFulfillmentPreference();
     newRequest.choosePickupServicePoint(servicePointName);
     cy.wait(1000);
     newRequest.saveRequestAndClose();
+    cy.wait(500);
     Requests.verifyRequestsPage();
     this.verifyNewRequest();
   },

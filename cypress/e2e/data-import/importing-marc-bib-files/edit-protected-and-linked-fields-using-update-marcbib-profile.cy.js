@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
   RECORD_STATUSES,
@@ -72,7 +72,7 @@ describe('Data Import', () => {
         subfield: 's',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -102,28 +102,28 @@ describe('Data Import', () => {
     ];
     const linkingTagAndValues = [
       {
-        rowIndex: 17,
+        rowIndex: 16,
         value: 'Ludwig van, Beethoven, 1770-1827.',
         tag: '100',
       },
       {
-        rowIndex: 18,
+        rowIndex: 17,
         value:
           'Beethoven, Ludwig van, 1770-1827 Variations, piano, violin, cello, op. 44, E♭ major',
         tag: '240',
       },
       {
-        rowIndex: 41,
+        rowIndex: 40,
         value: 'Music piano',
         tag: '650',
       },
       {
-        rowIndex: 50,
+        rowIndex: 49,
         value: 'Hewitt, Angela, 1958-',
         tag: '700',
       },
       {
-        rowIndex: 51,
+        rowIndex: 50,
         value: 'Ludwig van, Beethoven, 1770-1827.',
         tag: '700',
       },
@@ -309,7 +309,7 @@ describe('Data Import', () => {
         Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          17,
+          16,
           '100',
           '1',
           '\\',
@@ -319,7 +319,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          18,
+          17,
           '240',
           '1',
           '0',
@@ -329,7 +329,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          41,
+          40,
           '650',
           '\\',
           '0',
@@ -339,7 +339,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          50,
+          49,
           '700',
           '1',
           '\\',
@@ -349,7 +349,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          51,
+          50,
           '700',
           '1',
           '2',
@@ -359,14 +359,14 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          52,
+          51,
           '700',
           '1',
           '\\',
           '$a Hewitt, Angela, $d 1958- $e instrumentalist, $e author of supplementary textual content. $0 http://id.loc.gov/authorities/names/n91099716',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          53,
+          52,
           '700',
           '1',
           '2',

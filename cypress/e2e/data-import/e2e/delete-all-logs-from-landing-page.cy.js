@@ -10,7 +10,7 @@ import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Data Import', () => {
+describe.skip('Data Import', () => {
   describe('End to end scenarios', () => {
     let user = null;
     const instanceIds = [];

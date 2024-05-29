@@ -8,58 +8,60 @@ import QueryModal, { itemFieldValues } from '../../../support/fragments/bulk-edi
 let user;
 const invalidUUID = uuid();
 
-describe('Bulk Edit - Query', () => {
-  before('create test data', () => {
-    cy.getAdminToken();
-    cy.createTempUser([
-      permissions.bulkEditEdit.gui,
-      permissions.uiInventoryViewCreateEditItems.gui,
-      permissions.bulkEditQueryView.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
+describe('bulk-edit', () => {
+  describe('query', () => {
+    before('create test data', () => {
+      cy.getAdminToken();
+      cy.createTempUser([
+        permissions.bulkEditEdit.gui,
+        permissions.uiInventoryViewCreateEditItems.gui,
+        permissions.bulkEditQueryView.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
-  });
 
-  after('delete test data', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
-  });
+    after('delete test data', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+    });
 
-  it(
-    'C446066 Verify the "Run query" button, when the query returns 0 - items (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
-    () => {
-      BulkEditSearchPane.openQuerySearch();
-      BulkEditSearchPane.checkItemsRadio();
-      BulkEditSearchPane.clickBuildQueryButton();
-      QueryModal.verify();
-      QueryModal.verifyFieldsSortedAlphabetically();
-      QueryModal.selectField(itemFieldValues.holdingsId);
-      QueryModal.verifySelectedField(itemFieldValues.holdingsId);
-      QueryModal.verifyQueryAreaContent('(holdings_id  )');
-      QueryModal.verifyOperatorColumn();
-      QueryModal.selectOperator('==');
-      QueryModal.verifyQueryAreaContent('(holdings_id == )');
-      QueryModal.verifyValueColumn();
-      QueryModal.fillInValueTextfield(invalidUUID);
-      QueryModal.verifyQueryAreaContent(`(holdings_id == "${invalidUUID}")`);
-      QueryModal.testQueryDisabled(false);
-      QueryModal.runQueryDisabled();
-      QueryModal.clickTestQuery();
-      QueryModal.exists();
-      QueryModal.verifyQueryAreaContent(`(holdings_id == "${invalidUUID}")`);
-      QueryModal.verifyValueColumn();
-      QueryModal.verifyOperatorColumn();
-      QueryModal.testQueryDisabled(false);
-      BulkEditSearchPane.verifyInputLabel('Query would return 0 records.');
-      BulkEditSearchPane.verifyInputLabel('The list contains no items');
-      QueryModal.cancelDisabled(false);
-      QueryModal.runQueryDisabled();
-      QueryModal.xButttonDisabled(false);
-    },
-  );
+    it(
+      'C446066 Verify the "Run query" button, when the query returns 0 - items (firebird)',
+      { tags: ['criticalPath', 'firebird'] },
+      () => {
+        BulkEditSearchPane.openQuerySearch();
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.clickBuildQueryButton();
+        QueryModal.verify();
+        QueryModal.verifyFieldsSortedAlphabetically();
+        QueryModal.selectField(itemFieldValues.holdingsId);
+        QueryModal.verifySelectedField(itemFieldValues.holdingsId);
+        QueryModal.verifyQueryAreaContent('(holdings_id  )');
+        QueryModal.verifyOperatorColumn();
+        QueryModal.selectOperator('==');
+        QueryModal.verifyQueryAreaContent('(holdings_id == )');
+        QueryModal.verifyValueColumn();
+        QueryModal.fillInValueTextfield(invalidUUID);
+        QueryModal.verifyQueryAreaContent(`(holdings_id == "${invalidUUID}")`);
+        QueryModal.testQueryDisabled(false);
+        QueryModal.runQueryDisabled();
+        QueryModal.clickTestQuery();
+        QueryModal.exists();
+        QueryModal.verifyQueryAreaContent(`(holdings_id == "${invalidUUID}")`);
+        QueryModal.verifyValueColumn();
+        QueryModal.verifyOperatorColumn();
+        QueryModal.testQueryDisabled(false);
+        BulkEditSearchPane.verifyInputLabel('Query would return 0 records.');
+        BulkEditSearchPane.verifyInputLabel('The list contains no items');
+        QueryModal.cancelDisabled(false);
+        QueryModal.runQueryDisabled();
+        QueryModal.xButttonDisabled(false);
+      },
+    );
+  });
 });
