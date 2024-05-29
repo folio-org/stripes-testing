@@ -471,4 +471,12 @@ export default {
       cy.updateBaseUrlInAuthoritySourceFileViaAPI(body.id, body._version + 1, newBaseUrl);
     });
   },
+
+  deleteAuthoritySourceFileByNameViaApi(fileName) {
+    cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
+      if (body.totalRecords !== 0) {
+        cy.deleteAuthoritySourceFileViaAPI(body.id, true);
+      }
+    });
+  },
 };
