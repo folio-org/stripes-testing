@@ -198,8 +198,16 @@ describe('Eureka', () => {
         'C424001 Viewing/editing existing authorization role',
         { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
         () => {
+          const roleViewUrl = `${Cypress.config().baseUrl}${TopMenu.settingsAuthorizationRoles}/${
+            testData.roleId
+          }`;
+
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
+          cy.url().then((url) => expect(url).to.eq(roleViewUrl));
+          cy.reload();
+          AuthorizationRoles.verifyRoleViewPane(testData.roleName);
+          cy.url().then((url) => expect(url).to.eq(roleViewUrl));
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.clickOnCapabilitiesAccordion();
           testData.originalCapabilitySets.forEach((capabilitySet) => {
@@ -255,6 +263,7 @@ describe('Eureka', () => {
             testData.updatedRoleName,
             testData.updatedRoleDescription,
           );
+          cy.url().then((url) => expect(url).to.eq(roleViewUrl));
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.newCapabilitySet);
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.originalCapabilitySets[1]);
