@@ -156,7 +156,9 @@ describe('Check In - Actions', () => {
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
     CirculationRules.deleteRuleViaApi(testData.addedRule);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [testData.userServicePoint.id]);
+    UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [
+      testData.userServicePoint.id,
+    ]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Requests.getRequestApi({ query: `(item.barcode=="${itemData.barcode}")` }).then(
       (requestResponse) => {

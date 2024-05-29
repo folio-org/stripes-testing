@@ -17,23 +17,18 @@ describe('Data Import', () => {
       mappingProfiles: [
         {
           name: `A-C377046${getRandomPostfix()}`,
-          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
         {
           name: `B-C377046${getRandomPostfix()}`,
-          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
         {
           name: `C-C377046${getRandomPostfix()}`,
-          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
         {
           name: `D-C377046${getRandomPostfix()}`,
-          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
         {
           name: `Z-C377046${getRandomPostfix()}`,
-          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
       ],
 
@@ -46,7 +41,7 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       cy.getAdminToken();
       testData.mappingProfiles.forEach((mappingProfile) => {
-        NewFieldMappingProfile.createMappingProfileViaApi(mappingProfile.name);
+        NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile);
       });
 
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {

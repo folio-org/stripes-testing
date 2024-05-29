@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
   RECORD_STATUSES,
@@ -75,7 +75,7 @@ describe('Data Import', () => {
         subfield: 's',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -88,6 +88,9 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
+      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       cy.getAdminToken().then(() => {
         // clean up generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
@@ -98,9 +101,6 @@ describe('Data Import', () => {
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileForExport.name);
       });
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
-      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     });
 
     it(

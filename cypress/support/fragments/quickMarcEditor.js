@@ -1550,7 +1550,7 @@ export default {
     );
   },
 
-  checkHeaderFirstLine({ headingTypeFrom1XX, headingType, status }, { firstName, name }) {
+  checkHeaderFirstLine({ headingTypeFrom1XX, headingType, status }, userName) {
     cy.expect(Pane(`Edit  MARC authority record - ${headingTypeFrom1XX}`).exists());
     cy.then(() => Pane(`Edit  MARC authority record - ${headingTypeFrom1XX}`).subtitle()).then(
       (subtitle) => {
@@ -1561,7 +1561,7 @@ export default {
               including(status),
               including(headingType),
               including('Last updated:'),
-              including(`Source: ${firstName}, ${name}`),
+              including(`Source: ${userName}`),
             ),
           }).exists(),
         );

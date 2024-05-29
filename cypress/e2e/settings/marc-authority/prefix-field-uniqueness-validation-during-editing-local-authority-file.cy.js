@@ -19,7 +19,6 @@ describe('MARC', () => {
           baseUrl: '',
           source: 'Local',
           isActive: true,
-          createdByAdmin: `${date} by ADMINISTRATOR, Diku_admin`,
         },
         {
           name: `C436865 auth source file active two ${randomPostfix}`,
@@ -28,14 +27,17 @@ describe('MARC', () => {
           baseUrl: '',
           source: 'Local',
           isActive: true,
-          createdByAdmin: `${date} by ADMINISTRATOR, Diku_admin`,
         },
       ];
       const errorPrefixUniqueness = 'Error saving data. Prefix must be unique.';
+      let adminUser;
       let user;
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        cy.getAdminSourceRecord().then((record) => {
+          adminUser = record;
+        });
         cy.createTempUser([Permissions.uiSettingsManageAuthorityFiles.gui])
           .then((userProperties) => {
             user = userProperties;
@@ -81,7 +83,7 @@ describe('MARC', () => {
             localAuthFiles[0].baseUrl,
             localAuthFiles[0].isActive,
             localAuthFiles[0].source,
-            localAuthFiles[0].createdByAdmin,
+            `${date} by ${adminUser}`,
           );
           ManageAuthorityFiles.checkSaveButtonEnabledInFile(localAuthFiles[0].name, false);
           ManageAuthorityFiles.checkCancelButtonEnabledInFile(localAuthFiles[0].name);
@@ -111,7 +113,7 @@ describe('MARC', () => {
             localAuthFiles[0].hridStartsWith,
             localAuthFiles[0].baseUrl,
             localAuthFiles[0].isActive,
-            localAuthFiles[0].createdByAdmin,
+            `${date} by ${adminUser}`,
             true,
           );
 

@@ -119,14 +119,13 @@ describe('Create Item or Title level request', () => {
         testData.userServicePoint.id,
       );
       TitleLevelRequests.enableTLRViaApi();
+      cy.wait(3000);
       cy.getInstance({
         limit: 1,
         expandAll: true,
         query: `"id"=="${instanceData.instanceId}"`,
       }).then((instance) => {
-        cy.wait(3000).then(() => {
-          testData.instanceHRID = instance.hrid;
-        });
+        testData.instanceHRID = instance.hrid;
       });
       Checkout.checkoutItemViaApi({
         id: uuid(),

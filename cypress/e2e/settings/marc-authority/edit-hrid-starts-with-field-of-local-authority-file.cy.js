@@ -17,14 +17,17 @@ describe('MARC', () => {
         baseUrl: '',
         source: 'Local',
         isActive: true,
-        createdByAdmin: `${date} by ADMINISTRATOR, Diku_admin`,
       };
       const newHridStartsWith = ['787', '100', '9'];
       const HRID_STARTS_WITH = 'HRID starts with';
+      let adminUser;
       let user;
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        cy.getAdminSourceRecord().then((record) => {
+          adminUser = record;
+        });
         cy.createTempUser([Permissions.uiSettingsManageAuthorityFiles.gui])
           .then((userProperties) => {
             user = userProperties;
@@ -64,7 +67,7 @@ describe('MARC', () => {
             localAuthFile.hridStartsWithNumber,
             localAuthFile.baseUrl,
             localAuthFile.isActive,
-            localAuthFile.createdByAdmin,
+            `${date} by ${adminUser}`,
             true,
           );
 
@@ -77,7 +80,7 @@ describe('MARC', () => {
             localAuthFile.baseUrl,
             localAuthFile.isActive,
             localAuthFile.source,
-            localAuthFile.createdByAdmin,
+            `${date} by ${adminUser}`,
           );
           ManageAuthorityFiles.checkNewButtonEnabled(false);
 

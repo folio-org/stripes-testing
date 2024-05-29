@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
@@ -78,7 +78,7 @@ describe('Data Import', () => {
         in2: 'f',
         subfield: 's',
       },
-      recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -133,7 +133,7 @@ describe('Data Import', () => {
       });
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       // create Match profile
-      NewMatchProfile.createMatchProfileViaApiMarc(matchProfile);
+      NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile);
       // create Field mapping profile
       NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile);
       // create Action profile and link it to Field mapping profile
