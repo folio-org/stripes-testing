@@ -2,7 +2,7 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
   DEFAULT_JOB_PROFILE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
@@ -33,14 +33,16 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 
-describe('Data Import', () => {
+describe.skip('Data Import', () => {
   describe('Log details', () => {
     let user;
     let instanceHrid;
-    let exportedFileName;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
-    const fileNameForCreate = `C357027 autotestFileCreteInstance${getRandomPostfix()}.mrc`;
+    const fileNameForCreate = `C357027 autotestFileCreateInstance${getRandomPostfix()}.mrc`;
+    const exportedFileName = `C357027 autotestExportedFile${getRandomPostfix()}.mrc`;
+    const fileNameForUpdate = `C357027 autotestFileUpdateInstance${getRandomPostfix()}.mrc`;
     const filePathForCreateInstance = 'oneMarcBib.mrc';
     const mappingProfile = {
       name: `C357027 autoTestMappingProf.${getRandomPostfix()}`,
@@ -71,7 +73,7 @@ describe('Data Import', () => {
         field: '001',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -111,9 +113,10 @@ describe('Data Import', () => {
       });
     });
 
+    // the test is marked as Obsolete in TestRail, so it is skipped
     it(
       'C357027 Check that status of instance is updated in the Import log after uploading MARC file for modify (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: [] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateInstance, fileNameForCreate);
@@ -133,61 +136,60 @@ describe('Data Import', () => {
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);
           InventorySearchAndFilter.exportInstanceAsMarc();
+          cy.intercept('/data-export/quick-export').as('getHrid');
+          cy.wait('@getHrid', getLongDelay()).then((req) => {
+            const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
-          // download exported marc file
-          cy.visit(TopMenu.dataExportPath);
-          cy.getAdminToken();
-          ExportFile.getExportedFileNameViaApi().then((name) => {
-            exportedFileName = name;
-
-            cy.wait(4000);
-            ExportFile.downloadExportedMarcFile(exportedFileName);
-            // create Field mapping profile
-            cy.visit(SettingsMenu.mappingProfilePath);
-            FieldMappingProfiles.openNewMappingProfileForm();
-            NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-            NewFieldMappingProfile.addFieldMappingsForMarc();
-            NewFieldMappingProfile.fillModificationSectionWithAdd(mappingProfile.modifications);
-            NewFieldMappingProfile.save();
-            FieldMappingProfileView.closeViewMode(mappingProfile.name);
-            FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
-
-            // create Action profile and link it to Field mapping profile
-            cy.visit(SettingsMenu.actionProfilePath);
-            ActionProfiles.create(actionProfile, mappingProfile.name);
-            ActionProfiles.checkActionProfilePresented(actionProfile.name);
-
-            // create Match profile
-            cy.visit(SettingsMenu.matchProfilePath);
-            MatchProfiles.createMatchProfile(matchProfile);
-
-            // create Job profile
-            cy.visit(SettingsMenu.jobProfilePath);
-            JobProfiles.createJobProfileWithLinkingProfiles(
-              jobProfile,
-              actionProfile.name,
-              matchProfile.profileName,
-            );
-            JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-
-            // upload the exported marc file
-            cy.visit(TopMenu.dataImportPath);
-            DataImport.verifyUploadState();
-            DataImport.uploadExportedFile(exportedFileName);
-            JobProfiles.search(jobProfile.profileName);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(exportedFileName);
-            Logs.checkJobStatus(exportedFileName, JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(exportedFileName);
-            FileDetails.checkStatusInColumn(
-              RECORD_STATUSES.CREATED,
-              FileDetails.columnNameInResultList.srsMarc,
-            );
-            FileDetails.checkStatusInColumn(
-              RECORD_STATUSES.UPDATED,
-              FileDetails.columnNameInResultList.instance,
-            );
+            // download exported marc file
+            cy.visit(TopMenu.dataExportPath);
+            ExportFile.downloadExportedMarcFileWithRecordHrid(expectedRecordHrid, exportedFileName);
+            FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
           });
+          // create Field mapping profile
+          cy.visit(SettingsMenu.mappingProfilePath);
+          FieldMappingProfiles.openNewMappingProfileForm();
+          NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
+          NewFieldMappingProfile.addFieldMappingsForMarc();
+          NewFieldMappingProfile.fillModificationSectionWithAdd(mappingProfile.modifications);
+          NewFieldMappingProfile.save();
+          FieldMappingProfileView.closeViewMode(mappingProfile.name);
+          FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+
+          // create Action profile and link it to Field mapping profile
+          cy.visit(SettingsMenu.actionProfilePath);
+          ActionProfiles.create(actionProfile, mappingProfile.name);
+          ActionProfiles.checkActionProfilePresented(actionProfile.name);
+
+          // create Match profile
+          cy.visit(SettingsMenu.matchProfilePath);
+          MatchProfiles.createMatchProfile(matchProfile);
+
+          // create Job profile
+          cy.visit(SettingsMenu.jobProfilePath);
+          JobProfiles.createJobProfileWithLinkingProfiles(
+            jobProfile,
+            actionProfile.name,
+            matchProfile.profileName,
+          );
+          JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+
+          // upload the exported marc file
+          cy.visit(TopMenu.dataImportPath);
+          DataImport.verifyUploadState();
+          DataImport.uploadFile(exportedFileName, fileNameForUpdate);
+          JobProfiles.search(jobProfile.profileName);
+          JobProfiles.runImportFile();
+          Logs.waitFileIsImported(exportedFileName);
+          Logs.checkJobStatus(exportedFileName, JOB_STATUS_NAMES.COMPLETED);
+          Logs.openFileDetails(exportedFileName);
+          FileDetails.checkStatusInColumn(
+            RECORD_STATUSES.CREATED,
+            FileDetails.columnNameInResultList.srsMarc,
+          );
+          FileDetails.checkStatusInColumn(
+            RECORD_STATUSES.UPDATED,
+            FileDetails.columnNameInResultList.instance,
+          );
         });
       },
     );

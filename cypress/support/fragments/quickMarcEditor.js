@@ -1245,7 +1245,7 @@ export default {
   selectFieldsDropdownOption(tag, dropdownLabel, option) {
     cy.do(
       QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: dropdownLabel }))
+        .find(Select({ label: including(dropdownLabel) }))
         .choose(option),
     );
   },
@@ -1253,7 +1253,7 @@ export default {
   verifyFieldsDropdownOption(tag, dropdownLabel, option) {
     cy.expect(
       QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: dropdownLabel }))
+        .find(Select({ label: including(dropdownLabel) }))
         .has({ content: including(option) }),
     );
   },
@@ -1261,7 +1261,7 @@ export default {
   verifyDropdownOptionChecked(tag, dropdownLabel, option) {
     cy.expect(
       QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: dropdownLabel }))
+        .find(Select({ label: including(dropdownLabel) }))
         .has({ checkedOptionText: option }),
     );
   },
@@ -1550,7 +1550,7 @@ export default {
     );
   },
 
-  checkHeaderFirstLine({ headingTypeFrom1XX, headingType, status }, { firstName, name }) {
+  checkHeaderFirstLine({ headingTypeFrom1XX, headingType, status }, userName) {
     cy.expect(Pane(`Edit  MARC authority record - ${headingTypeFrom1XX}`).exists());
     cy.then(() => Pane(`Edit  MARC authority record - ${headingTypeFrom1XX}`).subtitle()).then(
       (subtitle) => {
@@ -1561,7 +1561,7 @@ export default {
               including(status),
               including(headingType),
               including('Last updated:'),
-              including(`Source: ${firstName}, ${name}`),
+              including(`Source: ${userName}`),
             ),
           }).exists(),
         );
@@ -2431,7 +2431,7 @@ export default {
   verifyDropdownValueOfLDRIsValid(dropdownLabel, isValid = true) {
     cy.expect(
       QuickMarcEditorRow({ tagValue: 'LDR' })
-        .find(Select({ label: dropdownLabel }))
+        .find(Select({ label: including(dropdownLabel) }))
         .has({ valid: isValid }),
     );
   },

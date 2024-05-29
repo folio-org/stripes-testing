@@ -62,6 +62,7 @@ export default {
     path: `service-points/${servicePointId}`,
     method: 'DELETE',
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   }),
 
   waitLoading() {

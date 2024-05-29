@@ -9,6 +9,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { LOCATION_IDS } from '../../../support/constants';
 
 let user;
 const validHoldingHRIDsFileName = `validHoldingHRIDs_${getRandomPostfix()}.csv`;
@@ -58,8 +59,7 @@ describe('bulk-edit', () => {
           item.holdingHRID = holdings[0].hrid;
           cy.updateHoldingRecord(holdings[0].id, {
             ...holdings[0],
-            // Popular Reading Collection
-            permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+            permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
             // Updating holdings with special characters
             callNumber: 'number;special&characters',
             callNumberPrefix: 'number-prefix;special&characters',

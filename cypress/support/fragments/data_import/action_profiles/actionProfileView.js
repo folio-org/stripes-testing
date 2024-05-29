@@ -62,7 +62,10 @@ export default {
     cy.expect(resultsPane.exists());
     cy.expect(viewPane.exists());
   },
-  verifyActionProfileTitleName: (profileName) => cy.get('#view-action-profile-pane-content h2').should('have.text', profileName),
+  verifyActionProfileTitleName: (profileName) => {
+    cy.expect(viewPane.exists());
+    cy.get('#view-action-profile-pane-content h2').should('have.text', profileName);
+  },
   verifyAction: () => cy.expect(KeyValue('Action').has({ value: 'Update' })),
   closeViewModeForMatchProfile: () => cy.do(viewPane.find(Button({ icon: 'times' })).click()),
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),

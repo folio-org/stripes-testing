@@ -15,7 +15,6 @@ describe('Data Import', () => {
     let user;
     const mappingProfile = {
       name: `C404371 autotest mapping profile ${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -26,7 +25,7 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      NewFieldMappingProfile.createMappingProfileViaApi(mappingProfile.name);
+      NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile);
 
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;

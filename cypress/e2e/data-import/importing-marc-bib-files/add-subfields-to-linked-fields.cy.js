@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   RECORD_STATUSES,
   DEFAULT_JOB_PROFILE_NAMES,
@@ -63,7 +63,7 @@ describe('Data Import', () => {
         in2: 'f',
         subfield: 's',
       },
-      recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -88,17 +88,17 @@ describe('Data Import', () => {
     ];
     const linkingTagAndValues = [
       {
-        rowIndex: 33,
+        rowIndex: 32,
         value: 'Coates, Ta-Nehisi',
         tag: 100,
       },
       {
-        rowIndex: 75,
+        rowIndex: 74,
         value: 'Chin, Staceyann, C385673',
         tag: 700,
       },
       {
-        rowIndex: 76,
+        rowIndex: 77,
         value: 'Lee, Stan, 1922-2018',
         tag: 700,
       },
@@ -133,7 +133,7 @@ describe('Data Import', () => {
 
         cy.loginAsAdmin().then(() => {
           // create Match profile
-          NewMatchProfile.createMatchProfileViaApiMarc(matchProfile);
+          NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile);
           // create Field mapping profile
           NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile);
           // create Action profile and link it to Field mapping profile
@@ -233,7 +233,7 @@ describe('Data Import', () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          33,
+          32,
           '100',
           '1',
           '\\',
@@ -243,7 +243,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          75,
+          74,
           '700',
           '1',
           '\\',
@@ -253,7 +253,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          76,
+          77,
           '700',
           '1',
           '\\',

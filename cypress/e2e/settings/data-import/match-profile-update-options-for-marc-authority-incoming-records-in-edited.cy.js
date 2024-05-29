@@ -1,4 +1,4 @@
-import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
@@ -30,12 +30,12 @@ describe('Data Import', () => {
         in2: 'f',
         subfield: 's',
       },
-      recordType: EXISTING_RECORDS_NAMES.MARC_AUTHORITY,
+      recordType: EXISTING_RECORD_NAMES.MARC_AUTHORITY,
     };
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      NewMatchProfile.createMatchProfileViaApiMarc(matchProfile);
+      NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile);
 
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;

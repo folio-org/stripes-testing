@@ -80,6 +80,7 @@ describe('Create Item or Title level request', () => {
         userData.userId,
         testData.userServicePoint.id,
       );
+      cy.wait(3000);
       cy.getInstance({
         limit: 1,
         expandAll: true,
