@@ -52,7 +52,7 @@ const exportButton = Button('Export');
 const ledgerResultsPaneSection = Section({ id: 'ledger-results-pane' });
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = Button('Search');
-const saveAndClose = Button('Save & Close');
+const saveAndClose = Button('Save & close');
 
 export default {
   defaultUiLedger: {

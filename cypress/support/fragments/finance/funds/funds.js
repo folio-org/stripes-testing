@@ -66,7 +66,7 @@ const resetButton = Button({ id: 'reset-funds-filters' });
 const addTransferModal = Modal({ id: 'add-transfer-modal' });
 const closeWithoutSavingButton = Button('Close without saving');
 const addExpenseClassButton = Button({ id: 'budget-status-expense-classes-add-button' });
-const saveAndClose = Button('Save & Close');
+const saveAndClose = Button('Save & close');
 
 export default {
   defaultUiFund: {
@@ -967,7 +967,7 @@ export default {
   selectFund: (FundName) => {
     cy.wait(4000);
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
-    cy.wait(4000);
+    cy.wait(8000);
     FundDetails.waitLoading();
   },
 
