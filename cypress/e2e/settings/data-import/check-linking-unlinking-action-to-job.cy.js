@@ -20,13 +20,25 @@ describe('Data Import', () => {
 
     const actionProfiles = [
       {
-        name: `C423404 autoTestActionProf.${getRandomPostfix()}`,
+        actionProfile: {
+          name: `C423404 autoTestActionProf.${getRandomPostfix()}`,
+          action: 'CREATE',
+          folioRecordType: 'INSTANCE',
+        },
       },
       {
-        name: `C423404 autoTestActionProf.${getRandomPostfix()}`,
+        actionProfile: {
+          name: `C423404 autoTestActionProf.${getRandomPostfix()}`,
+          action: 'CREATE',
+          folioRecordType: 'INSTANCE',
+        },
       },
       {
-        name: `C423404 autoTestActionProf.${getRandomPostfix()}`,
+        actionProfile: {
+          name: `C423404 autoTestActionProf.${getRandomPostfix()}`,
+          action: 'CREATE',
+          folioRecordType: 'INSTANCE',
+        },
       },
     ];
     const mappingProfile = {
@@ -43,14 +55,14 @@ describe('Data Import', () => {
         testData.user = userProperties;
 
         // create 3 action profiles linked to mapping profile
-        NewFieldMappingProfile.createMappingProfileViaApi(mappingProfile.name).then(
+        NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile).then(
           (mappingProfileResponse) => {
             actionProfiles.forEach((profile) => {
               NewActionProfile.createActionProfileViaApi(
-                profile.name,
+                profile.actionProfile,
                 mappingProfileResponse.body.id,
               ).then((actionProfileResponse) => {
-                profile.id = actionProfileResponse.body.id;
+                profile.actionProfile.id = actionProfileResponse.body.id;
               });
             });
           },
@@ -82,10 +94,14 @@ describe('Data Import', () => {
         JobProfiles.createJobProfile(jobProfile);
         // Add three action profiles to the job profile
         actionProfiles.forEach((profile) => {
-          NewJobProfile.linkActionProfile(profile);
+          NewJobProfile.linkActionProfile(profile.actionProfile);
         });
         JobProfileEdit.verifyLinkedProfiles(
-          [actionProfiles[0].name, actionProfiles[1].name, actionProfiles[2].name],
+          [
+            actionProfiles[0].actionProfile.name,
+            actionProfiles[1].actionProfile.name,
+            actionProfiles[2].actionProfile.name,
+          ],
           3,
         );
         // #4 Save the new job profile
@@ -96,13 +112,16 @@ describe('Data Import', () => {
         JobProfileEdit.verifyScreenName(jobProfile.profileName);
         // #6 Delete the second action profile from the job profile
         JobProfileEdit.unlinkActionProfile(1);
-        JobProfileEdit.verifyLinkedProfiles([actionProfiles[0].name, actionProfiles[2].name], 2);
+        JobProfileEdit.verifyLinkedProfiles(
+          [actionProfiles[0].actionProfile.name, actionProfiles[2].actionProfile.name],
+          2,
+        );
         // #7 Delete the first action profile from the job profile
         JobProfileEdit.unlinkActionProfile(0);
-        JobProfileEdit.verifyLinkedProfiles([actionProfiles[2].name], 1);
+        JobProfileEdit.verifyLinkedProfiles([actionProfiles[2].actionProfile.name], 1);
         // #8 Save the edited job profile
         JobProfileEdit.saveAndClose();
-        JobProfileView.verifyLinkedProfiles([actionProfiles[2].name], 1);
+        JobProfileView.verifyLinkedProfiles([actionProfiles[2].actionProfile.name], 1);
       },
     );
   });

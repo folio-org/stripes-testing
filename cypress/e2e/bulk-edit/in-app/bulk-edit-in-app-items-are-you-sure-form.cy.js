@@ -11,14 +11,14 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { LOCATION_IDS } from '../../../support/constants';
 
 let user;
 
 const item = {
   instanceName: `instanceName-${getRandomPostfix()}`,
   barcode: `barcode-${getRandomPostfix()}`,
-  // Annex
-  locationId: '53cf956f-c1df-410b-8bea-27f712cca7c0',
+  locationId: LOCATION_IDS.ANNEX,
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const previewOfProposedChangesFileName = `*-Updates-Preview-${itemBarcodesFileName}`;

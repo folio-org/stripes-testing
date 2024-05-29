@@ -134,11 +134,13 @@ export default {
   },
 
   selectRecordType(option) {
-    cy.get('button[name=recordType]').click().then(() => {
-      cy.wait(500);
-      cy.get('li[role=option]').contains(option).click();
-      cy.wait(500);
-    });
+    cy.get('button[name=recordType]')
+      .click()
+      .then(() => {
+        cy.wait(500);
+        cy.get('li[role=option]').contains(option).click();
+        cy.wait(500);
+      });
   },
 
   selectVisibility(visibility) {
@@ -211,6 +213,7 @@ export default {
       method: 'DELETE',
       path: `lists/${id}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
 

@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import { ITEM_STATUS_NAMES, ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -16,6 +16,8 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 
 describe('Orders: Receiving and Check-in', () => {
   const order = {
@@ -45,38 +47,56 @@ describe('Orders: Receiving and Check-in', () => {
 
   let orderNumber;
   let user;
-  let effectiveLocationServicePoint;
+  let servicePointId;
   let location;
 
   before(() => {
     cy.getAdminToken();
 
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
-      effectiveLocationServicePoint = servicePoints[0];
-      NewLocation.createViaApi(
-        NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
-      ).then((locationResponse) => {
-        location = locationResponse;
-        Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-          organization.id = organizationsResponse;
-          order.vendor = organizationsResponse;
-        });
+    ServicePoints.getViaApi().then((servicePoint) => {
+      servicePointId = servicePoint[0].id;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+        location = res;
 
-        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-        cy.getAdminToken();
-        cy.createOrderApi(order).then((response) => {
-          orderNumber = response.body.poNumber;
-          Orders.searchByParameter('PO number', orderNumber);
-          Orders.selectFromResultsList(orderNumber);
-          Orders.createPOLineViaActions();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-          OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
-            'Purchase',
-            locationResponse.name,
-            '2',
-          );
-          OrderLines.backToEditingOrder();
-        });
+        MaterialTypes.createMaterialTypeViaApi(MaterialTypes.getDefaultMaterialType()).then(
+          (mtypes) => {
+            cy.getAcquisitionMethodsApi({
+              query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE}"`,
+            }).then((params) => {
+              Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+                organization.id = organizationsResponse;
+                order.vendor = organizationsResponse;
+                const firstOrderLine = {
+                  ...BasicOrderLine.defaultOrderLine,
+                  cost: {
+                    listUnitPrice: 10.0,
+                    currency: 'USD',
+                    discountType: 'percentage',
+                    quantityPhysical: 2,
+                    poLineEstimatedPrice: 10.0,
+                  },
+                  fundDistribution: [],
+                  locations: [{ locationId: location.id, quantity: 2, quantityPhysical: 2 }],
+                  acquisitionMethod: params.body.acquisitionMethods[0].id,
+                  physical: {
+                    createInventory: 'Instance, Holding, Item',
+                    materialType: mtypes.body.id,
+                    materialSupplier: organizationsResponse,
+                    volumes: [],
+                  },
+                };
+                cy.createOrderApi(order).then((firstOrderResponse) => {
+                  orderNumber = firstOrderResponse.body.poNumber;
+                  firstOrderLine.purchaseOrderId = firstOrderResponse.body.id;
+                  order.poNumber = firstOrderResponse.poNumber;
+                  order.id = firstOrderResponse.id;
+
+                  OrderLines.createOrderLineViaApi(firstOrderLine);
+                });
+              });
+            });
+          },
+        );
       });
     });
 
@@ -96,20 +116,6 @@ describe('Orders: Receiving and Check-in', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.receivingPath, waiter: Receiving.waitLoading });
-    Orders.searchByParameter('PO number', orderNumber);
-    Receiving.selectLinkFromResultsList();
-    Receiving.unreceiveFromReceivedSection();
-    cy.visit(TopMenu.ordersPath);
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    Orders.unOpenOrder();
-    OrderLines.selectPOLInOrder(0);
-    OrderLines.deleteOrderLine();
-    // Need to wait until the order is opened before deleting it
-    cy.wait(2000);
-    cy.getAdminToken();
-    Orders.deleteOrderViaApi(order.id);
     Users.deleteViaApi(user.userId);
   });
 

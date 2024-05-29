@@ -11,6 +11,7 @@ import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -122,6 +123,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
 
+        BulkEditActions.openActions();
         BulkEditActions.openActionsIfNotYet();
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.fillExpirationDate(today);
@@ -136,6 +138,7 @@ describe('bulk-edit', () => {
           'Custom fields',
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         );
+        BulkEditActions.openActions();
         BulkEditActions.openActionsIfNotYet();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
@@ -143,13 +146,13 @@ describe('bulk-edit', () => {
         ]);
 
         BulkEditSearchPane.openLogsSearch();
-        BulkEditSearchPane.checkUsersCheckbox();
-        BulkEditSearchPane.clickActionsRunBy(secondUser.username);
-        BulkEditSearchPane.downloadFileWithProposedChanges();
+        BulkEditLogs.checkUsersCheckbox();
+        BulkEditLogs.clickActionsRunBy(secondUser.username);
+        BulkEditLogs.downloadFileWithProposedChanges();
         ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, [
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         ]);
-        BulkEditSearchPane.downloadFileWithUpdatedRecords();
+        BulkEditLogs.downloadFileWithUpdatedRecords();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         ]);

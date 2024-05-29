@@ -67,6 +67,7 @@ export default {
     cy.do(rowInList.find(HTML(including(barcode))).click());
   },
   openLoanDetails: (itemBarcode) => {
+    cy.wait(2000);
     cy.do(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).click());
     return LoansPage;
   },

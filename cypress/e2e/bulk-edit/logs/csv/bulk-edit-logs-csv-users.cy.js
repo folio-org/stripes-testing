@@ -6,6 +6,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
+import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
@@ -17,103 +18,107 @@ const previewOfProposedChangesFileName = {
 };
 const updatedRecordsFileName = `*-Changed-Records*-${userUUIDsFileName}`;
 
-describe('Bulk Edit - Logs', () => {
-  before('create test data', () => {
-    cy.createTempUser([
-      permissions.bulkEditLogsView.gui,
-      permissions.bulkEditCsvView.gui,
-      permissions.bulkEditCsvEdit.gui,
-      permissions.uiUserEdit.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
+describe('bulk-edit', () => {
+  describe('logs', () => {
+    describe('csv approach', () => {
+      before('create test data', () => {
+        cy.createTempUser([
+          permissions.bulkEditLogsView.gui,
+          permissions.bulkEditCsvView.gui,
+          permissions.bulkEditCsvEdit.gui,
+          permissions.uiUserEdit.gui,
+        ]).then((userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+          FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, `${user.userId}`);
+        });
       });
-      FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, `${user.userId}`);
+
+      after('delete test data', () => {
+        cy.getAdminToken();
+        FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
+        FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
+        Users.deleteViaApi(user.userId);
+        FileManager.deleteFileFromDownloadsByMask(
+          userUUIDsFileName,
+          `*${matchedRecordsFileName}`,
+          previewOfProposedChangesFileName.first,
+          updatedRecordsFileName,
+        );
+      });
+
+      it(
+        'C375217 Verify generated Logs files for Users Local (firebird)',
+        { tags: ['smoke', 'firebird'] },
+        () => {
+          BulkEditSearchPane.checkUsersRadio();
+          BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+          BulkEditSearchPane.uploadFile(userUUIDsFileName);
+          BulkEditSearchPane.waitLoading();
+
+          // Prepare file for bulk edit
+          const nameToUpdate = `testNameToUpdate_${getRandomPostfix()}`;
+          BulkEditActions.downloadMatchedResults();
+          BulkEditActions.prepareValidBulkEditFile(
+            matchedRecordsFileName,
+            editedFileName,
+            'testPermFirst',
+            nameToUpdate,
+          );
+
+          // Upload bulk edit file
+          BulkEditActions.openStartBulkEditForm();
+          BulkEditSearchPane.uploadFile(editedFileName);
+          BulkEditSearchPane.waitFileUploading();
+          BulkEditActions.clickNext();
+          BulkEditActions.commitChanges();
+          BulkEditSearchPane.verifyChangedResults(nameToUpdate);
+
+          // Open logs by users
+          BulkEditActions.openActions();
+          BulkEditActions.downloadChangedCSV();
+          BulkEditSearchPane.openLogsSearch();
+          BulkEditLogs.verifyLogsPane();
+          BulkEditLogs.checkUsersCheckbox();
+
+          BulkEditLogs.clickActionsRunBy(user.username);
+          BulkEditLogs.verifyLogsRowActionWhenCompleted();
+          BulkEditLogs.downloadFileUsedToTrigger();
+          BulkEditFiles.verifyMatchedResultFileContent(
+            userUUIDsFileName,
+            [user.userId],
+            'userId',
+            true,
+          );
+
+          BulkEditLogs.downloadFileWithMatchingRecords();
+          BulkEditFiles.verifyMatchedResultFileContent(
+            `*${matchedRecordsFileName}`,
+            [user.userId],
+            'userId',
+            true,
+          );
+
+          BulkEditLogs.downloadFileWithProposedChanges();
+          BulkEditFiles.verifyMatchedResultFileContent(
+            previewOfProposedChangesFileName.first,
+            [nameToUpdate],
+            'firstName',
+            true,
+          );
+
+          BulkEditLogs.downloadFileWithUpdatedRecords();
+          BulkEditFiles.verifyMatchedResultFileContent(
+            updatedRecordsFileName,
+            [nameToUpdate],
+            'firstName',
+            true,
+          );
+        },
+      );
     });
   });
-
-  after('delete test data', () => {
-    cy.getAdminToken();
-    FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
-    FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
-    Users.deleteViaApi(user.userId);
-    FileManager.deleteFileFromDownloadsByMask(
-      userUUIDsFileName,
-      `*${matchedRecordsFileName}`,
-      previewOfProposedChangesFileName.first,
-      updatedRecordsFileName,
-    );
-  });
-
-  it(
-    'C375217 Verify generated Logs files for Users Local (firebird)',
-    { tags: ['smoke', 'firebird'] },
-    () => {
-      BulkEditSearchPane.checkUsersRadio();
-      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
-      BulkEditSearchPane.uploadFile(userUUIDsFileName);
-      BulkEditSearchPane.waitLoading();
-
-      // Prepare file for bulk edit
-      const nameToUpdate = `testNameToUpdate_${getRandomPostfix()}`;
-      BulkEditActions.downloadMatchedResults();
-      BulkEditActions.prepareValidBulkEditFile(
-        matchedRecordsFileName,
-        editedFileName,
-        'testPermFirst',
-        nameToUpdate,
-      );
-
-      // Upload bulk edit file
-      BulkEditActions.openStartBulkEditForm();
-      BulkEditSearchPane.uploadFile(editedFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.clickNext();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.verifyChangedResults(nameToUpdate);
-
-      // Open logs by users
-      BulkEditActions.openActions();
-      BulkEditActions.downloadChangedCSV();
-      BulkEditSearchPane.openLogsSearch();
-      BulkEditSearchPane.verifyLogsPane();
-      BulkEditSearchPane.checkUsersCheckbox();
-
-      BulkEditSearchPane.clickActionsRunBy(user.username);
-      BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
-      BulkEditSearchPane.downloadFileUsedToTrigger();
-      BulkEditFiles.verifyMatchedResultFileContent(
-        userUUIDsFileName,
-        [user.userId],
-        'userId',
-        true,
-      );
-
-      BulkEditSearchPane.downloadFileWithMatchingRecords();
-      BulkEditFiles.verifyMatchedResultFileContent(
-        `*${matchedRecordsFileName}`,
-        [user.userId],
-        'userId',
-        true,
-      );
-
-      BulkEditSearchPane.downloadFileWithProposedChanges();
-      BulkEditFiles.verifyMatchedResultFileContent(
-        previewOfProposedChangesFileName.first,
-        [nameToUpdate],
-        'firstName',
-        true,
-      );
-
-      BulkEditSearchPane.downloadFileWithUpdatedRecords();
-      BulkEditFiles.verifyMatchedResultFileContent(
-        updatedRecordsFileName,
-        [nameToUpdate],
-        'firstName',
-        true,
-      );
-    },
-  );
 });

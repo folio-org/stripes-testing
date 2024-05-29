@@ -12,10 +12,12 @@ describe('MARC', () => {
     const testData = {
       searchOption: 'LCCN',
       AUTHORIZED: 'Authorized',
-      searchQuery: '766384',
+      searchQueryWithoutAsteriks: '766384',
+      searchQueryWithAsteriks: '*766384',
     };
 
-    const searchResults = [
+    const searchResultWithoutAsteriks = 'C440118 Test LCCN subfield z record 10 (digits only)';
+    const searchResultsWithAsteriks = [
       'C440118 Test LCCN subfield z record 1 (two leading spaces, one trailing space, two internal spaces)',
       'C440118 Test LCCN subfield z record 2 (one space internal)',
       'C440118 Test LCCN subfield z record 3 (two spaces internal)',
@@ -77,8 +79,13 @@ describe('MARC', () => {
       'C440118 Search for "MARC authority" by "LCCN" option using a query without prefix (numbers only) when "Canceled LCCN" (010 $z) has (leading, internal, trailing) spaces". (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        MarcAuthorities.searchByParameter(testData.searchOption, testData.searchQuery);
-        searchResults.forEach((result) => {
+        MarcAuthorities.searchByParameter(
+          testData.searchOption,
+          testData.searchQueryWithoutAsteriks,
+        );
+        MarcAuthorities.checkAfterSearch(testData.AUTHORIZED, searchResultWithoutAsteriks);
+        MarcAuthorities.searchByParameter(testData.searchOption, testData.searchQueryWithAsteriks);
+        searchResultsWithAsteriks.forEach((result) => {
           MarcAuthorities.checkAfterSearch(testData.AUTHORIZED, result);
         });
       },

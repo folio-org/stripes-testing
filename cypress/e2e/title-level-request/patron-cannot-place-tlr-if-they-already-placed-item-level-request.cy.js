@@ -85,6 +85,7 @@ describe('Create Item or Title level request', () => {
         testData.userServicePoint.id,
       );
       TitleLevelRequests.enableTLRViaApi();
+      cy.wait(3000);
       cy.getInstance({
         limit: 1,
         expandAll: true,

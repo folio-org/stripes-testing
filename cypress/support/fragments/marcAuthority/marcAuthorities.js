@@ -101,6 +101,31 @@ const authoritySourceOptions = [
 const thesaurusAccordion = Accordion('Thesaurus');
 const sharedTextInDetailView = 'Shared • ';
 const localTextInDetailView = 'Local • ';
+const defaultLDR = '00000nz\\\\a2200000o\\\\4500';
+const default008FieldValues = {
+  'Cat Rules': '\\',
+  'Geo Subd': '\\',
+  'Govt Ag': '\\',
+  'Kind rec': '\\',
+  Lang: '\\',
+  'Level Est': '\\',
+  'Main use': '\\',
+  'Mod Rec Est': '\\',
+  'Numb Series': '\\',
+  'Pers Name': '\\',
+  RecUpd: '\\',
+  RefEval: '\\',
+  Roman: '\\',
+  'SH Sys': '\\',
+  Series: '\\',
+  'Series use': '\\',
+  Source: '\\',
+  'Subj use': '\\',
+  'Type Subd': '\\',
+  Undef_18: '\\\\\\\\\\\\\\\\\\\\',
+  Undef_30: '\\',
+  Undef_34: '\\\\\\\\',
+};
 
 export default {
   waitLoading() {
@@ -1443,5 +1468,18 @@ export default {
         expect(cellText).to.be.oneOf([...sourceNames]);
       });
     });
+  },
+
+  createMarcAuthorityViaAPI(
+    authorityFilePrefix,
+    authorityFileHridStartsWith,
+    fields,
+    LDR = defaultLDR,
+  ) {
+    return cy.createMarcAuthorityViaAPI(LDR, [
+      { tag: '001', content: `${authorityFilePrefix}${authorityFileHridStartsWith}` },
+      { tag: '008', content: default008FieldValues, indicators: ['\\', '\\'] },
+      ...fields,
+    ]);
   },
 };

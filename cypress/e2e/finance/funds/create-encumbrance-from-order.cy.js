@@ -12,6 +12,7 @@ import Organizations from '../../../support/fragments/organizations/organization
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
 
 describe('ui-finance: Transactions', () => {
   const defaultFund = { ...Funds.defaultUiFund };
@@ -19,30 +20,31 @@ describe('ui-finance: Transactions', () => {
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const order = { ...NewOrder.defaultOneTimeOrder };
-  const allocatedQuantity = '100';
+  const defaultBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 100,
+  };
   let user;
   let orderNumber;
+
   before(() => {
     cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
       order.vendor = response;
     });
-    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
-      defaultFiscalYear.id = response.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((defaultFiscalYearResponse) => {
+      defaultFiscalYear.id = defaultFiscalYearResponse.id;
+      defaultBudget.fiscalYearId = defaultFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
 
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
+          defaultBudget.fundId = fundResponse.fund.id;
+          Budgets.createViaApi(defaultBudget);
         });
       });
     });
@@ -69,25 +71,6 @@ describe('ui-finance: Transactions', () => {
 
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    Orders.unOpenOrder();
-    OrderLines.selectPOLInOrder(0);
-    OrderLines.deleteOrderLine();
-    // Need to wait few seconds, that data will be deleted
-    cy.wait(2000);
-    cy.getAdminToken();
-    Orders.deleteOrderViaApi(order.id);
-    cy.visit(TopMenu.fundPath);
-    FinanceHelp.searchByName(defaultFund.name);
-    Funds.selectFund(defaultFund.name);
-    Funds.selectBudgetDetails();
-    Funds.deleteBudgetViaActions();
-    // Need to wait few seconds, that data will be deleted(its need to pass test in Jenkins run)
-    cy.wait(2500);
-    Funds.deleteFundViaApi(defaultFund.id);
-    Ledgers.deleteledgerViaApi(defaultLedger.id);
-    FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
     Users.deleteViaApi(user.userId);
   });
 

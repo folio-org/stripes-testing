@@ -15,11 +15,15 @@ const confirmButtonInLoanDetails = confirmModalInLoanDetails.find(Button('Confir
 
 export default {
   confirmItemStatus: (reasonToChangeStatus = additionalInformation) => {
-    return cy.do([
-      additionalInformationField.fillIn(reasonToChangeStatus),
-      confirmButton.click(),
-      confirmModal.dismiss(),
-    ]);
+    return cy.wrap(true).then(() => {
+      cy.wait(500);
+      cy.do(additionalInformationField.fillIn(reasonToChangeStatus));
+      cy.wait(500);
+      cy.do(confirmButton.click());
+      cy.wait(500);
+      cy.do(confirmModal.dismiss());
+      cy.wait(500);
+    });
   },
   confirmClaimReturnedInLoanDetails: (reasonToChangeStatus = additionalInformation) => {
     return cy.do([

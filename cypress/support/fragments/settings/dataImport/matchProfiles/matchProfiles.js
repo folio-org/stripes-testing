@@ -11,7 +11,6 @@ import {
 import ResultsPane from '../resultsPane';
 import MatchProfileEditForm from './matchProfileEditForm';
 import NewMatchProfile from './newMatchProfile';
-import getRandomPostfix from '../../../../utils/stringTools';
 
 const actionsButton = Button('Actions');
 const viewPane = Pane({ id: 'view-match-profile-pane' });
@@ -25,68 +24,6 @@ const waitCreatingMatchProfile = () => {
 const search = (profileName) => {
   cy.get('#input-search-match-profiles-field').clear().type(profileName);
   cy.do(Pane('Match profiles').find(Button('Search')).click());
-};
-
-const marcAuthorityMatchBy010TagProfile = {
-  profile: {
-    name: `Update MARC authority record -  Match Profile 010 $a${getRandomPostfix()}`,
-    description: '',
-    incomingRecordType: 'MARC_AUTHORITY',
-    matchDetails: [
-      {
-        incomingRecordType: 'MARC_AUTHORITY',
-        incomingMatchExpression: {
-          fields: [
-            {
-              label: 'field',
-              value: '010',
-            },
-            {
-              label: 'indicator1',
-              value: '',
-            },
-            {
-              label: 'indicator2',
-              value: '',
-            },
-            {
-              label: 'recordSubfield',
-              value: 'a',
-            },
-          ],
-          staticValueDetails: null,
-          dataValueType: 'VALUE_FROM_RECORD',
-        },
-        existingRecordType: 'MARC_AUTHORITY',
-        existingMatchExpression: {
-          fields: [
-            {
-              label: 'field',
-              value: '010',
-            },
-            {
-              label: 'indicator1',
-              value: '',
-            },
-            {
-              label: 'indicator2',
-              value: '',
-            },
-            {
-              label: 'recordSubfield',
-              value: 'a',
-            },
-          ],
-          staticValueDetails: null,
-          dataValueType: 'VALUE_FROM_RECORD',
-        },
-        matchCriterion: 'EXACTLY_MATCHES',
-      },
-    ],
-    existingRecordType: 'MARC_AUTHORITY',
-  },
-  addedRelations: [],
-  deletedRelations: [],
 };
 
 export default {
@@ -169,14 +106,6 @@ export default {
   verifySearchFieldIsEmpty: () => cy.expect(TextField({ id: 'input-search-match-profiles-field' }).has({ value: '' })),
   verifySearchResult: (profileName) => {
     cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
-  },
-  createMatchProfileViaApi(matchProfile = marcAuthorityMatchBy010TagProfile) {
-    return cy.okapiRequest({
-      method: 'POST',
-      path: 'data-import-profiles/matchProfiles',
-      body: matchProfile,
-      isDefaultSearchParamsRequired: false,
-    });
   },
   getMatchProfilesViaApi(searchParams) {
     return cy

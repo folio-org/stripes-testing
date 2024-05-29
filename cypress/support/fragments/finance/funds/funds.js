@@ -66,7 +66,11 @@ const resetButton = Button({ id: 'reset-funds-filters' });
 const addTransferModal = Modal({ id: 'add-transfer-modal' });
 const closeWithoutSavingButton = Button('Close without saving');
 const addExpenseClassButton = Button({ id: 'budget-status-expense-classes-add-button' });
-const saveAndClose = Button('Save & Close');
+const saveAndClose = Button('Save & close');
+const fundFormSection = Section({ id: 'pane-fund-form' });
+const locationSection = Section({ id: 'locations' });
+const editButton = Button('Edit');
+const selectLocationsModal = Modal('Select locations');
 
 export default {
   defaultUiFund: {
@@ -139,6 +143,56 @@ export default {
     this.waitForFundDetailsLoading();
   },
 
+  save() {
+    cy.do(saveAndCloseButton.click());
+  },
+
+  fillInRequiredFields(fund) {
+    cy.do([
+      nameField.fillIn(fund.name),
+      codeField.fillIn(fund.code),
+      externalAccountField.fillIn(fund.externalAccountNo),
+      ledgerSelection.open(),
+      SelectionList().select(fund.ledgerName),
+    ]);
+  },
+
+  newFund() {
+    cy.wait(2000);
+    cy.do(Section({ id: 'fund-results-pane' }).find(newButton).click());
+  },
+
+  clickRestrictByLocationsCheckbox() {
+    cy.wait(4000);
+    cy.do(fundFormSection.find(Checkbox({ name: 'fund.restrictByLocations' })).click());
+    cy.wait(4000);
+  },
+
+  addLocationToFund(locationName) {
+    cy.do([
+      locationSection.find(Button({ id: 'fund-locations' })).click(),
+      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
+      Button('Search').click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
+      selectLocationsModal.find(Button('Save')).click(),
+    ]);
+  },
+
+  varifyLocationSectionExist() {
+    cy.expect(fundFormSection.find(locationSection).exists());
+  },
+
+  varifyLocationSectionAbsent() {
+    cy.expect(fundFormSection.find(locationSection).absent());
+  },
+
+  varifyLocationRequiredError() {
+    cy.expect(locationSection.find(HTML(including('Locations must be assigned'))).exists());
+  },
+
   cancelCreatingFundWithTransfers(defaultFund, defaultLedger, firstFund, secondFund) {
     cy.do([
       newButton.click(),
@@ -173,7 +227,7 @@ export default {
   addGroupToFund: (group) => {
     cy.do([
       actionsButton.click(),
-      Button('Edit').click(),
+      editButton.click(),
       MultiSelect({ label: 'Group' }).select([group]),
       saveAndCloseButton.click(),
     ]);
@@ -183,7 +237,7 @@ export default {
   addTransferTo: (fund) => {
     cy.do([
       actionsButton.click(),
-      Button('Edit').click(),
+      editButton.click(),
       MultiSelect({ label: 'Transfer to' }).select([fund]),
       saveAndCloseButton.click(),
     ]);
@@ -817,13 +871,17 @@ export default {
 
   editBudget: () => {
     cy.wait(4000);
-    cy.do([actionsButton.click(), Button('Edit').click()]);
+    cy.do([actionsButton.click(), editButton.click()]);
   },
 
   changeStatusOfBudget: (statusName, fund, fiscalYear) => {
     cy.wait(4000);
     cy.do([Select({ id: 'budget-status' }).choose(statusName), saveAndCloseButton.click()]);
     InteractorsTools.checkCalloutMessage(`Budget ${fund.code}-${fiscalYear.code} has been saved`);
+  },
+
+  varifyFundIsSaved: () => {
+    InteractorsTools.checkCalloutMessage('Fund has been saved');
   },
 
   addExpensesClass: (firstExpenseClassName) => {
@@ -967,7 +1025,7 @@ export default {
   selectFund: (FundName) => {
     cy.wait(4000);
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
-    cy.wait(4000);
+    cy.wait(8000);
     FundDetails.waitLoading();
   },
 
@@ -991,6 +1049,14 @@ export default {
     );
   },
 
+  closeBudgetTransactionApp: (budget) => {
+    cy.do(
+      PaneHeader(budget)
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
   clickInfoInTransactionDetails: () => {
     cy.do(
       Section({ id: 'pane-transaction-details' })
@@ -1000,7 +1066,7 @@ export default {
   },
 
   addAUToFund: (AUName) => {
-    cy.do([actionsButton.click(), Button('Edit').click()]);
+    cy.do([actionsButton.click(), editButton.click()]);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(4000);
     cy.do([

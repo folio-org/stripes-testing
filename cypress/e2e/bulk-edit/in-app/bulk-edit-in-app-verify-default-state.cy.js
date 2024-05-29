@@ -57,7 +57,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
         BulkEditSearchPane.verifyRecordIdentifierEmpty();
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
-        BulkEditSearchPane.verifyRecordTypesSortedAlphabetically(false);
+        BulkEditSearchPane.verifyRecordTypesSortedAlphabetically();
 
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.isHoldingsRadioChecked(true);
