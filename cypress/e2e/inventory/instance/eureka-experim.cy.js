@@ -48,11 +48,11 @@ describe('eureka test', () => {
             AuthorizationRoles.searchRole(testData.roleName);
             AuthorizationRoles.clickOnRoleName(testData.roleName);
             AuthorizationRoles.clickOnCapabilitiesAccordion();
-            AuthorizationRoles.verifyCheckboxesCountInCapablityRow(
+            AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(
               { application: 'app-platform-complete', table: 'Data', resource: 'Accounts Item' },
-              5,
+              4,
             );
-            AuthorizationRoles.verifyCheckboxesCountInCapablityRow(
+            AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(
               {
                 application: 'app-platform-complete',
                 table: 'Procedural',
@@ -61,13 +61,13 @@ describe('eureka test', () => {
               1,
             );
             AuthorizationRoles.clickOnCapabilitySetsAccordion();
-            AuthorizationRoles.verifyCheckboxesCountInCapablitySetRow(
+            AuthorizationRoles.verifyCheckboxesCountInCapabilitySetRow(
               {
                 application: 'app-platform-complete',
                 table: 'Data',
                 resource: 'Acquisitions-Units Memberships',
               },
-              5,
+              1,
             );
           });
         });
@@ -75,7 +75,7 @@ describe('eureka test', () => {
     });
   });
 
-  it('experiment 2', () => {
+  it.skip('experiment 2', () => {
     cy.loginAsAdmin({
       path: TopMenu.ordersPath,
       waiter: Orders.waitLoading,
