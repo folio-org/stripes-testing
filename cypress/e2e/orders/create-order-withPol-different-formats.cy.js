@@ -45,6 +45,7 @@ describe('ui-orders: Orders and Order lines', () => {
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
+          cy.pause();
         });
       });
     });
