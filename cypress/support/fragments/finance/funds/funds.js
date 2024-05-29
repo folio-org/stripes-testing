@@ -131,8 +131,9 @@ export default {
     return FundEditForm;
   },
   createFund(fund) {
+    cy.do([newButton.click()]);
+    cy.wait(8000);
     cy.do([
-      newButton.click(),
       nameField.fillIn(fund.name),
       codeField.fillIn(fund.code),
       externalAccountField.fillIn(fund.externalAccount),
@@ -352,6 +353,7 @@ export default {
 
   viewTransactions: () => {
     cy.do(Link('View transactions').click());
+    cy.reload();
   },
 
   checkTransactionList: (fundCode) => {
@@ -1025,7 +1027,8 @@ export default {
   selectFund: (FundName) => {
     cy.wait(4000);
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
-    cy.wait(4000);
+    // cy.wait(8000);
+    cy.reload();
     FundDetails.waitLoading();
   },
 

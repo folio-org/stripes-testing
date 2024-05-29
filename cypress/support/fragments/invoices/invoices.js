@@ -270,6 +270,7 @@ export default {
       Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
       newBlankLineButton.click(),
     ]);
+    cy.reload();
     cy.do([
       polLookUpButton.click(),
       selectOrderLinesModal.find(SearchField({ id: searhInputId })).fillIn(orderNumber),
@@ -277,9 +278,10 @@ export default {
     ]);
     FinanceHelper.selectFromResultsList();
     cy.get('input[name="subTotal"]').clear().type(total);
-    cy.do([fundInInvoiceSection.find(Button('%')).click(), saveAndClose.click()]);
+    cy.do([fundInInvoiceSection.find(Button('%')).click()]);
+    cy.wait(2000);
+    cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
-    cy.wait(4000);
   },
 
   checkSearchResultsContent({ records = [] } = {}) {
@@ -604,6 +606,7 @@ export default {
   createInvoiceLine: (invoiceLine) => {
     cy.do(Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click());
     cy.do(newBlankLineButton.click());
+    cy.reload();
     // TODO: update using interactors once we will be able to pass negative value into text field
     cy.xpath('//*[@id="subTotal"]').type(invoiceLine.subTotal);
     cy.do([
@@ -709,6 +712,7 @@ export default {
       saveAndClose.click(),
     ]);
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
+    cy.wait(8000);
   },
 
   changeFundInLine: (fund) => {

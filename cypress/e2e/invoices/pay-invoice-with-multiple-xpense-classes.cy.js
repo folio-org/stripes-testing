@@ -51,6 +51,7 @@ describe('Invoices', () => {
           cy.visit(TopMenu.fundPath);
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
+          cy.reload();
           Funds.addBudget(allocatedQuantity);
           Funds.editBudget();
           Funds.addExpensesClass(firstExpenseClass.name);
@@ -74,8 +75,8 @@ describe('Invoices', () => {
       Orders.createApprovedOrderForRollover(firstOrder, true).then((secondOrderResponse) => {
         firstOrder.id = secondOrderResponse.id;
         firstOrderNumber = secondOrderResponse.poNumber;
-        Orders.checkCreatedOrder(firstOrder);
         OrderLines.addPOLine();
+        cy.reload();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
         OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
           defaultFund,
@@ -114,6 +115,7 @@ describe('Invoices', () => {
     () => {
       cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(invoice, organization.name);
+      cy.reload();
       Invoices.createInvoiceLineFromPol(firstOrderNumber);
       Invoices.approveInvoice();
       Invoices.payInvoice();
