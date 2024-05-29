@@ -121,6 +121,7 @@ describe('MARC', () => {
             `$a ${marcFiles[1].authority010FieldValue} $z ${testData.updatedSubfieldZValue}`,
           );
           QuickMarcEditor.checkButtonsEnabled();
+          cy.wait(1000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
           QuickMarcEditor.updateExistingField(
@@ -137,7 +138,7 @@ describe('MARC', () => {
 
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.verifyTagFieldAfterLinking(
-            59,
+            60,
             testData.tag700,
             '0',
             '\\',
