@@ -100,7 +100,7 @@ describe('bulk-edit', () => {
           `${folioItem.instanceId},false,true,`,
           `${marcInstances[0].instanceId},false,true,`,
         ]);
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditInstanceForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         const possibleActions = ['Staff suppress', 'Suppress from discovery'];
         BulkEditActions.verifyPossibleActions(possibleActions);
