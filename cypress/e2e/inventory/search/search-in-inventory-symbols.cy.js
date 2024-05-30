@@ -94,6 +94,7 @@ describe('Inventory', () => {
 
     before('Importing data', () => {
       // make sure there are no duplicate records in the system
+      cy.getAdminToken();
       InventoryInstances.getInstancesViaApi({
         limit: 100,
         query: 'title="MSEARCH-466"',

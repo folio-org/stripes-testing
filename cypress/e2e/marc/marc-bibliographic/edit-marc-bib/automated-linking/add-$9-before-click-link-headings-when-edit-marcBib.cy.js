@@ -137,15 +137,15 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.updateExistingFieldContent(
-              32,
+              31,
               '$a Normal authors $z Jamaica $v Biography. $0 sh99014708C388552 $9 acc6b9cb-c607-4a4f-8505-a0f1a4492295',
             );
             QuickMarcEditor.updateExistingFieldContent(
-              33,
+              32,
               '$a Normal activists $z Jamaica $v Biography. $0 sh96007532C388552 $9 test123',
             );
             QuickMarcEditor.updateExistingFieldContent(
-              39,
+              30,
               '$a Authors, Jamaican $y 21st century $v Biography. $0 sh850099229 $9 acc6b9cb-c607-4a4f-8505-a0f1a4492233',
             );
             QuickMarcEditor.updateExistingFieldContent(
@@ -169,14 +169,14 @@ describe('MARC', () => {
               'Field 100 and 650 must be set manually by selecting the link icon.',
             );
 
+            QuickMarcEditor.verifyRowLinked(31, true);
             QuickMarcEditor.verifyRowLinked(32, true);
-            QuickMarcEditor.verifyRowLinked(33, true);
             QuickMarcEditor.verifyRowLinked(17, false);
-            QuickMarcEditor.verifyRowLinked(39, false);
+            QuickMarcEditor.verifyRowLinked(30, false);
             QuickMarcEditor.checkValueAbsent(17, '$9');
-            QuickMarcEditor.checkValueAbsent(39, '$9');
+            QuickMarcEditor.checkValueAbsent(30, '$9');
+            QuickMarcEditor.checkValueAbsent(31, '$9');
             QuickMarcEditor.checkValueAbsent(32, '$9');
-            QuickMarcEditor.checkValueAbsent(33, '$9');
             QuickMarcEditor.checkValueExist(15, '$9');
             QuickMarcEditor.checkValueExist(16, '$9');
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
