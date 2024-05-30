@@ -6,7 +6,7 @@ describe('fse-eholdings', () => {
     cy.allure().logCommandSteps();
   });
 
-  it('TC195060 - Get eholdings titles', { tags: ['sanity', 'fse', 'api'] }, () => {
+  it('TC195060 - Get eholdings titles', { tags: ['sanity', 'fse', 'api', 'eholdings'] }, () => {
     cy.getEHoldingsTitlesViaAPI('time').then((response) => {
       cy.expect(response.status).to.eq(200);
     });
