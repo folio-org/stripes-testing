@@ -305,7 +305,7 @@ export default {
 
   clickSaveButtonAfterEditingFile(authorityFileName) {
     const targetRow = getTargetRowWithFile(authorityFileName);
-
+    cy.wait(1000);
     cy.do(targetRow.find(saveButton).click());
   },
 

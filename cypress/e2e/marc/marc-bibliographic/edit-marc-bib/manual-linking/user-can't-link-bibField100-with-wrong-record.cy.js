@@ -66,7 +66,7 @@ describe('MARC', () => {
         ];
 
         const bib100FieldValues = [
-          32,
+          33,
           testData.tag100,
           '1',
           '\\',
