@@ -130,24 +130,28 @@ describe('Check Out', () => {
     );
   };
 
-  it('C591 Check out: multipiece items (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
-    cy.visit(TopMenu.checkOutPath);
-    Checkout.waitLoading();
-    CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
-    CheckOutActions.checkPatronInformation(user.username, userBarcode);
-    cy.expect(CheckOutActions.modal.absent());
+  it(
+    'C591 Check out: multipiece items (vega)',
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    () => {
+      cy.visit(TopMenu.checkOutPath);
+      Checkout.waitLoading();
+      CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
+      CheckOutActions.checkPatronInformation(user.username, userBarcode);
+      cy.expect(CheckOutActions.modal.absent());
 
-    fullCheckOut(testItems[1]);
-    MultipieceCheckOut.cancelModal();
-    CheckOutActions.checkItem(testItems[1].barcode);
+      fullCheckOut(testItems[1]);
+      MultipieceCheckOut.cancelModal();
+      CheckOutActions.checkItem(testItems[1].barcode);
 
-    fullCheckOut(testItems[1]);
-    MultipieceCheckOut.confirmMultipleCheckOut(testItems[1].barcode);
+      fullCheckOut(testItems[1]);
+      MultipieceCheckOut.confirmMultipleCheckOut(testItems[1].barcode);
 
-    fullCheckOut(testItems[2]);
-    MultipieceCheckOut.confirmMultipleCheckOut(testItems[2].barcode);
+      fullCheckOut(testItems[2]);
+      MultipieceCheckOut.confirmMultipleCheckOut(testItems[2].barcode);
 
-    fullCheckOut(testItems[3]);
-    MultipieceCheckOut.confirmMultipleCheckOut(testItems[3].barcode);
-  });
+      fullCheckOut(testItems[3]);
+      MultipieceCheckOut.confirmMultipleCheckOut(testItems[3].barcode);
+    },
+  );
 });
