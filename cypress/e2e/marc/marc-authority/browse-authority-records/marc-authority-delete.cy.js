@@ -53,10 +53,12 @@ describe('MARC', () => {
         () => {
           DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName2);
           JobProfiles.waitFileIsUploaded();
-          DataImport.importFileForBrowse(
-            DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-            testData.fileName2,
-          );
+          JobProfiles.waitLoadingList();
+          JobProfiles.search(DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY);
+          JobProfiles.runImportFile();
+          Logs.waitFileIsImported(testData.fileName2);
+          Logs.checkJobStatus(testData.fileName2, 'Completed');
+
           cy.visit(TopMenu.marcAuthorities);
           MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.searchBy(testData.searchOption, testData.recordForC357549);

@@ -145,6 +145,7 @@ describe('MARC', () => {
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
+          cy.wait(1000);
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
 
           MarcAuthorities.clickActionsAndReportsButtons();
