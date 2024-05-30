@@ -21,6 +21,7 @@ import {
   Section,
   Card,
   PaneContent,
+  Spinner,
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -920,5 +921,9 @@ export default {
   checkExistingPOInOrdersList: (POL) => {
     cy.wait(4000);
     cy.expect(ordersResultsPane.find(MultiColumnListCell(POL)).exists());
+  },
+
+  waitOrdersListLoading: () => {
+    cy.expect([ordersResultsPane.find(Spinner()).absent(), ordersList.exists()]);
   },
 };

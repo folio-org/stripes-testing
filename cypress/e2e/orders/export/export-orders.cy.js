@@ -104,6 +104,7 @@ describe('Orders', () => {
       { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
       () => {
         Orders.selectOpenStatusFilter();
+        Orders.waitOrdersListLoading();
         Orders.exportResultsToCsv();
       },
     );
