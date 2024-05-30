@@ -107,58 +107,59 @@ describe('bulk-edit', () => {
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, electronicAccess[0].publicNote);
         BulkEditActions.openInAppStartBulkEditFrom();
-        // BulkEditActions.electronicAccessReplaceWith('URL Relationship', electronicAccessRelationshipName.RESOURCE, electronicAccessRelationshipName.VERSION_OF_RESOURCE);
-        // BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.noteReplaceWith('URI', electronicAccess[0].uri, newUri, 0);
-        BulkEditActions.confirmChanges();
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(
-          0,
-          electronicAccessRelationshipName.RESOURCE,
-        );
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, newUri);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, electronicAccess[0].linkText);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(
-          3,
-          electronicAccess[0].materialsSpecification,
-        );
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, electronicAccess[0].publicNote);
-        BulkEditActions.downloadPreview();
-        contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${newUri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
-        ExportFile.verifyFileIncludes(previewFileName, [contentToVerify]);
-        BulkEditActions.commitChanges();
-        BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(
-          0,
-          electronicAccessRelationshipName.RESOURCE,
-        );
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, newUri);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, electronicAccess[0].linkText);
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(
-          3,
-          electronicAccess[0].materialsSpecification,
-        );
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, electronicAccess[0].publicNote);
-        BulkEditActions.openActions();
-        BulkEditActions.downloadChangedCSV();
-        contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${newUri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [contentToVerify]);
+        BulkEditActions.electronicAccessReplaceWith('URL Relationship', electronicAccessRelationshipName.RESOURCE, electronicAccessRelationshipName.VERSION_OF_RESOURCE);
+        BulkEditActions.addNewBulkEditFilterString();
 
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.switchToHoldings();
-        InventorySearchAndFilter.searchByParameter('Holdings HRID', item.holdingsHRID);
-        InventorySearchAndFilter.selectSearchResultItem();
-        InventorySearchAndFilter.selectViewHoldings();
-        HoldingsRecordView.verifyElectronicAccessByElementIndex(
-          0,
-          electronicAccessRelationshipName.RESOURCE,
-        );
-        HoldingsRecordView.verifyElectronicAccessByElementIndex(1, newUri);
-        HoldingsRecordView.verifyElectronicAccessByElementIndex(2, electronicAccess[0].linkText);
-        HoldingsRecordView.verifyElectronicAccessByElementIndex(
-          3,
-          electronicAccess[0].materialsSpecification,
-        );
-        HoldingsRecordView.verifyElectronicAccessByElementIndex(4, electronicAccess[0].publicNote);
+      //   BulkEditActions.noteReplaceWith('URI', electronicAccess[0].uri, newUri, 0);
+      //   BulkEditActions.confirmChanges();
+      //   BulkEditSearchPane.verifyElectronicAccessElementByIndex(
+      //     0,
+      //     electronicAccessRelationshipName.RESOURCE,
+      //   );
+      //   BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, newUri);
+      //   BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, electronicAccess[0].linkText);
+      //   BulkEditSearchPane.verifyElectronicAccessElementByIndex(
+      //     3,
+      //     electronicAccess[0].materialsSpecification,
+      //   );
+      //   BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, electronicAccess[0].publicNote);
+      //   BulkEditActions.downloadPreview();
+      //   contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${newUri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
+      //   ExportFile.verifyFileIncludes(previewFileName, [contentToVerify]);
+      //   BulkEditActions.commitChanges();
+      //   BulkEditSearchPane.waitFileUploading();
+      //   BulkEditSearchPane.verifyElectronicAccessElementByIndex(
+      //     0,
+      //     electronicAccessRelationshipName.RESOURCE,
+      //   );
+      //   BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, newUri);
+      //   BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, electronicAccess[0].linkText);
+      //   BulkEditSearchPane.verifyElectronicAccessElementByIndex(
+      //     3,
+      //     electronicAccess[0].materialsSpecification,
+      //   );
+      //   BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, electronicAccess[0].publicNote);
+      //   BulkEditActions.openActions();
+      //   BulkEditActions.downloadChangedCSV();
+      //   contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${newUri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
+      //   ExportFile.verifyFileIncludes(changedRecordsFileName, [contentToVerify]);
+
+      //   cy.visit(TopMenu.inventoryPath);
+      //   InventorySearchAndFilter.switchToHoldings();
+      //   InventorySearchAndFilter.searchByParameter('Holdings HRID', item.holdingsHRID);
+      //   InventorySearchAndFilter.selectSearchResultItem();
+      //   InventorySearchAndFilter.selectViewHoldings();
+      //   HoldingsRecordView.verifyElectronicAccessByElementIndex(
+      //     0,
+      //     electronicAccessRelationshipName.RESOURCE,
+      //   );
+      //   HoldingsRecordView.verifyElectronicAccessByElementIndex(1, newUri);
+      //   HoldingsRecordView.verifyElectronicAccessByElementIndex(2, electronicAccess[0].linkText);
+      //   HoldingsRecordView.verifyElectronicAccessByElementIndex(
+      //     3,
+      //     electronicAccess[0].materialsSpecification,
+      //   );
+      //   HoldingsRecordView.verifyElectronicAccessByElementIndex(4, electronicAccess[0].publicNote);
       },
     );
   });

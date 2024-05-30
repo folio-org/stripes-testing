@@ -605,11 +605,7 @@ export default {
     cy.wait(2000);
     this.selectFromUnchangedSelect(oldValue, rowIndex);
     this.selectSecondAction('Replace with', rowIndex);
-    cy.do(
-      RepeatableFieldItem({ index: rowIndex })
-        .find(Select({ changed: true, id: 'urlRelationship' }))
-        .choose(newValue),
-    );
+    this.selectFromUnchangedSelect(newValue, rowIndex);
   },
 
   noteRemove(noteType, note, rowIndex = 0) {
