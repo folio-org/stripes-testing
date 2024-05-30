@@ -1,4 +1,5 @@
 import { Permissions } from '../../../support/dictionary';
+import { EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import MatchProfileEdit from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileEditForm';
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
@@ -11,11 +12,23 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Settings', () => {
     let user;
-    const matchProfileName = `C2339 autotest MatchProf${getRandomPostfix()}`;
+    const matchProfile = {
+      profileName: `C2339 autotest MatchProf${getRandomPostfix()}`,
+      incomingRecordFields: {
+        field: '001',
+        in1: '',
+        in2: '',
+        subfield: '',
+      },
+      recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+      existingMatchExpressionValue: 'instance.hrid',
+    };
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      NewMatchProfile.createMatchProfileViaApi(matchProfileName);
+      NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(matchProfile);
+
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
@@ -27,7 +40,7 @@ describe('Data Import', () => {
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       });
     });
 
@@ -36,10 +49,10 @@ describe('Data Import', () => {
       { tags: ['criticalPath', 'folijet'] },
       () => {
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
-        MatchProfiles.search(matchProfileName);
-        MatchProfiles.selectMatchProfileFromList(matchProfileName);
+        MatchProfiles.search(matchProfile.profileName);
+        MatchProfiles.selectMatchProfileFromList(matchProfile.profileName);
         MatchProfileView.edit();
-        MatchProfileEdit.verifyScreenName(matchProfileName);
+        MatchProfileEdit.verifyScreenName(matchProfile.profileName);
         MatchProfileEdit.changeExistingInstanceRecordField();
         MatchProfileEdit.clickSaveAndCloseButton({
           profileCreated: false,

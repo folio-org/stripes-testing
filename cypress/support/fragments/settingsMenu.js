@@ -12,7 +12,7 @@ export default {
   circulationFixedDueDateSchedulesPath: 'settings/circulation/fixed-due-date-schedules',
   circulationLoanHistoryPath: 'settings/circulation/loan-anonymization',
   circulationLoanPoliciesPath: 'settings/circulation/loan-policies',
-  circulationoVerdueFinePoliciesPath: 'settings/circulation/fine-policies',
+  circulationOverdueFinePoliciesPath: 'settings/circulation/fine-policies',
   circulationLostItemFeePolicyPath: 'settings/circulation/lost-item-fee-policy',
   circulationPatronNoticePoliciesPath: 'settings/circulation/notice-policies',
   circulationPatronNoticeTemplatesPath: 'settings/circulation/patron-notices',

@@ -176,6 +176,7 @@ export default {
   },
 
   openActions() {
+    cy.wait(500);
     cy.do(actionsButton.click());
   },
 

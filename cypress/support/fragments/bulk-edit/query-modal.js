@@ -43,6 +43,7 @@ export const usersFieldValues = {
   lastName: 'User last name',
   patronGroup: 'User patron group',
   userActive: 'User active',
+  userBarcode: 'User barcode',
 };
 export const dateTimeOperators = [
   'Select operator',

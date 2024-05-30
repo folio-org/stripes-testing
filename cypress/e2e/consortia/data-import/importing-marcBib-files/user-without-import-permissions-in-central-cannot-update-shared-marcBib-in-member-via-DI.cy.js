@@ -1,6 +1,6 @@
 import {
   DEFAULT_JOB_PROFILE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
 } from '../../../../support/constants';
@@ -52,7 +52,6 @@ describe('Data Import', () => {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     };
     const actionProfile = {
-      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       name: `C411791 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       action: 'UPDATE',
       folioRecordType: 'MARC_BIBLIOGRAPHIC',
@@ -71,7 +70,7 @@ describe('Data Import', () => {
         in2: 'f',
         subfield: 's',
       },
-      recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfileName = `C411791 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
 
@@ -103,7 +102,7 @@ describe('Data Import', () => {
           ]);
           NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
             (mappingProfileResponse) => {
-              NewActionProfile.createActionProfileViaApiMarc(
+              NewActionProfile.createActionProfileViaApi(
                 actionProfile,
                 mappingProfileResponse.body.id,
               ).then((actionProfileResponse) => {
@@ -149,6 +148,9 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.exportedFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
@@ -173,9 +175,6 @@ describe('Data Import', () => {
         testData.collegeLocation.libraryId,
         testData.collegeLocation.id,
       );
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.exportedFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
     });
 
     it(

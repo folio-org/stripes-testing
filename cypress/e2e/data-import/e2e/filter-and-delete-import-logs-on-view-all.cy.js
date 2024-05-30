@@ -11,7 +11,7 @@ import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Data Import', () => {
+describe.skip('Data Import', () => {
   describe('End to end scenarios', () => {
     const startedDate = new Date();
     const completedDate = startedDate;

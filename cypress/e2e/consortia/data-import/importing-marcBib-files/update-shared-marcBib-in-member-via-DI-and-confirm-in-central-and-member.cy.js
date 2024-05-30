@@ -1,6 +1,6 @@
 import {
   DEFAULT_JOB_PROFILE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
@@ -61,7 +61,6 @@ describe('Data Import', () => {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     };
     const actionProfile = {
-      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       name: `C405528 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       action: 'UPDATE',
       folioRecordType: 'MARC_BIBLIOGRAPHIC',
@@ -80,7 +79,7 @@ describe('Data Import', () => {
         in2: 'f',
         subfield: 's',
       },
-      recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfileName = `C405528 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
 
@@ -110,7 +109,7 @@ describe('Data Import', () => {
           ]);
           NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
             (mappingProfileResponse) => {
-              NewActionProfile.createActionProfileViaApiMarc(
+              NewActionProfile.createActionProfileViaApi(
                 actionProfile,
                 mappingProfileResponse.body.id,
               ).then((actionProfileResponse) => {

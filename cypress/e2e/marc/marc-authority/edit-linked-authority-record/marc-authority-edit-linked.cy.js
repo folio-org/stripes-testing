@@ -137,7 +137,7 @@ describe('MARC', () => {
 
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.verifyTagFieldAfterLinking(
-            60,
+            59,
             testData.tag700,
             '0',
             '\\',

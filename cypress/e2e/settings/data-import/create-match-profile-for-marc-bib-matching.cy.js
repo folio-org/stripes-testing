@@ -1,4 +1,4 @@
-import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
@@ -37,7 +37,7 @@ describe('Data Import', () => {
             field: '001',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+          existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
           instanceOption: NewMatchProfile.optionsList.instanceHrid,
         };
 
@@ -89,7 +89,7 @@ describe('Data Import', () => {
             subfield: 's',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+          existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
         };
 
         cy.visit(SettingsMenu.matchProfilePath);
@@ -132,7 +132,7 @@ describe('Data Import', () => {
           incomingStaticValue: 'Online',
           incomingStaticRecordValue: 'Text',
           matchCriterion: 'Existing value contains incoming value',
-          existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+          existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
           existingRecordOption: NewMatchProfile.optionsList.holdingsHrid,
         };
 
@@ -174,7 +174,7 @@ describe('Data Import', () => {
           incomingStaticValue: '3456',
           incomingStaticRecordValue: 'Number',
           matchCriterion: 'Existing value contains incoming value',
-          existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+          existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
           existingRecordOption: NewMatchProfile.optionsList.holdingsHrid,
         };
 
@@ -209,7 +209,7 @@ describe('Data Import', () => {
           incomingStaticValue: DateTools.getFormattedDate({ date: new Date() }),
           incomingStaticRecordValue: 'Date',
           matchCriterion: 'Existing value contains incoming value',
-          existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+          existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
           existingRecordOption: NewMatchProfile.optionsList.holdingsHrid,
         };
 
@@ -244,7 +244,7 @@ describe('Data Import', () => {
           incomingStaticValue: DateTools.getFormattedDate({ date: new Date() }),
           incomingStaticRecordValue: 'Date range',
           matchCriterion: 'Existing value contains incoming value',
-          existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+          existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
           existingRecordOption: NewMatchProfile.optionsList.holdingsHrid,
         };
 

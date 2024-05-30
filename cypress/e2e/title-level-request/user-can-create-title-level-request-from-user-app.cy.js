@@ -80,14 +80,13 @@ describe('Create Item or Title level request', () => {
         userData.userId,
         testData.userServicePoint.id,
       );
+      cy.wait(3000);
       cy.getInstance({
         limit: 1,
         expandAll: true,
         query: `"id"=="${instanceData.instanceId}"`,
       }).then((instance) => {
-        cy.wait(3000).then(() => {
-          instanceData.instanceHRID = instance.hrid;
-        });
+        instanceData.instanceHRID = instance.hrid;
       });
       TitleLevelRequests.enableTLRViaApi();
       cy.login(userData.username, userData.password, {

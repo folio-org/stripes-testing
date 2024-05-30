@@ -68,6 +68,7 @@ const expandActionsDropdown = () => {
   );
 };
 const selectOrganizationModal = Modal('Select Organization');
+const selectLocationsModal = Modal('Select locations');
 
 export default {
   searchByParameter(parameter, value) {
@@ -900,5 +901,24 @@ export default {
       selectOrganizationModal.find(searchButton).click(),
     ]);
     cy.expect(MultiColumnListCell(organization.name).absent());
+  },
+  selectLocationInFilters: (locationName) => {
+    cy.wait(4000);
+    cy.do([
+      Button({ id: 'accordion-toggle-button-filter-poLine.locations' }).click(),
+      Button('Location look-up').click(),
+      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
+      Button('Search').click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
+      selectLocationsModal.find(Button('Save')).click(),
+    ]);
+  },
+
+  checkExistingPOInOrdersList: (POL) => {
+    cy.wait(4000);
+    cy.expect(ordersResultsPane.find(MultiColumnListCell(POL)).exists());
   },
 };

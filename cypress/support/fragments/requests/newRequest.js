@@ -53,6 +53,8 @@ function addRequester(userName) {
 }
 
 function openNewRequestPane() {
+  cy.do(actionsButton.click());
+  cy.wait(500);
   cy.do([actionsButton.click(), newRequestButton.click()]);
 }
 
@@ -86,6 +88,7 @@ export default {
     cy.do(enterRequesterBarcodeButton.click());
     cy.expect(selectServicePoint.exists);
     cy.wait('@getUsers');
+    cy.wait(500);
     cy.do(selectRequestType.choose(newRequest.requestType));
   },
 
@@ -100,7 +103,9 @@ export default {
   createNewRequest(newRequest) {
     openNewRequestPane();
     this.fillRequiredFields(newRequest);
+    cy.wait(500);
     this.choosePickupServicePoint(newRequest.pickupServicePoint);
+    cy.wait(500);
     this.saveRequestAndClose();
     this.waitLoading();
   },
