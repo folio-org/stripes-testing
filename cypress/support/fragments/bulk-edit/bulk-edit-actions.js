@@ -576,6 +576,14 @@ export default {
     );
   },
 
+  selectFromUnchangedSelect(selection, rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ id: 'urlRelationship', changed: false }))
+        .choose(selection),
+    );
+  },
+
   findValue(type, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
@@ -590,6 +598,18 @@ export default {
     this.fillInFirstTextArea(oldNote, rowIndex);
     this.selectSecondAction('Replace with', rowIndex);
     this.fillInSecondTextArea(newNote, rowIndex);
+  },
+
+  electronicAccessReplaceWith(property, oldValue, newValue, rowIndex = 0) {
+    this.findValue(property, rowIndex);
+    cy.wait(2000);
+    this.selectFromUnchangedSelect(oldValue, rowIndex);
+    this.selectSecondAction('Replace with', rowIndex);
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ changed: true, id: 'urlRelationship' }))
+        .choose(newValue),
+    );
   },
 
   noteRemove(noteType, note, rowIndex = 0) {
