@@ -1,4 +1,8 @@
-import { FOLIO_RECORD_TYPE, JOB_STATUS_NAMES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  FOLIO_RECORD_TYPE,
+  JOB_STATUS_NAMES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -86,7 +90,7 @@ describe('Data Import', () => {
         // create job profile
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfile);
-        NewJobProfile.linkActionProfileByName('Default - Create instance');
+        NewJobProfile.linkActionProfileByName(DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS);
         NewJobProfile.linkActionProfile(actionProfile);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);

@@ -1,16 +1,12 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
-  ACQUISITION_METHOD_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
   LOAN_TYPE_NAMES,
   LOCATION_NAMES,
-  ORDER_FORMAT_NAMES_IN_PROFILE,
-  ORDER_STATUSES,
   RECORD_STATUSES,
-  VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -24,8 +20,6 @@ import FieldMappingProfiles from '../../../support/fragments/data_import/mapping
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Orders from '../../../support/fragments/orders/orders';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -39,10 +33,9 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Log details', () => {
     let user;
-    let orderNumber;
     let instanceHRID;
-    const filePathForCreate = 'marcFileForC388570.mrc';
-    const marcFileName = `C388570 autotestFileName${getRandomPostfix()}.mrc`;
+    const filePathForCreate = 'marcFileForC442826.mrc';
+    const marcFileName = `C442826 autotestFileName${getRandomPostfix()}.mrc`;
     const arrayOfHoldingsStatuses = ['Created (KU/CC/DI/M)', 'Created (E)', 'Created (KU/CC/DI/A)'];
     const quantityOfCreatedHoldings = 3;
     const quantityOfCreatedItems = '6';
@@ -54,62 +47,42 @@ describe('Data Import', () => {
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: {
-          typeValue: FOLIO_RECORD_TYPE.ORDER,
-          name: `C388570 Physical open order for multiple.${getRandomPostfix()}`,
-          orderStatus: ORDER_STATUSES.OPEN,
-          approved: true,
-          vendor: VENDOR_NAMES.GOBI,
-          title: '245$a',
-          acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
-          orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
-          receivingWorkflow: 'Synchronized',
-          physicalUnitPrice: '"20"',
-          quantityPhysical: '"1"',
-          currency: 'USD',
-          locationName: `"${LOCATION_NAMES.ANNEX}"`,
-          locationQuantityPhysical: '"1"',
-        },
-        actionProfile: {
-          typeValue: FOLIO_RECORD_TYPE.ORDER,
-          name: `C388570 Physical open order for multiple.${getRandomPostfix()}`,
-        },
-      },
-      {
-        mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `C388570 Test multiple holdings.${getRandomPostfix()}`,
-          permanentLocation: '945$h',
+          name: `C442826 Test multiple holdings.${getRandomPostfix()}`,
+          permanentLocation: '945$h; else "1 hour earlier (1he)"',
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `C388570 Test multiple holdings.${getRandomPostfix()}`,
+          name: `C442826 Test multiple holdings.${getRandomPostfix()}`,
         },
       },
       {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
-          name: `C388570 Test multiple items.${getRandomPostfix()}`,
+          name: `C442826 Test multiple items.${getRandomPostfix()}`,
           materialType: '945$a',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: ITEM_STATUS_NAMES.ON_ORDER,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
-          name: `C388570 Test multiple items.${getRandomPostfix()}`,
+          name: `C442826 Test multiple items.${getRandomPostfix()}`,
         },
       },
     ];
     const jobProfile = {
-      profileName: `C388570 Physical open order for multiple.${getRandomPostfix()}`,
+      profileName: `C442826 Test multiple items.${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('Create test user and login', () => {
+      cy.getAdminToken();
+      // create location
+
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
-        Permissions.uiOrdersView.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -137,24 +110,14 @@ describe('Data Import', () => {
             InventoryInstance.deleteInstanceViaApi(instance.id);
           },
         );
-        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
-          Orders.deleteOrderViaApi(orderId[0].id);
-        });
       });
     });
 
     it(
-      'C388570 Check the log result table for imported multiple items and holdings for Physical resource open order (folijet)',
+      'C442826 Check the log result table for imported multiple items in multiple holdings with conditional mapping (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profiles
-        FieldMappingProfiles.createOrderMappingProfile(
-          collectionOfMappingAndActionProfiles[0].mappingProfile,
-        );
-        FieldMappingProfiles.checkMappingProfilePresented(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
-        );
-
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(
           collectionOfMappingAndActionProfiles[1].mappingProfile,
@@ -201,7 +164,6 @@ describe('Data Import', () => {
         // create job profile
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfile);
-        NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
         NewJobProfile.linkActionProfileByName(DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS);
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[2].actionProfile);
@@ -217,6 +179,7 @@ describe('Data Import', () => {
         Logs.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
+        cy.pause();
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
@@ -234,17 +197,6 @@ describe('Data Import', () => {
         FileDetails.checkItemQuantityInSummaryTable('6');
         FileDetails.checkOrderQuantityInSummaryTable('1');
         FileDetails.verifyMultipleItemsStatus(Number(quantityOfCreatedItems));
-        FileDetails.openOrder(RECORD_STATUSES.CREATED);
-        OrderLines.waitLoading();
-        OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-          const polNumber = initialNumber;
-          orderNumber = polNumber.replace('-1', '');
-        });
-        OrderLines.checkQuantityPhysical(quantityOfCreatedItems);
-        OrderLines.checkPhysicalQuantityInLocation(quantityOfCreatedHoldings);
-
-        cy.visit(TopMenu.dataImportPath);
-        Logs.openFileDetails(marcFileName);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;

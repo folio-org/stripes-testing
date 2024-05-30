@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import {
   ACTION_NAMES_IN_ACTION_PROFILE,
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
@@ -247,7 +248,7 @@ describe('Data Import', () => {
 
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(createJobProfile);
-        NewJobProfile.linkActionProfileByName('Default - Create instance');
+        NewJobProfile.linkActionProfileByName(DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS);
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
         NewJobProfile.saveAndClose();

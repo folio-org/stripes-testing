@@ -1,6 +1,7 @@
 import {
   ACQUISITION_METHOD_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
@@ -242,7 +243,7 @@ describe('Data Import', () => {
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfile(jobProfileForCreate);
       NewJobProfile.linkActionProfile(collectionOfProfilesForCreate[0].actionProfile);
-      NewJobProfile.linkActionProfileByName('Default - Create instance');
+      NewJobProfile.linkActionProfileByName(DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS);
       NewJobProfile.linkActionProfile(collectionOfProfilesForCreate[1].actionProfile);
       NewJobProfile.linkActionProfile(collectionOfProfilesForCreate[2].actionProfile);
       NewJobProfile.saveAndClose();

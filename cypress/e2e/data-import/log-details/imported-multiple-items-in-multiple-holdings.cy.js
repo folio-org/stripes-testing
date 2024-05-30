@@ -1,5 +1,6 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
@@ -128,7 +129,7 @@ describe('Data Import', () => {
         // create job profile
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfile);
-        NewJobProfile.linkActionProfileByName('Default - Create instance');
+        NewJobProfile.linkActionProfileByName(DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS);
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
         NewJobProfile.saveAndClose();
