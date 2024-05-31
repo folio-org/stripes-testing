@@ -78,7 +78,7 @@ export default {
     cy.wait(8000);
     cy.do([
       Dropdown({ id: 'profileDropdown' })
-        .find(Button({ ariaLabel: `${currentTenantName}  profile` }))
+        .find(Button({ ariaLabel: or(`${currentTenantName}  profile`, 'My profile') }))
         .click(),
       switchActiveAffiliationButton.click(),
       Modal('Select affiliation')
@@ -90,7 +90,11 @@ export default {
     cy.wait(8000);
     cy.expect(
       Button({
-        ariaLabel: or(`${newTenantName}  profile`, `${newTenantName} ${servicePointName} profile`),
+        ariaLabel: or(
+          `${newTenantName}  profile`,
+          `${newTenantName} ${servicePointName} profile`,
+          'My profile',
+        ),
       })
         .find(HTML({ text: including(newTenantName) }))
         .exists(),
@@ -116,9 +120,14 @@ export default {
       Dropdown({ id: 'profileDropdown' })
         .find(
           Button({
-            ariaLabel: or(`${tenantName}  profile`, `${tenantName} ${servicePointName} profile`),
+            ariaLabel: or(
+              `${tenantName}  profile`,
+              `${tenantName} ${servicePointName} profile`,
+              'My profile',
+            ),
           }),
         )
+        .find(HTML({ text: tenantName }))
         .exists(),
     );
   },

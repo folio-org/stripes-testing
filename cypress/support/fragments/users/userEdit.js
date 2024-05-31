@@ -240,9 +240,10 @@ export default {
       extendedInformationAccordion.exists(),
       contactInformationAccordion.exists(),
       customFieldsAccordion.exists(),
-      userPermissionsAccordion.exists(),
       servicePointsAccordion.exists(),
     ]);
+    if (!Cypress.env('eureka')) cy.expect(userPermissionsAccordion.exists());
+    else cy.expect(userPermissionsAccordion.absent());
     cy.expect([
       patronBlocksAccordion.absent(),
       proxySponsorAccordion.absent(),
@@ -258,9 +259,10 @@ export default {
       userInformationAccordion.exists(),
       extendedInformationAccordion.exists(),
       contactInformationAccordion.exists(),
-      userPermissionsAccordion.exists(),
       servicePointsAccordion.exists(),
     ]);
+    if (!Cypress.env('eureka')) cy.expect(userPermissionsAccordion.exists());
+    else cy.expect(userPermissionsAccordion.absent());
     cy.expect([
       patronBlocksAccordion.absent(),
       proxySponsorAccordion.absent(),
