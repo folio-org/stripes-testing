@@ -34,6 +34,7 @@ const downloadPreviewBtn = Button('Download preview');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
+const startBulkEditInstanceButton = Button('Start bulk edit - Instance fields');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
 const confirmChangesButton = Button('Confirm changes');
@@ -55,6 +56,10 @@ const bulkPageSelections = {
 export default {
   openStartBulkEditForm() {
     cy.do(startBulkEditLocalButton.click());
+  },
+  openStartBulkEditInstanceForm() {
+    cy.do(startBulkEditInstanceButton.click());
+    cy.wait(1000);
   },
   openInAppStartBulkEditFrom() {
     cy.do(startBulkEditButton.click());
