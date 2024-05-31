@@ -14,17 +14,13 @@ describe('Consortia', () => {
   let user;
 
   before('Create users, data', () => {
+    cy.setTenant(Affiliations.Consortia);
     cy.getAdminToken();
-
     cy.createTempUser([Permissions.consortiaSettingsSettingsMembershipEdit.gui])
       .then((userProperties) => {
         user = userProperties;
       })
       .then(() => {
-        cy.setTenant(Affiliations.Consortia);
-        cy.assignPermissionsToExistingUser(user.userId, [
-          Permissions.consortiaSettingsSettingsMembershipEdit.gui,
-        ]);
         cy.login(user.username, user.password, {
           path: SettingsMenu.consortiumManagerPath,
           waiter: ConsortiumManager.waitLoading,
@@ -45,36 +41,36 @@ describe('Consortia', () => {
       ConsortiumManager.selectMembership();
       ConsortiumManager.editTenant(tenantNames.professional);
       ConsortiumManager.editTenantInformation(
-        2,
+        4,
         `${tenantCodes.professional}E`,
         `${tenantNames.professional}-Edited`,
       );
-      ConsortiumManager.saveEditingTenantInformation(2);
+      ConsortiumManager.saveEditingTenantInformation(4);
       ConsortiumManager.checkEditedTenantInformation(
-        2,
+        4,
         `${tenantCodes.professional}E`,
         `${tenantNames.professional}-Edited`,
       );
       ConsortiumManager.editTenant(tenantNames.professional);
       ConsortiumManager.editTenantInformation(
-        2,
+        4,
         tenantCodes.professional,
         tenantNames.professional,
       );
-      ConsortiumManager.saveEditingTenantInformation(2);
+      ConsortiumManager.saveEditingTenantInformation(4);
       ConsortiumManager.checkEditedTenantInformation(
-        2,
+        4,
         tenantCodes.professional,
         tenantNames.professional,
       );
       ConsortiumManager.editTenant(tenantNames.professional);
-      ConsortiumManager.editTenantInformation(2, `${tenantCodes.professional}-E`, character151);
+      ConsortiumManager.editTenantInformation(4, `${tenantCodes.professional}-E`, character151);
       ConsortiumManager.checkErrorsInEditedTenantInformation(
-        2,
+        4,
         tenantErrors.code,
         tenantErrors.name,
       );
-      ConsortiumManager.cancelEditingTenantInformation(2);
+      ConsortiumManager.cancelEditingTenantInformation(4);
     },
   );
 });
