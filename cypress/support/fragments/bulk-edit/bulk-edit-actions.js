@@ -1,4 +1,5 @@
 import { HTML, including } from '@interactors/html';
+import { not } from 'bigtest';
 import FileManager from '../../utils/fileManager';
 import {
   Modal,
@@ -579,12 +580,13 @@ export default {
   selectFromUnchangedSelect(selection, rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
-        .find(Select({ id: 'urlRelationship', changed: false }))
+        .find(Select({ id: 'urlRelationship', selectClass: not(including('isChanged')) }))
         .choose(selection),
     );
   },
 
   findValue(type, rowIndex = 0) {
+    cy.wait(2000);
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
       RepeatableFieldItem({ index: rowIndex })

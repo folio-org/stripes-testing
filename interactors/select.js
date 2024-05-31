@@ -36,10 +36,8 @@ export default HTML.extend('select')
     },
     required: (el) => el.querySelector('select').getAttribute('aria-required') === 'true',
     valid: (el) => el.querySelector('select').getAttribute('aria-invalid') !== 'true',
-    changed: (el) => {
-      console.log(el.querySelector('select'));
-      console.log(el.querySelector('select').querySelector('[class^=isChanged-]'));
-      return el.querySelector('select').querySelector('[class^=isChanged-]') !== null;
+    selectClass: (el) => {
+      return el.querySelector('select').getAttribute('class').toString();
     },
     disabled: (el) => el.querySelector('select').disabled,
     focused: (el) => el.querySelector('select').contains(el.ownerDocument.activeElement),
