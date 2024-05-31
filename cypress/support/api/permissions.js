@@ -293,3 +293,25 @@ Cypress.Commands.add('deleteRolesForUserApi', (userId) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('updateCapabilitiesForUserApi', (userId, capabilityIds) => {
+  cy.okapiRequest({
+    method: 'PUT',
+    path: `/users/${userId}/capabilities`,
+    body: {
+      capabilityIds,
+    },
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('updateCapabilitySetsForUserApi', (userId, capabilitySetIds) => {
+  cy.okapiRequest({
+    method: 'PUT',
+    path: `/users/${userId}/capability-sets`,
+    body: {
+      capabilitySetIds,
+    },
+    isDefaultSearchParamsRequired: false,
+  });
+});
