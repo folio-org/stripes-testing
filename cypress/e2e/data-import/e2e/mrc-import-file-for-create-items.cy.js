@@ -129,7 +129,7 @@ describe('Data Import', () => {
 
     it(
       'C343334 MARC file import with creating a new mapping profiles, action profiles and job profile (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
         // create mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);
