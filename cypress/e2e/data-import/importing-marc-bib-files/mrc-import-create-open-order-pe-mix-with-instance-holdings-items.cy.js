@@ -137,7 +137,6 @@ describe('Data Import', () => {
       });
     });
 
-    // test is skiped because of https://issues.folio.org/browse/MODORDERS-884
     it(
       'C380446 Import to create open orders: P/E mix with Instances, Holdings, Items (folijet)',
       { tags: ['smoke', 'folijet'] },

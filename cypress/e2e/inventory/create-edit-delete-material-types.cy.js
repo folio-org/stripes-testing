@@ -27,7 +27,7 @@ describe('Inventory', () => {
 
     it(
       'C505 Settings (Inventory): Create, edit, delete material types (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
         cy.visit(SettingsMenu.materialTypePath);
         MaterialTypes.checkAvailableOptions();
