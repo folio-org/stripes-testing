@@ -24,6 +24,8 @@ import {
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -33,6 +35,12 @@ describe('Data Import', () => {
   describe('Log details', () => {
     let user;
     let instanceHRID;
+    let servicePointId;
+    const locationData = {
+      fullLocationName: '1 hour earlier (1he)',
+      locationName: '1 hour earlier',
+      locationCode: '1he',
+    };
     const filePathForCreate = 'marcFileForC442826.mrc';
     const marcFileName = `C442826 autotestFileName${getRandomPostfix()}.mrc`;
     const arrayOfHoldingsStatuses = ['Created (KU/CC/DI/M)', 'Created (E)', 'Created (KU/CC/DI/A)'];
@@ -74,9 +82,31 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('Create test user and login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
-      // create location
+      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoint) => {
+        servicePointId = servicePoint[0].id;
+
+        cy.getLocations({ query: `name="${locationData.fullLocationName}"` }).then((res) => {
+          if (res.length !== 0) {
+            NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+              res.institutionId,
+              res.campusId,
+              res.libraryId,
+              res.id,
+            );
+          }
+          NewLocation.createViaApi(
+            NewLocation.getDefaultLocation(
+              servicePointId,
+              locationData.locationName,
+              locationData.locationCode,
+            ),
+          ).then((response) => {
+            locationData.location = response;
+          });
+        });
+      });
 
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
@@ -109,6 +139,12 @@ describe('Data Import', () => {
             InventoryInstance.deleteInstanceViaApi(instance.id);
           },
         );
+        NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+          locationData.location.institutionId,
+          locationData.location.campusId,
+          locationData.location.libraryId,
+          locationData.location.id,
+        );
       });
     });
 
@@ -119,38 +155,38 @@ describe('Data Import', () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(
-          collectionOfMappingAndActionProfiles[1].mappingProfile,
+          collectionOfMappingAndActionProfiles[0].mappingProfile,
         );
         NewFieldMappingProfile.fillPermanentLocation(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation,
+          collectionOfMappingAndActionProfiles[0].mappingProfile.permanentLocation,
         );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
 
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(
-          collectionOfMappingAndActionProfiles[2].mappingProfile,
+          collectionOfMappingAndActionProfiles[1].mappingProfile,
         );
         NewFieldMappingProfile.fillMaterialType(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.materialType,
+          collectionOfMappingAndActionProfiles[1].mappingProfile.materialType,
         );
         NewFieldMappingProfile.fillPermanentLoanType(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType,
+          collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(
-          `"${collectionOfMappingAndActionProfiles[2].mappingProfile.status}"`,
+          `"${collectionOfMappingAndActionProfiles[1].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.name,
+          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.name,
+          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
         );
 
         // create action profiles
@@ -164,8 +200,8 @@ describe('Data Import', () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfileByName('Default - Create instance');
+        NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
-        NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[2].actionProfile);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
@@ -178,11 +214,9 @@ describe('Data Import', () => {
         Logs.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
-        cy.pause();
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
-          FileDetails.columnNameInResultList.order,
         ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
@@ -194,7 +228,6 @@ describe('Data Import', () => {
         FileDetails.checkInstanceQuantityInSummaryTable('1');
         FileDetails.checkHoldingsQuantityInSummaryTable('3');
         FileDetails.checkItemQuantityInSummaryTable('6');
-        FileDetails.checkOrderQuantityInSummaryTable('1');
         FileDetails.verifyMultipleItemsStatus(Number(quantityOfCreatedItems));
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
