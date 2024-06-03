@@ -59,10 +59,9 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then((otherSettingsResp) => {
-        const newConfig = otherSettingsResp.body.configs.length === 0;
         let config = otherSettingsResp.body.configs[0];
 
-        if (newConfig) {
+        if (otherSettingsResp.body.configs.length === 0) {
           config = {
             value:
               '{"audioAlertsEnabled":false,"audioTheme":"classic","checkoutTimeout":true,"checkoutTimeoutDuration":3,"prefPatronIdentifier":"barcode,username","useCustomFieldsAsIdentifiers":false,"wildcardLookupEnabled":false}',
@@ -70,6 +69,10 @@ export default {
             configName: 'other_settings',
             id: uuid(),
           };
+
+          const newValue = { ...JSON.parse(config.value), ...params };
+          config.value = JSON.stringify(newValue);
+
           cy.okapiRequest({
             method: 'POST',
             path: 'configurations/entries',
@@ -79,6 +82,8 @@ export default {
           });
         } else {
           const newValue = { ...JSON.parse(config.value), ...params };
+          config.value = JSON.stringify(newValue);
+
           cy.okapiRequest({
             method: 'PUT',
             path: `configurations/entries/${config.id}`,
@@ -87,7 +92,7 @@ export default {
               module: config.module,
               configName: config.configName,
               enabled: config.enabled,
-              value: JSON.stringify(newValue),
+              value: config.value,
             },
             isDefaultSearchParamsRequired: false,
           });

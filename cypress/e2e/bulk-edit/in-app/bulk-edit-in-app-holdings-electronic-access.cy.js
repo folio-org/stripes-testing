@@ -1,52 +1,66 @@
-import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import UrlRelationship from '../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
-import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
+import {
+  electronicAccessRelationshipId,
+  electronicAccessRelationshipName,
+} from '../../../support/constants';
 
 let user;
-let holdingsHRID;
-const newRelationshipName = `newRelationshipName-${getRandomPostfix()}`;
-const holdingsHRIDFileName = `holdingsHRIDFileName${getRandomPostfix()}.csv`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
-const calloutMessage = `The URL relationship term ${newRelationshipName} was successfully deleted`;
+const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
+const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-${holdingUUIDsFileName}`;
+const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
+const electronicAccess = [
+  {
+    linkText: 'test-linkText',
+    materialsSpecification: 'test-materialsSpecification',
+    publicNote: 'test-publicNote',
+    relationshipId: electronicAccessRelationshipId.RESOURCE,
+    uri: 'testuri.com/uri',
+  },
+];
+const newUri = 'testuri2.com/uri';
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
-        permissions.bulkEditView.gui,
+        permissions.bulkEditLogsView.gui,
         permissions.bulkEditEdit.gui,
-        permissions.inventoryAll.gui,
-        permissions.uiCreateEditDeleteURL.gui,
+        permissions.inventoryCRUDHoldings.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
-        const instanceId = InventoryInstances.createInstanceViaApi(
+        item.instanceId = InventoryInstances.createInstanceViaApi(
           item.instanceName,
           item.itemBarcode,
         );
-        cy.getHoldings({ limit: 1, query: `"instanceId"="${instanceId}"` }).then((holdings) => {
-          holdingsHRID = holdings[0].hrid;
-          FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, holdingsHRID);
-        });
+        cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
+          (holdings) => {
+            item.holdingsHRID = holdings[0].hrid;
+            FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              electronicAccess,
+            });
+          },
+        );
         cy.login(user.username, user.password, {
-          path: SettingsMenu.urlRelationshipPath,
-          waiter: UrlRelationship.waitloading,
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
       });
     });
@@ -54,53 +68,102 @@ describe('bulk-edit', () => {
     after('delete test data', () => {
       cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-      FileManager.deleteFile(`cypress/fixtures/${holdingsHRIDFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${holdingUUIDsFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(
+        matchedRecordsFileName,
+        changedRecordsFileName,
+        previewFileName,
+      );
       Users.deleteViaApi(user.userId);
     });
 
     it(
-      'C367977 Verify Bulk edit Holdings records with non-existent Electronic access Relationship type ID (firebird)',
+      'C423494 Verify rendering Holdings electronic access properties while bulk edit Holdings electronic access (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
-        UrlRelationship.createNewRelationship(newRelationshipName);
-        UrlRelationship.verifyElectronicAccessNameOnTable(newRelationshipName);
-
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.switchToHoldings();
-        InventorySearchAndFilter.bySource(INSTANCE_SOURCE_NAMES.FOLIO);
-        InventorySearchAndFilter.searchHoldingsByHRID(holdingsHRID);
-        InventorySearchAndFilter.selectViewHoldings();
-        HoldingsRecordView.edit();
-        HoldingsRecordEdit.addElectronicAccess(newRelationshipName);
-
-        cy.visit(SettingsMenu.urlRelationshipPath);
-        UrlRelationship.deleteUrlRelationship(newRelationshipName);
-        InteractorsTools.checkCalloutMessage(calloutMessage);
-
-        cy.visit(TopMenu.bulkEditPath);
         BulkEditSearchPane.checkHoldingsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
-        BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
+        BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
+        BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyMatchedResults(holdingsHRID);
-        BulkEditSearchPane.verifyReasonForError('Electronic access relationship not found by id=');
-
-        const tempLocation = 'Online (E)';
-
-        BulkEditActions.openActions();
+        BulkEditActions.downloadMatchedResults();
+        let contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${electronicAccess[0].uri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
+        ExportFile.verifyFileIncludes(matchedRecordsFileName, [contentToVerify]);
+        BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
+        BulkEditSearchPane.checkboxWithTextAbsent('Relationship');
+        BulkEditSearchPane.checkboxWithTextAbsent('URI');
+        BulkEditSearchPane.checkboxWithTextAbsent('Link text');
+        BulkEditSearchPane.checkboxWithTextAbsent('Materials specified');
+        BulkEditSearchPane.checkboxWithTextAbsent('Public note');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(
+          0,
+          electronicAccessRelationshipName.RESOURCE,
+        );
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, electronicAccess[0].uri);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, electronicAccess[0].linkText);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(
+          3,
+          electronicAccess[0].materialsSpecification,
+        );
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, electronicAccess[0].publicNote);
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings');
+        BulkEditActions.electronicAccessReplaceWith(
+          'URL Relationship',
+          electronicAccessRelationshipName.RESOURCE,
+          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+        );
+        BulkEditActions.addNewBulkEditFilterString();
+
+        BulkEditActions.noteReplaceWith('URI', electronicAccess[0].uri, newUri, 1);
         BulkEditActions.confirmChanges();
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(
+          0,
+          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+        );
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, newUri);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, electronicAccess[0].linkText);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(
+          3,
+          electronicAccess[0].materialsSpecification,
+        );
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, electronicAccess[0].publicNote);
+        BulkEditActions.downloadPreview();
+        contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.VERSION_OF_RESOURCE};${newUri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
+        ExportFile.verifyFileIncludes(previewFileName, [contentToVerify]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyChangedResults(holdingsHRID);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(
+          0,
+          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+        );
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(1, newUri);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(2, electronicAccess[0].linkText);
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(
+          3,
+          electronicAccess[0].materialsSpecification,
+        );
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, electronicAccess[0].publicNote);
+        BulkEditActions.openActions();
+        BulkEditActions.downloadChangedCSV();
+        contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.VERSION_OF_RESOURCE};${newUri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [contentToVerify]);
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToHoldings();
-        InventorySearchAndFilter.searchByParameter('Holdings HRID', holdingsHRID);
+        InventorySearchAndFilter.searchByParameter('Holdings HRID', item.holdingsHRID);
         InventorySearchAndFilter.selectSearchResultItem();
         InventorySearchAndFilter.selectViewHoldings();
-        InventoryInstance.verifyHoldingsTemporaryLocation('Online');
+        HoldingsRecordView.verifyElectronicAccessByElementIndex(
+          0,
+          electronicAccessRelationshipName.VERSION_OF_RESOURCE,
+        );
+        HoldingsRecordView.verifyElectronicAccessByElementIndex(1, newUri);
+        HoldingsRecordView.verifyElectronicAccessByElementIndex(2, electronicAccess[0].linkText);
+        HoldingsRecordView.verifyElectronicAccessByElementIndex(
+          3,
+          electronicAccess[0].materialsSpecification,
+        );
+        HoldingsRecordView.verifyElectronicAccessByElementIndex(4, electronicAccess[0].publicNote);
       },
     );
   });
