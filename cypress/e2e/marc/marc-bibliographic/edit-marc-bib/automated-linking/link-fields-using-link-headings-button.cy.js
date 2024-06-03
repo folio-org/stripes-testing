@@ -65,12 +65,12 @@ describe('MARC', () => {
             naturalId: 'no2020024230C388536',
           },
           {
-            rowIndex: 51,
+            rowIndex: 65,
             tag: '600',
             naturalId: 'n2016004081C388536',
           },
           {
-            rowIndex: 71,
+            rowIndex: 62,
             tag: '630',
             naturalId: 'no2023006889C388536',
           },
@@ -133,22 +133,22 @@ describe('MARC', () => {
             naturalId: 'n800269809',
           },
           {
-            rowIndex: 69,
+            rowIndex: 60,
             tag: '610',
             naturalId: 'nb20090244889',
           },
           {
-            rowIndex: 70,
+            rowIndex: 61,
             tag: '611',
             naturalId: 'n822167579',
           },
           {
-            rowIndex: 62,
+            rowIndex: 67,
             tag: '650',
             naturalId: 'sh20091259899',
           },
           {
-            rowIndex: 68,
+            rowIndex: 71,
             tag: '651',
             naturalId: 'sh850015319',
           },
