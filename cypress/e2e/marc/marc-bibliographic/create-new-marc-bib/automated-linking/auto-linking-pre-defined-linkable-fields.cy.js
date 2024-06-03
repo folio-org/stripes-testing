@@ -63,50 +63,50 @@ describe('MARC', () => {
         const newFields = [
           {
             rowIndex: 6,
-            tag: '630',
-            content: '$a Black Panther (test: will not be linked) $0 no2023006999C389489',
-            isLinked: false,
-          },
-          {
-            rowIndex: 7,
             tag: '100',
             content: '$a Coates, Ta-Nehisi,$e author. $0 n2008001084C389489',
             isLinked: true,
           },
           {
-            rowIndex: 8,
+            rowIndex: 7,
             tag: '110',
             content: '$aBlack Panther (MG) $0 no2006108277C389489',
             isLinked: true,
           },
           {
-            rowIndex: 9,
+            rowIndex: 8,
             tag: '111',
             content: '$aPimedate Ööde Filmifestival $0 no2009176429C389489',
             isLinked: true,
           },
           {
-            rowIndex: 10,
+            rowIndex: 9,
             tag: '130',
             content: '$a Marvel comics $0 n80026980C389489',
             isLinked: true,
           },
           {
-            rowIndex: 11,
+            rowIndex: 10,
             tag: '240',
             content: '$a Black Panther $0 no2020024230C389489',
             isLinked: true,
           },
           {
-            rowIndex: 12,
+            rowIndex: 11,
             tag: '610',
             content: '$a Black Panther $0 nb2009024488C389489',
             isLinked: false,
           },
           {
-            rowIndex: 13,
+            rowIndex: 12,
             tag: '611',
             content: '$aPanther Photographic $0n 82216757C389489',
+            isLinked: false,
+          },
+          {
+            rowIndex: 13,
+            tag: '630',
+            content: '$a Black Panther (test: will not be linked) $0 no2023006999C389489',
             isLinked: false,
           },
           {
