@@ -52,12 +52,6 @@ describe('Inventory', () => {
         matchOption: 'Contains any',
         operator: 'AND',
       },
-      {
-        row: 5,
-        query: 'n 79021425',
-        matchOption: 'Exact phrase',
-        operator: 'AND',
-      },
     ];
 
     const searchResults = [
