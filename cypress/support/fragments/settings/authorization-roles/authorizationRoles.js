@@ -291,6 +291,7 @@ export default {
   },
 
   openForEdit: () => {
+    cy.wait(1000);
     cy.do([actionsButton.click(), editButton.click()]);
     cy.expect([
       editRolePane.exists(),

@@ -17,9 +17,17 @@ describe('Eureka', () => {
       const capabilityCallRegExp = new RegExp(`\\/capabilities${regExpBase}`);
       const capabilitySetsCallRegExp = new RegExp(`\\/capability-sets${regExpBase}`);
 
+      const capabSetsToAssign = [
+        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
+        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
+        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+      ];
+
       before(() => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
+          cy.updateRolesForUserApi(testData.user.userId, []);
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.settingsAuthorizationRoles,
             waiter: AuthorizationRoles.waitContentLoading,
@@ -57,6 +65,7 @@ describe('Eureka', () => {
           //   testData.firstApplicationName,
           //   testData.secondApplicationName,
           // ]);
+          cy.wait(2000);
           AuthorizationRoles.clickSaveButton();
           AuthorizationRoles.checkAfterSaveCreate(testData.roleName, testData.roleDescription);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
