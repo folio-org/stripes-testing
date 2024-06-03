@@ -46,7 +46,7 @@ describe('bulk-edit', () => {
 
     it(
       'C436871 Verify Bulk Edit Query tab (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
@@ -67,7 +67,7 @@ describe('bulk-edit', () => {
 
     it(
       'C436746 Verify actions in the "Build query" form (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
       () => {
         cy.login(secondUser.username, secondUser.password, {
           path: TopMenu.bulkEditPath,
