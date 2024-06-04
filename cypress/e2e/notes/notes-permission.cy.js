@@ -41,14 +41,14 @@ describe('Notes', () => {
     Users.deleteViaApi(testData.viewUserProperties.userId);
   });
 
-  it('C527 Notes: Can create notes (spitfire)', { tags: ['criticalPath', 'spitfire'] }, () => {
+  it('C527 Notes: Can create notes (spitfire)', { tags: ['criticalPath', 'spitfire', 'shiftLeft'] }, () => {
     NotesEholdings.createNote(note.title, note.details);
     NotesEholdings.verifyNoteCreation(note.title, note.details);
     NotesEholdings.openNoteView(note.title, note.details);
     NotesEholdings.deleteNote();
   });
 
-  it('C1245 Notes: Can view notes (spitfire)', { tags: ['criticalPath', 'spitfire'] }, () => {
+  it('C1245 Notes: Can view notes (spitfire)', { tags: ['criticalPath', 'spitfire', 'shiftLeft'] }, () => {
     NotesEholdings.createNote(note.title, note.details);
     NotesEholdings.verifyNoteCreation(note.title, note.details);
 
@@ -68,7 +68,7 @@ describe('Notes', () => {
     NotesEholdings.deleteNote();
   });
 
-  it('C526 Notes: Can edit a note (spitfire)', { tags: ['criticalPath', 'spitfire'] }, () => {
+  it('C526 Notes: Can edit a note (spitfire)', { tags: ['criticalPath', 'spitfire', 'shiftLeft'] }, () => {
     const newNote = {
       title: `Changed Title ${getRandomPostfix()}`,
       details: `Changed details ${getRandomPostfix()}`,
@@ -80,7 +80,7 @@ describe('Notes', () => {
     NotesEholdings.deleteNote();
   });
 
-  it('C528 Notes: Can delete notes (spitfire)', { tags: ['criticalPath', 'spitfire'] }, () => {
+  it('C528 Notes: Can delete notes (spitfire)', { tags: ['criticalPath', 'spitfire', 'shiftLeft'] }, () => {
     NotesEholdings.createNote(note.title, note.details);
     NotesEholdings.verifyNoteCreation(note.title, note.details);
     NotesEholdings.openNoteView(note.title, note.details);
