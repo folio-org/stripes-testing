@@ -37,7 +37,6 @@ describe('Data Import', () => {
     let instanceHRID;
     let servicePointId;
     const locationData = {
-      fullLocationName: '1 hour earlier (1he)',
       locationName: '1 hour earlier',
       locationCode: '1he',
     };
@@ -87,24 +86,14 @@ describe('Data Import', () => {
       ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoint) => {
         servicePointId = servicePoint[0].id;
 
-        cy.getLocations({ query: `name="${locationData.fullLocationName}"` }).then((res) => {
-          if (res.length !== 0) {
-            NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-              res.institutionId,
-              res.campusId,
-              res.libraryId,
-              res.id,
-            );
-          }
-          NewLocation.createViaApi(
-            NewLocation.getDefaultLocation(
-              servicePointId,
-              locationData.locationName,
-              locationData.locationCode,
-            ),
-          ).then((response) => {
-            locationData.location = response;
-          });
+        NewLocation.createViaApi(
+          NewLocation.getDefaultLocation(
+            servicePointId,
+            locationData.locationName,
+            locationData.locationCode,
+          ),
+        ).then((response) => {
+          locationData.location = response;
         });
       });
 
@@ -125,6 +114,12 @@ describe('Data Import', () => {
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
+        NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+          locationData.location.institutionId,
+          locationData.location.campusId,
+          locationData.location.libraryId,
+          locationData.location.id,
+        );
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
           SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
@@ -139,12 +134,6 @@ describe('Data Import', () => {
             InventoryInstance.deleteInstanceViaApi(instance.id);
           },
         );
-        NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-          locationData.location.institutionId,
-          locationData.location.campusId,
-          locationData.location.libraryId,
-          locationData.location.id,
-        );
       });
     });
 
@@ -154,13 +143,9 @@ describe('Data Import', () => {
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(
+        NewFieldMappingProfile.fillHoldingsMappingProfile(
           collectionOfMappingAndActionProfiles[0].mappingProfile,
         );
-        NewFieldMappingProfile.fillPermanentLocation(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.permanentLocation,
-        );
-        NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
@@ -169,21 +154,8 @@ describe('Data Import', () => {
         );
 
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(
+        FieldMappingProfiles.createItemMappingProfile(
           collectionOfMappingAndActionProfiles[1].mappingProfile,
-        );
-        NewFieldMappingProfile.fillMaterialType(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.materialType,
-        );
-        NewFieldMappingProfile.fillPermanentLoanType(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLoanType,
-        );
-        NewFieldMappingProfile.fillStatus(
-          `"${collectionOfMappingAndActionProfiles[1].mappingProfile.status}"`,
-        );
-        NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewMode(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
           collectionOfMappingAndActionProfiles[1].mappingProfile.name,
