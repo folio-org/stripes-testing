@@ -145,7 +145,7 @@ describe('eHoldings', () => {
       },
     );
 
-    it('C693 Create a custom title. (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
+    it('C693 Create a custom title. (spitfire)', { tags: ['smoke', 'spitfire', 'shiftLeft'] }, () => {
       cy.createTempUser([
         permissions.uieHoldingsRecordsEdit.gui,
         permissions.uieHoldingsTitlesPackagesCreateDelete.gui,

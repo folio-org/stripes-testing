@@ -417,7 +417,7 @@ export default {
     // Summary section
     fillSummaryInMappingProfile(profile);
     if (profile.materialType) {
-      fillMaterialType(`"${profile.materialType}"`);
+      fillMaterialType(profile.materialType);
     }
     if (profile.permanentLoanType) {
       fillPermanentLoanType(profile.permanentLoanType);
