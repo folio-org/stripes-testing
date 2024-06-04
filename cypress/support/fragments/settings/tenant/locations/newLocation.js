@@ -91,7 +91,7 @@ export default {
       });
   },
 
-  deleteViaApiIncludingInstitutionCampusLibrary: (
+  deleteInstitutionCampusLibraryLocationViaApi: (
     institutionId,
     campusId,
     libraryId,

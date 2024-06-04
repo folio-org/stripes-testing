@@ -251,7 +251,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
       'e5b45031-a202-4abb-917b-e1df9346fe2c',
       'Maximum number of overdue recalls',
     );
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

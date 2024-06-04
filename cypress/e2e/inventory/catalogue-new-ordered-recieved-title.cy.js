@@ -142,7 +142,7 @@ describe('Inventory', () => {
           ServicePoints.deleteViaApi(secondServicePoint.id);
           Users.deleteViaApi(userId);
         });
-        NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+        NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
           effectiveLocation.institutionId,
           effectiveLocation.campusId,
           effectiveLocation.libraryId,

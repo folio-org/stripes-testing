@@ -130,7 +130,7 @@ describe('Title Level Request', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
       UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint1.id]);
       Users.deleteViaApi(userData.userId);
-      Location.deleteViaApiIncludingInstitutionCampusLibrary(
+      Location.deleteInstitutionCampusLibraryLocationViaApi(
         defaultLocation.institutionId,
         defaultLocation.campusId,
         defaultLocation.libraryId,

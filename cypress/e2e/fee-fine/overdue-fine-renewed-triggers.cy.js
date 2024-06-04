@@ -276,7 +276,7 @@ describe('Overdue fine', () => {
     InventoryInstance.deleteInstanceViaApi(itemData.instanceId);
     PaymentMethods.deleteViaApi(testData.paymentMethod.id);
     UsersOwners.deleteViaApi(userOwnerBody.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
