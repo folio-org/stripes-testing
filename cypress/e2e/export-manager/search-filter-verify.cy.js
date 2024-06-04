@@ -120,7 +120,7 @@ describe('Export Manager', () => {
 
   it(
     'C350727 Verify search filter options Export Manager (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
     () => {
       ExportManagerSearchPane.waitLoading();
       ExportManagerSearchPane.searchBySuccessful();

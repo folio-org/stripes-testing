@@ -310,7 +310,9 @@ export default {
   findCreatedRequest(title) {
     cy.wait(1000);
     cy.do(TextField({ id: 'input-request-search' }).fillIn(title));
+    cy.wait(500);
     cy.do(Pane({ title: 'Search & filter' }).find(Button('Search')).click());
+    cy.wait(500);
   },
 
   selectAllOpenRequests() {

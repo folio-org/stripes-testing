@@ -43,7 +43,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357982 Verify user records - in app permission - confirmation page (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('Usernames');

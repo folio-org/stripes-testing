@@ -38,4 +38,8 @@ export default {
     cy.do(internalContactFilterList.select(userName));
     cy.expect(internalContactFilterList.absent());
   },
+
+  verifyAgreementsFilterPane() {
+    cy.expect(Pane({ id: 'agreements-tab-filter-pane' }).exists());
+  },
 };

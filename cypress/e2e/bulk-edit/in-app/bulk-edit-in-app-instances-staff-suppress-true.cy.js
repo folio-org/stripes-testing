@@ -94,7 +94,7 @@ describe('bulk-edit', () => {
           marcInstances[0].instanceId,
           folioItem.instanceId,
         ]);
-        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openStartBulkEditInstanceForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         const possibleActions = ['Staff suppress', 'Suppress from discovery'];
         BulkEditActions.verifyPossibleActions(possibleActions);
