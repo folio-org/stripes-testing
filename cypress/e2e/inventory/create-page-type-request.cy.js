@@ -105,7 +105,7 @@ describe('ui-inventory: Create page type request', () => {
 
   it(
     'C546: Create new request for "Page" type (vega)',
-    { tags: ['smoke', 'vega', 'system'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
     () => {
       cy.visit(TopMenu.inventoryPath);
       createPageTypeRequest.findAvailableItem(instanceData, createdItem.barcode);

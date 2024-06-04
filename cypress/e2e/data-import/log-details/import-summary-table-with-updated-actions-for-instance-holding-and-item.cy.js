@@ -45,6 +45,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 
 describe('Data Import', () => {
   describe('Log details', () => {
@@ -355,8 +356,14 @@ describe('Data Import', () => {
         InventorySearchAndFilter.selectYesfilterStaffSuppress();
         InventorySearchAndFilter.searchByParameter('Subject', subject);
         InstanceRecordView.verifyInstancePaneExists();
+        cy.intercept('/search/instances?query=id**').as('getIds');
         InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        cy.wait('@getIds', getLongDelay()).then((req) => {
+          const expectedUUID = InventorySearchAndFilter.getUUIDFromRequest(req);
+
+          FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID);
+          FileManager.deleteFileFromDownloadsByMask('*SearchInstanceUUIDs*');
+        });
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);

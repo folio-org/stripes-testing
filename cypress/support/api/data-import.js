@@ -127,3 +127,10 @@ Cypress.Commands.add('createOnePairMappingAndActionProfiles', (mappingProfile, a
   });
   return cy.get('@idActionProfile');
 });
+
+Cypress.Commands.add('dataImportGetJobByStatus', (jobStatus) => {
+  return cy.okapiRequest({
+    path: `metadata-provider/jobExecutions?limit=1&query=status==${jobStatus}`,
+    isDefaultSearchParamsRequired: false,
+  });
+});

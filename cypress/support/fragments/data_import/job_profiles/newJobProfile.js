@@ -72,6 +72,7 @@ function linkActionProfileForMatches(actionProfileName, forMatchesOrder = 0) {
   ModalSelectProfile.searchProfileByName(actionProfileName);
   ModalSelectProfile.selectProfile(actionProfileName);
   cy.expect(overviewAccordion.find(HTML(including(actionProfileName))).exists());
+  cy.wait(1000);
 }
 
 function linkActionProfileForSubMatches(actionProfileName, forMatchesOrder = 0) {
@@ -141,6 +142,7 @@ export default {
     ModalSelectProfile.searchProfileByName(profileName);
     ModalSelectProfile.selectProfile(profileName);
     cy.expect(overviewAccordion.find(HTML(including(profileName))).exists());
+    cy.wait(1000);
   },
 
   linkMatchProfileForNonMatches(profileName, forMatchesOrder = 1) {
