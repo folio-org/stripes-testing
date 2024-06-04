@@ -71,6 +71,7 @@ const fundFormSection = Section({ id: 'pane-fund-form' });
 const locationSection = Section({ id: 'locations' });
 const editButton = Button('Edit');
 const selectLocationsModal = Modal('Select locations');
+const unreleaseEncumbranceModal = Modal('Unrelease encumbrance');
 
 export default {
   defaultUiFund: {
@@ -1034,11 +1035,7 @@ export default {
   },
 
   closeTransactionDetails: () => {
-    cy.do(
-      Section({ id: 'pane-transaction-details' })
-        .find(Button({ icon: 'times' }))
-        .click(),
-    );
+    cy.do(transactionDetailSection.find(Button({ icon: 'times' })).click());
   },
 
   closeTransactionApp: (fund, fiscalYear) => {
@@ -1058,11 +1055,7 @@ export default {
   },
 
   clickInfoInTransactionDetails: () => {
-    cy.do(
-      Section({ id: 'pane-transaction-details' })
-        .find(Button({ icon: 'info' }))
-        .click(),
-    );
+    cy.do(transactionDetailSection.find(Button({ icon: 'info' })).click());
   },
 
   addAUToFund: (AUName) => {
@@ -1098,6 +1091,27 @@ export default {
       transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
       transactionDetailSection.find(KeyValue('To')).has({ value: fund }),
     );
+  },
+
+  cancelUnreleaseEncumbrance: () => {
+    cy.do(transactionDetailSection.find(Button('Unrelease encumbrance')).click());
+    cy.expect(unreleaseEncumbranceModal.exists());
+    cy.do(
+      unreleaseEncumbranceModal
+        .find(Button({ id: 'clickable-unrelease-confirmation-cancel' }))
+        .click(),
+    );
+  },
+
+  unreleaseEncumbrance: () => {
+    cy.do(transactionDetailSection.find(Button('Unrelease encumbrance')).click());
+    cy.expect(unreleaseEncumbranceModal.exists());
+    cy.do(
+      unreleaseEncumbranceModal
+        .find(Button({ id: 'clickable-unrelease-confirmation-confirm' }))
+        .click(),
+    );
+    InteractorsTools.checkCalloutMessage('Encumbrance was unreleased');
   },
 
   varifyCanNotCreatePlannedBudget: () => {
