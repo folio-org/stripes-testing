@@ -53,6 +53,7 @@ export default {
   selectActionProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
 
   checkActionProfilePresented: (profileName) => {
+    cy.wait(1000);
     search(profileName);
     cy.expect(MultiColumnListCell(profileName).exists());
   },

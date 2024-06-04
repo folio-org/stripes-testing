@@ -35,7 +35,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe.skip('Data Import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let instanceHrid;
@@ -137,7 +137,6 @@ describe.skip('Data Import', () => {
       });
     });
 
-    // test is skiped because of https://issues.folio.org/browse/MODORDERS-884
     it(
       'C380446 Import to create open orders: P/E mix with Instances, Holdings, Items (folijet)',
       { tags: ['smoke', 'folijet'] },
