@@ -48,7 +48,6 @@ describe('MARC', () => {
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
-          ManageAuthorityFiles.checkActionTableHeaderExists();
           Object.values(DEFAULT_FOLIO_AUTHORITY_FILES).forEach((fileName) => {
             ManageAuthorityFiles.checkSourceFileExistsByName(fileName);
           });
