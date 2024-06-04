@@ -1100,6 +1100,31 @@ export default {
     );
   },
 
+  cancelUnreleaseEncumbrance: () => {
+    cy.do(
+      Section({ id: 'pane-transaction-details' }).find(Button('Unrelease encumbrance')).click(),
+    );
+    cy.expect(Modal('Unrelease encumbrance').exists());
+    cy.do(
+      Modal('Unrelease encumbrance')
+        .find(Button({ id: 'clickable-unrelease-confirmation-cancel' }))
+        .click(),
+    );
+  },
+
+  unreleaseEncumbrance: () => {
+    cy.do(
+      Section({ id: 'pane-transaction-details' }).find(Button('Unrelease encumbrance')).click(),
+    );
+    cy.expect(Modal('Unrelease encumbrance').exists());
+    cy.do(
+      Modal('Unrelease encumbrance')
+        .find(Button({ id: 'clickable-unrelease-confirmation-confirm' }))
+        .click(),
+    );
+    InteractorsTools.checkCalloutMessage('Encumbrance was unreleased');
+  },
+
   varifyCanNotCreatePlannedBudget: () => {
     cy.expect(cy.expect(Section({ id: 'plannedBudget' }).find(Button('New')).absent()));
   },
