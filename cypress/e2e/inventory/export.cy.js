@@ -109,7 +109,7 @@ describe('data-export', () => {
       },
     );
 
-    it('C9287 Export CQL query (firebird)', { tags: ['smoke', 'firebird'] }, () => {
+    it('C9287 Export CQL query (firebird)', { tags: ['smoke', 'firebird', 'shiftLeft'] }, () => {
       InventorySearchAndFilter.byLanguage();
       InventorySearchAndFilter.searchByParameter(
         'Keyword (title, contributor, identifier, HRID, UUID)',
