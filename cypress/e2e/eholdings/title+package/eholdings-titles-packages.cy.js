@@ -48,7 +48,7 @@ describe('eHoldings', () => {
 
     it(
       'C684 Title Search: Search titles for chemical engineering. Then filter results to journals. (spitfire)',
-      { tags: ['smoke', 'spitfire'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
       () => {
         cy.login(testData.C684UserProperties.username, testData.C684UserProperties.password, {
           path: TopMenu.eholdingsPath,

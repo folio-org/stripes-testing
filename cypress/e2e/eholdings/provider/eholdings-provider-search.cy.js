@@ -29,7 +29,7 @@ describe('eHoldings', () => {
 
     it(
       'C694 Search providers for [Gale | Cengage]. Then Search list of packages on Provider detail record for all selected packages (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'shiftLeft'] },
       () => {
         EHoldingsProvidersSearch.byProvider('Gale Cengage');
         EHoldingsProviders.viewProvider();
@@ -41,7 +41,7 @@ describe('eHoldings', () => {
 
     it(
       'C682 Search providers for [Sage] (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'shiftLeft'] },
       () => {
         const providerTitle = 'SAGE';
         EHoldingsProvidersSearch.byProvider(providerTitle);
