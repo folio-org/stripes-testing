@@ -96,6 +96,7 @@ const searchInstanceByHRID = (id) => {
     TextArea({ id: 'input-inventory-search' }).fillIn(id),
     searchButton.click(),
   ]);
+  cy.wait(1000);
 };
 
 const searchHoldingsByHRID = (hrid) => {
@@ -448,6 +449,11 @@ export default {
       expectedUUIDs.push(elem.id);
     });
     return expectedUUIDs;
+  },
+
+  getUUIDFromRequest(req) {
+    const expectedUUID = req.response.body.instances[0].id;
+    return expectedUUID;
   },
 
   verifySelectedRecords(selected) {
