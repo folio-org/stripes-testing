@@ -16,6 +16,7 @@ export default {
     cy.expect(selectProfileModal.exists());
   },
   searchProfile(profileName) {
+    cy.wait(1000);
     cy.do([
       selectProfileModal.find(TextField({ name: 'query' })).fillIn(profileName),
       selectProfileModal.find(Button('Search')).click(),
