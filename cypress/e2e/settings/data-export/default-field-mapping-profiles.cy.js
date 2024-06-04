@@ -33,7 +33,7 @@ describe('settings: data-export', () => {
 
   it(
     'C10982 "Settings" > "Data export" > "Field mapping profiles" page (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
     () => {
       ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
       ExportFieldMappingProfiles.verifyDefaultProfiles();
@@ -42,7 +42,7 @@ describe('settings: data-export', () => {
 
   it(
     'C15822 Preventing changes to the default instance mapping profile (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
     () => {
       SingleFieldMappingProfilePane.clickProfileNameFromTheList('Default instance mapping profile');
       SingleFieldMappingProfilePane.waitLoading('Default instance mapping profile');
@@ -52,7 +52,7 @@ describe('settings: data-export', () => {
 
   it(
     'C15825 Profiles that cannot be edited or deleted (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
     () => {
       SingleFieldMappingProfilePane.clickProfileNameFromTheList('Default holdings mapping profile');
       SingleFieldMappingProfilePane.waitLoading('Default holdings mapping profile');

@@ -38,6 +38,7 @@ import MatchProfiles from '../../../support/fragments/settings/dataImport/matchP
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -268,6 +269,7 @@ describe('Data Import', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+      FileManager.deleteFileFromDownloadsByMask('*SearchInstanceUUIDs*');
       cy.getAdminToken().then(() => {
         // delete generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
@@ -367,9 +369,13 @@ describe('Data Import', () => {
           InventorySearchAndFilter.selectYesfilterStaffSuppress();
           cy.wait(1500);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+          cy.intercept('/search/instances?query=id**').as('getIds');
           InventorySearchAndFilter.saveUUIDs();
-          ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+          cy.wait('@getIds', getLongDelay()).then((req) => {
+            const expectedUUID = InventorySearchAndFilter.getUUIDFromRequest(req);
+
+            FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID);
+          });
         });
 
         cy.visit(SettingsMenu.exportMappingProfilePath);

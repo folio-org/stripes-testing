@@ -1,4 +1,4 @@
-describe('fse-eholdings', () => {
+describe('fse-inventory', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -6,8 +6,8 @@ describe('fse-eholdings', () => {
     cy.allure().logCommandSteps();
   });
 
-  it('TC195060 - Get eholdings titles', { tags: ['sanity', 'fse', 'api'] }, () => {
-    cy.getEHoldingsTitlesViaAPI('time').then((response) => {
+  it('TC195317 - Get instances by status', { tags: ['sanity', 'fse', 'api', 'inventory'] }, () => {
+    cy.getInventoryInstanceByStatus('Available').then((response) => {
       cy.expect(response.status).to.eq(200);
     });
   });

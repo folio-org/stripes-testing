@@ -33,7 +33,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359605 Verify that columns on the "Are you sure form" the same as on the "Preview of the matched records " (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
