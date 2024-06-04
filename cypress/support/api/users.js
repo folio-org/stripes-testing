@@ -122,7 +122,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
             userId: newUserProperties.id,
           });
           cy.setUserPassword(userProperties);
-          if (Cypress.env('runAsAdm') && Cypress.env('e')) {
+          if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
             cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
               if (Cypress.env('ecsEnabled')) {
                 cy.recurse(
