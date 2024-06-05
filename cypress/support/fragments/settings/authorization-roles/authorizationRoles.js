@@ -43,7 +43,7 @@ const saveButtonInModal = selectApplicationModal.find(
 const cancelButtonInModal = selectApplicationModal.find(Button('Cancel'));
 const capabilitiesAccordion = Accordion('Capabilities');
 const capabilitySetsAccordion = Accordion('Capability sets');
-const saveButton = Button('Save and close');
+const saveButton = Button('Save & close');
 const roleNameInView = KeyValue('Name');
 const roleDescriptionInView = KeyValue('Description');
 
