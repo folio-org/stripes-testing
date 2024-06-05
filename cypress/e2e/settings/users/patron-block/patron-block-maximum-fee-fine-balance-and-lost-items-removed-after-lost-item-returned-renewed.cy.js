@@ -319,7 +319,7 @@ describe('Patron Block: Lost items', () => {
       '72b67965-5b73-4840-bc0b-be8f3f6e047e',
       'Maximum number of lost items',
     );
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

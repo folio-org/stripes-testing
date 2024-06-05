@@ -96,7 +96,7 @@ const searchInstanceByHRID = (id) => {
     TextArea({ id: 'input-inventory-search' }).fillIn(id),
     searchButton.click(),
   ]);
-  cy.wait(1000);
+  cy.wait(2000);
 };
 
 const searchHoldingsByHRID = (hrid) => {

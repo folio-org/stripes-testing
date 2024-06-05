@@ -97,7 +97,7 @@ describe('Orders', () => {
       Orders.updateOrderViaApi({ ...testData.order, workflowStatus: 'Pending' });
       Orders.deleteOrderViaApi(testData.order.id);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
-      NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+      NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
         location.institutionId,
         location.campusId,
         location.libraryId,
