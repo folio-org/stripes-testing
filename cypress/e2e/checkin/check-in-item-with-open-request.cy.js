@@ -196,7 +196,7 @@ describe('Check In - Actions', () => {
     cy.deleteItemViaApi(itemData.itemId);
     cy.deleteHoldingRecordViaApi(itemData.holdingId);
     InventoryInstance.deleteInstanceViaApi(itemData.instanceId);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
