@@ -164,7 +164,7 @@ describe('Request notice triggers', () => {
     PatronGroups.deleteViaApi(patronGroup.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

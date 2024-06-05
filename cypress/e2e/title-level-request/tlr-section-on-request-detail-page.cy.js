@@ -72,14 +72,13 @@ describe('Title Level Request', () => {
         testData.servicePoint.id,
       );
       instanceData = testData.folioInstances[0];
+      cy.wait(3000);
       cy.getInstance({
         limit: 1,
         expandAll: true,
         query: `"id"=="${instanceData.instanceId}"`,
       }).then((instance) => {
-        cy.wait(3000).then(() => {
-          testData.instanceHRID = instance.hrid;
-        });
+        testData.instanceHRID = instance.hrid;
       });
       TitleLevelRequests.enableTLRViaApi();
       Requests.createNewRequestViaApi({

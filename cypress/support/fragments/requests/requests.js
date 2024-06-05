@@ -308,8 +308,16 @@ export default {
   },
 
   findCreatedRequest(title) {
+    cy.expect(Pane({ id: 'pane-filter' }).exists());
+    cy.expect(
+      Pane({ title: 'Search & filter' })
+        .find(TextField({ id: 'input-request-search' }))
+        .exists(),
+    );
     cy.do(TextField({ id: 'input-request-search' }).fillIn(title));
+    cy.wait(500);
     cy.do(Pane({ title: 'Search & filter' }).find(Button('Search')).click());
+    cy.wait(1500);
   },
 
   selectAllOpenRequests() {
@@ -387,6 +395,7 @@ export default {
   },
 
   checkRequestType(requestType) {
+    cy.wait(500);
     if (requestType === REQUEST_TYPES.PAGE) {
       this.selectPagesRequestType();
     } else if (requestType === REQUEST_TYPES.HOLD) {
@@ -394,6 +403,7 @@ export default {
     } else if (requestType === REQUEST_TYPES.RECALL) {
       this.selectRecallsRequestType();
     }
+    cy.wait(500);
   },
 
   checkRequestStatus(requestStatus) {

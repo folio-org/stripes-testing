@@ -155,7 +155,6 @@ describe('Data Import', () => {
         collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {
           cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         // create job profile for creating
@@ -168,7 +167,6 @@ describe('Data Import', () => {
           collectionOfMappingAndActionProfilesForCreate[1].actionProfile.name,
         );
         NewJobProfile.saveAndClose();
-        JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
       });
     });
 

@@ -12,15 +12,19 @@ describe('ui-finance: Funds', () => {
     cy.deleteLedgerApi(createdLedgerId);
   });
 
-  it('C4057 Add budget to a fund (thunderjet)', { tags: ['smoke', 'thunderjet'] }, () => {
-    Funds.createFundViaUI(fund).then((createdLedger) => {
-      createdLedgerId = createdLedger.id;
-      Funds.addBudget(0);
-      Funds.checkCreatedBudget(fund.code, DateTools.getCurrentFiscalYearCode());
-      Funds.deleteBudgetViaActions();
-      Funds.deleteFundViaActions();
-      FinanceHelp.searchByName(fund.name);
-      Funds.checkZeroSearchResultsHeader();
-    });
-  });
+  it(
+    'C4057 Add budget to a fund (thunderjet)',
+    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+    () => {
+      Funds.createFundViaUI(fund).then((createdLedger) => {
+        createdLedgerId = createdLedger.id;
+        Funds.addBudget(0);
+        Funds.checkCreatedBudget(fund.code, DateTools.getCurrentFiscalYearCode());
+        Funds.deleteBudgetViaActions();
+        Funds.deleteFundViaActions();
+        FinanceHelp.searchByName(fund.name);
+        Funds.checkZeroSearchResultsHeader();
+      });
+    },
+  );
 });

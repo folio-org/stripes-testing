@@ -147,9 +147,9 @@ describe('MARC', () => {
               linkedField.zeroSubfield,
               linkedField.seventhBox,
             );
-            QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(11);
-            QuickMarcEditor.checkUnlinkTooltipText(11, 'Unlink from MARC Authority record');
-            QuickMarcEditor.clickUnlinkIconInTagField(11);
+            QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(10);
+            QuickMarcEditor.checkUnlinkTooltipText(10, 'Unlink from MARC Authority record');
+            QuickMarcEditor.clickUnlinkIconInTagField(10);
             QuickMarcEditor.checkUnlinkModal(testData.tag100);
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(

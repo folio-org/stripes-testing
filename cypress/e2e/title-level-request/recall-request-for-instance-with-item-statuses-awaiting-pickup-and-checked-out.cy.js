@@ -159,14 +159,13 @@ describe('Title level Request', () => {
       })
       .then(() => {
         TitleLevelRequests.enableTLRViaApi();
+        cy.wait(3000);
         cy.getInstance({
           limit: 1,
           expandAll: true,
           query: `"id"=="${instanceData.instanceId}"`,
         }).then((instance) => {
-          cy.wait(3000).then(() => {
-            instanceData.instanceHRID = instance.hrid;
-          });
+          instanceData.instanceHRID = instance.hrid;
         });
       })
       .then(() => {
@@ -202,7 +201,7 @@ describe('Title level Request', () => {
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     PatronGroups.deleteViaApi(testData.patronGroup.id);
     cy.deleteLoanType(instanceData.loanTypeId);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

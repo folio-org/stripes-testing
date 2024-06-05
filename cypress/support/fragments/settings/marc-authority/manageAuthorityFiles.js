@@ -33,6 +33,7 @@ const tableHeaderTexts = [
   'Active',
   'Source',
   'Last updated by',
+  'Actions',
 ];
 const editButton = Button({ icon: 'edit' });
 const deleteButton = Button({ icon: 'trash' });
@@ -329,6 +330,15 @@ export default {
     );
   },
 
+  editBaseUrlInFolioFile(authorityFileName, fieldName, fieldValue) {
+    const targetRow = getTargetRowWithFile(authorityFileName);
+
+    cy.do(targetRow.find(TextField({ placeholder: fieldName })).fillIn(fieldValue));
+    cy.expect(targetRow.find(TextField({ placeholder: fieldName })).has({ value: fieldValue }));
+    cy.expect(targetRow.find(cancelButton).has({ disabled: false }));
+    cy.expect(targetRow.find(saveButton).has({ disabled: false }));
+  },
+
   checkRowEditableInEditMode(
     authorityFileName,
     prefix,
@@ -380,10 +390,6 @@ export default {
     const targetRow = getTargetRowWithFile(authorityFileName);
 
     cy.expect(targetRow.find(MultiColumnListCell(including(userName))).exists());
-  },
-
-  checkActionTableHeaderExists() {
-    cy.get('#list-column-actions').should('exist').and('have.text', 'Actions');
   },
 
   checkAuthorityFilesTableExists(isExist = true) {
@@ -454,6 +460,20 @@ export default {
   unsetAuthorityFileAsActiveViaApi(fileName) {
     cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
       cy.setActiveAuthoritySourceFileViaAPI(body.id, body._version + 1, false);
+    });
+  },
+
+  updateBaseUrlInAuthorityFileViaApi(fileName, newBaseUrl) {
+    cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
+      cy.updateBaseUrlInAuthoritySourceFileViaAPI(body.id, body._version + 1, newBaseUrl);
+    });
+  },
+
+  deleteAuthoritySourceFileByNameViaApi(fileName) {
+    cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
+      if (body.totalRecords !== 0) {
+        cy.deleteAuthoritySourceFileViaAPI(body.id, true);
+      }
     });
   },
 };

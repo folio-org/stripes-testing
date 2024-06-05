@@ -98,7 +98,7 @@ describe('Data Import', () => {
         tag: 700,
       },
       {
-        rowIndex: 75,
+        rowIndex: 77,
         value: 'Lee, Stan, 1922-2018',
         tag: 700,
       },
@@ -253,7 +253,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          75,
+          77,
           '700',
           '1',
           '\\',

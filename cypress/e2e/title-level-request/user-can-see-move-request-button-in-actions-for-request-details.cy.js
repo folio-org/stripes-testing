@@ -120,7 +120,7 @@ describe('Title Level Request', () => {
     Users.deleteViaApi(testData.user.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

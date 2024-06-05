@@ -1,12 +1,12 @@
-import { recurse } from 'cypress-recurse';
 import { HTML } from '@interactors/html';
+import { recurse } from 'cypress-recurse';
 import {
-  Modal,
   Button,
-  Select,
-  Pane,
+  Modal,
   MultiColumnListCell,
+  Pane,
   PaneHeader,
+  Select,
 } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import FileManager from '../../utils/fileManager';
