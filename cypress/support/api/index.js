@@ -25,3 +25,6 @@ import './eholdings';
 import './consortium';
 import './export-manager';
 import './licenses';
+import './organizations';
+import './receiving';
+import './settings';
