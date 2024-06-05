@@ -118,7 +118,7 @@ describe('MARC', () => {
       instanceIds.forEach((instanceId) => {
         InventoryInstance.deleteInstanceViaApi(instanceId);
       });
-      NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+      NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
         location.institutionId,
         location.campusId,
         location.libraryId,

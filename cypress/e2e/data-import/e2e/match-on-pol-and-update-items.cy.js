@@ -267,7 +267,7 @@ describe('Data Import', () => {
             });
           },
         );
-        NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+        NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
           location.institutionId,
           location.campusId,
           location.libraryId,

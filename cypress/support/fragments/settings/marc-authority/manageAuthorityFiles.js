@@ -33,6 +33,7 @@ const tableHeaderTexts = [
   'Active',
   'Source',
   'Last updated by',
+  'Actions',
 ];
 const editButton = Button({ icon: 'edit' });
 const deleteButton = Button({ icon: 'trash' });
@@ -389,10 +390,6 @@ export default {
     const targetRow = getTargetRowWithFile(authorityFileName);
 
     cy.expect(targetRow.find(MultiColumnListCell(including(userName))).exists());
-  },
-
-  checkActionTableHeaderExists() {
-    cy.get('#list-column-actions').should('exist').and('have.text', 'Actions');
   },
 
   checkAuthorityFilesTableExists(isExist = true) {

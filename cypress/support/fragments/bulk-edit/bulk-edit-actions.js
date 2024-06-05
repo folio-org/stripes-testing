@@ -1,4 +1,5 @@
 import { HTML, including } from '@interactors/html';
+import { not } from 'bigtest';
 import FileManager from '../../utils/fileManager';
 import {
   Modal,
@@ -33,6 +34,7 @@ const downloadPreviewBtn = Button('Download preview');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
+const startBulkEditInstanceButton = Button('Start bulk edit - Instance fields');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
 const confirmChangesButton = Button('Confirm changes');
@@ -54,6 +56,10 @@ const bulkPageSelections = {
 export default {
   openStartBulkEditForm() {
     cy.do(startBulkEditLocalButton.click());
+  },
+  openStartBulkEditInstanceForm() {
+    cy.do(startBulkEditInstanceButton.click());
+    cy.wait(1000);
   },
   openInAppStartBulkEditFrom() {
     cy.do(startBulkEditButton.click());
@@ -576,7 +582,16 @@ export default {
     );
   },
 
+  selectFromUnchangedSelect(selection, rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ id: 'urlRelationship', selectClass: not(including('isChanged')) }))
+        .choose(selection),
+    );
+  },
+
   findValue(type, rowIndex = 0) {
+    cy.wait(2000);
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
       RepeatableFieldItem({ index: rowIndex })
@@ -590,6 +605,14 @@ export default {
     this.fillInFirstTextArea(oldNote, rowIndex);
     this.selectSecondAction('Replace with', rowIndex);
     this.fillInSecondTextArea(newNote, rowIndex);
+  },
+
+  electronicAccessReplaceWith(property, oldValue, newValue, rowIndex = 0) {
+    this.findValue(property, rowIndex);
+    cy.wait(2000);
+    this.selectFromUnchangedSelect(oldValue, rowIndex);
+    this.selectSecondAction('Replace with', rowIndex);
+    this.selectFromUnchangedSelect(newValue, rowIndex);
   },
 
   noteRemove(noteType, note, rowIndex = 0) {

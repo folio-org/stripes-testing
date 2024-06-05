@@ -200,7 +200,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
     cy.deleteHoldingRecordViaApi(instanceData.holdingId);
     InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
     UsersOwners.deleteViaApi(userOwnerBody.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
