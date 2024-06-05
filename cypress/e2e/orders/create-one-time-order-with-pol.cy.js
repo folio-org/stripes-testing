@@ -82,7 +82,7 @@ describe('Orders: Inventory interaction', () => {
     Orders.deleteOrderViaApi(firstOrder.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
-    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+    NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
       location.institutionId,
       location.campusId,
       location.libraryId,

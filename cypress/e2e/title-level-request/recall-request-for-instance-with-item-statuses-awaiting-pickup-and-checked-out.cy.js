@@ -201,7 +201,7 @@ describe('Title level Request', () => {
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     PatronGroups.deleteViaApi(testData.patronGroup.id);
     cy.deleteLoanType(instanceData.loanTypeId);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

@@ -117,7 +117,7 @@ describe('bulk-edit', () => {
             `${folioItem.instanceId},false,false,`,
             `${marcInstances[0].instanceId},false,false,`,
           ]);
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditInstanceForm();
           BulkEditActions.verifyModifyLandingPageBeforeModifying();
           BulkEditActions.selectOption('Staff suppress');
           BulkEditSearchPane.verifyInputLabel('Staff suppress');

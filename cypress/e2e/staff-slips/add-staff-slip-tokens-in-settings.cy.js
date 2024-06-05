@@ -80,7 +80,7 @@ describe('Staff slips', () => {
     InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
       testData.folioInstances[0].instanceId,
     );
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

@@ -64,7 +64,7 @@ describe('Title level request for aged to lost item', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
       testData.folioInstances[0].items[0].barcode,
     );
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       defaultLocation.institutionId,
       defaultLocation.campusId,
       defaultLocation.libraryId,

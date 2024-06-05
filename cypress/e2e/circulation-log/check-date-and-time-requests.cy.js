@@ -83,7 +83,7 @@ describe('Circulation log', () => {
 
   it(
     'C350711 Check date and time --requests (volaris) (TaaS)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'shiftLeft'] },
     () => {
       // Navigate to the "Circulation log" app
       cy.login(testData.user.username, testData.user.password, {

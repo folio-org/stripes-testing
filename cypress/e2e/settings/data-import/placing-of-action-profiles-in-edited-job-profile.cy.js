@@ -103,7 +103,7 @@ describe('Data Import', () => {
 
     it(
       'C423385 Check the placing of action profiles in edited Job profile (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfile);
