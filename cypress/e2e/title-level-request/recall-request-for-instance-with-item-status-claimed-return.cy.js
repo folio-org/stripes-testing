@@ -66,7 +66,7 @@ describe('Title level request for claimed return item', () => {
       servicePoint: testData.servicePoint,
       shouldCheckIn: true,
     });
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       defaultLocation.institutionId,
       defaultLocation.campusId,
       defaultLocation.libraryId,

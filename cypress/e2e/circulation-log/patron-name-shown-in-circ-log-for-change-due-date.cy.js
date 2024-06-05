@@ -45,7 +45,7 @@ describe('Circulation log', () => {
         permissions.uiUsersfeefinesView.gui,
         permissions.uiUsersView.gui,
         permissions.uiUserLoansChangeDueDate.gui,
-        permissions.uiCirculationCreateViewOverdueFinesPolicies.gui
+        permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
       ],
       patronGroup.name,
     ).then((userAProperties) => {
@@ -88,7 +88,7 @@ describe('Circulation log', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
       testData.folioInstances[0].barcodes[0],
     );
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

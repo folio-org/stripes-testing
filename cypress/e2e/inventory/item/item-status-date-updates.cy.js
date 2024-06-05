@@ -106,7 +106,7 @@ describe.skip('Inventory', () => {
         Users.deleteViaApi(userForDeliveryRequest.userId);
       });
 
-      NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+      NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
         effectiveLocation.institutionId,
         effectiveLocation.campusId,
         effectiveLocation.libraryId,
