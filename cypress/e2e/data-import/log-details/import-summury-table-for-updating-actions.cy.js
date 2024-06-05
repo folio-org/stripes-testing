@@ -42,6 +42,7 @@ import MatchProfiles from '../../../support/fragments/settings/dataImport/matchP
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -356,8 +357,15 @@ describe('Data Import', () => {
           InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
+          cy.intercept('/search/instances?query=id**').as('getIds');
           InventorySearchAndFilter.saveUUIDs();
-          ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+          // need to create a new file with instance UUID because tests are run in multiple threads
+          cy.wait('@getIds', getLongDelay()).then((req) => {
+            const expectedUUID = InventorySearchAndFilter.getUUIDFromRequest(req);
+
+            FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID);
+            FileManager.deleteFileFromDownloadsByMask('*SearchInstanceUUIDs*');
+          });
         });
 
         // download exported marc file

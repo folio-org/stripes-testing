@@ -87,7 +87,7 @@ describe('Circulation log', () => {
 
   it(
     'C17000 Check the Actions button from filtering Circulation log by closed loan (volaris) (TaaS)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       goToCircLogApp().then((rowIndex) => {
         SearchResults.chooseActionByRow(rowIndex, 'Loan details');

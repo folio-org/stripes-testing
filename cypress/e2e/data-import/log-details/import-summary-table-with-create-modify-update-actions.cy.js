@@ -44,6 +44,7 @@ import NewMatchProfile from '../../../support/fragments/settings/dataImport/matc
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -163,7 +164,7 @@ describe('Data Import', () => {
         mappingProfile: {
           name: `C430257 update item mapping profile ${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.ITEM,
-          materialType: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
+          materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
           noteType: '"Electronic bookplate"',
           note: '"Smith Family Foundation"',
           noteUI: 'Smith Family Foundation',
@@ -355,8 +356,15 @@ describe('Data Import', () => {
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter('Subject', uniqueSubject);
+        cy.intercept('/search/instances?query=id**').as('getIds');
         InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        // need to create a new file with instance UUID because tests are run in multiple threads
+        cy.wait('@getIds', getLongDelay()).then((req) => {
+          const expectedUUID = InventorySearchAndFilter.getUUIDFromRequest(req);
+
+          FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID);
+          FileManager.deleteFileFromDownloadsByMask('*SearchInstanceUUIDs*');
+        });
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);

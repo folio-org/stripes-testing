@@ -9,6 +9,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
+import { electronicAccessRelationshipId } from '../../../support/constants';
 
 let user;
 const item = {
@@ -45,11 +46,7 @@ describe('bulk-edit', () => {
               ...holdings[0],
               electronicAccess: [
                 {
-                  linkText: '',
-                  materialsSpecification: '',
-                  publicNote: '',
-                  // Resource
-                  relationshipId: 'f5d0068e-6272-458e-8a81-b85e7b9a14aa',
+                  relationshipId: electronicAccessRelationshipId.RESOURCE,
                   uri: item.uri,
                 },
               ],

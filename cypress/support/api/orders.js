@@ -22,3 +22,11 @@ Cypress.Commands.add('getAcquisitionMethodsApi', (searchParams) => {
     searchParams,
   });
 });
+
+Cypress.Commands.add('getOrderByWorkflowStatus', (status) => {
+  const UpdatedUrl = encodeURI(`orders/composite-orders?query=(workflowStatus==${status})&limit=1`);
+  return cy.okapiRequest({
+    path: UpdatedUrl,
+    isDefaultSearchParamsRequired: false,
+  });
+});

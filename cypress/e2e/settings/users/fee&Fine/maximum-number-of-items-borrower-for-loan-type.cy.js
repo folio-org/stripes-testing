@@ -198,7 +198,7 @@ describe('Item Blocks', () => {
 
   it(
     'C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works (volaris)',
-    { tags: ['smoke', 'volaris'] },
+    { tags: ['smoke', 'volaris', 'shiftLeft'] },
     () => {
       cy.visit(TopMenu.checkOutPath);
       CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[0].barcode);

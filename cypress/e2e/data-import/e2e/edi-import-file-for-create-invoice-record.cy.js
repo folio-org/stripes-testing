@@ -86,7 +86,7 @@ describe('Data Import', () => {
 
     it(
       'C343338 EDIFACT file import with creating of new invoice record (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.waitLoading();

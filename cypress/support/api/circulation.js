@@ -132,3 +132,14 @@ Cypress.Commands.add('getLostItemFeesPolicy', (searchParams) => {
     return policy.body.lostItemFeePolicies;
   });
 });
+
+Cypress.Commands.add('getByLoan', (loanStatus) => {
+  const UpdatedUrl = encodeURI(
+    `audit-data/circulation/logs?limit=1&offset=0&query=action==${loanStatus}`,
+  );
+  cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: UpdatedUrl,
+    isDefaultSearchParamsRequired: false,
+  });
+});

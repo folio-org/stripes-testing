@@ -45,6 +45,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 
 describe('Data Import', () => {
   describe('Log details', () => {
@@ -160,7 +161,7 @@ describe('Data Import', () => {
         mappingProfile: {
           name: `C430253 update item mapping profile ${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.ITEM,
-          materialType: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
+          materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
           noteType: '"Electronic bookplate"',
           note: '"Smith Family Foundation"',
           noteUI: 'Smith Family Foundation',
@@ -328,7 +329,7 @@ describe('Data Import', () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePath, nameMarcFileForImportCreate);
         JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(jobProfileForCreate.profile.name);
+        JobProfiles.search(jobProfileForCreate.name);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameMarcFileForImportCreate);
         Logs.checkJobStatus(nameMarcFileForImportCreate, JOB_STATUS_NAMES.COMPLETED);
@@ -355,8 +356,15 @@ describe('Data Import', () => {
         InventorySearchAndFilter.selectYesfilterStaffSuppress();
         InventorySearchAndFilter.searchByParameter('Subject', subject);
         InstanceRecordView.verifyInstancePaneExists();
+        cy.intercept('/search/instances?query=id**').as('getIds');
         InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        // need to create a new file with instance UUID because tests are run in multiple threads
+        cy.wait('@getIds', getLongDelay()).then((req) => {
+          const expectedUUID = InventorySearchAndFilter.getUUIDFromRequest(req);
+
+          FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID);
+          FileManager.deleteFileFromDownloadsByMask('*SearchInstanceUUIDs*');
+        });
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);
