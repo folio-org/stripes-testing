@@ -161,7 +161,7 @@ describe('Data Import', () => {
         mappingProfile: {
           name: `C430253 update item mapping profile ${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.ITEM,
-          materialType: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
+          materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
           noteType: '"Electronic bookplate"',
           note: '"Smith Family Foundation"',
           noteUI: 'Smith Family Foundation',
@@ -329,7 +329,7 @@ describe('Data Import', () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePath, nameMarcFileForImportCreate);
         JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(jobProfileForCreate.profile.name);
+        JobProfiles.search(jobProfileForCreate.name);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameMarcFileForImportCreate);
         Logs.checkJobStatus(nameMarcFileForImportCreate, JOB_STATUS_NAMES.COMPLETED);
@@ -358,6 +358,7 @@ describe('Data Import', () => {
         InstanceRecordView.verifyInstancePaneExists();
         cy.intercept('/search/instances?query=id**').as('getIds');
         InventorySearchAndFilter.saveUUIDs();
+        // need to create a new file with instance UUID because tests are run in multiple threads
         cy.wait('@getIds', getLongDelay()).then((req) => {
           const expectedUUID = InventorySearchAndFilter.getUUIDFromRequest(req);
 

@@ -152,7 +152,7 @@ describe('Patron Block: Maximum number of items charged out', () => {
       cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
       InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
     });
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

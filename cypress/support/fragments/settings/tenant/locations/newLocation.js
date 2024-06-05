@@ -6,6 +6,8 @@ import Libraries from '../location-setup/libraries';
 
 const getDefaultLocation = (
   specialServicePointId,
+  locationName,
+  locationCode,
   specialInstitutionId,
   specialCampusId,
   specialLibraryId,
@@ -19,12 +21,12 @@ const getDefaultLocation = (
     campusName: `autotest_campuse_${getRandomPostfix()}`,
     libraryId: specialLibraryId || uuid(),
     libraryName: `autotest_library_${getRandomPostfix()}`,
-    // servicePointIds must have real Servi point id
+    // servicePointIds must have real Service point id
     servicePointIds: [specialServicePointId],
-    name: `autotest_location_name_${getRandomPostfix()}`,
-    code: `autotest_location_code_${getRandomPostfix()}`,
+    name: locationName || `autotest_location_name_${getRandomPostfix()}`,
+    code: locationCode || `autotest_location_code_${getRandomPostfix()}`,
     discoveryDisplayName: `autotest_name_${getRandomPostfix()}`,
-    // servicePointIds must have real Servis point id
+    // servicePointIds must have real Service point id
     primaryServicePoint: specialServicePointId,
   };
 
@@ -91,7 +93,7 @@ export default {
       });
   },
 
-  deleteViaApiIncludingInstitutionCampusLibrary: (
+  deleteInstitutionCampusLibraryLocationViaApi: (
     institutionId,
     campusId,
     libraryId,

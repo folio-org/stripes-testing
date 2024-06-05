@@ -29,7 +29,7 @@ describe('settings: data-export', () => {
 
   it(
     'C380470 Verify that Default Data export profiles are present (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    { tags: ['smoke', 'firebird', 'shiftLeft'] },
     () => {
       ExportJobProfiles.goToJobProfilesTab();
       ExportJobProfiles.verifyDefaultProfiles();
