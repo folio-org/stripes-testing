@@ -490,6 +490,14 @@ export default {
     );
   },
 
+  holdingsTabIsDefault() {
+    cy.do(
+      holdingsToggleButton.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
+
   browseSubjectsSearch(searchString = 'test123') {
     cy.do([
       browseButton.click(),
