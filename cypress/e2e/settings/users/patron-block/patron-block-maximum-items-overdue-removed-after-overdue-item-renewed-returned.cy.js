@@ -236,7 +236,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
       '584fbd4f-6a34-4730-a6ca-73a6a6a9d845',
       'Maximum number of overdue items',
     );
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

@@ -210,7 +210,7 @@ describe('Request Detail. TLR', () => {
     Users.deleteViaApi(users.mainUser.userId);
     Users.deleteViaApi(users.holdUser.userId);
     Users.deleteViaApi(users.recallUser.userId);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

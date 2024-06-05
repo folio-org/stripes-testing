@@ -240,6 +240,7 @@ describe('Data Import', () => {
           InventorySearchAndFilter.selectResultCheckboxes(1);
           cy.intercept('/search/instances?query=id**').as('getIds');
           InventorySearchAndFilter.saveUUIDs();
+          // need to create a new file with instance UUID because tests are run in multiple threads
           cy.wait('@getIds', getLongDelay()).then((req) => {
             const expectedUUID = InventorySearchAndFilter.getUUIDFromRequest(req);
 

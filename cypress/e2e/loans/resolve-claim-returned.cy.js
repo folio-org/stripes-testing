@@ -88,7 +88,7 @@ describe('Loans', () => {
           shouldCheckIn: true,
         });
       });
-      Location.deleteViaApiIncludingInstitutionCampusLibrary(
+      Location.deleteInstitutionCampusLibraryLocationViaApi(
         defaultLocation.institutionId,
         defaultLocation.campusId,
         defaultLocation.libraryId,
