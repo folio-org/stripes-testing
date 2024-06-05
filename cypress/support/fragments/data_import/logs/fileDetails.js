@@ -402,6 +402,11 @@ export default {
     cy.do(Button({ icon: 'times' }).click());
   },
 
+  downloadSourceFile() {
+    cy.do(Button({ href: 'https://data-import' }).click());
+    cy.wait(3000);
+  },
+
   verifyMultipleHoldingsStatus: (expectedArray, expectedQuantity, rowNumber = 0) => {
     cy.do(
       resultsList.find(MultiColumnListRow({ index: rowNumber })).perform((element) => {
@@ -567,6 +572,10 @@ export default {
   },
 
   verifyLogDetailsPageIsOpened: (fileName) => {
+    cy.expect(Pane(fileName).exists());
+  },
+
+  verifyUsedFileDisplayed: (fileName) => {
     cy.expect(Pane(fileName).exists());
   },
 

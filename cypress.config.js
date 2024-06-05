@@ -22,10 +22,10 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://folio-testing-cypress-okapi.ci.folio.org',
-    OKAPI_TENANT: 'diku',
-    diku_login: 'diku_admin',
-    diku_password: 'admin',
+    OKAPI_HOST: 'https://okapi-bugfest-quesnelia-aqa.int.aws.folio.org',
+    OKAPI_TENANT: 'fs09000003',
+    diku_login: 'folio-aqa',
+    diku_password: 'Folio-aqa1',
     is_kiwi_release: false,
     downloadTimeout: 2000,
     allure: true,
@@ -118,7 +118,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
+    baseUrl: 'https://bugfest-quesnelia-aqa.int.aws.folio.org',
     testIsolation: false,
   },
 });

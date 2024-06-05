@@ -1,5 +1,6 @@
 import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -158,6 +159,8 @@ describe('Data Import', () => {
         ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
+        FileDetails.verifyUsedFileDisplayed(marcFileName);
+        ExportFile.verifyFileIncludes();
       },
     );
   });
