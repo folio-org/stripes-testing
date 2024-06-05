@@ -7,8 +7,8 @@ describe('fse-users', () => {
   });
 
   it('TC195392 - Get by username', { tags: ['sanity', 'fse', 'api', 'users'] }, () => {
-    cy.getUsers({ limit: 1, query: '"username"="ebscosupport"' }).then((response) => {
-      cy.expect(response.status).to.eq(200);
+    cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then((users) => {
+      cy.expect(users[0].id).to.not.be.oneOf([null, '']);
     });
   });
 });
