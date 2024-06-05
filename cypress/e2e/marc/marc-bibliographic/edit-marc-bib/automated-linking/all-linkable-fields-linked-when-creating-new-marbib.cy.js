@@ -259,6 +259,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateLDR06And07Positions();
             newFields.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
+              cy.wait(1000);
             });
             // wait for fields to be filled in
             cy.wait(2000);
