@@ -1,7 +1,11 @@
 import uuid from 'uuid';
 import Users from '../fragments/users/users';
 import getRandomPostfix from '../utils/stringTools';
+import permissionsList from '../dictionary/permissions';
 import { FULFILMENT_PREFERENCES } from '../constants';
+
+let capabilitiesCollection = [];
+let capabilitySetsCollection = [];
 
 Cypress.Commands.add('getUsers', (searchParams) => {
   cy.okapiRequest({
@@ -140,7 +144,56 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
                 });
               } else cy.updateRolesForUserApi(userProperties.userId, [roleId]);
             });
+          } else if (Cypress.env('eureka')) {
+            cy.getCapabilitiesApi().then((capabilitiesResponse) => {
+              cy.getCapabilitySetsApi().then((capabilitySetsResponse) => {
+                const capabilitiesIds = [];
+                const capabilitySetsIds = [];
+                if (capabilitiesCollection.length === 0) capabilitiesCollection = [...capabilitiesResponse];
+                if (capabilitySetsCollection.length === 0) capabilitySetsCollection = [...capabilitySetsResponse];
+                permissions.forEach((permission) => {
+                  let currentPermission = '';
+                  for (const permissionObject in permissionsList) {
+                    // eslint-disable-next-line no-prototype-builtins
+                    if (permissionsList.hasOwnProperty(permissionObject)) {
+                      const { gui, internal } = permissionsList[permissionObject];
+                      if (gui.includes(permission)) {
+                        currentPermission = internal;
+                        break;
+                      }
+                    }
+                  }
+                  for (const capablityObject of capabilitiesCollection) {
+                    if (capablityObject.permission === currentPermission) {
+                      capabilitiesIds.push(capablityObject.id);
+                      break;
+                    }
+                  }
+
+                  for (const capablitySetObject of capabilitiesCollection) {
+                    if (capablitySetObject.permission === currentPermission) {
+                      capabilitySetsIds.push(capablitySetObject.id);
+                      break;
+                    }
+                  }
+                  currentPermission = '';
+                });
+
+                if (capabilitiesIds.length === 0) {
+                  cy.log('Capabilities not found ');
+                } else {
+                  cy.addCapabilitiesToNewUserApi(userProperties.userId, capabilitiesIds);
+                }
+
+                if (capabilitySetsIds.length === 0) {
+                  cy.log('Capability sets not found ');
+                } else {
+                  cy.addCapabilitySetsToNewUserApi(userProperties.userId, capabilitySetsIds);
+                }
+              });
+            });
           } else {
+            cy.wait(3000);
             cy.addPermissionsToNewUserApi({
               userId: userProperties.userId,
               permissions: [
