@@ -282,7 +282,7 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       cy.getAdminToken().then(() => {
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.name);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         collectionOfMatchProfiles.forEach((profile) => {
           SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);

@@ -137,7 +137,7 @@ describe('Data Import', () => {
         mappingProfileIds.push(mappingProfileResponse.body.id);
 
         NewActionProfile.createActionProfileViaApi(
-          actionProfilesForCreate[1].actionProfile,
+          actionProfilesForCreate[0].actionProfile,
           mappingProfileResponse.body.id,
         ).then((actionProfileResponse) => {
           actionProfileIds.push(actionProfileResponse.body.id);
@@ -149,7 +149,7 @@ describe('Data Import', () => {
         mappingProfileIds.push(mappingProfileResponse.body.id);
 
         NewActionProfile.createActionProfileViaApi(
-          actionProfilesForCreate[2].actionProfile,
+          actionProfilesForCreate[1].actionProfile,
           mappingProfileResponse.body.id,
         ).then((actionProfileResponse) => {
           actionProfileIds.push(actionProfileResponse.body.id);
@@ -160,7 +160,7 @@ describe('Data Import', () => {
           mappingProfileIds.push(mappingProfileResponse.body.id);
 
           NewActionProfile.createActionProfileViaApi(
-            actionProfilesForCreate[3].actionProfile,
+            actionProfilesForCreate[2].actionProfile,
             mappingProfileResponse.body.id,
           ).then((actionProfileResponse) => {
             actionProfileIds.push(actionProfileResponse.body.id);
