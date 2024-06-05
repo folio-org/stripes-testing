@@ -144,7 +144,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
                 });
               } else cy.updateRolesForUserApi(userProperties.userId, [roleId]);
             });
-          } else {
+          } else if (Cypress.env('eureka')) {
             cy.getCapabilitiesApi().then((capabilitiesResponse) => {
               cy.getCapabilitySetsApi().then((capabilitySetsResponse) => {
                 const capabilitiesIds = [];
@@ -192,6 +192,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
                 }
               });
             });
+          } else {
             cy.wait(3000);
             cy.addPermissionsToNewUserApi({
               userId: userProperties.userId,
