@@ -266,6 +266,7 @@ describe('MARC', () => {
               fields[0].tag,
               '$a Coates, Ta-Nehisi, $e author. $0n2008001084C389486',
             );
+            cy.wait(1000);
             QuickMarcEditor.clickLinkHeadingsButton();
             // need to wait until message appear
             cy.wait(2000);
@@ -289,6 +290,7 @@ describe('MARC', () => {
             });
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.updateExistingField(fields[14].tag, '$a Delaware $0 n84745425C389486');
+            cy.wait(1000);
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout('Field 711 has been linked to MARC authority record(s).');
             QuickMarcEditor.clickSaveAndKeepEditing();
