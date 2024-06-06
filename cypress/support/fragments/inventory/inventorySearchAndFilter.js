@@ -451,11 +451,6 @@ export default {
     return expectedUUIDs;
   },
 
-  getUUIDFromRequest(req) {
-    const expectedUUID = req.response.body.instances[0].id;
-    return expectedUUID;
-  },
-
   verifySelectedRecords(selected) {
     if (selected === 1) {
       cy.expect(
