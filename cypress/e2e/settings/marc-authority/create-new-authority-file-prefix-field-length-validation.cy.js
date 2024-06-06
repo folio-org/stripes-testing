@@ -10,22 +10,20 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Settings', () => {
       const date = DateTools.getFormattedDateWithSlashes({ date: new Date() });
-      const authorityFiles = [
-        {
-          name: `C440094 Test file ${getRandomPostfix()}`,
-          startWithNumber: '5',
-          prefixes: [getRandomLetters(26), getRandomLetters(25)],
-          baseUrl: `http://testurl.com/source-${getRandomPostfix()}/`,
-          isActive: false,
-        },
-        {
-          name: `C440094 Test file 24 prefix ${getRandomPostfix()}`,
-          startWithNumber: '5',
-          prefix: getRandomLetters(24),
-          baseUrl: `http://testurl.com/source/prefix24-${getRandomPostfix()}/`,
-          isActive: false,
-        },
-      ];
+      const authorityFile = {
+        name: `C440094 Test file ${getRandomPostfix()}`,
+        startWithNumber: '5',
+        prefixes: [getRandomLetters(26), getRandomLetters(25)],
+        baseUrl: `http://testurl.com/source-${getRandomPostfix()}/`,
+        isActive: false,
+      };
+      const authorityFilePrefix24Letters = {
+        name: `C440094 Test file 24 prefix ${getRandomPostfix()}`,
+        startWithNumber: '5',
+        prefix: getRandomLetters(24),
+        baseUrl: `http://testurl.com/source/prefix24-${getRandomPostfix()}/`,
+        isActive: false,
+      };
       const errorPrefixLength = 'Error saving data. Prefix cannot be more than 25 characters.';
       let user;
 
@@ -46,9 +44,10 @@ describe('MARC', () => {
       after('Delete data, user', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userId);
-        authorityFiles.forEach((authorityFile) => {
-          ManageAuthorityFiles.deleteAuthoritySourceFileByNameViaApi(authorityFile.name);
-        });
+        ManageAuthorityFiles.deleteAuthoritySourceFileByNameViaApi(authorityFile.name);
+        ManageAuthorityFiles.deleteAuthoritySourceFileByNameViaApi(
+          authorityFilePrefix24Letters.name,
+        );
       });
 
       it(
@@ -61,11 +60,11 @@ describe('MARC', () => {
 
           // 2 Fill in editable text boxes with unique valid values, but the "Prefix" field with 26-letter prefix
           ManageAuthorityFiles.fillAllFields(
-            authorityFiles[0].name,
-            authorityFiles[0].prefixes[0],
-            authorityFiles[0].startWithNumber,
-            authorityFiles[0].baseUrl,
-            authorityFiles[0].isActive,
+            authorityFile.name,
+            authorityFile.prefixes[0],
+            authorityFile.startWithNumber,
+            authorityFile.baseUrl,
+            authorityFile.isActive,
           );
           ManageAuthorityFiles.checkCancelButtonEnabled();
           ManageAuthorityFiles.checkSaveButtonEnabled();
@@ -73,27 +72,27 @@ describe('MARC', () => {
           // 3 Click on the "Save" button
           ManageAuthorityFiles.clickSaveButton();
           ManageAuthorityFiles.checkErrorInField(
-            authorityFiles[0].name,
+            authorityFile.name,
             AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX,
             errorPrefixLength,
           );
 
           // 4 Delete one letter from "Prefix" field
           ManageAuthorityFiles.editField(
-            authorityFiles[0].name,
+            authorityFile.name,
             AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX,
-            authorityFiles[0].prefixes[1],
+            authorityFile.prefixes[1],
           );
 
           // 5 Click on the "Save" button
-          ManageAuthorityFiles.clickSaveButtonAfterEditingFile(authorityFiles[0].name);
-          ManageAuthorityFiles.checkAfterSave(authorityFiles[0].name);
+          ManageAuthorityFiles.clickSaveButtonAfterEditingFile(authorityFile.name);
+          ManageAuthorityFiles.checkAfterSave(authorityFile.name);
           ManageAuthorityFiles.checkSourceFileExists(
-            authorityFiles[0].name,
-            authorityFiles[0].prefixes[1],
-            authorityFiles[0].startsWith,
-            authorityFiles[0].baseUrl,
-            authorityFiles[0].isActive,
+            authorityFile.name,
+            authorityFile.prefixes[1],
+            authorityFile.startsWith,
+            authorityFile.baseUrl,
+            authorityFile.isActive,
             `${date} by ${user.lastName}, ${user.firstName}`,
             true,
           );
@@ -104,24 +103,24 @@ describe('MARC', () => {
 
           // 7 Fill in editable text boxes with unique valid values, but the "Prefix" field with 24-letter prefix
           ManageAuthorityFiles.fillAllFields(
-            authorityFiles[1].name,
-            authorityFiles[1].prefix,
-            authorityFiles[1].startWithNumber,
-            authorityFiles[1].baseUrl,
-            authorityFiles[1].isActive,
+            authorityFilePrefix24Letters.name,
+            authorityFilePrefix24Letters.prefix,
+            authorityFilePrefix24Letters.startWithNumber,
+            authorityFilePrefix24Letters.baseUrl,
+            authorityFilePrefix24Letters.isActive,
           );
           ManageAuthorityFiles.checkCancelButtonEnabled();
           ManageAuthorityFiles.checkSaveButtonEnabled();
 
           // 8 Click on the "Save" button
-          ManageAuthorityFiles.clickSaveButtonAfterEditingFile(authorityFiles[1].name);
-          ManageAuthorityFiles.checkAfterSave(authorityFiles[1].name);
+          ManageAuthorityFiles.clickSaveButtonAfterEditingFile(authorityFilePrefix24Letters.name);
+          ManageAuthorityFiles.checkAfterSave(authorityFilePrefix24Letters.name);
           ManageAuthorityFiles.checkSourceFileExists(
-            authorityFiles[1].name,
-            authorityFiles[1].prefix,
-            authorityFiles[1].startsWith,
-            authorityFiles[1].baseUrl,
-            authorityFiles[1].isActive,
+            authorityFilePrefix24Letters.name,
+            authorityFilePrefix24Letters.prefix,
+            authorityFilePrefix24Letters.startsWith,
+            authorityFilePrefix24Letters.baseUrl,
+            authorityFilePrefix24Letters.isActive,
             `${date} by ${user.lastName}, ${user.firstName}`,
             true,
           );
