@@ -41,9 +41,17 @@ describe('Eureka', () => {
       });
       testData.capabilityToSelect.application = testData.application;
 
+      const capabSetsToAssign = [
+        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
+        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
+        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+      ];
+
       before('Create role, user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
+          cy.updateRolesForUserApi(testData.user.userId, []);
           cy.createAuthorizationRoleApi().then((role) => {
             testData.roleName = role.name;
             testData.roleId = role.id;
@@ -78,6 +86,7 @@ describe('Eureka', () => {
         () => {
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.clickOnCapabilitiesAccordion();
+          cy.wait(1000);
           AuthorizationRoles.openForEdit();
           AuthorizationRoles.fillRoleNameDescription(
             testData.updatedRoleName,

@@ -16,6 +16,7 @@ import {
   KeyValue,
   and,
   or,
+  matching,
 } from '../../../../../interactors';
 
 const rolesPane = Pane('Authorization roles');
@@ -214,6 +215,7 @@ export default {
 
   clickOnRoleName: (roleName) => {
     cy.do(rolesPane.find(HTML(roleName, { className: including('root') })).click());
+    cy.wait(1000);
     cy.expect([
       Pane(roleName).exists(),
       Spinner().absent(),
@@ -339,12 +341,14 @@ export default {
     cy.do([roleSearchInputField.fillIn(roleName), roleSearchButton.click()]);
   },
 
-  checkCapabilitiesAccordionCounter: (expectedCount) => {
-    cy.expect(capabilitiesAccordion.has({ counter: expectedCount }));
+  checkCapabilitiesAccordionCounter: (expectedCount, regExp = false) => {
+    if (regExp) cy.expect(capabilitiesAccordion.has({ counter: matching(expectedCount) }));
+    else cy.expect(capabilitiesAccordion.has({ counter: expectedCount }));
   },
 
-  checkCapabilitySetsAccordionCounter: (expectedCount) => {
-    cy.expect(capabilitySetsAccordion.has({ counter: expectedCount }));
+  checkCapabilitySetsAccordionCounter: (expectedCount, regExp = false) => {
+    if (regExp) cy.expect(capabilitySetsAccordion.has({ counter: matching(expectedCount) }));
+    else cy.expect(capabilitySetsAccordion.has({ counter: expectedCount }));
   },
 
   checkUsersAccordion: (expectedCount = false) => {
