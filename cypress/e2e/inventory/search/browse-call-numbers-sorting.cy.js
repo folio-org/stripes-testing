@@ -127,6 +127,7 @@ describe('Inventory', () => {
             index + 1,
           );
         });
+        cy.wait(1000);
 
         // #17 * Select "Browse" in toggle
         // * Select "Other scheme" browse option
