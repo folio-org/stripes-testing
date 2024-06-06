@@ -101,4 +101,7 @@ export default {
   checkResultsListEmpty() {
     cy.expect(resultsList.absent());
   },
+  checkNoRecordsFound() {
+    cy.expect(selectInstanceModal.find(HTML(including('No results found for'))).exists());
+  },
 };
