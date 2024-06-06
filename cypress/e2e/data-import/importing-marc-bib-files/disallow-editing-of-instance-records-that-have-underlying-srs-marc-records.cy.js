@@ -26,7 +26,6 @@ describe('Data Import', () => {
         instanceId = response[0].instance.id;
       });
 
-      // create temp user with inventoryAll permissions
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         user = userProperties;
 

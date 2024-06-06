@@ -117,6 +117,7 @@ Cypress.Commands.add('createLinkedProfiles', (testData) => {
   });
 });
 
+// TODO redesign
 Cypress.Commands.add('createOnePairMappingAndActionProfiles', (mappingProfile, actionProfile) => {
   FieldMappingProfiles.createMappingProfileViaApi(mappingProfile).then((bodyWithMappingProfile) => {
     actionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
@@ -125,4 +126,11 @@ Cypress.Commands.add('createOnePairMappingAndActionProfiles', (mappingProfile, a
     });
   });
   return cy.get('@idActionProfile');
+});
+
+Cypress.Commands.add('dataImportGetJobByStatus', (jobStatus) => {
+  return cy.okapiRequest({
+    path: `metadata-provider/jobExecutions?limit=1&query=status==${jobStatus}`,
+    isDefaultSearchParamsRequired: false,
+  });
 });

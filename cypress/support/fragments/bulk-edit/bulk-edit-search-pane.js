@@ -762,6 +762,16 @@ export default {
     ]);
   },
 
+  checkboxWithTextAbsent(text) {
+    cy.get('[class^="ActionMenu-"]').within(() => {
+      cy.get('[class^="checkbox-"]').each(($checkbox) => {
+        cy.wrap($checkbox).should(($el) => {
+          expect($el.text().toLowerCase()).to.not.contain(text.toLowerCase());
+        });
+      });
+    });
+  },
+
   verifyElectronicAccessElementByIndex(index, expectedText) {
     cy.get('[class^="ElectronicAccess"]').find('td').eq(index).should('contain.text', expectedText);
   },

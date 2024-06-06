@@ -72,14 +72,13 @@ describe('Title Level Request. Create Item or Title level request', () => {
           ],
         }).then((specialInstanceIds) => {
           instanceData.instanceId = specialInstanceIds.instanceId;
+          cy.wait(3000);
           cy.getInstance({
             limit: 1,
             expandAll: true,
             query: `"id"=="${instanceData.instanceId}"`,
           }).then((instance) => {
-            cy.wait(3000).then(() => {
-              testData.instanceHRID = instance.hrid;
-            });
+            testData.instanceHRID = instance.hrid;
           });
         });
       });
@@ -132,7 +131,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

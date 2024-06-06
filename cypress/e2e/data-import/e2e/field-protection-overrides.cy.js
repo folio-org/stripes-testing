@@ -3,7 +3,7 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
   DEFAULT_JOB_PROFILE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
@@ -128,7 +128,7 @@ describe('Data Import', () => {
         field: '001',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
 
     const jobProfileForUpdate = {
@@ -184,6 +184,9 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
+      // delete created files
+      FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
+      FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
       cy.getAdminToken().then(() => {
         MarcFieldProtection.deleteViaApi(firstFieldId);
         MarcFieldProtection.deleteViaApi(secondFieldId);
@@ -203,9 +206,6 @@ describe('Data Import', () => {
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
           instanceMappingProfileOverride.name,
         );
-        // delete created files
-        FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
-        FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (instance) => {
             InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -216,7 +216,7 @@ describe('Data Import', () => {
 
     it(
       'C17018 Check that field protection overrides work properly during data import (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
       () => {
         // create Field mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);

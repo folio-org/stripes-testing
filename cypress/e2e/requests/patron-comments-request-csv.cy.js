@@ -135,7 +135,7 @@ describe('Requests Export CSV File', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
     Users.deleteViaApi(userData.userId);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       defaultLocation.institutionId,
       defaultLocation.campusId,
       defaultLocation.libraryId,

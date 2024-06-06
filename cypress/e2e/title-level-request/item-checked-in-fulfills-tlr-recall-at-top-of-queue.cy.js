@@ -160,7 +160,7 @@ describe('Request queue. TLR', () => {
       Users.deleteViaApi(id);
     });
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

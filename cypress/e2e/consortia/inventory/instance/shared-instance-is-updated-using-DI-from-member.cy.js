@@ -1,6 +1,6 @@
 import {
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_SOURCE_NAMES,
   JOB_STATUS_NAMES,
@@ -64,7 +64,7 @@ describe('Inventory', () => {
         subfield: 'i',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       existingRecordOption: NewMatchProfile.optionsList.instanceUuid,
     };
     const jobProfile = {

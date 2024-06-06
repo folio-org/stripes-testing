@@ -7,8 +7,8 @@ import getRandomPostfix from '../../support/utils/stringTools';
 describe('Inventory', () => {
   describe('Permissions', () => {
     let userId;
-    const materialTypeName = `autoTestMaterialType.${getRandomPostfix()}`;
-    const newMaterialTypeName = `autoTestMaterialType.${getRandomPostfix()}`;
+    const materialTypeName = `C505 autoTestMaterialType.${getRandomPostfix()}`;
+    const newMaterialTypeName = `C505 autoTestMaterialType.${getRandomPostfix()}`;
 
     before('Create test user and login', () => {
       cy.createTempUser([Permissions.uiCreateEditDeleteMaterialTypes.gui]).then(
@@ -27,7 +27,7 @@ describe('Inventory', () => {
 
     it(
       'C505 Settings (Inventory): Create, edit, delete material types (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
         cy.visit(SettingsMenu.materialTypePath);
         MaterialTypes.checkAvailableOptions();

@@ -297,4 +297,8 @@ export default {
   searchByName: (name) => {
     cy.do([searchField.selectIndex('Name'), searchField.fillIn(name), searchButton.click()]);
   },
+
+  verifyFiltersSectionIsDisplayed: () => {
+    cy.expect(fiscalYearFiltersSection.exists());
+  },
 };

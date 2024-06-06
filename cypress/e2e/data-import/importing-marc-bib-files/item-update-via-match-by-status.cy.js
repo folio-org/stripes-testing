@@ -1,7 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import {
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   LOAN_TYPE_NAMES,
@@ -37,6 +37,7 @@ import StatisticalCodes from '../../../support/fragments/settings/inventory/inst
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -109,7 +110,7 @@ describe('Data Import', () => {
         subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+      existingRecordType: EXISTING_RECORD_NAMES.ITEM,
       itemOption: NewMatchProfile.optionsList.itemHrid,
     };
 
@@ -118,7 +119,7 @@ describe('Data Import', () => {
       incomingStaticValue: ITEM_STATUS_NAMES.AVAILABLE,
       incomingStaticRecordValue: 'Text',
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+      existingRecordType: EXISTING_RECORD_NAMES.ITEM,
       existingRecordOption: NewMatchProfile.optionsList.status,
     };
 
@@ -319,7 +320,13 @@ describe('Data Import', () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.filterItemByStatisticalCode(statisticalCode);
         InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        // need to create a new file with instance UUID because tests are runing in multiple threads
+        cy.intercept('/search/instances/ids**').as('getIds');
+        cy.wait('@getIds', getLongDelay()).then((req) => {
+          const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
+
+          FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID);
+        });
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);

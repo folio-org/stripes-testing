@@ -761,6 +761,10 @@ export default {
     internal: 'ui-finance.fund-budget.view',
     gui: 'Finance: View fund and budget',
   },
+  uiFinanceUnreleaseEncumbrance: {
+    internal: 'ui-finance.encumbrance.unrelease',
+    gui: 'Finance: Unrelease encumbrance',
+  },
   uiFinanceViewGroups: { internal: 'ui-finance.group.view', gui: 'Finance: View group' },
   uiFinanceViewLedger: { internal: 'ui-finance.ledger.view', gui: 'Finance: View ledger' },
   uiFinanceViewEditFiscalYear: {

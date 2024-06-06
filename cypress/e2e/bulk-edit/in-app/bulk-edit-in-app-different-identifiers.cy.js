@@ -66,10 +66,9 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
     });
 
-    // has to pass after UIBULKED-321
     it(
       'C360119 Verify that different Holdings identifiers are supported for Bulk edit (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');

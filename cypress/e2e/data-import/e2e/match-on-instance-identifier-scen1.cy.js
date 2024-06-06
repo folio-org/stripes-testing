@@ -2,7 +2,7 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
   DEFAULT_JOB_PROFILE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
@@ -53,7 +53,7 @@ describe('Data Import', () => {
         subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       instanceOption: 'Identifier: UPC',
     };
     const mappingProfile = {

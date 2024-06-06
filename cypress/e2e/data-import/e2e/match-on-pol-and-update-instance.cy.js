@@ -5,7 +5,7 @@ import {
   ACTION_NAMES_IN_ACTION_PROFILE,
   CALL_NUMBER_TYPE_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
   ITEM_STATUS_NAMES,
@@ -104,7 +104,7 @@ describe('Data Import', () => {
         subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       instanceOption: NewMatchProfile.optionsList.pol,
     };
 
@@ -151,6 +151,8 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
+      // delete created files
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
         Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
           Orders.deleteOrderViaApi(orderId[0].id);
@@ -178,8 +180,6 @@ describe('Data Import', () => {
             profile.mappingProfile.name,
           );
         });
-        // delete created files
-        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
         Users.deleteViaApi(user.userId);
       });
     });
@@ -218,7 +218,7 @@ describe('Data Import', () => {
 
     it(
       'C350944 Match on POL and update related Instance with source MARC, create Holdings, Item records. (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
       () => {
         // create mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);

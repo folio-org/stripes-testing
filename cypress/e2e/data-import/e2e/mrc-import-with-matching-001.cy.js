@@ -2,7 +2,7 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
   DEFAULT_JOB_PROFILE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
   RECORD_STATUSES,
@@ -28,6 +28,7 @@ import MatchProfiles from '../../../support/fragments/settings/dataImport/matchP
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -48,7 +49,7 @@ describe('Data Import', () => {
         field: '001',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const mappingProfile = {
       name: `autoTestMappingProf.${getRandomPostfix()}`,
@@ -84,6 +85,9 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
+      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         // clean up generated profiles
@@ -91,9 +95,6 @@ describe('Data Import', () => {
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-        // delete created files in fixtures
-        FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
-        FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       });
     });
 
@@ -120,12 +121,17 @@ describe('Data Import', () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
         InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-        cy.visit(TopMenu.dataExportPath);
+        // need to create a new file with instance UUID because tests are runing in multiple threads
+        cy.intercept('/search/instances/ids**').as('getIds');
+        cy.wait('@getIds', getLongDelay()).then((req) => {
+          const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
+
+          FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID[0]);
+        });
 
         // download exported marc file
         cy.getAdminToken();
+        cy.visit(TopMenu.dataExportPath);
         ExportFile.uploadFile(nameForCSVFile);
         ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
         ExportFile.getRecordHridOfExportedFile(nameForCSVFile).then((req) => {

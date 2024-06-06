@@ -3,7 +3,7 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
   ITEM_STATUS_NAMES,
@@ -127,7 +127,7 @@ describe('Data Import', () => {
             subfield: 'a',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+          existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
           instanceOption: NewMatchProfile.optionsList.pol,
         },
       },
@@ -139,7 +139,7 @@ describe('Data Import', () => {
             subfield: 'a',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+          existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
           holdingsOption: NewMatchProfile.optionsList.pol,
         },
       },
@@ -151,7 +151,7 @@ describe('Data Import', () => {
             subfield: 'a',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+          existingRecordType: EXISTING_RECORD_NAMES.ITEM,
           itemOption: NewMatchProfile.optionsList.pol,
         },
       },
@@ -267,7 +267,7 @@ describe('Data Import', () => {
             });
           },
         );
-        NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+        NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
           location.institutionId,
           location.campusId,
           location.libraryId,

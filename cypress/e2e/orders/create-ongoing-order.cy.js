@@ -47,7 +47,7 @@ describe('orders: create an order', () => {
 
   it(
     'C663 Create an order and at least one order line for an ongoing order (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
     () => {
       Orders.createOrder(order, true, false).then((orderId) => {
         order.id = orderId;

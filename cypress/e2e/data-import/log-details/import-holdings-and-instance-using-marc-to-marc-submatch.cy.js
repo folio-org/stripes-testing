@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
   INSTANCE_STATUS_TERM_NAMES,
@@ -155,7 +155,6 @@ describe('Data Import', () => {
         collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {
           cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         // create job profile for creating
@@ -168,7 +167,6 @@ describe('Data Import', () => {
           collectionOfMappingAndActionProfilesForCreate[1].actionProfile.name,
         );
         NewJobProfile.saveAndClose();
-        JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
       });
     });
 
@@ -233,7 +231,7 @@ describe('Data Import', () => {
               incomingStaticValue: 'Electronic Resource',
               incomingStaticRecordValue: 'Text',
               matchCriterion: 'Exactly matches',
-              existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+              existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
               existingRecordOption: NewMatchProfile.optionsList.instanceStatusTerm,
             },
           },
@@ -249,7 +247,7 @@ describe('Data Import', () => {
                 subfield: 'a',
               },
               matchCriterion: 'Exactly matches',
-              existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+              existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
             },
           },
         ];
@@ -416,7 +414,7 @@ describe('Data Import', () => {
             subfield: 'a',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+          existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
         };
         const jobProfileForUpdate = {
           ...NewJobProfile.defaultJobProfile,
@@ -583,7 +581,7 @@ describe('Data Import', () => {
                 subfield: 'a',
               },
               matchCriterion: 'Exactly matches',
-              existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+              existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
             },
           },
           {
@@ -592,7 +590,7 @@ describe('Data Import', () => {
               incomingStaticValue: 'Electronic Resource',
               incomingStaticRecordValue: 'Text',
               matchCriterion: 'Exactly matches',
-              existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+              existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
               existingRecordOption: NewMatchProfile.optionsList.instanceStatusTerm,
             },
           },
@@ -602,7 +600,7 @@ describe('Data Import', () => {
               incomingStaticValue: 'Electronic',
               incomingStaticRecordValue: 'Text',
               matchCriterion: 'Exactly matches',
-              existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+              existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
               existingRecordOption: NewMatchProfile.optionsList.holdingsType,
             },
           },

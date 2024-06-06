@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
   JOB_STATUS_NAMES,
@@ -119,7 +119,7 @@ describe('Data Import', () => {
         subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+      existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
       holdingsOption: NewMatchProfile.optionsList.holdingsHrid,
     };
     const jobProfileForUpdate = {
@@ -144,6 +144,8 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
@@ -164,14 +166,11 @@ describe('Data Import', () => {
           },
         );
       });
-
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     });
 
     it(
       'C401727 Verify that 3 successive update actions for Holdings proceed without errors (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
       () => {
         // create field mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();

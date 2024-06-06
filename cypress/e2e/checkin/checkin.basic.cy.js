@@ -108,7 +108,7 @@ describe('Check In - Actions ', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
     Users.deleteViaApi(userData.userId);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       defaultLocation.institutionId,
       defaultLocation.campusId,
       defaultLocation.libraryId,
@@ -117,22 +117,26 @@ describe('Check In - Actions ', () => {
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
-  it('C347631 Check in: Basic check in (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(10000);
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.waitLoading();
-    CheckInActions.checkInItemGui(itemData.barcode);
-    CheckInPane.verifyResultCells();
-    CheckInPane.checkResultsInTheRow(checkInResultsData);
-    CheckInActions.checkActionsMenuOptions();
-    CheckInActions.openLoanDetails(userData.username);
-    CheckInActions.openCheckInPane();
-    CheckInActions.openPatronDetails(userData.username);
-    CheckInActions.openCheckInPane();
-    CheckInActions.openItemDetails(itemData.barcode);
-    CheckInActions.openCheckInPane();
-    CheckInActions.openNewfeefinesPane();
-    CheckInActions.openCheckInPane();
-  });
+  it(
+    'C347631 Check in: Basic check in (vega)',
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    () => {
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(10000);
+      cy.visit(TopMenu.checkInPath);
+      CheckInActions.waitLoading();
+      CheckInActions.checkInItemGui(itemData.barcode);
+      CheckInPane.verifyResultCells();
+      CheckInPane.checkResultsInTheRow(checkInResultsData);
+      CheckInActions.checkActionsMenuOptions();
+      CheckInActions.openLoanDetails(userData.username);
+      CheckInActions.openCheckInPane();
+      CheckInActions.openPatronDetails(userData.username);
+      CheckInActions.openCheckInPane();
+      CheckInActions.openItemDetails(itemData.barcode);
+      CheckInActions.openCheckInPane();
+      CheckInActions.openNewfeefinesPane();
+      CheckInActions.openCheckInPane();
+    },
+  );
 });

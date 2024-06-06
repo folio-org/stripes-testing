@@ -19,6 +19,7 @@ import {
   Select,
   TextArea,
   TextField,
+  not,
 } from '../../../../interactors';
 import { BROWSE_CALL_NUMBER_OPTIONS } from '../../constants';
 import DateTools from '../../utils/dateTools';
@@ -95,6 +96,7 @@ const searchInstanceByHRID = (id) => {
     TextArea({ id: 'input-inventory-search' }).fillIn(id),
     searchButton.click(),
   ]);
+  cy.wait(2000);
 };
 
 const searchHoldingsByHRID = (hrid) => {
@@ -483,6 +485,22 @@ export default {
     );
   },
 
+  holdingsTabIsDefault() {
+    cy.do(
+      holdingsToggleButton.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
+
+  itemTabIsDefault() {
+    cy.do(
+      itemToggleButton.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
+
   browseSubjectsSearch(searchString = 'test123') {
     cy.do([
       browseButton.click(),
@@ -725,6 +743,19 @@ export default {
   verifyPanesExist() {
     cy.expect(paneFilterSection.exists());
     cy.expect(paneResultsSection.exists());
+  },
+
+  verifySearchOptionIncluded(searchOption, optionShown = true) {
+    if (optionShown) cy.expect(searchTypeDropdown.has({ content: including(searchOption) }));
+    else cy.expect(searchTypeDropdown.has({ content: not(including(searchOption)) }));
+  },
+
+  verifyDefaultSearchOptionSelected(defaultSearchOptionValue) {
+    cy.expect(searchTypeDropdown.has({ value: defaultSearchOptionValue }));
+  },
+
+  clickSearchOptionSelect() {
+    cy.do(searchTypeDropdown.click());
   },
 
   selectViewHoldings: () => cy.do(viewHoldingButton.click()),
