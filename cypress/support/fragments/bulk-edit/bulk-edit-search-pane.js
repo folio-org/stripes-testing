@@ -772,7 +772,16 @@ export default {
     });
   },
 
-  verifyElectronicAccessElementByIndex(index, expectedText) {
-    cy.get('[class^="ElectronicAccess"]').find('td').eq(index).should('contain.text', expectedText);
+  verifyElectronicAccessElementByIndex(index, expectedText, miniRowCount = 1) {
+    cy.get('[class^="ElectronicAccess"]')
+      .find('tr')
+      .eq(miniRowCount)
+      .find('td')
+      .eq(index)
+      .should('have.text', expectedText);
+  },
+
+  verifyRowHasEmptyElectronicAccess(index) {
+    cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
   },
 };
