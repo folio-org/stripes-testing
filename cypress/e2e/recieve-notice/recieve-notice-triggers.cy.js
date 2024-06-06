@@ -178,7 +178,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
           permissions.uiCirculationSettingsNoticeTemplates.gui,
           permissions.uiCirculationSettingsNoticePolicies.gui,
           permissions.loansAll.gui,
-          permissions.uiCirculationCreateViewOverdueFinesPolicies.gui
+          permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
         ],
         patronGroup.name,
       )
@@ -220,7 +220,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
       InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
     });
     cy.deleteLoanType(testData.loanTypeId);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

@@ -183,7 +183,7 @@ describe('Receiving notice: Checkout', () => {
       InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
     });
     cy.deleteLoanType(testData.loanTypeId);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

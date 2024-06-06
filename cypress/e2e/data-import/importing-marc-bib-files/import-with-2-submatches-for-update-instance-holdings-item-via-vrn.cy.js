@@ -93,7 +93,7 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C451467 Create simple item${getRandomPostfix()}`,
-          materialType: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
+          materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           status: ITEM_STATUS_NAMES.AVAILABLE,
         },

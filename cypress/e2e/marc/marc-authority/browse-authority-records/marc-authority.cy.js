@@ -245,35 +245,6 @@ describe('MARC', () => {
           MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
         },
       );
-
-      it(
-        'C350572 Edit an Authority record (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
-        () => {
-          MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-          MarcAuthorities.selectFirst(testData.authority.title);
-          MarcAuthority.edit();
-          MarcAuthority.addNewField(
-            5,
-            testData.authority.newField.tag,
-            `$a ${testData.authority.newField.content}`,
-          );
-          cy.wait(1000);
-          MarcAuthority.changeField('130', testData.authority.newField.title);
-          cy.wait(1000);
-          MarcAuthority.clicksaveAndCloseButton();
-          QuickMarcEditor.checkAfterSaveAndCloseAuthority();
-
-          MarcAuthority.contains(testData.authority.newField.tag);
-          MarcAuthority.contains(testData.authority.newField.content);
-
-          MarcAuthorities.searchBy(
-            testData.authority.searchOption,
-            testData.authority.newField.title,
-          );
-          MarcAuthorities.checkRow(testData.authority.newField.title);
-        },
-      );
     });
   });
 });

@@ -153,7 +153,7 @@ describe('Check In - Actions ', () => {
     UserEdit.changeServicePointPreferenceViaApi(userData[1].userId, [servicePoint.id]);
     Users.deleteViaApi(userData[0].userId);
     Users.deleteViaApi(userData[1].userId);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       defaultLocation.institutionId,
       defaultLocation.campusId,
       defaultLocation.libraryId,

@@ -49,7 +49,7 @@ describe('MARC', () => {
           },
         ];
         const linkedField = {
-          rowIndex: 9,
+          rowIndex: 10,
           tag: '100',
           secondBox: '1',
           thirdBox: '\\',
@@ -59,7 +59,7 @@ describe('MARC', () => {
           seventhBox: '$1 http://viaf.org/viaf/24074052',
         };
         const unlinkedField = {
-          rowIndex: 9,
+          rowIndex: 10,
           tag: '100',
           indicator0: '1',
           indicator1: '\\',

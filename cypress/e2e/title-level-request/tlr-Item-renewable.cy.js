@@ -233,7 +233,7 @@ describe('TLR: Item renew', () => {
     Users.deleteViaApi(userForRenew.userId);
     Users.deleteViaApi(userForCheckOut.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

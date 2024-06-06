@@ -240,7 +240,7 @@ describe('Request notice triggers', () => {
           permissions.checkoutAll.gui,
           permissions.okapiTimersPatch.gui,
           permissions.checkinAll.gui,
-          permissions.uiCirculationCreateViewOverdueFinesPolicies.gui
+          permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
         ],
         patronGroup.name,
       )
@@ -282,7 +282,7 @@ describe('Request notice triggers', () => {
     NoticePolicyApi.deleteViaApi(testData.noticePolicyId);
     PatronGroups.deleteViaApi(patronGroup.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instanceData.itemBarcode);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

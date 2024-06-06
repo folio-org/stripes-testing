@@ -125,7 +125,7 @@ describe('Loans', () => {
         InventoryInstance.deleteInstanceViaApi(item.instanceId);
       }));
       LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
-      Location.deleteViaApiIncludingInstitutionCampusLibrary(
+      Location.deleteInstitutionCampusLibraryLocationViaApi(
         defaultLocation.institutionId,
         defaultLocation.campusId,
         defaultLocation.libraryId,

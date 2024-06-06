@@ -14,7 +14,7 @@ describe('ui-finance: Funds', () => {
     cy.deleteLedgerApi(createdLedgerId);
   });
 
-  it('C343211 Delete Budget (thunderjet)', { tags: ['smoke', 'thunderjet'] }, () => {
+  it('C343211 Delete Budget (thunderjet)', { tags: ['smoke', 'thunderjet', 'shiftLeft'] }, () => {
     const quantityArray = [0, 100];
     const transactionFactory = new Transaction();
     Funds.createFundViaUI(fund).then((createdLedger) => {

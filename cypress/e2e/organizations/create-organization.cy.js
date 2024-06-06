@@ -20,8 +20,12 @@ describe('ui-organizations: Creating organization', () => {
     );
   });
 
-  it('C675 Create new organization record (thunderjet)', { tags: ['smoke', 'thunderjet'] }, () => {
-    Organizations.createOrganizationViaUi(organization);
-    Organizations.checkOrganizationInfo(organization);
-  });
+  it(
+    'C675 Create new organization record (thunderjet)',
+    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+    () => {
+      Organizations.createOrganizationViaUi(organization);
+      Organizations.checkOrganizationInfo(organization);
+    },
+  );
 });

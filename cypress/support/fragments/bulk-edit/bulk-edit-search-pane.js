@@ -762,7 +762,26 @@ export default {
     ]);
   },
 
-  verifyElectronicAccessElementByIndex(index, expectedText) {
-    cy.get('[class^="ElectronicAccess"]').find('td').eq(index).should('contain.text', expectedText);
+  checkboxWithTextAbsent(text) {
+    cy.get('[class^="ActionMenu-"]').within(() => {
+      cy.get('[class^="checkbox-"]').each(($checkbox) => {
+        cy.wrap($checkbox).should(($el) => {
+          expect($el.text().toLowerCase()).to.not.contain(text.toLowerCase());
+        });
+      });
+    });
+  },
+
+  verifyElectronicAccessElementByIndex(index, expectedText, miniRowCount = 1) {
+    cy.get('[class^="ElectronicAccess"]')
+      .find('tr')
+      .eq(miniRowCount)
+      .find('td')
+      .eq(index)
+      .should('have.text', expectedText);
+  },
+
+  verifyRowHasEmptyElectronicAccess(index) {
+    cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
   },
 };
