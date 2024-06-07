@@ -259,7 +259,7 @@ describe('Claimed Returned', () => {
     WaiveReasons.deleteViaApi(waiveReason.id);
     UsersOwners.deleteViaApi(ownerBody.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instanceData.item1Barcode);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

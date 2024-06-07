@@ -142,7 +142,7 @@ describe('Inventory', () => {
           ServicePoints.deleteViaApi(secondServicePoint.id);
           Users.deleteViaApi(userId);
         });
-        NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+        NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
           effectiveLocation.institutionId,
           effectiveLocation.campusId,
           effectiveLocation.libraryId,
@@ -197,8 +197,8 @@ describe('Inventory', () => {
         ItemRecordView.waitLoading();
         ItemRecordView.checkBarcode(barcode);
 
-        SwitchServicePoint.switchServicePoint(secondServicePoint.name);
         cy.visit(TopMenu.checkInPath);
+        SwitchServicePoint.switchServicePoint(secondServicePoint.name);
         CheckInActions.checkInItem(barcode);
         ConfirmItemInModal.confirmInTransitModal();
         cy.visit(TopMenu.inventoryPath);

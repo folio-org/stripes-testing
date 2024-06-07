@@ -93,7 +93,7 @@ describe('Title Level Request', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
       testData.folioInstances[0].barcodes[0],
     );
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

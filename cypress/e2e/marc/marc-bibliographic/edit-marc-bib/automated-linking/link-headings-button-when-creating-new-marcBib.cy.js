@@ -139,7 +139,7 @@ describe('MARC', () => {
 
             QuickMarcEditor.updateExistingField(
               testData.tags.tag245,
-              '$a A New Record $0 3052044C388562',
+              '$a A New Record $0 2052044C388562',
             );
             QuickMarcEditor.updateExistingField(
               newFieldsForC388562[3].tag,
@@ -159,7 +159,7 @@ describe('MARC', () => {
             InventoryInstance.verifyAndClickLinkIcon(newFieldsForC388562[0].tag);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
-            InventoryInstance.searchResultsWithOption('Identifier (all)', '3052044C388562');
+            InventoryInstance.searchResultsWithOption('Identifier (all)', '2052044C388562');
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
               newFieldsForC388562[0].tag,

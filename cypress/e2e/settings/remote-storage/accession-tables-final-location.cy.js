@@ -47,7 +47,7 @@ describe('Remote Storage: Accession tables', () => {
   after('Delete test data', () => {
     cy.getAdminToken();
     ServicePoints.deleteViaApi(testData.servicePoint.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.location.institutionId,
       testData.location.campusId,
       testData.location.libraryId,

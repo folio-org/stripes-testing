@@ -326,13 +326,13 @@ describe('Data Import', () => {
         InventorySearchAndFilter.searchInstanceByHRID(testData.firstHrid);
         InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.selectResultCheckboxes(1);
-        cy.intercept('/search/instances?query=id**').as('getIds');
         InventorySearchAndFilter.saveUUIDs();
+        // need to create a new file with instance UUID because tests are runing in multiple threads
+        cy.intercept('/search/instances/ids**').as('getIds');
         cy.wait('@getIds', getLongDelay()).then((req) => {
-          const expectedUUID = InventorySearchAndFilter.getUUIDFromRequest(req);
+          const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
 
-          FileManager.createFile(`cypress/fixtures/${csvFileName}`, expectedUUID);
-          FileManager.deleteFileFromDownloadsByMask('*SearchInstanceUUIDs*');
+          FileManager.createFile(`cypress/fixtures/${csvFileName}`, expectedUUID[0]);
         });
 
         // download exported marc file
@@ -556,13 +556,13 @@ describe('Data Import', () => {
         InventorySearchAndFilter.searchInstanceByHRID(testData.secondHrid);
         InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.selectResultCheckboxes(1);
-        cy.intercept('/search/instances?query=id**').as('getIds');
         InventorySearchAndFilter.saveUUIDs();
+        // need to create a new file with instance UUID because tests are runing in multiple threads
+        cy.intercept('/search/instances/ids**').as('getIds');
         cy.wait('@getIds', getLongDelay()).then((req) => {
-          const expectedUUID = InventorySearchAndFilter.getUUIDFromRequest(req);
+          const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
 
-          FileManager.createFile(`cypress/fixtures/${csvFileName}`, expectedUUID);
-          FileManager.deleteFileFromDownloadsByMask('*SearchInstanceUUIDs*');
+          FileManager.createFile(`cypress/fixtures/${csvFileName}`, expectedUUID[0]);
         });
 
         // download exported marc file

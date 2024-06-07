@@ -70,7 +70,7 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
       servicePoint: testData.servicePoint,
       shouldCheckIn: true,
     });
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

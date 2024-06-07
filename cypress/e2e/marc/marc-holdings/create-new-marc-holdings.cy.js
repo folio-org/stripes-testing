@@ -118,7 +118,7 @@ describe('MARC', () => {
       instanceIds.forEach((instanceId) => {
         InventoryInstance.deleteInstanceViaApi(instanceId);
       });
-      NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+      NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
         location.institutionId,
         location.campusId,
         location.libraryId,
@@ -175,7 +175,7 @@ describe('MARC', () => {
 
     it(
       'C350646 Create a new MARC Holdings record for existing "Instance" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'shiftLeft'] },
       () => {
         InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstances.searchByTitle(instanceIds[1]);
