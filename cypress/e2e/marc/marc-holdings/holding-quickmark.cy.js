@@ -2,7 +2,6 @@ import { calloutTypes } from '../../../../interactors';
 import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -43,7 +42,7 @@ describe('MARC', () => {
             });
           },
         );
-        JobProfiles.waitFileIsImported(fileName);
+        Logs.waitFileIsImported(fileName);
         Logs.checkJobStatus(fileName, 'Completed');
         Logs.openFileDetails(fileName);
         Logs.goToTitleLink(RECORD_STATUSES.CREATED);
