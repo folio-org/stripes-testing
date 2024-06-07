@@ -61,7 +61,7 @@ export default {
     const newFileName = fileName.replace(/\.mrc$/i, '');
 
     cy.do(
-      MultiColumnListCell({ content: newFileName }).perform((element) => {
+      MultiColumnListCell({ content: including(newFileName) }).perform((element) => {
         const rowNumber = element.parentElement.getAttribute('data-row-inner');
 
         cy.expect(
