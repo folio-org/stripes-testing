@@ -9,11 +9,28 @@ describe('Eureka', () => {
       resetLinkPath: '/users-keycloak/password-reset/link',
     };
 
+    const capabSetsToAssign = [
+      { type: 'Data', resource: 'UI-Users', action: 'View' },
+      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
+      { type: 'Procedural', resource: 'UI-Users Reset Password', action: 'Execute' },
+    ];
+    const capabsToAssign = [
+      { type: 'Data', resource: 'UI-Users', action: 'View' },
+      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
+      { type: 'Procedural', resource: 'UI-Users Reset Password', action: 'Execute' },
+    ];
+
     before('Create users', () => {
       cy.getAdminToken();
       cy.getUserGroups({ limit: 1 });
       cy.createTempUser([]).then((createdUserProperties) => {
         testData.tempUser = createdUserProperties;
+        cy.assignCapabilitiesToExistingUser(
+          testData.tempUser.userId,
+          capabsToAssign,
+          capabSetsToAssign,
+        );
+        cy.updateRolesForUserApi(testData.tempUser.userId, []);
         cy.createTempUser([]).then((createdUserAProperties) => {
           testData.userA = createdUserAProperties;
           cy.login(testData.tempUser.username, testData.tempUser.password, {
