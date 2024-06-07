@@ -12,7 +12,7 @@ describe('ui-finance: Funds', () => {
     cy.deleteLedgerApi(createdLedgerId);
   });
 
-  it('C4052 Create a new fund (thunderjet)', { tags: ['smoke', 'thunderjet'] }, () => {
+  it('C4052 Create a new fund (thunderjet)', { tags: ['smoke', 'thunderjet', 'shiftLeft'] }, () => {
     Funds.createFundViaUI(fund).then((createdLedger) => {
       createdLedgerId = createdLedger.id;
       Funds.deleteFundViaActions();

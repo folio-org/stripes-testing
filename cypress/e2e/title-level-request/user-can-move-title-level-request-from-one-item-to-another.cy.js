@@ -76,7 +76,7 @@ describe('Title Level Request', () => {
         servicePoint: testData.servicePoint,
       });
     });
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

@@ -114,7 +114,7 @@ describe('Title level Request', () => {
     ]);
     Users.deleteViaApi(users.mainUser.userId);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

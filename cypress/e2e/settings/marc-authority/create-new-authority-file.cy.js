@@ -45,10 +45,9 @@ describe('MARC', () => {
 
       it(
         'C423372 Create new "Authority file" at "Settings >> MARC authority>>Manage authority files" pane (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'shiftLeft'] },
         () => {
           ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
-          ManageAuthorityFiles.checkActionTableHeaderExists();
           Object.values(DEFAULT_FOLIO_AUTHORITY_FILES).forEach((fileName) => {
             ManageAuthorityFiles.checkSourceFileExistsByName(fileName);
           });

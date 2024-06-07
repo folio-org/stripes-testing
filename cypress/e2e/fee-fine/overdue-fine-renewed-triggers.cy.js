@@ -276,7 +276,7 @@ describe('Overdue fine', () => {
     InventoryInstance.deleteInstanceViaApi(itemData.instanceId);
     PaymentMethods.deleteViaApi(testData.paymentMethod.id);
     UsersOwners.deleteViaApi(userOwnerBody.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
@@ -294,7 +294,7 @@ describe('Overdue fine', () => {
 
   it(
     'C347875 Overdue fine, renewed triggers (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       noticeTemplates.forEach((template, index) => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);

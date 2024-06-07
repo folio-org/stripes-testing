@@ -214,7 +214,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     UserEdit.changeServicePointPreferenceViaApi(secondUser.userId, [servicePoint.id]);
     Users.deleteViaApi(firstUser.userId);
     Users.deleteViaApi(secondUser.userId);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       defaultLocation.institutionId,
       defaultLocation.campusId,
       defaultLocation.libraryId,
