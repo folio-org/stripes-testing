@@ -58,7 +58,8 @@ export default {
   checkStatusOfJobProfile: (status = 'Completed', rowNumber = 0) => cy.do(MultiColumnListCell({ row: rowNumber, content: status }).exists()),
 
   checkJobStatus: (fileName, status) => {
-    const newFileName = fileName.replace('/.mrc/i', '');
+    const newFileName = fileName.replace(/\.mrc$/i, '');
+
     cy.do(
       MultiColumnListCell({ content: newFileName }).perform((element) => {
         const rowNumber = element.parentElement.getAttribute('data-row-inner');
