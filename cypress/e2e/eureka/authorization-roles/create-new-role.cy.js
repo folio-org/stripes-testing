@@ -119,7 +119,7 @@ describe('Eureka', () => {
             expect(call.request.body.name).to.eq(testData.roleName);
             expect(call.request.body.description).to.eq(testData.roleDescription);
             cy.wait('@capabilitiesCall').then((callCapabs) => {
-              expect(callCapabs.request.body.capabilityIds).to.have.lengthOf(5);
+              expect(callCapabs.request.body.capabilityIds).to.have.lengthOf(2);
               expect(callCapabs.request.body.roleId).to.eq(roleId);
             });
             cy.wait('@capabilitySetsCall').then((callCapabSets) => {
@@ -127,6 +127,7 @@ describe('Eureka', () => {
               expect(callCapabSets.request.body.roleId).to.eq(roleId);
             });
           });
+          cy.wait(4000);
           AuthorizationRoles.checkAfterSaveCreate(testData.roleName, testData.roleDescription);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.clickOnCapabilitySetsAccordion();

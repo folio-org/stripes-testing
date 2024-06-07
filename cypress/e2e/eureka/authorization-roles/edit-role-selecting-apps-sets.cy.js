@@ -115,7 +115,7 @@ describe('Eureka', () => {
         capabIds: [],
       };
 
-      const regExpBase = `\\?limit=\\d{1,}&query=applicationId=${testData.newApplication}-.{1,}`;
+      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${testData.newApplication}-.{1,}\\)`;
       const capabilitiesCallRegExp = new RegExp(`\\/capabilities${regExpBase}`);
       const capabilitySetsCallRegExp = new RegExp(`\\/capability-sets${regExpBase}`);
 

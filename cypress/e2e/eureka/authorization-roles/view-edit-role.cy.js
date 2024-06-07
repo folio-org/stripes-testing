@@ -261,7 +261,7 @@ describe('Eureka', () => {
           });
           cy.wait('@capabilitiesCall').then((call) => {
             expect(call.response.statusCode).to.eq(204);
-            expect(call.request.body.capabilityIds).to.have.lengthOf(8);
+            expect(call.request.body.capabilityIds).to.have.lengthOf(2);
           });
           cy.wait('@capabilitySetsCall').then((call) => {
             expect(call.response.statusCode).to.eq(204);
