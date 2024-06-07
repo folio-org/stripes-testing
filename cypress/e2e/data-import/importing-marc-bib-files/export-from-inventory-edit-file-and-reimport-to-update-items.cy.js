@@ -137,7 +137,7 @@ describe('Data Import', () => {
         mappingProfileIds.push(mappingProfileResponse.body.id);
 
         NewActionProfile.createActionProfileViaApi(
-          actionProfilesForCreate[1].actionProfile,
+          actionProfilesForCreate[0].actionProfile,
           mappingProfileResponse.body.id,
         ).then((actionProfileResponse) => {
           actionProfileIds.push(actionProfileResponse.body.id);
@@ -149,7 +149,7 @@ describe('Data Import', () => {
         mappingProfileIds.push(mappingProfileResponse.body.id);
 
         NewActionProfile.createActionProfileViaApi(
-          actionProfilesForCreate[2].actionProfile,
+          actionProfilesForCreate[1].actionProfile,
           mappingProfileResponse.body.id,
         ).then((actionProfileResponse) => {
           actionProfileIds.push(actionProfileResponse.body.id);
@@ -160,7 +160,7 @@ describe('Data Import', () => {
           mappingProfileIds.push(mappingProfileResponse.body.id);
 
           NewActionProfile.createActionProfileViaApi(
-            actionProfilesForCreate[3].actionProfile,
+            actionProfilesForCreate[2].actionProfile,
             mappingProfileResponse.body.id,
           ).then((actionProfileResponse) => {
             actionProfileIds.push(actionProfileResponse.body.id);
@@ -238,13 +238,13 @@ describe('Data Import', () => {
           ItemRecordView.closeDetailView();
           InventorySearchAndFilter.searchByParameter('Subject', instance.instanceSubject);
           InventorySearchAndFilter.selectResultCheckboxes(1);
-          cy.intercept('/search/instances?query=id**').as('getIds');
           InventorySearchAndFilter.saveUUIDs();
+          // need to create a new file with instance UUID because tests are runing in multiple threads
+          cy.intercept('/search/instances/ids**').as('getIds');
           cy.wait('@getIds', getLongDelay()).then((req) => {
-            const expectedUUID = InventorySearchAndFilter.getUUIDFromRequest(req);
+            const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
 
-            FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID);
-            FileManager.deleteFileFromDownloadsByMask('*SearchInstanceUUIDs*');
+            FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID[0]);
           });
 
           // download exported marc file
