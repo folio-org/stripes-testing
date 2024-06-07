@@ -36,7 +36,7 @@ describe('Inventory', () => {
       Users.deleteViaApi(userId);
     });
 
-    it('C343215 Filter instances by tags (volaris)', { tags: ['smoke', 'volaris'] }, () => {
+    it('C343215 Filter instances by tags (volaris)', { tags: ['smoke', 'volaris', 'shiftLeft'] }, () => {
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.verifyPanesExist();
       InventorySearchAndFilter.searchInstanceByTitle(instanceRecord.instanceTitle);
