@@ -89,23 +89,34 @@ describe('Data Import', () => {
     const linkingTagAndValues = [
       {
         rowIndex: 32,
-        value: 'Coates, Ta-Nehisi',
+        value: 'C385673 Coates, Ta-Nehisi',
         tag: 100,
       },
       {
         rowIndex: 74,
-        value: 'Chin, Staceyann, C385673',
+        value: 'C385673 Chin, Staceyann',
         tag: 700,
       },
       {
         rowIndex: 77,
-        value: 'Lee, Stan, 1922-2018',
+        value: 'C385673 Lee, Stan, 1922-2018',
         tag: 700,
       },
     ];
     const createdAuthorityIDs = [];
 
     before('Creating user', () => {
+      cy.getAdminToken();
+      // make sure there are no duplicate records in the system
+      MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C385673*"' }).then(
+        (records) => {
+          records.forEach((record) => {
+            if (record.authRefType === 'Authorized') {
+              MarcAuthority.deleteViaAPI(record.id, true);
+            }
+          });
+        },
+      );
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
@@ -212,8 +223,11 @@ describe('Data Import', () => {
         DataImport.editMarcFile(
           nameForExportedMarcFile,
           nameForUpdatedMarcFile,
-          ['aCoates, Ta-Nehisi', 'aLee, Stan,'],
-          ['aCoates, Ta-NehisiaNarrator9f01479eWriter', 'aLee, Stan,aAnother author9f01479eAUTHOR'],
+          ['aC385673 Coates, Ta-Nehisi', 'aC385673 Lee, Stan,'],
+          [
+            'aC385673 Coates, Ta-NehisiaNarrator9f01479eWriter',
+            'aC385673 Lee, Stan,aAnother author9f01479eAUTHOR',
+          ],
         );
 
         // upload the exported marc file with 999.f.f.s fields
@@ -237,7 +251,7 @@ describe('Data Import', () => {
           '100',
           '1',
           '\\',
-          '$a Coates, Ta-Nehisi',
+          '$a C385673 Coates, Ta-Nehisi',
           '$e Writer $e author.',
           '$0 http://id.loc.gov/authorities/names/n2008001084',
           '',
@@ -247,7 +261,7 @@ describe('Data Import', () => {
           '700',
           '1',
           '\\',
-          '$a Chin, Staceyann, C385673',
+          '$a C385673 Chin, Staceyann',
           '$e letterer.',
           '$0 http://id.loc.gov/authorities/names/n2008052404',
           '',
@@ -257,7 +271,7 @@ describe('Data Import', () => {
           '700',
           '1',
           '\\',
-          '$a Lee, Stan, $d 1922-2018',
+          '$a C385673 Lee, Stan, $d 1922-2018',
           '$e AUTHOR $e creator',
           '$0 http://id.loc.gov/authorities/names/n83169267',
           '',
