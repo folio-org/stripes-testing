@@ -7,5 +7,5 @@ FROM cypress/browsers
 
 COPY . /opt/app
 WORKDIR /opt/app
-RUN npm install --save-dev cypress
+#RUN npm install --save-dev cypress
 RUN yarn config set @folio:registry https://repository.folio.org/repository/npm-folioci/
