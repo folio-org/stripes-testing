@@ -281,7 +281,7 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       cy.getAdminToken().then(() => {
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.name);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         collectionOfMatchProfiles.forEach((profile) => {
           SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
@@ -328,7 +328,7 @@ describe('Data Import', () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePath, nameMarcFileForImportCreate);
         JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(jobProfileForCreate.profile.name);
+        JobProfiles.search(jobProfileForCreate.name);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameMarcFileForImportCreate);
         Logs.checkJobStatus(nameMarcFileForImportCreate, JOB_STATUS_NAMES.COMPLETED);
