@@ -99,7 +99,7 @@ describe('Data Import', () => {
           name: `C430253 item mapping profile${getRandomPostfix()}`,
           materialType: 'book',
           permanentLoanType: 'Can circulate',
-          status: 'Available',
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           name: `C430253 item action profile${getRandomPostfix()}`,

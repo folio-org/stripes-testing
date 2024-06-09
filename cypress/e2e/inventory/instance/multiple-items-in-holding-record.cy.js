@@ -3,6 +3,7 @@ import { InventoryInstances } from '../../../support/fragments/inventory';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -82,8 +83,8 @@ describe('Inventory', () => {
           InventoryInstance.checkHoldingsTableContent({
             name: location.name,
             records: [
-              { status: 'Available', location: location.name },
-              { status: 'Available', location: location.name },
+              { status: ITEM_STATUS_NAMES.AVAILABLE, location: location.name },
+              { status: ITEM_STATUS_NAMES.AVAILABLE, location: location.name },
             ],
           });
         });

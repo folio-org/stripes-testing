@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, RECORD_STATUSES, ITEM_STATUS_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
@@ -50,7 +50,7 @@ describe('Data Import', () => {
           name: `C404412 autotest_item_mapping_profile_${getRandomPostfix()}`,
           materialType: 'book',
           permanentLoanType: 'Can circulate',
-          status: 'Available',
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           name: `C404412 autotest_item_action_profile_${getRandomPostfix()}`,

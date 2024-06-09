@@ -73,7 +73,7 @@ describe('Data Import', () => {
       name: `C11123 autotest_item_mapping_profile_${getRandomPostfix()}`,
       materialType: 'book',
       permanentLoanType: 'Can circulate',
-      status: 'Available',
+      status: ITEM_STATUS_NAMES.AVAILABLE,
     };
     const actionProfilesForCreate = [
       {

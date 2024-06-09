@@ -16,6 +16,7 @@ import {
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 import InstanceStates from '../instanceStates';
+import { ITEM_STATUS_NAMES } from '../../../constants';
 
 const saveAndCloseBtn = Button('Save & close');
 const cancelBtn = Button('Cancel');
@@ -103,7 +104,7 @@ export default {
         method: 'POST',
         path: 'inventory/items',
         body: {
-          status: { name: 'Available' },
+          status: { name: ITEM_STATUS_NAMES.AVAILABLE },
           holdingsRecordId: holdingsId,
           boundWithTitles: [],
           barcode: itemBarcode,

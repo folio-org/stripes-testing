@@ -1,18 +1,19 @@
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
+import Checkout from '../../../support/fragments/checkout/checkout';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import Checkout from '../../../support/fragments/checkout/checkout';
-import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
 
 let user;
 let servicePointId;
@@ -76,7 +77,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.replaceItemStatus('Available');
+        BulkEditActions.replaceItemStatus(ITEM_STATUS_NAMES.AVAILABLE);
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
         BulkEditSearchPane.verifyReasonForError('New status value "Available" is not allowed');
