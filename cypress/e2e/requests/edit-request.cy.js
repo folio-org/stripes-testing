@@ -40,7 +40,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
 
   it(
     'C556 Request: Edit requests. Make sure that edits are being saved. (vega)',
-    { tags: ['smoke', 'vega', 'system'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       [

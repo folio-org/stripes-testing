@@ -13,6 +13,7 @@ const rootModal = Modal('Select item');
 
 export default {
   waitLoading: () => {
+    cy.wait(1000);
     cy.expect(rootModal.exists());
   },
 
@@ -21,6 +22,7 @@ export default {
   },
 
   checkIsRequestMovedSuccessfully() {
+    cy.wait(1000);
     cy.expect(Pane(including('Request queue on instance')).exists());
     InteractorsTools.checkCalloutMessage('Request has been moved successfully');
   },

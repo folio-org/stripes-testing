@@ -216,7 +216,7 @@ describe('Patron notices', () => {
       Users.deleteViaApi(testData.user.userId);
       PatronGroups.deleteViaApi(patronGroup.id);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instanceData.itemBarcode);
-      Location.deleteViaApiIncludingInstitutionCampusLibrary(
+      Location.deleteInstitutionCampusLibraryLocationViaApi(
         testData.defaultLocation.institutionId,
         testData.defaultLocation.campusId,
         testData.defaultLocation.libraryId,

@@ -129,7 +129,7 @@ describe('orders: Edifact export', () => {
     cy.loginAsAdmin();
     cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
     Organizations.deleteOrganizationViaApi(organization.id);
-    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+    NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
       location.institutionId,
       location.campusId,
       location.libraryId,

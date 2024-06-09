@@ -116,7 +116,7 @@ describe('Check Out - Actions ', () => {
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroupId);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       defaultLocation.institutionId,
       defaultLocation.campusId,
       defaultLocation.libraryId,
@@ -127,7 +127,7 @@ describe('Check Out - Actions ', () => {
 
   it(
     'C356772 An active user with barcode can Check out item (vega)',
-    { tags: ['smoke', 'vega', 'system'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
     () => {
       cy.visit(TopMenu.checkOutPath);
       Checkout.waitLoading();
