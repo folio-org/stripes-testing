@@ -133,7 +133,7 @@ describe('Loans', () => {
       );
     });
 
-    it('C10959 Loans: Claim returned (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
+    it('C10959 Loans: Claim returned (vega)', { tags: ['smoke', 'vega', 'system', 'shiftLeft'] }, () => {
       const selectedItems = [];
       let claimedReturnedLoansQuantity;
       let selectedItem = folioInstances.find(
