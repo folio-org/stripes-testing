@@ -298,7 +298,10 @@ export default {
 
   checkManageAuthorityFilesPaneExists(isExist = true) {
     if (isExist) {
-      cy.expect(manageAuthorityFilesPane.exists());
+      cy.expect([
+        manageAuthorityFilesPane.exists(),
+        manageAuthorityFilesPane.has({ isFullScreenView: true }),
+      ]);
     } else {
       cy.expect(manageAuthorityFilesPane.absent());
     }

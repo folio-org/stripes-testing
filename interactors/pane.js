@@ -53,6 +53,7 @@ export default HTML.extend('pane')
       return undefined;
     },
     id: (el) => el.getAttribute('id'),
+    isFullScreenView: (el) => el.getAttribute('style') === 'flex: 0 0 100%; left: 0px;',
   })
   .actions({
     dismiss: (interactor) => interactor.find(Button({ ariaLabel: 'Close ' })).click(),
