@@ -40,7 +40,10 @@ export default {
   },
 
   verifyActionMenuAbsent: () => cy.expect(viewPane.find(actionsButton).absent()),
-  verifyMatchProfileTitleName: (profileName) => cy.get('#view-match-profile-pane-content h2').should('have.text', profileName),
+  verifyMatchProfileTitleName: (profileName) => {
+    cy.wait(1000);
+    cy.get('#view-match-profile-pane-content h2').should('have.text', profileName);
+  },
   verifyMatchProfileWithIncomingAndExistingValue(
     { profileName, incomingRecordFields, existingRecordFields, existingRecordType },
     recordType,

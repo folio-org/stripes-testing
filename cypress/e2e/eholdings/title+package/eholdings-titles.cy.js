@@ -145,23 +145,27 @@ describe('eHoldings', () => {
       },
     );
 
-    it('C693 Create a custom title. (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
-      cy.createTempUser([
-        permissions.uieHoldingsRecordsEdit.gui,
-        permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
-      ]).then((userProperties) => {
-        userId = userProperties.userId;
-        eHoldingsPackages.getCustomPackageViaApi().then((packageName) => {
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: eHoldingsTitlesSearch.waitLoading,
+    it(
+      'C693 Create a custom title. (spitfire)',
+      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      () => {
+        cy.createTempUser([
+          permissions.uieHoldingsRecordsEdit.gui,
+          permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
+        ]).then((userProperties) => {
+          userId = userProperties.userId;
+          eHoldingsPackages.getCustomPackageViaApi().then((packageName) => {
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.eholdingsPath,
+              waiter: eHoldingsTitlesSearch.waitLoading,
+            });
+            eHoldingSearch.switchToTitles();
+            const title = eHoldingsTitles.create(packageName);
+            eHoldingsResourceView.checkNames(packageName, title);
           });
-          eHoldingSearch.switchToTitles();
-          const title = eHoldingsTitles.create(packageName);
-          eHoldingsResourceView.checkNames(packageName, title);
         });
-      });
-    });
+      },
+    );
 
     it(
       'C157916 Title - Packages accordion - Filter by Holding Status (spitfire)',

@@ -169,7 +169,7 @@ describe('Data Import', () => {
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-      NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+      NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
         testData.collegeLocation.institutionId,
         testData.collegeLocation.campusId,
         testData.collegeLocation.libraryId,

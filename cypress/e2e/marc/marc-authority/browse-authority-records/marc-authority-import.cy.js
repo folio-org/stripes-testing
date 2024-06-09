@@ -1,7 +1,6 @@
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -73,7 +72,7 @@ describe('MARC', () => {
               });
             },
           );
-          JobProfiles.waitFileIsImported(fileName);
+          Logs.waitFileIsImported(fileName);
           Logs.checkJobStatus(fileName, 'Completed');
           Logs.openFileDetails(fileName);
           Logs.goToTitleLink('Chemistry, Organic');
@@ -88,7 +87,7 @@ describe('MARC', () => {
 
       it(
         'C360521 Import of "MARC Authority" record with valid prefix in "010 $a" field only (spitfire)',
-        { tags: ['smoke', 'authority', 'spitfire'] },
+        { tags: ['smoke', 'authority', 'spitfire', 'shiftLeft'] },
         () => {
           DataImport.uploadFileViaApi(
             'corporate_name(prefix_in_010Sa)sc_02.mrc',
@@ -99,7 +98,7 @@ describe('MARC', () => {
               createdAuthorityIDs.push(record[propertyName].id);
             });
           });
-          JobProfiles.waitFileIsImported(fileName);
+          Logs.waitFileIsImported(fileName);
           Logs.checkJobStatus(fileName, 'Completed');
           Logs.openFileDetails(fileName);
           Logs.goToTitleLink('Apple Academic Press');
@@ -114,7 +113,7 @@ describe('MARC', () => {
 
       it(
         'C360522 Import of "MARC Authority" record with same valid prefixes in "001" and "010 $a" fields (spitfire)',
-        { tags: ['smoke', 'authority', 'spitfire'] },
+        { tags: ['smoke', 'authority', 'spitfire', 'shiftLeft'] },
         () => {
           DataImport.uploadFileViaApi(
             'D_genre(prefixes_in_001_010Sa)sc_03.mrc',
@@ -125,7 +124,7 @@ describe('MARC', () => {
               createdAuthorityIDs.push(record[propertyName].id);
             });
           });
-          JobProfiles.waitFileIsImported(fileName);
+          Logs.waitFileIsImported(fileName);
           Logs.checkJobStatus(fileName, 'Completed');
           Logs.openFileDetails(fileName);
           Logs.goToTitleLink('Case Reports');

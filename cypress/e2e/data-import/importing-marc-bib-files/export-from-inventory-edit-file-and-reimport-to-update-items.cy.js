@@ -33,6 +33,7 @@ import MatchProfiles from '../../../support/fragments/settings/dataImport/matchP
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -136,7 +137,7 @@ describe('Data Import', () => {
         mappingProfileIds.push(mappingProfileResponse.body.id);
 
         NewActionProfile.createActionProfileViaApi(
-          actionProfilesForCreate[1].actionProfile,
+          actionProfilesForCreate[0].actionProfile,
           mappingProfileResponse.body.id,
         ).then((actionProfileResponse) => {
           actionProfileIds.push(actionProfileResponse.body.id);
@@ -148,7 +149,7 @@ describe('Data Import', () => {
         mappingProfileIds.push(mappingProfileResponse.body.id);
 
         NewActionProfile.createActionProfileViaApi(
-          actionProfilesForCreate[2].actionProfile,
+          actionProfilesForCreate[1].actionProfile,
           mappingProfileResponse.body.id,
         ).then((actionProfileResponse) => {
           actionProfileIds.push(actionProfileResponse.body.id);
@@ -159,7 +160,7 @@ describe('Data Import', () => {
           mappingProfileIds.push(mappingProfileResponse.body.id);
 
           NewActionProfile.createActionProfileViaApi(
-            actionProfilesForCreate[3].actionProfile,
+            actionProfilesForCreate[2].actionProfile,
             mappingProfileResponse.body.id,
           ).then((actionProfileResponse) => {
             actionProfileIds.push(actionProfileResponse.body.id);
@@ -238,7 +239,13 @@ describe('Data Import', () => {
           InventorySearchAndFilter.searchByParameter('Subject', instance.instanceSubject);
           InventorySearchAndFilter.selectResultCheckboxes(1);
           InventorySearchAndFilter.saveUUIDs();
-          ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+          // need to create a new file with instance UUID because tests are runing in multiple threads
+          cy.intercept('/search/instances/ids**').as('getIds');
+          cy.wait('@getIds', getLongDelay()).then((req) => {
+            const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
+
+            FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID[0]);
+          });
 
           // download exported marc file
           cy.visit(TopMenu.dataExportPath);

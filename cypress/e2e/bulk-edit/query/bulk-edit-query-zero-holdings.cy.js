@@ -32,7 +32,7 @@ describe('bulk-edit', () => {
 
     it(
       'C446067 Verify the "Run query" button, when the query returns 0 - holdings (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkHoldingsRadio();

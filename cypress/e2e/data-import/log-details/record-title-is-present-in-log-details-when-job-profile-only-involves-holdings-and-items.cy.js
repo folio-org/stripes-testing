@@ -38,6 +38,7 @@ import NewMatchProfile from '../../../support/fragments/settings/dataImport/matc
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -326,7 +327,13 @@ describe('Data Import', () => {
         InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(csvFileName, 'SearchInstanceUUIDs*');
+        // need to create a new file with instance UUID because tests are runing in multiple threads
+        cy.intercept('/search/instances/ids**').as('getIds');
+        cy.wait('@getIds', getLongDelay()).then((req) => {
+          const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
+
+          FileManager.createFile(`cypress/fixtures/${csvFileName}`, expectedUUID[0]);
+        });
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);
@@ -550,7 +557,13 @@ describe('Data Import', () => {
         InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(csvFileName, 'SearchInstanceUUIDs*');
+        // need to create a new file with instance UUID because tests are runing in multiple threads
+        cy.intercept('/search/instances/ids**').as('getIds');
+        cy.wait('@getIds', getLongDelay()).then((req) => {
+          const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
+
+          FileManager.createFile(`cypress/fixtures/${csvFileName}`, expectedUUID[0]);
+        });
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);

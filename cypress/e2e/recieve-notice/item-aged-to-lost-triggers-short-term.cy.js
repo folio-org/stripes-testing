@@ -228,7 +228,7 @@ describe.skip('Patron notices', () => {
       testData.folioInstances.forEach((instance) => {
         InventoryInstances.deleteInstanceViaApi({ instance });
       });
-      Location.deleteViaApiIncludingInstitutionCampusLibrary(
+      Location.deleteInstitutionCampusLibraryLocationViaApi(
         testData.defaultLocation.institutionId,
         testData.defaultLocation.campusId,
         testData.defaultLocation.libraryId,

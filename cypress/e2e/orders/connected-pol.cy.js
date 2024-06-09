@@ -37,7 +37,7 @@ describe('orders: create an order', () => {
 
   it(
     'C10926 Populate POL details from Inventory instance (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
     () => {
       Orders.createOrder(order).then((orderId) => {
         order.id = orderId;
