@@ -1103,6 +1103,10 @@ export default {
     );
   },
 
+  unreleaseEncumbranceButtonAbsent: () => {
+    cy.expect(transactionDetailSection.find(Button('Unrelease encumbrance')).absent());
+  },
+
   unreleaseEncumbrance: () => {
     cy.do(transactionDetailSection.find(Button('Unrelease encumbrance')).click());
     cy.expect(unreleaseEncumbranceModal.exists());

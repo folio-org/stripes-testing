@@ -235,7 +235,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
 
   it(
     'C347862 Check out + Loan due date change + Check in triggers (volaris)',
-    { tags: ['smoke', 'volaris'] },
+    { tags: ['smoke', 'volaris', 'shiftLeft'] },
     () => {
       noticeTemplates.forEach((template) => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(template);
