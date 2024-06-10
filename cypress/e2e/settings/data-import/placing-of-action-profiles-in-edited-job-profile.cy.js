@@ -138,6 +138,7 @@ describe('Data Import', () => {
         // wait for the action profile to be linked
         cy.wait(1000);
         JobProfileEdit.saveAndClose();
+        cy.wait(1000);
         JobProfileView.verifyLinkedProfiles(
           [
             matchProfile.profileName,
