@@ -20,6 +20,7 @@ describe('Data Import', () => {
       pathToStaticFile: 'oneMarcBib.mrc',
       jobProfileName: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       fileNameForFailedImport: `C11113test${getRandomPostfix()}.mrc`,
+      fileName: `C11113test${getRandomPostfix()}.mrc`,
       fileNameForSuccessfulImport: `C11113test${getRandomPostfix()}.mrc`,
       oclcNumber: '1234567',
       OCLCAuthentication: '100481406/PAOLF',
@@ -39,22 +40,20 @@ describe('Data Import', () => {
         testData.user = userProperties;
 
         // Create file dynamically with given name and content in fixtures
-        FileManager.createFile(`cypress/fixtures/${testData.fileNameForFailedImport}`);
+        FileManager.createFile(`cypress/fixtures/${testData.fileName}`);
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
         DataImport.verifyUploadState();
-        // remove generated test file from fixtures after uploading
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(testData.pathToStaticFile, testData.fileNameForFailedImport);
+        DataImport.uploadFile(testData.fileName, testData.fileNameForFailedImport);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(testData.fileNameForFailedImport);
-        Logs.checkStatusOfJobProfile();
-        cy.wait(2000);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.FAILED);
+
         DataImport.uploadFileViaApi(
           testData.pathToStaticFile,
           `C11113 autotestFileName ${getRandomPostfix()}`,
@@ -64,7 +63,7 @@ describe('Data Import', () => {
         });
 
         // Remove generated test files from fixtures after uploading
-        FileManager.deleteFile(`cypress/fixtures/${testData.fileNameForFailedImport}`);
+        FileManager.deleteFile(`cypress/fixtures/${testData.fileName}`);
       });
     });
 
@@ -100,10 +99,11 @@ describe('Data Import', () => {
 
       // api endpoint expects completedDate increased by 1 day
       completedDate.setDate(completedDate.getDate() + 1);
-
+      cy.wait(1500);
       LogsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });
-
+      cy.wait(1500);
       const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
+      cy.wait(1500);
       LogsViewAll.checkByDate({ from: formattedStart, end: formattedEnd });
       LogsViewAll.resetAllFilters();
 
