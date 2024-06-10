@@ -30,7 +30,9 @@ describe('lists', () => {
     });
 
     afterEach('Delete a user', () => {
-      cy.getUserToken(firstUser.username, firstUser.password);
+      // eslint-disable-next-line spaced-comment
+      //cy.getUserToken(firstUser.username, firstUser.password);
+      cy.getAdminToken();
       Lists.getViaApi().then((response) => {
         const filteredItem = response.body.content.find((item) => item.name === listData.name);
         Lists.deleteViaApi(filteredItem.id);
@@ -41,9 +43,12 @@ describe('lists', () => {
     });
 
     it('C411733 Edit list: Make the list Private (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      cy.login(firstUser.username, firstUser.password);
+      // eslint-disable-next-line spaced-comment
+      //cy.login(userData.username, userData.password);
+      cy.loginAsAdmin();
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
+      Lists.resetAll();
       Lists.openNewListPane();
       Lists.setName(listData.name);
       Lists.setDescription(listData.name);
@@ -75,9 +80,12 @@ describe('lists', () => {
     });
 
     it('C411736 Edit list: Make the list Shared (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      cy.login(firstUser.username, firstUser.password);
+      // eslint-disable-next-line spaced-comment
+      //cy.login(userData.username, userData.password);
+      cy.loginAsAdmin();
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
+      Lists.resetAll();
       Lists.openNewListPane();
       Lists.setName(listData.name);
       Lists.setDescription(listData.name);
