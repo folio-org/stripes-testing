@@ -186,6 +186,17 @@ export default {
     cy.expect(fundFormSection.find(locationSection).exists());
   },
 
+  varifyLocationInSection: (locationName) => {
+    cy.get('#locations').find('ul[class^=list-]').contains(locationName).should('exist');
+  },
+
+  verifyCheckboxState: (checkboxLabel, expectedState) => {
+    cy.contains('[class^="labelText"]', checkboxLabel)
+      .parent('label')
+      .find('input[type="checkbox"]')
+      .should(expectedState ? 'be.checked' : 'not.be.checked');
+  },
+
   varifyLocationSectionAbsent() {
     cy.expect(fundFormSection.find(locationSection).absent());
   },
