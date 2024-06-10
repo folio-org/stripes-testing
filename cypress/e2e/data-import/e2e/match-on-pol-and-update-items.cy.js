@@ -3,10 +3,11 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
   ITEM_STATUS_NAMES,
+  JOB_STATUS_NAMES,
   LOCATION_NAMES,
   ORDER_STATUSES,
   RECORD_STATUSES,
@@ -47,6 +48,7 @@ import NewLocation from '../../../support/fragments/settings/tenant/locations/ne
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -62,15 +64,17 @@ describe('Data Import', () => {
     let materialTypeId;
     let user = {};
     let servicePointId;
+    const uniqueFirstInstanceTitle = `Agrarianism and capitalism in early Georgia, 1732-1743 /${getRandomPostfix()}`;
+    const uniqueSecondInstanceTitle = `Evolution of the Earth /${getRandomPostfix()}`;
     const firstItem = {
-      title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
+      title: `${uniqueFirstInstanceTitle} Jay Jordan Butler.`,
       productId: '9782266111560',
       quantity: '1',
       price: '20',
       barcode: uuid(),
     };
     const secondItem = {
-      title: 'Evolution of the Earth / Donald R. Prothero, Robert H. Dott, Jr.',
+      title: `${uniqueSecondInstanceTitle} Donald R. Prothero, Robert H. Dott, Jr.`,
       productId: '9783161484100',
       quantity: '1',
       price: '20',
@@ -124,7 +128,7 @@ describe('Data Import', () => {
             subfield: 'a',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+          existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
           instanceOption: NewMatchProfile.optionsList.pol,
         },
       },
@@ -136,7 +140,7 @@ describe('Data Import', () => {
             subfield: 'a',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+          existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
           holdingsOption: NewMatchProfile.optionsList.pol,
         },
       },
@@ -148,7 +152,7 @@ describe('Data Import', () => {
             subfield: 'a',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+          existingRecordType: EXISTING_RECORD_NAMES.ITEM,
           itemOption: NewMatchProfile.optionsList.pol,
         },
       },
@@ -199,6 +203,8 @@ describe('Data Import', () => {
               });
               ServicePoints.getViaApi().then((servicePoint) => {
                 servicePointId = servicePoint[0].id;
+
+                UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
                 NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then(
                   (res) => {
                     location = res;
@@ -346,6 +352,7 @@ describe('Data Import', () => {
 
             cy.visit(TopMenu.ordersPath);
             Orders.resetFilters();
+            Orders.selectStatusInSearch(ORDER_STATUSES.OPEN);
             Orders.checkIsOrderCreated(secondOrderNumber);
             // open the second PO
             openOrder(secondOrderNumber);
@@ -359,8 +366,18 @@ describe('Data Import', () => {
           DataImport.editMarcFile(
             'marcFileForC350590.mrc',
             editedMarcFileName,
-            ['test', '242451241247'],
-            [firstOrderNumber, firstItem.barcode],
+            [
+              'Agrarianism and capitalism in early Georgia, 1732-1743 /',
+              'Evolution of the Earth /',
+              'test',
+              '242451241247',
+            ],
+            [
+              uniqueFirstInstanceTitle,
+              uniqueSecondInstanceTitle,
+              firstOrderNumber,
+              firstItem.barcode,
+            ],
           );
         });
 
@@ -409,7 +426,7 @@ describe('Data Import', () => {
         JobProfiles.search(specialJobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(editedMarcFileName);
-        Logs.checkStatusOfJobProfile();
+        Logs.checkJobStatus(editedMarcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(editedMarcFileName);
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
         FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
@@ -422,7 +439,7 @@ describe('Data Import', () => {
           RECORD_STATUSES.UPDATED,
         ]);
         FileDetails.checkItemsStatusesInResultList(1, [
-          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.NO_ACTION,
           RECORD_STATUSES.NO_ACTION,
           RECORD_STATUSES.NO_ACTION,
           RECORD_STATUSES.NO_ACTION,

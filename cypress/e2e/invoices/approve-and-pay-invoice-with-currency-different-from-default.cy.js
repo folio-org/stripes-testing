@@ -75,7 +75,7 @@ describe('Invoices', () => {
     });
   });
 
-  after('Delete test data', () => {
+  after('Delete data', () => {
     cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Users.deleteViaApi(testData.user.userId);
@@ -107,7 +107,7 @@ describe('Invoices', () => {
 
       // Select currency different from selected by default, Click "Save & close" button
       InvoiceEditForm.fillInvoiceFields({
-        currency: 'UYI (UYI)',
+        currency: 'Uruguayan Peso (UYU)',
         exchangeRate: '1',
       });
       InvoiceEditForm.clickSaveButton();
@@ -117,7 +117,7 @@ describe('Invoices', () => {
         title: testData.invoice.vendorInvoiceNo,
         invoiceInformation: [
           { key: 'Status', value: INVOICE_STATUSES.OPEN },
-          { key: 'Sub-total', value: 'UYI' },
+          { key: 'Sub-total', value: 'UYU&nbsp;0.00' },
         ],
       });
 

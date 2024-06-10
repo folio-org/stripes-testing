@@ -1,4 +1,4 @@
-import { FOLIO_RECORD_TYPE, ACTION_NAMES_IN_ACTION_PROFILE } from '../../../support/constants';
+import { ACTION_NAMES_IN_ACTION_PROFILE, FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -15,7 +15,6 @@ describe('Data Import', () => {
     let user;
     const mappingProfile = {
       name: `C404371 autotest mapping profile ${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -24,9 +23,9 @@ describe('Data Import', () => {
     };
     const calloutMessage = `Mapping profile '${mappingProfile.name}' can not be linked to this Action profile. ExistingRecordType and FolioRecord types are different`;
 
-    before('create user', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
-      NewFieldMappingProfile.createMappingProfileViaApi(mappingProfile.name);
+      NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile);
 
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
@@ -37,7 +36,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);

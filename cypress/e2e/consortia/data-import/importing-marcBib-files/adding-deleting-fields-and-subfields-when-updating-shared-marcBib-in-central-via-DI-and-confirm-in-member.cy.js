@@ -1,37 +1,38 @@
 import {
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../../support/constants';
-import {
-  JobProfiles as SettingsJobProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../../support/fragments/settings/dataImport';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Users from '../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../support/utils/stringTools';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import NewActionProfile from '../../../../support/fragments/data_import/action_profiles/newActionProfile';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import NewFieldMappingProfile from '../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import FileManager from '../../../../support/utils/fileManager';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 import BrowseContributors from '../../../../support/fragments/inventory/search/browseContributors';
 import BrowseSubjects from '../../../../support/fragments/inventory/search/browseSubjects';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../../support/fragments/settings/dataImport';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import { getLongDelay } from '../../../../support/utils/cypressTools';
+import FileManager from '../../../../support/utils/fileManager';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -73,7 +74,6 @@ describe('Data Import', () => {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     };
     const actionProfile = {
-      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       name: `C405531 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       action: 'UPDATE',
       folioRecordType: 'MARC_BIBLIOGRAPHIC',
@@ -92,7 +92,7 @@ describe('Data Import', () => {
         in2: 'f',
         subfield: 's',
       },
-      recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfileName = `C405531 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
 
@@ -100,7 +100,7 @@ describe('Data Import', () => {
       cy.getAdminToken();
       NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
         (mappingProfileResponse) => {
-          NewActionProfile.createActionProfileViaApiMarc(
+          NewActionProfile.createActionProfileViaApi(
             actionProfile,
             mappingProfileResponse.body.id,
           ).then((actionProfileResponse) => {
@@ -152,6 +152,9 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.exportedFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
@@ -160,9 +163,6 @@ describe('Data Import', () => {
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
       SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.exportedFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
     });
 
     it(
@@ -174,19 +174,24 @@ describe('Data Import', () => {
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.verifySelectedRecords(1);
         InventorySearchAndFilter.exportInstanceAsMarc();
-        // download exported marc file
-        cy.visit(TopMenu.dataExportPath);
-        cy.wait(1000);
-        ExportFile.getExportedFileNameViaApi().then((name) => {
-          testData.marcFile.exportedFileName = name;
-          ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
-          // change exported file
-          DataImport.replace999SubfieldsInPreupdatedFile(
+        cy.intercept('/data-export/quick-export').as('getHrid');
+        cy.wait('@getHrid', getLongDelay()).then((req) => {
+          const expectedRecordHrid = req.response.body.jobExecutionHrId;
+
+          // download exported marc file
+          cy.visit(TopMenu.dataExportPath);
+          ExportFile.downloadExportedMarcFileWithRecordHrid(
+            expectedRecordHrid,
             testData.marcFile.exportedFileName,
-            testData.marcFile.marcFileForModify,
-            testData.marcFile.modifiedMarcFile,
           );
+          FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
         });
+        // change exported file
+        DataImport.replace999SubfieldsInPreupdatedFile(
+          testData.marcFile.exportedFileName,
+          testData.marcFile.marcFileForModify,
+          testData.marcFile.modifiedMarcFile,
+        );
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();

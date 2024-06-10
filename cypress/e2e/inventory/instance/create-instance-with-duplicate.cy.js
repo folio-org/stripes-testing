@@ -20,7 +20,7 @@ describe('Inventory', () => {
       resourceType: 'other',
     };
 
-    before('create user and login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         InventoryInstances.createInstanceViaApi(testData.instanceTitle, testData.barcode);
       });
@@ -28,6 +28,7 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
         (userProperties) => {
           testData.user = userProperties;
+
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
@@ -36,7 +37,7 @@ describe('Inventory', () => {
       );
     });
 
-    after(() => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
         Users.deleteViaApi(testData.user.userId);

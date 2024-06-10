@@ -21,13 +21,14 @@ describe('Inventory', () => {
       source: INSTANCE_SOURCE_NAMES.FOLIO,
     };
 
-    beforeEach(() => {
+    before('Create test data and login', () => {
       cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
         firstUser = userProperties;
       });
 
       cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
         secondUser = userProperties;
+
         cy.login(secondUser.username, secondUser.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
@@ -35,7 +36,7 @@ describe('Inventory', () => {
       });
     });
 
-    afterEach(() => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
           (instance) => {
@@ -59,7 +60,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
         cy.expect(MultiColumnListCell({ row: 0, content: recordsData.instanceTitle }).exists());
 
-        // logout and login as a different user
+        // login as a different user
         cy.login(firstUser.username, firstUser.password);
 
         cy.visit(TopMenu.inventoryPath);

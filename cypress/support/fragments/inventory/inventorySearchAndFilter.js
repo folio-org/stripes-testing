@@ -19,6 +19,7 @@ import {
   Select,
   TextArea,
   TextField,
+  not,
 } from '../../../../interactors';
 import { BROWSE_CALL_NUMBER_OPTIONS } from '../../constants';
 import DateTools from '../../utils/dateTools';
@@ -418,6 +419,7 @@ export default {
   },
 
   saveUUIDs() {
+    cy.wait(1500);
     InventoryActions.open();
     cy.do(InventoryActions.options.saveUUIDs.click());
   },
@@ -574,7 +576,7 @@ export default {
   },
 
   resetAll() {
-    cy.do(resetAllButton.click());
+    cy.do(resetAllBtn.click());
   },
 
   clickResetAllButton() {
@@ -726,6 +728,19 @@ export default {
     cy.expect(paneResultsSection.exists());
   },
 
+  verifySearchOptionIncluded(searchOption, optionShown = true) {
+    if (optionShown) cy.expect(searchTypeDropdown.has({ content: including(searchOption) }));
+    else cy.expect(searchTypeDropdown.has({ content: not(including(searchOption)) }));
+  },
+
+  verifyDefaultSearchOptionSelected(defaultSearchOptionValue) {
+    cy.expect(searchTypeDropdown.has({ value: defaultSearchOptionValue }));
+  },
+
+  clickSearchOptionSelect() {
+    cy.do(searchTypeDropdown.click());
+  },
+
   selectViewHoldings: () => cy.do(viewHoldingButton.click()),
 
   filterItemByStatisticalCode: (code) => {
@@ -749,7 +764,10 @@ export default {
 
   verifyActionButtonOptions() {
     cy.do(paneResultsSection.find(actionsButton).click());
-    cy.expect([Button(including('New')).exists(), DropdownMenu().find(HTML('Show columns')).exists()]);
+    cy.expect([
+      Button(including('New')).exists(),
+      DropdownMenu().find(HTML('Show columns')).exists(),
+    ]);
   },
 
   verifyNoExportJsonOption() {
@@ -798,7 +816,10 @@ export default {
   },
 
   verifySearchAndResetAllButtonsDisabled(state) {
-    cy.expect([searchButton.has({ disabled: state }), resetAllBtn.has({ disabled: state })]);
+    cy.expect([
+      Section({ id: 'browse-inventory-filters-pane' }).find(searchButton).has({ disabled: state }),
+      Section({ id: 'browse-inventory-filters-pane' }).find(resetAllBtn).has({ disabled: state }),
+    ]);
   },
 
   verifyNoRecordsFound() {

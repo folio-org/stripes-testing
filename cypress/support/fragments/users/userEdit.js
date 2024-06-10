@@ -19,6 +19,9 @@ import {
   TextArea,
   TextField,
   Spinner,
+  ListItem,
+  List,
+  or,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
@@ -57,6 +60,21 @@ const cancelButton = Button('Cancel');
 const userSearch = TextField('User search');
 const userEditPane = Pane('Edit');
 const closeIcon = Button({ id: 'clickable-closenewuserdialog' });
+const resetPasswordLink = Button({ className: including('resetPasswordButton') });
+const resetPasswordModal = Modal('Reset password email sent');
+const resetPasswordInput = resetPasswordModal.find(TextField());
+const resetPasswordCopyButton = resetPasswordModal.find(Button('Copy link'));
+const userRolesAccordion = userEditPane.find(Accordion('User roles'));
+const addRolesButton = Button({ dataTestID: 'add-roles-button' });
+const unassignAllRolesButton = Button({ dataTestID: 'unassign-all-roles-button' });
+const selectRolesModal = Modal('Select user roles');
+const roleAssignmentFilter = selectRolesModal.find(
+  Accordion({ id: including('Role assigment status') }),
+);
+const rolesPane = selectRolesModal.find(Pane('User roles'));
+const unassignAllRolesModal = Modal('Unassign all user roles');
+const yesButton = Button('Yes');
+const noButton = Button('No');
 let totalRows;
 
 // servicePointIds is array of ids
@@ -75,6 +93,7 @@ export default {
   addServicePointsViaApi,
 
   openEdit() {
+    cy.wait(1000);
     cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
   },
 
@@ -221,9 +240,10 @@ export default {
       extendedInformationAccordion.exists(),
       contactInformationAccordion.exists(),
       customFieldsAccordion.exists(),
-      userPermissionsAccordion.exists(),
       servicePointsAccordion.exists(),
     ]);
+    if (!Cypress.env('eureka')) cy.expect(userPermissionsAccordion.exists());
+    else cy.expect(userPermissionsAccordion.absent());
     cy.expect([
       patronBlocksAccordion.absent(),
       proxySponsorAccordion.absent(),
@@ -239,9 +259,10 @@ export default {
       userInformationAccordion.exists(),
       extendedInformationAccordion.exists(),
       contactInformationAccordion.exists(),
-      userPermissionsAccordion.exists(),
       servicePointsAccordion.exists(),
     ]);
+    if (!Cypress.env('eureka')) cy.expect(userPermissionsAccordion.exists());
+    else cy.expect(userPermissionsAccordion.absent());
     cy.expect([
       patronBlocksAccordion.absent(),
       proxySponsorAccordion.absent(),
@@ -288,6 +309,7 @@ export default {
   },
 
   saveAndClose() {
+    cy.wait(1000);
     cy.do(saveAndCloseBtn.click());
   },
 
@@ -319,6 +341,7 @@ export default {
       method: 'GET',
       path: `service-points-users?query="userId"="${userId}"`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     })
     .then((servicePointsUsers) => {
       cy.okapiRequest({
@@ -536,5 +559,109 @@ export default {
   closeUsingIcon() {
     cy.do(closeIcon.click());
     cy.expect(userEditPane.absent);
+  },
+
+  clickResetPasswordLink() {
+    cy.do(resetPasswordLink.click());
+    cy.expect([
+      resetPasswordModal.exists(),
+      resetPasswordInput.exists(),
+      resetPasswordCopyButton.exists(),
+    ]);
+  },
+
+  verifyResetLink(expectedLink) {
+    cy.expect(resetPasswordInput.has({ value: expectedLink }));
+  },
+
+  verifyUserRolesCounter(expectedCount) {
+    cy.expect(userRolesAccordion.has({ counter: expectedCount }));
+  },
+
+  clickUserRolesAccordion(isExpanded = true) {
+    cy.do(userRolesAccordion.clickHeader());
+    cy.expect([
+      userRolesAccordion.has({ open: isExpanded }),
+      addRolesButton.exists(),
+      unassignAllRolesButton.has({ disabled: or(true, false) }),
+    ]);
+  },
+
+  verifyUserRolesAccordionEmpty() {
+    cy.expect(userRolesAccordion.find(ListItem()).absent());
+  },
+
+  clickAddUserRolesButton() {
+    cy.do(userRolesAccordion.find(addRolesButton).click());
+    cy.expect(selectRolesModal.exists());
+  },
+
+  verifySelectRolesModal() {
+    cy.expect([
+      selectRolesModal.find(userSearch).exists(),
+      selectRolesModal.find(searchButton).has({ disabled: true }),
+      selectRolesModal.find(saveAndCloseBtn).exists(),
+      selectRolesModal.find(cancelButton).exists(),
+      rolesPane.exists(),
+      roleAssignmentFilter.exists(),
+    ]);
+  },
+
+  selectRoleInModal(roleName, isSelected = true) {
+    const targetCheckbox = MultiColumnListRow(including(roleName), { isContainer: false }).find(
+      Checkbox(),
+    );
+    cy.do([
+      selectRolesModal.find(userSearch).fillIn(roleName),
+      selectRolesModal.find(searchButton).click(),
+      targetCheckbox.click(),
+    ]);
+    cy.expect(targetCheckbox.has({ checked: isSelected }));
+  },
+
+  saveAndCloseRolesModal() {
+    cy.do(selectRolesModal.find(saveAndCloseBtn).click());
+    cy.expect(selectRolesModal.absent());
+  },
+
+  verifyUserRoleNames(roleNames) {
+    roleNames.forEach((roleName) => {
+      cy.expect(
+        userRolesAccordion
+          .find(
+            ListItem(including(roleName)).find(
+              Button({ id: including('clickable-remove-user-role') }),
+            ),
+          )
+          .exists(),
+      );
+    });
+  },
+
+  verifyUserRolesRowsCount(expectedCount) {
+    cy.expect(userRolesAccordion.find(List()).has({ count: expectedCount }));
+  },
+
+  removeOneRole(roleName) {
+    cy.do(
+      userRolesAccordion
+        .find(
+          ListItem(including(roleName)).find(
+            Button({ id: including('clickable-remove-user-role') }),
+          ),
+        )
+        .click(),
+    );
+  },
+
+  unassignAllRoles(isConfirmed = true) {
+    cy.do(userRolesAccordion.find(unassignAllRolesButton).click());
+    cy.expect([
+      unassignAllRolesModal.find(yesButton).exists(),
+      unassignAllRolesModal.find(noButton).exists(),
+    ]);
+    if (isConfirmed) cy.do(unassignAllRolesModal.find(yesButton).click());
+    else cy.do(unassignAllRolesModal.find(noButton).click());
+    cy.expect(unassignAllRolesModal.absent());
   },
 };

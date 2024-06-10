@@ -25,9 +25,11 @@ import {
 } from '../../../../../interactors';
 import {
   ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
+  INCOMING_RECORD_NAMES,
+  LOCATION_NAMES,
 } from '../../../constants';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -115,7 +117,6 @@ const actionsFieldMappingsForMarc = {
   update: 'Updates',
 };
 
-const permanentLocation = '"Annex (KU/CC/DI/A)"';
 const materialType = '"book"';
 const permanentLoanType = '"Can circulate"';
 const status = '"In process"';
@@ -125,7 +126,7 @@ const catalogedDate = '###TODAY###';
 const defaultMappingProfile = {
   name: `autotest${FOLIO_RECORD_TYPE.INSTANCE}${getRandomPostfix()}`,
   typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-  location: permanentLocation,
+  location: `"${LOCATION_NAMES.ANNEX_UI}"`,
   material: materialType,
   loan: permanentLoanType,
   statusField: status,
@@ -273,82 +274,17 @@ const fillSummaryForMarcAuthInMappingProfile = (specialMappingProfile = defaultM
 const fillFolioRecordType = (profile) => {
   cy.do(existingRecordType.choose(profile.typeValue));
 };
-const getDefaultInstanceMappingProfile = (name) => {
-  const defaultInstanceMappingProfile = {
-    profile: {
-      name,
-      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-    },
-  };
-  return defaultInstanceMappingProfile;
-};
-const getDefaultHoldingsMappingProfile = (name, permLocation) => {
-  const defaultHoldingsMappingProfile = {
-    profile: {
-      name,
-      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-      existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
-      mappingDetails: {
-        name: 'holdings',
-        recordType: 'HOLDINGS',
-        mappingFields: [
-          {
-            name: 'permanentLocationId',
-            enabled: true,
-            path: 'holdings.permanentLocationId',
-            value: `"${permLocation}"`,
-          },
-        ],
-      },
-    },
-  };
-  return defaultHoldingsMappingProfile;
-};
-const getDefaultItemMappingProfile = (name) => {
-  const defaultItemMappingProfile = {
-    profile: {
-      name,
-      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-      existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
-      mappingDetails: {
-        name: 'item',
-        recordType: 'ITEM',
-        mappingFields: [
-          {
-            name: 'materialType.id',
-            enabled: true,
-            path: 'item.materialType.id',
-            value: '"book"',
-            acceptedValues: { '1a54b431-2e4f-452d-9cae-9cee66c9a892': 'book' },
-          },
-          {
-            name: 'permanentLoanType.id',
-            enabled: true,
-            path: 'item.permanentLoanType.id',
-            value: '"Can circulate"',
-            acceptedValues: { '2b94c631-fca9-4892-a730-03ee529ffe27': 'Can circulate' },
-          },
-          { name: 'status.name', enabled: true, path: 'item.status.name', value: '"Available"' },
-          {
-            name: 'permanentLocation.id',
-            enabled: 'true',
-            path: 'item.permanentLocation.id',
-            value: `"${permanentLocation}"`,
-            acceptedValues: { 'fcd64ce1-6995-48f0-840e-89ffa2288371': 'Main Library (KU/CC/DI/M)' },
-          },
-        ],
-      },
-    },
-  };
-  return defaultItemMappingProfile;
-};
 const fillInvoiceLineDescription = (description) => {
   cy.do(Accordion('Invoice line information').find(TextField('Description*')).fillIn(description));
 };
 const fillSummaryDescription = (text) => {
   cy.do(Accordion('Summary').find(TextArea('Description')).fillIn(text));
 };
+const fillMaterialType = (type) => cy.do(materialTypeField.fillIn(type));
+const fillStatus = (itemStatus) => cy.do(TextField('Status').fillIn(itemStatus));
+const fillPermanentLoanType = (loanType) => cy.do(TextField('Permanent loan type').fillIn(`"${loanType}"`));
+const fillInstanceStatusTerm = (statusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED) => cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`));
+const fillHoldingsType = (type) => cy.do(TextField('Holdings type').fillIn(`"${type}"`));
 const selectAdminNotesAction = (numberOfmappingField, action = actions.addTheseToExisting) => {
   // number needs for using this method in filling fields for holdings and item profiles
   const adminNoteFieldName = `profile.mappingDetails.mappingFields[${numberOfmappingField}].repeatableFieldAction`;
@@ -358,13 +294,40 @@ const selectAdminNotesAction = (numberOfmappingField, action = actions.addTheseT
     Select({ name: adminNoteFieldName }).choose(action),
   ]);
 };
+const selectActionForStatisticalCode = (number, action = actions.addTheseToExisting) => {
+  // number needs for using this method in filling fields for holdings and item profiles
+  const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
+
+  cy.do([
+    Select({ name: statisticalCodeFieldName }).focus(),
+    Select({ name: statisticalCodeFieldName }).choose(action),
+  ]);
+};
+const addStatisticalCode = (name, number, action) => {
+  selectActionForStatisticalCode(number, action);
+  cy.do([
+    Button('Add statistical code').click(),
+    TextField('Statistical code').fillIn(`"${name}"`),
+  ]);
+};
+const addItemNotes = (noteType, note, staffOnly) => {
+  const noteFieldName = 'profile.mappingDetails.mappingFields[25].repeatableFieldAction';
+  const selectName =
+    'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction';
+
+  cy.do([
+    Select({ name: noteFieldName }).focus(),
+    Select({ name: noteFieldName }).choose(actions.addTheseToExisting),
+    Button('Add item note').click(),
+    noteTypeField.fillIn(noteType),
+    TextField('Note').fillIn(note),
+    Select({ name: selectName }).focus(),
+    Select({ name: selectName }).choose(staffOnly),
+  ]);
+};
 
 export default {
-  getDefaultInstanceMappingProfile,
-  getDefaultHoldingsMappingProfile,
-  getDefaultItemMappingProfile,
   incomingRecordType,
-  permanentLocation,
   materialType,
   permanentLoanType,
   statusField: status,
@@ -385,11 +348,91 @@ export default {
   fillSummaryDescription,
   fillInvoiceLineDescription,
   fillFolioRecordType,
+  fillMaterialType,
+  fillPermanentLoanType,
+  fillStatus,
+  fillInstanceStatusTerm,
+  fillHoldingsType,
   selectOrganizationByName,
   selectAdminNotesAction,
+  addStatisticalCode,
+  selectActionForStatisticalCode,
   save,
+  addItemNotes,
   waitLoading: () => {
     cy.expect(mappingProfilesForm.exists());
+  },
+
+  fillInstanceMappingProfile: (profile) => {
+    // Summary section
+    fillSummaryInMappingProfile(profile);
+    if (profile.catalogedDate) {
+      cy.do(catalogedDateField.fillIn(profile.catalogedDate));
+    }
+    if (profile.instanceStatusTerm) {
+      fillInstanceStatusTerm(profile.instanceStatusTerm);
+    }
+    if (profile.statisticalCode) {
+      addStatisticalCode(profile.statisticalCode, 8);
+    }
+    save();
+    cy.expect(saveButton.absent());
+  },
+
+  fillHoldingsMappingProfile: (profile) => {
+    // Summary section
+    fillSummaryInMappingProfile(profile);
+    if (profile.permanentLocation) {
+      cy.do(permanentLocationField.fillIn(profile.permanentLocation));
+    }
+    if (profile.holdingsType) {
+      fillHoldingsType(profile.holdingsType);
+    }
+    if (profile.callNumberType) {
+      cy.do(TextField('Call number type').fillIn(`"${profile.callNumberType}"`));
+    }
+    if (profile.callNumber) {
+      cy.do(TextField('Call number').fillIn(profile.callNumber));
+    }
+    if (profile.relationship) {
+      cy.get('[name="profile.mappingDetails.mappingFields[23].repeatableFieldAction"]').select(
+        'Add these to existing',
+      );
+      cy.do([
+        Button('Add electronic access').click(),
+        TextField('Relationship').fillIn(`"${profile.relationship}"`),
+      ]);
+    }
+    if (profile.uri) {
+      cy.do(TextField('URI').fillIn(profile.uri));
+    }
+    if (profile.linkText) {
+      cy.do(TextField('Link text').fillIn(profile.linkText));
+    }
+    save();
+    cy.expect(saveButton.absent());
+  },
+
+  fillItemMappingProfile: (profile) => {
+    // Summary section
+    fillSummaryInMappingProfile(profile);
+    if (profile.materialType) {
+      fillMaterialType(`"${profile.materialType}"`);
+    }
+    if (profile.permanentLoanType) {
+      fillPermanentLoanType(profile.permanentLoanType);
+    }
+    if (profile.status) {
+      fillStatus(`"${profile.status}"`);
+    }
+    if (profile.statisticalCode) {
+      addStatisticalCode(profile.statisticalCode, 6);
+    }
+    if (profile.noteType) {
+      addItemNotes(profile.noteType, profile.note, profile.staffOnly);
+    }
+    save();
+    cy.expect(saveButton.absent());
   },
 
   fillMappingProfile: (specialMappingProfile = defaultMappingProfile) => {
@@ -708,26 +751,8 @@ export default {
     );
   },
 
-  selectActionForStatisticalCode(number, action = actions.addTheseToExisting) {
-    // number needs for using this method in filling fields for holdings and item profiles
-    const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
-
-    cy.do([
-      Select({ name: statisticalCodeFieldName }).focus(),
-      Select({ name: statisticalCodeFieldName }).choose(action),
-    ]);
-  },
-
-  addStatisticalCode(name, number, action) {
-    this.selectActionForStatisticalCode(number, action);
-    cy.do([
-      Button('Add statistical code').click(),
-      TextField('Statistical code').fillIn(`"${name}"`),
-    ]);
-  },
-
   addStatisticalCodeWithSeveralCodes(firstCode, secondCode, number, action) {
-    this.selectActionForStatisticalCode(number, action);
+    selectActionForStatisticalCode(number, action);
     cy.do([
       Button('Add statistical code').click(),
       TextField({
@@ -849,15 +874,10 @@ export default {
 
   fillPermanentLocation: (location) => cy.do(permanentLocationField.fillIn(location)),
   fillCatalogedDate: (date = catalogedDate) => cy.do(catalogedDateField.fillIn(date)),
-  fillInstanceStatusTerm: (statusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED) => cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`)),
-  fillHoldingsType: (type) => cy.do(TextField('Holdings type').fillIn(`"${type}"`)),
   fillCallNumberType: (type) => cy.do(TextField('Call number type').fillIn(type)),
   fillCallNumberPrefix: (prefix) => cy.do(TextField('Call number prefix').fillIn(prefix)),
   fillcallNumberSuffix: (sufix) => cy.do(TextField('Call number suffix').fillIn(sufix)),
-  fillStatus: (itemStatus) => cy.do(TextField('Status').fillIn(itemStatus)),
-  fillPermanentLoanType: (loanType) => cy.do(TextField('Permanent loan type').fillIn(`"${loanType}"`)),
   fillTemporaryLoanType: (loanType) => cy.do(TextField('Temporary loan type').fillIn(loanType)),
-  fillMaterialType: (type) => cy.do(materialTypeField.fillIn(type)),
   fillIllPolicy: (policy) => cy.do(TextField('ILL policy').fillIn(`"${policy}"`)),
   fillBatchGroup: (group) => cy.do(batchGroupField.fillIn(group)),
   fillPaymentMethod: (method) => cy.do(paymentMethodField.fillIn(method)),
@@ -875,22 +895,6 @@ export default {
       Button('Add holdings note').click(),
       noteTypeField.fillIn(type),
       TextField('Note').fillIn(`"${note}"`),
-      Select({ name: selectName }).focus(),
-      Select({ name: selectName }).choose(staffOnly),
-    ]);
-  },
-
-  addItemNotes: (noteType, note, staffOnly) => {
-    const noteFieldName = 'profile.mappingDetails.mappingFields[25].repeatableFieldAction';
-    const selectName =
-      'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction';
-
-    cy.do([
-      Select({ name: noteFieldName }).focus(),
-      Select({ name: noteFieldName }).choose(actions.addTheseToExisting),
-      Button('Add item note').click(),
-      noteTypeField.fillIn(noteType),
-      TextField('Note').fillIn(note),
       Select({ name: selectName }).focus(),
       Select({ name: selectName }).choose(staffOnly),
     ]);
@@ -1079,17 +1083,170 @@ export default {
     cy.wait(2000);
   },
 
-  createMappingProfileViaApi: (nameProfile) => {
+  createModifyMarcBibMappingProfileViaApi: (profile) => {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'data-import-profiles/mappingProfiles',
         body: {
           profile: {
-            name: nameProfile,
-            incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-            existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+            name: profile.name,
+            incomingRecordType: INCOMING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+            existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+            mappingDetails: {
+              name: 'marcBib',
+              recordType: 'MARC_BIBLIOGRAPHIC',
+              marcMappingDetails: [
+                {
+                  order: 0,
+                  field: {
+                    subfields: [
+                      {
+                        subaction: null,
+                        data: {
+                          text: profile.updatingText,
+                        },
+                        subfield: profile.subfield,
+                      },
+                    ],
+                    field: profile.fieldNumber,
+                    indicator2: profile.indicator2,
+                  },
+                  action: 'ADD',
+                },
+              ],
+              marcMappingOption: 'MODIFY',
+            },
           },
+          addedRelations: [],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  createInstanceMappingProfileViaApi: (profile) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/mappingProfiles',
+        body: {
+          profile: {
+            name: profile.name,
+            incomingRecordType: INCOMING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+            existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+          },
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  createHoldingsMappingProfileViaApi: (profile) => {
+    // eslint-disable-next-line no-unused-vars
+    let locationId;
+
+    if (profile.permanentLocation === LOCATION_NAMES.MAIN_LIBRARY_UI) {
+      cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then((res) => {
+        locationId = res.id;
+      });
+    }
+    if (profile.permanentLocation === LOCATION_NAMES.ANNEX_UI) {
+      cy.getLocations({ query: `name="${LOCATION_NAMES.ANNEX}"` }).then((res) => {
+        locationId = res.id;
+      });
+    }
+    if (profile.permanentLocation === LOCATION_NAMES.ONLINE_UI) {
+      cy.getLocations({ query: `name="${LOCATION_NAMES.ONLINE}"` }).then((res) => {
+        locationId = res.id;
+      });
+    }
+
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/mappingProfiles',
+        body: {
+          profile: {
+            name: profile.name,
+            incomingRecordType: INCOMING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+            existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
+            mappingDetails: {
+              name: 'holdings',
+              recordType: 'HOLDINGS',
+              mappingFields: [
+                {
+                  name: 'permanentLocationId',
+                  enabled: true,
+                  path: 'holdings.permanentLocationId',
+                  value: `"${profile.permanentLocation}"`,
+                  subfields: [],
+                  acceptedValues: {
+                    locationId: profile.permanentLocation,
+                  },
+                },
+              ],
+            },
+          },
+          addedRelations: [],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  createItemMappingProfileViaApi: (profile) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/mappingProfiles',
+        body: {
+          profile: {
+            name: profile.name,
+            incomingRecordType: INCOMING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+            existingRecordType: EXISTING_RECORD_NAMES.ITEM,
+            mappingDetails: {
+              name: 'item',
+              recordType: 'ITEM',
+              mappingFields: [
+                {
+                  name: 'materialType.id',
+                  enabled: true,
+                  path: 'item.materialType.id',
+                  value: `"${profile.materialType}"`,
+                  subfields: [],
+                  acceptedValues: { '1a54b431-2e4f-452d-9cae-9cee66c9a892': profile.materialType },
+                },
+                {
+                  name: 'permanentLoanType.id',
+                  enabled: true,
+                  path: 'item.permanentLoanType.id',
+                  value: `"${profile.permanentLoanType}"`,
+                  subfields: [],
+                  acceptedValues: {
+                    '2b94c631-fca9-4892-a730-03ee529ffe27': profile.permanentLoanType,
+                  },
+                },
+                {
+                  name: 'status.name',
+                  enabled: true,
+                  path: 'item.status.name',
+                  value: `"${profile.status}"`,
+                  subfields: [],
+                },
+              ],
+            },
+          },
+          addedRelations: [],
+          deletedRelations: [],
         },
         isDefaultSearchParamsRequired: false,
       })

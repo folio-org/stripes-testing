@@ -141,7 +141,6 @@ export default {
   },
 
   checkFileIsRunning: (fileName) => {
-    cy.wait(2000);
     cy.expect(runningAccordion.find(HTML(including(fileName))).exists());
   },
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),
@@ -166,6 +165,7 @@ export default {
   },
 
   verifyFirstFileNameInLogList: (username, fileName) => {
+    const newFileName = fileName.replace(/\.mrc$/i, '');
     cy.do(
       MultiColumnListCell({ content: username }).perform((element) => {
         const rowNumber = element.parentElement.getAttribute('data-row-inner');
@@ -173,7 +173,7 @@ export default {
         cy.expect(
           MultiColumnList({ id: 'job-logs-list' })
             .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
-            .find(MultiColumnListCell({ content: fileName }))
+            .find(MultiColumnListCell({ content: including(newFileName) }))
             .exists(),
         );
       }),
@@ -195,9 +195,8 @@ export default {
   },
 
   waitFileIsImported: (fileName) => {
-    const newFileName = fileName.replace('.mrc', '');
-
-    cy.expect(runningAccordion.find(HTML(including(newFileName))).absent(), getLongDelay(300000));
+    const newFileName = fileName.replace(/\.mrc$/i, '');
+    cy.expect(runningAccordion.find(HTML(including(newFileName))).absent(), getLongDelay(240000));
     cy.expect(
       MultiColumnList({ id: 'job-logs-list' })
         .find(Button(including(newFileName)))

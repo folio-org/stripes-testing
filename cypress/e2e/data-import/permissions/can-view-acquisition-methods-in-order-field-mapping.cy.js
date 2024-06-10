@@ -9,9 +9,10 @@ import Users from '../../../support/fragments/users/users';
 describe('Data Import', () => {
   describe('Permissions', () => {
     let user;
-    before('create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: SettingsPane.waitLoading,
@@ -19,7 +20,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });

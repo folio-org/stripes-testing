@@ -20,12 +20,13 @@ const testData = {
 
 describe('Inventory', () => {
   describe('Item', () => {
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       InventoryInstances.createInstanceViaApi(
         testData.item.instanceName,
         testData.item.itemBarcode,
       );
+
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
         cy.login(userProperties.username, userProperties.password, {

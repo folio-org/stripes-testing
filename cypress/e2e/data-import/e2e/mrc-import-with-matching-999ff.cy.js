@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
   RECORD_STATUSES,
@@ -75,7 +75,7 @@ describe('Data Import', () => {
         subfield: 's',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -83,11 +83,14 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('login', () => {
+    before('Login', () => {
       cy.loginAsAdmin();
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
+      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       cy.getAdminToken().then(() => {
         // clean up generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
@@ -98,9 +101,6 @@ describe('Data Import', () => {
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileForExport.name);
       });
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
-      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     });
 
     it(
@@ -157,9 +157,16 @@ describe('Data Import', () => {
           cy.getAdminToken().then(() => {
             ExportFile.uploadFile(nameForCSVFile);
             ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
-            ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
-            FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-            cy.log('#####End Of Export#####');
+            ExportFile.getRecordHridOfExportedFile(nameForCSVFile).then((req) => {
+              const expectedRecordHrid = req;
+
+              // download exported marc file
+              ExportFile.downloadExportedMarcFileWithRecordHrid(
+                expectedRecordHrid,
+                nameForExportedMarcFile,
+              );
+              FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
+            });
           });
 
           // create Match profile

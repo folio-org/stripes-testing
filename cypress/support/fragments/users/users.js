@@ -1,18 +1,19 @@
 import { including } from '@interactors/html';
+import { recurse } from 'cypress-recurse';
 import {
   Accordion,
   Button,
+  Callout,
   Dropdown,
+  HTML,
   KeyValue,
   MultiColumnListCell,
   Pane,
   PaneHeader,
   Section,
   Select,
-  TextField,
-  Callout,
-  HTML,
   Spinner,
+  TextField,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -86,6 +87,30 @@ export default {
       .then(({ body }) => {
         return body.users;
       });
+  },
+
+  getAutomatedPatronBlocksApi(userId) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `automated-patron-blocks/${userId}`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => {
+        return body;
+      });
+  },
+
+  waitForAutomatedPatronBlocksForUser(userId, secondsToWait) {
+    recurse(
+      () => this.getAutomatedPatronBlocksApi(userId),
+      (body) => body.automatedPatronBlocks.length > 0,
+      {
+        limit: Math.trunc(secondsToWait / 10),
+        timeout: secondsToWait * 1000,
+        delay: 10000,
+      },
+    );
   },
 
   createViaUi: (userData) => {
@@ -162,6 +187,13 @@ export default {
     cy.intercept(`/automated-patron-blocks/${userId}`).as('patronBlockStatus');
     cy.wait('@patronBlockStatus', { timeout: 10000 }).then((xhr) => {
       cy.wrap(xhr.response.body.automatedPatronBlocks.length).should('eq', 0);
+      cy.expect(TextField({ value: 'Patron has block(s) in place' }).absent());
+    });
+  },
+
+  checkPatronIsNotBlockedViaApi(userId) {
+    this.getAutomatedPatronBlocksApi(userId).then((body) => {
+      cy.wrap(body.automatedPatronBlocks.length).should('eq', 0);
       cy.expect(TextField({ value: 'Patron has block(s) in place' }).absent());
     });
   },

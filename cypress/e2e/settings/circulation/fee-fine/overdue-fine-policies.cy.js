@@ -167,6 +167,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
         permissions.checkinAll.gui,
         permissions.loansAll.gui,
         permissions.uiUsersfeefinesView.gui,
+        permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {
@@ -214,7 +215,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
     () => {
       cy.loginAsAdmin();
       // TODO add check that name is unique
-      cy.visit(SettingsMenu.circulationoVerdueFinePoliciesPath);
+      cy.visit(SettingsMenu.circulationOverdueFinePoliciesPath);
 
       const overduePolicyProps = ['1.00', '2.00', '3.00', '4.00'];
       const editedOverduePolicyProps = ['5.00', '6.00', '7.00', '8.00'];

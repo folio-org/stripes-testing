@@ -10,6 +10,7 @@ import {
   Pane,
   PaneHeader,
   Link,
+  MultiColumnListRow,
 } from '../../../../interactors';
 import HoldingsRecordEdit from './holdingsRecordEdit';
 import InventoryViewSource from './inventoryViewSource';
@@ -167,6 +168,14 @@ export default {
       .find(MultiColumnListCell({ content: value }))
       .exists(),
   ),
+  checkHoldingsNoteByRow: (value = [], row = 0) => value.forEach((text) => {
+    cy.expect(
+      MultiColumnList({ id: 'list-holdings-notes-0' })
+        .find(MultiColumnListRow({ index: row }))
+        .find(MultiColumnListCell({ content: text }))
+        .exists(),
+    );
+  }),
   checkMarkAsSuppressedFromDiscovery: () => cy.expect(
     holdingsRecordViewSection
       .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
@@ -208,6 +217,11 @@ export default {
   },
   verifyElectronicAccess: (uri) => {
     cy.expect(electronicAccessAccordion.find(HTML(uri)).exists());
+  },
+  verifyElectronicAccessByElementIndex: (index, content) => {
+    cy.expect(
+      electronicAccessAccordion.find(MultiColumnListCell({ columnIndex: index, content })).exists(),
+    );
   },
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
   getRecordLastUpdatedDate: () => cy.then(() => {

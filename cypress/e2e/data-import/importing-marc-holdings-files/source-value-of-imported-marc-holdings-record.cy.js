@@ -3,6 +3,7 @@ import {
   RECORD_STATUSES,
   DEFAULT_JOB_PROFILE_NAMES,
   INSTANCE_SOURCE_NAMES,
+  MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -29,8 +30,8 @@ describe('Data Import', () => {
     const jobProfileForCreatingHoldings = DEFAULT_JOB_PROFILE_NAMES.CREATE_HOLDINGS_AND_SRS;
     const filePathForUpload = 'marcFileForC356820.mrc';
     const filePathForEdit = 'marcFileForC356820_holdings.mrc';
-    const fileName = `C356820 autotestFileName.${getRandomPostfix()}`;
-    const editedMarcFileName = `C356820 editedAutotestFileName.${getRandomPostfix()}`;
+    const fileName = `C356820 autotestFileName.${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C356820 editedAutotestFileName${getRandomPostfix()}.mrc`;
     const changesSavedCallout =
       'This record has successfully saved and is in process. Changes may not appear immediately.';
 
@@ -109,8 +110,13 @@ describe('Data Import', () => {
         QuickMarcEditor.waitLoading();
         QuickMarcEditor.checkContent('$9 000442923', 6);
         QuickMarcEditor.checkPaneheaderContains(`Source: ${user.username}`);
+        QuickMarcEditor.selectFieldsDropdownOption(
+          'LDR',
+          'Item',
+          MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN.I,
+        );
         QuickMarcEditor.addValuesToExistingField(
-          7,
+          6,
           '852',
           '$b E $h BR140 $i .J86 $x dbe=c $z Current issues in Periodicals Room $x CHECK-IN RECORD CREATED $9 Test',
           '0',

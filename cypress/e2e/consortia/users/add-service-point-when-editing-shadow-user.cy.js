@@ -1,10 +1,11 @@
-import Affiliations from '../../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 
 const testData = {};
 const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
@@ -14,12 +15,16 @@ describe('Users', () => {
     cy.getAdminToken();
     ServicePoints.createViaApi(servicePoint);
     cy.resetTenant();
-    cy.createTempUser([
-      Permissions.consortiaSettingsConsortiaAffiliationsEdit.gui,
-      Permissions.uiUsersPermissions.gui,
-      Permissions.uiUsersEdituserservicepoints.gui,
-      Permissions.uiUserEdit.gui,
-    ], '', 'staff').then((userProperties) => {
+    cy.createTempUser(
+      [
+        Permissions.consortiaSettingsConsortiaAffiliationsEdit.gui,
+        Permissions.uiUsersPermissions.gui,
+        Permissions.uiUsersEdituserservicepoints.gui,
+        Permissions.uiUserEdit.gui,
+      ],
+      '',
+      'staff',
+    ).then((userProperties) => {
       testData.user1 = userProperties;
       cy.assignAffiliationToUser(Affiliations.College, testData.user1.userId);
       cy.setTenant(Affiliations.College);
@@ -39,9 +44,7 @@ describe('Users', () => {
   after('Delete test data', () => {
     cy.resetTenant();
     cy.getAdminToken();
-    UserEdit.changeServicePointPreferenceViaApi(testData.user2.userId, [
-      servicePoint.id,
-    ]);
+    UserEdit.changeServicePointPreferenceViaApi(testData.user2.userId, [servicePoint.id]);
     ServicePoints.deleteViaApi(servicePoint.id);
     Users.deleteViaApi(testData.user1.userId);
     Users.deleteViaApi(testData.user2.userId);
@@ -55,7 +58,10 @@ describe('Users', () => {
         path: TopMenu.usersPath,
         waiter: UsersSearchPane.waitLoading,
       });
+      ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+      ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
       UsersSearchPane.searchByUsername(testData.user2.username);
+      UsersSearchPane.waitLoading();
       UserEdit.checkAccordionsForShadowUser();
       UserEdit.checkActionsForShadowUser();
       UserEdit.openEdit();

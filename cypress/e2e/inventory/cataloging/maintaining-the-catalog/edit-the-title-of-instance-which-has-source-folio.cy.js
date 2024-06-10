@@ -15,7 +15,7 @@ describe('Inventory', () => {
       newInstanceTitle: `autotest_instance_title_${getRandomPostfix()}`,
     };
 
-    before('create test data and login', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         user = userProperties;
 
@@ -30,7 +30,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         cy.wait(8000);

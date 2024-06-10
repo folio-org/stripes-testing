@@ -211,6 +211,7 @@ describe('Patron Block: Lost items', () => {
         permissions.checkoutAll.gui,
         permissions.uiUsersView.gui,
         permissions.okapiTimersPatch.gui,
+        permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {
@@ -268,9 +269,9 @@ describe('Patron Block: Lost items', () => {
       });
     });
     cy.login(userData.username, userData.password);
-    // needed for the "Lost Item Fee Policy" so patron can recieve fee/fine
+    // needed for the "Lost Item Fee Policy" so patron can receive fee/fine
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(100000);
+    cy.wait(20000);
     cy.visit(SettingsMenu.conditionsPath);
   });
 
@@ -328,14 +329,15 @@ describe('Patron Block: Lost items', () => {
 
   it(
     'C350655 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item renewed (vega)',
-    { tags: ['criticalPathBroken', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum outstanding fee/fine balance', '624');
+      Users.waitForAutomatedPatronBlocksForUser(userData.userId, 4 * 60);
       findPatron();
       UsersCard.waitLoading();
+      cy.wait(2000);
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
-
       const itemForRenew = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
       UsersCard.viewCurrentLoans();
       UserLoans.openLoanDetails(itemForRenew.barcode);
@@ -346,18 +348,21 @@ describe('Patron Block: Lost items', () => {
       OverrideAndRenewModal.confirmOverrideItem();
 
       findPatron();
-      Users.checkPatronIsNotBlocked(userData.userId);
+      cy.wait(1000);
+      Users.checkPatronIsNotBlockedViaApi(userData.userId);
     },
   );
 
   it(
     'C350651 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item returned (vega)',
-    { tags: ['criticalPathBroken', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum outstanding fee/fine balance', '624');
+      Users.waitForAutomatedPatronBlocksForUser(userData.userId, 4 * 60);
       findPatron();
       UsersCard.waitLoading();
+      cy.wait(2000);
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
       cy.visit(TopMenu.checkInPath);
@@ -367,7 +372,8 @@ describe('Patron Block: Lost items', () => {
       CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
 
       findPatron();
-      Users.checkPatronIsNotBlocked(userData.userId);
+      cy.wait(1000);
+      Users.checkPatronIsNotBlockedViaApi(userData.userId);
     },
   );
 
@@ -377,8 +383,10 @@ describe('Patron Block: Lost items', () => {
     () => {
       const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum number of lost items', '4');
+      Users.waitForAutomatedPatronBlocksForUser(userData.userId, 4 * 60);
       findPatron();
       UsersCard.waitLoading();
+      cy.wait(2000);
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
       const itemForRenew = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
@@ -391,7 +399,8 @@ describe('Patron Block: Lost items', () => {
       OverrideAndRenewModal.confirmOverrideItem();
 
       findPatron();
-      Users.checkPatronIsNotBlocked(userData.userId);
+      cy.wait(1000);
+      Users.checkPatronIsNotBlockedViaApi(userData.userId);
     },
   );
 
@@ -401,8 +410,10 @@ describe('Patron Block: Lost items', () => {
     () => {
       const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum number of lost items', '4');
+      Users.waitForAutomatedPatronBlocksForUser(userData.userId, 4 * 60);
       findPatron();
       UsersCard.waitLoading();
+      cy.wait(2000);
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
       cy.visit(TopMenu.checkInPath);
@@ -412,7 +423,8 @@ describe('Patron Block: Lost items', () => {
       CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
 
       findPatron();
-      Users.checkPatronIsNotBlocked(userData.userId);
+      cy.wait(1000);
+      Users.checkPatronIsNotBlockedViaApi(userData.userId);
     },
   );
 });

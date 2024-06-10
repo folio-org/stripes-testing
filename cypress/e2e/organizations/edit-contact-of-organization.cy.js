@@ -39,14 +39,14 @@ describe('Organizations', () => {
       Organizations.addNewContact(contact);
       Organizations.closeContact();
       Organizations.addContactToOrganization(contact);
-      Organizations.checkContactIsAdd(contact);
+      Organizations.checkContactIsAddToContactPeopleSection(contact);
       Organizations.selectContact(contact);
       Organizations.editContact();
       Organizations.editFirstAndLastNameInContact(contact);
       Organizations.closeContact();
       contact.lastName = `${contact.lastName}-edited`;
       contact.firstName = `${contact.firstName}-edited`;
-      Organizations.checkContactIsAdd(contact);
+      Organizations.checkContactIsAddToContactPeopleSection(contact);
     },
   );
 });

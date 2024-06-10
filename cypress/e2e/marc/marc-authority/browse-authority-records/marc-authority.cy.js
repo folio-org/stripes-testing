@@ -1,4 +1,11 @@
-import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  RECORD_STATUSES,
+  AUTHORITY_LDR_FIELD_STATUS_DROPDOWN,
+  AUTHORITY_LDR_FIELD_TYPE_DROPDOWN,
+  AUTHORITY_LDR_FIELD_ELVL_DROPDOWN,
+  AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN,
+} from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -21,7 +28,6 @@ describe('MARC', () => {
         authority: {
           title: 'Congress and foreign policy series',
           nonExactTitle: 'Congress',
-          ldr: '00846cz\\\\a2200241n\\\\4500',
           searchOption: 'Uniform title',
           newField: {
             title: `Test authority ${getRandomPostfix()}`,
@@ -102,7 +108,7 @@ describe('MARC', () => {
           JobProfiles.waitLoadingList();
           JobProfiles.search(createdJobProfile.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(updatedfileName);
+          Logs.waitFileIsImported(updatedfileName);
           Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(updatedfileName);
           Logs.goToTitleLink(RECORD_STATUSES.CREATED);
@@ -171,7 +177,15 @@ describe('MARC', () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
           MarcAuthority.edit();
-          MarcAuthority.checkLDRValue(testData.authority.ldr);
+          QuickMarcEditor.verifyBoxValuesInLDRFieldInMarcAuthorityRecord(
+            '00846',
+            AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.C,
+            AUTHORITY_LDR_FIELD_TYPE_DROPDOWN.Z,
+            '\\\\a2200241',
+            AUTHORITY_LDR_FIELD_ELVL_DROPDOWN.N,
+            AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN['\\'],
+            '\\4500',
+          );
           MarcAuthority.check008Field();
           MarcAuthority.checkRemovedTag(9);
         },
@@ -232,34 +246,30 @@ describe('MARC', () => {
         },
       );
 
-      it(
-        'C350572 Edit an Authority record (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
-        () => {
-          MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-          MarcAuthorities.selectFirst(testData.authority.title);
-          MarcAuthority.edit();
-          MarcAuthority.addNewField(
-            5,
-            testData.authority.newField.tag,
-            `$a ${testData.authority.newField.content}`,
-          );
-          cy.wait(1000);
-          MarcAuthority.changeField('130', testData.authority.newField.title);
-          cy.wait(1000);
-          MarcAuthority.clicksaveAndCloseButton();
-          QuickMarcEditor.checkAfterSaveAndCloseAuthority();
+      it('C350572 Edit an Authority record (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
+        MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+        MarcAuthorities.selectFirst(testData.authority.title);
+        MarcAuthority.edit();
+        MarcAuthority.addNewField(
+          5,
+          testData.authority.newField.tag,
+          `$a ${testData.authority.newField.content}`,
+        );
+        cy.wait(1000);
+        MarcAuthority.changeField('130', testData.authority.newField.title);
+        cy.wait(1000);
+        MarcAuthority.clicksaveAndCloseButton();
+        QuickMarcEditor.checkAfterSaveAndCloseAuthority();
 
-          MarcAuthority.contains(testData.authority.newField.tag);
-          MarcAuthority.contains(testData.authority.newField.content);
+        MarcAuthority.contains(testData.authority.newField.tag);
+        MarcAuthority.contains(testData.authority.newField.content);
 
-          MarcAuthorities.searchBy(
-            testData.authority.searchOption,
-            testData.authority.newField.title,
-          );
-          MarcAuthorities.checkRow(testData.authority.newField.title);
-        },
-      );
+        MarcAuthorities.searchBy(
+          testData.authority.searchOption,
+          testData.authority.newField.title,
+        );
+        MarcAuthorities.checkRow(testData.authority.newField.title);
+      });
     });
   });
 });

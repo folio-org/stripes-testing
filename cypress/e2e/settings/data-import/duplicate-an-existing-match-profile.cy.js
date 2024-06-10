@@ -1,4 +1,4 @@
-import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
@@ -20,7 +20,7 @@ describe('Data Import', () => {
         field: '001',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
 
     const duplicatedMatchProfile = {
@@ -31,7 +31,7 @@ describe('Data Import', () => {
     const calloutMessage = `The match profile "${duplicatedMatchProfile.profileName}" was successfully created`;
     const calloutErrorMessage = 'New record not created';
 
-    before('create user and profile', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password);
@@ -41,7 +41,7 @@ describe('Data Import', () => {
       MatchProfileView.verifyMatchProfileTitleName(matchProfile.profileName);
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);

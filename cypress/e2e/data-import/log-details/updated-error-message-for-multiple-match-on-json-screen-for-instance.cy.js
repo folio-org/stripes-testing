@@ -1,10 +1,10 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -68,7 +68,7 @@ describe('Data Import', () => {
         subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       instanceOption: NewMatchProfile.optionsList.identifierOCLC,
     };
     const collectionOfMappingAndActionProfiles = [
@@ -195,7 +195,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(testData.user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
@@ -216,7 +216,7 @@ describe('Data Import', () => {
       'C389589  Verify the updated error message for multiple match on JSON screen for Instance: Case 1 (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const fileName = `C389589 marcFileName${getRandomPostfix()}`;
+        const fileName = `C389589 marcFileName${getRandomPostfix()}.mrc`;
 
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
@@ -238,7 +238,7 @@ describe('Data Import', () => {
       'C389590 Verify the updated error message for multiple match on JSON screen for Instance: Case 2 (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const fileName = `C389590 marcFileName${getRandomPostfix()}`;
+        const fileName = `C389590 marcFileName${getRandomPostfix()}.mrc`;
 
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();

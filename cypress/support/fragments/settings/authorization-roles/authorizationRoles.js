@@ -14,6 +14,9 @@ import {
   HTML,
   Spinner,
   KeyValue,
+  and,
+  or,
+  matching,
 } from '../../../../../interactors';
 
 const rolesPane = Pane('Authorization roles');
@@ -22,6 +25,7 @@ const actionsButton = Button('Actions');
 const editButton = Button('Edit');
 const deleteButton = Button('Delete');
 const cancelButton = Button('Cancel');
+const resetAllButton = Button('Reset all');
 const createRolePane = Pane('Create role');
 const editRolePane = Pane('Edit role');
 const roleNameInput = TextField('Name*');
@@ -40,7 +44,7 @@ const saveButtonInModal = selectApplicationModal.find(
 const cancelButtonInModal = selectApplicationModal.find(Button('Cancel'));
 const capabilitiesAccordion = Accordion('Capabilities');
 const capabilitySetsAccordion = Accordion('Capability sets');
-const saveButton = Button('Save and close');
+const saveButton = Button('Save & close');
 const roleNameInView = KeyValue('Name');
 const roleDescriptionInView = KeyValue('Description');
 
@@ -60,6 +64,15 @@ const searchInputInAssignModal = TextField('user search');
 const searchButtonInAssignModal = assignUsersModal.find(Button('Search'));
 const saveButtonInAssignModal = assignUsersModal.find(Button('Save'));
 const resultsPaneInAssignModal = Pane('User Search Results');
+const assignModalResultColumns = [
+  '',
+  'Name',
+  'Status',
+  'Barcode',
+  'Patron group',
+  'Username',
+  'Email',
+];
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
@@ -96,6 +109,7 @@ export default {
       capabilitySetsAccordion.exists(),
       saveButton.has({ disabled: true }),
     ]);
+    cy.wait(1000);
   },
 
   fillRoleNameDescription: (roleName, roleDescription = '') => {
@@ -201,6 +215,7 @@ export default {
 
   clickOnRoleName: (roleName) => {
     cy.do(rolesPane.find(HTML(roleName, { className: including('root') })).click());
+    cy.wait(1000);
     cy.expect([
       Pane(roleName).exists(),
       Spinner().absent(),
@@ -219,11 +234,11 @@ export default {
     if (checkOpen) cy.expect(capabilitySetsAccordion.has({ open: true }));
   },
 
-  checkCountOfCapablities: (table, expectedCount) => {
+  checkCountOfCapabilityRows: (table, expectedCount) => {
     cy.expect(capabilitiesAccordion.find(capabilityTables[table]).has({ rowCount: expectedCount }));
   },
 
-  checkCountOfCapablitySets: (table, expectedCount) => {
+  checkCountOfCapabilitySetRows: (table, expectedCount) => {
     cy.expect(
       capabilitySetsAccordion.find(capabilityTables[table]).has({ rowCount: expectedCount }),
     );
@@ -278,6 +293,7 @@ export default {
   },
 
   openForEdit: () => {
+    cy.wait(1000);
     cy.do([actionsButton.click(), editButton.click()]);
     cy.expect([
       editRolePane.exists(),
@@ -325,12 +341,14 @@ export default {
     cy.do([roleSearchInputField.fillIn(roleName), roleSearchButton.click()]);
   },
 
-  checkCapabilitiesAccordionCounter: (expectedCount) => {
-    cy.expect(capabilitiesAccordion.has({ counter: expectedCount }));
+  checkCapabilitiesAccordionCounter: (expectedCount, regExp = false) => {
+    if (regExp) cy.expect(capabilitiesAccordion.has({ counter: matching(expectedCount) }));
+    else cy.expect(capabilitiesAccordion.has({ counter: expectedCount }));
   },
 
-  checkCapabilitySetsAccordionCounter: (expectedCount) => {
-    cy.expect(capabilitySetsAccordion.has({ counter: expectedCount }));
+  checkCapabilitySetsAccordionCounter: (expectedCount, regExp = false) => {
+    if (regExp) cy.expect(capabilitySetsAccordion.has({ counter: matching(expectedCount) }));
+    else cy.expect(capabilitySetsAccordion.has({ counter: expectedCount }));
   },
 
   checkUsersAccordion: (expectedCount = false) => {
@@ -384,7 +402,12 @@ export default {
       searchButtonInAssignModal.click(),
       targetCheckbox.click(),
     ]);
-    cy.expect(targetCheckbox.has({ checked: isSelected }));
+    cy.expect([
+      targetCheckbox.has({ checked: isSelected }),
+      resultsPaneInAssignModal
+        .find(MultiColumnList({ columns: assignModalResultColumns }))
+        .exists(),
+    ]);
   },
 
   clickSaveInAssignModal: () => {
@@ -392,8 +415,99 @@ export default {
     cy.expect(assignUsersModal.absent());
   },
 
-  verifyAssignedUser: (lastName, firstName, isAssigned = true) => {
-    if (isAssigned) cy.expect(usersAccordion.find(HTML(including(`${lastName}, ${firstName}`))).exists());
-    else cy.expect(usersAccordion.find(HTML(including(`${lastName}, ${firstName}`))).absent());
+  verifyAssignedUser: (lastName, firstName, isAssigned = true, patronGroupName = '') => {
+    const userRow = usersAccordion.find(
+      MultiColumnListRow(and(including(`${lastName}, ${firstName}`), including(patronGroupName))),
+    );
+    if (isAssigned) cy.expect(userRow.exists());
+    else cy.expect(userRow.absent());
+  },
+
+  verifyAssignedUsersAccordion: () => {
+    cy.expect([
+      usersAccordion.has({ open: true }),
+      usersAccordion.find(assignUsersButton).exists(),
+      usersAccordion.find(MultiColumnListHeader('Name')).exists(),
+      usersAccordion.find(MultiColumnListHeader('Patron group')).exists(),
+    ]);
+  },
+
+  verifyAssignedUsersAccordionEmpty: () => {
+    cy.expect([
+      usersAccordion.has({ open: true }),
+      usersAccordion.find(assignUsersButton).exists(),
+      usersAccordion.find(MultiColumnListRow()).absent(),
+    ]);
+  },
+
+  clickResetAllInAssignModal: () => {
+    cy.do(assignUsersModal.find(resetAllButton).click());
+    cy.expect([
+      searchInputInAssignModal.has({ value: '' }),
+      resultsPaneInAssignModal.find(MultiColumnListRow()).absent(),
+    ]);
+  },
+
+  selectFilterOptionInAssignModal: (
+    filterName,
+    optionName,
+    isChecked = true,
+    resultsFound = null,
+  ) => {
+    const targetCheckbox = assignUsersModal.find(Accordion(filterName)).find(Checkbox(optionName));
+    cy.do(targetCheckbox.click());
+    cy.expect(targetCheckbox.has({ checked: isChecked }));
+    if (resultsFound === true) {
+      cy.expect([
+        resultsPaneInAssignModal.find(MultiColumnListRow()).exists(),
+        resultsPaneInAssignModal
+          .find(MultiColumnList({ columns: assignModalResultColumns }))
+          .exists(),
+      ]);
+    }
+    if (resultsFound === false) cy.expect(resultsPaneInAssignModal.find(MultiColumnListRow()).absent());
+  },
+
+  verifyCheckboxesCountInCapabilityRow: ({ table, application, resource }, expectedCount) => {
+    const targetRow = capabilitiesAccordion
+      .find(capabilityTables[table])
+      .find(
+        MultiColumnListRow(
+          or(
+            including(`${application}${resource}Read-only`),
+            including(`${application}${resource}No value set`),
+          ),
+          { isContainer: false },
+        ),
+      );
+    cy.expect(targetRow.has({ checkboxCount: expectedCount }));
+  },
+
+  verifyCheckboxesCountInCapabilitySetRow: ({ table, application, resource }, expectedCount) => {
+    const targetRow = capabilitySetsAccordion
+      .find(capabilityTables[table])
+      .find(
+        MultiColumnListRow(
+          or(
+            including(`${application}${resource}Read-only`),
+            including(`${application}${resource}No value set`),
+          ),
+          { isContainer: false },
+        ),
+      );
+    cy.expect(targetRow.has({ checkboxCount: expectedCount }));
+  },
+
+  waitCapabilitiesShown: () => {
+    cy.expect(capabilitiesAccordion.find(MultiColumnListRow()).exists());
+  },
+
+  verifyRoleViewPane: (roleName) => {
+    cy.expect([
+      Pane(roleName).exists(),
+      Spinner().absent(),
+      capabilitiesAccordion.has({ open: false }),
+      capabilitySetsAccordion.has({ open: false }),
+    ]);
   },
 };

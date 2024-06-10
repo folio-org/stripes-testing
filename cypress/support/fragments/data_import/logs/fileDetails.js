@@ -349,7 +349,11 @@ export default {
   },
 
   openJsonScreen: (title) => {
-    cy.get('#search-results-list').find('a').contains(title).invoke('removeAttr', 'target')
+    cy.get('#search-results-list')
+      .find('a')
+      .contains(title)
+      .first()
+      .invoke('removeAttr', 'target')
       .click();
     cy.wait(2000);
   },
@@ -406,11 +410,13 @@ export default {
     cy.do(
       resultsList.find(MultiColumnListRow({ index: rowNumber })).perform((element) => {
         const currentArray = Array.from(
-          element.querySelectorAll('[class*="mclCell-"]:nth-child(5) [style]'),
+          element.querySelectorAll('[class*="mclCell-"]:nth-child(5) [class*="baselineCell-"]'),
         ).map((el) => el.innerText.replace(/\n/g, ''));
 
-        expect(expectedQuantity).to.equal(currentArray.length);
-        expect(arrays.compareArrays(expectedArray, currentArray)).to.equal(true);
+        const resultArray = currentArray[0].match(/Created \([^)]*\)|No action/g);
+
+        expect(expectedQuantity).to.equal(resultArray.length);
+        expect(arrays.compareArrays(expectedArray, resultArray)).to.equal(true);
       }),
     );
   },
@@ -425,7 +431,7 @@ export default {
           // get text contains e.g. 'Created (it00000000123)' and put it to an array
           Array.from(element.querySelectorAll('[class*="baselineCell-"]')).map((el) => extractedMatches.push(el.innerText.match(/(Created \(it\d+\)|No action|-)/g)));
           // get the first element from an array
-          const currentArray = Array.from(extractedMatches[0]);
+          const currentArray = extractedMatches[0];
 
           expect(expectedQuantity).to.equal(currentArray.length);
         }),
@@ -443,7 +449,7 @@ export default {
           // get text contains e.g. 'Error' and put it to an array
           Array.from(element.querySelectorAll('[class*="baselineCell-"]')).map((el) => extractedMatches.push(el.innerText.match(/(Error)/g)));
           // get the first element from an array
-          const currentArray = Array.from(extractedMatches[0]);
+          const currentArray = extractedMatches[0];
 
           expect(expectedQuantity).to.equal(currentArray.length);
         }),

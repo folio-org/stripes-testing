@@ -23,7 +23,7 @@ describe('Eureka', () => {
           },
           {
             table: 'Settings',
-            resource: 'Settings Tags Enabled',
+            resource: 'Settings Enabled',
             action: 'View',
           },
           {
@@ -39,15 +39,15 @@ describe('Eureka', () => {
             action: 'Delete',
           },
           {
-            table: 'Settings',
-            resource: 'Module Notes Enabled',
-            action: 'View',
+            table: 'Data',
+            resource: 'Addresstypes Item',
+            action: 'Edit',
           },
         ],
-        expectedCounts: {
+        expectedRowCounts: {
           capabilities: {
             Data: 2,
-            Settings: 3,
+            Settings: 2,
           },
           capabilitySets: {
             Settings: 1,
@@ -65,9 +65,17 @@ describe('Eureka', () => {
         capability.application = testData.applicationName;
       });
 
+      const capabSetsToAssign = [
+        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
+        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
+        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+      ];
+
       before('Creating user, login', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
+          cy.updateRolesForUserApi(testData.user.userId, []);
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.settingsAuthorizationRoles,
             waiter: AuthorizationRoles.waitContentLoading,
@@ -111,7 +119,7 @@ describe('Eureka', () => {
             expect(call.request.body.name).to.eq(testData.roleName);
             expect(call.request.body.description).to.eq(testData.roleDescription);
             cy.wait('@capabilitiesCall').then((callCapabs) => {
-              expect(callCapabs.request.body.capabilityIds).to.have.lengthOf(5);
+              expect(callCapabs.request.body.capabilityIds).to.have.lengthOf(2);
               expect(callCapabs.request.body.roleId).to.eq(roleId);
             });
             cy.wait('@capabilitySetsCall').then((callCapabSets) => {
@@ -119,17 +127,19 @@ describe('Eureka', () => {
               expect(callCapabSets.request.body.roleId).to.eq(roleId);
             });
           });
+          cy.wait(4000);
           AuthorizationRoles.checkAfterSaveCreate(testData.roleName, testData.roleDescription);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.capabilitySet);
           AuthorizationRoles.verifyCapabilitySetCheckboxEnabled(testData.capabilitySet, false);
-          Object.entries(testData.expectedCounts.capabilitySets).forEach(([table, count]) => {
-            AuthorizationRoles.checkCountOfCapablitySets(table, count);
+          Object.entries(testData.expectedRowCounts.capabilitySets).forEach(([table, count]) => {
+            AuthorizationRoles.checkCountOfCapabilitySetRows(table, count);
           });
           testData.absentCapabilitySetTables.forEach((table) => {
             AuthorizationRoles.verifyCapabilitySetTableAbsent(table);
           });
+          AuthorizationRoles.verifyCheckboxesCountInCapabilitySetRow(testData.capabilitySet, 1);
           AuthorizationRoles.clickOnCapabilitiesAccordion();
           testData.capabilitiesInSet.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
@@ -137,12 +147,20 @@ describe('Eureka', () => {
           testData.capabilitiesToSelect.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
           });
-          Object.entries(testData.expectedCounts.capabilities).forEach(([table, count]) => {
-            AuthorizationRoles.checkCountOfCapablities(table, count);
+          Object.entries(testData.expectedRowCounts.capabilities).forEach(([table, count]) => {
+            AuthorizationRoles.checkCountOfCapabilityRows(table, count);
           });
           testData.absentCapabilityTables.forEach((table) => {
             AuthorizationRoles.verifyCapabilityTableAbsent(table);
           });
+          testData.capabilitiesInSet.forEach((capability) => {
+            AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(capability, 1);
+          });
+          // 2 checkboxes for the same row because same resource but different actions
+          AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(
+            testData.capabilitiesToSelect[0],
+            2,
+          );
         },
       );
     });

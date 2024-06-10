@@ -11,7 +11,7 @@ describe('Settings (Users): verifying time picker', () => {
 
   it(
     'C350699 Verify the schedule time -- AM/PM format (firebird)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPathBama', 'bama'] },
     () => {
       TransferFeeFine.selectTransferCriteriaSchedulePeriod('Days');
 

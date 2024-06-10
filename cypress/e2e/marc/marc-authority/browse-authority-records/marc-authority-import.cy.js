@@ -1,7 +1,6 @@
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -73,7 +72,7 @@ describe('MARC', () => {
               });
             },
           );
-          JobProfiles.waitFileIsImported(fileName);
+          Logs.waitFileIsImported(fileName);
           Logs.checkJobStatus(fileName, 'Completed');
           Logs.openFileDetails(fileName);
           Logs.goToTitleLink('Chemistry, Organic');
@@ -99,7 +98,7 @@ describe('MARC', () => {
               createdAuthorityIDs.push(record[propertyName].id);
             });
           });
-          JobProfiles.waitFileIsImported(fileName);
+          Logs.waitFileIsImported(fileName);
           Logs.checkJobStatus(fileName, 'Completed');
           Logs.openFileDetails(fileName);
           Logs.goToTitleLink('Apple Academic Press');
@@ -125,7 +124,7 @@ describe('MARC', () => {
               createdAuthorityIDs.push(record[propertyName].id);
             });
           });
-          JobProfiles.waitFileIsImported(fileName);
+          Logs.waitFileIsImported(fileName);
           Logs.checkJobStatus(fileName, 'Completed');
           Logs.openFileDetails(fileName);
           Logs.goToTitleLink('Case Reports');

@@ -10,9 +10,8 @@ import ItemRecordView from '../../support/fragments/inventory/item/itemRecordVie
 import FastAdd from '../../support/fragments/settings/inventory/instance-holdings-item/fastAdd';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { getLongDelay } from '../../support/utils/cypressTools';
+import randomFourDigitNumber, { getLongDelay } from '../../support/utils/cypressTools';
 import InteractorsTools from '../../support/utils/interactorsTools';
-import { randomFourDigitNumber } from '../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Fast Add', () => {
@@ -23,12 +22,13 @@ describe('Inventory', () => {
     const instanceStatusCodeValue = INSTANCE_STATUS_TERM_NAMES.UNCATALOGED;
     let userId;
 
-    beforeEach(() => {
+    beforeEach('Create test data and login', () => {
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiInventorySettingsFastAdd.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
+
         cy.login(userProperties.username, userProperties.password);
 
         cy.intercept('POST', '/inventory/instances').as('createInstance');
@@ -40,7 +40,7 @@ describe('Inventory', () => {
       });
     });
 
-    afterEach('reset "Fast add" setting', () => {
+    afterEach('Delete test data', () => {
       cy.getAdminToken().then(() => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
           FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,

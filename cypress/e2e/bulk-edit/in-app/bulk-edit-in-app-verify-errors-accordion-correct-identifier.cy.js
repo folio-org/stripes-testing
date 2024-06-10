@@ -12,6 +12,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import { LOCATION_IDS } from '../../../support/constants';
 
 // TODO: optimize creation of holdings
 
@@ -23,7 +24,7 @@ const matchedRecordsFileName = `*Matched-Records-${instanceHRIDFileName}`;
 const previewFileName = `*-Updates-Preview-${instanceHRIDFileName}`;
 
 const item = {
-  annexId: '53cf956f-c1df-410b-8bea-27f712cca7c0',
+  annexId: LOCATION_IDS.ANNEX,
   itemBarcode: getRandomPostfix(),
   instanceName: `instance-${getRandomPostfix()}`,
 };
@@ -67,7 +68,7 @@ describe('bulk-edit', () => {
                 {
                   holdingsTypeId: instance.holdingTypeId,
                   permanentLocationId: instance.defaultLocation.id,
-                  temporaryLocationId: '53cf956f-c1df-410b-8bea-27f712cca7c0',
+                  temporaryLocationId: LOCATION_IDS.ANNEX,
                 },
               ],
             })
@@ -118,7 +119,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C369050 Verify that Errors accordion displays correct identifier on the confirmation screen (instance HRIDs)(firebird) (TaaS)',
+      'C369050 Verify that Errors accordion displays correct identifier on the confirmation screen (instance HRIDs) (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Instance HRIDs');
@@ -142,7 +143,7 @@ describe('bulk-edit', () => {
 
         const newLocation = 'Annex';
         BulkEditActions.selectOption('Temporary holdings location');
-        BulkEditActions.selectAction('Replace with', 0);
+        BulkEditActions.selectSecondAction('Replace with');
         BulkEditActions.clickSelectedLocation('Select location', newLocation);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(2, newLocation);

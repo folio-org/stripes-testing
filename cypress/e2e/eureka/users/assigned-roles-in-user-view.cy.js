@@ -13,10 +13,20 @@ describe('Eureka', () => {
       roleBName: `Auto Role B C464314 ${getRandomPostfix()}`,
     };
 
+    const capabSetsToAssign = [
+      { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
+      { type: 'Data', resource: 'Capabilities', action: 'Manage' },
+      { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+      { type: 'Data', resource: 'Roles Users', action: 'Manage' },
+      { type: 'Data', resource: 'UI-Users', action: 'View' },
+    ];
+
     before('Create users, roles', () => {
       cy.getAdminToken();
       cy.createTempUser([]).then((createdUserProperties) => {
         testData.tempUser = createdUserProperties;
+        cy.assignCapabilitiesToExistingUser(testData.tempUser.userId, [], capabSetsToAssign);
+        cy.updateRolesForUserApi(testData.tempUser.userId, []);
       });
       cy.createTempUser([]).then((createdUserAProperties) => {
         testData.userA = createdUserAProperties;

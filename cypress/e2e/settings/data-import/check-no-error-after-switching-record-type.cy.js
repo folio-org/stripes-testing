@@ -1,11 +1,11 @@
 import { Permissions } from '../../../support/dictionary';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
-import { BatchGroups } from '../../../support/fragments/settings/invoices';
 import {
-  SettingsDataImport,
   FieldMappingProfiles,
+  SettingsDataImport,
 } from '../../../support/fragments/settings/dataImport';
 import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import { BatchGroups } from '../../../support/fragments/settings/invoices';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 

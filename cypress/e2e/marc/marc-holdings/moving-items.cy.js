@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import { ITEM_STATUS_NAMES, LOCATION_IDS } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstancesMovement from '../../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
@@ -76,12 +76,12 @@ describe('MARC', () => {
               holdings: [
                 {
                   holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-                  permanentLocationId: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5',
+                  permanentLocationId: LOCATION_IDS.ONLINE,
                   sourceId: source[0].id,
                 },
                 {
                   holdingsTypeId: Cypress.env('holdingsTypes')[1].id,
-                  permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+                  permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
                   sourceId: source[1].id,
                 },
               ],

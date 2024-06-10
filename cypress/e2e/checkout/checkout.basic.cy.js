@@ -10,7 +10,6 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
-import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -22,11 +21,6 @@ describe('Check Out - Actions ', () => {
     personal: {},
   };
   let patronGroupId = '';
-  const testActiveUser = { ...DefaultUser.defaultUiPatron.body };
-  testActiveUser.patronGroup = userData.group;
-  testActiveUser.personal.lastname = testActiveUser.personal.lastName;
-  testActiveUser.personal.middleName = getTestEntityValue('midname');
-  testActiveUser.personal.preferredFirstName = getTestEntityValue('prefname');
 
   const itemData = {
     barcode: generateItemBarcode(),
@@ -35,7 +29,7 @@ describe('Check Out - Actions ', () => {
   let defaultLocation;
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
 
-  before('Create New Item and New User', () => {
+  before('Create test data', () => {
     cy.getAdminToken()
       .then(() => {
         ServicePoints.createViaApi(servicePoint);
@@ -111,7 +105,7 @@ describe('Check Out - Actions ', () => {
       });
   });
 
-  after('Delete New Service point, Item and User', () => {
+  after('Delete test data', () => {
     cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode: itemData.barcode,
@@ -121,7 +115,6 @@ describe('Check Out - Actions ', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
     Users.deleteViaApi(userData.userId);
-    Users.deleteViaApi(testActiveUser.id);
     PatronGroups.deleteViaApi(patronGroupId);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       defaultLocation.institutionId,
@@ -134,21 +127,14 @@ describe('Check Out - Actions ', () => {
 
   it(
     'C356772 An active user with barcode can Check out item (vega)',
-    { tags: ['smokeBroken', 'vega', 'system'] },
+    { tags: ['smoke', 'vega', 'system'] },
     () => {
-      OtherSettings.selectPatronIdsForCheckoutScanning(['Username'], '3');
-      cy.visit(TopMenu.usersPath);
-      Users.createViaUi(testActiveUser).then((id) => {
-        testActiveUser.id = id;
-      });
-      // eslint-disable-next-line spaced-comment
-      //Users.checkIsUserCreated(testActiveUser);
       cy.visit(TopMenu.checkOutPath);
       Checkout.waitLoading();
       // without this waiter, the user will not be found by username
       cy.wait(4000);
-      CheckOutActions.checkOutUser(testActiveUser.barcode, testActiveUser.username);
-      CheckOutActions.checkUserInfo(testActiveUser, testActiveUser.patronGroup);
+      CheckOutActions.checkOutUser(userData.barcode, userData.username);
+      CheckOutActions.checkUserInfo(userData, userData.patronGroup);
       CheckOutActions.checkOutItem(itemData.barcode);
       CheckOutActions.checkItemInfo(itemData.barcode, itemData.instanceTitle);
     },

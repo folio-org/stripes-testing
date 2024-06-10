@@ -18,7 +18,7 @@ describe('Inventory', () => {
       instanceTitle: `autotestInstance ${getRandomPostfix()}`,
     };
 
-    before('create test data and login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
@@ -182,7 +182,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         cy.getInstance({
           limit: 1,

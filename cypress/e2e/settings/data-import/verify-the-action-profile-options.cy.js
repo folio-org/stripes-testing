@@ -17,21 +17,25 @@ describe('Data Import', () => {
   describe('Settings', () => {
     let user;
 
-    const mappingProfileName = `C421995 mapping profile${getRandomPostfix()}`;
-    const actionProfileName = `C421995 action profile${getRandomPostfix()}`;
+    const mappingProfile = {
+      name: `C421995 mapping profile${getRandomPostfix()}`,
+    };
+    const actionProfile = {
+      name: `C421995 action profile${getRandomPostfix()}`,
+      action: 'CREATE',
+      folioRecordType: 'INSTANCE',
+    };
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
-      NewFieldMappingProfile.createMappingProfileViaApi(mappingProfileName).then(
+      NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile).then(
         (mappingProfileResponse) => {
-          NewActionProfile.createActionProfileViaApi(
-            actionProfileName,
-            mappingProfileResponse.body.id,
-          );
+          NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfileResponse.body.id);
         },
       );
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password);
         cy.visit(SettingsMenu.actionProfilePath);
       });
@@ -39,8 +43,8 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfileName);
-      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileName);
+      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
       Users.deleteViaApi(user.userId);
     });
 
@@ -60,8 +64,8 @@ describe('Data Import', () => {
         });
 
         NewActionProfile.clickClose();
-        ActionProfiles.search(actionProfileName);
-        ActionProfiles.verifyActionProfileOpened(actionProfileName);
+        ActionProfiles.search(actionProfile.name);
+        ActionProfiles.verifyActionProfileOpened(actionProfile.name);
         ActionProfileView.edit();
 
         ActionProfileEdit.changeAction(actionCreate);

@@ -53,6 +53,8 @@ function addRequester(userName) {
 }
 
 function openNewRequestPane() {
+  cy.do(actionsButton.click());
+  cy.wait(500);
   cy.do([actionsButton.click(), newRequestButton.click()]);
 }
 
@@ -86,6 +88,7 @@ export default {
     cy.do(enterRequesterBarcodeButton.click());
     cy.expect(selectServicePoint.exists);
     cy.wait('@getUsers');
+    cy.wait(500);
     cy.do(selectRequestType.choose(newRequest.requestType));
   },
 
@@ -95,12 +98,14 @@ export default {
   },
 
   saveRequestAndClose: () => cy.do(saveAndCloseButton.click()),
-  waitLoading: () => cy.expect(Pane({ title: 'Request Detail' }).exists()),
+  waitLoading: () => cy.expect(Pane({ title: 'Request details' }).exists()),
 
   createNewRequest(newRequest) {
     openNewRequestPane();
     this.fillRequiredFields(newRequest);
+    cy.wait(500);
     this.choosePickupServicePoint(newRequest.pickupServicePoint);
+    cy.wait(500);
     this.saveRequestAndClose();
     this.waitLoading();
   },
@@ -166,7 +171,14 @@ export default {
 
   enterHridInfo(hrid) {
     cy.do(titleLevelRequest.click());
-    cy.do(instanceHridInput.fillIn(hrid));
+    cy.wait(1000);
+    try {
+      cy.do(instanceHridInput.fillIn(hrid));
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e);
+      cy.do(instanceHridInput.fillIn(hrid));
+    }
     cy.do(itemInfoSection.find(Button('Enter')).click());
   },
 

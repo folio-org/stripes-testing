@@ -10,6 +10,7 @@ import Users from '../../../../support/fragments/users/users';
 describe('Patron Notices', () => {
   let userData;
   const noticeTemplate = NoticeTemplates.getDefaultTemplate();
+  let adminNames;
 
   before('Preconditions', () => {
     cy.getAdminToken();
@@ -27,9 +28,12 @@ describe('Patron Notices', () => {
         );
       })
       .then(() => {
-        cy.login(userData.username, userData.password, {
-          path: SettingsMenu.circulationPatronNoticeTemplatesPath,
-          waiter: NewNoticePolicyTemplate.waitLoading,
+        cy.getAdminSourceRecord().then((names) => {
+          adminNames = names;
+          cy.login(userData.username, userData.password, {
+            path: SettingsMenu.circulationPatronNoticeTemplatesPath,
+            waiter: NewNoticePolicyTemplate.waitLoading,
+          });
         });
       });
   });
@@ -42,7 +46,7 @@ describe('Patron Notices', () => {
 
   it(
     'C387439 Add metadata info to view of Patron Notice Templates scenario 1,4,5 (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['smoke', 'volaris'] },
     () => {
       NewNoticePolicyTemplate.openToSide({ name: noticeTemplate.name });
       NewNoticePolicyTemplate.checkAfterSaving({
@@ -63,7 +67,7 @@ describe('Patron Notices', () => {
     { tags: ['extendedPath', 'volaris'] },
     () => {
       NewNoticePolicyTemplate.openToSide({ name: noticeTemplate.name });
-      NewNoticePolicyTemplate.verifyMetadataObjectIsVisible();
+      NewNoticePolicyTemplate.verifyMetadataObjectIsVisible(adminNames);
     },
   );
 });

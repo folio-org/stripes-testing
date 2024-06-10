@@ -1,4 +1,9 @@
 import { Permissions } from '../../../support/dictionary';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileEdit';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -6,18 +11,19 @@ import {
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileEdit';
 
 describe('Data Import', () => {
   describe('Settings', () => {
     let user;
 
-    const mappingProfileName = `mapping_${getRandomPostfix()}`;
-    const actionProfileName = `action_${getRandomPostfix()}`;
+    const mappingProfile = {
+      name: `C421998 mapping profile_${getRandomPostfix()}`,
+    };
+    const actionProfile = {
+      name: `C421998 action_${getRandomPostfix()}`,
+      action: 'CREATE',
+      folioRecordType: 'INSTANCE',
+    };
     const FOLIORecordTypes = [
       'Instance',
       'Holdings',
@@ -29,14 +35,11 @@ describe('Data Import', () => {
       'MARC Authority',
     ];
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
-      NewFieldMappingProfile.createMappingProfileViaApi(mappingProfileName).then(
+      NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile).then(
         (mappingProfileResponse) => {
-          NewActionProfile.createActionProfileViaApi(
-            actionProfileName,
-            mappingProfileResponse.body.id,
-          );
+          NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfileResponse.body.id);
         },
       );
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
@@ -48,8 +51,8 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfileName);
-      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileName);
+      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
       Users.deleteViaApi(user.userId);
     });
 
@@ -66,9 +69,9 @@ describe('Data Import', () => {
         });
 
         NewFieldMappingProfile.clickClose();
-        FieldMappingProfiles.search(mappingProfileName);
+        FieldMappingProfiles.search(mappingProfile.name);
         FieldMappingProfileView.edit();
-        FieldMappingProfileEdit.verifyScreenName(mappingProfileName);
+        FieldMappingProfileEdit.verifyScreenName(mappingProfile.name);
 
         FOLIORecordTypes.forEach((type) => {
           FieldMappingProfileEdit.verifyFOLIORecordTypeOptionExists(type);

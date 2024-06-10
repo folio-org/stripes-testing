@@ -21,6 +21,7 @@ const testData = {
     'Prayer Bible (Test record with 240 linked field).',
   ],
   searchQueries: ['Bible. Polish. Biblia Płocka 1992', 'Abraham, Angela, 1958- Hosanna Bible'],
+  instanceSearchQueries: ['Prayer Bible', 'The Gospel'],
   alternativeTitles: ['Biblia Płocka', 'Hosanna Bible'],
   searchResults: [
     'Prayer Bible (Test record with 130 linked field).',
@@ -58,15 +59,17 @@ describe('Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        InventoryInstances.getInstancesViaApi({
-          limit: 100,
-          query: 'title="Prayer Bible"',
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
+        testData.instanceSearchQueries.forEach((query) => {
+          InventoryInstances.getInstancesViaApi({
+            limit: 100,
+            query: `title="${query}"`,
+          }).then((instances) => {
+            if (instances) {
+              instances.forEach(({ id }) => {
+                InventoryInstance.deleteInstanceViaApi(id);
+              });
+            }
+          });
         });
         testData.searchQueries.forEach((query) => {
           MarcAuthorities.getMarcAuthoritiesViaApi({
@@ -110,7 +113,6 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
       });
-      cy.logout();
     });
 
     after('Delete test data', () => {

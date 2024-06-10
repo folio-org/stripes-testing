@@ -1,16 +1,17 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
+import { DEFAULT_JOB_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import DateTools from '../../../support/utils/dateTools';
-import TopMenu from '../../../support/fragments/topMenu';
-import FileManager from '../../../support/utils/fileManager';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import Users from '../../../support/fragments/users/users';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import DateTools from '../../../support/utils/dateTools';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
@@ -19,12 +20,13 @@ describe('Data Import', () => {
       pathToStaticFile: 'oneMarcBib.mrc',
       jobProfileName: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       fileNameForFailedImport: `C11113test${getRandomPostfix()}.mrc`,
+      fileName: `C11113test${getRandomPostfix()}.mrc`,
       fileNameForSuccessfulImport: `C11113test${getRandomPostfix()}.mrc`,
       oclcNumber: '1234567',
       OCLCAuthentication: '100481406/PAOLF',
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       cy.loginAsAdmin({
         path: TopMenu.inventoryPath,
@@ -38,16 +40,20 @@ describe('Data Import', () => {
         testData.user = userProperties;
 
         // Create file dynamically with given name and content in fixtures
-        FileManager.createFile(`cypress/fixtures/${testData.fileNameForFailedImport}`);
+        FileManager.createFile(`cypress/fixtures/${testData.fileName}`);
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
         DataImport.verifyUploadState();
-        // remove generated test file from fixtures after uploading
-        cy.uploadFileWithDefaultJobProfile(testData.fileNameForFailedImport);
-        cy.wait(2000);
+        DataImport.uploadFile(testData.fileName, testData.fileNameForFailedImport);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.search(DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS);
+        JobProfiles.runImportFile();
+        Logs.waitFileIsImported(testData.fileNameForFailedImport);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.FAILED);
+
         DataImport.uploadFileViaApi(
           testData.pathToStaticFile,
           `C11113 autotestFileName ${getRandomPostfix()}`,
@@ -57,11 +63,11 @@ describe('Data Import', () => {
         });
 
         // Remove generated test files from fixtures after uploading
-        FileManager.deleteFile(`cypress/fixtures/${testData.fileNameForFailedImport}`);
+        FileManager.deleteFile(`cypress/fixtures/${testData.fileName}`);
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(testData.user.userId);
         InventoryInstance.deleteInstanceViaApi(testData.instanceId);
@@ -93,10 +99,11 @@ describe('Data Import', () => {
 
       // api endpoint expects completedDate increased by 1 day
       completedDate.setDate(completedDate.getDate() + 1);
-
+      cy.wait(1500);
       LogsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });
-
+      cy.wait(1500);
       const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
+      cy.wait(1500);
       LogsViewAll.checkByDate({ from: formattedStart, end: formattedEnd });
       LogsViewAll.resetAllFilters();
 

@@ -178,6 +178,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
           permissions.uiCirculationSettingsNoticeTemplates.gui,
           permissions.uiCirculationSettingsNoticePolicies.gui,
           permissions.loansAll.gui,
+          permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
         ],
         patronGroup.name,
       )

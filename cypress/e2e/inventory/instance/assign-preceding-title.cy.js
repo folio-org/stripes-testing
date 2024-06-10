@@ -16,7 +16,7 @@ describe('Inventory', () => {
     const isbnValue = `ISBN test value ${getRandomPostfix()}`;
     const issnValue = `ISSN test value ${getRandomPostfix()}`;
 
-    before('navigate to Inventory', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 });
@@ -45,14 +45,14 @@ describe('Inventory', () => {
       });
     });
 
-    after(() => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         cy.getInstanceById(instanceIds[0])
           .then((body) => {
             const requestBody = body;
             requestBody.precedingTitles = [];
 
-            // reset precedingTitles to get rid of tables dependencies and be able to delete the instances
+            // reset precedingTitles to get hrid of tables dependencies and be able to delete the instances
             cy.updateInstance(requestBody);
           })
           .then(() => {
@@ -74,7 +74,7 @@ describe('Inventory', () => {
         InventoryInstance.editInstance();
         InstanceRecordEdit.addExistingPrecedingTitle(instanceTitle2);
         InstanceRecordEdit.saveAndClose();
-        InventoryInstance.checkPrecedingTitle(0, instanceTitle2, '', '');
+        InventoryInstance.checkPrecedingTitle(0, instanceTitle2, '-', '-');
       },
     );
   });

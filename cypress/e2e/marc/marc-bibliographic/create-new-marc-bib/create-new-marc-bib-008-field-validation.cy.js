@@ -65,7 +65,7 @@ describe('MARC', () => {
           cy.intercept('GET', '**records-editor/records?externalId=**').as('editMarc');
           InventoryInstance.editMarcBibliographicRecord();
           cy.wait('@editMarc').then((res) => {
-            expect(res.response.body.fields[1].content.Entered).to.be.eq(currentDate);
+            expect(res.response.body.fields[2].content.Entered).to.be.eq(currentDate);
           });
         },
       );

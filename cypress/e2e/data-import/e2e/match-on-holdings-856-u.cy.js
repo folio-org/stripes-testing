@@ -2,7 +2,7 @@
 import {
   ACTION_NAMES_IN_ACTION_PROFILE,
   CALL_NUMBER_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   LOCATION_NAMES,
@@ -83,7 +83,7 @@ describe('Data Import', () => {
         subfield: 'u',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+      existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
       holdingsOption: NewMatchProfile.optionsList.uri,
     };
 
@@ -96,14 +96,14 @@ describe('Data Import', () => {
       profileName: `C17025 updateEHoldingsJobProf${getRandomPostfix()}`,
     };
 
-    before('login', () => {
+    before('Login', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(
           createInstanceAndEHoldingsJobProfile.profileName,

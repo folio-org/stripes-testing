@@ -1,10 +1,10 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
@@ -15,7 +15,7 @@ describe('Data Import', () => {
     const uniqueFileName = `C11112 autotestFileName${uniquePartOfFileName}.mrc`;
     const uniqueFileNameForSearch = `C11112 autotestFileName${uniquePartOfFileName}_1.mrc`;
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         filePath,
@@ -35,7 +35,7 @@ describe('Data Import', () => {
       cy.visit(TopMenu.dataImportPath);
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken();
       InventoryInstance.deleteInstanceViaApi(instanceId);
     });
@@ -47,6 +47,7 @@ describe('Data Import', () => {
         LogsViewAll.selectOption(option);
         // when option is "ID", search with hrId otherwise, with file name
         const term = option === 'ID' ? `${id}` : uniqueFileNameForSearch;
+        cy.wait(1000);
 
         LogsViewAll.searchWithTerm(term);
 

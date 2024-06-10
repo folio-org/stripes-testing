@@ -1,16 +1,15 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
-  LOCATION_NAMES,
-  PROFILE_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -34,6 +33,7 @@ import NewMatchProfile from '../../../support/fragments/settings/dataImport/matc
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -41,88 +41,40 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user = null;
     let holdingsHrId = null;
-    let exportedFileName = null;
     let instanceHrid = null;
+    const mappingProfileIds = [];
+    const actionProfileIds = [];
     const holdingsPermanentLocation = 'Online';
-    const recordType = 'MARC_BIBLIOGRAPHIC';
     const filePathToUpload = 'oneMarcBib.mrc';
     const marcFileNameForCreate = `C347894 marcBibFileForCreate${getRandomPostfix()}.mrc`;
-    // profiles for creating instance, holdings, item
+    const exportedFileName = `C347894 exportedMarcFile${getRandomPostfix()}.mrc`;
+    const marcFileNameForUpdate = `C347894 marcBibFileForUpdate${getRandomPostfix()}.mrc`;
+    // profiles for creating instance, holdings
     const instanceMappingProfileForCreate = {
-      profile: {
-        name: `C347894 autotest instance mapping profile for create.${getRandomPostfix()}`,
-        incomingRecordType: recordType,
-        existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-      },
+      name: `C347894 autotest instance mapping profile for create.${getRandomPostfix()}`,
     };
     const holdingsMappingProfileForCreate = {
-      profile: {
-        name: `C347894 autotest holdings mapping profile for create.${getRandomPostfix()}`,
-        incomingRecordType: recordType,
-        existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
-        mappingDetails: {
-          name: 'holdings',
-          recordType: 'HOLDINGS',
-          mappingFields: [
-            {
-              name: 'permanentLocationId',
-              enabled: true,
-              path: 'holdings.permanentLocationId',
-              value: `"${LOCATION_NAMES.ONLINE}"`,
-            },
-          ],
-        },
-      },
+      name: `C347894 autotest holdings mapping profile for create.${getRandomPostfix()}`,
+      permanentLocation: 'Main Library (KU/CC/DI/M)',
     };
-    const instanceActionProfileForCreate = {
-      profile: {
-        name: `C347894 autotest instance action profile for create.${getRandomPostfix()}`,
-        action: 'CREATE',
-        folioRecord: 'INSTANCE',
-      },
-      addedRelations: [
-        {
-          masterProfileId: null,
-          masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
-          detailProfileId: '',
-          detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
-        },
-      ],
-      deletedRelations: [],
-    };
-    const holdingsActionProfileForCreate = {
-      profile: {
-        name: `C347894 autotest holdings action profile for create.${getRandomPostfix()}`,
-        action: 'CREATE',
-        folioRecord: 'HOLDINGS',
-      },
-      addedRelations: [
-        {
-          masterProfileId: null,
-          masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
-          detailProfileId: '',
-          detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
-        },
-      ],
-      deletedRelations: [],
-    };
-    const testData = [
+    const actionProfilesForCreate = [
       {
-        mappingProfile: instanceMappingProfileForCreate,
-        actionProfile: instanceActionProfileForCreate,
+        actionProfile: {
+          name: `C347894 autotest instance mapping profile for create.${getRandomPostfix()}`,
+          action: 'CREATE',
+          folioRecordType: 'INSTANCE',
+        },
       },
       {
-        mappingProfile: holdingsMappingProfileForCreate,
-        actionProfile: holdingsActionProfileForCreate,
+        actionProfile: {
+          name: `C347894 autotest holdings mapping profile for create.${getRandomPostfix()}`,
+          action: 'CREATE',
+          folioRecordType: 'HOLDINGS',
+        },
       },
     ];
     const jobProfileForCreate = {
-      profile: {
-        name: `C347894 autotest job profile for create.${getRandomPostfix()}`,
-        dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
-      },
-      addedRelations: [],
-      deletedRelations: [],
+      name: `C347894 autotest job profile for create.${getRandomPostfix()}`,
     };
     // profiles for updating item
     const instanceMatchProfile = {
@@ -131,7 +83,7 @@ describe('Data Import', () => {
         field: '001',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       instanceOption: NewMatchProfile.optionsList.instanceHrid,
     };
     const holdingsMatchProfile = {
@@ -139,7 +91,7 @@ describe('Data Import', () => {
       incomingStaticValue: 'Online',
       incomingStaticRecordValue: 'Text',
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+      existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
       existingRecordOption: NewMatchProfile.optionsList.holdingsPermLoc,
     };
     const collectionOfMappingAndActionProfiles = [
@@ -174,39 +126,46 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
-      testData.jobProfileForCreate = jobProfileForCreate;
+      NewFieldMappingProfile.createInstanceMappingProfileViaApi(
+        instanceMappingProfileForCreate,
+      ).then((mappingProfileResponse) => {
+        mappingProfileIds.push(mappingProfileResponse.body.id);
 
-      testData.forEach((specialPair) => {
-        cy.createOnePairMappingAndActionProfiles(
-          specialPair.mappingProfile,
-          specialPair.actionProfile,
-        ).then((idActionProfile) => {
-          cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
+        NewActionProfile.createActionProfileViaApi(
+          actionProfilesForCreate[0].actionProfile,
+          mappingProfileResponse.body.id,
+        ).then((actionProfileResponse) => {
+          actionProfileIds.push(actionProfileResponse.body.id);
         });
       });
-      SettingsJobProfiles.createJobProfileViaApi(testData.jobProfileForCreate).then(
-        (bodyWithjobProfile) => {
-          testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
-        },
-      );
-      cy.loginAsAdmin();
-      // upload a marc file for creating of the new instance, holding and item
-      cy.visit(TopMenu.dataImportPath);
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(filePathToUpload, marcFileNameForCreate);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(testData.jobProfileForCreate.profile.name);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(marcFileNameForCreate);
-      Logs.checkJobStatus(marcFileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(marcFileNameForCreate);
-      FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
-      HoldingsRecordView.getHoldingsHrId().then((initialHrId) => {
-        holdingsHrId = initialHrId;
+      NewFieldMappingProfile.createHoldingsMappingProfileViaApi(holdingsMappingProfileForCreate)
+        .then((mappingProfileResponse) => {
+          mappingProfileIds.push(mappingProfileResponse.body.id);
+
+          NewActionProfile.createActionProfileViaApi(
+            actionProfilesForCreate[1].actionProfile,
+            mappingProfileResponse.body.id,
+          ).then((actionProfileResponse) => {
+            actionProfileIds.push(actionProfileResponse.body.id);
+          });
+        })
+        .then(() => {
+          NewJobProfile.createJobProfileWithLinkedTwoActionProfilesViaApi(
+            jobProfileForCreate,
+            actionProfileIds[0],
+            actionProfileIds[1],
+          );
+        });
+      // upload a marc file for creating of the new instance, holding
+      DataImport.uploadFileViaApi(
+        filePathToUpload,
+        marcFileNameForCreate,
+        jobProfileForCreate.name,
+      ).then((response) => {
+        holdingsHrId = response[0].instance.hrid;
       });
-      cy.logout();
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -224,7 +183,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
       cy.getAdminToken().then(() => {
@@ -238,18 +197,12 @@ describe('Data Import', () => {
             profile.mappingProfile.name,
           );
         });
-        SettingsActionProfiles.deleteActionProfileByNameViaApi(
-          instanceActionProfileForCreate.profile.name,
-        );
-        SettingsActionProfiles.deleteActionProfileByNameViaApi(
-          holdingsActionProfileForCreate.profile.name,
-        );
-        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
-          instanceMappingProfileForCreate.profile.name,
-        );
-        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
-          holdingsMappingProfileForCreate.profile.name,
-        );
+        actionProfileIds.forEach((id) => {
+          SettingsActionProfiles.deleteActionProfileViaApi(id);
+        });
+        mappingProfileIds.forEach((id) => {
+          SettingsFieldMappingProfiles.deleteMappingProfileViaApi(id);
+        });
         Users.deleteViaApi(user.userId);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (instance) => {
@@ -269,103 +222,102 @@ describe('Data Import', () => {
         InventorySearchAndFilter.searchHoldingsByHRID(holdingsHrId);
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.exportInstanceAsMarc();
+        cy.intercept('/data-export/quick-export').as('getHrid');
+        cy.wait('@getHrid', getLongDelay()).then((req) => {
+          const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
-        // download exported marc file
-        cy.visit(TopMenu.dataExportPath);
-        cy.getAdminToken();
-        ExportFile.getExportedFileNameViaApi().then((name) => {
-          exportedFileName = name;
-
-          ExportFile.downloadExportedMarcFile(exportedFileName);
-
-          // create match profiles
-          cy.visit(SettingsMenu.matchProfilePath);
-          MatchProfiles.createMatchProfile(instanceMatchProfile);
-          MatchProfiles.checkMatchProfilePresented(instanceMatchProfile.profileName);
-          MatchProfiles.createMatchProfileWithStaticValue(holdingsMatchProfile);
-          MatchProfiles.checkMatchProfilePresented(holdingsMatchProfile.profileName);
-
-          // create Field mapping profiles
-          cy.visit(SettingsMenu.mappingProfilePath);
-          FieldMappingProfiles.openNewMappingProfileForm();
-          NewFieldMappingProfile.fillSummaryInMappingProfile(
-            collectionOfMappingAndActionProfiles[0].mappingProfile,
-          );
-          NewFieldMappingProfile.addSuppressFromDiscovery(
-            collectionOfMappingAndActionProfiles[0].mappingProfile.suppressFromDiscavery,
-          );
-          NewFieldMappingProfile.save();
-          FieldMappingProfileView.closeViewMode(
-            collectionOfMappingAndActionProfiles[0].mappingProfile.name,
-          );
-          FieldMappingProfiles.checkMappingProfilePresented(
-            collectionOfMappingAndActionProfiles[0].mappingProfile.name,
-          );
-
-          FieldMappingProfiles.openNewMappingProfileForm();
-          NewFieldMappingProfile.fillSummaryInMappingProfile(
-            collectionOfMappingAndActionProfiles[1].mappingProfile,
-          );
-          NewFieldMappingProfile.addSuppressFromDiscovery(
-            collectionOfMappingAndActionProfiles[1].mappingProfile.suppressFromDiscavery,
-          );
-          NewFieldMappingProfile.save();
-          FieldMappingProfileView.closeViewMode(
-            collectionOfMappingAndActionProfiles[1].mappingProfile.name,
-          );
-          FieldMappingProfiles.checkMappingProfilePresented(
-            collectionOfMappingAndActionProfiles[1].mappingProfile.name,
-          );
-
-          collectionOfMappingAndActionProfiles.forEach((profile) => {
-            cy.visit(SettingsMenu.actionProfilePath);
-            ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-            ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-          });
-
-          // create Job profile
-          cy.visit(SettingsMenu.jobProfilePath);
-          JobProfiles.createJobProfile(jobProfileForUpdate);
-          NewJobProfile.linkMatchAndActionProfiles(
-            instanceMatchProfile.profileName,
-            collectionOfMappingAndActionProfiles[0].actionProfile.name,
-          );
-          NewJobProfile.linkMatchProfileForMatches(holdingsMatchProfile.profileName);
-          NewJobProfile.linkActionProfileForMatches(
-            collectionOfMappingAndActionProfiles[1].actionProfile.name,
-          );
-          NewJobProfile.saveAndClose();
-          JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
-
-          // upload the exported marc file
-          cy.visit(TopMenu.dataImportPath);
-          DataImport.verifyUploadState();
-          DataImport.uploadExportedFile(exportedFileName);
-          JobProfiles.search(jobProfileForUpdate.profileName);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(exportedFileName);
-          Logs.checkJobStatus(exportedFileName, JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(exportedFileName);
-          [
-            FileDetails.columnNameInResultList.srsMarc,
-            FileDetails.columnNameInResultList.instance,
-            FileDetails.columnNameInResultList.holdings,
-          ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
-          });
-          FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
-          FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
-          FileDetails.checkHoldingsQuantityInSummaryTable('1', '1');
-          FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
-          InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
-          InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
-            instanceHrid = initialInstanceHrId;
-          });
-          cy.visit(TopMenu.dataImportPath);
-          Logs.openFileDetails(exportedFileName);
-          FileDetails.openHoldingsInInventory(RECORD_STATUSES.UPDATED);
-          HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
+          // download exported marc file
+          cy.visit(TopMenu.dataExportPath);
+          ExportFile.downloadExportedMarcFileWithRecordHrid(expectedRecordHrid, exportedFileName);
+          FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
         });
+        // create match profiles
+        cy.visit(SettingsMenu.matchProfilePath);
+        MatchProfiles.createMatchProfile(instanceMatchProfile);
+        MatchProfiles.checkMatchProfilePresented(instanceMatchProfile.profileName);
+        MatchProfiles.createMatchProfileWithStaticValue(holdingsMatchProfile);
+        MatchProfiles.checkMatchProfilePresented(holdingsMatchProfile.profileName);
+
+        // create Field mapping profiles
+        cy.visit(SettingsMenu.mappingProfilePath);
+        FieldMappingProfiles.openNewMappingProfileForm();
+        NewFieldMappingProfile.fillSummaryInMappingProfile(
+          collectionOfMappingAndActionProfiles[0].mappingProfile,
+        );
+        NewFieldMappingProfile.addSuppressFromDiscovery(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.suppressFromDiscavery,
+        );
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+        );
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+        );
+
+        FieldMappingProfiles.openNewMappingProfileForm();
+        NewFieldMappingProfile.fillSummaryInMappingProfile(
+          collectionOfMappingAndActionProfiles[1].mappingProfile,
+        );
+        NewFieldMappingProfile.addSuppressFromDiscovery(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.suppressFromDiscavery,
+        );
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+        );
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+        );
+
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          cy.visit(SettingsMenu.actionProfilePath);
+          ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+        });
+
+        // create Job profile
+        cy.visit(SettingsMenu.jobProfilePath);
+        JobProfiles.createJobProfile(jobProfileForUpdate);
+        NewJobProfile.linkMatchAndActionProfiles(
+          instanceMatchProfile.profileName,
+          collectionOfMappingAndActionProfiles[0].actionProfile.name,
+        );
+        NewJobProfile.linkMatchProfileForMatches(holdingsMatchProfile.profileName);
+        NewJobProfile.linkActionProfileForMatches(
+          collectionOfMappingAndActionProfiles[1].actionProfile.name,
+        );
+        NewJobProfile.saveAndClose();
+        JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
+
+        // upload the exported marc file
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(exportedFileName, marcFileNameForUpdate);
+        JobProfiles.search(jobProfileForUpdate.profileName);
+        JobProfiles.runImportFile();
+        Logs.waitFileIsImported(marcFileNameForUpdate);
+        Logs.checkJobStatus(marcFileNameForUpdate, JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(marcFileNameForUpdate);
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+          FileDetails.columnNameInResultList.holdings,
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
+        });
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
+        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+        FileDetails.checkHoldingsQuantityInSummaryTable('1', '1');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+        InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+        InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
+          instanceHrid = initialInstanceHrId;
+        });
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(marcFileNameForUpdate);
+        FileDetails.openHoldingsInInventory(RECORD_STATUSES.UPDATED);
+        HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
       },
     );
   });

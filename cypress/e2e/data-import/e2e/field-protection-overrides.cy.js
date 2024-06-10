@@ -2,11 +2,11 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -128,7 +128,7 @@ describe('Data Import', () => {
         field: '001',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
 
     const jobProfileForUpdate = {
@@ -143,7 +143,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    beforeEach('create test data', () => {
+    beforeEach('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         MarcFieldProtection.getListViaApi({
           query: `"field"=="${protectedFields.firstField}"`,
@@ -183,7 +183,10 @@ describe('Data Import', () => {
       cy.loginAsAdmin();
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
+      // delete created files
+      FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
+      FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
       cy.getAdminToken().then(() => {
         MarcFieldProtection.deleteViaApi(firstFieldId);
         MarcFieldProtection.deleteViaApi(secondFieldId);
@@ -203,9 +206,6 @@ describe('Data Import', () => {
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
           instanceMappingProfileOverride.name,
         );
-        // delete created files
-        FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
-        FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (instance) => {
             InventoryInstance.deleteInstanceViaApi(instance.id);

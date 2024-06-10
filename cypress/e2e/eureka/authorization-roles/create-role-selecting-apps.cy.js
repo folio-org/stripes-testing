@@ -59,12 +59,20 @@ describe('Eureka', () => {
       };
 
       const capabilityCallRegExp = new RegExp(
-        `\\/capabilities\\?limit=\\d{1,}&query=applicationId=${testData.firstApplicationName}-.{1,}or.{1,}applicationId=${testData.secondApplicationName}-.{1,}`,
+        `\\/capabilities\\?limit=\\d{1,}&query=applicationId==\\(${testData.firstApplicationName}-.{1,}or.{1,}${testData.secondApplicationName}-.{1,}\\)`,
       );
+
+      const capabSetsToAssign = [
+        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
+        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
+        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+      ];
 
       before(() => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
+          cy.updateRolesForUserApi(testData.user.userId, []);
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.settingsAuthorizationRoles,
             waiter: AuthorizationRoles.waitContentLoading,
@@ -91,8 +99,10 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSelectApplication();
           AuthorizationRoles.selectApplicationInModal(testData.firstApplicationName);
           AuthorizationRoles.selectApplicationInModal(testData.secondApplicationName);
+          cy.wait(1000);
           cy.intercept('GET', capabilityCallRegExp).as('capabilities');
           AuthorizationRoles.clickSaveInModal();
+          AuthorizationRoles.waitCapabilitiesShown();
           cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
           // TO DO: uncomment the following step when applications will be divided into multiple small entities
           // Currently, two apps used here include all existing capabilities/sets, and handling them requires unreasonable amount of resources
@@ -103,6 +113,7 @@ describe('Eureka', () => {
           testData.capabilities.forEach((capability) => {
             AuthorizationRoles.selectCapabilityCheckbox(capability);
           });
+          cy.wait(1000);
           AuthorizationRoles.clickSaveButton();
           AuthorizationRoles.checkAfterSaveCreate(testData.roleName, testData.roleDescription);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
@@ -113,7 +124,7 @@ describe('Eureka', () => {
             AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
           });
           Object.entries(testData.expectedCounts.capabilities).forEach(([table, count]) => {
-            AuthorizationRoles.checkCountOfCapablities(table, count);
+            AuthorizationRoles.checkCountOfCapabilityRows(table, count);
           });
         },
       );

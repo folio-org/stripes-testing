@@ -1,7 +1,11 @@
 import uuid from 'uuid';
 import Users from '../fragments/users/users';
 import getRandomPostfix from '../utils/stringTools';
+import permissionsList from '../dictionary/permissions';
 import { FULFILMENT_PREFERENCES } from '../constants';
+
+let capabilitiesCollection = [];
+let capabilitySetsCollection = [];
 
 Cypress.Commands.add('getUsers', (searchParams) => {
   cy.okapiRequest({
@@ -120,9 +124,76 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
           cy.setUserPassword(userProperties);
           if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
             cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
-              cy.addRolesToNewUserApi(userProperties.userId, [roleId]);
+              if (Cypress.env('ecsEnabled')) {
+                cy.recurse(
+                  () => {
+                    return cy.okapiRequest({
+                      path: `users-keycloak/users/${userProperties.userId}`,
+                      isDefaultSearchParamsRequired: false,
+                    });
+                  },
+                  (response) => expect(response.body.id).to.eq(userProperties.userId),
+                  {
+                    limit: 10,
+                    timeout: 40000,
+                    delay: 1000,
+                  },
+                ).then(() => {
+                  cy.wait(10000);
+                  cy.updateRolesForUserApi(userProperties.userId, [roleId]);
+                });
+              } else cy.updateRolesForUserApi(userProperties.userId, [roleId]);
+            });
+          } else if (Cypress.env('eureka')) {
+            cy.getCapabilitiesApi().then((capabilitiesResponse) => {
+              cy.getCapabilitySetsApi().then((capabilitySetsResponse) => {
+                const capabilitiesIds = [];
+                const capabilitySetsIds = [];
+                if (capabilitiesCollection.length === 0) capabilitiesCollection = [...capabilitiesResponse];
+                if (capabilitySetsCollection.length === 0) capabilitySetsCollection = [...capabilitySetsResponse];
+                permissions.forEach((permission) => {
+                  let currentPermission = '';
+                  for (const permissionObject in permissionsList) {
+                    // eslint-disable-next-line no-prototype-builtins
+                    if (permissionsList.hasOwnProperty(permissionObject)) {
+                      const { gui, internal } = permissionsList[permissionObject];
+                      if (gui.includes(permission)) {
+                        currentPermission = internal;
+                        break;
+                      }
+                    }
+                  }
+                  for (const capablityObject of capabilitiesCollection) {
+                    if (capablityObject.permission === currentPermission) {
+                      capabilitiesIds.push(capablityObject.id);
+                      break;
+                    }
+                  }
+
+                  for (const capablitySetObject of capabilitiesCollection) {
+                    if (capablitySetObject.permission === currentPermission) {
+                      capabilitySetsIds.push(capablitySetObject.id);
+                      break;
+                    }
+                  }
+                  currentPermission = '';
+                });
+
+                if (capabilitiesIds.length === 0) {
+                  cy.log('Capabilities not found ');
+                } else {
+                  cy.addCapabilitiesToNewUserApi(userProperties.userId, capabilitiesIds);
+                }
+
+                if (capabilitySetsIds.length === 0) {
+                  cy.log('Capability sets not found ');
+                } else {
+                  cy.addCapabilitySetsToNewUserApi(userProperties.userId, capabilitySetsIds);
+                }
+              });
             });
           } else {
+            cy.wait(3000);
             cy.addPermissionsToNewUserApi({
               userId: userProperties.userId,
               permissions: [
@@ -144,7 +215,25 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
 Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = []) => {
   if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
     cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
-      cy.addRolesToNewUserApi(userId, [roleId]);
+      if (Cypress.env('ecsEnabled')) {
+        cy.recurse(
+          () => {
+            return cy.okapiRequest({
+              path: `users-keycloak/users/${userId}`,
+              isDefaultSearchParamsRequired: false,
+            });
+          },
+          (response) => expect(response.body.id).to.eq(userId),
+          {
+            limit: 10,
+            timeout: 40000,
+            delay: 1000,
+          },
+        ).then(() => {
+          cy.wait(10000);
+          cy.updateRolesForUserApi(userId, [roleId]);
+        });
+      } else cy.updateRolesForUserApi(userId, [roleId]);
     });
   } else {
     const queryField = 'displayName';
@@ -220,3 +309,30 @@ Cypress.Commands.add('deleteUserGroupApi', (groupId) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add(
+  'assignCapabilitiesToExistingUser',
+  (userId, capabilities = [], capabilitySets = []) => {
+    const capabilityIds = [];
+    const capabilitySetIds = [];
+    cy.then(() => {
+      for (const capab of capabilities) {
+        cy.getCapabilityIdViaApi({
+          type: capab.type,
+          resource: capab.resource,
+          action: capab.action,
+        }).then((capabId) => capabilityIds.push(capabId));
+      }
+      for (const capabSet of capabilitySets) {
+        cy.getCapabilitySetIdViaApi({
+          type: capabSet.type,
+          resource: capabSet.resource,
+          action: capabSet.action,
+        }).then((capabSetId) => capabilitySetIds.push(capabSetId));
+      }
+    }).then(() => {
+      if (capabilityIds.length) cy.updateCapabilitiesForUserApi(userId, capabilityIds);
+      if (capabilitySetIds.length) cy.updateCapabilitySetsForUserApi(userId, capabilitySetIds);
+    });
+  },
+);

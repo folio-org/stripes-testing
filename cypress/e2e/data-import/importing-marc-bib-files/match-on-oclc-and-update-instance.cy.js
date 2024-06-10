@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
@@ -86,7 +86,7 @@ describe('Data Import', () => {
         subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       instanceOption: 'Identifier: OCLC',
     };
 
@@ -105,7 +105,7 @@ describe('Data Import', () => {
       },
     ];
 
-    before('login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       InventorySearchAndFilter.getInstancesByIdentifierViaApi(oclcNumber.value).then(
         (instances) => {
@@ -122,7 +122,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(
           collectionOfJobProfiles[0].jobProfile.profileName,

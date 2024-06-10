@@ -1,19 +1,17 @@
-import { FOLIO_RECORD_TYPE, JOB_STATUS_NAMES } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
@@ -22,52 +20,42 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Log details', () => {
     let user;
+    let instanceId;
     const numberOfLogsToDelete = '1';
     const filePath = 'oneMarcBib.mrc';
     const fileName = `C358534 autotestFile${getRandomPostfix()}.mrc`;
     const mappingProfile = {
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C358534 instance mapping profile ${getRandomPostfix()}`,
     };
     const actionProfile = {
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C358534 instance action profile ${getRandomPostfix()}`,
+      action: 'CREATE',
+      folioRecordType: FOLIO_RECORD_TYPE.INSTANCE,
     };
     const jobProfile = {
-      ...NewJobProfile.defaultJobProfile,
-      profileName: `C358534 job profile ${getRandomPostfix()}`,
+      name: `C358534 job profile ${getRandomPostfix()}`,
     };
 
     before('create user and login', () => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.mappingProfilePath,
-        waiter: FieldMappingProfiles.waitLoading,
+      cy.getAdminToken();
+      NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile).then(
+        (mappingProfileResponse) => {
+          NewActionProfile.createActionProfileViaApi(
+            actionProfile,
+            mappingProfileResponse.body.id,
+          ).then((actionProfileResponse) => {
+            NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
+              jobProfile,
+              actionProfileResponse.body.id,
+            );
+          });
+        },
+      );
+
+      // upload a marc file for creating of the new instance
+      DataImport.uploadFileViaApi(filePath, fileName, jobProfile.name).then((response) => {
+        instanceId = response[0].instance.id;
       });
-
-      // create mapping profile
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-      NewFieldMappingProfile.save();
-
-      // create action profile
-      cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(actionProfile, mappingProfile.name);
-
-      // create job profile
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfile(jobProfile);
-      NewJobProfile.linkActionProfile(actionProfile);
-      NewJobProfile.saveAndClose();
-
-      // upload a marc file for creating of the new instance, holding and item
-      cy.visit(TopMenu.dataImportPath);
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(filePath, fileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfile.profileName);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(fileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
       cy.createTempUser([Permissions.dataImportDeleteLogs.gui]).then((userProperties) => {
         user = userProperties;
@@ -79,12 +67,13 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete user', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.name);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         Users.deleteViaApi(user.userId);
+        InventoryInstance.deleteInstanceViaApi(instanceId);
       });
     });
 
@@ -93,15 +82,15 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         Logs.openViewAllLogs();
-        LogsViewAll.filterJobsByJobProfile(jobProfile.profileName);
-        LogsViewAll.checkByJobProfileName(jobProfile.profileName);
+        LogsViewAll.filterJobsByJobProfile(jobProfile.name);
+        LogsViewAll.checkByJobProfileName(jobProfile.name);
         DataImport.selectAllLogs();
         DataImport.openDeleteImportLogsModal();
         DataImport.confirmDeleteImportLogs();
         InteractorsTools.checkCalloutMessage(
           `${numberOfLogsToDelete} data import logs have been successfully deleted.`,
         );
-        LogsViewAll.verifyJobProfileIsAbsntInFilter(jobProfile.profileName);
+        LogsViewAll.verifyJobProfileIsAbsntInFilter(jobProfile.name);
       },
     );
   });

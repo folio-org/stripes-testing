@@ -2,11 +2,11 @@ import moment from 'moment';
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -68,7 +68,7 @@ describe('Data Import', () => {
         in2: '',
         subfield: 'a',
       },
-      recordType: EXISTING_RECORDS_NAMES.MARC_AUTHORITY,
+      recordType: EXISTING_RECORD_NAMES.MARC_AUTHORITY,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -102,6 +102,8 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${testData.editedFileNameForCreate}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.editedFileNameForUpdate}`);
       cy.getAdminToken();
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
@@ -109,8 +111,6 @@ describe('Data Import', () => {
       SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
       Users.deleteViaApi(testData.user.userId);
       MarcAuthority.deleteViaAPI(testData.createdRecordIDs[0]);
-      FileManager.deleteFile(`cypress/fixtures/${testData.editedFileNameForCreate}`);
-      FileManager.deleteFile(`cypress/fixtures/${testData.editedFileNameForUpdate}`);
     });
 
     it(
@@ -148,7 +148,7 @@ describe('Data Import', () => {
         );
 
         // create Match profile
-        NewMatchProfile.createMatchProfileViaApiMarc(matchProfile);
+        NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile);
         // create Field mapping profile
         NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile);
         // create Action profile and link it to Field mapping profile

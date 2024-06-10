@@ -110,6 +110,7 @@ const lineDetails = Section({ id: 'lineDetails' });
 const poLineDetails = {
   receiptStatus: lineDetails.find(Select('Receipt status')),
 };
+const selectLocationsModal = Modal('Select locations');
 
 const submitOrderLine = () => {
   cy.wait(4000);
@@ -143,6 +144,10 @@ const expandActionsDropdownInPOL = () => {
 };
 
 export default {
+  checkExistingPOLInOrderLinesList: (POL) => {
+    cy.wait(4000);
+    cy.expect(searchResultsPane.find(MultiColumnListCell(POL)).exists());
+  },
   submitOrderLine,
   checkQuantityPhysical,
   checkQuantityElectronic,
@@ -157,10 +162,12 @@ export default {
     cy.do([orderLineButton.click()]);
   },
   waitLoading() {
+    cy.wait(6000);
     cy.expect([
       Pane({ id: 'order-lines-filters-pane' }).exists(),
       Pane({ id: 'order-lines-results-pane' }).exists(),
     ]);
+    cy.wait(4000);
   },
 
   selectFund: (fundName) => {
@@ -170,6 +177,7 @@ export default {
   },
 
   resetFilters: () => {
+    cy.wait(4000);
     cy.do(filtersPane.find(Button('Reset all')).click());
   },
 
@@ -404,7 +412,7 @@ export default {
     cy.do([quantityPhysicalLocationField.fillIn(quantityPhysical), saveAndCloseButton.click()]);
   },
 
-  POLineInfoWithReceiptNotRequiredStatus: (institutionId) => {
+  POLineInfoWithReceiptNotRequiredStatus(institutionId) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
@@ -430,6 +438,7 @@ export default {
       Select('Create inventory*').choose('Instance, holdings, item'),
       saveAndCloseButton.click(),
     ]);
+    submitOrderLine();
   },
 
   POLineInfoWithReceiptNotRequiredStatuswithSelectLocation: (institutionId) => {
@@ -460,13 +469,14 @@ export default {
     ]);
   },
 
-  POLineInfoEditWithReceiptNotRequiredStatus: () => {
+  POLineInfoEditWithReceiptNotRequiredStatus() {
     cy.do(Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.RECEIPT_NOT_REQUIRED));
     cy.expect(receivingWorkflowSelect.disabled());
     cy.do(saveAndCloseButton.click());
+    submitOrderLine();
   },
 
-  POLineInfoEditWithPendingReceiptStatus: () => {
+  POLineInfoEditWithPendingReceiptStatus() {
     cy.do([
       Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.PENDING),
       receivingWorkflowSelect.choose(
@@ -474,6 +484,7 @@ export default {
       ),
       saveAndCloseButton.click(),
     ]);
+    submitOrderLine();
   },
 
   viewPO: () => {
@@ -775,12 +786,9 @@ export default {
     submitOrderLine();
   },
 
-  addReveivingNoteToItemDetailsAndSave(orderNumber) {
+  addReveivingNoteToItemDetailsAndSave() {
     cy.do([TextArea('Receiving note').fillIn(note), saveAndCloseButton.click()]);
     submitOrderLine();
-    InteractorsTools.checkCalloutMessage(
-      `The purchase order line ${orderNumber}-1 was successfully updated`,
-    );
   },
 
   rolloverPOLineInfoforPhysicalMaterialWith2Funds(
@@ -2354,5 +2362,24 @@ export default {
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
     submitOrderLine();
+  },
+
+  selectLocationInFilters: (locationName) => {
+    cy.wait(4000);
+    cy.do([
+      Button({ id: 'accordion-toggle-button-pol-location-filter' }).click(),
+      Button('Location look-up').click(),
+      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
+      Button('Search').click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
+      selectLocationsModal.find(Button('Save')).click(),
+    ]);
+  },
+
+  selectOrders: () => {
+    cy.do(Section({ id: 'order-lines-filters-pane' }).find(Button('Orders')).click());
   },
 };

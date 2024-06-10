@@ -1,4 +1,11 @@
-import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  RECORD_STATUSES,
+  INVENTORY_008_FIELD_CONF_DROPDOWN,
+  INVENTORY_008_FIELD_REGL_DROPDOWN,
+  INVENTORY_008_FIELD_DTST_DROPDOWN,
+  INVENTORY_008_FIELD_S_L_DROPDOWN,
+} from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
@@ -75,7 +82,11 @@ describe('MARC', () => {
           InventoryInstance.verifyInstanceTitle(firstInstanceTitle);
           InventoryInstance.editMarcBibliographicRecord();
 
-          QuickMarcEditor.updateValueOf008BoxByBoxName('MRec', 'S');
+          QuickMarcEditor.selectFieldsDropdownOption(
+            '008',
+            'Conf',
+            INVENTORY_008_FIELD_CONF_DROPDOWN.ONE,
+          );
           QuickMarcEditor.updateExistingFieldContent(7);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
@@ -88,7 +99,26 @@ describe('MARC', () => {
           InventoryInstance.verifyInstanceTitle(secondInstanceTitle);
           InventoryInstance.editMarcBibliographicRecord();
 
-          QuickMarcEditor.updateValueOf008BoxByBoxName('Freq', 'F');
+          QuickMarcEditor.selectFieldsDropdownOption(
+            '008',
+            'Regl',
+            INVENTORY_008_FIELD_REGL_DROPDOWN.R,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            '008',
+            'DtSt',
+            INVENTORY_008_FIELD_DTST_DROPDOWN.C,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            '008',
+            'Conf',
+            INVENTORY_008_FIELD_CONF_DROPDOWN.ONE,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            '008',
+            'S/L',
+            INVENTORY_008_FIELD_S_L_DROPDOWN[2],
+          );
           QuickMarcEditor.updateExistingFieldContent(7);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();

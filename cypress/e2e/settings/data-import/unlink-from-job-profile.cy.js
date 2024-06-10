@@ -1,4 +1,8 @@
-import { ACCEPTED_DATA_TYPE_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
+import {
+  ACCEPTED_DATA_TYPE_NAMES,
+  FOLIO_RECORD_TYPE,
+  EXISTING_RECORD_NAMES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -37,6 +41,15 @@ describe('Data Import', () => {
     ];
     const matchProfile = {
       profileName: `C11116 autotest match profile ${getRandomPostfix()}`,
+      incomingRecordFields: {
+        field: '001',
+        in1: '',
+        in2: '',
+        subfield: '',
+      },
+      recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+      existingMatchExpressionValue: 'instance.hrid',
     };
     const mappingProfile = {
       name: `C11116 mapping profile ${getRandomPostfix()}`,
@@ -46,20 +59,20 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(userProperties.username, userProperties.password);
 
-        // create mapping profile
-        NewFieldMappingProfile.createMappingProfileViaApi(mappingProfile.name);
-
-        // create match profile
-        NewMatchProfile.createMatchProfileViaApi(matchProfile.profileName);
+        NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile);
+        NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(
+          matchProfile,
+        );
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);

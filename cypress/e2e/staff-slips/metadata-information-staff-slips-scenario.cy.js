@@ -41,7 +41,7 @@ describe('Staff slips', () => {
 
   it(
     'C387437 Add metadata information to view of Staff Slips scenario 1,4,5 (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['smoke', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.circulationStaffSlipsPath);
       EditStaffClips.chooseStaffClip('Hold');

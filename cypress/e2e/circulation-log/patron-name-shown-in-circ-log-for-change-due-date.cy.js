@@ -45,6 +45,7 @@ describe('Circulation log', () => {
         permissions.uiUsersfeefinesView.gui,
         permissions.uiUsersView.gui,
         permissions.uiUserLoansChangeDueDate.gui,
+        permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
       ],
       patronGroup.name,
     ).then((userAProperties) => {

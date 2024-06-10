@@ -15,6 +15,7 @@ import {
 } from '../../../../interactors';
 
 const buildQueryModal = Modal('Build query');
+const buildQueryButton = Button('Build query');
 const testQueryButton = Button('Test query');
 const cancelButton = Button('Cancel');
 const runQueryButton = Button('Run query');
@@ -24,8 +25,17 @@ const trashButton = Button({ icon: 'trash' });
 
 const booleanValues = ['AND'];
 
+export const holdingsFieldValues = {
+  instanceUuid: 'Instance UUID',
+};
+export const instanceFieldValues = {
+  instanceHrid: 'Instance HRID',
+};
 export const itemFieldValues = {
   instanceId: 'Instance ID',
+  itemStatus: 'Item status',
+  holdingsId: 'Holdings ID',
+  temporaryLocation: 'Item temporary location name',
 };
 export const usersFieldValues = {
   expirationDate: 'User expiration date',
@@ -33,6 +43,7 @@ export const usersFieldValues = {
   lastName: 'User last name',
   patronGroup: 'User patron group',
   userActive: 'User active',
+  userBarcode: 'User barcode',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -68,17 +79,22 @@ export const stringStoresUuidButMillionOperators = [
   'not in',
   'is null/empty',
 ];
+export const enumOperators = ['Select operator', '==', '!=', 'in', 'not in', 'is null/empty'];
 export const booleanOperators = ['Select operator', '==', '!=', 'is null/empty'];
 
 export default {
+  exists() {
+    cy.expect(buildQueryModal.exists());
+  },
+  absent() {
+    cy.expect(buildQueryModal.absent());
+  },
   verify(firstline = true) {
-    cy.expect([
-      buildQueryModal.exists(),
-      testQueryButton.has({ disabled: true }),
-      cancelButton.has({ disabled: false }),
-      runQueryButton.has({ disabled: true }),
-      xButton.has({ disabled: false }),
-    ]);
+    this.exists();
+    this.testQueryDisabled();
+    this.cancelDisabled(false);
+    this.runQueryDisabled();
+    this.xButttonDisabled(false);
     this.verifyModalContent(firstline);
   },
 
@@ -223,7 +239,11 @@ export default {
   },
 
   cancelDisabled(disabled = true) {
-    cancelButton.has({ disabled });
+    cy.expect(cancelButton.has({ disabled }));
+  },
+
+  clickCancel() {
+    cy.do(cancelButton.click());
   },
 
   testQueryDisabled(disabled = true) {
@@ -232,6 +252,14 @@ export default {
 
   runQueryDisabled(disabled = true) {
     cy.expect(runQueryButton.has({ disabled }));
+  },
+
+  xButttonDisabled(disabled = true) {
+    cy.expect(xButton.has({ disabled }));
+  },
+
+  clickXButtton() {
+    cy.do(xButton.click());
   },
 
   addNewRow(row = 0) {
@@ -289,5 +317,9 @@ export default {
 
   verifyClosed() {
     cy.do(buildQueryModal.absent());
+  },
+
+  buildQueryButtonDisabled(disabled = true) {
+    cy.do(buildQueryButton.has({ disabled }));
   },
 };

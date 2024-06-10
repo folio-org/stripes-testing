@@ -4,14 +4,9 @@ import {
   JOB_STATUS_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
-  VENDOR_NAMES,
   RECORD_STATUSES,
+  VENDOR_NAMES,
 } from '../../../support/constants';
-import {
-  JobProfiles as SettingsJobProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -24,6 +19,11 @@ import FieldMappingProfileView from '../../../support/fragments/data_import/mapp
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -36,8 +36,8 @@ describe('Data Import', () => {
     const filePathForCreateOrder = 'marcFileForC376975.mrc';
     const firstMarcFileName = `C376975 autotestFileName${getRandomPostfix()}.mrc`;
     const secondMarcFileName = `C376975 autotestFileName${getRandomPostfix()}.mrc`;
-    const thirdMarcFileName = `C376975 autotestFileName ${getRandomPostfix()}.mrc`;
-    const forthMarcFileName = `C376975 autotestFileName ${getRandomPostfix()}.mrc`;
+    const thirdMarcFileName = `C376975 autotestFileName${getRandomPostfix()}.mrc`;
+    const forthMarcFileName = `C376975 autotestFileName${getRandomPostfix()}.mrc`;
     const fundAndExpenseClassData = [
       {
         fund: 'History(HIST)',
@@ -107,7 +107,7 @@ describe('Data Import', () => {
       profileName: `C376975 Check fund & expense class mappings in Orders ${getRandomPostfix()}`,
     };
 
-    before('login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -117,6 +117,7 @@ describe('Data Import', () => {
         Permissions.uiOrganizationsView.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
         cy.login(userProperties.username, userProperties.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,
@@ -124,7 +125,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);

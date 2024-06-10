@@ -1,15 +1,15 @@
 import { Permissions } from '../../../support/dictionary';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import DataImport from '../../../support/fragments/data_import/dataImport';
 
 describe('Data Import', () => {
   describe('Log details', () => {
     let user;
 
-    before('create temp user', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -24,7 +24,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
       });
@@ -45,6 +45,7 @@ describe('Data Import', () => {
               cy.expect(beforeFilteringCells).to.not.deep.equal(afterFilteringByJobProfileCells);
               LogsViewAll.checkByReverseChronologicalOrder();
               LogsViewAll.resetAllFilters(false);
+              cy.wait(3000);
               LogsViewAll.getAllLogsColumnsResults(jobProfileColumn).then(
                 (afterResetFilteringCells) => {
                   LogsViewAll.checkByReverseChronologicalOrder();

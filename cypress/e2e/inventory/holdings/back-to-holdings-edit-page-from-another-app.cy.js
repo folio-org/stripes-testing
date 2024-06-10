@@ -18,7 +18,7 @@ describe('Inventory', () => {
       instanceTitle,
     };
 
-    beforeEach(() => {
+    beforeEach('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
@@ -59,7 +59,7 @@ describe('Inventory', () => {
       });
     });
 
-    afterEach(() => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
           (instance) => {

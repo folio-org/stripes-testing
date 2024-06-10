@@ -11,8 +11,8 @@ describe('ui-finance: Funds', () => {
   const fundTo = { ...NewFund.defaultFund };
 
   it(
-    'C343240 delete budget with transfer transaction (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+    'C343240 Delete the budget with transfer transaction (thunderjet)',
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       // TODO: update test in testrail - it should contain rather business actions than buttons clicks etc.
       const hundredQunatity = 100;

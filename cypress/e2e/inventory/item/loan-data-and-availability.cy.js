@@ -1,17 +1,17 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
+import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import LoanTypesSection from '../../../support/fragments/settings/inventory/items/loanTypes';
+import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import LoanTypesSection from '../../../support/fragments/settings/inventory/items/loanTypes';
 
 describe('Inventory', () => {
   describe('Item', () => {
@@ -33,7 +33,7 @@ describe('Inventory', () => {
     let location;
     const service = ServicePoints.getDefaultServicePointWithPickUpLocation();
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
@@ -85,7 +85,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('Delete  test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken();
       ServicePoints.deleteViaApi(service.id);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);

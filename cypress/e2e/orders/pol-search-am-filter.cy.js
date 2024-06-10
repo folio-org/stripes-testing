@@ -41,28 +41,45 @@ describe('orders: export', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization).then((response) => {
-      organization.id = response;
+    Organizations.createOrganizationViaApi(organization).then((organizationResponse) => {
+      organization.id = organizationResponse;
       order.vendor = organization.name;
       order.orderType = 'One-time';
+      cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+      Organizations.searchByParameters('Name', organization.name);
+      Organizations.checkSearchResults(organization);
+      Organizations.selectOrganization(organization.name);
+      Organizations.addIntegration();
+      Organizations.fillIntegrationInformationWithoutScheduling(
+        integrationName,
+        integartionDescription,
+        vendorEDICodeFor1Integration,
+        libraryEDICodeFor1Integration,
+        organization.accounts[0].accountNo,
+        'Purchase',
+      );
+      InteractorsTools.checkCalloutMessage('Integration was saved');
+      cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
+      SettingsOrders.waitLoadingPurchaseOrderLinesLimit();
+      SettingsOrders.setPurchaseOrderLinesLimit(3);
+      cy.visit(TopMenu.ordersPath);
+      order.orderType = 'Ongoing';
+      Orders.createOrder(order, true, false).then((orderId) => {
+        order.id = orderId;
+        Orders.createPOLineViaActions();
+        OrderLines.fillInPOLineInfoForExport('Purchase');
+        OrderLines.backToEditingOrder();
+        Orders.createPOLineViaActions();
+        OrderLines.fillInPOLineInfoForExport('Purchase at vendor system');
+        OrderLines.backToEditingOrder();
+        Orders.createPOLineViaActions();
+        OrderLines.fillInPOLineInfoForExport('Depository');
+        Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((response) => {
+          orderNumber = response[0].poNumber;
+        });
+      });
     });
-    cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.checkSearchResults(organization);
-    Organizations.selectOrganization(organization.name);
-    Organizations.addIntegration();
-    Organizations.fillIntegrationInformationWithoutScheduling(
-      integrationName,
-      integartionDescription,
-      vendorEDICodeFor1Integration,
-      libraryEDICodeFor1Integration,
-      organization.accounts[0].accountNo,
-      'Purchase',
-    );
-    InteractorsTools.checkCalloutMessage('Integration was saved');
-    cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
-    SettingsOrders.waitLoadingPurchaseOrderLinesLimit();
-    SettingsOrders.setPurchaseOrderLinesLimit(3);
+
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersCreate.gui,
@@ -94,37 +111,16 @@ describe('orders: export', () => {
     'C350603: Searching POL by specifying acquisition method (thunderjet)',
     { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
     () => {
-      cy.logout();
-      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-      order.orderType = 'Ongoing';
-      Orders.createOrder(order, true, false).then((orderId) => {
-        order.id = orderId;
-        Orders.createPOLineViaActions();
-        OrderLines.fillInPOLineInfoForExport('Purchase');
-        OrderLines.backToEditingOrder();
-        Orders.createPOLineViaActions();
-        OrderLines.fillInPOLineInfoForExport('Purchase at vendor system');
-        OrderLines.backToEditingOrder();
-        Orders.createPOLineViaActions();
-        OrderLines.fillInPOLineInfoForExport('Depository');
-        Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((response) => {
-          orderNumber = response[0].poNumber;
-
-          cy.login(user.username, user.password, {
-            path: TopMenu.ordersPath,
-            waiter: Orders.waitLoading,
-          });
-          Orders.selectOrderLines();
-          Orders.selectFilterAcquisitionMethod('Purchase');
-          Orders.checkOrderlineSearchResults(`${orderNumber}-1`);
-          Orders.resetFilters();
-          Orders.selectFilterAcquisitionMethod('Purchase at vendor system');
-          Orders.checkOrderlineSearchResults(`${orderNumber}-2`);
-          Orders.resetFilters();
-          Orders.selectFilterAcquisitionMethod('Depository');
-          Orders.checkOrderlineSearchResults(`${orderNumber}-3`);
-        });
-      });
+      Orders.selectOrderLines();
+      Orders.selectFilterAcquisitionMethod('Purchase');
+      Orders.checkOrderlineSearchResults(`${orderNumber}-1`);
+      Orders.resetFilters();
+      Orders.selectFilterAcquisitionMethod('Purchase at vendor system');
+      Orders.checkOrderlineSearchResults(`${orderNumber}-2`);
+      Orders.resetFilters();
+      Orders.selectFilterAcquisitionMethod('Depository');
+      Orders.checkOrderlineSearchResults(`${orderNumber}-3`);
+      Orders.resetFilters();
     },
   );
 });

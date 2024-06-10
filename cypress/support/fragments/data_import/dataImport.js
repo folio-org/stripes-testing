@@ -56,6 +56,7 @@ const uploadBunchOfDifferentFiles = (fileNames) => {
   }
   cy.get('input[type=file]').attachFile(arrayOfFiles);
   cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
+  cy.wait(1500);
 };
 
 const uploadBunchOfFiles = (editedFileName, numberOfFiles, finalFileName) => {
@@ -468,21 +469,21 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                               id:
                                 recordResponse.body.relatedHoldingsInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedHoldingsInfo.idList[0],
+                                  : recordResponse.body.relatedHoldingsInfo.id,
                               hrid:
                                 recordResponse.body.relatedHoldingsInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedHoldingsInfo.hridList[0],
+                                  : recordResponse.body.relatedHoldingsInfo.hrid,
                             },
                             item: {
                               id:
                                 recordResponse.body.relatedItemInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedItemInfo.idList[0],
+                                  : recordResponse.body.relatedItemInfo.id,
                               hrid:
                                 recordResponse.body.relatedItemInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedItemInfo.hridList[0],
+                                  : recordResponse.body.relatedItemInfo.hrid,
                             },
                             authority: {
                               id:
@@ -691,22 +692,26 @@ export default {
     cy.expect(deleteLogsButton.is({ disabled: true }));
   },
 
-  verifyUploadState: (maxRetries = 30) => {
+  verifyUploadState: () => {
     // multiple users to be running Data Import in the same Tenant at the same time
     // because this is possible by design
-    // that's why we need waiting until previous file will be uploaded or reload page
-    let retryCount = 0;
+    // that's why we need waiting until previous file will be uploaded, reload page and delete uploaded file
     waitLoading();
     cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(
       (isDeleteFilesButtonExists) => {
-        if (isDeleteFilesButtonExists && retryCount < maxRetries) {
+        if (isDeleteFilesButtonExists) {
+          cy.wait(5000);
           cy.reload();
-          cy.wait(4000);
-          retryCount++;
+          cy.wait(15000);
+          cy.reload();
+          cy.wait(3000);
+          cy.do(Button('Delete files').click());
+          cy.expect(Button('or choose files').exists());
         }
       },
     );
     cy.expect(sectionPaneJobsTitle.find(Button('or choose files')).exists());
+    cy.wait(3000);
   },
 
   clickResumeButton: () => {

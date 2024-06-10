@@ -3,6 +3,7 @@ import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -26,7 +27,7 @@ describe('Data Import', () => {
       error: '3',
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then((response) => {
         instanceHrid = response[0].instance.hrid;
@@ -48,7 +49,8 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
@@ -58,7 +60,6 @@ describe('Data Import', () => {
           },
         );
       });
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     });
 
     it(
@@ -108,7 +109,9 @@ describe('Data Import', () => {
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems.noAction, 2);
         // check Error counter in the Summary table
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems.error, 3);
-        FileDetails.verifyErrorMessage(errorMessage);
+        FileDetails.openJsonScreen('Holdings');
+        JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.verifyContentInTab(errorMessage);
       },
     );
   });

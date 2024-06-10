@@ -3,6 +3,7 @@ import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -20,6 +21,7 @@ describe('Data Import', () => {
     before('login', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -36,7 +38,6 @@ describe('Data Import', () => {
       'C359207 Checking the import to Create MARC Authority records, when incoming records do and do not have 999 ff field (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         // upload the first .mrc file
         DataImport.uploadFile('marcAuthFileC359207.mrc', fileName);
@@ -70,7 +71,9 @@ describe('Data Import', () => {
         FileDetails.checkAuthorityQuantityInSummaryTable('2');
         // check No action counter in the Summary table
         FileDetails.checkSrsRecordQuantityInSummaryTable('6', 2);
-        FileDetails.verifyErrorMessage(error, 1);
+        FileDetails.openJsonScreen('No content');
+        JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.verifyContentInTab(error);
       },
     );
   });

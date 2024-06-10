@@ -1,9 +1,9 @@
 import uuid from 'uuid';
 import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
-import { JobProfiles as SettingsJobProfiles } from '../../../support/fragments/settings/dataImport';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import { JobProfiles as SettingsJobProfiles } from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -19,9 +19,8 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.loginAsAdmin();
-
       // create Job profile
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfile(jobProfile);
@@ -29,7 +28,7 @@ describe('Data Import', () => {
       JobProfiles.closeJobProfile(jobProfile.profileName);
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken();
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
     });

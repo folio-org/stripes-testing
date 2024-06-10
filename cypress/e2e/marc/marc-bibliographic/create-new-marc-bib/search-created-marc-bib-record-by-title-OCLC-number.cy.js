@@ -12,7 +12,7 @@ const testData = {
   secondSearchOption: 'OCLC number, normalized',
   textFor245Filed: '$a Sophisticated title #1',
   textFor035Filed: '$a (OCoLC)ocn607TST001',
-  searchText1: '(OCoLC)ocn607TST001',
+  searchText1: '(OCoLC)607TST001',
   searchText2: 'Sophisticated title #1',
   instanceTitle: 'Sophisticated title #1',
 };

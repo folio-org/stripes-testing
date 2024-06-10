@@ -67,6 +67,7 @@ export default {
     cy.do(rowInList.find(HTML(including(barcode))).click());
   },
   openLoanDetails: (itemBarcode) => {
+    cy.wait(2000);
     cy.do(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).click());
     return LoansPage;
   },
@@ -269,7 +270,7 @@ export default {
   getListTimersForTenant: () => cy
     .okapiRequest({
       method: 'GET',
-      path: '_/proxy/tenants/diku/timers',
+      path: `_/proxy/tenants/${Cypress.env('OKAPI_TENANT')}/timers`,
       isDefaultSearchParamsRequired: false,
     })
     .then(({ body }) => body),

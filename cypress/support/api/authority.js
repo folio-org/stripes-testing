@@ -1,3 +1,4 @@
+import { recurse } from 'cypress-recurse';
 import getRandomPostfix, { getRandomLetters } from '../utils/stringTools';
 import { REQUEST_METHOD } from '../constants';
 
@@ -45,7 +46,15 @@ Cypress.Commands.add('getAuthoritySourceFileDataViaAPI', (authorityFileName) => 
 
 Cypress.Commands.add(
   'createAuthoritySourceFileUsingAPI',
-  (prefix, startWithNumber, sourceName, isActive = true, baseURL = null, sourceType = 'Local') => {
+  (
+    prefix,
+    startWithNumber,
+    sourceName,
+    isActive = true,
+    baseURL = null,
+    ignoreErrors = false,
+    sourceType = 'Local',
+  ) => {
     cy.okapiRequest({
       method: 'POST',
       path: 'authority-source-files',
@@ -59,6 +68,7 @@ Cypress.Commands.add(
         selectable: isActive,
         source: sourceType,
       },
+      failOnStatusCode: !ignoreErrors,
       isDefaultSearchParamsRequired: false,
     }).then(({ body }) => body.id);
   },
@@ -84,6 +94,22 @@ Cypress.Commands.add(
       body: {
         id: authorityFileId,
         selectable: isActive,
+        _version: version,
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+);
+
+Cypress.Commands.add(
+  'updateBaseUrlInAuthoritySourceFileViaAPI',
+  (authorityFileId, version, newBaseUrl) => {
+    cy.okapiRequest({
+      method: REQUEST_METHOD.PATCH,
+      path: `authority-source-files/${authorityFileId}`,
+      body: {
+        id: authorityFileId,
+        baseUrl: newBaseUrl,
         _version: version,
       },
       isDefaultSearchParamsRequired: false,
@@ -118,3 +144,38 @@ Cypress.Commands.add(
     return cy.get('@body');
   },
 );
+
+Cypress.Commands.add('createMarcAuthorityViaAPI', (LDR, fields) => {
+  cy.okapiRequest({
+    path: 'records-editor/records',
+    method: 'POST',
+    isDefaultSearchParamsRequired: false,
+    body: {
+      _actionType: 'create',
+      leader: LDR,
+      fields,
+      suppressDiscovery: false,
+      marcFormat: 'AUTHORITY',
+    },
+  }).then(({ body }) => {
+    recurse(
+      () => {
+        return cy.okapiRequest({
+          method: 'GET',
+          path: `records-editor/records/status?qmRecordId=${body.qmRecordId}`,
+          isDefaultSearchParamsRequired: false,
+        });
+      },
+      (response) => response.body.status === 'CREATED',
+      {
+        limit: 10,
+        timeout: 80000,
+        delay: 5000,
+      },
+    ).then((response) => {
+      cy.wrap(response.body.externalId).as('createdMarcAuthorityId');
+
+      return cy.get('@createdMarcAuthorityId');
+    });
+  });
+});

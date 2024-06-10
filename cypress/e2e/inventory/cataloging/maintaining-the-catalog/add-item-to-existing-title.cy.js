@@ -27,7 +27,7 @@ describe('Inventory', () => {
       itemStatus: 'Available',
     };
 
-    before('create test data and login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
           testData.instanceRecord = instanceData;
@@ -44,7 +44,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);

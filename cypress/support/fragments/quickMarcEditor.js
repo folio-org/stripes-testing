@@ -127,9 +127,9 @@ const calloutThreeCharacterMarcTag = Callout(
 const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
 const specRetInputNamesHoldings008 = [
-  'records[3].content.Spec ret[0]',
-  'records[3].content.Spec ret[1]',
-  'records[3].content.Spec ret[2]',
+  'records[4].content.Spec ret[0]',
+  'records[4].content.Spec ret[1]',
+  'records[4].content.Spec ret[2]',
 ];
 
 const paneHeader = PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' });
@@ -357,15 +357,15 @@ const tag008DefaultValuesHoldings = [
   { interactor: TextField('AcqEndDate'), defaultValue: '\\\\\\\\' },
   { interactor: TextField('Gen ret'), defaultValue: '\\' },
   {
-    interactor: TextField('Spec ret', { name: 'records[3].content.Spec ret[0]' }),
+    interactor: TextField('Spec ret', { name: 'records[4].content.Spec ret[0]' }),
     defaultValue: '\\',
   },
   {
-    interactor: TextField('Spec ret', { name: 'records[3].content.Spec ret[1]' }),
+    interactor: TextField('Spec ret', { name: 'records[4].content.Spec ret[1]' }),
     defaultValue: '\\',
   },
   {
-    interactor: TextField('Spec ret', { name: 'records[3].content.Spec ret[2]' }),
+    interactor: TextField('Spec ret', { name: 'records[4].content.Spec ret[2]' }),
     defaultValue: '\\',
   },
   { interactor: TextField('Compl'), defaultValue: '\\' },
@@ -493,6 +493,13 @@ export default {
         .find(TextArea({ name: `records[${rowIndex + 1}].content` }))
         .fillIn(content),
     ]);
+  },
+
+  fillInFieldValues(rowIndex, tag, content, indicator0, indicator1) {
+    cy.get(`textarea[name="records[${rowIndex}].content"]`).clear().type(content);
+    cy.get(`input[name="records[${rowIndex}].indicators[1]"]`).type(indicator1);
+    cy.get(`input[name="records[${rowIndex}].indicators[0]"]`).type(indicator0);
+    cy.get(`input[name="records[${rowIndex}].tag"]`).type(tag);
   },
 
   deletePenaltField() {
@@ -1238,7 +1245,7 @@ export default {
   selectFieldsDropdownOption(tag, dropdownLabel, option) {
     cy.do(
       QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: dropdownLabel }))
+        .find(Select({ label: including(dropdownLabel) }))
         .choose(option),
     );
   },
@@ -1246,7 +1253,7 @@ export default {
   verifyFieldsDropdownOption(tag, dropdownLabel, option) {
     cy.expect(
       QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: dropdownLabel }))
+        .find(Select({ label: including(dropdownLabel) }))
         .has({ content: including(option) }),
     );
   },
@@ -1254,7 +1261,7 @@ export default {
   verifyDropdownOptionChecked(tag, dropdownLabel, option) {
     cy.expect(
       QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: dropdownLabel }))
+        .find(Select({ label: including(dropdownLabel) }))
         .has({ checkedOptionText: option }),
     );
   },
@@ -1328,6 +1335,14 @@ export default {
     cy.do(
       QuickMarcEditorRow({ index: rowIndex })
         .find(TextArea({ name: fieldName }))
+        .fillIn(content),
+    );
+  },
+
+  fillEmptyTextFieldOfField(rowIndex, fieldName, content) {
+    cy.do(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextField({ name: fieldName }))
         .fillIn(content),
     );
   },
@@ -1428,18 +1443,6 @@ export default {
       .getAllProperties()
       .map((property) => property.newValue)
       .join('');
-  },
-
-  updateAllDefaultValuesIn008TagInAuthority() {
-    validRecord.tag008AuthorityBytesProperties.getAllProperties().forEach((byteProperty) => {
-      cy.do(
-        QuickMarcEditorRow({ tagValue: '008' })
-          .find(byteProperty.interactor)
-          .fillIn(byteProperty.newValue),
-      );
-    });
-    QuickMarcEditor.pressSaveAndClose();
-    return validRecord.tag008AuthorityBytesProperties.getNewValueSourceLine();
   },
 
   clearTag008Holdings() {
@@ -1547,7 +1550,7 @@ export default {
     );
   },
 
-  checkHeaderFirstLine({ headingTypeFrom1XX, headingType, status }, { firstName, name }) {
+  checkHeaderFirstLine({ headingTypeFrom1XX, headingType, status }, userName) {
     cy.expect(Pane(`Edit  MARC authority record - ${headingTypeFrom1XX}`).exists());
     cy.then(() => Pane(`Edit  MARC authority record - ${headingTypeFrom1XX}`).subtitle()).then(
       (subtitle) => {
@@ -1558,7 +1561,7 @@ export default {
               including(status),
               including(headingType),
               including('Last updated:'),
-              including(`Source: ${firstName}, ${name}`),
+              including(`Source: ${userName}`),
             ),
           }).exists(),
         );
@@ -1608,14 +1611,6 @@ export default {
         .find(TextField('Indicator', { name: including('.indicators[1]') }))
         .has({ disabled: false }),
     ]);
-  },
-
-  checkLDRValue(ldrValue = validRecord.ldrValue) {
-    cy.expect(
-      getRowInteractorByTagName('LDR')
-        .find(TextArea({ ariaLabel: 'Subfield' }))
-        .has({ textContent: ldrValue }),
-    );
   },
 
   checkAuthority008SubfieldsLength() {
@@ -1746,12 +1741,20 @@ export default {
     cy.expect(calloutAfterSaveAndClose.absent());
   },
 
-  checkFourthBoxDisabled(rowIndex) {
-    cy.expect(
-      getRowInteractorByRowNumber(rowIndex)
-        .find(TextArea({ ariaLabel: 'Subfield' }))
-        .has({ disabled: true }),
-    );
+  checkFourthBoxEditable(rowIndex, isEditable = true) {
+    if (isEditable) {
+      cy.expect(
+        getRowInteractorByRowNumber(rowIndex)
+          .find(TextArea({ ariaLabel: 'Subfield' }))
+          .has({ disabled: !isEditable }),
+      );
+    } else {
+      cy.expect(
+        getRowInteractorByRowNumber(rowIndex)
+          .find(TextArea({ ariaLabel: 'Subfield' }))
+          .has({ disabled: !isEditable }),
+      );
+    }
   },
 
   verifyNoFieldWithContent(content) {
@@ -2228,7 +2231,10 @@ export default {
   },
 
   check008BoxesCount(count) {
-    cy.get('div[data-testid="bytes-field-col"]').should('have.length', count);
+    cy.get('input[value="008"]')
+      .parents('[data-testid="quick-marc-editorid"]')
+      .find('div[data-testid="bytes-field-col"]')
+      .should('have.length', count);
   },
 
   checkTagAbsent(tag) {
@@ -2425,7 +2431,7 @@ export default {
   verifyDropdownValueOfLDRIsValid(dropdownLabel, isValid = true) {
     cy.expect(
       QuickMarcEditorRow({ tagValue: 'LDR' })
-        .find(Select({ label: dropdownLabel }))
+        .find(Select({ label: including(dropdownLabel) }))
         .has({ valid: isValid }),
     );
   },
@@ -2520,6 +2526,40 @@ export default {
     ]);
   },
 
+  verifyBoxValuesInLDRFieldInMarcAuthorityRecord(
+    field0to4value,
+    statusOption,
+    typeOption,
+    field7to16value,
+    elvlOption,
+    punctOption,
+    field19to23value,
+  ) {
+    cy.expect([
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.Record length') }))
+        .has({ disabled: true, value: field0to4value }),
+      fieldLDR
+        .find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS }))
+        .has({ checkedOptionText: statusOption }),
+      fieldLDR
+        .find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.TYPE }))
+        .has({ checkedOptionText: typeOption }),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.7-16 positions') }))
+        .has({ disabled: true, value: field7to16value }),
+      fieldLDR
+        .find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL }))
+        .has({ checkedOptionText: elvlOption }),
+      fieldLDR
+        .find(Select({ label: AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT }))
+        .has({ checkedOptionText: punctOption }),
+      fieldLDR
+        .find(TextField({ name: including('records[0].content.19-23 positions') }))
+        .has({ disabled: true, value: field19to23value }),
+    ]);
+  },
+
   fillInElvlBoxInLDRField(value) {
     cy.do(
       fieldLDR
@@ -2598,5 +2638,20 @@ export default {
           .absent(),
       );
     });
+  },
+
+  verifyAllBoxesInARowAreDisabled(rowNumber, isDisabled = true) {
+    cy.expect([
+      getRowInteractorByRowNumber(rowNumber).find(TextField('Field')).has({ disabled: isDisabled }),
+      getRowInteractorByRowNumber(rowNumber)
+        .find(TextArea({ ariaLabel: 'Subfield' }))
+        .has({ disabled: isDisabled }),
+      getRowInteractorByRowNumber(rowNumber)
+        .find(TextField('Indicator', { name: including('.indicators[0]') }))
+        .has({ disabled: isDisabled }),
+      getRowInteractorByRowNumber(rowNumber)
+        .find(TextField('Indicator', { name: including('.indicators[1]') }))
+        .has({ disabled: isDisabled }),
+    ]);
   },
 };

@@ -19,7 +19,7 @@ describe('Inventory', () => {
       user: {},
     };
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         ServicePoints.createViaApi(testData.servicePoint);
         testData.location = Locations.getDefaultLocation({

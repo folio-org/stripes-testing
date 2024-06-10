@@ -27,7 +27,7 @@ const zeroResultsFoundText = '0 records found';
 const fiscalYearFiltersSection = Section({ id: 'fiscal-year-filters-pane' });
 const fiscalYearResultsSection = Section({ id: 'fiscal-year-results-pane' });
 
-const saveAndClose = Button('Save & Close');
+const saveAndClose = Button('Save & close');
 const agreementsButton = Button('Agreements');
 const newButton = Button('New');
 const actionsButton = Button('Actions');
@@ -142,6 +142,7 @@ export default {
   },
 
   filltheStartAndEndDateonCalenderstartDateField: (periodStart, periodEnd) => {
+    cy.wait(6000);
     cy.do([
       TextField({ name: 'periodStart' }).clear(),
       TextField({ name: 'periodStart' }).fillIn(periodStart),

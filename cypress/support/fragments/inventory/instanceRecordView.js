@@ -32,7 +32,7 @@ const electronicAccessAccordion = Accordion('Electronic access');
 const classificationAccordion = Accordion('Classification');
 const listClassifications = MultiColumnList({ id: 'list-classifications' });
 const descriptiveDataAccordion = Accordion('Descriptive data');
-const adminDataAcoordion = Accordion('Administrative data');
+const adminDataAccordion = Accordion('Administrative data');
 const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
 
 const verifyResourceTitle = (value) => {
@@ -341,7 +341,7 @@ export default {
   verifyMarkedAsStaffSuppressed() {
     cy.expect(
       rootSection
-        .find(adminDataAcoordion)
+        .find(adminDataAccordion)
         .find(HTML(including('Staff suppressed')))
         .exists(),
     );
@@ -350,7 +350,7 @@ export default {
   verifyNotMarkAssuppressFromDiscavery() {
     cy.expect(
       rootSection
-        .find(adminDataAcoordion)
+        .find(adminDataAccordion)
         .find(HTML(including('Suppressed from discovery')))
         .absent(),
     );
@@ -359,7 +359,7 @@ export default {
   verifyMarkedAsPreviouslyHeld() {
     cy.expect(
       rootSection
-        .find(adminDataAcoordion)
+        .find(adminDataAccordion)
         .find(HTML(including('Previously held')))
         .exists(),
     );
@@ -368,7 +368,7 @@ export default {
   verifyNotMarkAsPreviouslyHeld() {
     cy.expect(
       rootSection
-        .find(adminDataAcoordion)
+        .find(adminDataAccordion)
         .find(HTML(including('Previously held')))
         .absent(),
     );
@@ -478,10 +478,7 @@ export default {
 
   exportInstanceMarc: () => {
     cy.wait(1000);
-    cy.do([
-      rootSection.find(actionsButton).click(),
-      Button({ id: 'quick-export-trigger' }).click(),
-    ]);
+    cy.do([rootSection.find(actionsButton).click(), Button('Export instance (MARC)').click()]);
   },
 
   verifyEditInstanceButtonAbsent() {

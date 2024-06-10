@@ -80,7 +80,7 @@ describe('Orders', () => {
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
-      OrderLines.POLineInfoWithReceiptNotRequiredStatus(location.institutionId);
+      OrderLines.POLineInfoWithReceiptNotRequiredStatus(location.name);
       OrderLines.checkPOLReceiptStatus(RECEIPT_STATUS_VIEW.RECEIPT_NOT_REQUIRED);
       OrderLines.checkPOLReceivingWorkflow(
         RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY,

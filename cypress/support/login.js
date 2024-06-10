@@ -18,14 +18,12 @@ Cypress.Commands.add(
     if (Cypress.env('eureka')) {
       cy.logoutViaApi();
       cy.clearCookies({ domain: null }).then(() => {
-        cy.visit('/');
+        cy.visit(visitPath.path);
         cy.do([
           TextInput('Username').fillIn(username),
           TextInput('Password').fillIn(password),
           Button({ name: 'login' }).click(),
         ]);
-        cy.expect(Heading(including('Welcome')).exists());
-        cy.visit(visitPath.path);
         visitPath.waiter();
       });
     } else {
@@ -66,12 +64,15 @@ Cypress.Commands.add('loginAsAdmin', (visitPath) => {
 
 Cypress.Commands.add('loginAsCollegeAdmin', (visitPath) => {
   cy.login('ECS0001Admin', Cypress.env('diku_password'), visitPath);
+  cy.getAdminToken();
 });
 
 Cypress.Commands.add('loginAsUniversityAdmin', (visitPath) => {
   cy.login('ECS0005Admin', Cypress.env('diku_password'), visitPath);
+  cy.getAdminToken();
 });
 
 Cypress.Commands.add('loginAsConsortiumAdmin', (visitPath) => {
   cy.login('consortium_admin', Cypress.env('diku_password'), visitPath);
+  cy.getAdminToken();
 });

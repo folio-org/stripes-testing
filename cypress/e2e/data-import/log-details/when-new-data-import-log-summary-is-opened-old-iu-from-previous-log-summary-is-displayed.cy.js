@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -6,7 +7,6 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 describe('Data Import', () => {
   describe('Log details', () => {
@@ -14,12 +14,12 @@ describe('Data Import', () => {
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const filePathForUpload = ['marcBibFileForC353957_102.mrc', 'marcBibFileForC353957_202.mrc'];
     const fileNames = [
-      `marcBibFileForC353957_102_${getRandomPostfix()}.mrc`,
-      `marcBibFileForC353957_202_${getRandomPostfix()}.mrc`,
+      `C353957 marcBibFile_102_${getRandomPostfix()}.mrc`,
+      `C353957 marcBibFile_202_${getRandomPostfix()}.mrc`,
     ];
     const numberOfRecords = ['102', '202'];
 
-    before('create user and login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportCanViewOnly.gui,
@@ -34,7 +34,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete user', () => {
+    after('Delete user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });

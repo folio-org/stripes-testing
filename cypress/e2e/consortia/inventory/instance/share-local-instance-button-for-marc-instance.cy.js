@@ -21,7 +21,7 @@ describe('Inventory', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         marcFile.marc,
-        marcFile.fileName,
+        marcFile.marcFileName,
         DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       ).then((response) => {
         testData.instanceId = response[0].instance.id;

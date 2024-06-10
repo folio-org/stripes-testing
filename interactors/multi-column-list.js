@@ -23,6 +23,8 @@ export const MultiColumnListRow = HTML.extend('multi column list row')
     // indexRow filter is a workaround for folio parts where we have data-row-inner=true (for some reason)
     indexRow: (el) => el.parentElement.getAttribute('data-row-index'),
     ariaRowIndex: (el) => +el.getAttribute('aria-rowindex'),
+    checkboxCount: (el) => [...el.querySelectorAll('input[type=checkbox]')].length,
+    innerHTML: (el) => el.innerHTML,
   });
 
 export const ListRow = HTML.extend('list row')

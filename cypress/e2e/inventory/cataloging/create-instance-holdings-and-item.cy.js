@@ -14,11 +14,11 @@ describe('Inventory', () => {
     const testData = {
       barcode,
       callNumber: '331.2',
-      instanceTitle: `autotest_instance_title_${barcode}`,
+      instanceTitle: `C3505 autotest_instance_title_${barcode}`,
       user: {},
     };
 
-    before('Create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 

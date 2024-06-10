@@ -9,6 +9,7 @@ import DateTools from '../../../support/utils/dateTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../../support/fragments/users/usersCard';
+import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 const invalidUsername = getRandomPostfix();
@@ -104,7 +105,7 @@ describe('bulk-edit', () => {
         // BulkEditActions.downloadErrorsExists();
 
         BulkEditSearchPane.openLogsSearch();
-        BulkEditSearchPane.verifyLogsPane();
+        BulkEditLogs.verifyLogsPane();
         BulkEditSearchPane.openIdentifierSearch();
         BulkEditSearchPane.verifyMatchedResults(user.username);
 

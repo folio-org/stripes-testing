@@ -2,7 +2,7 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
   CALL_NUMBER_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   EXPORT_TRANSFORMATION_NAMES,
   FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
@@ -198,7 +198,7 @@ describe('Data Import', () => {
             in2: '',
             subfield: '',
           },
-          recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+          recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
         },
       },
       {
@@ -210,8 +210,8 @@ describe('Data Import', () => {
             in2: '',
             subfield: 'h',
           },
-          recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
-          existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+          recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+          existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
           existingMatchExpressionValue: 'holdingsrecord.hrid',
         },
       },
@@ -224,8 +224,8 @@ describe('Data Import', () => {
             in2: '',
             subfield: 'i',
           },
-          recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
-          existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+          recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+          existingRecordType: EXISTING_RECORD_NAMES.ITEM,
           existingMatchExpressionValue: 'item.hrid',
         },
       },
@@ -236,7 +236,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create and login user', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -254,7 +254,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${fileNameWithUpdatedContent}`);

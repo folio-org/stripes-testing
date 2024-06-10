@@ -7,20 +7,20 @@ export default {
 
 export const tenantNames = {
   central: 'Central Tenant',
-  college: 'Congressonal',
+  college: 'Congressional',
   university: 'General Collections',
-  // professional: 'Professional',
+  professional: 'Miscellaneous',
   // school: 'School',
   // special: 'Special,',
 };
 
 export const tenantCodes = {
-  central: 'CEN',
-  college: 'COL',
-  university: 'UNI',
-  professional: 'PROF',
-  school: 'SCHO',
-  special: 'SPE,',
+  central: 'dt0',
+  college: 'dt5',
+  university: 'dt1',
+  professional: 'dt6',
+  // school: 'SCHO',
+  // special: 'SPE,',
 };
 
 export const tenantErrors = {
