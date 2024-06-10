@@ -22,9 +22,12 @@ describe('lists', () => {
       });
     });
     it('C411768 Delete list: Positive case (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      cy.login(userData.username, userData.password);
+      // eslint-disable-next-line spaced-comment
+      //cy.login(userData.username, userData.password);
+      cy.loginAsAdmin();
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
+      Lists.resetAll();
       Lists.openNewListPane();
       Lists.setName(listData.name);
       Lists.setDescription(listData.name);
@@ -41,9 +44,12 @@ describe('lists', () => {
       'C411772 Delete list: "Edit list" mode (corsair)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
-        cy.login(userData.username, userData.password);
+        // eslint-disable-next-line spaced-comment
+        //cy.login(userData.username, userData.password);
+        cy.loginAsAdmin();
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
+        Lists.resetAll();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
