@@ -108,7 +108,7 @@ describe('MARC', () => {
           JobProfiles.waitLoadingList();
           JobProfiles.search(createdJobProfile.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(updatedfileName);
+          Logs.waitFileIsImported(updatedfileName);
           Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(updatedfileName);
           Logs.goToTitleLink(RECORD_STATUSES.CREATED);
