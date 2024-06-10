@@ -190,6 +190,10 @@ export default {
     cy.get('#locations').find('ul[class^=list-]').contains(locationName).should('exist');
   },
 
+  varifyLocationIsAbsentInSection: (locationName) => {
+    cy.get('#locations').find('ul[class^=list-]').contains('li', locationName).should('not.exist');
+  },
+
   verifyCheckboxState: (checkboxLabel, expectedState) => {
     cy.contains('[class^="labelText"]', checkboxLabel)
       .parent('label')
@@ -884,6 +888,14 @@ export default {
   editBudget: () => {
     cy.wait(4000);
     cy.do([actionsButton.click(), editButton.click()]);
+  },
+
+  removeLocation(locationName) {
+    cy.get('section#locations')
+      .contains('li', locationName)
+      .within(() => {
+        cy.get('button[aria-label*="Remove location"]').click();
+      });
   },
 
   changeStatusOfBudget: (statusName, fund, fiscalYear) => {
