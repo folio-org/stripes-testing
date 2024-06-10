@@ -207,7 +207,7 @@ describe('Receiving notice: Checkout', () => {
 
   it(
     'C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button (volaris)',
-    { tags: ['smoke', 'volaris'] },
+    { tags: ['smoke', 'volaris', 'shiftLeft'] },
     () => {
       NewNoticePolicyTemplate.startAdding();
       NewNoticePolicyTemplate.checkInitialState();
@@ -258,7 +258,7 @@ describe('Receiving notice: Checkout', () => {
 
   it(
     'C347622 Check that user can receive notice with multiple items after finishing the session "Check out" by setting automatic end (volaris)',
-    { tags: ['smoke', 'volaris'] },
+    { tags: ['smoke', 'volaris', 'shiftLeft'] },
     () => {
       NewNoticePolicyTemplate.startAdding();
       NewNoticePolicyTemplate.checkInitialState();
