@@ -9,10 +9,7 @@ import DateTools from '../../../support/utils/dateTools';
 import ManageAuthorityFiles from '../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
-import {
-  DEFAULT_FOLIO_AUTHORITY_FILES,
-  AUTHORITY_FILE_TEXT_FIELD_NAMES,
-} from '../../../support/constants';
+import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -94,11 +91,7 @@ describe('MARC', () => {
           // 3 Update all editable fields with unique valid value
           // "Base URL" = "http://testing/field/baseurl/positivetest7"
           // Change the state of "Active" checkbox to opposite
-          ManageAuthorityFiles.editBaseUrlInFolioFile(
-            folioAuthorityFile.name,
-            AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL,
-            newBaseUrl,
-          );
+          ManageAuthorityFiles.editBaseUrlInFolioFile(folioAuthorityFile.name, newBaseUrl);
           ManageAuthorityFiles.switchActiveCheckboxInFile(folioAuthorityFile.name, true);
           ManageAuthorityFiles.checkSaveButtonEnabledInFile(folioAuthorityFile.name);
           ManageAuthorityFiles.checkCancelButtonEnabledInFile(folioAuthorityFile.name);
