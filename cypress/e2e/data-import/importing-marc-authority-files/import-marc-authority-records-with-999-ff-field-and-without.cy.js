@@ -3,6 +3,7 @@ import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -70,7 +71,9 @@ describe('Data Import', () => {
         FileDetails.checkAuthorityQuantityInSummaryTable('2');
         // check No action counter in the Summary table
         FileDetails.checkSrsRecordQuantityInSummaryTable('6', 2);
-        FileDetails.verifyErrorMessage(error, 1);
+        FileDetails.openJsonScreen('No content');
+        JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.verifyContentInTab(error);
       },
     );
   });
