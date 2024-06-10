@@ -141,7 +141,7 @@ describe('Inventory', () => {
 
     it(
       'C358140 Verify that browsing for "call number" with "space" value will get the correct result (spitfire)',
-      { tags: ['spitfire', 'smoke'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
       () => {
         search(testData.exactSearch);
         BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
