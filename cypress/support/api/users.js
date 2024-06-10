@@ -309,3 +309,30 @@ Cypress.Commands.add('deleteUserGroupApi', (groupId) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add(
+  'assignCapabilitiesToExistingUser',
+  (userId, capabilities = [], capabilitySets = []) => {
+    const capabilityIds = [];
+    const capabilitySetIds = [];
+    cy.then(() => {
+      for (const capab of capabilities) {
+        cy.getCapabilityIdViaApi({
+          type: capab.type,
+          resource: capab.resource,
+          action: capab.action,
+        }).then((capabId) => capabilityIds.push(capabId));
+      }
+      for (const capabSet of capabilitySets) {
+        cy.getCapabilitySetIdViaApi({
+          type: capabSet.type,
+          resource: capabSet.resource,
+          action: capabSet.action,
+        }).then((capabSetId) => capabilitySetIds.push(capabSetId));
+      }
+    }).then(() => {
+      if (capabilityIds.length) cy.updateCapabilitiesForUserApi(userId, capabilityIds);
+      if (capabilitySetIds.length) cy.updateCapabilitySetsForUserApi(userId, capabilitySetIds);
+    });
+  },
+);

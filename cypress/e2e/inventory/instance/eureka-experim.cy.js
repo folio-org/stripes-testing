@@ -103,4 +103,27 @@ describe('eureka test', () => {
     });
     cy.loginAsAdmin();
   });
+
+  it('experiment 3', () => {
+    const capabsToAssign = [
+      { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
+      { type: 'Settings', resource: 'Settings Notes Enabled', action: 'View' },
+    ];
+    const capabsSetsToAssign = [
+      { type: 'Data', resource: 'UI-Inventory All-Permissions Temprorary', action: 'Manage' },
+      { type: 'Data', resource: 'UI-Checkin', action: 'Manage' },
+    ];
+    cy.createTempUser().then((user) => {
+      testData.user3 = user;
+      cy.assignCapabilitiesToExistingUser(
+        testData.user3.userId,
+        capabsToAssign,
+        capabsSetsToAssign,
+      );
+      cy.updateRolesForUserApi(testData.user3.userId, []);
+      cy.login(testData.user3.username, testData.user3.password);
+      cy.wait(10000);
+      Users.deleteViaApi(testData.user3.userId);
+    });
+  });
 });

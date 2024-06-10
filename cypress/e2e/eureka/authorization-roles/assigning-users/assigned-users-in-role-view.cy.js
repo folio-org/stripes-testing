@@ -10,6 +10,14 @@ describe('Eureka', () => {
         roleName: `Auto Role C442816 ${getRandomPostfix()}`,
       };
 
+      const capabSetsToAssign = [
+        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
+        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
+        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+        { type: 'Data', resource: 'Roles Users', action: 'Manage' },
+        { type: 'Data', resource: 'Users', action: 'Manage' },
+      ];
+
       before('Create users, roles', () => {
         cy.getAdminToken();
         cy.getUserGroups().then(() => {
@@ -17,6 +25,8 @@ describe('Eureka', () => {
           testData.groupBName = Cypress.env('userGroups')[1].group;
           cy.createTempUser([]).then((createdUserProperties) => {
             testData.tempUser = createdUserProperties;
+            cy.assignCapabilitiesToExistingUser(testData.tempUser.userId, [], capabSetsToAssign);
+            cy.updateRolesForUserApi(testData.tempUser.userId, []);
             cy.createTempUser([], testData.groupAName).then((createdUserAProperties) => {
               testData.userA = createdUserAProperties;
               cy.createTempUser([], testData.groupBName).then((createdUserBProperties) => {

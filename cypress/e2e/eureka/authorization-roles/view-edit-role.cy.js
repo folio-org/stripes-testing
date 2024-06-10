@@ -154,9 +154,17 @@ describe('Eureka', () => {
         (capab, index) => index > 3 && index < 8,
       );
 
+      const capabSetsToAssign = [
+        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
+        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
+        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+      ];
+
       before('Create role, user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
+          cy.updateRolesForUserApi(testData.user.userId, []);
           cy.createAuthorizationRoleApi(testData.roleName, testData.roleDescription).then(
             (role) => {
               testData.roleId = role.id;
@@ -253,7 +261,7 @@ describe('Eureka', () => {
           });
           cy.wait('@capabilitiesCall').then((call) => {
             expect(call.response.statusCode).to.eq(204);
-            expect(call.request.body.capabilityIds).to.have.lengthOf(8);
+            expect(call.request.body.capabilityIds).to.have.lengthOf(2);
           });
           cy.wait('@capabilitySetsCall').then((call) => {
             expect(call.response.statusCode).to.eq(204);

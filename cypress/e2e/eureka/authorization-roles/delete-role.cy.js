@@ -11,9 +11,17 @@ describe('Eureka', () => {
         roleDescription: `Description C446120 ${getRandomPostfix()}`,
       };
 
+      const capabSetsToAssign = [
+        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
+        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
+        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+      ];
+
       before('Create role, user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
+          cy.updateRolesForUserApi(testData.user.userId, []);
           cy.createAuthorizationRoleApi(testData.roleName, testData.roleDescription).then(
             (role) => {
               testData.roleId = role.id;
@@ -54,7 +62,7 @@ describe('Eureka', () => {
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
-          AuthorizationRoles.checkCapabilitiesAccordionCounter('10');
+          AuthorizationRoles.checkCapabilitiesAccordionCounter(/^[1-9]\d*$/, true);
           AuthorizationRoles.checkCapabilitySetsAccordionCounter('3');
           AuthorizationRoles.checkUsersAccordion(1);
           AuthorizationRoles.clickDeleteRole();

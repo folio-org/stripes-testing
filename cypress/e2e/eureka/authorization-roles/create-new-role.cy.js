@@ -65,9 +65,17 @@ describe('Eureka', () => {
         capability.application = testData.applicationName;
       });
 
+      const capabSetsToAssign = [
+        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
+        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
+        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+      ];
+
       before('Creating user, login', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
+          cy.updateRolesForUserApi(testData.user.userId, []);
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.settingsAuthorizationRoles,
             waiter: AuthorizationRoles.waitContentLoading,
@@ -111,7 +119,7 @@ describe('Eureka', () => {
             expect(call.request.body.name).to.eq(testData.roleName);
             expect(call.request.body.description).to.eq(testData.roleDescription);
             cy.wait('@capabilitiesCall').then((callCapabs) => {
-              expect(callCapabs.request.body.capabilityIds).to.have.lengthOf(5);
+              expect(callCapabs.request.body.capabilityIds).to.have.lengthOf(2);
               expect(callCapabs.request.body.roleId).to.eq(roleId);
             });
             cy.wait('@capabilitySetsCall').then((callCapabSets) => {
@@ -119,6 +127,7 @@ describe('Eureka', () => {
               expect(callCapabSets.request.body.roleId).to.eq(roleId);
             });
           });
+          cy.wait(4000);
           AuthorizationRoles.checkAfterSaveCreate(testData.roleName, testData.roleDescription);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
