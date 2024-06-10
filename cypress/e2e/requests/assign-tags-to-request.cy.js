@@ -36,7 +36,7 @@ describe('ui-requests: Assign Tags to Request', () => {
     });
   });
 
-  it('C747 Assign Tags to Request (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
+  it('C747 Assign Tags to Request (vega)', { tags: ['smoke', 'vega', 'system', 'shiftLeft'] }, () => {
     cy.visit(TopMenu.requestsPath);
     Requests.selectNotYetFilledRequest();
     Requests.findCreatedRequest(instanceData.instanceTitle);
