@@ -39,10 +39,10 @@ describe('MARC', () => {
             '\\',
             '$a C436821 Whiteread, Rachel, $d 1963-',
             '$e artist.',
-            '$0 http://id.loc.gov/authorities/names/nr94042914',
+            '$0 http://id.loc.gov/authorities/names/nr94042914C436821',
             '',
           ],
-          [12, '240', '1', '0', '$a Works. $k Selections', '', '$0 2018019878', ''],
+          [12, '240', '1', '0', '$a Works. $k Selections', '', '$0 2018019878C436821', ''],
           [
             24,
             '655',
@@ -50,7 +50,7 @@ describe('MARC', () => {
             '7',
             '$a C436821 Action and adventure fiction',
             '',
-            '$0 https://vocabularyserver.com/gsafd/gsafd2014026217',
+            '$0 https://vocabularyserver.com/gsafd/gsafd2014026217C436821',
             '$2 lcgft',
           ],
           [
@@ -60,7 +60,7 @@ describe('MARC', () => {
             '\\',
             '$a C436821 Tate Britain (Gallery)',
             '$e organizer, $e host institution.',
-            '$0 http://linking.com/automated/tests/protocolhttp/os000208089',
+            '$0 http://linking.com/automated/tests/protocolhttp/os000208089C436821',
             '',
           ],
           [
@@ -70,7 +70,7 @@ describe('MARC', () => {
             '\\',
             '$a C436821 St. Louis Art Museum',
             '$e host institution.',
-            '$0 https://linking.com/automated/tests/protocolhttps/osw790055919',
+            '$0 https://linking.com/automated/tests/protocolhttps/osw790055919C436821',
             '',
           ],
         ];
@@ -217,19 +217,19 @@ describe('MARC', () => {
 
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t100\t1  \t$a C436821 Whiteread, Rachel, $d 1963- $e artist. $0 http://id.loc.gov/authorities/names/nr94042914 $9`,
+              `${testData.marcAuthIcon}\n\t100\t1  \t$a C436821 Whiteread, Rachel, $d 1963- $e artist. $0 http://id.loc.gov/authorities/names/nr94042914C436821 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t240\t1 0\t$a Works. $k Selections $0 2018019878 $9`,
+              `${testData.marcAuthIcon}\n\t240\t1 0\t$a Works. $k Selections $0 2018019878C436821 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t655\t  7\t$a C436821 Action and adventure fiction $0 https://vocabularyserver.com/gsafd/gsafd2014026217 $9`,
+              `${testData.marcAuthIcon}\n\t655\t  7\t$a C436821 Action and adventure fiction $0 https://vocabularyserver.com/gsafd/gsafd2014026217C436821 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436821 Tate Britain (Gallery) $e organizer, $e host institution. $0 http://linking.com/automated/tests/protocolhttp/os000208089 $9`,
+              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436821 Tate Britain (Gallery) $e organizer, $e host institution. $0 http://linking.com/automated/tests/protocolhttp/os000208089C436821 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436821 St. Louis Art Museum $e host institution. $0 https://linking.com/automated/tests/protocolhttps/osw790055919 $9`,
+              `${testData.marcAuthIcon}\n\t710\t2  \t$a C436821 St. Louis Art Museum $e host institution. $0 https://linking.com/automated/tests/protocolhttps/osw790055919C436821 $9`,
             );
           },
         );
