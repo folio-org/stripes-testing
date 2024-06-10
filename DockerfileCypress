@@ -1,4 +1,4 @@
-ARG NODE_VERSION='18.16.0'
+ARG NODE_VERSION='18.18.0'
 ARG YARN_VERSION='1.22.19'
 ARG CHROME_VERSION='124.0.6367.60-1'
 ARG CYPRESS_VERSION='12.0.0'
@@ -8,4 +8,3 @@ FROM cypress/factory:3.5.4
 COPY . /opt/app
 WORKDIR /opt/app
 RUN npm install --save-dev cypress
-RUN yarn config set @folio:registry https://repository.folio.org/repository/npm-folioci/
