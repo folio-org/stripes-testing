@@ -1,6 +1,5 @@
 import Users from '../../../support/fragments/users/users';
 import UsersCard from '../../../support/fragments/users/usersCard';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -13,10 +12,20 @@ describe('Eureka', () => {
       roleCName: `Auto Role C C464315 ${getRandomPostfix()}`,
     };
 
+    const capabSetsToAssign = [
+      { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
+      { type: 'Data', resource: 'Capabilities', action: 'Manage' },
+      { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+      { type: 'Data', resource: 'Roles Users', action: 'Manage' },
+      { type: 'Data', resource: 'UI-Users', action: 'View' },
+    ];
+
     before('Create users, roles', () => {
       cy.getAdminToken();
       cy.createTempUser([]).then((createdUserProperties) => {
         testData.tempUser = createdUserProperties;
+        cy.assignCapabilitiesToExistingUser(testData.tempUser.userId, [], capabSetsToAssign);
+        cy.updateRolesForUserApi(testData.tempUser.userId, []);
       });
       cy.createTempUser([]).then((createdUserAProperties) => {
         testData.userA = createdUserAProperties;
@@ -53,7 +62,7 @@ describe('Eureka', () => {
       // TO DO: rewrite when users will not have admin role assigned upon creation
       cy.updateRolesForUserApi(testData.userA.userId, [testData.roleAId, testData.roleBId]);
       cy.login(testData.tempUser.username, testData.tempUser.password, {
-        path: TopMenu.settingsAuthorizationRoles,
+        path: `${TopMenu.settingsAuthorizationRoles}/${testData.roleAId}`,
         waiter: AuthorizationRoles.waitContentLoading,
       });
     });
@@ -74,8 +83,7 @@ describe('Eureka', () => {
       'C464315 User detailed view updated when changing role assignments for a user (eureka)',
       { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
       () => {
-        AuthorizationRoles.searchRole(testData.roleAName);
-        AuthorizationRoles.clickOnRoleName(testData.roleAName);
+        AuthorizationRoles.verifyRoleViewPane(testData.roleAName);
         AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
         AuthorizationRoles.clickAssignUsersButton();
         AuthorizationRoles.selectUserInModal(testData.userA.username, false);
@@ -86,8 +94,8 @@ describe('Eureka', () => {
           false,
         );
 
-        AuthorizationRoles.searchRole(testData.roleCName);
-        AuthorizationRoles.clickOnRoleName(testData.roleCName);
+        cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleCId}`);
+        AuthorizationRoles.verifyRoleViewPane(testData.roleCName);
         AuthorizationRoles.verifyAssignedUser(
           testData.userA.lastName,
           testData.userA.firstName,
@@ -98,18 +106,14 @@ describe('Eureka', () => {
         AuthorizationRoles.clickSaveInAssignModal();
         AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
 
-        cy.visit(TopMenu.usersPath);
-        Users.waitLoading();
-        UsersSearchPane.searchByUsername(testData.userA.username);
-        UsersSearchPane.selectUserFromList(testData.userA.username);
+        cy.visit(`${TopMenu.usersPath}/preview/${testData.userA.userId}`);
+        UsersCard.waitLoading();
         UsersCard.verifyUserRolesCounter('2');
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNames([testData.roleBName, testData.roleCName]);
 
-        cy.visit(TopMenu.settingsAuthorizationRoles);
-        AuthorizationRoles.waitContentLoading();
-        AuthorizationRoles.searchRole(testData.roleBName);
-        AuthorizationRoles.clickOnRoleName(testData.roleBName);
+        cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleBId}`);
+        AuthorizationRoles.verifyRoleViewPane(testData.roleBName);
         AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
         AuthorizationRoles.clickAssignUsersButton();
         AuthorizationRoles.selectUserInModal(testData.userA.username, false);
@@ -120,8 +124,8 @@ describe('Eureka', () => {
           false,
         );
 
-        AuthorizationRoles.searchRole(testData.roleCName);
-        AuthorizationRoles.clickOnRoleName(testData.roleCName);
+        cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleCId}`);
+        AuthorizationRoles.verifyRoleViewPane(testData.roleCName);
         AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
         AuthorizationRoles.clickAssignUsersButton();
         AuthorizationRoles.selectUserInModal(testData.userA.username, false);
@@ -132,10 +136,8 @@ describe('Eureka', () => {
           false,
         );
 
-        cy.visit(TopMenu.usersPath);
-        Users.waitLoading();
-        UsersSearchPane.searchByUsername(testData.userA.username);
-        UsersSearchPane.selectUserFromList(testData.userA.username);
+        cy.visit(`${TopMenu.usersPath}/preview/${testData.userA.userId}`);
+        UsersCard.waitLoading();
         UsersCard.verifyUserRolesCounter('0');
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRolesAccordionEmpty();

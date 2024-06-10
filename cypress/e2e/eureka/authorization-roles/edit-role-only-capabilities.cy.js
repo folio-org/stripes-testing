@@ -11,6 +11,7 @@ describe('Eureka', () => {
         roleDescription: `Description C436929 ${getRandomPostfix()}`,
         updatedRoleName: `Auto Role C436929 ${getRandomPostfix()} UPD`,
         updatedRoleDescription: `Description C436929 ${getRandomPostfix()} UPD`,
+        originalApplications: ['app-platform-minimal', 'app-platform-complete'],
         originalCapabilitySets: [
           {
             application: 'app-platform-complete',
@@ -190,6 +191,10 @@ describe('Eureka', () => {
         });
       });
 
+      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${testData.originalApplications[0]}-.{1,}or.{1,}${testData.originalApplications[1]}-.{1,}\\)`;
+      const capabilitiesCallRegExp = new RegExp(`\\/capabilities${regExpBase}`);
+      const capabilitySetsCallRegExp = new RegExp(`\\/capability-sets${regExpBase}`);
+
       after('Delete user, role', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
@@ -213,7 +218,11 @@ describe('Eureka', () => {
             AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set);
           });
 
+          cy.intercept('GET', capabilitiesCallRegExp).as('capabilities');
+          cy.intercept('GET', capabilitySetsCallRegExp).as('capabilitySets');
           AuthorizationRoles.openForEdit();
+          cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
+          cy.wait('@capabilitySets').its('response.statusCode').should('eq', 200);
           testData.originalCapabilities.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxChecked(capability);
           });
