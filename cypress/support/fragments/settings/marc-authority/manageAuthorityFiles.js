@@ -298,7 +298,10 @@ export default {
 
   checkManageAuthorityFilesPaneExists(isExist = true) {
     if (isExist) {
-      cy.expect(manageAuthorityFilesPane.exists());
+      cy.expect([
+        manageAuthorityFilesPane.exists(),
+        manageAuthorityFilesPane.has({ isFullScreenView: true }),
+      ]);
     } else {
       cy.expect(manageAuthorityFilesPane.absent());
     }
@@ -330,11 +333,19 @@ export default {
     );
   },
 
-  editBaseUrlInFolioFile(authorityFileName, fieldName, fieldValue) {
+  editBaseUrlInFolioFile(authorityFileName, fieldValue) {
     const targetRow = getTargetRowWithFile(authorityFileName);
 
-    cy.do(targetRow.find(TextField({ placeholder: fieldName })).fillIn(fieldValue));
-    cy.expect(targetRow.find(TextField({ placeholder: fieldName })).has({ value: fieldValue }));
+    cy.do(
+      targetRow
+        .find(TextField({ placeholder: AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL }))
+        .fillIn(fieldValue),
+    );
+    cy.expect(
+      targetRow
+        .find(TextField({ placeholder: AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL }))
+        .has({ value: fieldValue }),
+    );
     cy.expect(targetRow.find(cancelButton).has({ disabled: false }));
     cy.expect(targetRow.find(saveButton).has({ disabled: false }));
   },

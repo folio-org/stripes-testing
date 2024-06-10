@@ -103,7 +103,7 @@ describe('Loans', () => {
 
     it(
       'C566 Loan: Change due date warnings and alerts (volaris)',
-      { tags: ['smoke', 'volaris'] },
+      { tags: ['smoke', 'volaris', 'shiftLeft'] },
       () => {
         cy.visit(TopMenu.usersPath);
         // show open loans
