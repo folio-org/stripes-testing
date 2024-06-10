@@ -9,7 +9,7 @@ describe('Inventory', () => {
     const testData = {
       lccnOption: 'LCCN, normalized',
       containsAll: 'Contains all',
-      defaultSearchOption: 'all',
+      defaultSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
     };
 
     before(() => {
