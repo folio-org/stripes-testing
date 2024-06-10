@@ -757,7 +757,7 @@ export default {
   },
 
   verifyDefaultSearchOptionSelected(defaultSearchOptionValue) {
-    cy.expect(searchTypeDropdown.has({ value: defaultSearchOptionValue }));
+    cy.expect(searchTypeDropdown.has({ checkedOptionText: defaultSearchOptionValue }));
   },
 
   clickSearchOptionSelect() {
