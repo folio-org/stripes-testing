@@ -140,11 +140,12 @@ Cypress.Commands.add('addCapabilitySetsToNewRoleApi', (roleId, capabilitySetIds)
   });
 });
 
-Cypress.Commands.add('deleteCapabilitiesFromRoleApi', (roleId) => {
+Cypress.Commands.add('deleteCapabilitiesFromRoleApi', (roleId, ignoreErrors = false) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `roles/${roleId}/capabilities`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   });
 });
 

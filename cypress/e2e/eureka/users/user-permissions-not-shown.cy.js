@@ -68,6 +68,7 @@ describe('Eureka', () => {
         Users.verifyLastNameOnUserDetailsPane(testData.tempUser.lastName);
         UsersCard.verifyUserPermissionsAccordion(false);
         UserEdit.openEdit();
+        cy.wait(10000);
         UserEdit.checkUserEditPaneOpened();
         UserEdit.verifyUserPermissionsAccordion(false);
       },
