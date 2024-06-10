@@ -54,7 +54,7 @@ describe('Inventory', () => {
         resetAllAndCheckBrowseSearchInputFieldInFocus();
 
         Object.values(CALL_NUMBER_TYPE_NAMES).forEach((type) => {
-          InventorySearchAndFilter.selectBrowseOption(type);
+          InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(type);
           InventorySearchAndFilter.checkBrowseOptionSelected(type);
           searchBrowseRecordAndCheckBrowseInventoryResultPaneInFocus();
           resetAllAndCheckBrowseSearchInputFieldInFocus();
