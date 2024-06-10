@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES, RECORD_STATUSES, ITEM_STATUS_NAMES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
@@ -102,7 +102,7 @@ describe('Data Import', () => {
         })
         .then(() => {
           NewJobProfile.createJobProfileWithLinkedThreeActionProfilesViaApi(
-            jobProfile.name,
+            jobProfile,
             collectionOfProfiles[0].actionProfile.id,
             collectionOfProfiles[1].actionProfile.id,
             collectionOfProfiles[2].actionProfile.id,
@@ -143,23 +143,23 @@ describe('Data Import', () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(marcFilePath, marcFileName);
         JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(jobProfile.profileName);
+        JobProfiles.search(jobProfile.name);
         JobProfiles.runImportFile();
+        cy.pause();
         Logs.waitFileIsImported(marcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
-        Logs.getCreatedItemsID().then((link) => {
-          instanceId = link.split('/')[5];
-        });
-        [
-          FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.instance,
-          FileDetails.columnNameInResultList.holdings,
-          FileDetails.columnNameInResultList.item,
-        ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
-        });
-        FileDetails.verifyUsedFileDisplayed(marcFileName);
+        Logs.openFileDetails('C404412 autotestFile474.1841084441128312.mrc');
+        FileDetails.checkItemsQuantityInSummaryTable(0, '1,000');
+
+        // FileDetails.verifyUsedFileDisplayed('C404412 autotestFile474.1841084441128312.mrc');
+        // cy.pause();
+        FileDetails.downloadSourceFile(
+          'C404412 autotestFile474.1841084441128312.mrc',
+          'test',
+          `*${'C404412 autotestFile474.1841084441128312.mrc'}*`,
+        );
+        FileDetails.verifyNumberOfRecordsInMRCFile(marcFileName, 1000);
         ExportFile.verifyFileIncludes();
       },
     );

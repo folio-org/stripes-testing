@@ -1,4 +1,5 @@
 import { HTML, including } from '@interactors/html';
+import { recurse } from 'cypress-recurse';
 import {
   MultiColumnListCell,
   MultiColumnList,
@@ -12,6 +13,7 @@ import {
 } from '../../../../../interactors';
 import LogsViewAll from './logsViewAll';
 import arrays from '../../../utils/arrays';
+import FileManager from '../../../utils/fileManager';
 
 const invoiceNumberFromEdifactFile = '94999';
 
@@ -402,10 +404,55 @@ export default {
     cy.do(Button({ icon: 'times' }).click());
   },
 
-  downloadSourceFile() {
-    cy.do(Button({ href: 'https://data-import' }).click());
+  downloadSourceFile(fileName, createdFileName, mask) {
+    const newFileName = fileName.replace('.mrc', '');
+    cy.pause();
     cy.wait(3000);
+    // cy.do(Pane({ id:'pane-results' }).find(Link(including(newFileName))).click());
+    cy.get('#pane-results').find('a').contains(newFileName).invoke('removeAttr', 'target')
+      .click();
+
+    recurse(
+      () => FileManager.findDownloadedFilesByMask(mask),
+      (x) => typeof x === 'object' && !!x,
+    ).then((foundFiles) => {
+      cy.log(`found file ${foundFiles}`);
+      const lastDownloadedFilename = foundFiles.sort()[foundFiles.length - 1];
+
+      FileManager.readFile(lastDownloadedFilename).then((actualContent) => {
+        // create a new file with the contents of the downloaded file in fixtures
+        FileManager.createFile(`cypress/fixtures/${createdFileName}`, actualContent);
+      });
+    });
+
+    // cy.do(Link(including(newFileName)).click());
+    // this.verifyLogDetailsPageIsOpened(newFileName);
+    // cy.do(Button({ href: 'https://data-import' }).click());
+    // cy.wait(3000);
+    // cy.get('#pane-results').find('a').contains(newFileName).invoke('removeAttr', 'target')
+    //   .click();
+    // cy.wait(2000);
+    cy.reload();
+    cy.pause();
   },
+
+  // verifyNumberOfRecordsInMRCFile(fileName, numberOfRecords) {
+  //   const newFileName = fileName.replace('.mrc', '');
+
+  //   FileManager.findDownloadedFilesByMask(newFileName).then((downloadedFilenames) => {
+  //     FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
+  //       const parts = actualContent.split('005');
+  //       console.log(parts);
+  //       return parts.length - 1;
+
+  //       // const values = this.getValuesFromCSVFile(actualContent);
+  //       // // verify each row in csv file
+  //       // values.forEach((elem, index) => {
+  //       //   expect(elem).to.include(expectedResult[index]);
+  //       // });
+  //     });
+  //   });
+  // },
 
   verifyMultipleHoldingsStatus: (expectedArray, expectedQuantity, rowNumber = 0) => {
     cy.do(
@@ -572,11 +619,17 @@ export default {
   },
 
   verifyLogDetailsPageIsOpened: (fileName) => {
-    cy.expect(Pane(fileName).exists());
+    cy.expect(Pane(including(fileName)).exists());
   },
 
   verifyUsedFileDisplayed: (fileName) => {
-    cy.expect(Pane(fileName).exists());
+    const newFileName = fileName.replace('.mrc', '');
+
+    cy.expect(
+      Pane({ id: 'pane-results' })
+        .find(Link(including(newFileName)))
+        .exists(),
+    );
   },
 
   verifyInstanceStatusIsHiperlink: (itmStatus, rowNumber = 0) => {
