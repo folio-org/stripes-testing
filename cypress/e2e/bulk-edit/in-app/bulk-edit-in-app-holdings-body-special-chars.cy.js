@@ -138,7 +138,7 @@ describe('bulk-edit', () => {
         InventoryInstance.openHoldingView();
         InventoryInstance.verifyHoldingsTemporaryLocation(newLocation);
         HoldingsRecordView.edit();
-        HoldingsRecordEdit.editHoldingsNotes('Binding', holdingsNormalNote);
+        HoldingsRecordEdit.editHoldingsNotes(holdingsNormalNote, 'Binding');
         HoldingsRecordEdit.saveAndClose();
       },
     );
