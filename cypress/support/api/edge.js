@@ -9,3 +9,14 @@ Cypress.Commands.add('postEdgeErm', () => {
     },
   });
 });
+
+Cypress.Commands.add('getEdgeRtac', (instanceId) => {
+  cy.request({
+    method: 'GET',
+    url: `${Cypress.env('EDGE_HOST')}/prod/rtac/folioRTAC?apikey=${Cypress.env('EDGE_API_KEY')}&mms_id=${instanceId}`,
+    headers: {
+      'user-agent': 'FSE_AQA_Suite',
+      'Content-type': 'application/json',
+    },
+  });
+});
