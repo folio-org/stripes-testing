@@ -89,6 +89,17 @@ export const enumOperators = [
 ];
 export const booleanOperators = ['Select operator', 'equals', 'not equal to', 'is null/empty'];
 
+export const QUERY_OPERATIONS = {
+  PLACEHOLDER: 'Select operator',
+  EQUAL: 'equals',
+  NOT_EQUAL: 'not equal to',
+  IN: 'in',
+  NOT_IN: 'not in',
+  IS_NULL: 'is null/empty',
+  CONTAINS: 'contains',
+  START_WITH: 'starts with',
+};
+
 export default {
   exists() {
     cy.expect(buildQueryModal.exists());
