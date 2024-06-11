@@ -38,7 +38,7 @@ const inventoryEntity = {
 };
 
 describe('bulk-edit', () => {
-  describe('logs/in-app approach', () => {
+  describe('logs-in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditLogsView.gui,

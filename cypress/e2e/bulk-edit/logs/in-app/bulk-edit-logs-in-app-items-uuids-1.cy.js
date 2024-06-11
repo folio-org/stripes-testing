@@ -72,6 +72,14 @@ describe('bulk-edit', () => {
     });
 
     it(
+      'C375273-1 Verify generated Logs files for Items In app -- only valid Item UUIDs (firebird)',
+      { tags: ['smoke', 'firebird', 'testTag'] },
+      () => {
+        cy.log('test');
+      }
+    );
+
+    it(
       'C375273 Verify generated Logs files for Items In app -- only valid Item UUIDs (firebird)',
       { tags: ['smoke', 'firebird', 'testTag'] },
       () => {

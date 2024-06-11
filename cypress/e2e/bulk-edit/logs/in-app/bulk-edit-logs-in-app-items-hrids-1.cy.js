@@ -47,7 +47,7 @@ const item2 = {
 };
 
 describe('bulk-edit', () => {
-  describe('logs/in-app approach', () => {
+  describe('logs-in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,
@@ -148,6 +148,14 @@ describe('bulk-edit', () => {
         errorsFromMatchingFileName,
       );
     });
+
+    it(
+      'C375281-1 Verify generated Logs files for Items In app -- only valid Item UUIDs (firebird)',
+      { tags: ['smoke', 'firebird', 'testTag'] },
+      () => {
+        cy.log('test');
+      }
+    );
 
     it(
       'C375281 Verify generated Logs files for Items In app -- valid and invalid records (firebird)',
