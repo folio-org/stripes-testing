@@ -58,7 +58,7 @@ export default {
   },
   checkReadOnlyFields: () => readonlyFields.forEach((element) => cy.expect(element.has({ disabled: true }))),
   closeWithoutSave: () => cy.do(rootForm.find(Button('Cancel')).click()),
-  fillHoldingFields({ permanentLocation, callNumber, holdingType } = {}) {
+  fillHoldingFields({ permanentLocation, callNumber, holdingsNote } = {}) {
     if (permanentLocation) {
       this.changePermanentLocation(permanentLocation);
     }
@@ -67,8 +67,8 @@ export default {
       this.fillCallNumber(callNumber);
     }
 
-    if (holdingType) {
-      cy.do([Select({ id: 'additem_holdingstype' }).choose(holdingType)]);
+    if (holdingsNote) {
+      this.addHoldingsNotes(holdingsNote);
     }
   },
   changePermanentLocation: (location) => {
@@ -150,8 +150,11 @@ export default {
   addAdministrativeNote: (note) => {
     cy.do([createAdministrativeNoteButton.click(), administrativeNoteTextArea.fillIn(note)]);
   },
-  editHoldingsNotes: (newType, newText) => {
-    cy.do([Select('Note type*').choose(newType), TextArea({ ariaLabel: 'Note' }).fillIn(newText)]);
+  editHoldingsNotes: (newText, newType) => {
+    cy.do(TextArea({ ariaLabel: 'Note' }).fillIn(newText));
+    if (newType) {
+      cy.do(Select('Note type*').choose(newType));
+    }
   },
   fillCallNumber(callNumberValue) {
     cy.do(callNumberField.fillIn(callNumberValue));
