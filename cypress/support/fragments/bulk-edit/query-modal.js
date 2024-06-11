@@ -47,8 +47,8 @@ export const usersFieldValues = {
 };
 export const dateTimeOperators = [
   'Select operator',
-  '==',
-  '!=',
+  'equals',
+  'not equal to',
   '>',
   '<',
   '>=',
@@ -57,30 +57,48 @@ export const dateTimeOperators = [
 ];
 export const stringOperators = [
   'Select operator',
-  '==',
-  '!=',
+  'equals',
+  'not equal to',
   'contains',
   'starts with',
   'is null/empty',
 ];
 export const stringStoresUuidOperators = [
   'Select operator',
-  '==',
-  '!=',
+  'equals',
+  'not equal to',
   'in',
   'not in',
   'is null/empty',
 ];
 export const stringStoresUuidButMillionOperators = [
   'Select operator',
-  '==',
-  '!=',
+  'equals',
+  'not equal to',
   'in',
   'not in',
   'is null/empty',
 ];
-export const enumOperators = ['Select operator', '==', '!=', 'in', 'not in', 'is null/empty'];
-export const booleanOperators = ['Select operator', '==', '!=', 'is null/empty'];
+export const enumOperators = [
+  'Select operator',
+  'equals',
+  'not equal to',
+  'in',
+  'not in',
+  'is null/empty',
+];
+export const booleanOperators = ['Select operator', 'equals', 'not equal to', 'is null/empty'];
+
+export const QUERY_OPERATIONS = {
+  PLACEHOLDER: 'Select operator',
+  EQUAL: 'equals',
+  NOT_EQUAL: 'not equal to',
+  IN: 'in',
+  NOT_IN: 'not in',
+  IS_NULL: 'is null/empty',
+  CONTAINS: 'contains',
+  START_WITH: 'starts with',
+};
 
 export default {
   exists() {
