@@ -182,7 +182,7 @@ describe('MARC', () => {
         ];
 
         before(() => {
-          // Making sure there are no duplicate authority records in the system before auto-linking
+          // making sure there are no duplicate records in the system before auto-linking
           cy.getAdminToken().then(() => {
             queries.forEach((query) => {
               MarcAuthorities.getMarcAuthoritiesViaApi({
@@ -269,6 +269,7 @@ describe('MARC', () => {
             // 7 Add new eligible for linking fields, by clicking "+" icon next to any field and filling first and fourth box of appeared row with following values
             newFields.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
+              cy.wait(1000);
             });
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             // 8 Click on the "Link headings" button.

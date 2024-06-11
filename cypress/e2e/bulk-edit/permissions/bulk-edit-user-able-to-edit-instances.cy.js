@@ -71,7 +71,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.instanceId);
         BulkEditActions.openActions();
         BulkEditSearchPane.verifyPaneRecordsCount(1);
-        BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
+        BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false, true);
       },
     );
   });
