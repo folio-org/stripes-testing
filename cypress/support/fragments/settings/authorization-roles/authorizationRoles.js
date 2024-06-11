@@ -17,6 +17,7 @@ import {
   and,
   or,
   matching,
+  PaneHeader,
 } from '../../../../../interactors';
 
 const rolesPane = Pane('Authorization roles');
@@ -509,5 +510,14 @@ export default {
       capabilitiesAccordion.has({ open: false }),
       capabilitySetsAccordion.has({ open: false }),
     ]);
+  },
+
+  closeRoleDetailView: (roleName) => {
+    cy.do(
+      PaneHeader(roleName)
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.expect(Pane(roleName));
   },
 };
