@@ -113,6 +113,7 @@ describe('Patron Block: Lost items', () => {
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.waitLoading();
     UsersSearchPane.searchByKeywords(userData.barcode);
+    cy.wait(3000);
   };
   const setConditionAndLimit = (message, type, limit) => {
     Conditions.waitLoading();
