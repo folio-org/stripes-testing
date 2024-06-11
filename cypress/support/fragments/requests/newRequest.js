@@ -53,8 +53,6 @@ function addRequester(userName) {
 }
 
 function openNewRequestPane() {
-  cy.do(actionsButton.click());
-  cy.wait(500);
   cy.do([actionsButton.click(), newRequestButton.click()]);
 }
 

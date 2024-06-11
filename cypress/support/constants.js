@@ -362,6 +362,12 @@ export const BROWSE_CALL_NUMBER_OPTIONS = {
   SUPERINTENDENT_OF_DOCUMENTS: 'Superintendent of Documents classification',
 };
 
+export const BROWSE_CLASSIFICATION_OPTIONS = {
+  CALL_NUMBERS_ALL: 'Classification (all)',
+  DEWEY_DECIMAL: 'Dewey Decimal classification',
+  LIBRARY_OF_CONGRESS: 'Library of Congress classification',
+};
+
 export const CONDITION_AND_LIMIT_TYPES = {
   MAX_ITEMS_CHARGED_OUT: 'Maximum number of items charged out',
   MAX_LOST_ITEMS: 'Maximum number of lost items',

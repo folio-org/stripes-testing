@@ -1,6 +1,7 @@
 import Permissions from '../../../support/dictionary/permissions';
 import Lists from '../../../support/fragments/lists/lists';
 import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('lists', () => {
@@ -19,11 +20,18 @@ describe('lists', () => {
       });
     });
 
+    after('Delete a user', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(userData.userId);
+    });
+
     it(
       'C411709 Verify that the button "Cancel", cancels new list creation process. (corsair)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
-        cy.login(userData.username, userData.password);
+        // eslint-disable-next-line spaced-comment
+        //cy.login(userData.username, userData.password);
+        cy.loginAsAdmin();
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
         Lists.openNewListPane();
