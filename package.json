@@ -49,7 +49,7 @@
     "@babel/eslint-parser": "^7.19.1",
     "@cypress/grep": "^4.0.1",
     "@cypress/request": "2.88.7",
-    "@folio/eslint-config-stripes": "^7.1.0",
+    "@folio/eslint-config-stripes": "^6.4.0",
     "@interactors/with-cypress": "^1.0.0-rc1.3",
     "@reportportal/agent-js-cypress": "^5.2.0",
     "@shelex/cypress-allure-plugin": "^2.40.0",
