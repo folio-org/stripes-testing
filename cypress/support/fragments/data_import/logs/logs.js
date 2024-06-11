@@ -84,7 +84,7 @@ export default {
   openFileDetails: (fileName) => {
     const newFileName = fileName.replace('.mrc', '');
 
-    cy.do(Link(newFileName).click());
+    cy.do(Link(including(newFileName)).click());
     FileDetails.verifyLogDetailsPageIsOpened(newFileName);
     FileDetails.verifyResultsListIsVisible();
     // TODO need to wait until page is uploaded
