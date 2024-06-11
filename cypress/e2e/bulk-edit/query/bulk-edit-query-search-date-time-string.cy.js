@@ -6,6 +6,7 @@ import QueryModal, {
   usersFieldValues,
   dateTimeOperators,
   stringOperators,
+  QUERY_OPERATIONS,
 } from '../../../support/fragments/bulk-edit/query-modal';
 import DateTools from '../../../support/utils/dateTools';
 
@@ -99,7 +100,7 @@ describe('bulk-edit', () => {
         );
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
-        QueryModal.selectOperator('starts with', 2);
+        QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 2);
         QueryModal.verifyOperatorsList(stringOperators, 2);
         QueryModal.verifyQueryAreaContent(
           `(user_expiration_date >= "${todayDateWithDashes}") AND (user_expiration_date <= "${nextWeekDateWithDashes}") AND (user_last_name starts with )`,
@@ -122,7 +123,7 @@ describe('bulk-edit', () => {
         QueryModal.verifySelectedField(usersFieldValues.firstName, 3);
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
-        QueryModal.selectOperator('contains', 3);
+        QueryModal.selectOperator(QUERY_OPERATIONS.CONTAINS, 3);
         QueryModal.fillInValueTextfield('testPermFirst', 3);
         QueryModal.verifyQueryAreaContent(
           `(user_expiration_date >= "${todayDateWithDashes}") AND (user_expiration_date <= "${nextWeekDateWithDashes}") AND (user_last_name starts with "cypressTestUser") AND (user_first_name contains "testPermFirst")`,

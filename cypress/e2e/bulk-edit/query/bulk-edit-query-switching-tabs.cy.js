@@ -2,7 +2,10 @@ import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import QueryModal, { itemFieldValues } from '../../../support/fragments/bulk-edit/query-modal';
+import QueryModal, {
+  itemFieldValues,
+  QUERY_OPERATIONS,
+} from '../../../support/fragments/bulk-edit/query-modal';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
@@ -94,8 +97,8 @@ describe('bulk-edit', () => {
         QueryModal.verifySelectedField(itemFieldValues.itemStatus);
         QueryModal.verifyQueryAreaContent('(item_status  )');
         QueryModal.verifyOperatorColumn();
-        QueryModal.selectOperator('in');
-        QueryModal.verifyQueryAreaContent('(item_status in )');
+        QueryModal.selectOperator(QUERY_OPERATIONS.IN);
+        QueryModal.verifyQueryAreaContent('(item_status in (""))');
         QueryModal.verifyValueColumn();
         QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.AVAILABLE);
         QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.AGED_TO_LOST);

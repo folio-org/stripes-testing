@@ -6,6 +6,7 @@ import QueryModal, {
   usersFieldValues,
   stringStoresUuidOperators,
   booleanOperators,
+  QUERY_OPERATIONS,
 } from '../../../support/fragments/bulk-edit/query-modal';
 import { patronGroupNames, patronGroupUuids } from '../../../support/constants';
 
@@ -49,7 +50,7 @@ describe('bulk-edit', () => {
         QueryModal.verifySelectedField(usersFieldValues.patronGroup);
         QueryModal.verifyQueryAreaContent('(user_patron_group  )');
         QueryModal.verifyOperatorColumn();
-        QueryModal.selectOperator('==');
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.verifyOperatorsList(stringStoresUuidOperators);
         QueryModal.verifyQueryAreaContent('(user_patron_group == )');
         QueryModal.verifyValueColumn();
@@ -57,13 +58,13 @@ describe('bulk-edit', () => {
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.verifyQueryAreaContent(`(user_patron_group == "${patronGroupUuids.STAFF}")`);
-        QueryModal.selectOperator('!=');
+        QueryModal.selectOperator(QUERY_OPERATIONS.NOT_EQUAL);
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.verifyQueryAreaContent('(user_patron_group != )');
         QueryModal.verifyValueColumn();
-        QueryModal.selectOperator('in');
-        QueryModal.verifyQueryAreaContent('(user_patron_group in )');
+        QueryModal.selectOperator(QUERY_OPERATIONS.IN);
+        QueryModal.verifyQueryAreaContent('(user_patron_group in (""))');
         QueryModal.verifyValueColumn();
         QueryModal.fillInValueMultiselect(patronGroupNames.STAFF);
         QueryModal.verifyQueryAreaContent(`(user_patron_group in ("${patronGroupUuids.STAFF}"))`);
@@ -101,7 +102,7 @@ describe('bulk-edit', () => {
         QueryModal.selectField(usersFieldValues.userActive, 1);
         QueryModal.verifySelectedField(usersFieldValues.userActive, 1);
         QueryModal.verifyOperatorsList(booleanOperators, 1);
-        QueryModal.selectOperator('==', 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
         QueryModal.verifyQueryAreaContent(
           `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (user_active == )`,
         );
@@ -125,7 +126,7 @@ describe('bulk-edit', () => {
         QueryModal.selectField(usersFieldValues.userActive, 2);
         QueryModal.verifySelectedField(usersFieldValues.userActive, 2);
         QueryModal.verifyOperatorsList(booleanOperators, 2);
-        QueryModal.selectOperator('!=', 2);
+        QueryModal.selectOperator(QUERY_OPERATIONS.NOT_EQUAL, 2);
         QueryModal.verifyQueryAreaContent(
           `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (user_active == "true") AND (user_active != )`,
         );
