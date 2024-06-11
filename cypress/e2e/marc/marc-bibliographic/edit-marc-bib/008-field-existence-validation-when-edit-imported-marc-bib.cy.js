@@ -1,4 +1,12 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  INVENTORY_008_FIELD_DTST_DROPDOWN,
+  INVENTORY_008_FIELD_DROPDOWNS_NAMES,
+  INVENTORY_008_FIELD_CONF_DROPDOWN,
+  INVENTORY_008_FIELD_FEST_DROPDOWN,
+  INVENTORY_008_FIELD_INDX_DROPDOWN,
+  INVENTORY_008_FIELD_LITF_DROPDOWN,
+} from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -41,12 +49,33 @@ describe('MARC', () => {
           'MRec',
           'Srce',
         ],
-        tag008BoxValues: ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         calloutMessage:
           'This record has successfully saved and is in process. Changes may not appear immediately.',
         errorCalloutMessage: 'Record cannot be saved without 008 field',
         initial008EnteredValue: DateTools.getCurrentDateYYMMDD(),
       };
+      const field008DropdownValues = [
+        {
+          dropdownLabel: INVENTORY_008_FIELD_DROPDOWNS_NAMES.DTST,
+          option: INVENTORY_008_FIELD_DTST_DROPDOWN.M,
+        },
+        {
+          dropdownLabel: INVENTORY_008_FIELD_DROPDOWNS_NAMES.CONF,
+          option: INVENTORY_008_FIELD_CONF_DROPDOWN.ONE,
+        },
+        {
+          dropdownLabel: INVENTORY_008_FIELD_DROPDOWNS_NAMES.FEST,
+          option: INVENTORY_008_FIELD_FEST_DROPDOWN.ONE,
+        },
+        {
+          dropdownLabel: INVENTORY_008_FIELD_DROPDOWNS_NAMES.INDX,
+          option: INVENTORY_008_FIELD_INDX_DROPDOWN.ONE,
+        },
+        {
+          dropdownLabel: INVENTORY_008_FIELD_DROPDOWNS_NAMES.LITF,
+          option: INVENTORY_008_FIELD_LITF_DROPDOWN.I,
+        },
+      ];
       const marcFile = {
         marc: 'marcBibFileForC387451.mrc',
         fileName: `testMarcFile${getRandomPostfix()}.mrc`,
@@ -115,10 +144,18 @@ describe('MARC', () => {
           QuickMarcEditor.checkContent('', 4);
           QuickMarcEditor.checkDeleteButtonExist(4);
           QuickMarcEditor.updateExistingTagValue(4, testData.tag008);
+          field008DropdownValues.forEach((field008DropdownValue) => {
+            QuickMarcEditor.selectFieldsDropdownOption(
+              testData.tag008,
+              field008DropdownValue.dropdownLabel,
+              field008DropdownValue.option,
+            );
+            cy.wait(500);
+          });
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
           QuickMarcEditor.check008FieldContent();
-          QuickMarcEditor.updateValuesIn008Boxes(testData.tag008BoxValues);
+          QuickMarcEditor.deleteValuesIn008Boxes();
           QuickMarcEditor.pressSaveAndClose();
           cy.intercept(`/inventory/instances/${testData.createdRecordIDs[0]}`).as('recordUpdated');
           QuickMarcEditor.checkAfterSaveAndClose();
