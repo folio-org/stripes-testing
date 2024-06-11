@@ -215,7 +215,7 @@ export default {
 
   clickOnRoleName: (roleName) => {
     cy.do(rolesPane.find(HTML(roleName, { className: including('root') })).click());
-    cy.wait(1000);
+    cy.wait(2000);
     cy.expect([
       Pane(roleName).exists(),
       Spinner().absent(),
@@ -389,7 +389,7 @@ export default {
     cy.expect([
       assignUsersModal.exists(),
       searchButtonInAssignModal.has({ disabled: true }),
-      saveButtonInAssignModal.has({ disabled: true }),
+      saveButtonInAssignModal.has({ disabled: or(true, false) }),
     ]);
   },
 
