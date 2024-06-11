@@ -6,6 +6,7 @@ import QueryModal, {
   usersFieldValues,
   stringStoresUuidOperators,
   booleanOperators,
+  QUERY_OPERATIONS,
 } from '../../../support/fragments/bulk-edit/query-modal';
 import { patronGroupNames, patronGroupUuids } from '../../../support/constants';
 
@@ -90,7 +91,7 @@ describe('bulk-edit', () => {
         QueryModal.verifySelectedField(usersFieldValues.userActive);
         QueryModal.verifyQueryAreaContent('(user_active  )');
         QueryModal.verifyOperatorsList(booleanOperators);
-        QueryModal.selectOperator('==');
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.verifyQueryAreaContent('(user_active == )');
         QueryModal.verifyValueColumn();
         QueryModal.selectValueFromSelect('True');
@@ -109,7 +110,7 @@ describe('bulk-edit', () => {
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.verifyOperatorColumn();
-        QueryModal.selectOperator('==', 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
         QueryModal.verifyOperatorsList(stringStoresUuidOperators, 1);
         QueryModal.chooseValueSelect(patronGroupNames.STAFF, 1);
         QueryModal.testQueryDisabled(false);
