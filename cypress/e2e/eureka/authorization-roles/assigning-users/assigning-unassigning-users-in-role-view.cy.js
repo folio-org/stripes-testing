@@ -55,10 +55,10 @@ describe('Eureka', () => {
 
       after('Delete roles, users', () => {
         cy.getAdminToken();
-        cy.deleteAuthorizationRoleApi(testData.roleAId);
-        cy.deleteAuthorizationRoleApi(testData.roleBId);
+        cy.deleteAuthorizationRoleApi(testData.roleId);
         Users.deleteViaApi(testData.userA.userId);
         Users.deleteViaApi(testData.userB.userId);
+        Users.deleteViaApi(testData.userC.userId);
         Users.deleteViaApi(testData.tempUser.userId);
       });
 
@@ -77,6 +77,7 @@ describe('Eureka', () => {
             testData.groupAName,
           );
           AuthorizationRoles.clickAssignUsersButton();
+          cy.wait(3000);
           AuthorizationRoles.selectFilterOptionInAssignModal(
             testData.filtername,
             testData.optionName,
@@ -100,7 +101,7 @@ describe('Eureka', () => {
             testData.userC.lastName,
             testData.userC.firstName,
             true,
-            testData.groupAName,
+            testData.groupCName,
           );
           AuthorizationRoles.closeRoleDetailView(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
@@ -116,9 +117,10 @@ describe('Eureka', () => {
             testData.userC.lastName,
             testData.userC.firstName,
             true,
-            testData.groupAName,
+            testData.groupCName,
           );
           AuthorizationRoles.clickAssignUsersButton();
+          cy.wait(3000);
           AuthorizationRoles.selectUserInModal(testData.userB.username, false);
           AuthorizationRoles.selectUserInModal(testData.userC.username, false);
           AuthorizationRoles.clickSaveInAssignModal();

@@ -518,6 +518,6 @@ export default {
         .find(Button({ icon: 'times' }))
         .click(),
     );
-    cy.expect(Pane(roleName));
+    cy.expect(Pane(roleName).absent());
   },
 };
