@@ -33,6 +33,7 @@ describe('Data Import', () => {
         Permissions.uiOrganizationsViewEditCreate.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,

@@ -110,7 +110,7 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
             QuickMarcEditor.verifyTagFieldAfterLinking(
-              18,
+              17,
               '240',
               '1',
               '0',
@@ -137,10 +137,10 @@ describe('MARC', () => {
             MarcAuthorities.closeMarcViewPane();
 
             InventoryInstance.editMarcBibliographicRecord();
-            QuickMarcEditor.clickUnlinkIconInTagField(18);
+            QuickMarcEditor.clickUnlinkIconInTagField(17);
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(
-              18,
+              17,
               '240',
               '1',
               '0',

@@ -7,12 +7,13 @@ import ItemRecordView from '../../support/fragments/inventory/item/itemRecordVie
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import { LOCATION_IDS } from '../../support/constants';
 
 let userId;
 const item = {
   instanceName: `Inventory-first-${Number(new Date())}`,
   barcode: `a-${getRandomPostfix()}`,
-  permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+  permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
   name: 'Popular Reading Collection',
 };
 
@@ -20,7 +21,7 @@ const secondItem = {
   instanceName: `Inventory-second-${getRandomPostfix()}`,
   barcode: `456${getRandomPostfix()}`,
   name: 'Online',
-  permanentLocationId: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5',
+  permanentLocationId: LOCATION_IDS.ONLINE,
 };
 
 describe('Inventory', () => {

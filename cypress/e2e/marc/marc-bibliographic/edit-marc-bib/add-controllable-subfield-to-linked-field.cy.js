@@ -15,7 +15,7 @@ describe('MARC', () => {
     describe('Edit MARC bib', () => {
       const testData = {
         tag: '100',
-        rowIndex: 16,
+        rowIndex: 15,
         marcValue: 'C375954 Kerouac, Jack',
         instanceValue: 'C375954 On the road [sound recording] / Jack Kerouac.',
         errorMessage:
@@ -100,8 +100,8 @@ describe('MARC', () => {
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.fillEmptyTextAreaOfField(
-            16,
-            'records[16].subfieldGroups.uncontrolledAlpha',
+            15,
+            'records[15].subfieldGroups.uncontrolledAlpha',
             '$e author. $d test',
           );
           // wait for the data will be filled in.
@@ -109,13 +109,13 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(testData.errorMessage);
           QuickMarcEditor.fillEmptyTextAreaOfField(
-            16,
-            'records[16].subfieldGroups.uncontrolledAlpha',
+            15,
+            'records[15].subfieldGroups.uncontrolledAlpha',
             '$e author.',
           );
           QuickMarcEditor.fillEmptyTextAreaOfField(
-            16,
-            'records[16].subfieldGroups.uncontrolledNumber',
+            15,
+            'records[15].subfieldGroups.uncontrolledNumber',
             '$c 123',
           );
           QuickMarcEditor.pressSaveAndClose();

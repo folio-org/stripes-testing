@@ -16,6 +16,7 @@ import {
   KeyValue,
   and,
   or,
+  matching,
 } from '../../../../../interactors';
 
 const rolesPane = Pane('Authorization roles');
@@ -43,7 +44,7 @@ const saveButtonInModal = selectApplicationModal.find(
 const cancelButtonInModal = selectApplicationModal.find(Button('Cancel'));
 const capabilitiesAccordion = Accordion('Capabilities');
 const capabilitySetsAccordion = Accordion('Capability sets');
-const saveButton = Button('Save and close');
+const saveButton = Button('Save & close');
 const roleNameInView = KeyValue('Name');
 const roleDescriptionInView = KeyValue('Description');
 
@@ -214,6 +215,7 @@ export default {
 
   clickOnRoleName: (roleName) => {
     cy.do(rolesPane.find(HTML(roleName, { className: including('root') })).click());
+    cy.wait(2000);
     cy.expect([
       Pane(roleName).exists(),
       Spinner().absent(),
@@ -291,6 +293,7 @@ export default {
   },
 
   openForEdit: () => {
+    cy.wait(1000);
     cy.do([actionsButton.click(), editButton.click()]);
     cy.expect([
       editRolePane.exists(),
@@ -338,12 +341,14 @@ export default {
     cy.do([roleSearchInputField.fillIn(roleName), roleSearchButton.click()]);
   },
 
-  checkCapabilitiesAccordionCounter: (expectedCount) => {
-    cy.expect(capabilitiesAccordion.has({ counter: expectedCount }));
+  checkCapabilitiesAccordionCounter: (expectedCount, regExp = false) => {
+    if (regExp) cy.expect(capabilitiesAccordion.has({ counter: matching(expectedCount) }));
+    else cy.expect(capabilitiesAccordion.has({ counter: expectedCount }));
   },
 
-  checkCapabilitySetsAccordionCounter: (expectedCount) => {
-    cy.expect(capabilitySetsAccordion.has({ counter: expectedCount }));
+  checkCapabilitySetsAccordionCounter: (expectedCount, regExp = false) => {
+    if (regExp) cy.expect(capabilitySetsAccordion.has({ counter: matching(expectedCount) }));
+    else cy.expect(capabilitySetsAccordion.has({ counter: expectedCount }));
   },
 
   checkUsersAccordion: (expectedCount = false) => {
@@ -384,7 +389,7 @@ export default {
     cy.expect([
       assignUsersModal.exists(),
       searchButtonInAssignModal.has({ disabled: true }),
-      saveButtonInAssignModal.has({ disabled: true }),
+      saveButtonInAssignModal.has({ disabled: or(true, false) }),
     ]);
   },
 

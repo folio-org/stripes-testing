@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
@@ -34,6 +34,7 @@ import NewMatchProfile from '../../../support/fragments/settings/dataImport/matc
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -41,15 +42,16 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let instanceHrid;
-    let exportedFileName;
     const quantityOfItems = '1';
     const fileName = `C368009 autotestFileName${getRandomPostfix()}.mrc`;
+    const exportedFileName = `C368009 autotestExportedFileName${getRandomPostfix()}.mrc`;
+    const fileNameForCreate = `C368009 autotestFileName${getRandomPostfix()}.mrc`;
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C368009 Testing item for SRS MARC bib ${getRandomPostfix()}`,
-          materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
+          materialType: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           status: ITEM_STATUS_NAMES.AVAILABLE,
         },
@@ -76,7 +78,7 @@ describe('Data Import', () => {
         field: '001',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       instanceOption: NewMatchProfile.optionsList.instanceHrid,
     };
     const jobProfile = {
@@ -187,43 +189,45 @@ describe('Data Import', () => {
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(selectedRecords);
         InventorySearchAndFilter.exportInstanceAsMarc();
+        cy.intercept('/data-export/quick-export').as('getHrid');
+        cy.wait('@getHrid', getLongDelay()).then((req) => {
+          const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
-        // download exported marc file
-        cy.visit(TopMenu.dataExportPath);
-        ExportFile.getExportedFileNameViaApi().then((name) => {
-          exportedFileName = name;
-
-          ExportFile.downloadExportedMarcFile(exportedFileName);
-          // upload the exported marc file
-          cy.visit(TopMenu.dataImportPath);
-          DataImport.verifyUploadState();
-          DataImport.uploadExportedFile(exportedFileName);
-          JobProfiles.search(jobProfile.profileName);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(exportedFileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(exportedFileName);
-          [
-            FileDetails.columnNameInResultList.holdings,
-            FileDetails.columnNameInResultList.item,
-          ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
-          });
-          FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems, 0);
-          FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 0);
-
-          // check created items
-          FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
-          HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.ANNEX_UI);
-          cy.wait(2000);
-          cy.go('back');
-          FileDetails.openItemInInventory(RECORD_STATUSES.CREATED);
-          ItemRecordView.verifyMaterialType(MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE);
-          ItemRecordView.verifyPermanentLoanType(LOAN_TYPE_NAMES.CAN_CIRCULATE);
-          ItemRecordView.verifyItemStatus(
-            collectionOfMappingAndActionProfiles[0].mappingProfile.status,
-          );
+          // download exported marc file
+          cy.visit(TopMenu.dataExportPath);
+          ExportFile.downloadExportedMarcFileWithRecordHrid(expectedRecordHrid, exportedFileName);
+          FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
         });
+        // upload the exported marc file
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(exportedFileName, fileNameForCreate);
+        JobProfiles.search(jobProfile.profileName);
+        JobProfiles.runImportFile();
+        Logs.waitFileIsImported(fileNameForCreate);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(fileNameForCreate);
+        [
+          FileDetails.columnNameInResultList.holdings,
+          FileDetails.columnNameInResultList.item,
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
+        });
+        FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems, 0);
+        FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 0);
+
+        // check created items
+        FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
+        HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.ANNEX_UI);
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(fileNameForCreate);
+        FileDetails.openItemInInventory(RECORD_STATUSES.CREATED);
+        ItemRecordView.verifyMaterialType(MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE);
+        ItemRecordView.verifyPermanentLoanType(LOAN_TYPE_NAMES.CAN_CIRCULATE);
+        ItemRecordView.verifyItemStatus(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.status,
+        );
       },
     );
   });

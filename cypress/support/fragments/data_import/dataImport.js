@@ -46,8 +46,6 @@ const importBlockedModal = Modal('Import blocked');
 const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 
 const uploadFile = (filePathName, fileName) => {
-  cy.reload();
-  cy.wait(3000);
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
 };
 
@@ -471,21 +469,21 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                               id:
                                 recordResponse.body.relatedHoldingsInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedHoldingsInfo.idList[0],
+                                  : recordResponse.body.relatedHoldingsInfo.id,
                               hrid:
                                 recordResponse.body.relatedHoldingsInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedHoldingsInfo.hridList[0],
+                                  : recordResponse.body.relatedHoldingsInfo.hrid,
                             },
                             item: {
                               id:
                                 recordResponse.body.relatedItemInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedItemInfo.idList[0],
+                                  : recordResponse.body.relatedItemInfo.id,
                               hrid:
                                 recordResponse.body.relatedItemInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedItemInfo.hridList[0],
+                                  : recordResponse.body.relatedItemInfo.hrid,
                             },
                             authority: {
                               id:

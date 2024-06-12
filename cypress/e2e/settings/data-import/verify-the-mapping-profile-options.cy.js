@@ -16,8 +16,14 @@ describe('Data Import', () => {
   describe('Settings', () => {
     let user;
 
-    const mappingProfileName = `mapping_${getRandomPostfix()}`;
-    const actionProfileName = `action_${getRandomPostfix()}`;
+    const mappingProfile = {
+      name: `C421998 mapping profile_${getRandomPostfix()}`,
+    };
+    const actionProfile = {
+      name: `C421998 action_${getRandomPostfix()}`,
+      action: 'CREATE',
+      folioRecordType: 'INSTANCE',
+    };
     const FOLIORecordTypes = [
       'Instance',
       'Holdings',
@@ -31,12 +37,9 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      NewFieldMappingProfile.createMappingProfileViaApi(mappingProfileName).then(
+      NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile).then(
         (mappingProfileResponse) => {
-          NewActionProfile.createActionProfileViaApi(
-            actionProfileName,
-            mappingProfileResponse.body.id,
-          );
+          NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfileResponse.body.id);
         },
       );
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
@@ -48,8 +51,8 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfileName);
-      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileName);
+      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
       Users.deleteViaApi(user.userId);
     });
 
@@ -66,9 +69,9 @@ describe('Data Import', () => {
         });
 
         NewFieldMappingProfile.clickClose();
-        FieldMappingProfiles.search(mappingProfileName);
+        FieldMappingProfiles.search(mappingProfile.name);
         FieldMappingProfileView.edit();
-        FieldMappingProfileEdit.verifyScreenName(mappingProfileName);
+        FieldMappingProfileEdit.verifyScreenName(mappingProfile.name);
 
         FOLIORecordTypes.forEach((type) => {
           FieldMappingProfileEdit.verifyFOLIORecordTypeOptionExists(type);

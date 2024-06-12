@@ -69,7 +69,7 @@ describe('MARC', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
-      InventoryInstance.deleteInstanceViaApi(instanceId);
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId);
     });
 
     it(

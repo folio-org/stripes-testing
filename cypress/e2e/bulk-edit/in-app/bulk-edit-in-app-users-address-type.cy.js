@@ -9,6 +9,7 @@ import UsersCard from '../../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 let addressTypeId;
@@ -93,21 +94,21 @@ describe('bulk-edit', () => {
                 BulkEditActions.downloadMatchedRecordsAbsent();
 
                 BulkEditSearchPane.openLogsSearch();
-                BulkEditSearchPane.verifyLogsPane();
-                BulkEditSearchPane.checkUsersCheckbox();
-                BulkEditSearchPane.clickActionsRunBy(user.username);
-                BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
+                BulkEditLogs.verifyLogsPane();
+                BulkEditLogs.checkUsersCheckbox();
+                BulkEditLogs.clickActionsRunBy(user.username);
+                BulkEditLogs.verifyLogsRowActionWhenCompleted();
 
-                BulkEditSearchPane.downloadFileUsedToTrigger();
+                BulkEditLogs.downloadFileUsedToTrigger();
                 ExportFile.verifyFileIncludes(userBarcodesFileName, [user.barcode]);
 
-                BulkEditSearchPane.downloadFileWithMatchingRecords();
+                BulkEditLogs.downloadFileWithMatchingRecords();
                 ExportFile.verifyFileIncludes(matchedRecordsFileName, [user.barcode]);
 
-                BulkEditSearchPane.downloadFileWithProposedChanges();
+                BulkEditLogs.downloadFileWithProposedChanges();
                 ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, ['graduate']);
 
-                BulkEditSearchPane.downloadFileWithUpdatedRecords();
+                BulkEditLogs.downloadFileWithUpdatedRecords();
                 ExportFile.verifyFileIncludes(updatedRecordsFileName, ['graduate']);
 
                 cy.visit(TopMenu.usersPath);

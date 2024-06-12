@@ -30,8 +30,8 @@ describe('Data Import', () => {
     const jobProfileForCreatingHoldings = DEFAULT_JOB_PROFILE_NAMES.CREATE_HOLDINGS_AND_SRS;
     const filePathForUpload = 'marcFileForC356820.mrc';
     const filePathForEdit = 'marcFileForC356820_holdings.mrc';
-    const fileName = `C356820 autotestFileName.${getRandomPostfix()}`;
-    const editedMarcFileName = `C356820 editedAutotestFileName.${getRandomPostfix()}`;
+    const fileName = `C356820 autotestFileName.${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C356820 editedAutotestFileName${getRandomPostfix()}.mrc`;
     const changesSavedCallout =
       'This record has successfully saved and is in process. Changes may not appear immediately.';
 

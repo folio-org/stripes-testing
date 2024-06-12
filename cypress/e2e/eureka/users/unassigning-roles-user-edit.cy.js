@@ -14,10 +14,30 @@ describe('Eureka', () => {
       roleDName: `Auto Role D C466114 ${getRandomPostfix()}`,
     };
 
+    const capabSetsToAssign = [
+      { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
+      { type: 'Data', resource: 'Capabilities', action: 'Manage' },
+      { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+      { type: 'Data', resource: 'Roles Users', action: 'Manage' },
+      { type: 'Data', resource: 'UI-Users', action: 'View' },
+      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
+    ];
+
+    const capabsToAssign = [
+      { type: 'Data', resource: 'UI-Users', action: 'View' },
+      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
+    ];
+
     before('Create users, roles', () => {
       cy.getAdminToken();
       cy.createTempUser([]).then((createdUserProperties) => {
         testData.tempUser = createdUserProperties;
+        cy.assignCapabilitiesToExistingUser(
+          testData.tempUser.userId,
+          capabsToAssign,
+          capabSetsToAssign,
+        );
+        cy.updateRolesForUserApi(testData.tempUser.userId, []);
       });
       cy.createTempUser([]).then((createdUserAProperties) => {
         testData.userA = createdUserAProperties;
@@ -108,6 +128,7 @@ describe('Eureka', () => {
         UserEdit.verifyUserRoleNames([testData.roleAName, testData.roleCName]);
         UserEdit.saveAndClose();
         UserEdit.checkUserEditPaneOpened(false);
+        cy.reload();
         UsersCard.verifyUserRolesCounter('2');
 
         cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleAId}`);

@@ -1,4 +1,4 @@
-import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -25,7 +25,7 @@ describe('Data Import', () => {
             field: '001',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+          existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
           instanceOption: NewMatchProfile.optionsList.instanceHrid,
         },
       },
@@ -40,7 +40,7 @@ describe('Data Import', () => {
           incomingStaticValue: `Text_${getRandomPostfix()}`,
           incomingStaticRecordValue: 'Text',
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+          existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
           existingRecordOption: NewMatchProfile.optionsList.instanceHrid,
         },
       },

@@ -53,6 +53,7 @@ describe('MARC', () => {
           Logs.openFileDetails(fileName);
           Logs.goToTitleLink(RECORD_STATUSES.CREATED);
           InventorySteps.addMarcHoldingRecord();
+          cy.wait(4000);
         });
       });
 

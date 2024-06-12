@@ -72,6 +72,7 @@ describe('Title Level Request', () => {
         testData.servicePoint.id,
       );
       instanceData = testData.folioInstances[0];
+      cy.wait(3000);
       cy.getInstance({
         limit: 1,
         expandAll: true,

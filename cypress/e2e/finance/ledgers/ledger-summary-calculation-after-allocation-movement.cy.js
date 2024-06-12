@@ -6,9 +6,10 @@ import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
 
 describe('Finance: Ledgers', () => {
-  const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
@@ -18,8 +19,14 @@ describe('Finance: Ledgers', () => {
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
-  const allocatedQuantityForFirstFund = '100';
-  const allocatedQuantityForSecondFund = '0';
+  const firstBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 100,
+  };
+  const secondBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 0,
+  };
   let user;
 
   before(() => {
@@ -32,24 +39,20 @@ describe('Finance: Ledgers', () => {
         defaultLedger.id = ledgerResponse.id;
         firstFund.ledgerId = defaultLedger.id;
         secondFund.ledgerId = defaultLedger.id;
+        firstBudget.fiscalYearId = defaultFiscalYear.id;
+        secondBudget.fiscalYearId = defaultFiscalYear.id;
 
-        Funds.createViaApi(firstFund).then((fundResponse) => {
-          firstFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(firstFund.name);
-          Funds.selectFund(firstFund.name);
-          Funds.addBudget(allocatedQuantityForFirstFund);
+        Funds.createViaApi(firstFund).then((firstFundResponse) => {
+          firstFund.id = firstFundResponse.fund.id;
+          firstBudget.fundId = firstFundResponse.fund.id;
+          Budgets.createViaApi(firstBudget);
         });
 
         cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
-
-          cy.visit(TopMenu.fundPath);
-          FinanceHelp.searchByName(secondFund.name);
-          Funds.selectFund(secondFund.name);
-          Funds.addBudget(allocatedQuantityForSecondFund);
+          secondBudget.fundId = secondFundResponse.fund.id;
+          Budgets.createViaApi(secondBudget);
         });
       });
     });

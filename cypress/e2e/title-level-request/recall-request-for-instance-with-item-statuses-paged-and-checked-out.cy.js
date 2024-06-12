@@ -16,7 +16,6 @@ import TitleLevelRequests from '../../support/fragments/settings/circulation/tit
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -37,7 +36,7 @@ describe('Create Item or Title level request', () => {
     },
   };
   const requestPolicyBody = {
-    requestTypes: [REQUEST_TYPES.PAGE, REQUEST_TYPES.HOLD],
+    requestTypes: [REQUEST_TYPES.PAGE, REQUEST_TYPES.HOLD, REQUEST_TYPES.RECALL],
     name: `requestPolicy${getRandomPostfix()}`,
     id: uuid(),
   };
@@ -172,6 +171,7 @@ describe('Create Item or Title level request', () => {
       })
       .then(() => {
         TitleLevelRequests.enableTLRViaApi();
+        cy.wait(3000);
         cy.getInstance({
           limit: 1,
           expandAll: true,
@@ -189,10 +189,7 @@ describe('Create Item or Title level request', () => {
   });
 
   after('Deleting created entities', () => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
+    cy.getAdminToken();
     Requests.getRequestApi({ query: `(instance.title=="${instanceData.title}")` }).then(
       (requestResponse) => {
         requestResponse.forEach((request) => {
@@ -221,7 +218,6 @@ describe('Create Item or Title level request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.disableTLRViaApi();
   });
   it(
     'C380490 Verify that user can create TLR: Recall request for instance with item statuses "Paged" and "Checked out" (vega) (Taas)',

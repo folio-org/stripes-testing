@@ -8,6 +8,7 @@ import {
   including,
   Pane,
   NavListItem,
+  Link,
 } from '../../../../../interactors';
 
 const rootSection = Section({ id: 'controlled-vocab-pane' });
@@ -47,5 +48,10 @@ export default {
 
   checkUserSectionOptionAbsent: (option) => {
     cy.expect(usersPane.find(NavListItem({ label: option })).absent());
+  },
+
+  checkUsersPaneTabPresent: (tabName, isPresent = true) => {
+    if (isPresent) cy.expect(usersPane.find(Link(tabName)).exists());
+    else cy.expect(usersPane.find(Link(tabName)).absent());
   },
 };

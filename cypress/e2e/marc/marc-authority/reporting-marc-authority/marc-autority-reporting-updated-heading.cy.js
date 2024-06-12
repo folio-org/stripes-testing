@@ -22,7 +22,7 @@ describe('MARC', () => {
         tag100: '100',
         tag240: '240',
         tag700: '700',
-        marcValue: 'Beethoven, Ludwig van,',
+        marcValue: 'C375220 Beethoven, Ludwig van,',
         searchOption: 'Keyword',
         authorityHeading:
           'C375220 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
@@ -108,7 +108,6 @@ describe('MARC', () => {
               MarcAuthorities.switchToSearch();
               InventoryInstance.verifySelectMarcAuthorityModal();
               InventoryInstance.searchResults(testData.marcValue);
-              MarcAuthoritiesSearch.selectAuthorityByIndex(0);
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tagValue, field.index);
             });

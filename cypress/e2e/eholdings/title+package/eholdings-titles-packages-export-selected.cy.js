@@ -8,6 +8,7 @@ import ExportManagerSearchPane from '../../../support/fragments/exportManager/ex
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
+import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 
 describe('eHoldings', () => {
   describe('Title+Package', () => {
@@ -48,6 +49,7 @@ describe('eHoldings', () => {
       { tags: ['criticalPath', 'spitfire'] },
       () => {
         // Fill in the input field with the search query, Click on the "Search" button.
+        EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName('Wiley Online Library');
         EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();
 

@@ -13,6 +13,7 @@ import {
   Section,
   Modal,
   PaneContent,
+  SearchField,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import ReceivingDetails from './receivingDetails';
@@ -31,6 +32,7 @@ const addPieceModal = Modal({ id: 'add-piece-modal' });
 const addPieceButton = Button('Add piece');
 const openedRequestModal = Modal({ id: 'data-test-opened-requests-modal' });
 const editPieceModal = Modal('Edit piece');
+const selectLocationsModal = Modal('Select locations');
 const filterOpenReceiving = () => {
   cy.do(Pane({ id: 'receiving-filters-pane' }).find(Button('Order status')).click());
   cy.do(Checkbox({ id: 'clickable-filter-purchaseOrder.workflowStatus-open' }).click());
@@ -50,7 +52,7 @@ export default {
   },
   filterOpenReceiving,
   selectFromResultsList(instanceName) {
-    cy.do(Link(instanceName).click());
+    cy.do(receivingResultsSection.find(Link(instanceName)).click());
     ReceivingDetails.waitLoading();
 
     return ReceivingDetails;
@@ -102,6 +104,26 @@ export default {
       receiveButton.click(),
     ]);
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
+  },
+
+  selectLocationInFilters: (locationName) => {
+    cy.wait(4000);
+    cy.do([
+      Button({ id: 'accordion-toggle-button-filter-poLine.locations' }).click(),
+      Button('Location look-up').click(),
+      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
+      Button('Search').click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
+      selectLocationsModal.find(Button('Save')).click(),
+    ]);
+  },
+
+  checkExistingPOLInReceivingList: (POL) => {
+    cy.wait(4000);
+    cy.expect(receivingResultsSection.find(MultiColumnListCell(POL)).exists());
   },
 
   addPiece: (displaySummary, copyNumber, enumeration, chronology) => {
@@ -212,7 +234,7 @@ export default {
     cy.do([
       TextField({ id: 'input-record-search' }).fillIn(institutionId),
       Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
+      selectLocationsModal.find(MultiColumnListCell(institutionId)).click(),
       receiveButton.click(),
     ]);
     // Need to wait, while data will be loaded
@@ -279,11 +301,7 @@ export default {
   },
 
   selectReceivingItem: () => {
-    cy.do(
-      Section({ id: 'receiving-results-pane' })
-        .find(Button({ href: including('/receiving') }))
-        .click(),
-    );
+    cy.do(receivingResultsSection.find(Button({ href: including('/receiving') })).click());
   },
 
   selectInstanceInReceive: (instanceName) => {
@@ -295,7 +313,7 @@ export default {
   },
 
   selectPOLInReceive: (POLName) => {
-    cy.do(Section({ id: 'receiving-results-pane' }).find(Link(POLName)).click());
+    cy.do(receivingResultsSection.find(Link(POLName)).click());
   },
 
   selectConnectedInEditPiece: () => {

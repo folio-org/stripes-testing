@@ -19,13 +19,16 @@ describe('MARC', () => {
         newBaseUrlSecond: `https://testing/field/baseurl/positivetest2${getRandomLetters(4)}/`,
         source: 'Local',
         isActive: true,
-        createdByAdmin: `${date} by ADMINISTRATOR, Diku_admin`,
       };
       const BASEURL = 'Base URL';
+      let adminUser;
       let user;
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        cy.getAdminSourceRecord().then((record) => {
+          adminUser = record;
+        });
         cy.createTempUser([Permissions.uiSettingsManageAuthorityFiles.gui])
           .then((userProperties) => {
             user = userProperties;
@@ -65,19 +68,20 @@ describe('MARC', () => {
             localAuthFile.startsWith,
             localAuthFile.baseUrl,
             localAuthFile.isActive,
-            localAuthFile.createdByAdmin,
+            `${date} by ${adminUser}`,
             true,
           );
 
           // 2 Click on the "Edit" (pencil) icon of "Local" authority file
           ManageAuthorityFiles.clickEditButton(localAuthFile.name);
-          ManageAuthorityFiles.checkRowEditableAfterClickEditButton(
+          ManageAuthorityFiles.checkRowEditableInEditMode(
             localAuthFile.name,
             localAuthFile.prefix,
             localAuthFile.startWithNumber,
             localAuthFile.baseUrl,
+            localAuthFile.isActive,
             localAuthFile.source,
-            localAuthFile.createdByAdmin,
+            `${date} by ${adminUser}`,
           );
           ManageAuthorityFiles.checkNewButtonEnabled(false);
 

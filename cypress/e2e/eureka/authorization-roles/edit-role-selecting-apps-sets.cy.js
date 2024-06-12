@@ -115,13 +115,21 @@ describe('Eureka', () => {
         capabIds: [],
       };
 
-      const regExpBase = `\\?limit=\\d{1,}&query=applicationId=${testData.newApplication}-.{1,}`;
+      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${testData.newApplication}-.{1,}\\)`;
       const capabilitiesCallRegExp = new RegExp(`\\/capabilities${regExpBase}`);
       const capabilitySetsCallRegExp = new RegExp(`\\/capability-sets${regExpBase}`);
+
+      const capabSetsToAssign = [
+        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
+        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
+        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+      ];
 
       before('Create role, user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
+          cy.updateRolesForUserApi(testData.user.userId, []);
           cy.createAuthorizationRoleApi(testData.roleName, testData.roleDescription).then(
             (role) => {
               testData.roleId = role.id;

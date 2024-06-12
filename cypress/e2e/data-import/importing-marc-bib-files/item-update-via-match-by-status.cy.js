@@ -1,7 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import {
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   LOAN_TYPE_NAMES,
@@ -109,7 +109,7 @@ describe('Data Import', () => {
         subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+      existingRecordType: EXISTING_RECORD_NAMES.ITEM,
       itemOption: NewMatchProfile.optionsList.itemHrid,
     };
 
@@ -118,7 +118,7 @@ describe('Data Import', () => {
       incomingStaticValue: ITEM_STATUS_NAMES.AVAILABLE,
       incomingStaticRecordValue: 'Text',
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+      existingRecordType: EXISTING_RECORD_NAMES.ITEM,
       existingRecordOption: NewMatchProfile.optionsList.status,
     };
 

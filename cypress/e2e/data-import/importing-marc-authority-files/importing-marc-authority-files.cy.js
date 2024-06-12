@@ -22,7 +22,7 @@ describe('Data Import', () => {
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
     const propertyName = 'authority';
     const createdJobProfile = {
-      profileName: 'Update MARC authority records - 999 ff $s',
+      profileName: `Update MARC authority records - 999 ff $s ${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
     let fileName;
@@ -45,6 +45,8 @@ describe('Data Import', () => {
         JobProfiles.createJobProfile(createdJobProfile);
         NewJobProfile.linkActionProfileByName('Default - Create MARC Authority');
         NewJobProfile.saveAndClose();
+        JobProfiles.waitLoadingList();
+        JobProfiles.checkJobProfilePresented(createdJobProfile.profileName);
       });
     });
 

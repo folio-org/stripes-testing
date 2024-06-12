@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 import {
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
@@ -108,7 +108,7 @@ describe('Data Import', () => {
             subfield: 'a',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+          existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
           holdingsOption: NewMatchProfile.optionsList.holdingsHrid,
         },
       },
@@ -120,7 +120,7 @@ describe('Data Import', () => {
             subfield: 'a',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+          existingRecordType: EXISTING_RECORD_NAMES.ITEM,
           itemOption: NewMatchProfile.optionsList.barcode,
         },
       },

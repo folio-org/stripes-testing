@@ -21,6 +21,7 @@ import {
   Section,
   Card,
   PaneContent,
+  Spinner,
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -68,6 +69,7 @@ const expandActionsDropdown = () => {
   );
 };
 const selectOrganizationModal = Modal('Select Organization');
+const selectLocationsModal = Modal('Select locations');
 
 export default {
   searchByParameter(parameter, value) {
@@ -118,6 +120,7 @@ export default {
   },
 
   updateOrderViaApi(order) {
+    cy.wait(2000);
     return cy.okapiRequest({
       method: 'PUT',
       path: `orders/composite-orders/${order.id}`,
@@ -899,5 +902,28 @@ export default {
       selectOrganizationModal.find(searchButton).click(),
     ]);
     cy.expect(MultiColumnListCell(organization.name).absent());
+  },
+  selectLocationInFilters: (locationName) => {
+    cy.wait(4000);
+    cy.do([
+      Button({ id: 'accordion-toggle-button-filter-poLine.locations' }).click(),
+      Button('Location look-up').click(),
+      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
+      Button('Search').click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
+      selectLocationsModal.find(Button('Save')).click(),
+    ]);
+  },
+
+  checkExistingPOInOrdersList: (POL) => {
+    cy.wait(4000);
+    cy.expect(ordersResultsPane.find(MultiColumnListCell(POL)).exists());
+  },
+
+  waitOrdersListLoading: () => {
+    cy.expect([ordersResultsPane.find(Spinner()).absent(), ordersList.exists()]);
   },
 };

@@ -1,5 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
@@ -12,12 +11,16 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import Budgets from '../../support/fragments/finance/budgets/budgets';
 
 describe('ui-orders: Orders and Order lines', () => {
   const defaultFund = { ...Funds.defaultUiFund };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const allocatedQuantity = '50';
+  const firstBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 50,
+  };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLineTitle = BasicOrderLine.defaultOrderLine.titleOrPackage;
@@ -30,22 +33,18 @@ describe('ui-orders: Orders and Order lines', () => {
     });
     order.vendor = organization.name;
     order.orderType = 'One-time';
-    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
-      defaultFiscalYear.id = response.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
+      defaultFiscalYear.id = firstFiscalYearResponse.id;
+      firstBudget.fiscalYearId = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
 
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-          cy.pause();
+          firstBudget.fundId = fundResponse.fund.id;
+          Budgets.createViaApi(firstBudget);
         });
       });
     });
@@ -61,16 +60,10 @@ describe('ui-orders: Orders and Order lines', () => {
   });
 
   afterEach(() => {
-    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
     cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
-    FinanceHelp.searchByName(defaultFund.name);
-    Funds.selectFund(defaultFund.name);
-    Funds.selectBudgetDetails();
-    Funds.deleteBudgetViaActions();
-    // Need to wait,while data will be deleted
-    cy.wait(1000);
+    Budgets.deleteViaApi(firstBudget.id);
     Funds.deleteFundViaApi(defaultFund.id);
     Ledgers.deleteledgerViaApi(defaultLedger.id);
     // Need to wait few seconds, that data will be deleted(its need to pass test in Jenkins run)

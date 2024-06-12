@@ -15,10 +15,12 @@ describe('MARC', () => {
       const testData = {
         searchOption: 'LCCN',
         AUTHORIZED: 'Authorized',
-        searchQuery: '85057895',
+        searchQueryWithoutAsteriks: '85057895',
+        searchQueryWithAsteriks: '*85057895',
       };
 
-      const searchResults = [
+      const searchResultWithoutAsteriks = 'C440115 Test LCCN subfield a record 10 (digits only)';
+      const searchResultsWithAsteriks = [
         'C440115 Test LCCN subfield a record 1 (two leading spaces, one trailing space, two internal spaces)',
         'C440115 Test LCCN subfield a record 2 (one space internal)',
         'C440115 Test LCCN subfield a record 3 (two spaces internal)',
@@ -42,7 +44,7 @@ describe('MARC', () => {
           marc: 'marcAuthFileForC440115.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-          numOfRecords: 9,
+          numOfRecords: 10,
           propertyName: 'authority',
         },
       ];
@@ -99,8 +101,16 @@ describe('MARC', () => {
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySearchOptions();
 
-          MarcAuthorities.searchByParameter(testData.searchOption, testData.searchQuery);
-          searchResults.forEach((result) => {
+          MarcAuthorities.searchByParameter(
+            testData.searchOption,
+            testData.searchQueryWithoutAsteriks,
+          );
+          MarcAuthorities.checkAfterSearch(testData.AUTHORIZED, searchResultWithoutAsteriks);
+          MarcAuthorities.searchByParameter(
+            testData.searchOption,
+            testData.searchQueryWithAsteriks,
+          );
+          searchResultsWithAsteriks.forEach((result) => {
             MarcAuthorities.checkAfterSearch(testData.AUTHORIZED, result);
           });
         },
