@@ -123,7 +123,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.verifySuccessBanner(1);
         BulkEditSearchPane.verifyChangesUnderColumns('Item permanent location', location);
-        TopMenuNavigation.navigateToApp('Inventory');
+        TopMenuNavigation.openAppFromDropdown('Inventory');
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();

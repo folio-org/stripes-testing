@@ -4,6 +4,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import QueryModal, {
   itemFieldValues,
+  QUERY_OPERATIONS,
   stringStoresUuidButMillionOperators,
 } from '../../../support/fragments/bulk-edit/query-modal';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -65,12 +66,12 @@ describe('bulk-edit', () => {
         QueryModal.verifyQueryAreaContent('(instance_id  )');
         QueryModal.verifyOperatorColumn();
         QueryModal.verifyOperatorsList(stringStoresUuidButMillionOperators);
-        QueryModal.selectOperator('in');
-        QueryModal.verifyQueryAreaContent('(instance_id in )');
+        QueryModal.selectOperator(QUERY_OPERATIONS.IN);
+        QueryModal.verifyQueryAreaContent('(instance_id in (""))');
         QueryModal.verifyValueColumn();
         QueryModal.fillInValueTextfield(`${firstItem.instanceId},${secondItem.instanceId}`);
         QueryModal.verifyQueryAreaContent(
-          `(instance_id in "${firstItem.instanceId},${secondItem.instanceId}")`,
+          `(instance_id in ("${firstItem.instanceId}","${secondItem.instanceId}"))`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();

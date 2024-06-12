@@ -14,10 +14,10 @@ import { ITEM_NOTES } from '../../../support/constants';
 
 let user;
 const notes = {
-  actionOne: 'actionNote',
-  actionTwo: 'ActionNote',
-  checkInOne: 'checkInNote',
-  checkInTwo: 'CheckInNote',
+  copyOne: 'copyNote',
+  copyTwo: 'copyNote',
+  checkOutOne: 'checkOutNote',
+  checkOutTwo: 'CheckOutNote',
 };
 
 const item = {
@@ -25,6 +25,8 @@ const item = {
   instanceName: `instance-${getRandomPostfix()}`,
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
+const matchedRecordsFileName = `*-Matched-Records-${itemBarcodesFileName}`;
+const previewFileName = `*-Updates-Preview-${itemBarcodesFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${itemBarcodesFileName}`;
 
 describe('bulk-edit', () => {
@@ -50,19 +52,19 @@ describe('bulk-edit', () => {
 
             itemData.notes = [
               {
-                itemNoteTypeId: ITEM_NOTES.ACTION_NOTE,
-                note: notes.actionOne,
+                itemNoteTypeId: ITEM_NOTES.COPY_NOTE,
+                note: notes.copyOne,
                 staffOnly: true,
               },
               {
-                itemNoteTypeId: ITEM_NOTES.ACTION_NOTE,
-                note: notes.actionTwo,
+                itemNoteTypeId: ITEM_NOTES.COPY_NOTE,
+                note: notes.copyTwo,
                 staffOnly: false,
               },
             ];
             itemData.circulationNotes = [
-              { noteType: 'Check in', note: notes.checkInOne, staffOnly: true },
-              { noteType: 'Check in', note: notes.checkInTwo, staffOnly: false },
+              { noteType: 'Check out', note: notes.checkOutOne, staffOnly: true },
+              { noteType: 'Check out', note: notes.checkOutTwo, staffOnly: false },
             ];
             cy.updateItemViaApi(itemData);
           },
@@ -74,11 +76,15 @@ describe('bulk-edit', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(changedRecordsFileName);
+      FileManager.deleteFileFromDownloadsByMask(
+        matchedRecordsFileName,
+        previewFileName,
+        changedRecordsFileName,
+      );
     });
 
     it(
-      'C405540 Verify Bulk Edit actions for Items notes - preserve the "Staff only" flag when change note type within the group (firebird)',
+      'C405542 Verify Bulk Edit actions for Items notes - preserve the "Staff only" flag when change note type to other group (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
@@ -88,50 +94,67 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
 
-        BulkEditActions.openActions();
+        BulkEditActions.downloadMatchedResults();
+        ExportFile.verifyFileIncludes(matchedRecordsFileName, [
+          `,Copy note;${notes.copyOne};true|Copy note;${notes.copyTwo};false,,${notes.checkOutOne} (staff only) | ${notes.checkOutTwo}`,
+        ]);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
-          'Action note',
+          'Copy note',
           'Check out notes',
           'Check in notes',
-          'Provenance note',
+          'Binding note',
         );
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.changeNoteType('Action note', 'Provenance', 0);
+        BulkEditActions.verifyItemOptions();
+        BulkEditActions.changeNoteType('Check out note', 'Binding');
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.changeNoteType('Check in note', 'Check out note', 1);
+        BulkEditActions.changeNoteType('Copy note', 'Check in note', 1);
 
         BulkEditActions.confirmChanges();
-        BulkEditActions.verifyChangesInAreYouSureForm('Provenance note', [
-          `${notes.actionOne} (staff only) | ${notes.actionTwo}`,
+        BulkEditActions.downloadPreview();
+        ExportFile.verifyFileIncludes(previewFileName, [
+          `Binding;${notes.checkOutOne};true|Binding;${notes.checkOutTwo};false,${notes.copyOne} (staff only) | ${notes.copyTwo},,`,
         ]);
-        BulkEditActions.verifyChangesInAreYouSureForm('Check out notes', [
-          `${notes.checkInOne} (staff only) | ${notes.checkInTwo}`,
-        ]);
-        BulkEditActions.verifyChangesInAreYouSureForm('Check in notes', ['']);
+        BulkEditSearchPane.verifyExactChangesUnderColumns(
+          'Check in notes',
+          `${notes.copyOne} (staff only) | ${notes.copyTwo}`,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumns(
+          'Binding note',
+          `${notes.checkOutOne} (staff only) | ${notes.checkOutTwo}`,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Copy note', '');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out notes', '');
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyChangesUnderColumns(
-          'Provenance note',
-          `${notes.actionOne} (staff only) | ${notes.actionTwo}`,
+        BulkEditSearchPane.verifyExactChangesUnderColumns(
+          'Check in notes',
+          `${notes.copyOne} (staff only) | ${notes.copyTwo}`,
         );
-        BulkEditSearchPane.verifyChangesUnderColumns(
-          'Check out notes',
-          `${notes.checkInOne} (staff only) | ${notes.checkInTwo}`,
+        BulkEditSearchPane.verifyExactChangesUnderColumns(
+          'Binding note',
+          `${notes.checkOutOne} (staff only) | ${notes.checkOutTwo}`,
         );
-        BulkEditSearchPane.verifyChangesUnderColumns('Check in notes', '');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Copy note', '');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out notes', '');
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `Provenance;${notes.actionOne};true|Provenance;${notes.actionTwo};false`,
-          `${notes.checkInOne} (staff only) | ${notes.checkInTwo}`,
+          `Binding;${notes.checkOutOne};true|Binding;${notes.checkOutTwo};false,${notes.copyOne} (staff only) | ${notes.copyTwo},,`,
         ]);
 
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
-        ItemRecordView.checkCheckOutNote(`${notes.checkInOne}${notes.checkInTwo}`, 'Yes\nNo');
-        ItemRecordView.checkItemNote(`${notes.actionOne}${notes.actionTwo}`, 'YesNo', 'Provenance');
+        ItemRecordView.checkCheckInNote(`${notes.copyOne}${notes.copyTwo}`, 'Yes\nNo');
+        ItemRecordView.checkItemNote(
+          `${notes.checkOutOne}${notes.checkOutTwo}`,
+          'YesNo',
+          'Binding',
+        );
+        ItemRecordView.verifyTextAbsent('Check out note');
+        ItemRecordView.verifyTextAbsent('Copy note');
       },
     );
   });

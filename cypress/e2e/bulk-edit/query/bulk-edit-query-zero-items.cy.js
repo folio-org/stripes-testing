@@ -3,7 +3,10 @@ import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import QueryModal, { itemFieldValues } from '../../../support/fragments/bulk-edit/query-modal';
+import QueryModal, {
+  itemFieldValues,
+  QUERY_OPERATIONS,
+} from '../../../support/fragments/bulk-edit/query-modal';
 
 let user;
 const invalidUUID = uuid();
@@ -43,7 +46,7 @@ describe('bulk-edit', () => {
         QueryModal.verifySelectedField(itemFieldValues.holdingsId);
         QueryModal.verifyQueryAreaContent('(holdings_id  )');
         QueryModal.verifyOperatorColumn();
-        QueryModal.selectOperator('==');
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.verifyQueryAreaContent('(holdings_id == )');
         QueryModal.verifyValueColumn();
         QueryModal.fillInValueTextfield(invalidUUID);
