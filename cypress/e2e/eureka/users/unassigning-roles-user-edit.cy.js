@@ -131,20 +131,26 @@ describe('Eureka', () => {
         cy.reload();
         UsersCard.verifyUserRolesCounter('2');
 
-        cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleAId}`);
+        cy.visit(TopMenu.settingsAuthorizationRoles);
+        AuthorizationRoles.waitContentLoading();
+        AuthorizationRoles.searchRole(testData.roleAName);
+        AuthorizationRoles.clickOnRoleName(testData.roleAName);
         AuthorizationRoles.checkUsersAccordion(1);
         AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
-        cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleCId}`);
+        AuthorizationRoles.searchRole(testData.roleCName);
+        AuthorizationRoles.clickOnRoleName(testData.roleCName);
         AuthorizationRoles.checkUsersAccordion(1);
         AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
-        cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleBId}`);
+        AuthorizationRoles.searchRole(testData.roleBName);
+        AuthorizationRoles.clickOnRoleName(testData.roleBName);
         AuthorizationRoles.checkUsersAccordion(0);
         AuthorizationRoles.verifyAssignedUser(
           testData.userA.lastName,
           testData.userA.firstName,
           false,
         );
-        cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleDId}`);
+        AuthorizationRoles.searchRole(testData.roleDName);
+        AuthorizationRoles.clickOnRoleName(testData.roleDName);
         AuthorizationRoles.checkUsersAccordion(0);
         AuthorizationRoles.verifyAssignedUser(
           testData.userA.lastName,
@@ -170,13 +176,17 @@ describe('Eureka', () => {
           expect(call.response.body.userRoles).to.have.lengthOf(0);
         });
 
-        cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleAId}`);
+        cy.visit(TopMenu.settingsAuthorizationRoles);
+        AuthorizationRoles.waitContentLoading();
+        AuthorizationRoles.searchRole(testData.roleAName);
+        AuthorizationRoles.clickOnRoleName(testData.roleAName);
         AuthorizationRoles.verifyAssignedUser(
           testData.userA.lastName,
           testData.userA.firstName,
           false,
         );
-        cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleCId}`);
+        AuthorizationRoles.searchRole(testData.roleCName);
+        AuthorizationRoles.clickOnRoleName(testData.roleCName);
         AuthorizationRoles.verifyAssignedUser(
           testData.userA.lastName,
           testData.userA.firstName,

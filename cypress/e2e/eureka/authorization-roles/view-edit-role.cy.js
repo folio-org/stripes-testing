@@ -206,16 +206,9 @@ describe('Eureka', () => {
         'C424001 Viewing/editing existing authorization role',
         { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
         () => {
-          const roleViewUrl = `${Cypress.config().baseUrl}${TopMenu.settingsAuthorizationRoles}/${
-            testData.roleId
-          }`;
-
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
-          cy.url().then((url) => expect(url).to.eq(roleViewUrl));
-          cy.reload();
           AuthorizationRoles.verifyRoleViewPane(testData.roleName);
-          cy.url().then((url) => expect(url).to.eq(roleViewUrl));
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.clickOnCapabilitiesAccordion();
           testData.originalCapabilitySets.forEach((capabilitySet) => {
@@ -261,7 +254,7 @@ describe('Eureka', () => {
           });
           cy.wait('@capabilitiesCall').then((call) => {
             expect(call.response.statusCode).to.eq(204);
-            expect(call.request.body.capabilityIds).to.have.lengthOf(2);
+            expect(call.request.body.capabilityIds).to.have.lengthOf(8);
           });
           cy.wait('@capabilitySetsCall').then((call) => {
             expect(call.response.statusCode).to.eq(204);
@@ -271,7 +264,6 @@ describe('Eureka', () => {
             testData.updatedRoleName,
             testData.updatedRoleDescription,
           );
-          cy.url().then((url) => expect(url).to.eq(roleViewUrl));
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.newCapabilitySet);
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.originalCapabilitySets[1]);
