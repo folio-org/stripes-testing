@@ -81,7 +81,8 @@ describe('Inventory', () => {
         HoldingsRecordEdit.waitLoading();
         TopMenu.openDataImportApp();
         DataImport.waitLoading();
-        TopMenu.openInventoryApp();
+        // TopMenu.openInventoryApp();
+        cy.go('back');
         HoldingsRecordEdit.waitLoading();
         HoldingsRecordEdit.verifyNoCalloutErrorMessage();
       },

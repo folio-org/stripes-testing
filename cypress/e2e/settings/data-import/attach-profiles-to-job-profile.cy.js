@@ -55,22 +55,22 @@ describe('Data Import', () => {
       {
         actionProfile: {
           name: `C11139 autotest action profile1 ${getRandomPostfix()}`,
-          action: 'CREATE',
           folioRecordType: 'INSTANCE',
+          action: 'CREATE',
         },
       },
       {
         actionProfile: {
           name: `C11139 autotest action profile2 ${getRandomPostfix()}`,
-          action: 'CREATE',
           folioRecordType: 'INSTANCE',
+          action: 'CREATE',
         },
       },
       {
         actionProfile: {
           name: `C11139 autotest action profile3 ${getRandomPostfix()}`,
-          action: 'CREATE',
           folioRecordType: 'INSTANCE',
+          action: 'CREATE',
         },
       },
     ];
@@ -84,14 +84,14 @@ describe('Data Import', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       // create 3 action profiles linked to mapping profile
-      NewFieldMappingProfile.createMappingProfileViaApi(mappingProfile.name).then(
+      NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile).then(
         (mappingProfileResponse) => {
           collectionOfActionProfiles.forEach((profile) => {
             NewActionProfile.createActionProfileViaApi(
-              profile.name,
+              profile.actionProfile,
               mappingProfileResponse.body.id,
             ).then((actionProfileResponse) => {
-              profile.id = actionProfileResponse.body.id;
+              profile.actionProfile.id = actionProfileResponse.body.id;
             });
           });
         },
@@ -99,11 +99,11 @@ describe('Data Import', () => {
 
       // create 2 match profile
       collectionOfMatchProfiles.forEach((profile) => {
-        NewMatchProfile.createMatchProfileViaApi(profile.profileName).then(
-          (matchProfileResponse) => {
-            profile.id = matchProfileResponse.body.id;
-          },
-        );
+        NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(
+          profile.matchProfile,
+        ).then((matchProfileResponse) => {
+          profile.matchProfile.id = matchProfileResponse.body.id;
+        });
       });
 
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
@@ -112,29 +112,6 @@ describe('Data Import', () => {
         cy.login(user.username, user.password, {
           path: SettingsMenu.jobProfilePath,
           waiter: JobProfiles.waitLoadingList,
-        });
-
-        // create 3 action profiles linked to mapping profile
-        NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile).then(
-          (mappingProfileResponse) => {
-            collectionOfActionProfiles.forEach((profile) => {
-              NewActionProfile.createActionProfileViaApi(
-                profile.actionProfile,
-                mappingProfileResponse.body.id,
-              ).then((actionProfileResponse) => {
-                profile.actionProfile.id = actionProfileResponse.body.id;
-              });
-            });
-          },
-        );
-
-        // create 2 match profile
-        collectionOfMatchProfiles.forEach((profile) => {
-          NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(
-            profile.matchProfile,
-          ).then((matchProfileResponse) => {
-            profile.matchProfile.id = matchProfileResponse.body.id;
-          });
         });
       });
     });
