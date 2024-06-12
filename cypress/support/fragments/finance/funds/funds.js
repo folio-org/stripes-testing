@@ -66,7 +66,7 @@ const resetButton = Button({ id: 'reset-funds-filters' });
 const addTransferModal = Modal({ id: 'add-transfer-modal' });
 const closeWithoutSavingButton = Button('Close without saving');
 const addExpenseClassButton = Button({ id: 'budget-status-expense-classes-add-button' });
-const saveAndClose = Button('Save & close');
+const saveAndClose = Button('Save & Close');
 
 export default {
   defaultUiFund: {
@@ -265,7 +265,7 @@ export default {
         .fillIn(allocatedQuantity.toString()),
     ]);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.do([Button('Save & close').click()]);
+    cy.do([Button('Save').click()]);
     cy.wait(6000);
   },
 

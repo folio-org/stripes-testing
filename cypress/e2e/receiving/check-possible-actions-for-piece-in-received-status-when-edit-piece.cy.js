@@ -70,7 +70,7 @@ describe('Orders: Inventory interaction', () => {
       orderNumber = firstOrderResponse.poNumber;
       Orders.checkCreatedOrder(firstOrder);
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
       OrderLines.fillInPOLineInfoForPhysicalResourceWithPaymentNotRequired(
         defaultFund,
         '20',

@@ -118,7 +118,7 @@ describe('Invoices', () => {
                 defaultOrder.id = firstOrderResponse.id;
                 orderNumber = firstOrderResponse.poNumber;
                 OrderLines.addPOLine();
-                OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+                OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
                 OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
                   firstFund,
                   '10',
