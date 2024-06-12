@@ -45,7 +45,7 @@ describe('Eureka', () => {
       };
 
       const capabilityCallRegExp = new RegExp(
-        `\\/capabilities\\?limit=\\d{1,}&query=\\applicationId==\\(${testData.newApplication}-.{1,}\\)`,
+        `\\/capabilities\\?limit=\\d{1,}&query=\\applicationId=${testData.newApplication}-.{1,}`,
       );
 
       const capabSetsToAssign = [
