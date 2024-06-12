@@ -20,3 +20,45 @@ Cypress.Commands.add('getEdgeRtac', (instanceId) => {
     },
   });
 });
+
+Cypress.Commands.add('postEdgeOrders', () => {
+  cy.request({
+    method: 'POST',
+    url: `${Cypress.env('EDGE_HOST')}/orders/validate?apikey=${Cypress.env('EDGE_API_KEY')}&type=GOBI`,
+    headers: {
+      'user-agent': 'FSE_AQA_Suite',
+    },
+    body: ' ',
+  });
+});
+
+Cypress.Commands.add('postEdgeNcip', (requestBody) => {
+  cy.request({
+    method: 'POST',
+    url: `${Cypress.env('EDGE_HOST')}/ncip?apikey=${Cypress.env('EDGE_API_KEY')}`,
+    headers: {
+      'user-agent': 'FSE_AQA_Suite',
+    },
+    body: requestBody,
+  });
+});
+
+Cypress.Commands.add('getEdgePatron', () => {
+  cy.request({
+    method: 'GET',
+    url: `${Cypress.env('EDGE_HOST')}/patron/account/${Cypress.env('diku_login')}?apikey=${Cypress.env('EDGE_API_KEY')}&includeLoans=true&includeCharges=true&includeHolds=true`,
+    headers: {
+      'user-agent': 'FSE_AQA_Suite',
+    },
+  });
+});
+
+Cypress.Commands.add('getEdgeOai', () => {
+  cy.request({
+    method: 'GET',
+    url: `${Cypress.env('EDGE_HOST')}/oai?apikey=${Cypress.env('EDGE_API_KEY')}&verb=Identify`,
+    headers: {
+      'user-agent': 'FSE_AQA_Suite',
+    },
+  });
+});
