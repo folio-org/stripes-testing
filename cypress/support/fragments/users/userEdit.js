@@ -75,6 +75,9 @@ const rolesPane = selectRolesModal.find(Pane('User roles'));
 const unassignAllRolesModal = Modal('Unassign all user roles');
 const yesButton = Button('Yes');
 const noButton = Button('No');
+const lastNameField = TextField({ id: 'adduser_lastname' });
+const firstNameField = TextField({ id: 'adduser_firstname' });
+const emailField = TextField({ id: 'adduser_email' });
 let totalRows;
 
 // servicePointIds is array of ids
@@ -663,5 +666,14 @@ export default {
     if (isConfirmed) cy.do(unassignAllRolesModal.find(yesButton).click());
     else cy.do(unassignAllRolesModal.find(noButton).click());
     cy.expect(unassignAllRolesModal.absent());
+  },
+
+  fillLastFirstNames(lastName, firstName) {
+    cy.do(lastNameField.fillIn(lastName));
+    if (firstName) cy.do(firstNameField.fillIn(firstName));
+  },
+
+  fillEmailAddress(email) {
+    cy.do(emailField.fillIn(email));
   },
 };
