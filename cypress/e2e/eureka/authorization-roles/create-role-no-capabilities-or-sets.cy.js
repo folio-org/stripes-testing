@@ -13,7 +13,7 @@ describe('Eureka', () => {
         secondApplicationName: 'app-platform-complete',
       };
 
-      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${testData.firstApplicationName}-.{1,}or.{1,}${testData.secondApplicationName}-.{1,}\\)`;
+      const regExpBase = `\\?limit=\\d{1,}&query=applicationId=${testData.firstApplicationName}-.{1,}or.{1,}applicationId=${testData.secondApplicationName}-.{1,}`;
       const capabilityCallRegExp = new RegExp(`\\/capabilities${regExpBase}`);
       const capabilitySetsCallRegExp = new RegExp(`\\/capability-sets${regExpBase}`);
 

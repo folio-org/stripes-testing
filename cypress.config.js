@@ -22,8 +22,8 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://kong-evrk2.int.aws.folio.org',
-    OKAPI_TENANT: 'diku2',
+    OKAPI_HOST: 'https://kong-crs-sandbox2.int.aws.folio.org',
+    OKAPI_TENANT: 'fs01000002',
     diku_login: 'folio',
     diku_password: 'folio',
     is_kiwi_release: false,
@@ -121,7 +121,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://diku2.int.aws.folio.org',
+    baseUrl: 'https://crs-sandbox2.int.aws.folio.org',
     testIsolation: false,
   },
 });
