@@ -191,6 +191,9 @@ export default {
     cy.expect(temporaryLocationList.exists());
     cy.expect(temporaryLocationList.find(HTML(including(temporarylocation))).exists());
   },
+  clickAddElectronicAccessButton: () => {
+    cy.do(addElectronicAccessButton.click());
+  },
   addElectronicAccess: (type) => {
     cy.expect(electronicAccessAccordion.exists());
     cy.do([
@@ -199,5 +202,23 @@ export default {
       uriTextarea.fillIn(type),
       Button('Save & close').click(),
     ]);
+  },
+  getRelationshipsFromHoldings: () => {
+    const relationshipNames = [];
+    return cy
+      .get('select[name="electronicAccess[0].relationshipId"]')
+      .each(($element) => {
+        cy.wrap($element)
+          .invoke('text')
+          .then((name) => {
+            relationshipNames.push(name);
+          });
+      })
+      .then(() => {
+        const resultArray = relationshipNames.map((str) => {
+          return str.replace('Select type', '').trim();
+        });
+        return Array.from(resultArray);
+      });
   },
 };

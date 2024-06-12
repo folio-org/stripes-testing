@@ -1673,4 +1673,8 @@ export default {
   verifyNoStaffSuppress() {
     cy.expect(HTML(including('Warning: Instance is marked staff suppressed')).absent());
   },
+
+  verifyHoldingsAbsent(holdingsLocation) {
+    cy.expect(Accordion({ label: including(`Holdings: ${holdingsLocation}`) }).absent());
+  },
 };
