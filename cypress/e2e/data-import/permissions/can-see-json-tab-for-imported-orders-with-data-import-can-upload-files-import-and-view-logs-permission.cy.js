@@ -16,7 +16,6 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import {
   ActionProfiles as SettingsActionProfiles,
@@ -31,7 +30,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Permissions', () => {
     let user;
-    let instanceId;
     const filePath = 'marcBibFileForC377023.mrc';
     const marcFileName = `C377023 autotestFileName${getRandomPostfix()}.mrc`;
     const title = 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.';
@@ -110,11 +108,12 @@ describe('Data Import', () => {
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
       // upload a marc file for creating of the new instance
-      DataImport.uploadFileViaApi(filePath, marcFileName, jobProfile.profileName).then(
-        (response) => {
-          instanceId = response[0].instance.id;
-        },
-      );
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(filePath, marcFileName);
+      JobProfiles.waitFileIsUploaded();
+      JobProfiles.search(jobProfile.profileName);
+      JobProfiles.runImportFile();
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
@@ -132,7 +131,6 @@ describe('Data Import', () => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-        InventoryInstance.deleteInstanceViaApi(instanceId);
       });
     });
 
