@@ -11,11 +11,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 const testData = {
   user: {},
   instanceTitle: `C716 Inventory Instance ${getRandomPostfix()}`,
-  //   item: {
-  //     instanceName: `C623 Inventory Instance ${getRandomPostfix()}`,
-  //     itemBarcode: randomFourDigitNumber(),
-  //   },
-  //   holdingsType: 'Electronic',
+  locationName: LOCATION_NAMES.MAIN_LIBRARY_UI,
 };
 
 describe('Inventory', () => {
@@ -29,7 +25,7 @@ describe('Inventory', () => {
           cy.getHoldingTypes({ limit: 1 }).then((res) => {
             testData.holdingTypeId = res[0].id;
           });
-          cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+          cy.getLocations({ query: `name="${testData.locationName}"` }).then((res) => {
             testData.locationId = res.id;
           });
           cy.getLoanTypes({ limit: 1 }).then((res) => {
@@ -84,7 +80,7 @@ describe('Inventory', () => {
         InventoryInstance.openHoldingView();
         HoldingsRecordView.delete();
         InventoryInstance.waitLoading();
-        InventoryInstance.verifyHoldingsAbsent(LOCATION_NAMES.MAIN_LIBRARY_UI);
+        InventoryInstance.verifyHoldingsAbsent(testData.locationName);
       },
     );
   });
