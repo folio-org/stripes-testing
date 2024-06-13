@@ -12,9 +12,10 @@ describe('Eureka', () => {
       const testData = {
         roleAName: `Auto Role A C451613 ${getRandomPostfix()}`,
         roleBName: `Auto Role B C451613 ${getRandomPostfix()}`,
+        newUsername: `C451613username${getRandomLetters(6)}`,
         newLastName: `C451613Last${getRandomLetters(6)}`,
         newFirstName: `C451613First${getRandomLetters(6)}`,
-        newEmailAddress: `email${getRandomLetters(6)}@.folio.org`,
+        newEmailAddress: `email${getRandomLetters(6)}@folio.org`,
       };
 
       const capabSetsToAssign = [
@@ -35,7 +36,7 @@ describe('Eureka', () => {
             testData.tempUser = createdUserProperties;
             cy.assignCapabilitiesToExistingUser(testData.tempUser.userId, [], capabSetsToAssign);
             cy.updateRolesForUserApi(testData.tempUser.userId, []);
-            cy.createTempUser([], testData.groupAName).then((createdUserAProperties) => {
+            cy.createTempUser([]).then((createdUserAProperties) => {
               testData.userA = createdUserAProperties;
               cy.updateRolesForUserApi(testData.userA.userId, []);
               cy.createAuthorizationRoleApi(testData.roleAName).then((roleA) => {
@@ -63,8 +64,15 @@ describe('Eureka', () => {
 
       it(
         'C451613 Assigning/unassigning a user for a role after username changed (eureka)',
-        { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
+        { tags: ['extendedPath', 'eureka', 'eurekaPhase1'] },
         () => {
+          const usersCallRegExpGetA = new RegExp(
+            `\\/roles\\/users\\?.+query=roleId==${testData.roleAId}`,
+          );
+          const usersCallRegExpGetB = new RegExp(
+            `\\/roles\\/users\\?.+query=roleId==${testData.roleBId}`,
+          );
+
           AuthorizationRoles.searchRole(testData.roleAName);
           AuthorizationRoles.clickOnRoleName(testData.roleAName);
           AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
@@ -84,69 +92,60 @@ describe('Eureka', () => {
           Users.waitLoading();
           UsersSearchPane.searchByUsername(testData.userA.username);
           UsersSearchPane.selectUserFromList(testData.userA.username);
-          UsersCard.verifyUserRolesCounter('0');
+          UsersCard.waitLoading();
           UserEdit.openEdit();
-          UsersCard.verifyUserRolesCounter('0');
+          UserEdit.verifyUserRolesCounter('1');
           UserEdit.editUsername(testData.newUsername);
-          UserEdit.fillLastFirstNames(testData.newFirstName, testData.newLastName);
+          UserEdit.fillLastFirstNames(testData.newLastName, testData.newFirstName);
           UserEdit.fillEmailAddress(testData.newEmailAddress);
+          UserEdit.saveEditedUser();
+          UsersCard.waitLoading();
 
-          // AuthorizationRoles.checkUsersAccordion(1);
-          // AuthorizationRoles.verifyAssignedUser(
-          //   testData.userA.lastName,
-          //   testData.userA.firstName,
-          //   true,
-          //   testData.groupAName,
-          // );
-          // AuthorizationRoles.clickAssignUsersButton();
-          // cy.wait(3000);
-          // AuthorizationRoles.selectFilterOptionInAssignModal(
-          //   testData.filtername,
-          //   testData.optionName,
-          //   true,
-          //   true,
-          // );
-          // AuthorizationRoles.clickResetAllInAssignModal();
-          // AuthorizationRoles.selectUserInModal(testData.userA.username, false);
-          // AuthorizationRoles.selectUserInModal(testData.userB.username);
-          // AuthorizationRoles.selectUserInModal(testData.userC.username);
-          // AuthorizationRoles.clickSaveInAssignModal();
-          // AuthorizationRoles.verifyAssignedUsersAccordion();
-          // AuthorizationRoles.checkUsersAccordion(2);
-          // AuthorizationRoles.verifyAssignedUser(
-          //   testData.userB.lastName,
-          //   testData.userB.firstName,
-          //   true,
-          //   testData.groupBName,
-          // );
-          // AuthorizationRoles.verifyAssignedUser(
-          //   testData.userC.lastName,
-          //   testData.userC.firstName,
-          //   true,
-          //   testData.groupCName,
-          // );
-          // AuthorizationRoles.closeRoleDetailView(testData.roleName);
-          // AuthorizationRoles.clickOnRoleName(testData.roleName);
-          // AuthorizationRoles.verifyAssignedUsersAccordion();
-          // AuthorizationRoles.checkUsersAccordion(2);
-          // AuthorizationRoles.verifyAssignedUser(
-          //   testData.userB.lastName,
-          //   testData.userB.firstName,
-          //   true,
-          //   testData.groupBName,
-          // );
-          // AuthorizationRoles.verifyAssignedUser(
-          //   testData.userC.lastName,
-          //   testData.userC.firstName,
-          //   true,
-          //   testData.groupCName,
-          // );
-          // AuthorizationRoles.clickAssignUsersButton();
-          // cy.wait(3000);
-          // AuthorizationRoles.selectUserInModal(testData.userB.username, false);
-          // AuthorizationRoles.selectUserInModal(testData.userC.username, false);
-          // AuthorizationRoles.clickSaveInAssignModal();
-          // AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
+          cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleBId}`);
+          AuthorizationRoles.verifyRoleViewPane(testData.roleBName);
+          AuthorizationRoles.clickAssignUsersButton();
+          AuthorizationRoles.selectUserInModal(testData.newUsername);
+          cy.intercept(usersCallRegExpGetB).as('usersGetB');
+          cy.intercept('PUT', '/roles/users/*').as('usersPutB');
+          AuthorizationRoles.clickSaveInAssignModal();
+          cy.wait('@usersGetB').then((call) => {
+            expect(call.response.statusCode).to.eq(200);
+            expect(
+              call.response.body.userRoles.filter(
+                (userRole) => userRole.userId === testData.userA.userId,
+              ),
+            ).to.have.lengthOf(1);
+          });
+          cy.wait('@usersPutB').its('response.statusCode').should('eq', 204);
+          AuthorizationRoles.verifyAssignedUser(testData.newLastName, testData.newFirstName);
+
+          cy.intercept(usersCallRegExpGetA).as('usersGetA1');
+          cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleAId}`);
+          AuthorizationRoles.verifyRoleViewPane(testData.roleAName);
+          cy.wait('@usersGetA1').then((call) => {
+            expect(call.response.statusCode).to.eq(200);
+            expect(
+              call.response.body.userRoles.filter(
+                (userRole) => userRole.userId === testData.userA.userId,
+              ),
+            ).to.have.lengthOf(1);
+          });
+          AuthorizationRoles.verifyAssignedUser(testData.newLastName, testData.newFirstName);
+          AuthorizationRoles.clickAssignUsersButton();
+          AuthorizationRoles.selectUserInModal(testData.newUsername, false);
+          cy.intercept(usersCallRegExpGetA).as('usersGetA2');
+          cy.intercept('PUT', '/roles/users/*').as('usersPutA');
+          AuthorizationRoles.clickSaveInAssignModal();
+          cy.wait('@usersPutA').its('response.statusCode').should('eq', 204);
+          cy.wait('@usersGetA2').then((call) => {
+            expect(call.response.statusCode).to.eq(200);
+            expect(
+              call.response.body.userRoles.filter(
+                (userRole) => userRole.userId === testData.userA.userId,
+              ),
+            ).to.have.lengthOf(0);
+          });
+          AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
         },
       );
     });

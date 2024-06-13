@@ -12,7 +12,7 @@ describe('Eureka', () => {
 
     it(
       'C468196 "Permission sets" tab is NOT shown in "Settings" -> "Users" (eureka)',
-      { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
+      { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
       () => {
         cy.visit(TopMenu.settingsUserPath);
         tabsPresent.forEach((presentTab) => {

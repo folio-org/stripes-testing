@@ -79,6 +79,7 @@ const lastNameField = TextField({ id: 'adduser_lastname' });
 const firstNameField = TextField({ id: 'adduser_firstname' });
 const emailField = TextField({ id: 'adduser_email' });
 let totalRows;
+const usersPath = Cypress.env('eureka') ? '/users-keycloak/users/*' : '/users/*';
 
 // servicePointIds is array of ids
 const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
@@ -317,7 +318,7 @@ export default {
   },
 
   saveEditedUser() {
-    cy.intercept('PUT', '/users/*').as('updateUser');
+    cy.intercept('PUT', usersPath).as('updateUser');
     this.saveAndClose();
     cy.wait('@updateUser', { timeout: 100000 });
   },
