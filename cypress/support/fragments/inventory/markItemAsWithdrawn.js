@@ -1,5 +1,6 @@
 import { HTML, including } from '@interactors/html';
 import { Button, Modal } from '../../../../interactors';
+import { ITEM_STATUS_NAMES } from '../../constants';
 
 const actionsButton = Button('Actions');
 const confirmItemWithdrawnModal = Modal('Confirm item status: Withdrawn');
@@ -7,23 +8,23 @@ const confirmItemWithdrawnModal = Modal('Confirm item status: Withdrawn');
 export default {
   // to reuse functions, it's named missing, but compliant with withdrawn
   itemsToMarkAsMissing: [
-    'Available',
-    'Awaiting pickup',
-    'In transit',
-    'Awaiting delivery',
-    'Paged',
-    'In process',
-    'Missing',
-    'Lost and paid',
+    ITEM_STATUS_NAMES.AVAILABLE,
+    ITEM_STATUS_NAMES.AWAITING_PICKUP,
+    ITEM_STATUS_NAMES.IN_TRANSIT,
+    ITEM_STATUS_NAMES.AWAITING_DELIVERY,
+    ITEM_STATUS_NAMES.PAGED,
+    ITEM_STATUS_NAMES.IN_PROCESS,
+    ITEM_STATUS_NAMES.MISSING,
+    ITEM_STATUS_NAMES.LOST_AND_PAID,
   ],
 
   // to reuse functions, it's named missing, but compliant with withdrawn
   itemsNotToMarkAsMissing: [
-    'Withdrawn',
-    'On order',
-    'Declared lost',
-    'Claimed returned',
-    'Checked out',
+    ITEM_STATUS_NAMES.WITHDRAWN,
+    ITEM_STATUS_NAMES.ON_ORDER,
+    ITEM_STATUS_NAMES.DECLARED_LOST,
+    ITEM_STATUS_NAMES.CLAIMED_RETURNED,
+    ITEM_STATUS_NAMES.CHECKED_OUT,
   ],
 
   itemStatusesToCreate() {

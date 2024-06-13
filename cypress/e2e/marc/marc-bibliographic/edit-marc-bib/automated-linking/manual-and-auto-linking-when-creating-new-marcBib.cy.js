@@ -138,6 +138,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateLDR06And07Positions();
             newFields.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
+              cy.wait(1000);
             });
 
             QuickMarcEditor.clickLinkIconInTagField(newFields[0].rowIndex + 1);

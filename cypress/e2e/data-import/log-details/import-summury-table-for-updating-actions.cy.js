@@ -79,7 +79,7 @@ describe('Data Import', () => {
       name: `C356802 create item mapping profile ${getRandomPostfix()}`,
       materialType: 'book',
       permanentLoanType: 'Can circulate',
-      status: 'Available',
+      status: ITEM_STATUS_NAMES.AVAILABLE,
     };
     const actionProfilesForCreate = [
       {
