@@ -9,7 +9,27 @@ const deleteIcon = Button({ icon: 'trash' });
 const deleteButton = Button('Delete');
 const deleteUrlRelationshipModal = Modal('Delete URL relationship term');
 
+function getListOfURLRelationship() {
+  const cells = [];
+
+  cy.wait(2000);
+  return cy
+    .get('div[class^="mclRowContainer--"]')
+    .find('[data-row-index]')
+    .each(($row) => {
+      // from each row, choose specific cell
+      cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
+        // extract its text content
+        .invoke('text')
+        .then((cellValue) => {
+          cells.push(cellValue);
+        });
+    })
+    .then(() => cells);
+}
+
 export default {
+  getListOfURLRelationship,
   waitloading() {
     cy.expect(urlRelationshipPane.exists());
   },
@@ -41,5 +61,11 @@ export default {
       MultiColumnListRow(including(name)).find(deleteIcon).click(),
       deleteUrlRelationshipModal.find(deleteButton).click(),
     ]);
+  },
+
+  verifyListOfUrlRelationshipInHoldings(urlRelationshipsFromInstance) {
+    getListOfURLRelationship().then((urlRelationships) => {
+      cy.expect(urlRelationships.join('')).to.eq(...urlRelationshipsFromInstance);
+    });
   },
 };

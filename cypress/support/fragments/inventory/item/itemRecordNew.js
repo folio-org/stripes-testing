@@ -1,19 +1,20 @@
 import { including } from '@interactors/html';
 import {
   Accordion,
-  TextField,
-  Pane,
   Button,
-  Section,
   FieldSet,
-  TextArea,
-  Select,
-  RepeatableFieldItem,
   HTML,
-  matching,
+  Pane,
+  RepeatableFieldItem,
+  Section,
+  Select,
   Selection,
   SelectionList,
+  TextArea,
+  TextField,
+  matching,
 } from '../../../../../interactors';
+import { ITEM_STATUS_NAMES } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import InstanceStates from '../instanceStates';
 
@@ -103,7 +104,7 @@ export default {
         method: 'POST',
         path: 'inventory/items',
         body: {
-          status: { name: 'Available' },
+          status: { name: ITEM_STATUS_NAMES.AVAILABLE },
           holdingsRecordId: holdingsId,
           boundWithTitles: [],
           barcode: itemBarcode,

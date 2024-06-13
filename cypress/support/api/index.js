@@ -28,3 +28,4 @@ import './licenses';
 import './organizations';
 import './receiving';
 import './settings';
+import './edge';
