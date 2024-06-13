@@ -103,7 +103,7 @@ describe('Data Import', () => {
 
     before('Creating user', () => {
       cy.getAdminToken();
-      // make sure there are no duplicate authority records in the system
+      // make sure there are no duplicate records in the system
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(linkingTagAndValues.value);
 
       cy.createTempUser([
