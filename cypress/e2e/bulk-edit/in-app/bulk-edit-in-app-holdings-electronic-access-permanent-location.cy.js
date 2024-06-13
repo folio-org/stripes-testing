@@ -7,9 +7,12 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import { electronicAccessRelationshipId,
+import {
+  electronicAccessRelationshipId,
   electronicAccessRelationshipName,
-  LOCATION_IDS, LOCATION_NAMES } from '../../../support/constants';
+  LOCATION_IDS,
+  LOCATION_NAMES,
+} from '../../../support/constants';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 
@@ -111,11 +114,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.downloadMatchedResults();
-        const matched = `${item.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.ONLINE_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}",,,,
-${secondItem.holdingsUUID},${secondItem.instanceName}. MIT,,${secondItem.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.ONLINE_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,,,,,\n`;
-        ExportFile.verifyFileIncludes(matchedRecordsFileName, [matched]);
-        BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID, secondItem.holdingsHRID);
-        BulkEditActions.openActions();
         // TODO: uncomment after UIBULKED-425
         // BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Permanent location');
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
@@ -142,7 +140,11 @@ ${secondItem.holdingsUUID},${secondItem.instanceName}. MIT,,${secondItem.holding
           2,
         );
         BulkEditSearchPane.verifyRowHasEmptyElectronicAccess(1);
-        BulkEditActions.openActions();
+        const matched = `${item.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.ONLINE_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}",,,,\n${secondItem.holdingsUUID},${secondItem.instanceName}.`;
+        ExportFile.verifyFileIncludes(matchedRecordsFileName, [matched]);
+        const secondMatched = `,${secondItem.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.ONLINE_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,,,,,\n`;
+        ExportFile.verifyFileIncludes(matchedRecordsFileName, [secondMatched]);
+        BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID, secondItem.holdingsHRID);
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.replacePermanentLocation(LOCATION_NAMES.MAIN_LIBRARY_UI, 'holdings');
         BulkEditActions.confirmChanges();
@@ -171,8 +173,11 @@ ${secondItem.holdingsUUID},${secondItem.instanceName}. MIT,,${secondItem.holding
         );
         BulkEditSearchPane.verifyRowHasEmptyElectronicAccess(1);
         BulkEditActions.downloadPreview();
-        const preview = `${item.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.MAIN_LIBRARY_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}",,,,\n${secondItem.holdingsUUID},,false,${secondItem.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.MAIN_LIBRARY_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,,,,,\n`;
+        const preview = `${item.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.MAIN_LIBRARY_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}",,,,`;
         ExportFile.verifyFileIncludes(previewFileName, [preview]);
+        const secondPreview = `,${secondItem.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.MAIN_LIBRARY_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,,,,,\n`;
+        ExportFile.verifyFileIncludes(previewFileName, [secondPreview]);
+
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
@@ -200,8 +205,11 @@ ${secondItem.holdingsUUID},${secondItem.instanceName}. MIT,,${secondItem.holding
         BulkEditSearchPane.verifyRowHasEmptyElectronicAccess(1);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        const changed = `${item.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.MAIN_LIBRARY_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}",,,,\n${secondItem.holdingsUUID},,false,${secondItem.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.MAIN_LIBRARY_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,,,,,\n`;
+        const changed = `${item.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.MAIN_LIBRARY_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}",,,,`;
         ExportFile.verifyFileIncludes(changedRecordsFileName, [changed]);
+        const secondChanged = `,${secondItem.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.MAIN_LIBRARY_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,,,,,\n`;
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [secondChanged]);
+
         BulkEditActions.verifySuccessBanner(2);
         BulkEditSearchPane.verifyLocationChanges(2, LOCATION_NAMES.MAIN_LIBRARY_UI);
 
@@ -217,12 +225,15 @@ ${secondItem.holdingsUUID},${secondItem.instanceName}. MIT,,${secondItem.holding
 
         BulkEditLogs.downloadFileWithMatchingRecords();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [matched]);
+        ExportFile.verifyFileIncludes(matchedRecordsFileName, [secondMatched]);
 
         BulkEditLogs.downloadFileWithProposedChanges();
         ExportFile.verifyFileIncludes(previewFileName, [preview]);
+        ExportFile.verifyFileIncludes(previewFileName, [secondPreview]);
 
         BulkEditLogs.downloadFileWithUpdatedRecords();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [changed]);
+        ExportFile.verifyFileIncludes(previewFileName, [secondChanged]);
 
         // TODO: uncomment after UIIN-2781
         // [item.holdingsHRID, secondItem.holdingsHRID].forEach((hrid) => {
