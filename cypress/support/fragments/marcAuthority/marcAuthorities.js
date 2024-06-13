@@ -1482,4 +1482,23 @@ export default {
       ...fields,
     ]);
   },
+
+  deleteViaAPI: (internalAuthorityId, ignoreErrors = false) => {
+    cy.okapiRequest({
+      method: 'DELETE',
+      isDefaultSearchParamsRequired: false,
+      path: `authority-storage/authorities/${internalAuthorityId}`,
+      failOnStatusCode: !ignoreErrors,
+    });
+  },
+
+  deleteMarcAuthorityByTitleViaAPI(title, authRefType = 'Authorized') {
+    this.getMarcAuthoritiesViaApi({ limit: 100, query: `keyword="${title}"` }).then((records) => {
+      records.forEach((record) => {
+        if (record.authRefType === authRefType) {
+          this.deleteViaAPI(record.id);
+        }
+      });
+    });
+  },
 };
