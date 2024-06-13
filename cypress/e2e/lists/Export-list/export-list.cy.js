@@ -9,7 +9,7 @@ describe('lists', () => {
     const userData = {};
     const listData = {
       name: getTestEntityValue('test_list'),
-      recordType: 'Loans',
+      recordType: 'Users',
       status: ['Active', 'Inactive'],
       visibility: 'Shared',
     };
@@ -33,61 +33,73 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411809 Export list: Not canned lists (corsair)', { tags: ['smoke', 'corsair', 'eurekaPhase1'] }, () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
-      Lists.openNewListPane();
-      Lists.setName(listData.name);
-      Lists.setDescription(listData.name);
-      Lists.selectRecordType(listData.recordType);
-      Lists.selectVisibility(listData.visibility);
-      Lists.buildQuery();
-      Lists.queryBuilderActions();
-      cy.wait(4000);
-      cy.contains('View updated list').click();
-      Lists.actionButton();
-      Lists.exportList();
-      cy.contains(
-        `Export of ${listData.name} is being generated. This may take some time for larger lists.`,
-      );
-      cy.wait(5000);
-      cy.contains(`List ${listData.name} was successfully exported to CSV.`);
-    });
+    it(
+      'C411809 Export list: Not canned lists (corsair)',
+      { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
+      () => {
+        cy.login(userData.username, userData.password);
+        cy.visit(TopMenu.listsPath);
+        Lists.waitLoading();
+        Lists.openNewListPane();
+        Lists.setName(listData.name);
+        Lists.setDescription(listData.name);
+        Lists.selectRecordType(listData.recordType);
+        Lists.selectVisibility(listData.visibility);
+        Lists.buildQuery();
+        Lists.queryBuilderActions();
+        cy.wait(4000);
+        cy.contains('View updated list').click();
+        Lists.actionButton();
+        Lists.exportList();
+        cy.contains(
+          `Export of ${listData.name} is being generated. This may take some time for larger lists.`,
+        );
+        cy.wait(5000);
+        cy.contains(`List ${listData.name} was successfully exported to CSV.`);
+      },
+    );
 
-    it('C411811 Export list: Inactive lists', { tags: ['smoke', 'corsair', 'eurekaPhase1'] }, () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
-      Lists.openNewListPane();
-      Lists.setName(listData.name);
-      Lists.setDescription(listData.name);
-      Lists.selectRecordType(listData.recordType);
-      Lists.selectVisibility(listData.visibility);
-      Lists.selectStatus(listData.status[1]);
-      Lists.buildQuery();
-      Lists.queryBuilderActions();
-      Lists.actionButton();
-      cy.contains('Export list (CSV)').should('be.disabled');
-    });
+    it(
+      'C411811 Export list: Inactive lists',
+      { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
+      () => {
+        cy.login(userData.username, userData.password);
+        cy.visit(TopMenu.listsPath);
+        Lists.waitLoading();
+        Lists.openNewListPane();
+        Lists.setName(listData.name);
+        Lists.setDescription(listData.name);
+        Lists.selectRecordType(listData.recordType);
+        Lists.selectVisibility(listData.visibility);
+        Lists.selectStatus(listData.status[1]);
+        Lists.buildQuery();
+        Lists.queryBuilderActions();
+        Lists.actionButton();
+        cy.contains('Export list (CSV)').should('be.disabled');
+      },
+    );
 
-    it('C411812 Export list: Refresh is in progress', { tags: ['smoke', 'corsair', 'eurekaPhase1'] }, () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
-      Lists.openNewListPane();
-      Lists.setName(listData.name);
-      Lists.setDescription(listData.name);
-      Lists.selectRecordType(listData.recordType);
-      Lists.selectVisibility(listData.visibility);
-      Lists.buildQuery();
-      Lists.queryBuilderActions();
-      cy.wait(1000);
-      Lists.actionButton();
-      cy.contains('Export list (CSV)').should('be.disabled');
-      cy.wait(3000);
-      cy.contains('View updated list').click();
-    });
+    it(
+      'C411812 Export list: Refresh is in progress',
+      { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
+      () => {
+        cy.login(userData.username, userData.password);
+        cy.visit(TopMenu.listsPath);
+        Lists.waitLoading();
+        Lists.openNewListPane();
+        Lists.setName(listData.name);
+        Lists.setDescription(listData.name);
+        Lists.selectRecordType(listData.recordType);
+        Lists.selectVisibility(listData.visibility);
+        Lists.buildQuery();
+        Lists.queryBuilderActions();
+        cy.wait(1000);
+        Lists.actionButton();
+        cy.contains('Export list (CSV)').should('be.disabled');
+        cy.wait(3000);
+        cy.contains('View updated list').click();
+      },
+    );
 
     it(
       'C411813 Export list: Edit is in progress, when the list contains records',

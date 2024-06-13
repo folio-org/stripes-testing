@@ -9,7 +9,7 @@ describe('lists', () => {
     const userData = {};
     const listData = {
       name: getTestEntityValue('test_list'),
-      recordType: 'Loans',
+      recordType: 'Users',
       status: 'Active',
       visibility: 'Shared',
     };

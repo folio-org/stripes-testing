@@ -9,7 +9,7 @@ describe('lists', () => {
     const userData = {};
     const listData = {
       name: getTestEntityValue('test_list'),
-      recordType: 'Loans',
+      recordType: 'Users',
       status: ['Active', 'Inactive'],
       visibility: 'Private',
     };
@@ -115,27 +115,33 @@ describe('lists', () => {
       },
     );
 
-    it('C411735 Edit list: Make the list Active (corsair)', { tags: ['smoke', 'corsair', 'eurekaPhase1'] }, () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
-      Lists.openNewListPane();
-      Lists.setName(listData.name);
-      Lists.setDescription(listData.name);
-      Lists.selectRecordType(listData.recordType);
-      Lists.selectVisibility(listData.visibility);
-      Lists.selectStatus(listData.status[1]);
-      Lists.saveList();
-      Lists.closeListDetailsPane();
-      cy.wait(2000);
-      cy.contains(listData.name).click();
-      cy.wait(2000);
-      Lists.actionButton();
-      Lists.editList();
-      Lists.selectStatus('Active');
-      Lists.saveList();
-      cy.contains(`List ${listData.name} saved.`);
-      cy.contains(`${listData.name} is active. Refresh ${listData.name} to see list contents`);
-    });
+    it(
+      'C411735 Edit list: Make the list Active (corsair)',
+      { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
+      () => {
+        cy.login(userData.username, userData.password);
+        cy.visit(TopMenu.listsPath);
+        Lists.waitLoading();
+        Lists.openNewListPane();
+        Lists.setName(listData.name);
+        Lists.setDescription(listData.name);
+        Lists.selectRecordType(listData.recordType);
+        Lists.selectVisibility(listData.visibility);
+        Lists.selectStatus(listData.status[1]);
+        Lists.saveList();
+        Lists.closeListDetailsPane();
+        cy.wait(2000);
+        Lists.resetAll();
+        Lists.clickOnCheckbox('Inactive');
+        cy.contains(listData.name).click();
+        cy.wait(2000);
+        Lists.actionButton();
+        Lists.editList();
+        Lists.selectStatus('Active');
+        Lists.saveList();
+        cy.contains(`List ${listData.name} saved.`);
+        cy.contains(`${listData.name} is active. Refresh ${listData.name} to see list contents`);
+      },
+    );
   });
 });
