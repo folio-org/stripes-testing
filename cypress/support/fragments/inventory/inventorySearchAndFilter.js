@@ -999,7 +999,7 @@ export default {
   },
 
   clickEffectiveLocationAccordionInput() {
-    cy.get('input[type=search]').click();
+    cy.get('#effectiveLocation').find('input').click();
   },
 
   checkEffectiveLocationAccordionInputInFocus() {
