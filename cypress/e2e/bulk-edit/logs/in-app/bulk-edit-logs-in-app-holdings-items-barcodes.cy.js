@@ -196,7 +196,7 @@ describe('bulk-edit', () => {
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
             'Instance (Title, Publisher, Publication date)',
           );
-          BulkEditSearchPane.verifyResultColumTitles(
+          BulkEditSearchPane.verifyResultColumnTitles(
             'Instance (Title, Publisher, Publication date)',
           );
 
