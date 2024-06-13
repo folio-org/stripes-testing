@@ -243,10 +243,13 @@ export const LOCATION_NAMES = {
   ONLINE_UI: 'Online',
   MAIN_LIBRARY: 'Main Library (KU/CC/DI/M)',
   MAIN_LIBRARY_UI: 'Main Library',
+  POPULAR_READING_COLLECTION: 'Popular Reading Collection (KU/CC/DI/P)',
+  POPULAR_READING_COLLECTION_UI: 'Popular Reading Collection',
 };
 
 export const LOCATION_IDS = {
   ANNEX: '53cf956f-c1df-410b-8bea-27f712cca7c0',
+  MAIN_LIBRARY: 'fcd64ce1-6995-48f0-840e-89ffa2288371',
   ONLINE: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5',
   POPULAR_READING_COLLECTION: 'b241764c-1466-4e1d-a028-1a3684a5da87',
 };
