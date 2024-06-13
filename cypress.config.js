@@ -120,7 +120,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://folio-snapshot.dev.folio.org',
+    baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
     testIsolation: false,
   },
 });
