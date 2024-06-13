@@ -94,14 +94,13 @@ describe('bulk-edit', () => {
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [item.holdingsUUID]);
         BulkEditActions.verifyHoldingsOptions();
         BulkEditActions.changeNoteType('Action note', 'Note');
-
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyChangesInAreYouSureForm('Note', [
           `${notes.actionNote} | ${notes.actionNoteStaffOnly} (staff only)`,
         ]);
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          `Note;${notes.actionNote};false|Note;${notes.actionNoteStaffOnly};true,`,
+          `,${notes.actionNote} | ${notes.actionNoteStaffOnly} (staff only),`,
         ]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
@@ -113,7 +112,7 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `Note;${notes.actionNote};false|Note;${notes.actionNoteStaffOnly};true,`,
+          `,${notes.actionNote} | ${notes.actionNoteStaffOnly} (staff only),`,
         ]);
 
         TopMenuNavigation.navigateToApp('Inventory');
