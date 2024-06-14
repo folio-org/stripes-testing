@@ -263,6 +263,7 @@ const fillSummaryInMappingProfile = (specialMappingProfile = defaultMappingProfi
     incomingRecordTypeField.choose(incomingRecordType.marcBib),
     existingRecordType.choose(specialMappingProfile.typeValue),
   ]);
+  cy.wait(1500);
 };
 const fillSummaryForMarcAuthInMappingProfile = (specialMappingProfile = defaultMappingProfile) => {
   cy.do([

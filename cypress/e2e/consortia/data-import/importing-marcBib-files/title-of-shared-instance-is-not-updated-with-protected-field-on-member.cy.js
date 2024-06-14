@@ -1,50 +1,87 @@
 import {
   DEFAULT_JOB_PROFILE_NAMES,
-  // EXISTING_RECORD_NAMES,
-  // FOLIO_RECORD_TYPE,
-  // JOB_STATUS_NAMES,
+  EXISTING_RECORD_NAMES,
+  FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
+  ACTION_NAMES_IN_ACTION_PROFILE,
+  ACCEPTED_DATA_TYPE_NAMES,
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-// import ExportFile from '../../../../support/fragments/data-export/exportFile';
-// import NewActionProfile from '../../../../support/fragments/data_import/action_profiles/newActionProfile';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-// import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-// import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
-// import Logs from '../../../../support/fragments/data_import/logs/logs';
-// import NewFieldMappingProfile from '../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
+import Logs from '../../../../support/fragments/data_import/logs/logs';
+import NewFieldMappingProfile from '../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-// import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-// import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
-// import BrowseContributors from '../../../../support/fragments/inventory/search/browseContributors';
-// import BrowseSubjects from '../../../../support/fragments/inventory/search/browseSubjects';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-// import {
-//   ActionProfiles as SettingsActionProfiles,
-//   FieldMappingProfiles as SettingsFieldMappingProfiles,
-//   JobProfiles as SettingsJobProfiles,
-//   MatchProfiles as SettingsMatchProfiles,
-// } from '../../../../support/fragments/settings/dataImport';
-// import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../../support/fragments/settings/dataImport';
+import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import TopMenu from '../../../../support/fragments/topMenu';
-// import Users from '../../../../support/fragments/users/users';
-// import { getLongDelay } from '../../../../support/utils/cypressTools';
-// import FileManager from '../../../../support/utils/fileManager';
+import Users from '../../../../support/fragments/users/users';
+import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import MarcFieldProtection from '../../../../support/fragments/settings/dataImport/marcFieldProtection';
+import FieldMappingProfiles from '../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import FieldMappingProfileView from '../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import ActionProfiles from '../../../../support/fragments/data_import/action_profiles/actionProfiles';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import MatchProfiles from '../../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import DateTools from '../../../../support/utils/dateTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {
       marcFile: {
-        marc: 'oneMarcBib.mrc.mrc',
+        marc: 'oneMarcBib.mrc',
         fileName: `C449362 testMarcFile${getRandomPostfix()}.mrc`,
+        modifiedMarcFile: `C449362 testMarcFile${getRandomPostfix()}.mrc`,
+        editedMarcFile: `C449362 editedTestMarcFile${getRandomPostfix()}.mrc`,
       },
       protectedField: '245',
+      existing245field:
+        'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)',
+      updated245field:
+        'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano Updated (founding editor)',
+    };
+    const mappingProfile = {
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+      name: `C449362 Update shared instance${getRandomPostfix()}`,
+      catalogingDate: '###TODAY###',
+      catalogingDateUI: DateTools.getFormattedDate({ date: new Date() }),
+      statusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
+      adminNotes: `test note${getRandomPostfix()}`,
+    };
+    const actionProfile = {
+      name: `C449362 Update shared instance${getRandomPostfix()}`,
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
+    };
+    const matchProfile = {
+      profileName: `C449362 001-to-Instance HRID match${getRandomPostfix()}`,
+      incomingRecordFields: {
+        field: '001',
+      },
+      matchCriterion: 'Exactly matches',
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+      instanceOption: NewMatchProfile.optionsList.instanceHrid,
+    };
+    const jobProfile = {
+      profileName: `C449362 001-to-Instance HRID match${getRandomPostfix()}`,
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       MarcFieldProtection.createViaApi({
         indicator1: '*',
@@ -73,7 +110,15 @@ describe('Data Import', () => {
           Affiliations.College,
           Affiliations.Consortia,
         );
+        // skip step with export instance and use existing file
+        cy.wait(5000);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${testData.instanceId}"` }).then(
+          (instance) => {
+            testData.instanceHrid = instance.hrid;
+          },
+        );
       });
+      cy.resetTenant();
 
       cy.createTempUser([Permissions.inventoryAll.gui])
         .then((userProperties) => {
@@ -89,12 +134,26 @@ describe('Data Import', () => {
           ]);
           cy.resetTenant();
 
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.login(testData.user.username, testData.user.password);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         });
+    });
+
+    after('Delete test data', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
+      cy.resetTenant();
+      cy.getAdminToken();
+      MarcFieldProtection.deleteViaApi(testData.protectedField);
+      Users.deleteViaApi(testData.user.userId);
+      cy.resetTenant();
+      cy.setTenant(Affiliations.College);
+      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+      SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+      SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
     });
 
     it(
@@ -102,12 +161,68 @@ describe('Data Import', () => {
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
         // change file
+        // we change instance hrid because using existing file
         DataImport.editMarcFile(
-          testData.marcFile.exportedFileName,
+          testData.marcFile.marc,
           testData.marcFile.modifiedMarcFile,
-          [testData.instanceTitle, 'Proceedings'],
-          [testData.updatedInstanceTitle, 'Proceedings Updated'],
+          ['ocn962073864', testData.existing245field],
+          [testData.instanceHrid, testData.updated245field],
         );
+
+        cy.visit(SettingsMenu.mappingProfilePath);
+        FieldMappingProfiles.openNewMappingProfileForm();
+        NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
+        NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogingDate);
+        NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.statusTerm);
+        NewFieldMappingProfile.addAdministrativeNote(mappingProfile.adminNotes, 9);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
+        FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(actionProfile, mappingProfile.name);
+        ActionProfiles.checkActionProfilePresented(actionProfile.name);
+
+        cy.visit(SettingsMenu.matchProfilePath);
+        MatchProfiles.createMatchProfile(matchProfile);
+
+        cy.visit(SettingsMenu.jobProfilePath);
+        JobProfiles.createJobProfile(jobProfile);
+        NewJobProfile.linkMatchProfile(matchProfile.profileName);
+        NewJobProfile.linkActionProfileForMatches(actionProfile.name);
+        NewJobProfile.saveAndClose();
+        JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(testData.marcFile.modifiedMarcFile, testData.marcFile.editedMarcFile);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.search(jobProfile.profileName);
+        JobProfiles.runImportFile();
+        Logs.waitFileIsImported(testData.marcFile.editedMarcFile);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(testData.marcFile.editedMarcFile);
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
+        });
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+        InventoryInstance.waitLoading();
+        InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogingDate);
+        InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
+        InstanceRecordView.verifyInstanceAdministrativeNote(mappingProfile.adminNotes);
+        InventoryInstance.verifyInstanceTitle(testData.existing245field);
+
+        ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.college);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        InventoryInstances.searchByTitle(testData.instanceId);
+        InventoryInstances.selectInstance();
+        InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogingDate);
+        InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
+        InstanceRecordView.verifyInstanceAdministrativeNote(mappingProfile.adminNotes);
+        InventoryInstance.verifyInstanceTitle(testData.existing245field);
       },
     );
   });
