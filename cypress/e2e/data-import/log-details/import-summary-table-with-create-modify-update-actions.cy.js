@@ -104,7 +104,7 @@ describe('Data Import', () => {
           name: `C430257 autotest item mapping profile.${getRandomPostfix()}`,
           materialType: 'book',
           permanentLoanType: 'Can circulate',
-          status: 'Available',
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           name: `C430257 autotest item action profile.${getRandomPostfix()}`,

@@ -9,7 +9,7 @@ import Users from '../../../support/fragments/users/users';
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const invalidUserUUID = getRandomPostfix();
-const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
+const matchedRecordsFileName = `*Matched-Records-${userUUIDsFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
 describe('bulk-edit', () => {
@@ -36,7 +36,7 @@ describe('bulk-edit', () => {
       cy.getAdminToken();
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(`*${matchedRecordsFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName);
       Users.deleteViaApi(user.userId);
     });
 

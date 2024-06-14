@@ -75,17 +75,17 @@ describe('bulk-edit', () => {
           'Call number',
           'Call number suffix',
         ].forEach((title) => {
-          BulkEditSearchPane.verifyResultColumTitles(title);
+          BulkEditSearchPane.verifyResultColumnTitles(title);
         });
         BulkEditActions.openActions();
         BulkEditSearchPane.verifyHoldingActionShowColumns();
 
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Permanent location');
         BulkEditSearchPane.changeShowColumnCheckbox('Permanent location');
-        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Permanent location');
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude('Permanent location');
 
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Call number type');
-        BulkEditSearchPane.verifyResultColumTitles('Call number type');
+        BulkEditSearchPane.verifyResultColumnTitles('Call number type');
       },
     );
 
