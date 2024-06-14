@@ -1,20 +1,25 @@
 import {
+  ACCEPTED_DATA_TYPE_NAMES,
+  ACTION_NAMES_IN_ACTION_PROFILE,
   DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
-  ACTION_NAMES_IN_ACTION_PROFILE,
-  ACCEPTED_DATA_TYPE_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
+import ActionProfiles from '../../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfileView from '../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -24,20 +29,15 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../../support/fragments/settings/dataImport';
+import MarcFieldProtection from '../../../../support/fragments/settings/dataImport/marcFieldProtection';
+import MatchProfiles from '../../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import DateTools from '../../../../support/utils/dateTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import MarcFieldProtection from '../../../../support/fragments/settings/dataImport/marcFieldProtection';
-import FieldMappingProfiles from '../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import FieldMappingProfileView from '../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import ActionProfiles from '../../../../support/fragments/data_import/action_profiles/actionProfiles';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import MatchProfiles from '../../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
-import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
-import DateTools from '../../../../support/utils/dateTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
