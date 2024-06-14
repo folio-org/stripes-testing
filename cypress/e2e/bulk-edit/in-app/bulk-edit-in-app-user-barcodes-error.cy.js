@@ -55,7 +55,7 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Username');
         BulkEditSearchPane.changeShowColumnCheckbox('Username');
-        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Username');
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude('Username');
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
         BulkEditActions.confirmChanges();
