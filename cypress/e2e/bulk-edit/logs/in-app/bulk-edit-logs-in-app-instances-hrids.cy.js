@@ -112,7 +112,7 @@ describe('bulk-edit', () => {
           BulkEditActions.downloadMatchedResults();
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Instance UUID');
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Staff suppress');
-          BulkEditSearchPane.verifyResultColumTitles('Staff suppress');
+          BulkEditSearchPane.verifyResultColumnTitles('Staff suppress');
           ExportFile.verifyFileIncludes(matchedRecordsFileName, [
             `${folioItem.instanceId},false,false,`,
             `${marcInstances[0].instanceId},false,false,`,
