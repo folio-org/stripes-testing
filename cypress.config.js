@@ -23,6 +23,8 @@ module.exports = defineConfig({
   downloadsFolder: 'cypress/downloads',
   env: {
     OKAPI_HOST: 'https://folio-testing-cypress-okapi.ci.folio.org',
+    EDGE_HOST: 'https://folio-testing-cypress-edge.ci.folio.org',
+    EDGE_API_KEY: '',
     OKAPI_TENANT: 'diku',
     diku_login: 'diku_admin',
     diku_password: 'admin',
