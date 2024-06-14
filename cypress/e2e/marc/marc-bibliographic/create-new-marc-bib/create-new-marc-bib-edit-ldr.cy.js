@@ -15,7 +15,7 @@ import {
   INVENTORY_008_FIELD_FEST_DROPDOWN,
   INVENTORY_008_FIELD_INDX_DROPDOWN,
   INVENTORY_008_FIELD_LITF_DROPDOWN,
-  INVENTORY_008_FIELD_DROPDOWNS_NAMES,
+  INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES,
   INVENTORY_008_FIELD_COMP_DROPDOWN,
   INVENTORY_008_FIELD_FMUS_DROPDOWN,
   INVENTORY_008_FIELD_CRTP_DROPDOWN,
@@ -37,19 +37,19 @@ describe('MARC', () => {
         },
         valid008Values: [
           {
-            label: 'Date 1',
+            label: INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE1,
             value: '1111',
           },
           {
-            label: 'Date 2',
+            label: INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE2,
             value: '2222',
           },
           {
-            label: 'Ctry',
+            label: INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.CTRY,
             value: 'ccc',
           },
           {
-            label: 'Lang',
+            label: INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.LANG,
             value: 'hhh',
           },
         ],
@@ -63,90 +63,99 @@ describe('MARC', () => {
 
         expected008BoxesSets: [
           [
-            'DtSt',
-            'Date 1',
-            'Date 2',
-            'Ctry',
-            'Ills',
-            'Audn',
-            'Form',
-            'Cont',
-            'GPub',
-            'Conf',
-            'Fest',
-            'Indx',
-            'LitF',
-            'Biog',
-            'Lang',
-            'MRec',
-            'Srce',
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE1,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE2,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.CTRY,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.ILLS,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.AUDN,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.FORM,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.CONT,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.GPUB,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.CONF,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.FEST,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.INDX,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.LITF,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.BIOG,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.LANG,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.MREC,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.SRCE,
           ],
           [
-            'DtSt',
-            'Date 1',
-            'Date 2',
-            'Ctry',
-            'Audn',
-            'Form',
-            'File',
-            'GPub',
-            'Lang',
-            'MRec',
-            'Srce',
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE1,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE2,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.CTRY,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.AUDN,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.FORM,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.FILE,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.GPUB,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.LANG,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.MREC,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.SRCE,
           ],
           [
-            'DtSt',
-            'Date 1',
-            'Date 2',
-            'Ctry',
-            'Comp',
-            'FMus',
-            'Part',
-            'Audn',
-            'Form',
-            'AccM',
-            'LTxt',
-            'TrAr',
-            'Lang',
-            'MRec',
-            'Srce',
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE1,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE2,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.CTRY,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.COMP,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.FMUS,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.PART,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.AUDN,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.FORM,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.ACCM,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.LTXT,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.TRAR,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.LANG,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.MREC,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.SRCE,
           ],
           [
-            'DtSt',
-            'Date 1',
-            'Date 2',
-            'Ctry',
-            'Freq',
-            'Regl',
-            'SrTp',
-            'Orig',
-            'Form',
-            'EntW',
-            'Cont',
-            'GPub',
-            'Conf',
-            'Alph',
-            'S/L',
-            'Lang',
-            'MRec',
-            'Srce',
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE1,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE2,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.CTRY,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.FREQ,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.REGL,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.SRTP,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.ORIG,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.FORM,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.ENTW,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.CONT,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.GPUB,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.CONF,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.ALPH,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.SL,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.LANG,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.MREC,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.SRCE,
           ],
           [
-            'DtSt',
-            'Date 1',
-            'Date 2',
-            'Ctry',
-            'Time',
-            'Audn',
-            'GPub',
-            'Form',
-            'TMat',
-            'Tech',
-            'Lang',
-            'MRec',
-            'Srce',
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE1,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE2,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.CTRY,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.TIME,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.AUDN,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.GPUB,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.FORM,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.TMAT,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.TECH,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.LANG,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.MREC,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.SRCE,
           ],
-          ['DtSt', 'Date 1', 'Date 2', 'Ctry', 'Form', 'Lang', 'MRec', 'Srce'],
+          [
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE1,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE2,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.CTRY,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.FORM,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.LANG,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.MREC,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.SRCE,
+          ],
         ],
         ldr06And07Values: [
           'naa',
@@ -164,44 +173,128 @@ describe('MARC', () => {
           'npi',
           'nrm',
           'nts',
-        ]
+        ],
       };
 
       const optionsFor008FieldDropdowns = {
         option_1: () => {
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.DTST, INVENTORY_008_FIELD_DTST_DROPDOWN.M);
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.CONF, INVENTORY_008_FIELD_CONF_DROPDOWN.ONE);
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.FEST, INVENTORY_008_FIELD_FEST_DROPDOWN.ONE);
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.INDX, INVENTORY_008_FIELD_INDX_DROPDOWN.ONE);
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.LITF, INVENTORY_008_FIELD_LITF_DROPDOWN.I);
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
+            INVENTORY_008_FIELD_DTST_DROPDOWN.M,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.CONF,
+            INVENTORY_008_FIELD_CONF_DROPDOWN.ONE,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.FEST,
+            INVENTORY_008_FIELD_FEST_DROPDOWN.ONE,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.INDX,
+            INVENTORY_008_FIELD_INDX_DROPDOWN.ONE,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.LITF,
+            INVENTORY_008_FIELD_LITF_DROPDOWN.I,
+          );
         },
         option_2: () => {
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.DTST, INVENTORY_008_FIELD_DTST_DROPDOWN.M);
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.CONF, INVENTORY_008_FIELD_CONF_DROPDOWN.ONE);
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.REGL, INVENTORY_008_FIELD_REGL_DROPDOWN.U);
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.SL, INVENTORY_008_FIELD_S_L_DROPDOWN.NO);
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
+            INVENTORY_008_FIELD_DTST_DROPDOWN.M,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.CONF,
+            INVENTORY_008_FIELD_CONF_DROPDOWN.ONE,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.REGL,
+            INVENTORY_008_FIELD_REGL_DROPDOWN.U,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.SL,
+            INVENTORY_008_FIELD_S_L_DROPDOWN.NO,
+          );
         },
         option_3: () => {
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.DTST, INVENTORY_008_FIELD_DTST_DROPDOWN.M);
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.COMP, INVENTORY_008_FIELD_COMP_DROPDOWN.AN);
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.FMUS, INVENTORY_008_FIELD_FMUS_DROPDOWN.C);
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
+            INVENTORY_008_FIELD_DTST_DROPDOWN.M,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.COMP,
+            INVENTORY_008_FIELD_COMP_DROPDOWN.AN,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.FMUS,
+            INVENTORY_008_FIELD_FMUS_DROPDOWN.C,
+          );
         },
         option_4: () => {
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.DTST, INVENTORY_008_FIELD_DTST_DROPDOWN.M);
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.CRTP, INVENTORY_008_FIELD_CRTP_DROPDOWN.D);
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.INDX, INVENTORY_008_FIELD_INDX_DROPDOWN.ONE);
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
+            INVENTORY_008_FIELD_DTST_DROPDOWN.M,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.CRTP,
+            INVENTORY_008_FIELD_CRTP_DROPDOWN.D,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.INDX,
+            INVENTORY_008_FIELD_INDX_DROPDOWN.ONE,
+          );
         },
         option_5: () => {
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.DTST, INVENTORY_008_FIELD_DTST_DROPDOWN.M);
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.TMAT, INVENTORY_008_FIELD_TMAT_DROPDOWN.B);
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.TECH, INVENTORY_008_FIELD_TECH_DROPDOWN.U);
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
+            INVENTORY_008_FIELD_DTST_DROPDOWN.M,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.TMAT,
+            INVENTORY_008_FIELD_TMAT_DROPDOWN.B,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.TECH,
+            INVENTORY_008_FIELD_TECH_DROPDOWN.U,
+          );
         },
         option_6: () => {
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.DTST, INVENTORY_008_FIELD_DTST_DROPDOWN.M);
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.FILE, INVENTORY_008_FIELD_FILE_DROPDOWN.E);
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
+            INVENTORY_008_FIELD_DTST_DROPDOWN.M,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.FILE,
+            INVENTORY_008_FIELD_FILE_DROPDOWN.E,
+          );
         },
         option_7: () => {
-          QuickMarcEditor.selectFieldsDropdownOption(testData.tags.tag008, INVENTORY_008_FIELD_DROPDOWNS_NAMES.DTST, INVENTORY_008_FIELD_DTST_DROPDOWN.M);
+          QuickMarcEditor.selectFieldsDropdownOption(
+            testData.tags.tag008,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
+            INVENTORY_008_FIELD_DTST_DROPDOWN.M,
+          );
         },
       };
 
@@ -209,32 +302,44 @@ describe('MARC', () => {
         {
           typeField: INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A,
           blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.A,
-          tag008Fields: () => { optionsFor008FieldDropdowns.option_1(); },
+          tag008Fields: () => {
+            optionsFor008FieldDropdowns.option_1();
+          },
         },
         {
           typeField: INVENTORY_LDR_FIELD_TYPE_DROPDOWN.M,
           blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.C,
-          tag008Fields: () => { optionsFor008FieldDropdowns.option_6(); },
+          tag008Fields: () => {
+            optionsFor008FieldDropdowns.option_6();
+          },
         },
         {
           typeField: INVENTORY_LDR_FIELD_TYPE_DROPDOWN.D,
           blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.I,
-          tag008Fields: () => { optionsFor008FieldDropdowns.option_3(); },
+          tag008Fields: () => {
+            optionsFor008FieldDropdowns.option_3();
+          },
         },
         {
           typeField: INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A,
           blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.B,
-          tag008Fields: () => { optionsFor008FieldDropdowns.option_2(); },
+          tag008Fields: () => {
+            optionsFor008FieldDropdowns.option_2();
+          },
         },
         {
           typeField: 'k - Two-dimensional nonprojectable graphic',
           blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.M,
-          tag008Fields: () => { optionsFor008FieldDropdowns.option_5(); },
+          tag008Fields: () => {
+            optionsFor008FieldDropdowns.option_5();
+          },
         },
         {
           typeField: INVENTORY_LDR_FIELD_TYPE_DROPDOWN.P,
           blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.S,
-          tag008Fields: () => { optionsFor008FieldDropdowns.option_7(); },
+          tag008Fields: () => {
+            optionsFor008FieldDropdowns.option_7();
+          },
         },
       ];
 
