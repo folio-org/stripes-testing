@@ -1,3 +1,7 @@
+export const APPLICATION_NAMES = {
+  INVENTORY: 'Inventory',
+};
+
 export const REQUEST_METHOD = {
   DELETE: 'DELETE',
   GET: 'GET',
