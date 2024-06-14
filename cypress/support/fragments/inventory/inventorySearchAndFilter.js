@@ -12,6 +12,7 @@ import {
   MultiColumnListRow,
   MultiSelect,
   MultiSelectOption,
+  OptionGroup,
   Pane,
   PaneHeader,
   SearchField,
@@ -21,7 +22,7 @@ import {
   TextField,
   not,
 } from '../../../../interactors';
-import { BROWSE_CALL_NUMBER_OPTIONS } from '../../constants';
+import { BROWSE_CALL_NUMBER_OPTIONS, BROWSE_CLASSIFICATION_OPTIONS } from '../../constants';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
@@ -277,10 +278,12 @@ export default {
     cy.wait(ONE_SECOND);
     cy.do(Select('Search field index').choose('Subjects'));
   },
+
   searchBySourceHolding: (source) => {
     cy.do(Button({ id: 'accordion-toggle-button-holdingsSource' }).click());
     cy.do(Checkbox(source).click());
   },
+
   selectBrowseContributors() {
     this.switchToBrowseTab();
     // cypress can not pick up an option without wait
@@ -295,14 +298,6 @@ export default {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(ONE_SECOND);
     cy.do(browseSearchAndFilterInput.choose('Other scheme'));
-  },
-
-  selectBrowseDeweyDecimal() {
-    this.switchToBrowseTab();
-    // cypress can't draw selected option without wait
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(ONE_SECOND);
-    cy.do(browseSearchAndFilterInput.choose('Dewey Decimal classification'));
   },
 
   showsOnlyNameTypeAccordion() {
@@ -357,8 +352,19 @@ export default {
   verifyBrowseOptions() {
     cy.do(browseSearchAndFilterInput.click());
     // eslint-disable-next-line no-unused-vars
-    Object.entries(BROWSE_CALL_NUMBER_OPTIONS).forEach(([key, value]) => {
-      cy.expect(browseSearchAndFilterInput.has({ content: including(value) }));
+    Object.values(BROWSE_CALL_NUMBER_OPTIONS).forEach((value) => {
+      cy.expect(
+        browseSearchAndFilterInput
+          .find(OptionGroup('Call numbers'))
+          .has({ text: including(value) }),
+      );
+    });
+    Object.values(BROWSE_CLASSIFICATION_OPTIONS).forEach((value) => {
+      cy.expect(
+        browseSearchAndFilterInput
+          .find(OptionGroup('Classification'))
+          .has({ text: including(value) }),
+      );
     });
     cy.expect([
       browseSearchAndFilterInput.has({ content: including('Contributors') }),
@@ -751,7 +757,7 @@ export default {
   },
 
   verifyDefaultSearchOptionSelected(defaultSearchOptionValue) {
-    cy.expect(searchTypeDropdown.has({ value: defaultSearchOptionValue }));
+    cy.expect(searchTypeDropdown.has({ checkedOptionText: defaultSearchOptionValue }));
   },
 
   clickSearchOptionSelect() {
@@ -861,6 +867,14 @@ export default {
 
   selectBrowseOption(option) {
     cy.do(browseSearchAndFilterInput.choose(option));
+  },
+
+  selectBrowseOptionFromCallNumbersGroup(option) {
+    cy.get('optgroup[label="Call numbers"]')
+      .contains('option', option)
+      .then((optionToSelect) => {
+        cy.get('select').select(optionToSelect.val());
+      });
   },
 
   checkSearchQueryText(text) {
@@ -1013,7 +1027,7 @@ export default {
   },
 
   clickEffectiveLocationAccordionInput() {
-    cy.get('input[type=search]').click();
+    cy.get('#effectiveLocation').find('input').click();
   },
 
   checkEffectiveLocationAccordionInputInFocus() {

@@ -255,27 +255,35 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();
 
-        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
+        );
         InventorySearchAndFilter.browseSearch(callNumbers[5].dewey);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[5].dewey);
         BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('dewey', 5));
 
-        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
+        );
         InventorySearchAndFilter.browseSearch(callNumbers[6].lc);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[6].lc);
         BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('lc', 6));
 
-        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LOCAL);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.LOCAL,
+        );
         InventorySearchAndFilter.browseSearch(callNumbers[6].local);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[6].local);
         BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('local', 6));
 
-        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE,
+        );
         InventorySearchAndFilter.browseSearch(callNumbers[2].nlm);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[2].nlm);
         BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('nlm', 2));
 
-        InventorySearchAndFilter.selectBrowseOption(
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
         );
         InventorySearchAndFilter.browseSearch(callNumbers[4].sudoc);

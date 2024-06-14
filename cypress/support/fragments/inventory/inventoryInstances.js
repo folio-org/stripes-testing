@@ -1193,11 +1193,7 @@ export default {
   },
 
   verifySelectedSearchOption(option) {
-    cy.expect(
-      inventorySearchAndFilterInput.has({
-        value: searchInstancesOptionsValues[searchInstancesOptions.indexOf(option)],
-      }),
-    );
+    cy.expect(inventorySearchAndFilterInput.has({ checkedOptionText: option }));
   },
 
   searchInstancesWithOption(option = searchInstancesOptions[0], value) {

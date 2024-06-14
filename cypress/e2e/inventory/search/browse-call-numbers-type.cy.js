@@ -150,7 +150,7 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.selectBrowseOption(callNumbers[0].type);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(callNumbers[0].type);
         InventorySearchAndFilter.browseSearch(callNumbers[0].value);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0].value);
         BrowseCallNumber.checkNumberOfTitlesForRow(callNumbers[0].value, '2');
@@ -159,7 +159,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyInstanceDisplayed(instances[1].title);
 
         InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.selectBrowseOption(callNumbers[1].type);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(callNumbers[1].type);
         InventorySearchAndFilter.browseSearch(callNumbers[1].value);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[1].value);
         BrowseCallNumber.checkNumberOfTitlesForRow(callNumbers[1].value, '2');

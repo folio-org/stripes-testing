@@ -511,16 +511,23 @@ export default {
     }
   },
 
-  verifyActionsAfterConductedInAppUploading(errors = true) {
+  verifyActionsAfterConductedInAppUploading(errors = true, instance = false) {
     cy.do(actions.click());
     cy.expect([
       Button('Download matched records (CSV)').exists(),
-      Button('Start bulk edit').exists(),
       DropdownMenu().find(HTML('Show columns')).exists(),
       DropdownMenu().find(searchColumnNameTextfield).exists(),
     ]);
     if (errors) {
       cy.expect(Button('Download errors (CSV)').exists());
+    }
+    if (instance) {
+      cy.expect([
+        Button('Start bulk edit - Instance fields').exists(),
+        Button('Start bulk edit - MARC fields').exists(),
+      ]);
+    } else {
+      cy.expect(Button('Start bulk edit').exists());
     }
   },
 
@@ -673,11 +680,11 @@ export default {
     });
   },
 
-  verifyResultColumTitles(title) {
+  verifyResultColumnTitles(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
   },
 
-  verifyResultColumTitlesDoNotInclude(title) {
+  verifyResultColumnTitlesDoNotInclude(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).absent());
   },
 

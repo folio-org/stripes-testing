@@ -60,13 +60,13 @@ describe('MARC', () => {
       after('Delete users, data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
-        MarcAuthority.deleteViaAPI(createdAuthorityId);
+        MarcAuthority.deleteViaAPI(createdAuthorityId, true);
         cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id, true);
       });
 
       it(
         'C423559 Create a new MARC authority record with "Local" authority file selected which includes default prefix in it (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'shiftLeft'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickNewAuthorityButton();

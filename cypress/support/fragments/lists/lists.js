@@ -172,6 +172,10 @@ export default {
     return cy.get('*[class^="mclRowContainer"]').contains(listName).should('not.exist');
   },
 
+  verifyListsPaneIsEmpty() {
+    cy.expect(HTML('The list contains no items').exists());
+  },
+
   selectInactiveLists() {
     cy.do(Checkbox({ id: 'clickable-filter-status-inactive' }).checkIfNotSelected());
   },
