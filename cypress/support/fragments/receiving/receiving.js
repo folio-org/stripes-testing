@@ -52,7 +52,7 @@ export default {
   },
   filterOpenReceiving,
   selectFromResultsList(instanceName) {
-    cy.do(Link(instanceName).click());
+    cy.do(receivingResultsSection.find(Link(instanceName)).click());
     ReceivingDetails.waitLoading();
 
     return ReceivingDetails;

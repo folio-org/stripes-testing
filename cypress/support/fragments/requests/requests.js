@@ -308,11 +308,16 @@ export default {
   },
 
   findCreatedRequest(title) {
-    cy.wait(1000);
+    cy.expect(Pane({ id: 'pane-filter' }).exists());
+    cy.expect(
+      Pane({ title: 'Search & filter' })
+        .find(TextField({ id: 'input-request-search' }))
+        .exists(),
+    );
+    cy.wait(1500);
     cy.do(TextField({ id: 'input-request-search' }).fillIn(title));
-    cy.wait(500);
     cy.do(Pane({ title: 'Search & filter' }).find(Button('Search')).click());
-    cy.wait(500);
+    cy.wait(1500);
   },
 
   selectAllOpenRequests() {

@@ -34,7 +34,7 @@ describe('MARC', () => {
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 1,
         propertyName: 'authority',
-        authorityHeading: 'Kerouac, Jack, C432300 1922-1969',
+        authorityHeading: 'C432300Kerouac, Jack, 1922-1969',
         tag010Value: '80036674432300',
       },
       {
@@ -43,7 +43,7 @@ describe('MARC', () => {
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 1,
         propertyName: 'authority',
-        authorityHeading: 'Beatles C432300',
+        authorityHeading: 'C432300Beatles',
         tag010Value: 'n79018119432300',
       },
     ];
@@ -75,6 +75,7 @@ describe('MARC', () => {
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           InventoryInstance.verifyAndClickLinkIcon(testData.tag100);
+          cy.wait(1000);
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySelectMarcAuthorityModal();
           InventoryInstance.searchResults(marcFiles[1].authorityHeading);

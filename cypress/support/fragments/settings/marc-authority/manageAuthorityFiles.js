@@ -33,6 +33,7 @@ const tableHeaderTexts = [
   'Active',
   'Source',
   'Last updated by',
+  'Actions',
 ];
 const editButton = Button({ icon: 'edit' });
 const deleteButton = Button({ icon: 'trash' });
@@ -297,7 +298,10 @@ export default {
 
   checkManageAuthorityFilesPaneExists(isExist = true) {
     if (isExist) {
-      cy.expect(manageAuthorityFilesPane.exists());
+      cy.expect([
+        manageAuthorityFilesPane.exists(),
+        manageAuthorityFilesPane.has({ isFullScreenView: true }),
+      ]);
     } else {
       cy.expect(manageAuthorityFilesPane.absent());
     }
@@ -329,11 +333,19 @@ export default {
     );
   },
 
-  editBaseUrlInFolioFile(authorityFileName, fieldName, fieldValue) {
+  editBaseUrlInFolioFile(authorityFileName, fieldValue) {
     const targetRow = getTargetRowWithFile(authorityFileName);
 
-    cy.do(targetRow.find(TextField({ placeholder: fieldName })).fillIn(fieldValue));
-    cy.expect(targetRow.find(TextField({ placeholder: fieldName })).has({ value: fieldValue }));
+    cy.do(
+      targetRow
+        .find(TextField({ placeholder: AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL }))
+        .fillIn(fieldValue),
+    );
+    cy.expect(
+      targetRow
+        .find(TextField({ placeholder: AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL }))
+        .has({ value: fieldValue }),
+    );
     cy.expect(targetRow.find(cancelButton).has({ disabled: false }));
     cy.expect(targetRow.find(saveButton).has({ disabled: false }));
   },
@@ -389,10 +401,6 @@ export default {
     const targetRow = getTargetRowWithFile(authorityFileName);
 
     cy.expect(targetRow.find(MultiColumnListCell(including(userName))).exists());
-  },
-
-  checkActionTableHeaderExists() {
-    cy.get('#list-column-actions').should('exist').and('have.text', 'Actions');
   },
 
   checkAuthorityFilesTableExists(isExist = true) {

@@ -1,4 +1,7 @@
-import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import {
+  INSTANCE_SOURCE_NAMES,
+  INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -149,7 +152,7 @@ describe('MARC', () => {
           'Compl',
           'Lend',
           'Repro',
-          'Lang',
+          INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.LANG,
           'Sep/comp',
         );
         QuickMarcEditor.pressSaveAndClose();
@@ -175,7 +178,7 @@ describe('MARC', () => {
 
     it(
       'C350646 Create a new MARC Holdings record for existing "Instance" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'shiftLeft'] },
       () => {
         InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstances.searchByTitle(instanceIds[1]);

@@ -187,6 +187,21 @@ export default {
     cy.expect(fundFormSection.find(locationSection).exists());
   },
 
+  varifyLocationInSection: (locationName) => {
+    cy.get('#locations').find('ul[class^=list-]').contains(locationName).should('exist');
+  },
+
+  varifyLocationIsAbsentInSection: (locationName) => {
+    cy.get('#locations').find('ul[class^=list-]').contains('li', locationName).should('not.exist');
+  },
+
+  verifyCheckboxState: (checkboxLabel, expectedState) => {
+    cy.contains('[class^="labelText"]', checkboxLabel)
+      .parent('label')
+      .find('input[type="checkbox"]')
+      .should(expectedState ? 'be.checked' : 'not.be.checked');
+  },
+
   varifyLocationSectionAbsent() {
     cy.expect(fundFormSection.find(locationSection).absent());
   },
@@ -877,6 +892,14 @@ export default {
     cy.do([actionsButton.click(), editButton.click()]);
   },
 
+  removeLocation(locationName) {
+    cy.get('section#locations')
+      .contains('li', locationName)
+      .within(() => {
+        cy.get('button[aria-label*="Remove location"]').click();
+      });
+  },
+
   changeStatusOfBudget: (statusName, fund, fiscalYear) => {
     cy.wait(4000);
     cy.do([Select({ id: 'budget-status' }).choose(statusName), saveAndCloseButton.click()]);
@@ -1103,6 +1126,10 @@ export default {
         .find(Button({ id: 'clickable-unrelease-confirmation-cancel' }))
         .click(),
     );
+  },
+
+  unreleaseEncumbranceButtonAbsent: () => {
+    cy.expect(transactionDetailSection.find(Button('Unrelease encumbrance')).absent());
   },
 
   unreleaseEncumbrance: () => {
