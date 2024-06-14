@@ -52,7 +52,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyUsersActionShowColumns();
 
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Email');
-        BulkEditSearchPane.verifyResultColumTitles('Email');
+        BulkEditSearchPane.verifyResultColumnTitles('Email');
 
         BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
       },

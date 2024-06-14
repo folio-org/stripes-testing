@@ -680,11 +680,11 @@ export default {
     });
   },
 
-  verifyResultColumTitles(title) {
+  verifyResultColumnTitles(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
   },
 
-  verifyResultColumTitlesDoNotInclude(title) {
+  verifyResultColumnTitlesDoNotInclude(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).absent());
   },
 
