@@ -1,9 +1,12 @@
-import { DEFAULT_JOB_PROFILE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, EXISTING_RECORD_NAMES } from '../../../support/constants';
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -11,6 +14,9 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Settings', () => {
     const defaultJobProfileName = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
+    const newDefaultJobProfileName = `${
+      DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY
+    }${getRandomPostfix()}`;
     const defaultActionProfileName = 'Default - Create MARC Authority';
     const matchProfile = {
       profileName: `C422093 Match Profile ${getRandomPostfix()}`,
@@ -23,23 +29,16 @@ describe('Data Import', () => {
         subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_AUTHORITY,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_AUTHORITY,
     };
 
-    before('Create test data', () => {
-      cy.getAdminToken();
+    before('Login', () => {
       cy.loginAsAdmin();
     });
 
     after('Delete test data', () => {
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.search(defaultJobProfileName);
-      JobProfiles.select(defaultJobProfileName);
-      JobProfileView.edit();
-      JobProfileEdit.verifyScreenName(defaultJobProfileName);
-      JobProfileEdit.unlinkActionProfile(0);
-      NewJobProfile.linkActionProfileByName(defaultActionProfileName);
-      JobProfileEdit.saveAndClose();
+      cy.getAdminToken();
+      SettingsJobProfiles.deleteJobProfileByNameViaApi(newDefaultJobProfileName);
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
     });
 
@@ -53,8 +52,14 @@ describe('Data Import', () => {
         MatchProfiles.createMatchProfile(matchProfile);
         // #3 Go to Job profiles, and search for Job profile called "Default - Create SRS MARC Authority". When found, click on it
         cy.visit(SettingsMenu.jobProfilePath);
+        // need to create the same job profile as default
         JobProfiles.search(defaultJobProfileName);
         JobProfiles.select(defaultJobProfileName);
+        JobProfileView.duplicate();
+        NewJobProfile.fillProfileName(newDefaultJobProfileName);
+        cy.wait(1500);
+        NewJobProfile.saveAndClose();
+        cy.wait(1500);
         // #4 Click on the "Actions" button -> Select "Edit"
         JobProfileView.edit();
         // #5 Update the profile

@@ -1,3 +1,4 @@
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { InventoryInstances } from '../../../support/fragments/inventory';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
@@ -18,7 +19,7 @@ describe('Inventory', () => {
       user: {},
     };
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           ServicePoints.createViaApi(testData.servicePoint);
@@ -82,8 +83,8 @@ describe('Inventory', () => {
           InventoryInstance.checkHoldingsTableContent({
             name: location.name,
             records: [
-              { status: 'Available', location: location.name },
-              { status: 'Available', location: location.name },
+              { status: ITEM_STATUS_NAMES.AVAILABLE, location: location.name },
+              { status: ITEM_STATUS_NAMES.AVAILABLE, location: location.name },
             ],
           });
         });

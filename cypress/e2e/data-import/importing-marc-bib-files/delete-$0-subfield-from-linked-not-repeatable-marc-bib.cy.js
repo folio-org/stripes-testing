@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
   RECORD_STATUSES,
@@ -104,7 +104,7 @@ describe('Data Import', () => {
         subfield: 's',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -144,6 +144,17 @@ describe('Data Import', () => {
     const createdAuthorityIDs = [];
 
     before('Creating user and test data', () => {
+      // make sure there are no duplicate records in the system
+      cy.getAdminToken();
+      MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C377001"' }).then(
+        (records) => {
+          records.forEach((record) => {
+            if (record.authRefType === 'Authorized') {
+              MarcAuthority.deleteViaAPI(record.id, true);
+            }
+          });
+        },
+      );
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,

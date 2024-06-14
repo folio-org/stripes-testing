@@ -13,7 +13,7 @@ describe('Data Import', () => {
     const fileName = `C356324 autotestFile${getRandomPostfix()}.mrc`;
     let instanceId;
 
-    before('login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(filePathToUpload, fileName, jobProfileToRun).then((response) => {
         instanceId = response[0].instance.id;
@@ -25,7 +25,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         InventoryInstance.deleteInstanceViaApi(instanceId);
       });
@@ -33,7 +33,7 @@ describe('Data Import', () => {
 
     it(
       'C353624 Check the log summary table display (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'shiftLeft'] },
       () => {
         const columnNumbers = {
           summary: '1',

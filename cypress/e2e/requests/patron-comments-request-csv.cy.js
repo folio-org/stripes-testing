@@ -135,7 +135,7 @@ describe('Requests Export CSV File', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
     Users.deleteViaApi(userData.userId);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       defaultLocation.institutionId,
       defaultLocation.campusId,
       defaultLocation.libraryId,
@@ -153,7 +153,7 @@ describe('Requests Export CSV File', () => {
       Requests.selectNotYetFilledRequest();
       Requests.findCreatedRequest(itemData.barcode);
       Requests.exportRequestToCsv();
-      Requests.checkCellInCsvFileContainsValue(fileName, 1, 30, patronComment);
+      Requests.checkCellInCsvFileContainsValue(fileName, 1, 31, patronComment);
     },
   );
 

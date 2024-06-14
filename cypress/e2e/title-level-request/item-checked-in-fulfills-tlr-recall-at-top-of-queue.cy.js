@@ -14,7 +14,6 @@ import Requests from '../../support/fragments/requests/requests';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -41,10 +40,6 @@ describe('Request queue. TLR', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
-        cy.loginAsAdmin({
-          path: SettingsMenu.circulationTitleLevelRequestsPath,
-          waiter: TitleLevelRequests.waitLoading,
-        });
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);
@@ -123,7 +118,7 @@ describe('Request queue. TLR', () => {
         });
       })
       .then(() => {
-        TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+        TitleLevelRequests.enableTLRViaApi();
         cy.wrap(instanceData.itemBarcodes).each((barcode) => {
           Checkout.checkoutItemViaApi({
             itemBarcode: barcode,
@@ -142,10 +137,7 @@ describe('Request queue. TLR', () => {
   });
 
   after('Deleting created entities', () => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
+    cy.getAdminToken();
     Requests.getRequestApi({ query: `(instance.title=="${instanceData.title}")` }).then(
       (requestResponse) => {
         cy.wrap(requestResponse).each((request) => {
@@ -168,13 +160,12 @@ describe('Request queue. TLR', () => {
       Users.deleteViaApi(id);
     });
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
   it(
     'C350682 Check that item checked in fulfills the TLR recall at the top of the queue (vega) (Taas)',

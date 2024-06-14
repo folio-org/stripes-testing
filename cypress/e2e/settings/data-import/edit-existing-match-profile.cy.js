@@ -1,5 +1,5 @@
-import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import { EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import MatchProfileEdit from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileEditForm';
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
@@ -7,7 +7,6 @@ import MatchProfiles from '../../../support/fragments/settings/dataImport/matchP
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
@@ -17,26 +16,28 @@ describe('Data Import', () => {
       profileName: `C2339 autotest MatchProf${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '001',
+        in1: '',
+        in2: '',
+        subfield: '',
       },
-      matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-      instanceOption: NewMatchProfile.optionsList.instanceHrid,
+      recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+      existingMatchExpressionValue: 'instance.hrid',
     };
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
+      cy.getAdminToken();
+      NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(matchProfile);
+
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password);
 
-        // create match profile
+        cy.login(user.username, user.password);
         cy.visit(SettingsMenu.matchProfilePath);
-        MatchProfiles.createMatchProfile(matchProfile);
-        InteractorsTools.closeCalloutMessage();
-        MatchProfileView.closeViewMode();
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);

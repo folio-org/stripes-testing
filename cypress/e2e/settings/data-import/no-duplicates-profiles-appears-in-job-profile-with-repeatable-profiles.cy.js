@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
 } from '../../../support/constants';
@@ -68,7 +68,7 @@ describe('Data Import', () => {
             subfield: 'a',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+          existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
           instanceOption: NewMatchProfile.optionsList.identifierOCLC,
         },
       },
@@ -82,7 +82,7 @@ describe('Data Import', () => {
             subfield: 'z',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+          existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
           instanceOption: NewMatchProfile.optionsList.identifierOCLC,
         },
       },
@@ -92,7 +92,7 @@ describe('Data Import', () => {
           incomingStaticValue: 'Batch Loaded',
           incomingStaticRecordValue: 'Text',
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+          existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
           existingRecordOption: NewMatchProfile.optionsList.instanceStatusTerm,
         },
       },
@@ -102,13 +102,13 @@ describe('Data Import', () => {
           incomingStaticValue: 'Electronic',
           incomingStaticRecordValue: 'Text',
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+          existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
           existingRecordOption: NewMatchProfile.optionsList.holdingsType,
         },
       },
     ];
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
         cy.login(userProperties.username, userProperties.password);
@@ -184,7 +184,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         collectionOfMatchProfiles.forEach((profile) => {

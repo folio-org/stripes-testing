@@ -12,20 +12,11 @@ import {
   MultiColumnList,
   Pane,
   including,
-  MultiColumnListRow,
   TextField,
-  TextInput,
   Image,
-  SelectionList,
-  SelectionOption,
 } from '../../../../interactors';
-import { ListRow } from '../../../../interactors/multi-column-list';
 
 const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
-const logsStartDateAccordion = Accordion('Started');
-const logsEndDateAccordion = Accordion('Ended');
-const applyBtn = Button('Apply');
-const logsResultPane = Pane({ id: 'bulk-edit-logs-pane' });
 const resultsAccordion = Accordion('Preview of record matched');
 const changesAccordion = Accordion('Preview of record changed');
 const errorsAccordion = Accordion('Errors');
@@ -38,47 +29,13 @@ const usersRadio = RadioButton('Users');
 const itemsRadio = RadioButton('Inventory - items');
 const holdingsRadio = RadioButton('Inventory - holdings');
 const instancesRadio = RadioButton('Inventory - instances');
-const usersCheckbox = Checkbox('Users');
-const holdingsCheckbox = Checkbox('Inventory - holdings');
-const itemsCheckbox = Checkbox('Inventory - items');
-const instancesCheckbox = Checkbox('Inventory - instances');
 const identifierToggle = Button('Identifier');
 const queryToggle = Button('Query');
 const logsToggle = Button('Logs');
 const setCriteriaPane = Pane('Set criteria');
-const searchButton = Button('Search');
-const resetAllButton = Button('Reset all');
-const logsStatusesAccordion = Accordion('Statuses');
-const logsUsersAccordion = Accordion('User');
-const clearAccordionButton = Button({ icon: 'times-circle-solid' });
-const usersSelectionList = SelectionList({ placeholder: 'Filter options list' });
 const saveAndClose = Button('Save and close');
-const textFieldTo = TextField('To');
-const textFieldFrom = TextField('From');
 const confirmChanges = Button('Confirm changes');
-const triggerBtn = DropdownMenu().find(Button('File that was used to trigger the bulk edit'));
-const errorsEncounteredBtn = DropdownMenu().find(
-  Button('File with errors encountered during the record matching'),
-);
-const matchingRecordsBtn = DropdownMenu().find(Button('File with the matching records'));
-const previewPorposedChangesBtn = DropdownMenu().find(
-  Button('File with the preview of proposed changes'),
-);
-const updatedRecordBtn = DropdownMenu().find(Button('File with updated records'));
-const errorsCommittingBtn = DropdownMenu().find(
-  Button('File with errors encountered when committing the changes'),
-);
 const buildQueryButton = Button('Build query');
-const logsActionButton = Button({ icon: 'ellipsis' });
-
-const newCheckbox = Checkbox('New');
-const retrievingRecordsCheckbox = Checkbox('Retrieving records');
-const savingRecordsCheckbox = Checkbox('Saving records');
-const dataModificationCheckbox = Checkbox('Data modification');
-const reviewingChangesCheckbox = Checkbox('Reviewing changes');
-const completedCheckbox = Checkbox('Completed');
-const completedWithErrorsCheckbox = Checkbox('Completed with errors');
-const failedCheckbox = Checkbox('Failed');
 const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' });
 
 export const userIdentifiers = ['User UUIDs', 'User Barcodes', 'External IDs', 'Usernames'];
@@ -120,28 +77,12 @@ export default {
     cy.expect(HTML("You don't have permission to view this app/record").exists());
   },
 
-  searchBtnIsDisabled(isDisabled) {
-    cy.expect(searchButton.has({ disabled: isDisabled }));
-  },
-
-  resetAllBtnIsDisabled(isDisabled) {
-    cy.expect(resetAllButton.has({ disabled: isDisabled }));
-  },
-
-  resetAll() {
-    cy.do(resetAllButton.click());
-  },
-
   actionsIsAbsent() {
     cy.expect(actions.absent());
   },
 
   verifyPopulatedPreviewPage() {
     cy.expect([errorsAccordion.exists(), resultsAccordion.exists(), actions.exists()]);
-  },
-
-  logActionsIsAbsent() {
-    cy.expect(logsActionButton.absent());
   },
 
   actionsIsShown() {
@@ -279,10 +220,6 @@ export default {
     this.verifyAfterChoosingIdentifier(modifiedIdentifier);
   },
 
-  verifyCheckboxIsSelected(checkbox, isChecked = false) {
-    cy.expect(Checkbox({ name: checkbox }).has({ checked: isChecked }));
-  },
-
   openIdentifierSearch() {
     cy.do(identifierToggle.click());
   },
@@ -319,42 +256,6 @@ export default {
 
   verifySetCriteriaPaneExists() {
     cy.expect(setCriteriaPane.exists());
-  },
-
-  verifyLogsPane() {
-    this.verifyLogsStatusesAccordionExistsAndUnchecked();
-    cy.expect([
-      logsToggle.has({ default: false }),
-      resetAllButton.has({ disabled: true }),
-      recordTypesAccordion.find(usersCheckbox).has({ checked: false }),
-      recordTypesAccordion.find(itemsCheckbox).has({ checked: false }),
-      recordTypesAccordion.find(holdingsCheckbox).has({ checked: false }),
-      recordTypesAccordion.find(instancesCheckbox).has({ checked: false }),
-      logsStartDateAccordion.has({ open: false }),
-      logsEndDateAccordion.has({ open: false }),
-      bulkEditPane.find(HTML('Bulk edit logs')).exists(),
-      bulkEditPane.find(HTML('Enter search criteria to start search')).exists(),
-      bulkEditPane.find(HTML('Choose a filter to show results.')).exists(),
-    ]);
-  },
-
-  verifyLogsPaneHeader() {
-    cy.expect([
-      bulkEditPane.find(HTML('Bulk edit logs')).exists(),
-      bulkEditPane.find(HTML(including('records found'))).exists(),
-    ]);
-  },
-
-  checkLogsCheckbox(status) {
-    cy.do(Checkbox(status).click());
-  },
-
-  resetStatuses() {
-    cy.do(
-      Accordion('Statuses')
-        .find(Button({ icon: 'times-circle-solid' }))
-        .click(),
-    );
   },
 
   verifyCsvViewPermission() {
@@ -442,18 +343,6 @@ export default {
 
   checkHoldingsRadio() {
     cy.do(holdingsRadio.click());
-  },
-
-  checkHoldingsCheckbox() {
-    cy.do(holdingsCheckbox.click());
-  },
-
-  checkItemsCheckbox() {
-    cy.do(itemsCheckbox.click());
-  },
-
-  checkUsersCheckbox() {
-    cy.do(usersCheckbox.click());
   },
 
   holdingsRadioIsDisabled(isDisabled) {
@@ -622,16 +511,23 @@ export default {
     }
   },
 
-  verifyActionsAfterConductedInAppUploading(errors = true) {
+  verifyActionsAfterConductedInAppUploading(errors = true, instance = false) {
     cy.do(actions.click());
     cy.expect([
       Button('Download matched records (CSV)').exists(),
-      Button('Start bulk edit').exists(),
       DropdownMenu().find(HTML('Show columns')).exists(),
       DropdownMenu().find(searchColumnNameTextfield).exists(),
     ]);
     if (errors) {
       cy.expect(Button('Download errors (CSV)').exists());
+    }
+    if (instance) {
+      cy.expect([
+        Button('Start bulk edit - Instance fields').exists(),
+        Button('Start bulk edit - MARC fields').exists(),
+      ]);
+    } else {
+      cy.expect(Button('Start bulk edit').exists());
     }
   },
 
@@ -775,11 +671,8 @@ export default {
     });
   },
 
-  // In Identifier pane - radio, in Logs pane - checkbox
-  verifyRecordTypesSortedAlphabetically(checkbox = true) {
-    let locator;
-    if (checkbox) locator = '#entityType [class*="labelText"]';
-    else locator = '[class*="labelText"]';
+  verifyRecordTypesSortedAlphabetically() {
+    const locator = '[class*="labelText"]';
     cy.get(locator).then((checkboxes) => {
       const textArray = checkboxes.get().map((el) => el.innerText);
       const sortedArray = [...textArray].sort((a, b) => a - b);
@@ -787,33 +680,11 @@ export default {
     });
   },
 
-  verifyCellsValues(column, status) {
-    this.getMultiColumnListCellsValues(column)
-      .should('have.length.at.least', 1)
-      .each((value) => {
-        expect(value).to.eq(status);
-      });
-  },
-
-  verifyDateCellsValues(column, fromDate, toDate) {
-    this.getMultiColumnListCellsValues(column)
-      .should('have.length.at.least', 1)
-      .each((value) => {
-        if (!value.includes('No value set')) {
-          const cellDate = new Date(value);
-          const to = new Date(toDate);
-          to.setDate(to.getDate() + 1);
-          expect(cellDate).to.greaterThan(new Date(fromDate));
-          expect(cellDate).to.lessThan(to);
-        }
-      });
-  },
-
-  verifyResultColumTitles(title) {
+  verifyResultColumnTitles(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
   },
 
-  verifyResultColumTitlesDoNotInclude(title) {
+  verifyResultColumnTitlesDoNotInclude(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).absent());
   },
 
@@ -829,399 +700,14 @@ export default {
     cy.do(recordTypesAccordion.clickHeader());
   },
 
-  clickLogsStatusesAccordion() {
-    cy.do(logsStatusesAccordion.clickHeader());
-  },
-
-  clickLogsStartedAccordion() {
-    cy.do(logsStartDateAccordion.clickHeader());
-  },
-
-  clickLogsEndedAccordion() {
-    cy.do(logsEndDateAccordion.clickHeader());
-  },
-
   verifyRecordTypesAccordionCollapsed() {
     this.recordTypesAccordionExpanded(false);
     this.verifyUsersRadioAbsent();
     cy.expect([itemsRadio.absent(), holdingsRadio.absent()]);
   },
 
-  verifyUserAccordionCollapsed() {
-    cy.expect(Accordion('User').has({ open: false }));
-  },
-
-  verifyLogsStatusesAccordionCollapsed() {
-    cy.expect([
-      logsStatusesAccordion.has({ open: false }),
-      newCheckbox.absent(),
-      retrievingRecordsCheckbox.absent(),
-      savingRecordsCheckbox.absent(),
-      dataModificationCheckbox.absent(),
-      reviewingChangesCheckbox.absent(),
-      completedCheckbox.absent(),
-      completedWithErrorsCheckbox.absent(),
-      failedCheckbox.absent(),
-    ]);
-  },
-
-  verifyLogsRecordTypesAccordionCollapsed() {
-    this.recordTypesAccordionExpanded(false);
-    cy.expect([usersCheckbox.absent(), holdingsCheckbox.absent(), itemsCheckbox.absent()]);
-  },
-
-  verifyLogsStatusesAccordionExistsAndUnchecked() {
-    cy.expect([
-      logsStatusesAccordion.has({ open: true }),
-      newCheckbox.has({ checked: false }),
-      retrievingRecordsCheckbox.has({ checked: false }),
-      savingRecordsCheckbox.has({ checked: false }),
-      dataModificationCheckbox.has({ checked: false }),
-      reviewingChangesCheckbox.has({ checked: false }),
-      completedCheckbox.has({ checked: false }),
-      completedWithErrorsCheckbox.has({ checked: false }),
-      failedCheckbox.has({ checked: false }),
-    ]);
-  },
-
-  verifyLogsRecordTypesAccordionExistsAndUnchecked() {
-    this.recordTypesAccordionExpanded(true);
-    cy.expect([
-      usersCheckbox.has({ checked: false }),
-      holdingsCheckbox.has({ checked: false }),
-      itemsCheckbox.has({ checked: false }),
-    ]);
-  },
-
-  verifyLogsStartedAccordionExistsWithElements() {
-    cy.expect([
-      logsStartDateAccordion.has({ open: true }),
-      logsStartDateAccordion
-        .find(textFieldFrom)
-        .find(Button({ icon: 'calendar' }))
-        .exists(),
-      logsStartDateAccordion
-        .find(textFieldTo)
-        .find(Button({ icon: 'calendar' }))
-        .exists(),
-      logsStartDateAccordion.find(textFieldFrom).has({ placeholder: 'YYYY-MM-DD' }),
-      logsStartDateAccordion.find(textFieldTo).has({ placeholder: 'YYYY-MM-DD' }),
-      logsStartDateAccordion.find(applyBtn).exists(),
-    ]);
-  },
-
-  verifyDateFieldWithError(accordion, textField, errorMessage) {
-    cy.expect([
-      Accordion(accordion).find(TextField(textField)).has({ errorIcon: true }),
-      Accordion(accordion).find(TextField(textField)).has({ errorBorder: true }),
-      Accordion(accordion).find(TextField(textField)).has({ error: errorMessage }),
-    ]);
-  },
-
-  verifyDateAccordionValidationMessage(accordion, message) {
-    cy.expect(Accordion(accordion).has({ validationMessage: message }));
-  },
-
-  verifyLogsEndedAccordionExistsWithElements() {
-    cy.expect([
-      logsEndDateAccordion.has({ open: true }),
-      logsEndDateAccordion
-        .find(textFieldFrom)
-        .find(Button({ icon: 'calendar' }))
-        .exists(),
-      logsEndDateAccordion
-        .find(textFieldTo)
-        .find(Button({ icon: 'calendar' }))
-        .exists(),
-      logsEndDateAccordion.find(textFieldFrom).has({ placeholder: 'YYYY-MM-DD' }),
-      logsEndDateAccordion.find(textFieldTo).has({ placeholder: 'YYYY-MM-DD' }),
-      logsEndDateAccordion.find(applyBtn).exists(),
-    ]);
-  },
-
-  verifyLogsDateFiledIsEqual(accordion, fieldName, valueToVerify) {
-    cy.expect(Accordion(accordion).find(TextField(fieldName)).has({ value: valueToVerify }));
-  },
-
-  verifyClearSelectedFiltersButton(accordion, verification = 'exists') {
-    cy.expect(
-      Accordion(accordion)
-        .find(Button({ icon: 'times-circle-solid' }))
-        // eslint-disable-next-line no-unexpected-multiline
-        [verification](),
-    );
-  },
-
-  clickUserAccordion() {
-    cy.do(logsUsersAccordion.clickHeader());
-  },
-
-  selectUserFromDropdown(name) {
-    cy.do([usersSelectionList.select(including(name))]);
-  },
-
-  fillUserFilterInput(userName) {
-    cy.do([usersSelectionList.find(TextInput()).fillIn(userName)]);
-  },
-
-  verifyDropdown(userName) {
-    cy.get('[id*="option-stripes-selection-"]').should('exist');
-    cy.then(() => usersSelectionList.optionList()).then((options) => {
-      cy.wrap(options).then(
-        (opts) => expect(opts.some((opt) => opt.includes(userName))).to.be.true,
-      );
-    });
-  },
-
-  verifyUserIsNotInUserList(name) {
-    cy.do([usersSelectionList.find(SelectionOption(including(name))).absent()]);
-  },
-
-  verifyEmptyUserDropdown() {
-    cy.expect([
-      usersSelectionList.find(HTML('-List is empty-')).exists(),
-      usersSelectionList.find(HTML('No matching options')).exists(),
-    ]);
-  },
-
-  clickChooseUserUnderUserAccordion() {
-    cy.do(logsUsersAccordion.find(Button(including('Select control'))).click());
-  },
-
-  verifyClearSelectedButtonExists(accordion, presence = true) {
-    cy.wait(1000);
-    if (presence) {
-      cy.expect(Accordion(accordion).find(clearAccordionButton).exists());
-    } else {
-      cy.expect(Accordion(accordion).find(clearAccordionButton).absent());
-    }
-  },
-
-  clickClearSelectedButton(accordion) {
-    cy.do(Accordion(accordion).find(clearAccordionButton).click());
-  },
-
-  verifyClearSelectedDateButtonExists(accordion, textField) {
-    cy.expect(
-      Accordion(accordion)
-        .find(TextField({ label: textField }))
-        .find(Button({ icon: 'times-circle-solid' }))
-        .exists(),
-    );
-  },
-
-  clickClearSelectedFiltersButton(accordion) {
-    cy.do(
-      Accordion(accordion)
-        .find(
-          Button({ icon: 'times-circle-solid', ariaLabel: including('Clear selected filters') }),
-        )
-        .click(),
-    );
-  },
-
-  clickClearSelectedDateButton(accordion, textField) {
-    cy.do(
-      Accordion(accordion)
-        .find(TextField({ label: textField }))
-        .find(Button({ icon: 'times-circle-solid' }))
-        .click(),
-    );
-  },
-
-  clickActionsOnTheRow(row = 0) {
-    cy.do(
-      MultiColumnListRow({ indexRow: `row-${row}` })
-        .find(logsActionButton)
-        .click(),
-    );
-  },
-
-  verifyLogStatus(runByUsername, content) {
-    cy.do(
-      ListRow({ text: including(runByUsername) })
-        .find(MultiColumnListCell({ content }))
-        .click(),
-    );
-  },
-
-  clickActionsRunBy(runByUsername) {
-    cy.do(
-      ListRow({ text: including(runByUsername) })
-        .find(logsActionButton)
-        .click(),
-    );
-  },
-
-  verifyActionsRunBy(name) {
-    cy.expect(ListRow({ text: including(`\n${name}\n`) }).exists());
-  },
-
-  verifyTriggerLogsAction() {
-    cy.expect(triggerBtn.exists());
-  },
-
-  verifyLogsRowAction() {
-    cy.expect([triggerBtn.exists(), errorsEncounteredBtn.exists()]);
-  },
-
-  verifyLogsRowActionWhenCompleted() {
-    cy.expect([
-      triggerBtn.exists(),
-      matchingRecordsBtn.exists(),
-      previewPorposedChangesBtn.exists(),
-      updatedRecordBtn.exists(),
-    ]);
-  },
-
-  verifyLogsRowActionWhenNoChangesApplied() {
-    cy.expect([
-      triggerBtn.exists(),
-      matchingRecordsBtn.exists(),
-      previewPorposedChangesBtn.exists(),
-      errorsCommittingBtn.exists(),
-    ]);
-  },
-
-  verifyLogsRowActionWhenCompletedWithErrors() {
-    cy.expect([
-      triggerBtn.exists(),
-      matchingRecordsBtn.exists(),
-      errorsEncounteredBtn.exists(),
-      previewPorposedChangesBtn.exists(),
-      updatedRecordBtn.exists(),
-      errorsCommittingBtn.exists(),
-    ]);
-  },
-
-  verifyLogsRowActionWhenCompletedWithErrorsWithoutModification() {
-    cy.expect([triggerBtn.exists(), errorsEncounteredBtn.exists()]);
-  },
-
   waitingFileDownload() {
     cy.wait(3000);
-  },
-
-  downloadFileUsedToTrigger() {
-    cy.do(triggerBtn.click());
-    this.waitingFileDownload();
-  },
-
-  downloadFileWithErrorsEncountered() {
-    cy.do(errorsEncounteredBtn.click());
-    this.waitingFileDownload();
-  },
-
-  downloadFileWithMatchingRecords() {
-    cy.do(matchingRecordsBtn.click());
-    this.waitingFileDownload();
-  },
-
-  downloadFileWithProposedChanges() {
-    cy.do(previewPorposedChangesBtn.click());
-    this.waitingFileDownload();
-  },
-
-  downloadFileWithUpdatedRecords() {
-    cy.do(updatedRecordBtn.click());
-    this.waitingFileDownload();
-  },
-
-  downloadFileWithCommitErrors() {
-    cy.do(errorsCommittingBtn.click());
-    this.waitingFileDownload();
-  },
-
-  verifyLogsTableHeaders(verification = 'exists') {
-    cy.get('div[class^="mclScrollable"]')
-      .should('exist')
-      .scrollTo('right', { ensureScrollable: false });
-    cy.expect([
-      MultiColumnListHeader('Record type')[verification](),
-      MultiColumnListHeader('Status')[verification](),
-      MultiColumnListHeader('Editing')[verification](),
-      MultiColumnListHeader('# of records')[verification](),
-      MultiColumnListHeader('Processed')[verification](),
-      MultiColumnListHeader('Started')[verification](),
-      MultiColumnListHeader('Ended')[verification](),
-      MultiColumnListHeader('Run by')[verification](),
-      MultiColumnListHeader('ID')[verification](),
-      MultiColumnListHeader('Actions')[verification](),
-    ]);
-  },
-
-  fillLogsDate(accordion, dataPicker, value) {
-    cy.do(Accordion(accordion).find(TextField(dataPicker)).fillIn(value));
-  },
-
-  fillLogsStartDate(fromDate, toDate) {
-    cy.do([
-      logsStartDateAccordion.clickHeader(),
-      logsStartDateAccordion.find(textFieldFrom).fillIn(fromDate),
-      logsStartDateAccordion.find(textFieldTo).fillIn(toDate),
-    ]);
-  },
-
-  fillLogsEndDate(fromDate, toDate) {
-    cy.do([
-      logsEndDateAccordion.clickHeader(),
-      logsEndDateAccordion.find(textFieldFrom).fillIn(fromDate),
-      logsEndDateAccordion.find(textFieldTo).fillIn(toDate),
-    ]);
-  },
-
-  applyStartDateFilters() {
-    cy.do(logsStartDateAccordion.find(applyBtn).click());
-  },
-
-  applyEndDateFilters() {
-    cy.do(logsEndDateAccordion.find(applyBtn).click());
-  },
-
-  verifyLogsStartedAccordionCollapsed() {
-    cy.expect([
-      logsStartDateAccordion.has({ open: false }),
-      logsStartDateAccordion.find(textFieldFrom).absent(),
-      logsStartDateAccordion.find(textFieldTo).absent(),
-    ]);
-  },
-
-  verifyLogsEndedAccordionCollapsed() {
-    cy.expect([
-      logsEndDateAccordion.has({ open: false }),
-      logsEndDateAccordion.find(textFieldFrom).absent(),
-      logsEndDateAccordion.find(textFieldTo).absent(),
-    ]);
-  },
-
-  verifyDirection(header, direction = 'descending') {
-    cy.get('[class^="mclHeader"]')
-      .contains(header)
-      .then((mclHeader) => {
-        const sort = mclHeader.prevObject[1].getAttribute('aria-sort');
-        expect(sort).to.eq(direction);
-      });
-  },
-
-  verifyNoDirection(header) {
-    cy.get('[class^="mclHeader"]')
-      .contains(header)
-      .then((mclHeader) => {
-        const sort = mclHeader.prevObject[1].getAttribute('aria-sort');
-        expect(sort).to.eq('none');
-      });
-  },
-
-  clickLogHeader(header) {
-    cy.do(MultiColumnListHeader(header).click());
-  },
-
-  noLogResultsFound() {
-    cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
-  },
-
-  verifyLogResultsFound() {
-    cy.expect(logsResultPane.find(MultiColumnList()).exists());
   },
 
   dragAndDropAreaExists(exists) {
@@ -1236,7 +722,7 @@ export default {
     cy.expect(saveAndClose.has({ disabled: isDisabled }));
   },
 
-  isBuildQueryButtonDisabled(isDisabled) {
+  isBuildQueryButtonDisabled(isDisabled = true) {
     cy.expect(buildQueryButton.has({ disabled: isDisabled }));
     cy.wait(2000);
   },
@@ -1281,5 +767,28 @@ export default {
       searchColumnNameTextfield.has({ disabled }),
       Checkbox({ disabled: false }).absent(),
     ]);
+  },
+
+  checkboxWithTextAbsent(text) {
+    cy.get('[class^="ActionMenu-"]').within(() => {
+      cy.get('[class^="checkbox-"]').each(($checkbox) => {
+        cy.wrap($checkbox).should(($el) => {
+          expect($el.text().toLowerCase()).to.not.contain(text.toLowerCase());
+        });
+      });
+    });
+  },
+
+  verifyElectronicAccessElementByIndex(index, expectedText, miniRowCount = 1) {
+    cy.get('[class^="ElectronicAccess"]')
+      .find('tr')
+      .eq(miniRowCount)
+      .find('td')
+      .eq(index)
+      .should('have.text', expectedText);
+  },
+
+  verifyRowHasEmptyElectronicAccess(index) {
+    cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
   },
 };

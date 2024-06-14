@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
   RECORD_STATUSES,
@@ -69,7 +69,7 @@ describe('Data Import', () => {
         subfield: 's',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -94,7 +94,7 @@ describe('Data Import', () => {
     ];
 
     const linkingTagAndValues = {
-      rowIndex: 17,
+      rowIndex: 16,
       value: 'C375098 Chin, Staceyann, 1972-',
       tag: '100',
     };
@@ -102,6 +102,10 @@ describe('Data Import', () => {
     const createdAuthorityIDs = [];
 
     before('Creating user', () => {
+      cy.getAdminToken();
+      // make sure there are no duplicate records in the system
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(linkingTagAndValues.value);
+
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
@@ -253,7 +257,7 @@ describe('Data Import', () => {
         InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Contributor');
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          19,
+          18,
           '100',
           '1',
           '\\',
@@ -263,7 +267,7 @@ describe('Data Import', () => {
           '$4 prf.',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          20,
+          19,
           '245',
           '1',
           '4',

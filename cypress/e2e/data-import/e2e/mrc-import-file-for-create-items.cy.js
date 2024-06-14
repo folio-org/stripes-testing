@@ -75,7 +75,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.dataImportUploadAll.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -83,6 +83,7 @@ describe('Data Import', () => {
         Permissions.uiInventoryViewInstances.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
         cy.login(userProperties.username, userProperties.password);
       });
     });
@@ -112,7 +113,7 @@ describe('Data Import', () => {
       FieldMappingProfileView.closeViewMode(itemMappingProfile.name);
     };
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         // delete generated profiles
@@ -128,7 +129,7 @@ describe('Data Import', () => {
 
     it(
       'C343334 MARC file import with creating a new mapping profiles, action profiles and job profile (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
         // create mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -169,7 +170,6 @@ describe('Data Import', () => {
         Logs.checkStatusOfJobProfile();
         Logs.checkImportFile(specialJobProfile.profileName);
         Logs.openFileDetails(fileName);
-        cy.reload();
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,

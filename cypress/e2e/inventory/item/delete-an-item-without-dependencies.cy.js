@@ -1,14 +1,14 @@
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import ConfirmDeleteItemModal from '../../../support/fragments/inventory/modals/confirmDeleteItemModal';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ConfirmDeleteItemModal from '../../../support/fragments/inventory/modals/confirmDeleteItemModal';
 
 describe('Inventory', () => {
   describe('Item', () => {
@@ -19,7 +19,7 @@ describe('Inventory', () => {
     };
     let defaultLocation;
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           ServicePoints.createViaApi(servicePoint);
@@ -77,7 +77,7 @@ describe('Inventory', () => {
         cy.deleteHoldingRecordViaApi(itemData.testInstanceIds.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(itemData.testInstanceIds.instanceId);
 
-        Location.deleteViaApiIncludingInstitutionCampusLibrary(
+        Location.deleteInstitutionCampusLibraryLocationViaApi(
           defaultLocation.institutionId,
           defaultLocation.campusId,
           defaultLocation.libraryId,

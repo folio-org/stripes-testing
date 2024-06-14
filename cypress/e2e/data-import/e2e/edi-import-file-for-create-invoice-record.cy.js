@@ -4,14 +4,9 @@ import {
   FOLIO_RECORD_TYPE,
   INVOICE_STATUSES,
   PAYMENT_METHOD,
-  VENDOR_NAMES,
   RECORD_STATUSES,
+  VENDOR_NAMES,
 } from '../../../support/constants';
-import {
-  JobProfiles as SettingsJobProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-} from '../../../support/fragments/settings/dataImport';
 import permissions from '../../../support/dictionary/permissions';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -22,6 +17,11 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import { InvoiceView, Invoices } from '../../../support/fragments/invoices';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -54,7 +54,7 @@ describe('Data Import', () => {
     };
     const vendorInvoiceNumber = '94999';
 
-    before('login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         permissions.dataImportUploadAll.gui,
         permissions.moduleDataImportEnabled.gui,
@@ -63,6 +63,7 @@ describe('Data Import', () => {
         permissions.viewEditDeleteInvoiceInvoiceLine.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
         cy.login(userProperties.username, userProperties.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,
@@ -70,7 +71,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         // clean up generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
@@ -85,7 +86,7 @@ describe('Data Import', () => {
 
     it(
       'C343338 EDIFACT file import with creating of new invoice record (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.waitLoading();

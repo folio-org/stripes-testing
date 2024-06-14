@@ -1,6 +1,10 @@
 import uuid from 'uuid';
 
-import { LOAN_TYPE_NAMES, MATERIAL_TYPE_NAMES } from '../../../../support/constants';
+import {
+  LOAN_TYPE_NAMES,
+  MATERIAL_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
+} from '../../../../support/constants';
 import { Permissions } from '../../../../support/dictionary';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -19,7 +23,7 @@ describe('Inventory', () => {
       holding: {},
     };
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -77,7 +81,7 @@ describe('Inventory', () => {
         ItemRecordEdit.saveAndClose({ itemSaved: true });
         InventoryInstance.checkHoldingsTableContent({
           name: testData.location.name,
-          records: [{ barcode: testData.barcode, status: 'Available' }],
+          records: [{ barcode: testData.barcode, status: ITEM_STATUS_NAMES.AVAILABLE }],
         });
       },
     );

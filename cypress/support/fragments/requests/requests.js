@@ -33,7 +33,7 @@ import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 import Helper from '../finance/financeHelper';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
-const requestDetailsSection = Pane({ title: 'Request Detail' });
+const requestDetailsSection = Pane({ title: 'Request details' });
 const appsButton = Button({ id: 'app-list-dropdown-toggle' });
 const requestsPane = Pane({ title: 'Requests' });
 const requestQueuePane = Pane({ id: 'request-queue' });
@@ -214,7 +214,7 @@ function deleteRequestViaApi(requestId) {
     method: 'DELETE',
     path: `circulation/requests/${requestId}`,
     isDefaultSearchParamsRequired: false,
-    falseOnStatusCode: false,
+    failOnStatusCode: false,
   });
 }
 
@@ -308,8 +308,16 @@ export default {
   },
 
   findCreatedRequest(title) {
+    cy.expect(Pane({ id: 'pane-filter' }).exists());
+    cy.expect(
+      Pane({ title: 'Search & filter' })
+        .find(TextField({ id: 'input-request-search' }))
+        .exists(),
+    );
+    cy.wait(1500);
     cy.do(TextField({ id: 'input-request-search' }).fillIn(title));
     cy.do(Pane({ title: 'Search & filter' }).find(Button('Search')).click());
+    cy.wait(1500);
   },
 
   selectAllOpenRequests() {
@@ -339,10 +347,11 @@ export default {
 
   addTag(tag) {
     waitLoadingTags();
+    cy.wait(1000);
     cy.do(tagsPane.find(MultiSelect({ ariaLabelledby: 'input-tag-label' })).choose(tag));
     // TODO investigate what to wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000);
+    cy.wait(3000);
   },
 
   addNewTag(tag) {
@@ -361,7 +370,7 @@ export default {
     cy.expect(tagsPane.find(ValueChipRoot(tag)).exists());
   },
 
-  REQUEST_TYPE_CELL: { columnIndex: 5 },
+  REQUEST_TYPE_CELL: { columnIndex: 6 },
   verifyIsFilteredByRequestType(requestType) {
     const values = [];
     cy.get('[data-row-index]')
@@ -386,6 +395,7 @@ export default {
   },
 
   checkRequestType(requestType) {
+    cy.wait(500);
     if (requestType === REQUEST_TYPES.PAGE) {
       this.selectPagesRequestType();
     } else if (requestType === REQUEST_TYPES.HOLD) {
@@ -393,6 +403,7 @@ export default {
     } else if (requestType === REQUEST_TYPES.RECALL) {
       this.selectRecallsRequestType();
     }
+    cy.wait(500);
   },
 
   checkRequestStatus(requestStatus) {

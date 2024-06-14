@@ -35,12 +35,12 @@ describe('MARC', () => {
 
         const linkingTagAndValues = [
           {
-            rowIndex: 82,
+            rowIndex: 81,
             value: 'C388536 Stelfreeze, Brian',
             tag: 700,
           },
           {
-            rowIndex: 83,
+            rowIndex: 82,
             value: 'C388536 Sprouse, Chris',
             tag: 700,
           },
@@ -55,37 +55,37 @@ describe('MARC', () => {
 
         const matchingNaturalIds = [
           {
-            rowIndex: 33,
+            rowIndex: 32,
             tag: '100',
             naturalId: 'n2008001084C388536',
           },
           {
-            rowIndex: 37,
+            rowIndex: 36,
             tag: '240',
             naturalId: 'no2020024230C388536',
           },
           {
-            rowIndex: 51,
+            rowIndex: 64,
             tag: '600',
             naturalId: 'n2016004081C388536',
           },
           {
-            rowIndex: 71,
+            rowIndex: 61,
             tag: '630',
             naturalId: 'no2023006889C388536',
           },
           {
-            rowIndex: 73,
+            rowIndex: 72,
             tag: '655',
             naturalId: 'gf2014026266C388536',
           },
           {
-            rowIndex: 84,
+            rowIndex: 83,
             tag: '700',
             naturalId: 'no2011137752C388536',
           },
           {
-            rowIndex: 86,
+            rowIndex: 85,
             tag: '700',
             naturalId: 'n77020008C388536',
           },
@@ -95,22 +95,22 @@ describe('MARC', () => {
             naturalId: 'n91065740C388536',
           },
           {
-            rowIndex: 88,
+            rowIndex: 86,
             tag: '710',
             naturalId: 'no2008081921C388536',
           },
           {
-            rowIndex: 89,
+            rowIndex: 88,
             tag: '711',
             naturalId: 'n84745425C388536',
           },
           {
-            rowIndex: 91,
+            rowIndex: 90,
             tag: '800',
             naturalId: 'n79023811C388536',
           },
           {
-            rowIndex: 94,
+            rowIndex: 93,
             tag: '830',
             naturalId: 'no2018018754C388536',
           },
@@ -118,57 +118,57 @@ describe('MARC', () => {
 
         const notMatchingNaturalIds = [
           {
-            rowIndex: 34,
+            rowIndex: 33,
             tag: '110',
             naturalId: 'no20061082779',
           },
           {
-            rowIndex: 35,
+            rowIndex: 34,
             tag: '111',
             naturalId: 'no20091764299',
           },
           {
-            rowIndex: 36,
+            rowIndex: 35,
             tag: '130',
             naturalId: 'n800269809',
           },
           {
-            rowIndex: 69,
+            rowIndex: 59,
             tag: '610',
             naturalId: 'nb20090244889',
           },
           {
-            rowIndex: 70,
+            rowIndex: 60,
             tag: '611',
             naturalId: 'n822167579',
           },
           {
-            rowIndex: 62,
+            rowIndex: 66,
             tag: '650',
             naturalId: 'sh20091259899',
           },
           {
-            rowIndex: 68,
+            rowIndex: 70,
             tag: '651',
             naturalId: 'sh850015319',
           },
           {
-            rowIndex: 85,
+            rowIndex: 84,
             tag: '700',
             naturalId: 'n831692679',
           },
           {
-            rowIndex: 90,
+            rowIndex: 89,
             tag: '730',
             naturalId: 'n790660959',
           },
           {
-            rowIndex: 92,
+            rowIndex: 91,
             tag: '810',
             naturalId: 'n800955859',
           },
           {
-            rowIndex: 93,
+            rowIndex: 92,
             tag: '811',
             naturalId: 'no20181255879',
           },
@@ -176,6 +176,9 @@ describe('MARC', () => {
 
         before('Creating user and data', () => {
           cy.getAdminToken();
+          // make sure there are no duplicate records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388536*');
+
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -245,7 +248,7 @@ describe('MARC', () => {
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(
-              82,
+              81,
               '700',
               '1',
               '\\',
@@ -255,7 +258,7 @@ describe('MARC', () => {
               '',
             );
             QuickMarcEditor.verifyTagFieldAfterLinking(
-              83,
+              82,
               '700',
               '1',
               '\\',
@@ -266,11 +269,11 @@ describe('MARC', () => {
             );
             QuickMarcEditor.checkLinkHeadingsButton();
 
-            for (let i = 82; i < 87; i++) {
+            for (let i = 81; i < 87; i++) {
               QuickMarcEditor.clickArrowDownButton(i);
             }
-            QuickMarcEditor.deleteField(83);
             QuickMarcEditor.deleteField(82);
+            QuickMarcEditor.deleteField(81);
             QuickMarcEditor.afterDeleteNotification('700');
 
             QuickMarcEditor.clickLinkHeadingsButton();
@@ -313,7 +316,7 @@ describe('MARC', () => {
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.clickRestoreDeletedField();
             QuickMarcEditor.verifyTagFieldAfterLinking(
-              82,
+              81,
               '700',
               '1',
               '\\',
@@ -323,7 +326,7 @@ describe('MARC', () => {
               '',
             );
             QuickMarcEditor.verifyTagFieldAfterUnlinking(
-              83,
+              82,
               '700',
               '1',
               '\\',
@@ -337,7 +340,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkCallout(
               'Field 110, 111, 130, 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.',
             );
-            QuickMarcEditor.verifyTagWithNaturalIdExistance(83, '700', 'n2014052262');
+            QuickMarcEditor.verifyTagWithNaturalIdExistance(82, '700', 'n2014052262');
             notMatchingNaturalIds.forEach((matchs) => {
               QuickMarcEditor.verifyTagWithNaturalIdExistance(
                 matchs.rowIndex,
@@ -350,7 +353,7 @@ describe('MARC', () => {
 
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.verifyTagFieldAfterLinking(
-              82,
+              81,
               '700',
               '1',
               '\\',

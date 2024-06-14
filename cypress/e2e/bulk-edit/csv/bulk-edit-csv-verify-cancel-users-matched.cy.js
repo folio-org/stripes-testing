@@ -6,6 +6,7 @@ import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-s
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
+import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 const invalidUserUUID = `invalidUserUUID_${uuid()}`;
@@ -94,7 +95,7 @@ describe('bulk-edit', () => {
         // BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
 
         BulkEditSearchPane.openLogsSearch();
-        BulkEditSearchPane.verifyLogsPane();
+        BulkEditLogs.verifyLogsPane();
         BulkEditSearchPane.openIdentifierSearch();
         // BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
         BulkEditSearchPane.verifyMatchedResults(user.username);

@@ -18,7 +18,7 @@ import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Title Level Request. Request Detail', () => {
+describe('Title Level Request. Request detail', () => {
   let instanceHRID;
   const unchecked = false;
   let requestId;
@@ -84,6 +84,7 @@ describe('Title Level Request. Request Detail', () => {
           instanceData.instanceId = specialInstanceIds.instanceId;
           instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
           instanceData.itemId = specialInstanceIds.holdingIds[0].itemIds;
+          cy.wait(3000);
           cy.getInstance({
             limit: 1,
             expandAll: true,
@@ -144,7 +145,7 @@ describe('Title Level Request. Request Detail', () => {
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

@@ -1,12 +1,12 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import TopMenu from '../../../support/fragments/topMenu';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import Users from '../../../support/fragments/users/users';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Log details', () => {
@@ -15,7 +15,7 @@ describe('Data Import', () => {
     const filePathToUpload = 'oneMarcBib.mrc';
     const fileName = `C423386 Default_file${getRandomPostfix()}.mrc`;
 
-    before('Create user and upload file', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         filePathToUpload,

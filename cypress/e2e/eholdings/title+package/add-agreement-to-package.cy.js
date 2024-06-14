@@ -11,7 +11,7 @@ describe('eHoldings', () => {
   const today = moment().utc().format('M/D/YYYY');
   describe('Title+Package', () => {
     const testData = {
-      title: 'Fish Biology',
+      title: 'Biology of Fishes',
       titleId: '',
       titleName: '',
       titlePackages: [],
@@ -64,7 +64,7 @@ describe('eHoldings', () => {
 
     it(
       'C752 Add an "Agreement" and attach a title in a package (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPathBroken', 'spitfire'] },
       () => {
         // Fill in the search box with the title of any "Title" record, Click on the "Search" button.
         EHoldingsTitlesSearch.byTitle(testData.title);

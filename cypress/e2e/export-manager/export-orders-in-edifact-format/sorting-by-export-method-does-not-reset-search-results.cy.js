@@ -160,7 +160,7 @@ describe('orders: export', () => {
     Orders.deleteOrderViaApi(orderForSecondOrganization.id);
     Organizations.deleteOrganizationViaApi(firstOrganization.id);
     Organizations.deleteOrganizationViaApi(secondOrganization.id);
-    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+    NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
       location.institutionId,
       location.campusId,
       location.libraryId,
@@ -179,6 +179,9 @@ describe('orders: export', () => {
       ExportManagerSearchPane.sortByJobID();
       ExportManagerSearchPane.selectJobByIntegrationInList(integrationNameForFirstOrganization);
       ExportManagerSearchPane.resetAll();
+      ExportManagerSearchPane.searchBySuccessful();
+      ExportManagerSearchPane.searchByFailed();
+      ExportManagerSearchPane.sortByJobID();
       ExportManagerSearchPane.selectJobByIntegrationInList(integrationNameForSecondOrganization);
     },
   );

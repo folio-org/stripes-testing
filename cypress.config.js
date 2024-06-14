@@ -7,6 +7,7 @@ const { rmdir, unlink } = require('fs');
 const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
+const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
 
 module.exports = defineConfig({
   retries: {
@@ -21,13 +22,16 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://folio-testing-sprint-okapi.ci.folio.org',
-    OKAPI_TENANT: 'cs00000int',
-    diku_login: 'ECSAdmin',
+    OKAPI_HOST: 'https://folio-testing-cypress-okapi.ci.folio.org',
+    EDGE_HOST: 'https://folio-testing-cypress-edge.ci.folio.org',
+    EDGE_API_KEY: '',
+    OKAPI_TENANT: 'diku',
+    diku_login: 'diku_admin',
     diku_password: 'admin',
     is_kiwi_release: false,
     downloadTimeout: 2000,
-    allure: 'true',
+    allure: true,
+    allureReuseAfterSpec: true,
     grepFilterSpecs: true,
     grepOmitFiltered: true,
     rtrAuth: true,
@@ -103,6 +107,8 @@ module.exports = defineConfig({
       if ('TESTRAIL_PROJECTID' in process.env && process.env.TESTRAIL_PROJECTID === '') {
         delete process.env.TESTRAIL_PROJECTID;
       }
+
+      registerReportPortalPlugin(on, config);
 
       // eslint-disable-next-line global-require
       const grepConfig = require('@cypress/grep/src/plugin')(config);

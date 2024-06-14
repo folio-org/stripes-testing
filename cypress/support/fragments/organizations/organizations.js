@@ -90,6 +90,7 @@ const toggleButtonIsDonor = Button({ id: 'accordion-toggle-button-isDonor' });
 const donorSection = Section({ id: 'isDonor' });
 const bankingInformationButton = Button('Banking information');
 const bankingInformationAddButton = Button({ id: 'bankingInformation-add-button' });
+const privilegedDonorInformationSection = Section({ id: 'privilegedDonorInformation' });
 
 export default {
   waitLoading: () => {
@@ -113,8 +114,25 @@ export default {
     ]);
   },
 
+  fillInInfoNewOrganization: (organization) => {
+    cy.do([
+      organizationStatus.choose(organization.status),
+      organizationNameField.fillIn(organization.name),
+      organizationCodeField.fillIn(organization.code),
+    ]);
+  },
+
+  newOrganization: () => {
+    cy.expect(buttonNew.exists());
+    cy.do(buttonNew.click());
+  },
+
   varifyAbsentOrganizationApp: () => {
     cy.expect(AppList('Organizations').absent());
+  },
+  varifyAbsentPrivilegedDonorInformationSection: () => {
+    cy.wait(4000);
+    cy.expect(privilegedDonorInformationSection.absent());
   },
   buttonNewIsAbsent: () => {
     cy.expect(Pane({ id: 'organizations-results-pane' }).find(buttonNew).absent());
@@ -145,6 +163,11 @@ export default {
     cy.expect(donorCheckbox.is({ disabled: false }));
     cy.do(donorCheckbox.click());
     cy.do(saveAndClose.click());
+  },
+
+  selectDonorCheckbox: () => {
+    cy.wait(4000);
+    cy.do(donorCheckbox.click());
   },
 
   createOrganizationWithAU: (organization, AcquisitionUnit) => {
@@ -367,9 +390,14 @@ export default {
     cy.wait(4000);
   },
 
-  checkIsDonor: (organization) => {
+  checkIsaDonor: (organization) => {
     cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
     cy.expect(summarySection.find(donorCheckbox).is({ visible: true, disabled: false }));
+  },
+
+  checkIsNotaDonor: (organization) => {
+    cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
+    cy.expect(summarySection.find(donorCheckbox).is({ visible: true, disabled: true }));
   },
 
   expectColorFromList: () => {
@@ -520,6 +548,43 @@ export default {
     InteractorsTools.checkCalloutMessage('The contact was saved');
   },
 
+  addNewDonorContact: (contact) => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-privilegedDonorInformation' }).click(),
+      privilegedDonorInformationSection.find(Button('Add donor')).click(),
+      addContacsModal.find(buttonNew).click(),
+      lastNameField.fillIn(contact.lastName),
+      firstNameField.fillIn(contact.firstName),
+      saveButtonInCotact.click(),
+    ]);
+    InteractorsTools.checkCalloutMessage('The contact was saved');
+  },
+
+  openPrivilegedDonorInformationSection: () => {
+    cy.do(Button({ id: 'accordion-toggle-button-privilegedDonorInformation' }).click());
+  },
+
+  verifyAddDonorButtonIsAbsent: () => {
+    cy.expect(Button('Add donor').absent());
+  },
+
+  addDonorContactToOrganization: (contact) => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-privilegedDonorInformation' }).click(),
+      privilegedDonorInformationSection.find(Button('Add donor')).click(),
+      addContacsModal.find(TextField({ id: 'input-record-search' })).fillIn(contact.lastName),
+      addContacsModal.find(Button('Search')).click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
+      addContacsModal
+        .find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
+        .find(Checkbox())
+        .click(),
+      addContacsModal.find(saveButton).click(),
+    ]);
+  },
+
   deleteContact: () => {
     cy.do([actionsButton.click(), deleteButton.click(), confirmButton.click()]);
   },
@@ -608,13 +673,36 @@ export default {
     cy.do(Button('Cancel').click());
   },
 
+  keepEditingOrganization: () => {
+    cy.do(
+      Modal({ id: 'cancel-editing-confirmation' })
+        .find(Button({ id: 'clickable-cancel-editing-confirmation-confirm' }))
+        .click(),
+    );
+  },
+
   checkContactIsAdd: (contact) => {
     cy.expect(
-      contactPeopleSection
+      privilegedDonorInformationSection
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .has({ content: `${contact.lastName}, ${contact.firstName}` }),
     );
+  },
+
+  checkContactIsAddToContactPeopleSection: (contact) => {
+    cy.expect(
+      Section({ id: 'contactPeopleSection' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: `${contact.lastName}, ${contact.firstName}` }),
+    );
+  },
+
+  checkDonorContactIsAdd: (contact, index = 0) => {
+    cy.get('#privilegedDonorInformation [data-row-index="row-' + index + '"]').within(() => {
+      cy.get('div[class*=mclCell-]').eq(0).contains(`${contact.lastName}, ${contact.firstName}`);
+    });
   },
 
   checkInterfaceIsAdd: (defaultInterface) => {
@@ -775,6 +863,13 @@ export default {
 
   saveOrganization: () => {
     cy.do(saveAndClose.click());
+    cy.wait(4000);
+  },
+
+  varifySaveOrganizationCalloutMessage: (organization) => {
+    InteractorsTools.checkCalloutMessage(
+      `The Organization - "${organization.name}" has been successfully saved`,
+    );
   },
 
   addBankingInformation: (bankingInformation) => {

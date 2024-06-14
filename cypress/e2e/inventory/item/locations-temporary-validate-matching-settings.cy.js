@@ -1,15 +1,15 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import { Locations } from '../../../support/fragments/settings/tenant';
+import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import settingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-import { Locations } from '../../../support/fragments/settings/tenant';
-import settingsMenu from '../../../support/fragments/settingsMenu';
 
 describe('Inventory', () => {
   describe('Item', () => {
@@ -32,7 +32,7 @@ describe('Inventory', () => {
     const service = ServicePoints.getDefaultServicePointWithPickUpLocation();
     const checkInResultsData = [ITEM_STATUS_NAMES.AVAILABLE, itemData.barcode];
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
@@ -97,7 +97,7 @@ describe('Inventory', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
       Location.deleteViaApi(location.id);
       [...Array(3)].forEach((_, index) => {
-        Location.deleteViaApiIncludingInstitutionCampusLibrary(
+        Location.deleteInstitutionCampusLibraryLocationViaApi(
           itemData.instances[index].defaultLocation.institutionId,
           itemData.instances[index].defaultLocation.campusId,
           itemData.instances[index].defaultLocation.libraryId,

@@ -1,6 +1,6 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
@@ -43,7 +43,7 @@ describe('Data Import', () => {
         subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_AUTHORITY,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_AUTHORITY,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -51,7 +51,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create user and login', () => {
+    before('Create test user and login', () => {
       // change 010$a to unique
       DataImport.editMarcFile(filePathToUpload, modifiedMarcFile, ['50033023'], [unique010$a]);
 
@@ -67,7 +67,9 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
+      // delete created files
+      FileManager.deleteFile(`cypress/fixtures/${modifiedMarcFile}`);
       cy.getAdminToken().then(() => {
         MarcAuthorities.getMarcAuthoritiesViaApi({
           limit: 100,
@@ -82,8 +84,6 @@ describe('Data Import', () => {
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
-        // delete created files
-        FileManager.deleteFile(`cypress/fixtures/${modifiedMarcFile}`);
       });
     });
 
@@ -137,7 +137,7 @@ describe('Data Import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.authority,
         ].forEach((column) => {
-          FileDetails.checkStatusInColumn(RECORD_STATUSES.BLANK, column);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.NO_ACTION, column);
         });
       },
     );

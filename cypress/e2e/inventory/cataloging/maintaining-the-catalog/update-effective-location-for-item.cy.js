@@ -22,7 +22,7 @@ describe('Inventory', () => {
     let instanceHrid;
     let user;
 
-    before(() => {
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           cy.getLoanTypes({ limit: 1 }).then((res) => {
@@ -82,7 +82,7 @@ describe('Inventory', () => {
       );
     });
 
-    afterEach(() => {
+    afterEach('Delete test data', () => {
       cy.getAdminToken().then(() => {
         cy.wrap(
           testInstanceId.holdingIds.forEach((holdingsId) => {
@@ -103,7 +103,7 @@ describe('Inventory', () => {
 
     it(
       'C3501 An item is being moved from one library location to another. Update the effective location for the item (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventoryInstance.waitInstanceRecordViewOpened(itemData.instanceTitle);

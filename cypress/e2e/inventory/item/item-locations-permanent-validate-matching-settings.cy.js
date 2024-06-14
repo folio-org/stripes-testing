@@ -1,16 +1,16 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import { Locations } from '../../../support/fragments/settings/tenant';
+import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import settingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
-import settingsMenu from '../../../support/fragments/settingsMenu';
-import { Locations } from '../../../support/fragments/settings/tenant';
 
 describe('Inventory', () => {
   describe('Item', () => {
@@ -33,7 +33,7 @@ describe('Inventory', () => {
     const service = ServicePoints.getDefaultServicePointWithPickUpLocation();
     const checkInResultsData = [ITEM_STATUS_NAMES.AVAILABLE, itemData.barcode];
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
@@ -98,7 +98,7 @@ describe('Inventory', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
       Location.deleteViaApi(location.id);
       [...Array(3)].forEach((_, index) => {
-        Location.deleteViaApiIncludingInstitutionCampusLibrary(
+        Location.deleteInstitutionCampusLibraryLocationViaApi(
           itemData.instances[index].location.institutionId,
           itemData.instances[index].location.campusId,
           itemData.instances[index].location.libraryId,

@@ -1,12 +1,12 @@
-import Permissions from '../../../../support/dictionary/permissions';
-import Users from '../../../../support/fragments/users/users';
-import TopMenu from '../../../../support/fragments/topMenu';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import Permissions from '../../../../support/dictionary/permissions';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
 
 describe('Inventory', () => {
@@ -54,12 +54,12 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      FileManager.deleteFileFromDownloadsByMask(testData.fileName);
+      FileManager.deleteFile(`cypress/fixtures/${testData.fileName}`);
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-      FileManager.deleteFileFromDownloadsByMask(testData.fileName);
-      FileManager.deleteFile(`cypress/fixtures/${testData.fileName}`);
     });
 
     it(

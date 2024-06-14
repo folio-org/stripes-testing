@@ -3,7 +3,7 @@ import uuid from 'uuid';
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   ORDER_STATUSES,
   VENDOR_NAMES,
   RECORD_STATUSES,
@@ -38,8 +38,9 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
+    const uniquePartOfInstanceTitle = `Agrarianism and capitalism in early Georgia, 1732-1743 /${getRandomPostfix()}`;
     const item = {
-      title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
+      title: `${uniquePartOfInstanceTitle} Jay Jordan Butler.`,
       productId: `xyz${getRandomPostfix()}`,
       vrn: uuid(),
       vrnType: 'Vendor order reference number',
@@ -55,7 +56,6 @@ describe('Data Import', () => {
     let materialTypeId;
     let user = null;
     let orderNumber;
-
     const instanceMappingProfileName = `C350591 Update Instance by VRN match ${getRandomPostfix()}`;
     const holdingsMappingProfileName = `C350591 Update Holdings by VRN match ${getRandomPostfix()}`;
     const itemMappingProfileName = `C350591 Update Item by VRN match ${getRandomPostfix()}`;
@@ -70,15 +70,15 @@ describe('Data Import', () => {
     const matchProfiles = [
       {
         name: instanceMatchProfileName,
-        existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+        existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       },
       {
         name: holdingsMatchProfileName,
-        existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+        existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
       },
       {
         name: itemMatchProfileName,
-        existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+        existingRecordType: EXISTING_RECORD_NAMES.ITEM,
       },
     ];
 
@@ -153,12 +153,12 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
         Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((order) => {
           Orders.deleteOrderViaApi(order[0].id);
         });
         Users.deleteViaApi(user.userId);
-        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
         // delete generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfilesData.name);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(instanceMatchProfileName);
@@ -226,8 +226,12 @@ describe('Data Import', () => {
         DataImport.editMarcFile(
           'marcFileForC350591.mrc',
           editedMarcFileName,
-          ['14567-1', 'xyzt124245271818912626262'],
-          [item.vrn, itemBarcode],
+          [
+            'Agrarianism and capitalism in early Georgia, 1732-1743 /',
+            '14567-1',
+            'xyzt124245271818912626262',
+          ],
+          [uniquePartOfInstanceTitle, item.vrn, itemBarcode],
         );
 
         // create field mapping profiles
@@ -283,7 +287,7 @@ describe('Data Import', () => {
           RECORD_STATUSES.UPDATED,
         ]);
         FileDetails.checkItemsStatusesInResultList(1, [
-          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.NO_ACTION,
           RECORD_STATUSES.NO_ACTION,
           RECORD_STATUSES.NO_ACTION,
           RECORD_STATUSES.NO_ACTION,

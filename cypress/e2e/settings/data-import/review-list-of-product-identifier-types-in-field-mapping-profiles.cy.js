@@ -9,14 +9,15 @@ describe('Data Import', () => {
   describe('Settings', () => {
     let user;
 
-    before('create user', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password);
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test user', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
       });

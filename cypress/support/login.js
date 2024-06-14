@@ -59,3 +59,19 @@ Cypress.Commands.add('loginAsUniversityAdmin', (visitPath) => {
 Cypress.Commands.add('loginAsConsortiumAdmin', (visitPath) => {
   cy.login('consortium_admin', Cypress.env('diku_password'), visitPath);
 });
+
+Cypress.Commands.add(
+  'checkSsoButton',
+  (visitPath = { path: '/', waiter: () => cy.expect(Heading(including('Welcome')).exists()) }) => {
+    // We use a behind-the-scenes method of ensuring we are logged
+    // out, rather than using the UI, in accordance with the Best
+    // Practices guidance at
+    // https://docs.cypress.io/guides/references/best-practices.html#Organizing-Tests-Logging-In-Controlling-State
+    localforage.removeItem('okapiSess');
+
+    cy.visit(visitPath.path);
+
+    // Verify that SSO button displayed
+    cy.expect([Button('Log in via SSO').exists()]);
+  },
+);

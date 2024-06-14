@@ -225,6 +225,7 @@ Cypress.Commands.add('deleteHoldingRecordViaApi', (holdingsRecordId) => {
     method: 'DELETE',
     path: `holdings-storage/holdings/${holdingsRecordId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   });
 });
 
@@ -278,6 +279,7 @@ Cypress.Commands.add('deleteItemViaApi', (itemId) => {
     method: 'DELETE',
     path: `inventory/items/${itemId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   });
 });
 
@@ -398,3 +400,13 @@ Cypress.Commands.add(
     }).then(({ body }) => cy.expect(body.status === 'IN_PROGRESS'));
   },
 );
+
+Cypress.Commands.add('getInventoryInstanceByStatus', (status) => {
+  const UpdatedUrl = encodeURI(
+    `search/instances?expandAll=true&limit=1&query=items.status.name==${status}`,
+  );
+  cy.okapiRequest({
+    path: UpdatedUrl,
+    isDefaultSearchParamsRequired: false,
+  });
+});

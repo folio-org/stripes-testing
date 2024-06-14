@@ -1,14 +1,15 @@
+import { EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-  ActionProfiles as SettingsActionProfiles,
-  FieldMappingProfiles as SettingsFieldMappingProfiles,
-  MatchProfiles as SettingsMatchProfiles,
-  NewMatchProfile,
-} from '../../../support/fragments/settings/dataImport';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import {
+  NewMatchProfile,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
@@ -16,39 +17,115 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 const abcProfile = {
   createJobProfile: `abc createJobProfile.${getRandomPostfix()}`,
-  createActionProfile: `abc autotest actionProfile${getRandomPostfix()}`,
-  createMappingProfile: `abc autotest mappingProfile${getRandomPostfix()}`,
+  createActionProfile: {
+    name: `abc autotest actionProfile${getRandomPostfix()}`,
+    action: 'CREATE',
+    folioRecordType: 'INSTANCE',
+  },
+  createMappingProfile: { name: `abc autotest mappingProfile${getRandomPostfix()}` },
   updateJobProfile: `abc updateJobProfile.${getRandomPostfix()}`,
-  updateMatchProfile: `abc updateJobProfile.${getRandomPostfix()}`,
-  updateActionProfile: `abc autotest actionProfile${getRandomPostfix()}`,
-  updateMappingProfile: `abc autotest mappingProfile${getRandomPostfix()}`,
+  updateMatchProfile: {
+    profileName: `abc updateJobProfile.${getRandomPostfix()}`,
+    incomingRecordFields: {
+      field: '001',
+      in1: '',
+      in2: '',
+      subfield: '',
+    },
+    recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+    existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+    existingMatchExpressionValue: 'instance.hrid',
+  },
+  updateActionProfile: {
+    name: `abc autotest actionProfile${getRandomPostfix()}`,
+    action: 'UPDATE',
+    folioRecordType: 'INSTANCE',
+  },
+  updateMappingProfile: { name: `abc autotest mappingProfile${getRandomPostfix()}` },
 };
 const adcProfile = {
   createJobProfile: `adc createJobProfile.${getRandomPostfix()}`,
-  createActionProfile: `adc autotest actionProfile${getRandomPostfix()}`,
-  createMappingProfile: `adc autotest mappingProfile${getRandomPostfix()}`,
+  createActionProfile: {
+    name: `adc autotest actionProfile${getRandomPostfix()}`,
+    action: 'CREATE',
+    folioRecordType: 'INSTANCE',
+  },
+  createMappingProfile: { name: `adc autotest mappingProfile${getRandomPostfix()}` },
   updateJobProfile: `adc updateJobProfile.${getRandomPostfix()}`,
-  updateMatchProfile: `abc updateJobProfile.${getRandomPostfix()}`,
-  updateActionProfile: `adc autotest actionProfile${getRandomPostfix()}`,
-  updateMappingProfile: `adc autotest mappingProfile${getRandomPostfix()}`,
+  updateMatchProfile: {
+    profileName: `abc updateJobProfile.${getRandomPostfix()}`,
+    incomingRecordFields: {
+      field: '001',
+      in1: '',
+      in2: '',
+      subfield: '',
+    },
+    recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+    existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+    existingMatchExpressionValue: 'instance.hrid',
+  },
+  updateActionProfile: {
+    name: `adc autotest actionProfile${getRandomPostfix()}`,
+    action: 'UPDATE',
+    folioRecordType: 'INSTANCE',
+  },
+  updateMappingProfile: { name: `adc autotest mappingProfile${getRandomPostfix()}` },
 };
 const zbcProfile = {
   createJobProfile: `zbc createJobProfile.${getRandomPostfix()}`,
-  createActionProfile: `zbc autotest actionProfile${getRandomPostfix()}`,
-  createMappingProfile: `zbc autotest mappingProfile${getRandomPostfix()}`,
+  createActionProfile: {
+    name: `zbc autotest actionProfile${getRandomPostfix()}`,
+    action: 'CREATE',
+    folioRecordType: 'INSTANCE',
+  },
+  createMappingProfile: { name: `zbc autotest mappingProfile${getRandomPostfix()}` },
   updateJobProfile: `zbc updateJobProfile.${getRandomPostfix()}`,
-  updateMatchProfile: `abc updateJobProfile.${getRandomPostfix()}`,
-  updateActionProfile: `zbc autotest actionProfile${getRandomPostfix()}`,
-  updateMappingProfile: `zbc autotest mappingProfile${getRandomPostfix()}`,
+  updateMatchProfile: {
+    profileName: `abc updateJobProfile.${getRandomPostfix()}`,
+    incomingRecordFields: {
+      field: '001',
+      in1: '',
+      in2: '',
+      subfield: '',
+    },
+    recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+    existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+    existingMatchExpressionValue: 'instance.hrid',
+  },
+  updateActionProfile: {
+    name: `zbc autotest actionProfile${getRandomPostfix()}`,
+    action: 'UPDATE',
+    folioRecordType: 'INSTANCE',
+  },
+  updateMappingProfile: { name: `zbc autotest mappingProfile${getRandomPostfix()}` },
 };
 const zdcProfile = {
   createJobProfile: `zdc createJobProfile.${getRandomPostfix()}`,
-  createActionProfile: `zdc autotest actionProfile${getRandomPostfix()}`,
-  createMappingProfile: `zdc autotest mappingProfile${getRandomPostfix()}`,
+  createActionProfile: {
+    name: `zdc autotest actionProfile${getRandomPostfix()}`,
+    action: 'CREATE',
+    folioRecordType: 'INSTANCE',
+  },
+  createMappingProfile: { name: `zdc autotest mappingProfile${getRandomPostfix()}` },
   updateJobProfile: `zdc updateJobProfile.${getRandomPostfix()}`,
-  updateMatchProfile: `abc updateJobProfile.${getRandomPostfix()}`,
-  updateActionProfile: `zdc autotest actionProfile${getRandomPostfix()}`,
-  updateMappingProfile: `zdc autotest mappingProfile${getRandomPostfix()}`,
+  updateMatchProfile: {
+    profileName: `abc updateJobProfile.${getRandomPostfix()}`,
+    incomingRecordFields: {
+      field: '001',
+      in1: '',
+      in2: '',
+      subfield: '',
+    },
+    recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+    existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+    existingMatchExpressionValue: 'instance.hrid',
+  },
+  updateActionProfile: {
+    name: `zdc autotest actionProfile${getRandomPostfix()}`,
+    action: 'UPDATE',
+    folioRecordType: 'INSTANCE',
+  },
+  updateMappingProfile: { name: `zdc autotest mappingProfile${getRandomPostfix()}` },
 };
 
 describe('Inventory', () => {
@@ -59,52 +136,51 @@ describe('Inventory', () => {
     const targetProfileName = `C374176 autotest profile${getRandomPostfix()}`;
     let profileId;
 
-    before('login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           // create job profiles for create
           [zbcProfile, adcProfile, zdcProfile, abcProfile].forEach((profile) => {
-            NewFieldMappingProfile.createMappingProfileViaApi(profile.createMappingProfile).then(
-              (mappingProfileResponse) => {
-                NewActionProfile.createActionProfileViaApi(
-                  profile.createActionProfile,
-                  mappingProfileResponse.body.id,
-                )
-                  .then((actionProfileResponse) => {
-                    NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
-                      profile.createJobProfile,
-                      actionProfileResponse.body.id,
-                    );
-                  })
-                  .then((id) => createJobProfileIds.push(id));
-              },
-            );
+            NewFieldMappingProfile.createInstanceMappingProfileViaApi(
+              profile.createMappingProfile,
+            ).then((mappingProfileResponse) => {
+              NewActionProfile.createActionProfileViaApi(
+                profile.createActionProfile,
+                mappingProfileResponse.body.id,
+              )
+                .then((actionProfileResponse) => {
+                  NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
+                    profile.createJobProfile,
+                    actionProfileResponse.body.id,
+                  );
+                })
+                .then((id) => createJobProfileIds.push(id));
+            });
           });
           // create job profile for update
           [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach((profile) => {
-            NewFieldMappingProfile.createMappingProfileViaApi(profile.updateMappingProfile).then(
-              (mappingProfileResponse) => {
-                NewActionProfile.createActionProfileViaApi(
-                  profile.updateActionProfile,
-                  mappingProfileResponse.body.id,
-                  'UPDATE',
-                )
-                  .then((actionProfileResponse) => {
-                    NewMatchProfile.createMatchProfileViaApi(profile.updateMatchProfile).then(
-                      (matchProfileResponse) => {
-                        NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
-                          profile.updateJobProfile,
-                          matchProfileResponse.body.id,
-                          actionProfileResponse.body.id,
-                        );
-                      },
+            NewFieldMappingProfile.createInstanceMappingProfileViaApi(
+              profile.updateMappingProfile,
+            ).then((mappingProfileResponse) => {
+              NewActionProfile.createActionProfileViaApi(
+                profile.updateActionProfile,
+                mappingProfileResponse.body.id,
+              )
+                .then((actionProfileResponse) => {
+                  NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(
+                    profile.updateMatchProfile,
+                  ).then((matchProfileResponse) => {
+                    NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+                      profile.updateJobProfile,
+                      matchProfileResponse.body.id,
+                      actionProfileResponse.body.id,
                     );
-                  })
-                  .then((id) => {
-                    updateJobProfileIds.push(id);
                   });
-              },
-            );
+                })
+                .then((id) => {
+                  updateJobProfileIds.push(id);
+                });
+            });
           });
         })
         .then(() => {
@@ -127,7 +203,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach((profile) => {
           SettingsJobProfiles.deleteJobProfileByNameViaApi(profile.createJobProfile);

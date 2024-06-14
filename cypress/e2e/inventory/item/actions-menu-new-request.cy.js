@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -12,7 +13,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('Inventory', () => {
   describe('Item', () => {
@@ -22,7 +22,7 @@ describe('Inventory', () => {
       instanceTitle: `autotestInstance ${getRandomPostfix()}`,
     };
 
-    before('create test data and login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
@@ -167,7 +167,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         cy.getInstance({
@@ -189,15 +189,15 @@ describe('Inventory', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         [
-          'Available',
-          'On order',
-          'In process',
-          'Checked out',
-          'In transit',
-          'Awaiting pickup',
-          'Awaiting delivery',
-          'Missing',
-          'Paged',
+          ITEM_STATUS_NAMES.AVAILABLE,
+          ITEM_STATUS_NAMES.ON_ORDER,
+          ITEM_STATUS_NAMES.IN_PROCESS,
+          ITEM_STATUS_NAMES.CHECKED_OUT,
+          ITEM_STATUS_NAMES.IN_TRANSIT,
+          ITEM_STATUS_NAMES.AWAITING_PICKUP,
+          ITEM_STATUS_NAMES.AWAITING_DELIVERY,
+          ITEM_STATUS_NAMES.MISSING,
+          ITEM_STATUS_NAMES.PAGED,
         ].forEach((itemStatus) => {
           InventoryHoldings.checkIfExpanded(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`, true);
           InventoryInstance.openItemByStatus(itemStatus);
@@ -214,17 +214,21 @@ describe('Inventory', () => {
           InstanceRecordView.verifyInstanceRecordViewOpened();
         });
 
-        ['Declared lost', 'Claimed returned', 'Lost and paid', 'Withdrawn', 'Order closed'].forEach(
-          (itemStatus) => {
-            cy.visit(TopMenu.inventoryPath);
-            InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
-            InstanceRecordView.verifyInstanceRecordViewOpened();
-            InventoryHoldings.checkIfExpanded(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`, true);
-            InventoryInstance.openItemByStatus(itemStatus);
-            InventoryItems.openActions();
-            InventoryItems.verifyNewRequestButtonIsAbsent();
-          },
-        );
+        [
+          ITEM_STATUS_NAMES.DECLARED_LOST,
+          ITEM_STATUS_NAMES.CLAIMED_RETURNED,
+          ITEM_STATUS_NAMES.LOST_AND_PAID,
+          ITEM_STATUS_NAMES.WITHDRAWN,
+          ITEM_STATUS_NAMES.ORDER_CLOSED,
+        ].forEach((itemStatus) => {
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
+          InstanceRecordView.verifyInstanceRecordViewOpened();
+          InventoryHoldings.checkIfExpanded(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`, true);
+          InventoryInstance.openItemByStatus(itemStatus);
+          InventoryItems.openActions();
+          InventoryItems.verifyNewRequestButtonIsAbsent();
+        });
       },
     );
   });

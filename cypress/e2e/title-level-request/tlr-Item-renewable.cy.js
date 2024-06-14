@@ -194,9 +194,16 @@ describe('TLR: Item renew', () => {
 
   beforeEach('Checkout items', () => {
     cy.getAdminToken();
+    cy.wait(3000);
     cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceData.instanceId}"` }).then(
       (instance) => {
         instanceHRID = instance.hrid;
+
+        if (instance.hrid === undefined) {
+          cy.log('Instance HRID is generated successfully').then(() => {
+            throw new Error('Instance HRID is not generated');
+          });
+        }
       },
     );
     cy.wrap(instanceData.itemsData).as('items');
@@ -233,7 +240,7 @@ describe('TLR: Item renew', () => {
     Users.deleteViaApi(userForRenew.userId);
     Users.deleteViaApi(userForCheckOut.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
@@ -300,7 +307,7 @@ describe('TLR: Item renew', () => {
 
   it(
     'C360534 TLR: Check that Item assigned to recall is not renewable (vega)',
-    { tags: ['criticalPathBroken', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.getToken(userForRenew.username, userForRenew.password);
       cy.visit(TopMenu.requestsPath);

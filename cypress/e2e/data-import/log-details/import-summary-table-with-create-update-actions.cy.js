@@ -2,7 +2,7 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
   CALL_NUMBER_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   EXPORT_TRANSFORMATION_NAMES,
   FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
@@ -41,6 +41,7 @@ import NewMatchProfile from '../../../support/fragments/settings/dataImport/matc
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -198,7 +199,7 @@ describe('Data Import', () => {
             in2: '',
             subfield: '',
           },
-          recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+          recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
         },
       },
       {
@@ -210,8 +211,8 @@ describe('Data Import', () => {
             in2: '',
             subfield: 'h',
           },
-          recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
-          existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+          recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+          existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
           existingMatchExpressionValue: 'holdingsrecord.hrid',
         },
       },
@@ -224,8 +225,8 @@ describe('Data Import', () => {
             in2: '',
             subfield: 'i',
           },
-          recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
-          existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+          recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+          existingRecordType: EXISTING_RECORD_NAMES.ITEM,
           existingMatchExpressionValue: 'item.hrid',
         },
       },
@@ -236,7 +237,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create and login user', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -254,7 +255,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${fileNameWithUpdatedContent}`);
@@ -393,7 +394,13 @@ describe('Data Import', () => {
           collectionOfProfilesForCreate[0].mappingProfile.modifications.data,
         );
         InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        // need to create a new file with instance UUID because tests are runing in multiple threads
+        cy.intercept('/search/instances/ids**').as('getIds');
+        cy.wait('@getIds', getLongDelay()).then((req) => {
+          const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
+
+          FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID);
+        });
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);

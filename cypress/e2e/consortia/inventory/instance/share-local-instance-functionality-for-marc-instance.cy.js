@@ -20,7 +20,8 @@ describe('Inventory', () => {
     const testData = {};
 
     before('Create test data', () => {
-      cy.getAdminToken();
+      cy.setTenant(Affiliations.College);
+      cy.getCollegeAdminToken();
       DataImport.uploadFileViaApi(
         marcFile.marc,
         marcFile.fileNameImported,
@@ -30,13 +31,17 @@ describe('Inventory', () => {
       });
 
       cy.resetTenant();
-      cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.uiInventoryViewCreateInstances.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+      ]).then((userProperties) => {
         testData.user = userProperties;
         cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
         cy.setTenant(Affiliations.College);
         cy.assignPermissionsToExistingUser(testData.user.userId, [
           Permissions.uiInventoryViewCreateInstances.gui,
           Permissions.consortiaInventoryShareLocalInstance.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]);
       });
     });
@@ -63,7 +68,6 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-
         InventoryInstance.clickShareLocalInstanceButton();
         InventoryInstance.verifyShareInstanceModal(marcFile.title);
         InventoryInstance.closeShareInstanceModal();

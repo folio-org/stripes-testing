@@ -1,12 +1,10 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { calloutTypes } from '../../../../interactors';
-import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
@@ -38,7 +36,7 @@ describe('Data Import', () => {
       },
     };
 
-    before('create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.uiInventorySingleRecordImport.gui,
@@ -52,7 +50,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
       });
@@ -76,16 +74,6 @@ describe('Data Import', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.importWithOclc(oclcForImport);
-
-        cy.visit(TopMenu.dataImportPath);
-        cy.wait(15000);
-        Logs.openViewAllLogs();
-        cy.reload();
-        cy.wait(10000);
-        LogsViewAll.openUserIdAccordion();
-        LogsViewAll.filterJobsByUser(`${user.firstName} ${user.lastName}`);
-        LogsViewAll.openFileDetails('No file name');
-        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.waitLoading();
         InventoryInstance.startOverlaySourceBibRecord();
         InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();

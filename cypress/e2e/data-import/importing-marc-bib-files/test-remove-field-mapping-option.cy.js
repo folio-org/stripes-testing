@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 import {
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
@@ -108,7 +108,7 @@ describe('Data Import', () => {
             subfield: 'a',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+          existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
           holdingsOption: NewMatchProfile.optionsList.holdingsHrid,
         },
       },
@@ -120,7 +120,7 @@ describe('Data Import', () => {
             subfield: 'a',
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+          existingRecordType: EXISTING_RECORD_NAMES.ITEM,
           itemOption: NewMatchProfile.optionsList.barcode,
         },
       },
@@ -159,14 +159,17 @@ describe('Data Import', () => {
       profileName: `C17033 update job profile_${getRandomPostfix()}`,
     };
 
-    before('login', () => {
+    before('Login', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
+      // delete created files
+      FileManager.deleteFile(`cypress/fixtures/${marcFileNameForCreate}`);
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
         // delete profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
@@ -188,9 +191,6 @@ describe('Data Import', () => {
         });
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
       });
-      // delete created files
-      FileManager.deleteFile(`cypress/fixtures/${marcFileNameForCreate}`);
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     });
 
     it(

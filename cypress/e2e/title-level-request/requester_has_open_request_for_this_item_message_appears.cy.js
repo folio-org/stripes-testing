@@ -115,7 +115,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
         requestId = intercept.response.body.id;
         cy.location('pathname').should('eq', `/requests/view/${requestId}`);
       });
-      Requests.closePane('Request Detail');
+      Requests.closePane('Request detail');
     });
   });
 
@@ -127,7 +127,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

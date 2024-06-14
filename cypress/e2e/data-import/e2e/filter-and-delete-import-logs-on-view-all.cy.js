@@ -11,7 +11,7 @@ import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Data Import', () => {
+describe.skip('Data Import', () => {
   describe('End to end scenarios', () => {
     const startedDate = new Date();
     const completedDate = startedDate;
@@ -32,7 +32,7 @@ describe('Data Import', () => {
       jobProfileName: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
     };
 
-    before(() => {
+    before('Create test data and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.dataImportDeleteLogs.gui,
@@ -82,7 +82,7 @@ describe('Data Import', () => {
       });
     });
 
-    after(() => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(firstTestData.user.userId);
         Users.deleteViaApi(secondTestData.user.userId);

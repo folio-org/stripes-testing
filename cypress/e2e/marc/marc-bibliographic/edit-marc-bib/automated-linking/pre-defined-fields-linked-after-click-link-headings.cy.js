@@ -38,7 +38,7 @@ describe('MARC', () => {
 
         const linkingTagAndValues = [
           {
-            rowIndex: 70,
+            rowIndex: 69,
             value: 'C389486 Superheroes',
             tag: 650,
             boxSecond: '\\',
@@ -49,7 +49,7 @@ describe('MARC', () => {
             boxSeventh: '$2 fast',
           },
           {
-            rowIndex: 85,
+            rowIndex: 84,
             value: 'C389486 Sabino, Joe',
             tag: 700,
             boxSecond: '1',
@@ -63,102 +63,102 @@ describe('MARC', () => {
 
         const fields = [
           {
-            rowIndex: 33,
+            rowIndex: 32,
             tag: '100',
             naturalId: 'n2008001084C389486',
           },
           {
-            rowIndex: 34,
+            rowIndex: 33,
             tag: '110',
             naturalId: 'no2006108277C389486',
           },
           {
-            rowIndex: 35,
+            rowIndex: 34,
             tag: '111',
             naturalId: 'no2009176429C389486',
           },
           {
-            rowIndex: 36,
+            rowIndex: 35,
             tag: '130',
             naturalId: 'n80026980C389486',
           },
           {
-            rowIndex: 37,
+            rowIndex: 36,
             tag: '240',
             naturalId: 'no2020024230C389486',
           },
           {
-            rowIndex: 65,
+            rowIndex: 64,
             tag: '600',
             naturalId: 'n2016004081C389486',
           },
           {
-            rowIndex: 60,
+            rowIndex: 59,
             tag: '610',
             naturalId: 'nb2009024488C389486',
           },
           {
-            rowIndex: 61,
+            rowIndex: 60,
             tag: '611',
             naturalId: 'n82216757C389486',
           },
           {
-            rowIndex: 62,
+            rowIndex: 61,
             tag: '630',
             naturalId: 'no2023006889C389486',
           },
           {
-            rowIndex: 67,
+            rowIndex: 66,
             tag: '650',
             naturalId: 'sh2009125989C389486',
           },
           {
-            rowIndex: 71,
+            rowIndex: 70,
             tag: '651',
             naturalId: 'sh85001531C389486',
           },
           {
-            rowIndex: 73,
+            rowIndex: 72,
             tag: '655',
             naturalId: 'gf2014026266C389486',
           },
           {
-            rowIndex: 86,
+            rowIndex: 85,
             tag: '700',
             naturalId: 'n83169267C389486',
           },
           {
-            rowIndex: 88,
+            rowIndex: 87,
             tag: '710',
             naturalId: 'no2008081921C389486',
           },
           {
-            rowIndex: 89,
+            rowIndex: 88,
             tag: '711',
             naturalId: 'n  84745425C389486',
           },
           {
-            rowIndex: 90,
+            rowIndex: 89,
             tag: '730',
             naturalId: 'n79066095C389486',
           },
           {
-            rowIndex: 91,
+            rowIndex: 90,
             tag: '800',
             naturalId: 'n79023811C389486',
           },
           {
-            rowIndex: 92,
+            rowIndex: 91,
             tag: '810',
             naturalId: 'n80095585C389486',
           },
           {
-            rowIndex: 93,
+            rowIndex: 92,
             tag: '811',
             naturalId: 'no2018125587C389486',
           },
           {
-            rowIndex: 94,
+            rowIndex: 93,
             tag: '830',
             naturalId: 'no2018018754C389486',
           },
@@ -170,7 +170,7 @@ describe('MARC', () => {
           100, 110, 111, 130, 240, 700, 710, 711, 730, 800, 810, 811, 830,
         ];
         const autoLinkingDisabledFields = [600, 610, 611, 630, 650, 651, 655];
-        const rowIndexOfLinkedFields = [33, 34, 35, 36, 37, 86, 88, 89, 90, 91, 92, 93, 94];
+        const rowIndexOfLinkedFields = [32, 33, 34, 35, 36, 85, 87, 88, 89, 90, 91, 92, 93];
 
         before('Creating user and data', () => {
           cy.getAdminToken();
@@ -266,6 +266,7 @@ describe('MARC', () => {
               fields[0].tag,
               '$a Coates, Ta-Nehisi, $e author. $0n2008001084C389486',
             );
+            cy.wait(1000);
             QuickMarcEditor.clickLinkHeadingsButton();
             // need to wait until message appear
             cy.wait(2000);
@@ -289,6 +290,7 @@ describe('MARC', () => {
             });
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.updateExistingField(fields[14].tag, '$a Delaware $0 n84745425C389486');
+            cy.wait(1000);
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout('Field 711 has been linked to MARC authority record(s).');
             QuickMarcEditor.clickSaveAndKeepEditing();

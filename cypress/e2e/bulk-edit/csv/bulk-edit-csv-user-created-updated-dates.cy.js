@@ -7,6 +7,7 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import Users from '../../../support/fragments/users/users';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import DateTools from '../../../support/utils/dateTools';
+import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
 let updatedDate;
@@ -53,7 +54,7 @@ describe('bulk-edit', () => {
 
     it(
       'C411714 Verify that "Created date" and "Updated date" fields are system updated in User Bulk edit (Local approach) (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
@@ -122,25 +123,25 @@ describe('bulk-edit', () => {
         );
 
         BulkEditSearchPane.openLogsSearch();
-        BulkEditSearchPane.verifyLogsPane();
-        BulkEditSearchPane.checkUsersCheckbox();
+        BulkEditLogs.verifyLogsPane();
+        BulkEditLogs.checkUsersCheckbox();
 
-        BulkEditSearchPane.clickActionsRunBy(user.username);
-        BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
-        BulkEditSearchPane.downloadFileUsedToTrigger();
+        BulkEditLogs.clickActionsRunBy(user.username);
+        BulkEditLogs.verifyLogsRowActionWhenCompleted();
+        BulkEditLogs.downloadFileUsedToTrigger();
         ExportFile.verifyFileIncludes(userUUIDsFileName, [user.userId]);
 
-        BulkEditSearchPane.downloadFileWithMatchingRecords();
+        BulkEditLogs.downloadFileWithMatchingRecords();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, ['Date of birth', userColumns]);
 
-        BulkEditSearchPane.downloadFileWithProposedChanges();
+        BulkEditLogs.downloadFileWithProposedChanges();
         ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, [
           'Date of birth',
           userColumns,
           newName,
         ]);
 
-        BulkEditSearchPane.downloadFileWithUpdatedRecords();
+        BulkEditLogs.downloadFileWithUpdatedRecords();
         ExportFile.verifyFileIncludes(updatedRecordsFileName, [
           'Date Of Birth',
           userColumns,

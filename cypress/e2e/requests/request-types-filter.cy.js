@@ -75,13 +75,14 @@ describe('ui-requests: Make sure that request type filters are working properly'
 
   it(
     'C540 Make sure that request type filters are working properly (vega)',
-    { tags: ['smoke', 'vega', 'system'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       // Apply filters and test that the appropriate results display
       requests.forEach(({ requestType }) => {
+        // eslint-disable-next-line spaced-comment
+        //Requests.waitUIFilteredByRequestType();
         Requests.checkRequestType(requestType);
-        Requests.waitUIFilteredByRequestType();
         Requests.verifyIsFilteredByRequestType(requestType);
         Requests.resetAllFilters();
       });
@@ -97,7 +98,8 @@ describe('ui-requests: Make sure that request type filters are working properly'
       // Navigate to other apps and back to ensure the filters are saved
       requests.forEach(({ requestType }) => {
         Requests.checkRequestType(requestType);
-        Requests.waitUIFilteredByRequestType();
+        // eslint-disable-next-line spaced-comment
+        //Requests.waitUIFilteredByRequestType();
         Requests.verifyIsFilteredByRequestType(requestType);
         Requests.navigateToApp('Data export');
         cy.expect(Pane({ title: 'Logs' }).exists());
@@ -117,7 +119,8 @@ describe('ui-requests: Make sure that request type filters are working properly'
       // Test that filters and search terms work well together
       requests.forEach(({ requestType, instance: { title } }) => {
         Requests.checkRequestType(requestType);
-        Requests.waitUIFilteredByRequestType();
+        // eslint-disable-next-line spaced-comment
+        //Requests.waitUIFilteredByRequestType();
         Requests.findCreatedRequest(title);
         Requests.verifyCreatedRequest(title);
         Requests.resetAllFilters();

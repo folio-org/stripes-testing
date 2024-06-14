@@ -10,6 +10,9 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../support/constants';
+import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 
 Cypress.on('uncaught:exception', () => false);
 
@@ -49,40 +52,68 @@ describe('orders: Edifact export', () => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
         location = res;
+
+        MaterialTypes.createMaterialTypeViaApi(MaterialTypes.getDefaultMaterialType()).then(
+          (mtypes) => {
+            cy.getAcquisitionMethodsApi({
+              query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE}"`,
+            }).then((params) => {
+              Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+                organization.id = organizationsResponse;
+                order.vendor = organizationsResponse;
+                const firstOrderLine = {
+                  ...BasicOrderLine.defaultOrderLine,
+                  cost: {
+                    listUnitPrice: 100.0,
+                    currency: 'USD',
+                    discountType: 'percentage',
+                    quantityPhysical: 1,
+                    poLineEstimatedPrice: 100.0,
+                  },
+                  fundDistribution: [],
+                  locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
+                  acquisitionMethod: params.body.acquisitionMethods[0].id,
+                  physical: {
+                    createInventory: 'Instance, Holding, Item',
+                    materialType: mtypes.body.id,
+                    materialSupplier: organizationsResponse,
+                    volumes: [],
+                  },
+                };
+                cy.loginAsAdmin({
+                  path: TopMenu.organizationsPath,
+                  waiter: Organizations.waitLoading,
+                });
+                Organizations.searchByParameters('Name', organization.name);
+                Organizations.checkSearchResults(organization);
+                Organizations.selectOrganization(organization.name);
+                Organizations.addIntegration();
+                Organizations.fillIntegrationInformation(
+                  integrationName1,
+                  integartionDescription1,
+                  vendorEDICodeFor1Integration,
+                  libraryEDICodeFor1Integration,
+                  organization.accounts[0].accountNo,
+                  'Purchase',
+                  UTCTime,
+                );
+
+                cy.createOrderApi(order).then((firstOrderResponse) => {
+                  orderNumber = firstOrderResponse.body.poNumber;
+                  firstOrderLine.purchaseOrderId = firstOrderResponse.body.id;
+
+                  OrderLines.createOrderLineViaApi(firstOrderLine);
+                  Orders.updateOrderViaApi({
+                    ...firstOrderResponse.body,
+                    workflowStatus: ORDER_STATUSES.OPEN,
+                  });
+                });
+              });
+            });
+          },
+        );
       });
     });
-
-    Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-      organization.id = organizationsResponse;
-      order.vendor = organizationsResponse;
-    });
-    cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.checkSearchResults(organization);
-    Organizations.selectOrganization(organization.name);
-    Organizations.addIntegration();
-    Organizations.fillIntegrationInformation(
-      integrationName1,
-      integartionDescription1,
-      vendorEDICodeFor1Integration,
-      libraryEDICodeFor1Integration,
-      organization.accounts[0].accountNo,
-      'Purchase',
-      UTCTime,
-    );
-
-    cy.createOrderApi(order).then((response) => {
-      orderNumber = response.body.poNumber;
-      cy.visit(TopMenu.ordersPath);
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-      OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-    });
-
     cy.createTempUser([permissions.uiOrdersView.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
@@ -100,7 +131,7 @@ describe('orders: Edifact export', () => {
     cy.wait(6000);
     Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
-    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+    NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
       location.institutionId,
       location.campusId,
       location.libraryId,

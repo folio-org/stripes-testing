@@ -2,7 +2,7 @@ import uuid from 'uuid';
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   LOCATION_NAMES,
@@ -38,6 +38,7 @@ import NewMatchProfile from '../../../support/fragments/settings/dataImport/matc
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -61,7 +62,7 @@ describe('Data Import', () => {
       subfieldForItem: '$i',
     };
 
-    before('create test data', () => {
+    before('Create test data', () => {
       cy.getAdminToken();
       cy.loginAsAdmin()
         .then(() => {
@@ -161,7 +162,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });
@@ -212,7 +213,7 @@ describe('Data Import', () => {
                 field: '001',
               },
               matchCriterion: 'Exactly matches',
-              existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+              existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
               instanceOption: NewMatchProfile.optionsList.instanceHrid,
             },
           },
@@ -224,7 +225,7 @@ describe('Data Import', () => {
                 subfield: 'h',
               },
               matchCriterion: 'Exactly matches',
-              existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+              existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
               holdingsOption: NewMatchProfile.optionsList.holdingsHrid,
             },
           },
@@ -236,7 +237,7 @@ describe('Data Import', () => {
                 subfield: 'i',
               },
               matchCriterion: 'Exactly matches',
-              existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+              existingRecordType: EXISTING_RECORD_NAMES.ITEM,
               itemOption: NewMatchProfile.optionsList.itemHrid,
             },
           },
@@ -326,7 +327,13 @@ describe('Data Import', () => {
         InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(csvFileName, 'SearchInstanceUUIDs*');
+        // need to create a new file with instance UUID because tests are runing in multiple threads
+        cy.intercept('/search/instances/ids**').as('getIds');
+        cy.wait('@getIds', getLongDelay()).then((req) => {
+          const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
+
+          FileManager.createFile(`cypress/fixtures/${csvFileName}`, expectedUUID[0]);
+        });
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);
@@ -453,7 +460,7 @@ describe('Data Import', () => {
                 subfield: 'h',
               },
               matchCriterion: 'Exactly matches',
-              existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+              existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
               holdingsOption: NewMatchProfile.optionsList.holdingsHrid,
             },
           },
@@ -465,7 +472,7 @@ describe('Data Import', () => {
                 subfield: 'i',
               },
               matchCriterion: 'Exactly matches',
-              existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+              existingRecordType: EXISTING_RECORD_NAMES.ITEM,
               itemOption: NewMatchProfile.optionsList.itemHrid,
             },
           },
@@ -550,7 +557,13 @@ describe('Data Import', () => {
         InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(csvFileName, 'SearchInstanceUUIDs*');
+        // need to create a new file with instance UUID because tests are runing in multiple threads
+        cy.intercept('/search/instances/ids**').as('getIds');
+        cy.wait('@getIds', getLongDelay()).then((req) => {
+          const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
+
+          FileManager.createFile(`cypress/fixtures/${csvFileName}`, expectedUUID[0]);
+        });
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);

@@ -49,6 +49,7 @@ export default {
 
   clickItemBarcodeLink(barcode) {
     cy.do(Link(barcode).click());
+    cy.wait(500);
     this.verifyInventoryDetailsPage(barcode);
   },
 
@@ -104,6 +105,7 @@ export default {
     cy.do(Button('Requester look-up').click());
     this.checkModalExists(true);
     this.filterRequesterLookup(patronGroupName);
+    cy.wait(1000);
     this.selectUser(username);
     this.checkModalExists(false);
     this.verifyRequesterDetailsPopulated(username, patronGroupName);
@@ -111,9 +113,12 @@ export default {
 
   saveAndClose(servicePointName = 'Circ Desk 1') {
     newRequest.chooseRequestType(REQUEST_TYPES.PAGE);
+    cy.wait(500);
     Requests.verifyFulfillmentPreference();
     newRequest.choosePickupServicePoint(servicePointName);
+    cy.wait(500);
     newRequest.saveRequestAndClose();
+    cy.wait(500);
     Requests.verifyRequestsPage();
     this.verifyNewRequest();
   },

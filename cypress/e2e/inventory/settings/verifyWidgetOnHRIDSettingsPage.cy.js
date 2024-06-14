@@ -4,11 +4,11 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Settings', () => {
     const testData = {};
 
-    before('Create test data', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.uiUsersView.gui,
         Permissions.uiSettingsHRIDHandlingCreateEditDelete.gui,
@@ -18,12 +18,13 @@ describe('Inventory', () => {
       });
     });
 
-    after('Delete test data', () => {
+    after('Delete user', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(testData.user.userId);
       });
     });
 
+    // this test we can't run in parallel, so it is skipped and moved to manual
     it(
       'C369055 Verify created/updated by widget on HRID Settings page (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
@@ -38,12 +39,14 @@ describe('Inventory', () => {
         // uncheck first, since this checkbox can be checked by default
         HridHandling.uncheckRemoveLeadingZeroesIfCheckedAndSave();
         HridHandling.checkRemoveLeadingZeroesAndSave();
+
         let date = DateTools.getFormattedDateWithTime(new Date(), { withSpace: true });
         // wait, because next steps can be failed without it
         cy.wait(5000);
         HridHandling.verifyValueInRecordDetailsSection(testData.user.username);
         HridHandling.verifyValueInRecordDetailsSection(date);
         HridHandling.uncheckRemoveLeadingZeroesAndSave();
+
         date = DateTools.getFormattedDateWithTime(new Date(), { withSpace: true });
         HridHandling.verifyValueInRecordDetailsSection(testData.user.username);
         HridHandling.verifyValueInRecordDetailsSection(date);

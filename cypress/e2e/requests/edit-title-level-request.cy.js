@@ -124,24 +124,29 @@ describe('Title Level Request', () => {
   });
 
   after('Delete New Service point, Item and User', () => {
-    cy.getAdminToken();
-    Requests.deleteRequestViaApi(requestId);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint1.id]);
-    Users.deleteViaApi(userData.userId);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
-      defaultLocation.institutionId,
-      defaultLocation.campusId,
-      defaultLocation.libraryId,
-      defaultLocation.id,
-    );
-    ServicePoints.deleteViaApi(servicePoint1.id);
-    ServicePoints.deleteViaApi(servicePoint2.id);
+    try {
+      cy.getAdminToken();
+      Requests.deleteRequestViaApi(requestId);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
+      UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint1.id]);
+      Users.deleteViaApi(userData.userId);
+      Location.deleteInstitutionCampusLibraryLocationViaApi(
+        defaultLocation.institutionId,
+        defaultLocation.campusId,
+        defaultLocation.libraryId,
+        defaultLocation.id,
+      );
+      ServicePoints.deleteViaApi(servicePoint1.id);
+      ServicePoints.deleteViaApi(servicePoint2.id);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e);
+    }
   });
 
   it(
     'C350559 Check that the user can Edit request (Title level request) (vega)',
-    { tags: ['criticalPathBroken', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();

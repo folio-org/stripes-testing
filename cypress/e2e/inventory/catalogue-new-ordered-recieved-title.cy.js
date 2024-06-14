@@ -39,7 +39,7 @@ describe('Inventory', () => {
     );
     let userId;
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       InventoryInteractionsDefaults.getConfigurationInventoryInteractions({
         query: '(module==ORDERS and configName==approvals)',
@@ -128,7 +128,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((res) => {
           Orders.deleteOrderViaApi(res[0].id);
@@ -142,7 +142,7 @@ describe('Inventory', () => {
           ServicePoints.deleteViaApi(secondServicePoint.id);
           Users.deleteViaApi(userId);
         });
-        NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+        NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
           effectiveLocation.institutionId,
           effectiveLocation.campusId,
           effectiveLocation.libraryId,
@@ -153,7 +153,7 @@ describe('Inventory', () => {
 
     it(
       'C3506 Catalog a new title which has been ordered and received in Orders (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
         InventoryInstances.selectInstance();
         InventoryInstances.verifyInstanceDetailsView();
@@ -197,8 +197,8 @@ describe('Inventory', () => {
         ItemRecordView.waitLoading();
         ItemRecordView.checkBarcode(barcode);
 
-        SwitchServicePoint.switchServicePoint(secondServicePoint.name);
         cy.visit(TopMenu.checkInPath);
+        SwitchServicePoint.switchServicePoint(secondServicePoint.name);
         CheckInActions.checkInItem(barcode);
         ConfirmItemInModal.confirmInTransitModal();
         cy.visit(TopMenu.inventoryPath);

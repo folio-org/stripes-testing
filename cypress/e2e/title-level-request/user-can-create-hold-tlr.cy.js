@@ -119,6 +119,7 @@ describe('Create Item or Title level request', () => {
         testData.userServicePoint.id,
       );
       TitleLevelRequests.enableTLRViaApi();
+      cy.wait(3000);
       cy.getInstance({
         limit: 1,
         expandAll: true,
@@ -160,7 +161,7 @@ describe('Create Item or Title level request', () => {
     Users.deleteViaApi(userForHold.userId);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

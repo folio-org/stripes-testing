@@ -36,7 +36,9 @@ const mappingProfileForDuplicate = {
 };
 
 const search = (nameForSearch) => {
+  cy.wait(1000);
   cy.do([searchField.focus(), searchField.fillIn(nameForSearch)]);
+  cy.wait(1000);
   cy.expect(searchButton.has({ disabled: false }));
   cy.do(searchButton.click(), getLongDelay());
 };
@@ -65,7 +67,7 @@ export default {
   },
   createInstanceMappingProfile: (mappingProfile) => {
     openNewMappingProfileForm();
-    NewFieldMappingProfile.fillInsatnceMappingProfile(mappingProfile);
+    NewFieldMappingProfile.fillInstanceMappingProfile(mappingProfile);
     FieldMappingProfileView.closeViewMode(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },

@@ -73,7 +73,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C422160 Verify Bulk Edit for Holding populated "URI" in electronic access (firebird)',
+      'C422222 Verify Bulk Edit for Holding with populated " URL relationship" in electronic access (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
@@ -92,7 +92,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.isSelectActionAbsent();
         BulkEditActions.selectOption('URL Relationship');
-        let possibleActions = ['Clear field', 'Find', 'Replace with'];
+        let possibleActions = ['Clear field', 'Find (full field search)', 'Replace with'];
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditActions.selectSecondAction('Clear field');
         BulkEditActions.addNewBulkEditFilterString();

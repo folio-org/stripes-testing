@@ -25,9 +25,17 @@ const trashButton = Button({ icon: 'trash' });
 
 const booleanValues = ['AND'];
 
+export const holdingsFieldValues = {
+  instanceUuid: 'Instance UUID',
+};
+export const instanceFieldValues = {
+  instanceHrid: 'Instance HRID',
+};
 export const itemFieldValues = {
   instanceId: 'Instance ID',
   itemStatus: 'Item status',
+  holdingsId: 'Holdings ID',
+  temporaryLocation: 'Item temporary location name',
 };
 export const usersFieldValues = {
   expirationDate: 'User expiration date',
@@ -35,11 +43,12 @@ export const usersFieldValues = {
   lastName: 'User last name',
   patronGroup: 'User patron group',
   userActive: 'User active',
+  userBarcode: 'User barcode',
 };
 export const dateTimeOperators = [
   'Select operator',
-  '==',
-  '!=',
+  'equals',
+  'not equal to',
   '>',
   '<',
   '>=',
@@ -48,40 +57,62 @@ export const dateTimeOperators = [
 ];
 export const stringOperators = [
   'Select operator',
-  '==',
-  '!=',
+  'equals',
+  'not equal to',
   'contains',
   'starts with',
   'is null/empty',
 ];
 export const stringStoresUuidOperators = [
   'Select operator',
-  '==',
-  '!=',
+  'equals',
+  'not equal to',
   'in',
   'not in',
   'is null/empty',
 ];
 export const stringStoresUuidButMillionOperators = [
   'Select operator',
-  '==',
-  '!=',
+  'equals',
+  'not equal to',
   'in',
   'not in',
   'is null/empty',
 ];
-export const enumOperators = ['Select operator', '==', '!=', 'in', 'not in', 'is null/empty'];
-export const booleanOperators = ['Select operator', '==', '!=', 'is null/empty'];
+export const enumOperators = [
+  'Select operator',
+  'equals',
+  'not equal to',
+  'in',
+  'not in',
+  'is null/empty',
+];
+export const booleanOperators = ['Select operator', 'equals', 'not equal to', 'is null/empty'];
+
+export const QUERY_OPERATIONS = {
+  PLACEHOLDER: 'Select operator',
+  EQUAL: 'equals',
+  NOT_EQUAL: 'not equal to',
+  IN: 'in',
+  NOT_IN: 'not in',
+  IS_NULL: 'is null/empty',
+  CONTAINS: 'contains',
+  START_WITH: 'starts with',
+};
 
 export default {
+  exists() {
+    cy.expect(buildQueryModal.exists());
+  },
+  absent() {
+    cy.expect(buildQueryModal.absent());
+  },
   verify(firstline = true) {
-    cy.expect([
-      buildQueryModal.exists(),
-      testQueryButton.has({ disabled: true }),
-      cancelButton.has({ disabled: false }),
-      runQueryButton.has({ disabled: true }),
-      xButton.has({ disabled: false }),
-    ]);
+    this.exists();
+    this.testQueryDisabled();
+    this.cancelDisabled(false);
+    this.runQueryDisabled();
+    this.xButttonDisabled(false);
     this.verifyModalContent(firstline);
   },
 
@@ -226,7 +257,11 @@ export default {
   },
 
   cancelDisabled(disabled = true) {
-    cancelButton.has({ disabled });
+    cy.expect(cancelButton.has({ disabled }));
+  },
+
+  clickCancel() {
+    cy.do(cancelButton.click());
   },
 
   testQueryDisabled(disabled = true) {
@@ -235,6 +270,14 @@ export default {
 
   runQueryDisabled(disabled = true) {
     cy.expect(runQueryButton.has({ disabled }));
+  },
+
+  xButttonDisabled(disabled = true) {
+    cy.expect(xButton.has({ disabled }));
+  },
+
+  clickXButtton() {
+    cy.do(xButton.click());
   },
 
   addNewRow(row = 0) {

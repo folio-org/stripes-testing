@@ -1,5 +1,6 @@
 import uuid from 'uuid';
 import {
+  ITEM_STATUS_NAMES,
   LOAN_TYPE_NAMES,
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
@@ -24,10 +25,10 @@ describe('Inventory', () => {
       barcode: uuid(),
       materialType: MATERIAL_TYPE_NAMES.BOOK,
       permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-      itemStatus: 'Available',
+      itemStatus: ITEM_STATUS_NAMES.AVAILABLE,
     };
 
-    before('create test data and login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
           testData.instanceRecord = instanceData;
@@ -44,7 +45,7 @@ describe('Inventory', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);

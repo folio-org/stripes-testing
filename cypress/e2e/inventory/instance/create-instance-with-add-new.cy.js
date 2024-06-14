@@ -9,14 +9,14 @@ describe('Inventory', () => {
   describe('Instance', () => {
     const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
 
-    before('navigate to Inventory', () => {
+    before('Login', () => {
       cy.loginAsAdmin({
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
     });
 
-    after(() => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         InventoryInstances.getInstanceIdApi({ limit: 1, query: `title="${instanceTitle}"` }).then(
           (id) => {
@@ -26,14 +26,18 @@ describe('Inventory', () => {
       });
     });
 
-    it('C598 Create new instance with add "New" (folijet)', { tags: ['smoke', 'folijet'] }, () => {
-      const InventoryNewInstance = InventoryInstances.addNewInventory();
-      InventoryNewInstance.fillRequiredValues(instanceTitle);
-      InventoryNewInstance.clickSaveAndCloseButton();
+    it(
+      'C598 Create new instance with add "New" (folijet)',
+      { tags: ['smoke', 'folijet', 'shiftLeft'] },
+      () => {
+        const InventoryNewInstance = InventoryInstances.addNewInventory();
+        InventoryNewInstance.fillRequiredValues(instanceTitle);
+        InventoryNewInstance.clickSaveAndCloseButton();
 
-      InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
+        InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
 
-      cy.expect(MultiColumnListCell({ row: 0, content: instanceTitle }).exists());
-    });
+        cy.expect(MultiColumnListCell({ row: 0, content: instanceTitle }).exists());
+      },
+    );
   });
 });

@@ -129,8 +129,18 @@ export default {
     cy.do(TextArea({ name: 'description' }).fillIn(value));
   },
 
-  selectRecordType(option) {
+  selectRecordTypeOld(option) {
     cy.get('select[name=recordType]').select(option);
+  },
+
+  selectRecordType(option) {
+    cy.get('button[name=recordType]')
+      .click()
+      .then(() => {
+        cy.wait(500);
+        cy.get('li[role=option]').contains(option).click();
+        cy.wait(500);
+      });
   },
 
   selectVisibility(visibility) {
@@ -160,6 +170,10 @@ export default {
 
   verifyListIsNotPresent(listName) {
     return cy.get('*[class^="mclRowContainer"]').contains(listName).should('not.exist');
+  },
+
+  verifyListsPaneIsEmpty() {
+    cy.expect(HTML('The list contains no items').exists());
   },
 
   selectInactiveLists() {
@@ -203,6 +217,7 @@ export default {
       method: 'DELETE',
       path: `lists/${id}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
 

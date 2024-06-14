@@ -1,12 +1,12 @@
-import { recurse } from 'cypress-recurse';
 import { HTML } from '@interactors/html';
+import { recurse } from 'cypress-recurse';
 import {
-  Modal,
   Button,
-  Select,
-  Pane,
+  Modal,
   MultiColumnListCell,
+  Pane,
   PaneHeader,
+  Select,
 } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import FileManager from '../../utils/fileManager';
@@ -72,6 +72,53 @@ const downloadExportedMarcFile = (fileName) => {
     });
 };
 
+const downloadExportedMarcFileWithRecordHrid = (hrid, fileName) => {
+  const query =
+    '(status=(COMPLETED OR COMPLETED_WITH_ERRORS OR FAIL)) sortby completedDate/sort.descending';
+  const limit = '100';
+  const queryString = new URLSearchParams({ limit, query });
+
+  cy.wait(5000);
+  // get file id and job id
+  cy.okapiRequest({
+    method: 'GET',
+    path: `data-export/job-executions?${queryString}`,
+    isDefaultSearchParamsRequired: false,
+  })
+    .then((jobExecutionResponse) => {
+      const jobExecutionId = jobExecutionResponse.body.jobExecutions.find(
+        (exec) => exec.hrId === hrid,
+      ).id;
+
+      const fileId = jobExecutionResponse.body.jobExecutions.find((exec) => exec.hrId === hrid)
+        .exportedFiles[0].fileId;
+
+      // get the link to download exported file
+      return cy.okapiRequest({
+        method: 'GET',
+        path: `data-export/job-executions/${jobExecutionId}/download/${fileId}`,
+        isDefaultSearchParamsRequired: false,
+      });
+    })
+    .then(({ body: { link } }) => {
+      // download exported file
+      cy.downloadFile(link, 'cypress/downloads', fileName);
+
+      // wait until file has been downloaded
+      recurse(
+        () => FileManager.findDownloadedFilesByMask(fileName),
+        (x) => typeof x === 'object' && !!x,
+      ).then((foundFiles) => {
+        const lastDownloadedFilename = foundFiles.sort()[foundFiles.length - 1];
+
+        FileManager.readFile(lastDownloadedFilename).then((actualContent) => {
+          // create a new file with the contents of the downloaded file in fixtures
+          FileManager.createFile(`cypress/fixtures/${fileName}`, actualContent);
+        });
+      });
+    });
+};
+
 const waitLandingPageOpened = () => {
   cy.expect(PaneHeader({ id: 'paneHeader8' }).find(Button('View all')).exists());
 };
@@ -83,6 +130,7 @@ const uploadFile = (fileName) => {
 export default {
   downloadCSVFile,
   downloadExportedMarcFile,
+  downloadExportedMarcFileWithRecordHrid,
   waitLandingPageOpened,
   uploadFile,
 
@@ -181,5 +229,15 @@ export default {
       });
     });
     uploadFile(downloadedFile);
+  },
+
+  getRecordHridOfExportedFile(fileName) {
+    return cy
+      .get('#job-logs-list')
+      .contains('div[class^="mclCell-"]', fileName.replace('.csv', ''))
+      .then((elem) => {
+        const hridElement = elem.parent().find('[class*="mclCell-"]:nth-child(10)');
+        return +hridElement[0].innerText;
+      });
   },
 };

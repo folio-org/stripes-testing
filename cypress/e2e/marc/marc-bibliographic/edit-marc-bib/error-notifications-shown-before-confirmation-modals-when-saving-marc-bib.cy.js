@@ -18,8 +18,6 @@ describe('MARC', () => {
         tag300: '300',
         tag300content: 'TEST',
         tagLDR: 'LDR',
-        invalidLDR: '01338cas\\a2200409\\\\\\450',
-        validLDR: '01338cas\\a2200409\\\\\\4500',
         errorMessage:
           'Record cannot be saved. The Leader must contain 24 characters, including null spaces.',
       };
@@ -72,11 +70,11 @@ describe('MARC', () => {
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.updateExistingTagName(testData.tag040, testData.tag0);
-          QuickMarcEditor.updateExistingField(testData.tagLDR, testData.invalidLDR);
+          QuickMarcEditor.fillEmptyTextFieldOfField(0, 'records[0].content.ELvl', '');
           QuickMarcEditor.deleteTag(13);
           QuickMarcEditor.updateExistingField(testData.tag300, testData.tag300content);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.errorMessage);
-          QuickMarcEditor.updateExistingField(testData.tagLDR, testData.validLDR);
+          QuickMarcEditor.fillEmptyTextFieldOfField(0, 'records[0].content.ELvl', '\\');
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
           QuickMarcEditor.closeCallout();

@@ -1,3 +1,7 @@
+export const APPLICATION_NAMES = {
+  INVENTORY: 'Inventory',
+};
+
 export const REQUEST_METHOD = {
   DELETE: 'DELETE',
   GET: 'GET',
@@ -243,6 +247,15 @@ export const LOCATION_NAMES = {
   ONLINE_UI: 'Online',
   MAIN_LIBRARY: 'Main Library (KU/CC/DI/M)',
   MAIN_LIBRARY_UI: 'Main Library',
+  POPULAR_READING_COLLECTION: 'Popular Reading Collection (KU/CC/DI/P)',
+  POPULAR_READING_COLLECTION_UI: 'Popular Reading Collection',
+};
+
+export const LOCATION_IDS = {
+  ANNEX: '53cf956f-c1df-410b-8bea-27f712cca7c0',
+  MAIN_LIBRARY: 'fcd64ce1-6995-48f0-840e-89ffa2288371',
+  ONLINE: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5',
+  POPULAR_READING_COLLECTION: 'b241764c-1466-4e1d-a028-1a3684a5da87',
 };
 
 export const INSTANCE_STATUS_TERM_NAMES = {
@@ -289,12 +302,16 @@ export const PROFILE_TYPE_NAMES = {
   MAPPING_PROFILE: 'MAPPING_PROFILE',
 };
 
-export const EXISTING_RECORDS_NAMES = {
+export const EXISTING_RECORD_NAMES = {
   INSTANCE: 'INSTANCE',
   HOLDINGS: 'HOLDINGS',
   ITEM: 'ITEM',
   MARC_BIBLIOGRAPHIC: 'MARC_BIBLIOGRAPHIC',
   MARC_AUTHORITY: 'MARC_AUTHORITY',
+};
+
+export const INCOMING_RECORD_NAMES = {
+  MARC_BIBLIOGRAPHIC: 'MARC_BIBLIOGRAPHIC',
 };
 
 export const JOB_STATUS_NAMES = {
@@ -350,6 +367,12 @@ export const BROWSE_CALL_NUMBER_OPTIONS = {
   LIBRARY_OF_MEDICINE: 'National Library of Medicine classification',
   OTHER_SCHEME: 'Other scheme',
   SUPERINTENDENT_OF_DOCUMENTS: 'Superintendent of Documents classification',
+};
+
+export const BROWSE_CLASSIFICATION_OPTIONS = {
+  CALL_NUMBERS_ALL: 'Classification (all)',
+  DEWEY_DECIMAL: 'Dewey Decimal classification',
+  LIBRARY_OF_CONGRESS: 'Library of Congress classification',
 };
 
 export const CONDITION_AND_LIMIT_TYPES = {
@@ -547,20 +570,42 @@ export const INVENTORY_LDR_FIELD_BLVL_DROPDOWN = {
   S: 's - Serial',
 };
 
-export const INVENTORY_008_FIELD_DROPDOWNS_NAMES = {
+export const INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES = {
   DTST: 'DtSt',
+  DATE1: 'Date 1',
+  DATE2: 'Date 2',
   CONF: 'Conf',
   FEST: 'Fest',
   INDX: 'Indx',
+  AUDN: 'Audn',
   LITF: 'LitF',
+  ILLS: 'Ills',
   COMP: 'Comp',
+  CTRY: 'Ctry',
+  CONT: 'Cont',
+  GPUB: 'GPub',
+  BIOG: 'Biog',
+  LANG: 'Lang',
+  MREC: 'MRec',
+  PART: 'Part',
+  ACCM: 'AccM',
+  LTXT: 'LTxt',
+  TRAR: 'TrAr',
+  FREQ: 'Freq',
+  SRTP: 'SrTp',
+  ORIG: 'Orig',
+  ENTW: 'EntW',
+  ALPH: 'Alph',
+  TIME: 'Time',
   FMUS: 'FMus',
+  FORM: 'Form',
   CRTP: 'CrTp',
   TMAT: 'TMat',
   TECH: 'Tech',
   FILE: 'File',
   REGL: 'Regl',
   SL: 'S/L',
+  SRCE: 'Srce',
 };
 
 export const INVENTORY_008_FIELD_DTST_DROPDOWN = {
@@ -725,4 +770,26 @@ export const electronicAccessRelationshipId = {
 export const electronicAccessRelationshipName = {
   RESOURCE: 'Resource',
   VERSION_OF_RESOURCE: 'Version of resource',
+};
+
+export const AUTHORITY_FILE_TEXT_FIELD_NAMES = {
+  NAME: 'Name',
+  PREFIX: 'Prefix',
+  HRID_STARTS_WITH: 'HRID starts with',
+  BASE_URL: 'Base URL',
+};
+
+export const HOLDING_NOTES = {
+  ACTION_NOTE: 'd6510242-5ec3-42ed-b593-3585d2e48fd6',
+  ELECTRONIC_BOOKPLATE_NOTE: '88914775-f677-4759-b57b-1a33b90b24e0',
+  BINDING_NOTE: 'e19eabab-a85c-4aef-a7b2-33bd9acef24e',
+  PROVENANCE_NOTE: 'db9b4787-95f0-4e78-becf-26748ce6bdeb',
+};
+
+export const ITEM_NOTES = {
+  ACTION_NOTE: '0e40884c-3523-4c6d-8187-d578e3d2794e',
+  BINDING_NOTE: '87c450be-2033-41fb-80ba-dd2409883681',
+  NOTE_NOTE: '8d0a5eca-25de-4391-81a9-236eeefdd20b',
+  COPY_NOTE: '1dde7141-ec8a-4dae-9825-49ce14c728e7',
+  ELECTRONIC_BOOKPLATE_NOTE: 'f3ae3823-d096-4c65-8734-0c1efd2ffea8',
 };

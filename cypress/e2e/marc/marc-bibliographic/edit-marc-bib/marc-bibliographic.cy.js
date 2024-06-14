@@ -74,7 +74,7 @@ describe('MARC', () => {
 
       it(
         'C10924 Add a field to a record using quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -108,7 +108,7 @@ describe('MARC', () => {
 
       it(
         'C10928 Delete a field(s) from a record in quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -137,7 +137,7 @@ describe('MARC', () => {
 
       it(
         'C10957 Attempt to delete a required field (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -156,7 +156,7 @@ describe('MARC', () => {
 
       it(
         'C10951 Add a 5XX field to a marc record in quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -203,40 +203,44 @@ describe('MARC', () => {
         },
       );
 
-      it('C345388 Derive a MARC bib record (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventorySearchAndFilter.waitLoading,
-        });
-        InventoryActions.import();
-        InventoryInstance.getId().then((id) => {
-          testData.instanceID = id;
-        });
-
-        InventoryInstance.getAssignedHRID().then((instanceHRID) => {
-          InventoryInstance.deriveNewMarcBib();
-          const expectedCreatedValue = QuickMarcEditor.addNewField();
-
-          QuickMarcEditor.deletePenaltField().then((deletedTag) => {
-            const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
-
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.deleteConfirmationPresented();
-            QuickMarcEditor.confirmDelete();
-
-            InventoryInstance.checkUpdatedHRID(instanceHRID);
-            InventoryInstance.checkExpectedMARCSource();
-            InventoryInstance.checkPresentedText(expectedUpdatedValue);
-
-            // Wait for the content to be loaded.
-            cy.wait(4000);
-            InventoryInstance.viewSource();
-            InventoryViewSource.contains(expectedCreatedValue);
-            InventoryViewSource.contains(expectedUpdatedValue);
-            InventoryViewSource.notContains(deletedTag);
+      it(
+        'C345388 Derive a MARC bib record (spitfire)',
+        { tags: ['smokeBroken', 'spitfire'] },
+        () => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventorySearchAndFilter.waitLoading,
           });
-        });
-      });
+          InventoryActions.import();
+          InventoryInstance.getId().then((id) => {
+            testData.instanceID = id;
+          });
+
+          InventoryInstance.getAssignedHRID().then((instanceHRID) => {
+            InventoryInstance.deriveNewMarcBib();
+            const expectedCreatedValue = QuickMarcEditor.addNewField();
+
+            QuickMarcEditor.deletePenaltField().then((deletedTag) => {
+              const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
+
+              QuickMarcEditor.pressSaveAndClose();
+              QuickMarcEditor.deleteConfirmationPresented();
+              QuickMarcEditor.confirmDelete();
+
+              InventoryInstance.checkUpdatedHRID(instanceHRID);
+              InventoryInstance.checkExpectedMARCSource();
+              InventoryInstance.checkPresentedText(expectedUpdatedValue);
+
+              // Wait for the content to be loaded.
+              cy.wait(4000);
+              InventoryInstance.viewSource();
+              InventoryViewSource.contains(expectedCreatedValue);
+              InventoryViewSource.contains(expectedUpdatedValue);
+              InventoryViewSource.notContains(deletedTag);
+            });
+          });
+        },
+      );
     });
   });
 });

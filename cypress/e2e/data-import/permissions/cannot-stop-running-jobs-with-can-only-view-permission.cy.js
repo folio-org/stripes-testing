@@ -1,11 +1,11 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Users from '../../../support/fragments/users/users';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Permissions', () => {
@@ -15,7 +15,7 @@ describe('Data Import', () => {
     const marcFileName = `C356788 autotestFileName${getRandomPostfix()}.mrc`;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
-    before('create test data', () => {
+    before('Create users and login', () => {
       cy.createTempUser([Permissions.settingsDataImportView.gui]).then((userProperties) => {
         userA = userProperties;
       });
@@ -26,6 +26,7 @@ describe('Data Import', () => {
         Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         userB = userProperties;
+
         cy.login(userB.username, userB.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -33,7 +34,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete users', () => {
       cy.getAdminToken();
       Users.deleteViaApi(userA.userId);
       Users.deleteViaApi(userB.userId);
@@ -52,6 +53,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         DataImport.checkIsLandingPageOpened();
         Logs.checkFileIsRunning(marcFileName);
+
         cy.login(userA.username, userA.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,

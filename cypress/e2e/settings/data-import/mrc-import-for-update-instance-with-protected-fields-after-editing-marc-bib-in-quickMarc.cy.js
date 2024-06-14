@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
@@ -73,7 +73,7 @@ describe('Data Import', () => {
         field: '001',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       instanceOption: NewMatchProfile.optionsList.instanceHrid,
     };
     const mappingProfile = {
@@ -92,7 +92,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('create test user', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -109,7 +109,8 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
         MarcFieldProtection.getListViaApi({
           query: `"data"=="${firstProtectedFieldsData.data}"`,
@@ -126,7 +127,6 @@ describe('Data Import', () => {
             InventoryInstance.deleteInstanceViaApi(instance.id);
           },
         );
-        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -180,7 +180,7 @@ describe('Data Import', () => {
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.importWithOclc(oclcForImport);
         InventoryInstance.editMarcBibliographicRecord();
-        [18, 19, 20, 21, 22, 23, 24, 25, 26].forEach((fieldNumber) => {
+        [17, 18, 19, 20, 21, 22, 23, 24, 25].forEach((fieldNumber) => {
           InventoryEditMarcRecord.deleteField(fieldNumber);
         });
         InventoryEditMarcRecord.editField('$a Louisiana $2 fast', '$a Louisiana $2 fast $5 amb');

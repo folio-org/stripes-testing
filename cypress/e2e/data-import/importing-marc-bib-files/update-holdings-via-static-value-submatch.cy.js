@@ -1,7 +1,7 @@
 import {
   ACTION_NAMES_IN_ACTION_PROFILE,
   CALL_NUMBER_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
   INSTANCE_STATUS_TERM_NAMES,
@@ -109,7 +109,7 @@ describe('Data Import', () => {
         field: '001',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       instanceOption: NewMatchProfile.optionsList.instanceHrid,
     };
     const holdingsMatchProfile = {
@@ -117,7 +117,7 @@ describe('Data Import', () => {
       incomingStaticValue: 'Main Library (KU/CC/DI/M)',
       incomingStaticRecordValue: 'Text',
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+      existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
       existingRecordOption: NewMatchProfile.optionsList.holdingsPermLoc,
     };
     const jobProfileForCreate = {
@@ -129,14 +129,16 @@ describe('Data Import', () => {
       profileName: `C11110 autotest job profile.${getRandomPostfix()}`,
     };
 
-    before('create test data', () => {
+    before('Login', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
+      // delete created files
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
@@ -160,8 +162,6 @@ describe('Data Import', () => {
             InventoryInstance.deleteInstanceViaApi(instance.id);
           },
         );
-        // delete created files
-        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       });
     });
 

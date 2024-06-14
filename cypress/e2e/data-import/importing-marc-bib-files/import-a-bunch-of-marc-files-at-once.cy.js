@@ -11,8 +11,7 @@ describe('Data Import', () => {
     const filePathForUpload = 'oneMarcBib.mrc';
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
-    before(() => {
-      cy.getAdminToken();
+    before('Login', () => {
       cy.loginAsAdmin();
     });
 
@@ -44,7 +43,7 @@ describe('Data Import', () => {
 
           Logs.openViewAllLogs();
           LogsViewAll.viewAllIsOpened();
-          cy.wait(20000);
+          cy.wait(30000);
           LogsViewAll.selectOption('Keyword (ID, File name)');
           LogsViewAll.searchWithTerm(upload.fileName);
           // TODO need to wait until files are filtered

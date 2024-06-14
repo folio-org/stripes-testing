@@ -1,5 +1,5 @@
-import { Permissions } from '../../../support/dictionary';
 import { RECORD_STATUSES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
@@ -18,7 +18,7 @@ describe('Data Import', () => {
     const oclcNumber = '42980246';
     const OCLCAuthentication = '100481406/PAOLF';
     const field005 = '20230427101124.9';
-    const field035 = '$a (OCoLC)ocm42980246';
+    const field035 = '$a (OCoLC)42980246';
     const notDuplicatedFieldsContent = {
       first006field: 'jccnn           n ',
       second006field: 'm     q  h        ',
@@ -26,7 +26,7 @@ describe('Data Import', () => {
       field008: '991202s2000    ctua     b    001 0 eng',
     };
 
-    before('login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
@@ -43,7 +43,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(

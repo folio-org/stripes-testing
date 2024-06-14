@@ -2,15 +2,15 @@ import { HTML, including } from '@interactors/html';
 import {
   Accordion,
   Button,
-  Select,
-  TextField,
-  Pane,
-  TextArea,
   Callout,
   Modal,
+  Pane,
+  Select,
+  TextArea,
+  TextField,
 } from '../../../../../interactors';
-import ModalSelectProfile from './modalSelectProfile';
 import { ACCEPTED_DATA_TYPE_NAMES, PROFILE_TYPE_NAMES } from '../../../constants';
+import ModalSelectProfile from './modalSelectProfile';
 
 const actionsButton = Button('Action');
 const matchButton = Button('Match');
@@ -72,6 +72,7 @@ function linkActionProfileForMatches(actionProfileName, forMatchesOrder = 0) {
   ModalSelectProfile.searchProfileByName(actionProfileName);
   ModalSelectProfile.selectProfile(actionProfileName);
   cy.expect(overviewAccordion.find(HTML(including(actionProfileName))).exists());
+  cy.wait(1000);
 }
 
 function linkActionProfileForSubMatches(actionProfileName, forMatchesOrder = 0) {
@@ -97,7 +98,10 @@ export default {
   waitLoading,
   defaultJobProfile,
 
-  fillProfileName: (profileName) => cy.do(nameField.fillIn(profileName)),
+  fillProfileName: (profileName) => {
+    cy.wait(1500);
+    cy.do(nameField.fillIn(profileName));
+  },
   fillDescription: (description) => cy.do(TextArea({ name: 'profile.description' }).fillIn(description)),
 
   fillJobProfile: (specialJobProfile = defaultJobProfile) => {
@@ -138,6 +142,7 @@ export default {
     ModalSelectProfile.searchProfileByName(profileName);
     ModalSelectProfile.selectProfile(profileName);
     cy.expect(overviewAccordion.find(HTML(including(profileName))).exists());
+    cy.wait(1000);
   },
 
   linkMatchProfileForNonMatches(profileName, forMatchesOrder = 1) {
@@ -291,39 +296,9 @@ export default {
   },
 
   saveAndClose: () => {
+    cy.wait(1000);
     cy.do(saveAndCloseButton.click());
     cy.expect(saveAndCloseButton.absent());
-  },
-
-  createJobProfileViaApi: (nameProfile, matchProfileId, actProfileId) => {
-    return cy.okapiRequest({
-      method: 'POST',
-      path: 'data-import-profiles/jobProfiles',
-      body: {
-        profile: {
-          name: nameProfile,
-          dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
-        },
-        addedRelations: [
-          {
-            masterProfileId: null,
-            masterProfileType: PROFILE_TYPE_NAMES.JOB_PROFILE,
-            detailProfileId: matchProfileId,
-            detailProfileType: PROFILE_TYPE_NAMES.MATCH_PROFILE,
-            order: 0,
-          },
-          {
-            masterProfileId: null,
-            masterProfileType: PROFILE_TYPE_NAMES.JOB_PROFILE,
-            detailProfileId: actProfileId,
-            detailProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
-            order: 1,
-          },
-        ],
-        deletedRelations: [],
-      },
-      isDefaultSearchParamsRequired: false,
-    });
   },
 
   createJobProfileWithLinkedActionProfileViaApi: (nameProfile, actProfileId) => {
@@ -354,23 +329,38 @@ export default {
       });
   },
 
-  createJobProfileWithLinkedMatchProfileViaApi: (nameProfile, matchProfileId) => {
+  createJobProfileWithLinkedTwoActionProfilesViaApi: (
+    profile,
+    actionProfileId1,
+    actionProfileId2,
+  ) => {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'data-import-profiles/jobProfiles',
         body: {
           profile: {
-            name: nameProfile,
-            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+            dataType: 'MARC',
+            name: profile.name,
           },
           addedRelations: [
             {
               masterProfileId: null,
-              masterProfileType: PROFILE_TYPE_NAMES.JOB_PROFILE,
-              detailProfileId: matchProfileId,
-              detailProfileType: PROFILE_TYPE_NAMES.MATCH_PROFILE,
+              masterWrapperId: null,
+              masterProfileType: 'JOB_PROFILE',
+              detailProfileId: actionProfileId1,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
               order: 0,
+            },
+            {
+              masterProfileId: null,
+              masterWrapperId: null,
+              masterProfileType: 'JOB_PROFILE',
+              detailProfileId: actionProfileId2,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
+              order: 1,
             },
           ],
           deletedRelations: [],
@@ -383,7 +373,7 @@ export default {
   },
 
   createJobProfileWithLinkedMatchAndActionProfilesViaApi: (
-    nameProfile,
+    profileName,
     matchProfileId,
     actionProfileId,
   ) => {
@@ -393,7 +383,7 @@ export default {
         path: 'data-import-profiles/jobProfiles',
         body: {
           profile: {
-            name: nameProfile,
+            name: profileName,
             dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
           },
           addedRelations: [
@@ -415,6 +405,150 @@ export default {
               detailProfileType: 'ACTION_PROFILE',
               order: 0,
               reactTo: 'MATCH',
+            },
+          ],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((responce) => {
+        return responce.body.id;
+      });
+  },
+
+  createJobProfileWithLinkedThreeActionProfilesViaApi: (
+    profile,
+    actionProfileId1,
+    actionProfileId2,
+    actionProfileId3,
+  ) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/jobProfiles',
+        body: {
+          profile: {
+            dataType: 'MARC',
+            name: profile.name,
+          },
+          addedRelations: [
+            {
+              masterProfileId: null,
+              masterWrapperId: null,
+              masterProfileType: 'JOB_PROFILE',
+              detailProfileId: actionProfileId1,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
+              order: 0,
+            },
+            {
+              masterProfileId: null,
+              masterWrapperId: null,
+              masterProfileType: 'JOB_PROFILE',
+              detailProfileId: actionProfileId2,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
+              order: 1,
+            },
+            {
+              masterProfileId: null,
+              masterWrapperId: null,
+              masterProfileType: 'JOB_PROFILE',
+              detailProfileId: actionProfileId3,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
+              order: 2,
+            },
+          ],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((responce) => {
+        return responce.body.id;
+      });
+  },
+
+  createJobProfileWithLinkedFourActionProfilesViaApi: (
+    profile,
+    actionProfileId1,
+    actionProfileId2,
+    actionProfileId3,
+    actionProfileId4,
+  ) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/jobProfiles',
+        body: {
+          profile: {
+            dataType: 'MARC',
+            name: profile.name,
+          },
+          addedRelations: [
+            {
+              masterProfileId: null,
+              masterWrapperId: null,
+              masterProfileType: 'JOB_PROFILE',
+              detailProfileId: actionProfileId1,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
+              order: 0,
+            },
+            {
+              masterProfileId: null,
+              masterWrapperId: null,
+              masterProfileType: 'JOB_PROFILE',
+              detailProfileId: actionProfileId2,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
+              order: 1,
+            },
+            {
+              masterProfileId: null,
+              masterWrapperId: null,
+              masterProfileType: 'JOB_PROFILE',
+              detailProfileId: actionProfileId3,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
+              order: 2,
+            },
+            {
+              masterProfileId: null,
+              masterWrapperId: null,
+              masterProfileType: 'JOB_PROFILE',
+              detailProfileId: actionProfileId4,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
+              order: 3,
+            },
+          ],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((responce) => {
+        return responce.body.id;
+      });
+  },
+
+  createJobProfileWithLinkedMatchProfileViaApi: (nameProfile, matchProfileId) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/jobProfiles',
+        body: {
+          profile: {
+            name: nameProfile,
+            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+          },
+          addedRelations: [
+            {
+              masterProfileId: null,
+              masterProfileType: PROFILE_TYPE_NAMES.JOB_PROFILE,
+              detailProfileId: matchProfileId,
+              detailProfileType: PROFILE_TYPE_NAMES.MATCH_PROFILE,
+              order: 0,
             },
           ],
           deletedRelations: [],

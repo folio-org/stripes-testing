@@ -1,13 +1,11 @@
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 import Helper from '../../support/fragments/finance/financeHelper';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
@@ -76,7 +74,6 @@ describe('Check Out', () => {
           testInstanceIds = specialInstanceIds;
         });
       });
-    OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
     cy.createTempUser([permissions.checkoutCirculatingItems.gui])
       .then((userProperties) => {
         user = userProperties;
@@ -98,31 +95,21 @@ describe('Check Out', () => {
   after(() => {
     cy.getAdminToken();
     cy.wrap(
-      testItems.forEach((item) => {
-        CheckInActions.checkinItemViaApi({
-          itemBarcode: item.barcode,
-          servicePointId: servicePoint.id,
-          checkInDate: new Date().toISOString(),
+      testInstanceIds.holdingIds.forEach((holdingsId) => {
+        cy.wrap(
+          holdingsId.itemIds.forEach((itemId) => {
+            cy.deleteItemViaApi(itemId);
+          }),
+        ).then(() => {
+          cy.deleteHoldingRecordViaApi(holdingsId.id);
         });
       }),
     ).then(() => {
-      cy.wrap(
-        testInstanceIds.holdingIds.forEach((holdingsId) => {
-          cy.wrap(
-            holdingsId.itemIds.forEach((itemId) => {
-              cy.deleteItemViaApi(itemId);
-            }),
-          ).then(() => {
-            cy.deleteHoldingRecordViaApi(holdingsId.id);
-          });
-        }),
-      ).then(() => {
-        InventoryInstance.deleteInstanceViaApi(testInstanceIds.instanceId);
-      });
-      UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id]).then(() => {
-        ServicePoints.deleteViaApi(servicePoint.id);
-        Users.deleteViaApi(user.userId);
-      });
+      InventoryInstance.deleteInstanceViaApi(testInstanceIds.instanceId);
+    });
+    UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id]).then(() => {
+      ServicePoints.deleteViaApi(servicePoint.id);
+      Users.deleteViaApi(user.userId);
     });
   });
 
@@ -143,24 +130,28 @@ describe('Check Out', () => {
     );
   };
 
-  it('C591 Check out: multipiece items (vega)', { tags: ['smokeBroken', 'vega', 'system'] }, () => {
-    cy.visit(TopMenu.checkOutPath);
-    Checkout.waitLoading();
-    CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
-    CheckOutActions.checkPatronInformation(user.username, userBarcode);
-    cy.expect(CheckOutActions.modal.absent());
+  it(
+    'C591 Check out: multipiece items (vega)',
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    () => {
+      cy.visit(TopMenu.checkOutPath);
+      Checkout.waitLoading();
+      CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
+      CheckOutActions.checkPatronInformation(user.username, userBarcode);
+      cy.expect(CheckOutActions.modal.absent());
 
-    fullCheckOut(testItems[1]);
-    MultipieceCheckOut.cancelModal();
-    CheckOutActions.checkItem(testItems[1].barcode);
+      fullCheckOut(testItems[1]);
+      MultipieceCheckOut.cancelModal();
+      CheckOutActions.checkItem(testItems[1].barcode);
 
-    fullCheckOut(testItems[1]);
-    MultipieceCheckOut.confirmMultipleCheckOut(testItems[1].barcode);
+      fullCheckOut(testItems[1]);
+      MultipieceCheckOut.confirmMultipleCheckOut(testItems[1].barcode);
 
-    fullCheckOut(testItems[2]);
-    MultipieceCheckOut.confirmMultipleCheckOut(testItems[2].barcode);
+      fullCheckOut(testItems[2]);
+      MultipieceCheckOut.confirmMultipleCheckOut(testItems[2].barcode);
 
-    fullCheckOut(testItems[3]);
-    MultipieceCheckOut.confirmMultipleCheckOut(testItems[3].barcode);
-  });
+      fullCheckOut(testItems[3]);
+      MultipieceCheckOut.confirmMultipleCheckOut(testItems[3].barcode);
+    },
+  );
 });

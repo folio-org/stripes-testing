@@ -1,7 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
-  EXISTING_RECORDS_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
   RECORD_STATUSES,
@@ -40,7 +40,7 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {
       updated100Field: [
-        20,
+        19,
         '100',
         '1',
         '\\',
@@ -50,7 +50,7 @@ describe('Data Import', () => {
         '',
       ],
       updated245Field: [
-        21,
+        20,
         '245',
         '1',
         '4',
@@ -110,7 +110,7 @@ describe('Data Import', () => {
         subfield: 's',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -134,7 +134,7 @@ describe('Data Import', () => {
       },
     ];
     const linkingTagAndValues = {
-      rowIndex: 17,
+      rowIndex: 16,
       value: 'C376967 Chin, Staceyann, 1972-',
       tag: '100',
     };

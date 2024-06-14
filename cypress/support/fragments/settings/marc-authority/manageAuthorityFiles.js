@@ -2,6 +2,8 @@ import {
   Button,
   Callout,
   Checkbox,
+  EditableListRow,
+  Form,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
@@ -9,7 +11,7 @@ import {
   TextField,
   including,
 } from '../../../../../interactors';
-import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../constants';
+import { DEFAULT_FOLIO_AUTHORITY_FILES, AUTHORITY_FILE_TEXT_FIELD_NAMES } from '../../../constants';
 
 const manageAuthorityFilesPane = Pane('Manage authority files');
 const newButton = manageAuthorityFilesPane.find(Button({ id: 'clickable-add-authorityfiles' }));
@@ -31,10 +33,16 @@ const tableHeaderTexts = [
   'Active',
   'Source',
   'Last updated by',
+  'Actions',
 ];
 const editButton = Button({ icon: 'edit' });
 const deleteButton = Button({ icon: 'trash' });
-const successSaveCalloutText = (authorityFileName) => `The authority file ${authorityFileName} has been successfully created.`;
+const successSaveCalloutText = (authorityFileName) => {
+  return `The authority file ${authorityFileName} has been successfully created.`;
+};
+const successSaveEditedFileCalloutText = (authorityFileName) => {
+  return `The authority file ${authorityFileName} has been successfully updated.`;
+};
 
 const waitLoading = () => {
   cy.expect(newButton.has({ disabled: false }));
@@ -44,6 +52,16 @@ const waitLoading = () => {
 
 const clickNewButton = () => {
   cy.do(newButton.click());
+};
+
+const clickEditButton = (authorityFileName) => {
+  const targetRow = manageAuthorityFilesPane.find(MultiColumnListRow(including(authorityFileName)));
+  cy.do(targetRow.find(editButton).click());
+};
+
+const checkEditButtonInRow = (authorityFileName) => {
+  const targetRow = manageAuthorityFilesPane.find(MultiColumnListRow(including(authorityFileName)));
+  cy.expect(targetRow.find(editButton).exists());
 };
 
 const verifyEditableRowAdded = () => {
@@ -97,17 +115,116 @@ const checkSaveButtonEnabled = (isEnabled = true) => {
   cy.expect(firstRow.find(saveButton).has({ disabled: !isEnabled }));
 };
 
+const checkNewButtonEnabled = (isEnabled = true) => {
+  cy.expect(newButton.has({ disabled: !isEnabled }));
+};
+
 const clickSaveButton = () => {
   cy.do(firstRow.find(saveButton).click());
+};
+
+const clickCancelButton = () => {
+  cy.do(firstRow.find(cancelButton).click());
 };
 
 const checkAfterSave = (authorityFileName) => {
   cy.expect(Callout(successSaveCalloutText(authorityFileName)).exists());
 };
 
+const checkAfterSaveEditedFile = (authorityFileName) => {
+  cy.expect(Callout(successSaveEditedFileCalloutText(authorityFileName)).exists());
+};
+
+const getEditableListRow = (rowNumber) => {
+  return EditableListRow({ index: +rowNumber.split('-')[1] });
+};
+
+const getTargetRowWithFile = (authorityFileName) => {
+  return manageAuthorityFilesPane.find(
+    MultiColumnListRow({ innerHTML: including(authorityFileName) }),
+  );
+};
+
+const defaultFolioAuthorityFiles = [
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.ART_AND_ARCHITECTURE_THESAURUS,
+    prefix: 'aatg,aat',
+    startsWith: '',
+    baseUrl: 'http://vocab.getty.edu/aat/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.FACETED_APPLICATION_OF_SUBJECT_TERMINOLOGY,
+    prefix: 'fst',
+    startsWith: '',
+    baseUrl: 'http://id.worldcat.org/fast/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.GSAFD_GENRE_TERMS,
+    prefix: 'gsafd',
+    startsWith: '',
+    baseUrl: 'https://vocabularyserver.com/gsafd/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.LC_CHILDREN_SUBJECT_HEADINGS,
+    prefix: 'sj',
+    startsWith: '',
+    baseUrl: 'http://id.loc.gov/authorities/childrensSubjects/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.LC_DEMOGRAPHIC_GROUP_TERMS,
+    prefix: 'dg',
+    startsWith: '',
+    baseUrl: 'http://id.loc.gov/authorities/demographicTerms/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.LC_GENRE_FORM_TERMS,
+    prefix: 'gf',
+    startsWith: '',
+    baseUrl: 'http://id.loc.gov/authorities/genreForms/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.LC_MEDIUM_OF_PERFORMANCE_THESAURUS_FOR_MUSIC,
+    prefix: 'mp',
+    startsWith: '',
+    baseUrl: 'http://id.loc.gov/authorities/performanceMediums/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
+    prefix: 'n,nb,nr,no,ns',
+    startsWith: '',
+    baseUrl: 'http://id.loc.gov/authorities/names/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.LC_SUBJECT_HEADINGS,
+    prefix: 'sh',
+    startsWith: '',
+    baseUrl: 'http://id.loc.gov/authorities/subjects/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.MEDICAL_SUBJECT_HEADINGS,
+    prefix: 'D',
+    startsWith: '',
+    baseUrl: 'https://id.nlm.nih.gov/mesh/',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.RARE_BOOKS_AND_MANUSCRIPTS_SECTION,
+    prefix: 'rbmscv',
+    startsWith: '',
+    baseUrl: '',
+  },
+  {
+    name: DEFAULT_FOLIO_AUTHORITY_FILES.THESAURUS_FOR_GRAPHIC_MATERIALS,
+    prefix: 'lcgtm,tgm',
+    startsWith: '',
+    baseUrl: 'http://id.loc.gov/vocabulary/graphicMaterials/',
+  },
+];
+
 export default {
   waitLoading,
   clickNewButton,
+  clickEditButton,
+  checkEditButtonInRow,
   verifyEditableRowAdded,
   verifyTableHeaders,
   fillName,
@@ -117,19 +234,24 @@ export default {
   switchActiveCheckbox,
   checkCancelButtonEnabled,
   checkSaveButtonEnabled,
+  checkNewButtonEnabled,
   clickSaveButton,
+  clickCancelButton,
   checkAfterSave,
+  checkAfterSaveEditedFile,
+  getEditableListRow,
 
   fillAllFields: (name, prefix, startsWith, baseUrl, isActive) => {
     fillName(name);
     fillPrefix(prefix);
     fillHridStartsWith(startsWith);
     fillBaseUrl(baseUrl);
-    switchActiveCheckbox(isActive);
+    if (isActive) switchActiveCheckbox(isActive);
   },
 
   checkSourceFileExists(name, prefix, startsWith, baseUrl, isActive, lastUpdatedBy, isDeletable) {
-    const targetRow = manageAuthorityFilesPane.find(MultiColumnListRow(including(name)));
+    const targetRow = getTargetRowWithFile(name);
+
     cy.expect([
       targetRow.find(MultiColumnListCell(prefix)).exists(),
       targetRow.find(MultiColumnListCell(startsWith)).exists(),
@@ -139,6 +261,189 @@ export default {
       targetRow.find(editButton).exists(),
     ]);
     if (isDeletable) cy.expect(targetRow.find(deleteButton).exists());
+  },
+
+  checkSourceFileExistsByName(fileName, isExist = true) {
+    if (isExist) {
+      cy.expect(manageAuthorityFilesPane.find(MultiColumnListRow(including(fileName))).exists());
+    } else {
+      cy.expect(manageAuthorityFilesPane.find(MultiColumnListRow(including(fileName))).absent());
+    }
+  },
+
+  checkErrorInField(authorityFileName, fieldName, errorMessage) {
+    const targetRow = getTargetRowWithFile(authorityFileName);
+
+    switch (fieldName) {
+      case AUTHORITY_FILE_TEXT_FIELD_NAMES.NAME:
+        cy.expect(targetRow.find(nameTextField).has({ error: errorMessage, errorTextRed: true }));
+        break;
+      case AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX:
+        cy.expect(targetRow.find(prefixTextField).has({ error: errorMessage, errorTextRed: true }));
+        break;
+      case AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH:
+        cy.expect(
+          targetRow.find(hridStartsWithTextField).has({ error: errorMessage, errorTextRed: true }),
+        );
+        break;
+      case AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL:
+        cy.expect(
+          targetRow.find(baseUrlTextField).has({ error: errorMessage, errorTextRed: true }),
+        );
+        break;
+      default:
+        break;
+    }
+  },
+
+  checkManageAuthorityFilesPaneExists(isExist = true) {
+    if (isExist) {
+      cy.expect([
+        manageAuthorityFilesPane.exists(),
+        manageAuthorityFilesPane.has({ isFullScreenView: true }),
+      ]);
+    } else {
+      cy.expect(manageAuthorityFilesPane.absent());
+    }
+  },
+
+  clickSaveButtonAfterEditingFile(authorityFileName) {
+    const targetRow = getTargetRowWithFile(authorityFileName);
+
+    cy.do(targetRow.find(saveButton).click());
+  },
+
+  clickCancelButtonAfterEditingFile(authorityFileName) {
+    const targetRow = getTargetRowWithFile(authorityFileName);
+
+    cy.do(targetRow.find(cancelButton).click());
+  },
+
+  editField(authorityFileName, fieldName, fieldValue) {
+    cy.do(
+      TextField({ value: authorityFileName }).perform((element) => {
+        const rowNumber = element.closest('[data-row-index]').getAttribute('data-row-index');
+        const targetRow = manageAuthorityFilesPane.find(getEditableListRow(rowNumber));
+
+        cy.do(targetRow.find(TextField({ placeholder: fieldName })).fillIn(fieldValue));
+        cy.expect(targetRow.find(TextField({ placeholder: fieldName })).has({ value: fieldValue }));
+        cy.expect(targetRow.find(cancelButton).has({ disabled: false }));
+        cy.expect(targetRow.find(saveButton).has({ disabled: false }));
+      }),
+    );
+  },
+
+  editBaseUrlInFolioFile(authorityFileName, fieldValue) {
+    const targetRow = getTargetRowWithFile(authorityFileName);
+
+    cy.do(
+      targetRow
+        .find(TextField({ placeholder: AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL }))
+        .fillIn(fieldValue),
+    );
+    cy.expect(
+      targetRow
+        .find(TextField({ placeholder: AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL }))
+        .has({ value: fieldValue }),
+    );
+    cy.expect(targetRow.find(cancelButton).has({ disabled: false }));
+    cy.expect(targetRow.find(saveButton).has({ disabled: false }));
+  },
+
+  checkRowEditableInEditMode(
+    authorityFileName,
+    prefix,
+    hridStartsWith,
+    baseUrl,
+    isActive,
+    source,
+    createdByUser,
+    isCancelButtonDisabled = false,
+    isSaveButtonDisabled = true,
+  ) {
+    const targetRow = getTargetRowWithFile(authorityFileName);
+
+    cy.expect([
+      targetRow.find(nameTextField).has({ value: authorityFileName, disabled: false }),
+      targetRow.find(prefixTextField).has({ value: prefix, disabled: false }),
+      targetRow.find(hridStartsWithTextField).has({ value: hridStartsWith, disabled: false }),
+      targetRow.find(baseUrlTextField).has({ value: baseUrl, disabled: false }),
+      targetRow.find(activeCheckbox).has({ checked: isActive, disabled: false }),
+      targetRow.find(sourceCell).has({ content: source }),
+      targetRow.find(MultiColumnListCell(including(createdByUser))).exists(),
+      targetRow.find(cancelButton).has({ disabled: isCancelButtonDisabled }),
+      targetRow.find(saveButton).has({ disabled: isSaveButtonDisabled }),
+    ]);
+  },
+
+  checkRowEditableInEditModeInFolioFile(
+    authorityFileName,
+    prefix,
+    hridStartsWith,
+    baseUrl,
+    isActive,
+    isCancelButtonDisabled = false,
+    isSaveButtonDisabled = true,
+  ) {
+    const targetRow = getTargetRowWithFile(authorityFileName);
+
+    cy.expect([
+      targetRow.find(MultiColumnListCell(prefix)).exists(),
+      targetRow.find(MultiColumnListCell(hridStartsWith)).exists(),
+      targetRow.find(baseUrlTextField).has({ value: baseUrl, disabled: false }),
+      targetRow.find(activeCheckbox).has({ checked: isActive, disabled: false }),
+      targetRow.find(cancelButton).has({ disabled: isCancelButtonDisabled }),
+      targetRow.find(saveButton).has({ disabled: isSaveButtonDisabled }),
+    ]);
+  },
+
+  checkLastUpdatedByUser(authorityFileName, userName) {
+    const targetRow = getTargetRowWithFile(authorityFileName);
+
+    cy.expect(targetRow.find(MultiColumnListCell(including(userName))).exists());
+  },
+
+  checkAuthorityFilesTableExists(isExist = true) {
+    if (isExist) {
+      cy.expect(Form(including('Authority files')).exists());
+    } else {
+      cy.expect(Form(including('Authority files')).absent());
+    }
+  },
+
+  switchActiveCheckboxInFile(authorityFileName, isChecked) {
+    const targetRow = getTargetRowWithFile(authorityFileName);
+
+    cy.do(targetRow.find(activeCheckbox).click());
+    cy.expect(targetRow.find(activeCheckbox).has({ checked: isChecked }));
+  },
+
+  checkSaveButtonEnabledInFile(authorityFileName, isEnabled = true) {
+    const targetRow = getTargetRowWithFile(authorityFileName);
+
+    cy.expect(targetRow.find(saveButton).has({ disabled: !isEnabled }));
+  },
+
+  checkCancelButtonEnabledInFile(authorityFileName, isEnabled = true) {
+    const targetRow = getTargetRowWithFile(authorityFileName);
+
+    cy.expect(targetRow.find(cancelButton).has({ disabled: !isEnabled }));
+  },
+
+  checkDefaultSourceFilesExist() {
+    defaultFolioAuthorityFiles.forEach((defaultFolioAuthorityFile) => {
+      const targetRow = manageAuthorityFilesPane.find(
+        MultiColumnListRow(including(defaultFolioAuthorityFile.name)),
+      );
+      cy.expect([
+        targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.prefix)).exists(),
+        targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.startsWith)).exists(),
+        targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.baseUrl)).exists(),
+        targetRow.find(sourceCell).has({ content: 'FOLIO' }),
+        targetRow.find(activeCheckbox).has({ disabled: true }),
+        targetRow.find(editButton).exists(),
+      ]);
+    });
   },
 
   setAllDefaultFOLIOFilesToActiveViaAPI() {
@@ -166,6 +471,20 @@ export default {
   unsetAuthorityFileAsActiveViaApi(fileName) {
     cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
       cy.setActiveAuthoritySourceFileViaAPI(body.id, body._version + 1, false);
+    });
+  },
+
+  updateBaseUrlInAuthorityFileViaApi(fileName, newBaseUrl) {
+    cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
+      cy.updateBaseUrlInAuthoritySourceFileViaAPI(body.id, body._version + 1, newBaseUrl);
+    });
+  },
+
+  deleteAuthoritySourceFileByNameViaApi(fileName) {
+    cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
+      if (body.totalRecords !== 0) {
+        cy.deleteAuthoritySourceFileViaAPI(body.id, true);
+      }
     });
   },
 };

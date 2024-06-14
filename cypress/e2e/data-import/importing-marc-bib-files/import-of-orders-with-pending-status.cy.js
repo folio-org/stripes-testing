@@ -119,7 +119,7 @@ describe('Data Import', () => {
       profileName: `C375174 Test Order ${getRandomPostfix()}`,
     };
 
-    before('login', () => {
+    before('Login', () => {
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -136,7 +136,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
@@ -150,7 +150,7 @@ describe('Data Import', () => {
 
     it(
       'C375174 Verify the importing of orders with pending status (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);

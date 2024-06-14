@@ -761,6 +761,10 @@ export default {
     internal: 'ui-finance.fund-budget.view',
     gui: 'Finance: View fund and budget',
   },
+  uiFinanceUnreleaseEncumbrance: {
+    internal: 'ui-finance.encumbrance.unrelease',
+    gui: 'Finance: Unrelease encumbrance',
+  },
   uiFinanceViewGroups: { internal: 'ui-finance.group.view', gui: 'Finance: View group' },
   uiFinanceViewLedger: { internal: 'ui-finance.ledger.view', gui: 'Finance: View ledger' },
   uiFinanceViewEditFiscalYear: {
@@ -866,6 +870,14 @@ export default {
   uiOrganizationsViewEditCreate: {
     internal: 'ui-organizations.create',
     gui: 'Organizations: View, edit, create',
+  },
+  uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation: {
+    internal: 'ui-organizations.privileged-contacts.edit',
+    gui: 'Organizations: can view, create, edit, delete privileged donor information',
+  },
+  uiOrganizationsViewPrivilegedDonorInformation: {
+    internal: 'ui-organizations.privileged-contacts.view',
+    gui: 'Organizations: can view privileged donor information',
   },
   uiOrganizationsViewEditDelete: {
     internal: 'ui-organizations.delete',

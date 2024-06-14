@@ -1,16 +1,16 @@
+import { EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import DataImport from '../../../support/fragments/data_import/dataImport';
+import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
+import MatchProfileEdit from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileEditForm';
+import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import SettingsDataImport from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import SettingsDataImport from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
-import MatchProfileEdit from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileEditForm';
-import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 
@@ -30,13 +30,12 @@ describe('Data Import', () => {
         in2: 'f',
         subfield: 's',
       },
-      recordType: EXISTING_RECORDS_NAMES.MARC_AUTHORITY,
+      recordType: EXISTING_RECORD_NAMES.MARC_AUTHORITY,
     };
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
-      // create Match profile
-      NewMatchProfile.createMatchProfileViaApiMarc(matchProfile);
+      NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile);
 
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;

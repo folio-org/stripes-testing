@@ -85,6 +85,9 @@ export default {
   clickSearchOptionSelect() {
     cy.do(searchOptionSelect.click());
   },
+  chooseSearchOption(searchOption) {
+    cy.do(searchOptionSelect.choose(searchOption));
+  },
   checkSearchOptionIncluded(searchOption, optionShown = true) {
     if (optionShown) cy.expect(searchOptionSelect.has({ content: including(searchOption) }));
     else cy.expect(searchOptionSelect.has({ content: not(including(searchOption)) }));
@@ -97,5 +100,8 @@ export default {
   },
   checkResultsListEmpty() {
     cy.expect(resultsList.absent());
+  },
+  checkNoRecordsFound() {
+    cy.expect(selectInstanceModal.find(HTML(including('No results found for'))).exists());
   },
 };

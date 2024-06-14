@@ -32,7 +32,7 @@ import {
   or,
 } from '../../../../interactors';
 import Badge from '../../../../interactors/badge';
-import { REQUEST_METHOD } from '../../constants';
+import { REQUEST_METHOD, ITEM_STATUS_NAMES } from '../../constants';
 import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -185,6 +185,7 @@ const pressAddHoldingsButton = () => {
 };
 
 const waitLoading = () => {
+  cy.wait(1000);
   cy.get('#pane-instancedetails').within(() => {
     cy.contains('button', 'Action').should('exist');
   });
@@ -986,10 +987,10 @@ export default {
     );
   },
 
-  checkInstanceIdentifier: (identifier) => {
+  checkInstanceIdentifier: (identifier, rowIndex = 0) => {
     cy.expect(
       identifiersAccordion
-        .find(identifiers.find(MultiColumnListRow({ index: 0 })))
+        .find(identifiers.find(MultiColumnListRow({ index: rowIndex })))
         .find(MultiColumnListCell({ columnIndex: 1 }))
         .has({ content: identifier }),
     );
@@ -1050,7 +1051,7 @@ export default {
     cy.expect(tagButton.find(HTML(including('0'))).exists());
   },
 
-  checkIsInstancePresented: (title, location, status = 'On order') => {
+  checkIsInstancePresented: (title, location, status = ITEM_STATUS_NAMES.ON_ORDER) => {
     cy.expect(Pane({ titleLabel: including(title) }).exists());
     cy.expect(instanceDetailsSection.find(HTML(including(location))).exists());
     openHoldings([location]);
@@ -1091,6 +1092,7 @@ export default {
       method: REQUEST_METHOD.DELETE,
       path: `instance-storage/instances/${id}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
 
@@ -1196,6 +1198,7 @@ export default {
   },
 
   openHoldingsAccordion: (location) => {
+    cy.wait(2000);
     cy.do(Button(including(location)).click());
     cy.wait(6000);
   },
@@ -1690,5 +1693,17 @@ export default {
       Accordion({ id: memberId }).has({ open: isOpen }),
       Accordion({ id: `consortialHoldings.cs00000int_0005.${holdingsId}` }).exists(),
     ]);
+  },
+
+  verifyStaffSuppress() {
+    cy.expect(HTML(including('Warning: Instance is marked staff suppressed')).exists());
+  },
+
+  verifyNoStaffSuppress() {
+    cy.expect(HTML(including('Warning: Instance is marked staff suppressed')).absent());
+  },
+
+  verifyHoldingsAbsent(holdingsLocation) {
+    cy.expect(Accordion({ label: including(`Holdings: ${holdingsLocation}`) }).absent());
   },
 };

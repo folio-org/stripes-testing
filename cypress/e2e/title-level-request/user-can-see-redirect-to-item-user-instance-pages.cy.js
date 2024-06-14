@@ -24,7 +24,7 @@ import UsersCard from '../../support/fragments/users/usersCard';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Title Level Request. Request Detail', () => {
+describe('Title Level Request. Request detail', () => {
   let userData = {};
   let userForTLR = {};
   const requestIds = [];
@@ -171,7 +171,7 @@ describe('Title Level Request. Request Detail', () => {
     Users.deleteViaApi(userForTLR.userId);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

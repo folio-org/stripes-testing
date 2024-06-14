@@ -101,6 +101,31 @@ const authoritySourceOptions = [
 const thesaurusAccordion = Accordion('Thesaurus');
 const sharedTextInDetailView = 'Shared • ';
 const localTextInDetailView = 'Local • ';
+const defaultLDR = '00000nz\\\\a2200000o\\\\4500';
+const default008FieldValues = {
+  'Cat Rules': '\\',
+  'Geo Subd': '\\',
+  'Govt Ag': '\\',
+  'Kind rec': '\\',
+  Lang: '\\',
+  'Level Est': '\\',
+  'Main use': '\\',
+  'Mod Rec Est': '\\',
+  'Numb Series': '\\',
+  'Pers Name': '\\',
+  RecUpd: '\\',
+  RefEval: '\\',
+  Roman: '\\',
+  'SH Sys': '\\',
+  Series: '\\',
+  'Series use': '\\',
+  Source: '\\',
+  'Subj use': '\\',
+  'Type Subd': '\\',
+  Undef_18: '\\\\\\\\\\\\\\\\\\\\',
+  Undef_30: '\\',
+  Undef_34: '\\\\\\\\',
+};
 
 export default {
   waitLoading() {
@@ -485,6 +510,13 @@ export default {
     cy.expect([marcViewSection.exists(), marcViewSectionContent.has({ text: including(value) })]);
   },
 
+  verifyViewPaneContentAbsent(value) {
+    cy.expect([
+      marcViewSection.exists(),
+      marcViewSectionContent.find(HTML(including(value))).absent(),
+    ]);
+  },
+
   verifyViewPaneContentExists() {
     cy.expect(marcViewSection.exists());
   },
@@ -765,6 +797,10 @@ export default {
     ]);
   },
 
+  checkAuthoritySourceDropdownHasOption(optionName) {
+    cy.expect(sourceFileAccordion.find(MultiSelectOption(including(optionName))).exists());
+  },
+
   checkAuthoritySourceOptions() {
     cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
     cy.expect([
@@ -1039,6 +1075,14 @@ export default {
 
   clickAuthoritySourceAccordion() {
     cy.do([authoritySourceAccordion.clickHeader()]);
+  },
+
+  clickMultiSelectToggleButtonInAccordion(accordionName) {
+    cy.do(
+      Accordion(accordionName)
+        .find(Button({ className: including('multiSelectToggleButton') }))
+        .click(),
+    );
   },
 
   verifyAuthoritySourceAccordionCollapsed() {
@@ -1422,6 +1466,38 @@ export default {
     this.getResultsListByColumn(4).then((cellTexts) => {
       cellTexts.forEach((cellText) => {
         expect(cellText).to.be.oneOf([...sourceNames]);
+      });
+    });
+  },
+
+  createMarcAuthorityViaAPI(
+    authorityFilePrefix,
+    authorityFileHridStartsWith,
+    fields,
+    LDR = defaultLDR,
+  ) {
+    return cy.createMarcAuthorityViaAPI(LDR, [
+      { tag: '001', content: `${authorityFilePrefix}${authorityFileHridStartsWith}` },
+      { tag: '008', content: default008FieldValues, indicators: ['\\', '\\'] },
+      ...fields,
+    ]);
+  },
+
+  deleteViaAPI: (internalAuthorityId, ignoreErrors = false) => {
+    cy.okapiRequest({
+      method: 'DELETE',
+      isDefaultSearchParamsRequired: false,
+      path: `authority-storage/authorities/${internalAuthorityId}`,
+      failOnStatusCode: !ignoreErrors,
+    });
+  },
+
+  deleteMarcAuthorityByTitleViaAPI(title, authRefType = 'Authorized') {
+    this.getMarcAuthoritiesViaApi({ limit: 100, query: `keyword="${title}"` }).then((records) => {
+      records.forEach((record) => {
+        if (record.authRefType === authRefType) {
+          this.deleteViaAPI(record.id);
+        }
       });
     });
   },

@@ -14,11 +14,9 @@ describe('Data Import', () => {
   describe('Permissions', () => {
     let user;
     let instnaceId;
-    const uniquePartOfFileName = getRandomPostfix();
-    const uniqueFileName = `C356780 autotestFileName${uniquePartOfFileName}.mrc`;
-    const uniqueFileNameForSearch = `C356780 autotestFileName${uniquePartOfFileName}_1.mrc`;
+    const uniqueFileName = `C356780 autotestFileName${getRandomPostfix()}.mrc`;
 
-    before('create test data', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         'oneMarcBib.mrc',
@@ -42,7 +40,7 @@ describe('Data Import', () => {
       });
     });
 
-    after('delete test data', () => {
+    after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         InventoryInstance.deleteInstanceViaApi(instnaceId);
@@ -55,7 +53,7 @@ describe('Data Import', () => {
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
-        LogsViewAll.searchWithTerm(uniqueFileNameForSearch);
+        LogsViewAll.searchWithTerm(uniqueFileName);
         LogsViewAll.openFileDetails(uniqueFileName);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstances.verifyInstanceDetailsView();

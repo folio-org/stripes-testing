@@ -1,7 +1,6 @@
 import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../../support/constants';
 import { Permissions } from '../../../../support/dictionary';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
@@ -116,7 +115,7 @@ describe('MARC', () => {
               });
             },
           );
-          JobProfiles.waitFileIsImported(fileName);
+          Logs.waitFileIsImported(fileName);
           Logs.checkJobStatus(fileName, 'Completed');
           Logs.openFileDetails(fileName);
           Logs.goToTitleLink(RECORD_STATUSES.CREATED);
@@ -148,7 +147,7 @@ describe('MARC', () => {
 
       it(
         'C360542 Verify that "Link to MARC Authority record" icon displays next to MARC fields when deriving Bib record (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           InventoryInstance.deriveNewMarcBib();
           tagArray.forEach((tag) => {
@@ -169,6 +168,7 @@ describe('MARC', () => {
           MarcAuthority.addNewField(8, testData.tags.tag655, '$b Different row', '1', '/');
           MarcAuthority.addNewField(9, testData.tags.tag655, '$b Row without indicator', '1', '/');
           MarcAuthority.addNewField(10, testData.tags.tag755, '$b Different row', '1', '/');
+          cy.wait(2000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           cy.visit(SettingsMenu.marcFieldProtectionPath);

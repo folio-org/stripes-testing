@@ -12,6 +12,7 @@ import {
   MultiColumnListRow,
   MultiSelect,
   MultiSelectOption,
+  OptionGroup,
   Pane,
   PaneHeader,
   SearchField,
@@ -19,8 +20,9 @@ import {
   Select,
   TextArea,
   TextField,
+  not,
 } from '../../../../interactors';
-import { BROWSE_CALL_NUMBER_OPTIONS } from '../../constants';
+import { BROWSE_CALL_NUMBER_OPTIONS, BROWSE_CLASSIFICATION_OPTIONS } from '../../constants';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
@@ -95,6 +97,7 @@ const searchInstanceByHRID = (id) => {
     TextArea({ id: 'input-inventory-search' }).fillIn(id),
     searchButton.click(),
   ]);
+  cy.wait(2000);
 };
 
 const searchHoldingsByHRID = (hrid) => {
@@ -275,10 +278,12 @@ export default {
     cy.wait(ONE_SECOND);
     cy.do(Select('Search field index').choose('Subjects'));
   },
+
   searchBySourceHolding: (source) => {
     cy.do(Button({ id: 'accordion-toggle-button-holdingsSource' }).click());
     cy.do(Checkbox(source).click());
   },
+
   selectBrowseContributors() {
     this.switchToBrowseTab();
     // cypress can not pick up an option without wait
@@ -293,14 +298,6 @@ export default {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(ONE_SECOND);
     cy.do(browseSearchAndFilterInput.choose('Other scheme'));
-  },
-
-  selectBrowseDeweyDecimal() {
-    this.switchToBrowseTab();
-    // cypress can't draw selected option without wait
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(ONE_SECOND);
-    cy.do(browseSearchAndFilterInput.choose('Dewey Decimal classification'));
   },
 
   showsOnlyNameTypeAccordion() {
@@ -355,8 +352,19 @@ export default {
   verifyBrowseOptions() {
     cy.do(browseSearchAndFilterInput.click());
     // eslint-disable-next-line no-unused-vars
-    Object.entries(BROWSE_CALL_NUMBER_OPTIONS).forEach(([key, value]) => {
-      cy.expect(browseSearchAndFilterInput.has({ content: including(value) }));
+    Object.values(BROWSE_CALL_NUMBER_OPTIONS).forEach((value) => {
+      cy.expect(
+        browseSearchAndFilterInput
+          .find(OptionGroup('Call numbers'))
+          .has({ text: including(value) }),
+      );
+    });
+    Object.values(BROWSE_CLASSIFICATION_OPTIONS).forEach((value) => {
+      cy.expect(
+        browseSearchAndFilterInput
+          .find(OptionGroup('Classification'))
+          .has({ text: including(value) }),
+      );
     });
     cy.expect([
       browseSearchAndFilterInput.has({ content: including('Contributors') }),
@@ -418,6 +426,7 @@ export default {
   },
 
   saveUUIDs() {
+    cy.wait(1500);
     InventoryActions.open();
     cy.do(InventoryActions.options.saveUUIDs.click());
   },
@@ -477,6 +486,22 @@ export default {
   instanceTabIsDefault() {
     cy.do(
       navigationInstancesButton.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
+
+  holdingsTabIsDefault() {
+    cy.do(
+      holdingsToggleButton.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
+
+  itemTabIsDefault() {
+    cy.do(
+      itemToggleButton.perform((element) => {
         expect(element.classList[2]).to.include('primary');
       }),
     );
@@ -574,7 +599,7 @@ export default {
   },
 
   resetAll() {
-    cy.do(resetAllButton.click());
+    cy.do(resetAllBtn.click());
   },
 
   clickResetAllButton() {
@@ -726,6 +751,19 @@ export default {
     cy.expect(paneResultsSection.exists());
   },
 
+  verifySearchOptionIncluded(searchOption, optionShown = true) {
+    if (optionShown) cy.expect(searchTypeDropdown.has({ content: including(searchOption) }));
+    else cy.expect(searchTypeDropdown.has({ content: not(including(searchOption)) }));
+  },
+
+  verifyDefaultSearchOptionSelected(defaultSearchOptionValue) {
+    cy.expect(searchTypeDropdown.has({ checkedOptionText: defaultSearchOptionValue }));
+  },
+
+  clickSearchOptionSelect() {
+    cy.do(searchTypeDropdown.click());
+  },
+
   selectViewHoldings: () => cy.do(viewHoldingButton.click()),
 
   filterItemByStatisticalCode: (code) => {
@@ -798,7 +836,10 @@ export default {
   },
 
   verifySearchAndResetAllButtonsDisabled(state) {
-    cy.expect([searchButton.has({ disabled: state }), resetAllBtn.has({ disabled: state })]);
+    cy.expect([
+      Section({ id: 'browse-inventory-filters-pane' }).find(searchButton).has({ disabled: state }),
+      Section({ id: 'browse-inventory-filters-pane' }).find(resetAllBtn).has({ disabled: state }),
+    ]);
   },
 
   verifyNoRecordsFound() {
@@ -826,6 +867,14 @@ export default {
 
   selectBrowseOption(option) {
     cy.do(browseSearchAndFilterInput.choose(option));
+  },
+
+  selectBrowseOptionFromCallNumbersGroup(option) {
+    cy.get('optgroup[label="Call numbers"]')
+      .contains('option', option)
+      .then((optionToSelect) => {
+        cy.get('select').select(optionToSelect.val());
+      });
   },
 
   checkSearchQueryText(text) {
@@ -978,7 +1027,7 @@ export default {
   },
 
   clickEffectiveLocationAccordionInput() {
-    cy.get('input[type=search]').click();
+    cy.get('#effectiveLocation').find('input').click();
   },
 
   checkEffectiveLocationAccordionInputInFocus() {

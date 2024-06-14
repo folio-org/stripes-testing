@@ -8,6 +8,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { LOCATION_IDS } from '../../../support/constants';
 
 let user;
 let holdingHRID;
@@ -38,8 +39,7 @@ describe('bulk-edit', () => {
           holdingHRID = holdings[0].hrid;
           cy.updateHoldingRecord(holdings[0].id, {
             ...holdings[0],
-            // Popular Reading Collection
-            permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+            permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
           });
           FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, holdings[0].id);
         });
@@ -75,17 +75,17 @@ describe('bulk-edit', () => {
           'Call number',
           'Call number suffix',
         ].forEach((title) => {
-          BulkEditSearchPane.verifyResultColumTitles(title);
+          BulkEditSearchPane.verifyResultColumnTitles(title);
         });
         BulkEditActions.openActions();
         BulkEditSearchPane.verifyHoldingActionShowColumns();
 
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Permanent location');
         BulkEditSearchPane.changeShowColumnCheckbox('Permanent location');
-        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Permanent location');
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude('Permanent location');
 
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Call number type');
-        BulkEditSearchPane.verifyResultColumTitles('Call number type');
+        BulkEditSearchPane.verifyResultColumnTitles('Call number type');
       },
     );
 

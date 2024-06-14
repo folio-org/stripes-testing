@@ -495,6 +495,13 @@ export default {
     ]);
   },
 
+  fillInFieldValues(rowIndex, tag, content, indicator0, indicator1) {
+    cy.get(`textarea[name="records[${rowIndex}].content"]`).clear().type(content);
+    cy.get(`input[name="records[${rowIndex}].indicators[1]"]`).type(indicator1);
+    cy.get(`input[name="records[${rowIndex}].indicators[0]"]`).type(indicator0);
+    cy.get(`input[name="records[${rowIndex}].tag"]`).type(tag);
+  },
+
   deletePenaltField() {
     const shouldBeRemovedRowNumber = 16;
     cy.expect(getRowInteractorByRowNumber(shouldBeRemovedRowNumber).exists());
@@ -1238,7 +1245,7 @@ export default {
   selectFieldsDropdownOption(tag, dropdownLabel, option) {
     cy.do(
       QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: dropdownLabel }))
+        .find(Select({ label: including(dropdownLabel) }))
         .choose(option),
     );
   },
@@ -1246,7 +1253,7 @@ export default {
   verifyFieldsDropdownOption(tag, dropdownLabel, option) {
     cy.expect(
       QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: dropdownLabel }))
+        .find(Select({ label: including(dropdownLabel) }))
         .has({ content: including(option) }),
     );
   },
@@ -1254,7 +1261,7 @@ export default {
   verifyDropdownOptionChecked(tag, dropdownLabel, option) {
     cy.expect(
       QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: dropdownLabel }))
+        .find(Select({ label: including(dropdownLabel) }))
         .has({ checkedOptionText: option }),
     );
   },
@@ -1328,6 +1335,14 @@ export default {
     cy.do(
       QuickMarcEditorRow({ index: rowIndex })
         .find(TextArea({ name: fieldName }))
+        .fillIn(content),
+    );
+  },
+
+  fillEmptyTextFieldOfField(rowIndex, fieldName, content) {
+    cy.do(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextField({ name: fieldName }))
         .fillIn(content),
     );
   },
@@ -1428,18 +1443,6 @@ export default {
       .getAllProperties()
       .map((property) => property.newValue)
       .join('');
-  },
-
-  updateAllDefaultValuesIn008TagInAuthority() {
-    validRecord.tag008AuthorityBytesProperties.getAllProperties().forEach((byteProperty) => {
-      cy.do(
-        QuickMarcEditorRow({ tagValue: '008' })
-          .find(byteProperty.interactor)
-          .fillIn(byteProperty.newValue),
-      );
-    });
-    QuickMarcEditor.pressSaveAndClose();
-    return validRecord.tag008AuthorityBytesProperties.getNewValueSourceLine();
   },
 
   clearTag008Holdings() {
@@ -1547,7 +1550,7 @@ export default {
     );
   },
 
-  checkHeaderFirstLine({ headingTypeFrom1XX, headingType, status }, { firstName, name }) {
+  checkHeaderFirstLine({ headingTypeFrom1XX, headingType, status }, userName) {
     cy.expect(Pane(`Edit  MARC authority record - ${headingTypeFrom1XX}`).exists());
     cy.then(() => Pane(`Edit  MARC authority record - ${headingTypeFrom1XX}`).subtitle()).then(
       (subtitle) => {
@@ -1558,7 +1561,7 @@ export default {
               including(status),
               including(headingType),
               including('Last updated:'),
-              including(`Source: ${firstName}, ${name}`),
+              including(`Source: ${userName}`),
             ),
           }).exists(),
         );
@@ -1608,14 +1611,6 @@ export default {
         .find(TextField('Indicator', { name: including('.indicators[1]') }))
         .has({ disabled: false }),
     ]);
-  },
-
-  checkLDRValue(ldrValue = validRecord.ldrValue) {
-    cy.expect(
-      getRowInteractorByTagName('LDR')
-        .find(TextArea({ ariaLabel: 'Subfield' }))
-        .has({ textContent: ldrValue }),
-    );
   },
 
   checkAuthority008SubfieldsLength() {
@@ -1746,12 +1741,20 @@ export default {
     cy.expect(calloutAfterSaveAndClose.absent());
   },
 
-  checkFourthBoxDisabled(rowIndex) {
-    cy.expect(
-      getRowInteractorByRowNumber(rowIndex)
-        .find(TextArea({ ariaLabel: 'Subfield' }))
-        .has({ disabled: true }),
-    );
+  checkFourthBoxEditable(rowIndex, isEditable = true) {
+    if (isEditable) {
+      cy.expect(
+        getRowInteractorByRowNumber(rowIndex)
+          .find(TextArea({ ariaLabel: 'Subfield' }))
+          .has({ disabled: !isEditable }),
+      );
+    } else {
+      cy.expect(
+        getRowInteractorByRowNumber(rowIndex)
+          .find(TextArea({ ariaLabel: 'Subfield' }))
+          .has({ disabled: !isEditable }),
+      );
+    }
   },
 
   verifyNoFieldWithContent(content) {
@@ -2428,7 +2431,7 @@ export default {
   verifyDropdownValueOfLDRIsValid(dropdownLabel, isValid = true) {
     cy.expect(
       QuickMarcEditorRow({ tagValue: 'LDR' })
-        .find(Select({ label: dropdownLabel }))
+        .find(Select({ label: including(dropdownLabel) }))
         .has({ valid: isValid }),
     );
   },
@@ -2635,5 +2638,20 @@ export default {
           .absent(),
       );
     });
+  },
+
+  verifyAllBoxesInARowAreDisabled(rowNumber, isDisabled = true) {
+    cy.expect([
+      getRowInteractorByRowNumber(rowNumber).find(TextField('Field')).has({ disabled: isDisabled }),
+      getRowInteractorByRowNumber(rowNumber)
+        .find(TextArea({ ariaLabel: 'Subfield' }))
+        .has({ disabled: isDisabled }),
+      getRowInteractorByRowNumber(rowNumber)
+        .find(TextField('Indicator', { name: including('.indicators[0]') }))
+        .has({ disabled: isDisabled }),
+      getRowInteractorByRowNumber(rowNumber)
+        .find(TextField('Indicator', { name: including('.indicators[1]') }))
+        .has({ disabled: isDisabled }),
+    ]);
   },
 };

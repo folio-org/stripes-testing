@@ -9,6 +9,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { LOCATION_IDS } from '../../../support/constants';
 
 let user;
 const item = {
@@ -35,8 +36,7 @@ describe('bulk-edit', () => {
           expandAll: true,
           query: `"barcode"=="${item.itemBarcode}"`,
         }).then((res) => {
-          // Annex
-          res.temporaryLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
+          res.temporaryLocation = { id: LOCATION_IDS.ANNEX };
           InventoryItems.editItemViaApi(res);
         });
         cy.login(user.username, user.password, {

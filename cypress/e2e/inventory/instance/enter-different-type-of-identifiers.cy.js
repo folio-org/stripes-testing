@@ -13,7 +13,7 @@ describe('Inventory', () => {
     let instanceId;
     let resourceIdentifier;
 
-    beforeEach('navigate to inventory', () => {
+    before('Create test data and login', () => {
       instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
       cy.getAdminToken()
         .then(() => {
@@ -35,7 +35,7 @@ describe('Inventory', () => {
       cy.loginAsAdmin();
     });
 
-    afterEach(() => {
+    after('Delete test data', () => {
       cy.getAdminToken();
       InventoryInstance.deleteInstanceViaApi(instanceId);
     });
@@ -46,7 +46,16 @@ describe('Inventory', () => {
       InventoryInstances.selectInstance();
     };
 
-    ['ASIN', 'BNB'].forEach((identifier) => {
+    [
+      {
+        identifier: 'ASIN',
+        line: 0,
+      },
+      {
+        identifier: 'BNB',
+        line: 1,
+      },
+    ].forEach((element) => {
       it(
         'C609 In Accordion Identifiers --> enter different type of identifiers (folijet)',
         { tags: ['smoke', 'folijet'] },
@@ -55,12 +64,12 @@ describe('Inventory', () => {
 
           searchAndOpenInstance('Title (all)', instanceTitle);
           InventoryInstance.editInstance();
-          InstanceRecordEdit.addIdentifier(identifier, resourceIdentifier);
+          InstanceRecordEdit.addIdentifier(element.identifier, resourceIdentifier, element.line);
           searchAndOpenInstance(
             'Keyword (title, contributor, identifier, HRID, UUID)',
             resourceIdentifier,
           );
-          InventoryInstance.checkInstanceIdentifier(resourceIdentifier);
+          InventoryInstance.checkInstanceIdentifier(resourceIdentifier, element.line);
         },
       );
     });
