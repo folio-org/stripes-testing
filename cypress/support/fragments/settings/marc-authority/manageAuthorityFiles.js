@@ -10,6 +10,7 @@ import {
   Pane,
   TextField,
   including,
+  matching,
 } from '../../../../../interactors';
 import { DEFAULT_FOLIO_AUTHORITY_FILES, AUTHORITY_FILE_TEXT_FIELD_NAMES } from '../../../constants';
 
@@ -440,6 +441,9 @@ export default {
         targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.startsWith)).exists(),
         targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.baseUrl)).exists(),
         targetRow.find(sourceCell).has({ content: 'FOLIO' }),
+        targetRow
+          .find(MultiColumnListCell({ content: matching(/\d{1,2}\/\d{1,2}\/\d{4} by */) }))
+          .exists(),
         targetRow.find(activeCheckbox).has({ disabled: true }),
         targetRow.find(editButton).exists(),
       ]);
