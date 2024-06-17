@@ -1,4 +1,3 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
 import {
   Accordion,
   Button,
@@ -22,7 +21,7 @@ import {
   TextArea,
   TextField,
   including,
-} from '../../../../../interactors';
+} from '../../../../../../interactors';
 import {
   ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES,
   EXISTING_RECORD_NAMES,
@@ -30,8 +29,8 @@ import {
   INSTANCE_STATUS_TERM_NAMES,
   INCOMING_RECORD_NAMES,
   LOCATION_NAMES,
-} from '../../../constants';
-import getRandomPostfix from '../../../utils/stringTools';
+} from '../../../../constants';
+import getRandomPostfix from '../../../../utils/stringTools';
 
 const saveButton = Button('Save as profile & Close');
 const searchButton = Button('Search');

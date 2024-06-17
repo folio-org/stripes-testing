@@ -1,6 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { including } from '@interactors/html';
-import { Button, Form, TextField, Accordion, Option, Select } from '../../../../../interactors';
+import { Button, Form, TextField, Accordion, Option, Select } from '../../../../../../interactors';
 
 const recordTypeselect = Select({ name: 'profile.existingRecordType' });
 
