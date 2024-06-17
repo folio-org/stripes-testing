@@ -262,6 +262,7 @@ const fillSummaryInMappingProfile = (specialMappingProfile = defaultMappingProfi
     incomingRecordTypeField.choose(incomingRecordType.marcBib),
     existingRecordType.choose(specialMappingProfile.typeValue),
   ]);
+  cy.wait(1500);
 };
 const fillSummaryForMarcAuthInMappingProfile = (specialMappingProfile = defaultMappingProfile) => {
   cy.do([
@@ -269,9 +270,11 @@ const fillSummaryForMarcAuthInMappingProfile = (specialMappingProfile = defaultM
     incomingRecordTypeField.choose(incomingRecordType.marcAuth),
     existingRecordType.choose(specialMappingProfile.typeValue),
   ]);
+  cy.wait(1500);
 };
 const fillFolioRecordType = (profile) => {
   cy.do(existingRecordType.choose(profile.typeValue));
+  cy.wait(1500);
 };
 const fillInvoiceLineDescription = (description) => {
   cy.do(Accordion('Invoice line information').find(TextField('Description*')).fillIn(description));
@@ -505,7 +508,7 @@ export default {
       incomingRecordTypeField.choose(profile.incomingRecordType),
       existingRecordType.choose(profile.typeValue),
     ]);
-    cy.wait(1000);
+    cy.wait(1500);
     cy.get('#mapping-profiles-form').find('textarea[name="profile.description"]').clear();
     cy.wait(1000);
     if (profile.description) {
@@ -705,7 +708,10 @@ export default {
   },
   addName: (name) => cy.do(nameField.fillIn(name)),
   addIncomingRecordType: (type) => cy.do(incomingRecordTypeField.choose(type)),
-  addFolioRecordType: (folioType) => cy.do(existingRecordType.choose(folioType)),
+  addFolioRecordType: (folioType) => {
+    cy.do(existingRecordType.choose(folioType));
+    cy.wait(1500);
+  },
   fillTemporaryLocation: (location) => cy.do(TextField('Temporary').fillIn(location)),
   fillDigitizationPolicy: (policy) => cy.do(TextField('Digitization policy').fillIn(policy)),
   fillCallNumber: (number) => cy.do(TextField('Call number').fillIn(number)),
