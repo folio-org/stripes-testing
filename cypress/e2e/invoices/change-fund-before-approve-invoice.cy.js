@@ -133,7 +133,6 @@ describe('Invoices', () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         OrderLines.addPOLine();
-        cy.reload();
         OrderLines.fillInPOLineInfoWithFund(firstFund);
         OrderLines.backToEditingOrder();
         Orders.approveOrderbyActions();
@@ -146,7 +145,6 @@ describe('Invoices', () => {
         Orders.selectFromResultsList(orderNumber);
         OrderLines.selectPOLInOrder(0);
         OrderLines.editPOLInOrder();
-        cy.reload();
         OrderLines.changeFundInPOL(secondFund);
         cy.visit(TopMenu.invoicesPath);
         Invoices.searchByNumber(invoice.invoiceNumber);

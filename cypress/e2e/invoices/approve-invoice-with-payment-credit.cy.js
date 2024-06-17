@@ -142,16 +142,12 @@ describe('ui-invoices: Cancelling approved invoices', () => {
       cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(invoice, organization.name);
       cy.wait(2000);
-      cy.reload();
       Invoices.createInvoiceLinePOLLookUWithSubTotal(firstOrderNumber, '10');
       cy.wait(2000);
-      cy.reload();
       Invoices.createInvoiceLinePOLLookUWithSubTotal(firstOrderNumber, '-10');
       cy.wait(2000);
-      cy.reload();
       Invoices.createInvoiceLinePOLLookUWithSubTotal(firstOrderNumber, '10');
       cy.wait(2000);
-      cy.reload();
       Invoices.approveInvoice();
       cy.visit(TopMenu.fundPath);
       FinanceHelp.searchByName(defaultFund.name);
@@ -170,7 +166,6 @@ describe('ui-invoices: Cancelling approved invoices', () => {
       cy.visit(TopMenu.invoicesPath);
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
-      cy.reload();
       Invoices.payInvoice();
       cy.visit(TopMenu.fundPath);
       FinanceHelp.searchByName(defaultFund.name);

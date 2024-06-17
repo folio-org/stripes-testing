@@ -369,7 +369,6 @@ export default {
 
   viewTransactions: () => {
     cy.do(Link('View transactions').click());
-    cy.reload();
   },
 
   checkTransactionList: (fundCode) => {
@@ -1051,7 +1050,6 @@ export default {
   selectFund: (FundName) => {
     cy.wait(4000);
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
-    cy.reload();
     FundDetails.waitLoading();
   },
 

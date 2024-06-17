@@ -270,7 +270,6 @@ export default {
       Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
       newBlankLineButton.click(),
     ]);
-    cy.reload();
     cy.do([
       polLookUpButton.click(),
       selectOrderLinesModal.find(SearchField({ id: searhInputId })).fillIn(orderNumber),
@@ -606,7 +605,6 @@ export default {
   createInvoiceLine: (invoiceLine) => {
     cy.do(Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click());
     cy.do(newBlankLineButton.click());
-    cy.reload();
     // TODO: update using interactors once we will be able to pass negative value into text field
     cy.xpath('//*[@id="subTotal"]').type(invoiceLine.subTotal);
     cy.do([

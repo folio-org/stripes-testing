@@ -137,9 +137,9 @@ describe('Invoices', () => {
     });
 
     cy.createTempUser([
-      permissions.uiFinanceExecuteFiscalYearRollover.gui,
+      permissions.uiInvoicesApproveInvoices.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiFinanceViewLedger.gui,
+      permissions.viewEditCreateInvoiceInvoiceLine.gui,
       permissions.uiInvoicesPayInvoices.gui,
       permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
       permissions.uiOrdersView.gui,

@@ -56,7 +56,6 @@ describe('ui-invoices: Approve invoice', () => {
                 cy.visit(TopMenu.invoicesPath);
                 Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
                 Invoices.createInvoiceLine(invoiceLine);
-                cy.reload();
                 Invoices.addFundDistributionToLine(invoiceLine, defaultFund);
                 Invoices.approveInvoice();
               });
