@@ -307,10 +307,9 @@ const selectActionForStatisticalCode = (number, action = actions.addTheseToExist
 };
 const addStatisticalCode = (name, number, action) => {
   selectActionForStatisticalCode(number, action);
-  cy.do([
-    Button('Add statistical code').click(),
-    TextField('Statistical code').fillIn(`"${name}"`),
-  ]);
+  cy.do(Button('Add statistical code').click());
+  cy.wait(1000);
+  cy.do(TextField('Statistical code').fillIn(`"${name}"`));
 };
 const addItemNotes = (noteType, note, staffOnly) => {
   const noteFieldName = 'profile.mappingDetails.mappingFields[25].repeatableFieldAction';
