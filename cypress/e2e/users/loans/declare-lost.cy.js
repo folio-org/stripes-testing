@@ -132,6 +132,7 @@ describe('ui-users-loans: Loans', () => {
         // We need this wait because "testLoanDetails" has time-based checks
         // so "сheck out" and "declare lost" are expected to be done in the same minutes.
         cy.wait((60 - date.getSeconds()) * 1000);
+        cy.wait(10000);
         [newFirstItemData.barcode, newSecondItemData.barcode].forEach((itemBarcode) => {
           Checkout.checkoutItemViaApi({
             itemBarcode,
@@ -172,7 +173,7 @@ describe('ui-users-loans: Loans', () => {
     );
   });
 
-  it('C9191 Loans: Declare lost (vega)', { tags: ['smoke', 'vega', 'system', 'shiftLeftBroken'] }, () => {
+  it('C9191 Loans: Declare lost (vega)', { tags: ['smoke', 'vega', 'system', 'shiftLeft'] }, () => {
     UsersCard.getApi(testData.userId).then((user) => {
       Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);
       Loans.startDeclareLost(SECOND_LOAN_ROW_INDEX);
@@ -185,6 +186,8 @@ describe('ui-users-loans: Loans', () => {
 
       const testLoanDetails = (shouldDeclareLost, loanId, loanHistoryFirstAction) => {
         cy.visit(AppPaths.getLoanDetailsPath(testData.userId, loanId));
+
+        cy.wait(2000);
 
         if (shouldDeclareLost) {
           LoanDetails.checkDeclareLostButtonActive();
