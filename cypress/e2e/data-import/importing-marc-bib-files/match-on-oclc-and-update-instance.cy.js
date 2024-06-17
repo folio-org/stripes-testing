@@ -226,6 +226,7 @@ describe('Data Import', () => {
           NewFieldMappingProfile.fillSummaryInMappingProfile(
             collectionOfMappingAndActionProfiles[1].mappingProfile,
           );
+          cy.wait(1000);
           NewFieldMappingProfile.fillInstanceStatusTerm(itemsForUpdateInstance.statusTerm);
           NewFieldMappingProfile.addStatisticalCode(itemsForUpdateInstance.statisticalCode, 8);
           NewFieldMappingProfile.save();

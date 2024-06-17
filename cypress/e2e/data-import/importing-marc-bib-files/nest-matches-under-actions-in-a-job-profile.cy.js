@@ -164,7 +164,7 @@ describe('Data Import', () => {
         marcFileNameForCreate,
         jobProfileForCreate.name,
       ).then((response) => {
-        holdingsHrId = response[0].instance.hrid;
+        holdingsHrId = response[0].holding.hrid;
       });
 
       cy.createTempUser([
@@ -187,7 +187,7 @@ describe('Data Import', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
       cy.getAdminToken().then(() => {
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.name);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(instanceMatchProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(holdingsMatchProfile.profileName);
