@@ -883,7 +883,6 @@ export default {
 
   browseOptionsDropdownIncludesOptions(options) {
     const browseOptionsDropdown = Select('Search field index');
-    this.switchToBrowseTab();
     options.forEach((name) => {
       cy.expect(browseOptionsDropdown.has({ content: including(name) }));
     });
@@ -900,7 +899,7 @@ export default {
   verifySearchAndFilterPane() {
     this.searchTabIsDefault();
     this.instanceTabIsDefault();
-    this.searchTypeDropdownDefaultValue('all');
+    this.searchTypeDropdownDefaultValue('Keyword (title, contributor, identifier, HRID, UUID)');
     this.verifySearchFieldIsEmpty();
     cy.expect([
       searchToggleButton.exists(),
@@ -936,7 +935,7 @@ export default {
   },
 
   searchTypeDropdownDefaultValue(value) {
-    cy.expect(searchTypeDropdown.has({ value }));
+    cy.expect(searchTypeDropdown.has({ checkedOptionText: value }));
   },
 
   verifySearchFieldIsEmpty() {
