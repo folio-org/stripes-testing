@@ -10,6 +10,7 @@ import {
   Pane,
   TextField,
   including,
+  matching,
 } from '../../../../../interactors';
 import { DEFAULT_FOLIO_AUTHORITY_FILES, AUTHORITY_FILE_TEXT_FIELD_NAMES } from '../../../constants';
 
@@ -333,11 +334,19 @@ export default {
     );
   },
 
-  editBaseUrlInFolioFile(authorityFileName, fieldName, fieldValue) {
+  editBaseUrlInFolioFile(authorityFileName, fieldValue) {
     const targetRow = getTargetRowWithFile(authorityFileName);
 
-    cy.do(targetRow.find(TextField({ placeholder: fieldName })).fillIn(fieldValue));
-    cy.expect(targetRow.find(TextField({ placeholder: fieldName })).has({ value: fieldValue }));
+    cy.do(
+      targetRow
+        .find(TextField({ placeholder: AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL }))
+        .fillIn(fieldValue),
+    );
+    cy.expect(
+      targetRow
+        .find(TextField({ placeholder: AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL }))
+        .has({ value: fieldValue }),
+    );
     cy.expect(targetRow.find(cancelButton).has({ disabled: false }));
     cy.expect(targetRow.find(saveButton).has({ disabled: false }));
   },
@@ -432,6 +441,9 @@ export default {
         targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.startsWith)).exists(),
         targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.baseUrl)).exists(),
         targetRow.find(sourceCell).has({ content: 'FOLIO' }),
+        targetRow
+          .find(MultiColumnListCell({ content: matching(/\d{1,2}\/\d{1,2}\/\d{4} by */) }))
+          .exists(),
         targetRow.find(activeCheckbox).has({ disabled: true }),
         targetRow.find(editButton).exists(),
       ]);

@@ -5,7 +5,6 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import { getLongDelay } from '../../../support/utils/cypressTools';
 
 let user;
 const externalId = getRandomPostfix();
@@ -18,6 +17,18 @@ const errorMessage =
 
 const getCalloutContent = (fileName) => {
   return `${fileName} is formatted incorrectly. Please correct the formatting and upload the file again.`;
+};
+const numberOfRequests = 5;
+const checkResponses = (alias, remainingRequests) => {
+  if (remainingRequests > 0) {
+    cy.wait(alias).then((interception) => {
+      if (interception.response.body.errorMessage) {
+        expect(interception.response.body.errorMessage).to.eq(errorMessage);
+      } else {
+        checkResponses(alias, remainingRequests - 1);
+      }
+    });
+  }
 };
 
 describe('bulk-edit', () => {
@@ -62,36 +73,28 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
         cy.intercept('GET', '*bulk-operations/*').as('uuid');
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
-        cy.wait('@uuid', getLongDelay()).then((res) => {
-          expect(res.response.body.errorMessage).to.eq(errorMessage);
-        });
+        checkResponses('@uuid', numberOfRequests);
         InteractorsTools.checkCalloutErrorMessage(getCalloutContent(userUUIDsFileName));
         InteractorsTools.dismissCallout(getCalloutContent(userUUIDsFileName));
 
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         cy.intercept('GET', '*bulk-operations/*').as('barcode');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
-        cy.wait('@barcode', getLongDelay()).then((res) => {
-          expect(res.response.body.errorMessage).to.eq(errorMessage);
-        });
+        checkResponses('@barcode', numberOfRequests);
         InteractorsTools.checkCalloutErrorMessage(getCalloutContent(userBarcodesFileName));
         InteractorsTools.dismissCallout(getCalloutContent(userBarcodesFileName));
 
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'External IDs');
         cy.intercept('GET', '*bulk-operations/*').as('id');
         BulkEditSearchPane.uploadFile(userExternalIDsFileName);
-        cy.wait('@id', getLongDelay()).then((res) => {
-          expect(res.response.body.errorMessage).to.eq(errorMessage);
-        });
+        checkResponses('@id', numberOfRequests);
         InteractorsTools.checkCalloutErrorMessage(getCalloutContent(userExternalIDsFileName));
         InteractorsTools.dismissCallout(getCalloutContent(userExternalIDsFileName));
 
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'Usernames');
         cy.intercept('GET', '*bulk-operations/*').as('username');
         BulkEditSearchPane.uploadFile(usernamesFileName);
-        cy.wait('@username', getLongDelay()).then((res) => {
-          expect(res.response.body.errorMessage).to.eq(errorMessage);
-        });
+        checkResponses('@username', numberOfRequests);
         InteractorsTools.checkCalloutErrorMessage(getCalloutContent(usernamesFileName));
         InteractorsTools.dismissCallout(getCalloutContent(usernamesFileName));
       },

@@ -83,8 +83,8 @@ describe('bulk-edit', () => {
           'Item permanent location',
           'Item temporary location',
         );
-        BulkEditSearchPane.verifyResultColumTitles('Item permanent location');
-        BulkEditSearchPane.verifyResultColumTitles('Item temporary location');
+        BulkEditSearchPane.verifyResultColumnTitles('Item permanent location');
+        BulkEditSearchPane.verifyResultColumnTitles('Item temporary location');
         // Click "Actions" menu => Select "Download matched records (CSV)" element
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedResults();

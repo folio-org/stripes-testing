@@ -87,7 +87,7 @@ const searchHoldingsOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
   'ISBN',
   'ISSN',
-  'Call number, eye readable',
+  'Call number, not normalized',
   'Call number, normalized',
   'Holdings notes (all)',
   'Holdings administrative notes',
@@ -100,7 +100,7 @@ const searchItemsOptions = [
   'Barcode',
   'ISBN',
   'ISSN',
-  'Effective call number (item), eye readable',
+  'Effective call number (item), not normalized',
   'Effective call number (item), normalized',
   'Item notes (all)',
   'Item administrative notes',
@@ -1193,11 +1193,7 @@ export default {
   },
 
   verifySelectedSearchOption(option) {
-    cy.expect(
-      inventorySearchAndFilterInput.has({
-        value: searchInstancesOptionsValues[searchInstancesOptions.indexOf(option)],
-      }),
-    );
+    cy.expect(inventorySearchAndFilterInput.has({ checkedOptionText: option }));
   },
 
   searchInstancesWithOption(option = searchInstancesOptions[0], value) {

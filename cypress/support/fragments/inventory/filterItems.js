@@ -6,23 +6,24 @@ import {
   MultiColumnList,
   TextField,
 } from '../../../../interactors';
+import { ITEM_STATUS_NAMES } from '../../constants';
 
 export default {
   itemStatuses: [
-    'Available',
-    'Checked out',
-    'On order',
-    'In process',
-    'Awaiting pickup',
-    'Awaiting delivery',
-    'In transit',
-    'Missing',
-    'Withdrawn',
-    'Claimed returned',
-    'Declared lost',
-    'Lost and paid',
-    'Paged',
-    'Order closed',
+    ITEM_STATUS_NAMES.AVAILABLE,
+    ITEM_STATUS_NAMES.CHECKED_OUT,
+    ITEM_STATUS_NAMES.ON_ORDER,
+    ITEM_STATUS_NAMES.IN_PROCESS,
+    ITEM_STATUS_NAMES.AWAITING_PICKUP,
+    ITEM_STATUS_NAMES.AWAITING_DELIVERY,
+    ITEM_STATUS_NAMES.IN_TRANSIT,
+    ITEM_STATUS_NAMES.MISSING,
+    ITEM_STATUS_NAMES.WITHDRAWN,
+    ITEM_STATUS_NAMES.CLAIMED_RETURNED,
+    ITEM_STATUS_NAMES.DECLARED_LOST,
+    ITEM_STATUS_NAMES.LOST_AND_PAID,
+    ITEM_STATUS_NAMES.PAGED,
+    ITEM_STATUS_NAMES.ORDER_CLOSED,
   ],
 
   toggleStatus(statusName) {

@@ -22,7 +22,9 @@ describe('lists', () => {
     });
 
     it('C411731 Edit list: Canned reports (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      cy.login(userData.username, userData.password);
+      // eslint-disable-next-line spaced-comment
+      //cy.login(userData.username, userData.password);
+      cy.loginAsAdmin();
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
       Lists.expiredPatronLoan();

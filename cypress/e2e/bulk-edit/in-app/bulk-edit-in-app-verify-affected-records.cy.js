@@ -66,7 +66,7 @@ describe('bulk-edit', () => {
         // Click "Actions" menu => Select "Start Bulk edit" option
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Item temporary location');
-        BulkEditSearchPane.verifyResultColumTitles('Item temporary location');
+        BulkEditSearchPane.verifyResultColumnTitles('Item temporary location');
 
         BulkEditActions.openInAppStartBulkEditFrom();
         const tempLocation = 'Annex';

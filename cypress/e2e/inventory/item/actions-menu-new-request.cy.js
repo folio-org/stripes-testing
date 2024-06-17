@@ -189,15 +189,15 @@ describe('Inventory', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         [
-          'Available',
-          'On order',
-          'In process',
-          'Checked out',
-          'In transit',
-          'Awaiting pickup',
-          'Awaiting delivery',
-          'Missing',
-          'Paged',
+          ITEM_STATUS_NAMES.AVAILABLE,
+          ITEM_STATUS_NAMES.ON_ORDER,
+          ITEM_STATUS_NAMES.IN_PROCESS,
+          ITEM_STATUS_NAMES.CHECKED_OUT,
+          ITEM_STATUS_NAMES.IN_TRANSIT,
+          ITEM_STATUS_NAMES.AWAITING_PICKUP,
+          ITEM_STATUS_NAMES.AWAITING_DELIVERY,
+          ITEM_STATUS_NAMES.MISSING,
+          ITEM_STATUS_NAMES.PAGED,
         ].forEach((itemStatus) => {
           InventoryHoldings.checkIfExpanded(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`, true);
           InventoryInstance.openItemByStatus(itemStatus);
@@ -214,17 +214,21 @@ describe('Inventory', () => {
           InstanceRecordView.verifyInstanceRecordViewOpened();
         });
 
-        ['Declared lost', 'Claimed returned', 'Lost and paid', 'Withdrawn', 'Order closed'].forEach(
-          (itemStatus) => {
-            cy.visit(TopMenu.inventoryPath);
-            InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
-            InstanceRecordView.verifyInstanceRecordViewOpened();
-            InventoryHoldings.checkIfExpanded(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`, true);
-            InventoryInstance.openItemByStatus(itemStatus);
-            InventoryItems.openActions();
-            InventoryItems.verifyNewRequestButtonIsAbsent();
-          },
-        );
+        [
+          ITEM_STATUS_NAMES.DECLARED_LOST,
+          ITEM_STATUS_NAMES.CLAIMED_RETURNED,
+          ITEM_STATUS_NAMES.LOST_AND_PAID,
+          ITEM_STATUS_NAMES.WITHDRAWN,
+          ITEM_STATUS_NAMES.ORDER_CLOSED,
+        ].forEach((itemStatus) => {
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
+          InstanceRecordView.verifyInstanceRecordViewOpened();
+          InventoryHoldings.checkIfExpanded(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`, true);
+          InventoryInstance.openItemByStatus(itemStatus);
+          InventoryItems.openActions();
+          InventoryItems.verifyNewRequestButtonIsAbsent();
+        });
       },
     );
   });

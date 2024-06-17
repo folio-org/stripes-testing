@@ -8,6 +8,7 @@ import Users from '../../../../support/fragments/users/users';
 import {
   INVENTORY_LDR_FIELD_DROPDOWNS_NAMES,
   INVENTORY_LDR_FIELD_TYPE_DROPDOWN,
+  INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES,
 } from '../../../../support/constants';
 
 describe('MARC', () => {
@@ -26,9 +27,9 @@ describe('MARC', () => {
         },
       };
       const field008DropdownsOptionsSets = [
-        { name: 'DtSt', option: 'm - Multiple dates' },
-        { name: 'Comp', option: 'an - Anthems' },
-        { name: 'FMus', option: 'a - Full score' },
+        { name: INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST, option: 'm - Multiple dates' },
+        { name: INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.COMP, option: 'an - Anthems' },
+        { name: INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.FMUS, option: 'a - Full score' },
       ];
 
       before('Create test data', () => {

@@ -59,10 +59,10 @@ describe('bulk-edit', () => {
 
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Last name');
         BulkEditSearchPane.changeShowColumnCheckbox('Last name');
-        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Last name');
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude('Last name');
 
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Email');
-        BulkEditSearchPane.verifyResultColumTitles('Email');
+        BulkEditSearchPane.verifyResultColumnTitles('Email');
       },
     );
 
