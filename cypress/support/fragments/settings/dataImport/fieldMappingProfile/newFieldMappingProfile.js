@@ -470,6 +470,7 @@ export default {
         cy.do(TextField('Call number').fillIn(specialMappingProfile.callNumber));
       }
     } else if (specialMappingProfile.typeValue === itemType) {
+      cy.wait(1500);
       cy.intercept('loan-types?*').as('getType');
       cy.do(materialTypeField.fillIn(materialType));
       cy.do(TextField('Permanent loan type').fillIn(permanentLoanType));
@@ -480,6 +481,7 @@ export default {
       cy.do(TextField('Status').fillIn(status));
     } else if (specialMappingProfile.typeValue === FOLIO_RECORD_TYPE.INSTANCE) {
       if ('update' in specialMappingProfile) {
+        cy.wait(1500);
         cy.do([
           catalogedDateField.fillIn(catalogedDate),
           TextField('Instance status term').fillIn(`"${INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED}"`),
