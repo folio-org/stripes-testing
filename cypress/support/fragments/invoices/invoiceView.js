@@ -28,9 +28,6 @@ const invoiceDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-invoiceDetails
 const actionsButton = Button('Actions');
 const newBlankLineButton = Button('New blank line');
 
-// information section
-const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }));
-
 // invoice lines section
 const invoiceLinesSection = Section({ id: 'invoiceLines' });
 
@@ -133,7 +130,16 @@ export default {
     }
 
     invoiceInformation.forEach(({ key, value }) => {
-      cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
+      cy.contains('div[class^="kvRoot"]', key)
+        .parent()
+        .within(() => {
+          cy.get('[data-test-kv-value="true"]')
+            .invoke('text')
+            .then((text) => {
+              const normalizedText = Cypress._.trim(Cypress._.replace(text, /\u00a0/g, ' '));
+              cy.wrap(normalizedText).should('include', value);
+            });
+        });
     });
 
     vendorDetails.forEach(({ key, value }) => {
