@@ -66,7 +66,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.searchColumnName('note');
         const columnNameNote = 'Administrative note';
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(columnNameNote);
-        BulkEditSearchPane.verifyResultColumTitles(columnNameNote);
+        BulkEditSearchPane.verifyResultColumnTitles(columnNameNote);
         BulkEditSearchPane.clearSearchColumnNameTextfield();
 
         BulkEditSearchPane.searchColumnName('fewoh', false);
@@ -74,7 +74,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.searchColumnName('id');
         const columnNameId = 'Instance HRID';
         BulkEditSearchPane.uncheckShowColumnCheckbox(columnNameId);
-        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude(columnNameId);
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(columnNameId);
 
         TopMenuNavigation.navigateToApp('Bulk edit');
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');

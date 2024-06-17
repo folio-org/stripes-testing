@@ -83,7 +83,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.searchColumnName('note');
         const columnNameNote = 'Action note';
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(columnNameNote);
-        BulkEditSearchPane.verifyResultColumTitles(columnNameNote);
+        BulkEditSearchPane.verifyResultColumnTitles(columnNameNote);
         BulkEditSearchPane.searchColumnName('fewoh', false);
         BulkEditSearchPane.clearSearchColumnNameTextfield();
         BulkEditSearchPane.verifyActionsDropdownScrollable();
@@ -91,7 +91,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.searchColumnName(columnName);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(columnName);
         BulkEditSearchPane.changeShowColumnCheckbox(columnName);
-        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude(columnName);
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(columnName);
       },
     );
   });
