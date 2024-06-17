@@ -49,20 +49,20 @@ describe('Inventory', () => {
           Object.values(BROWSE_CALL_NUMBER_OPTIONS),
         );
 
-        InventorySearchAndFilter.selectBrowseCallNumbers();
+        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.EFFECTIVE_LOCATION, true);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.EFFECTIVE_LOCATION, false);
 
-        InventorySearchAndFilter.selectBrowseContributors();
+        InventorySearchAndFilter.selectBrowseOption('Contributors');
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.NAME_TYPE);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.NAME_TYPE, true);
         BrowseContributors.expandNameTypeMenu();
         BrowseContributors.verifyNameTypeOptions(contributorsNameTypes);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.NAME_TYPE);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.NAME_TYPE, false);
-        InventorySearchAndFilter.selectBrowseSubjects();
+        InventorySearchAndFilter.selectBrowseOption('Subjects');
         BrowseSubjects.verifyNoAccordionsOnPane();
       },
     );
