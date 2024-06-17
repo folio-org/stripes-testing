@@ -27,7 +27,7 @@ describe('lists', () => {
       cy.loginAsAdmin();
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
-      Lists.resetAll();
+      Lists.resetAllFilters();
       Lists.expiredPatronLoan();
       Lists.actionButton();
       cy.contains('Edit list').should('be.disabled');

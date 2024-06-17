@@ -9,7 +9,7 @@ describe('lists', () => {
     const userData = {};
     const listData = {
       name: getTestEntityValue('test_list'),
-      recordType: 'Loans',
+      recordType: 'Users',
       status: ['Active', 'Inactive'],
       visibility: 'Private',
     };
@@ -44,7 +44,7 @@ describe('lists', () => {
         cy.loginAsAdmin();
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
-        Lists.resetAll();
+        Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -71,7 +71,7 @@ describe('lists', () => {
         cy.loginAsAdmin();
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
-        Lists.resetAll();
+        Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -101,7 +101,7 @@ describe('lists', () => {
         cy.loginAsAdmin();
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
-        Lists.resetAll();
+        Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -132,7 +132,7 @@ describe('lists', () => {
       cy.loginAsAdmin();
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
-      Lists.resetAll();
+      Lists.resetAllFilters();
       Lists.openNewListPane();
       Lists.setName(listData.name);
       Lists.setDescription(listData.name);
