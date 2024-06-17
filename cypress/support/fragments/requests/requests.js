@@ -244,7 +244,6 @@ function waitLoadingTags() {
     url: '/tags?limit=10000',
   }).as('getTags');
   cy.wait('@getTags');
-  // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(1000);
 }
 
