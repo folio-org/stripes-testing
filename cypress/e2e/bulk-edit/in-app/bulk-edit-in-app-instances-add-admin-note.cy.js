@@ -11,7 +11,8 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import SelectInstanceModal from '../../../support/fragments/requests/selectInstanceModal';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const testData = {};
@@ -25,15 +26,14 @@ const folioItem = {
 };
 const userServicePoint = ServicePoints.getDefaultServicePoint();
 const marcInstances = InventoryInstances.generateFolioInstances();
+const adminNote = 'adminNote~!@#$%^&*()~{.[]<}>øÆ§';
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
-        permissions.inventoryAll.gui,
-        permissions.enableStaffSuppressFacet.gui,
-        permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
+        permissions.uiInventoryViewCreateEditInstances.gui,
       ]).then((userProperties) => {
         user = userProperties;
         ServicePoints.createViaApi(userServicePoint);
@@ -78,8 +78,8 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C423979 Verify "Staff suppress" (Set true) option in Bulk Editing - Instances (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      'C466300 Bulk edit Instance fields - add administrative note (firebird)',
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
         BulkEditSearchPane.uploadFile(instanceUUIDsFileName);
@@ -88,20 +88,17 @@ describe('bulk-edit', () => {
 
         BulkEditActions.downloadMatchedResults();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Instance UUID');
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Staff suppress');
-        BulkEditSearchPane.verifyResultColumnTitles('Staff suppress');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Source');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Source', 'FOLIO');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Source', 'MARC');
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [
-          marcInstances[0].instanceId,
           folioItem.instanceId,
+          marcInstances[0].instanceId,
         ]);
         BulkEditActions.openStartBulkEditInstanceForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
-        const possibleActions = ['Staff suppress', 'Suppress from discovery'];
-        BulkEditActions.verifyPossibleActions(possibleActions);
-        BulkEditActions.selectOption('Staff suppress');
-        BulkEditSearchPane.verifyInputLabel('Staff suppress');
-        BulkEditActions.selectSecondAction('Set true');
-        BulkEditActions.verifyCheckboxAbsent();
+        BulkEditActions.verifyItemAdminstrativeNoteActions();
+        BulkEditActions.addItemNote('Administrative note', adminNote);
         BulkEditSearchPane.isConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyInputLabel(
@@ -111,27 +108,26 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyAreYouSureForm(2, marcInstances[0].instanceId);
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          folioItem.instanceId,
-          marcInstances[0].instanceId,
+          `${adminNote},${folioItem.instanceName},`,
+          `${adminNote},${marcInstances[0].instanceTitle},`,
         ]);
         BulkEditActions.commitChanges();
         BulkEditActions.verifySuccessBanner(2);
-        BulkEditSearchPane.verifyLocationChanges(2, 'true');
+        BulkEditSearchPane.verifyLocationChanges(2, adminNote);
         BulkEditSearchPane.verifyChangedResults(folioItem.instanceId, marcInstances[0].instanceId);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `${folioItem.instanceId},false,true,`,
-          `${marcInstances[0].instanceId},false,true,`,
+          `${adminNote},${folioItem.instanceName},`,
+          `${adminNote},${marcInstances[0].instanceTitle},`,
         ]);
 
         [folioItem.instanceName, marcInstances[0].instanceTitle].forEach((title) => {
-          cy.visit(TopMenu.inventoryPath);
-          SelectInstanceModal.filterByStaffSuppress('Yes');
+          TopMenuNavigation.navigateToApp('Inventory');
           InventorySearchAndFilter.searchInstanceByTitle(title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
-          InventoryInstance.verifyStaffSuppress();
+          ItemRecordView.checkItemAdministrativeNote(adminNote);
         });
       },
     );
