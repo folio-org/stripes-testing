@@ -320,7 +320,7 @@ export default {
     cy.do(Section({ id: 'instancesTags' }).find(TextField()).fillIn(tagName));
     cy.wait('@getTags');
     // TODO: clarify with developers what should be waited
-    cy.wait(1000);
+    cy.wait(1500);
     cy.do(Section({ id: 'instancesTags' }).find(TextField()).focus());
     cy.do(Section({ id: 'instancesTags' }).find(TextField()).click());
     cy.do(Checkbox(tagName).click());
@@ -978,9 +978,9 @@ export default {
     oclc,
     profile = 'Inventory Single Record - Default Create Instance (Default)',
   ) => {
+    cy.do([actionsButton.click(), Button({ id: 'dropdown-clickable-import-record' }).click()]);
+    cy.wait(1000);
     cy.do([
-      actionsButton.click(),
-      Button({ id: 'dropdown-clickable-import-record' }).click(),
       Select({ name: 'selectedJobProfileId' }).choose(profile),
       singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
       singleRecordImportModal.find(Button('Import')).click(),
