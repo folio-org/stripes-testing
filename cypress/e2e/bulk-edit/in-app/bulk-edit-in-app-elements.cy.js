@@ -91,13 +91,13 @@ describe('bulk-edit', () => {
           'Temporary loan type',
           'Item effective location',
         ];
-        expectedColumnTitles.forEach((title) => BulkEditSearchPane.verifyResultColumTitles(title));
+        expectedColumnTitles.forEach((title) => BulkEditSearchPane.verifyResultColumnTitles(title));
 
         BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
         BulkEditActions.verifyItemActionDropdownItems();
 
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Item ID');
-        BulkEditSearchPane.verifyResultColumTitles('Item ID');
+        BulkEditSearchPane.verifyResultColumnTitles('Item ID');
       },
     );
 

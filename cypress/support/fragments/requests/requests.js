@@ -244,7 +244,6 @@ function waitLoadingTags() {
     url: '/tags?limit=10000',
   }).as('getTags');
   cy.wait('@getTags');
-  // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(1000);
 }
 
@@ -314,8 +313,8 @@ export default {
         .find(TextField({ id: 'input-request-search' }))
         .exists(),
     );
+    cy.wait(1500);
     cy.do(TextField({ id: 'input-request-search' }).fillIn(title));
-    cy.wait(500);
     cy.do(Pane({ title: 'Search & filter' }).find(Button('Search')).click());
     cy.wait(1500);
   },

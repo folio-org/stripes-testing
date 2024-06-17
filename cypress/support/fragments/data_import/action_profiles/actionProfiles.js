@@ -31,7 +31,7 @@ const search = (profileName) => {
   cy.expect(resultsPane.find(searchField).exists());
   cy.wait(1500);
   cy.do(searchField.fillIn(profileName));
-  cy.wait(2000);
+  cy.wait(1000);
   cy.do(Pane('Action profiles').find(Button('Search')).click());
 };
 
@@ -53,7 +53,7 @@ export default {
   selectActionProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
 
   checkActionProfilePresented: (profileName) => {
-    cy.wait(1000);
+    cy.wait(1500);
     search(profileName);
     cy.expect(MultiColumnListCell(profileName).exists());
   },

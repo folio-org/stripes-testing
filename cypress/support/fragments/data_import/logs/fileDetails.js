@@ -349,7 +349,11 @@ export default {
   },
 
   openJsonScreen: (title) => {
-    cy.get('#search-results-list').find('a').contains(title).invoke('removeAttr', 'target')
+    cy.get('#search-results-list')
+      .find('a')
+      .contains(title)
+      .first()
+      .invoke('removeAttr', 'target')
       .click();
     cy.wait(2000);
   },
@@ -567,7 +571,7 @@ export default {
   },
 
   verifyLogDetailsPageIsOpened: (fileName) => {
-    cy.expect(Pane(fileName).exists());
+    cy.expect(Pane(including(fileName)).exists());
   },
 
   verifyInstanceStatusIsHiperlink: (itmStatus, rowNumber = 0) => {

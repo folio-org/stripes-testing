@@ -32,7 +32,7 @@ import {
   or,
 } from '../../../../interactors';
 import Badge from '../../../../interactors/badge';
-import { REQUEST_METHOD } from '../../constants';
+import { REQUEST_METHOD, ITEM_STATUS_NAMES } from '../../constants';
 import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -1051,7 +1051,7 @@ export default {
     cy.expect(tagButton.find(HTML(including('0'))).exists());
   },
 
-  checkIsInstancePresented: (title, location, status = 'On order') => {
+  checkIsInstancePresented: (title, location, status = ITEM_STATUS_NAMES.ON_ORDER) => {
     cy.expect(Pane({ titleLabel: including(title) }).exists());
     cy.expect(instanceDetailsSection.find(HTML(including(location))).exists());
     openHoldings([location]);
@@ -1672,5 +1672,9 @@ export default {
 
   verifyNoStaffSuppress() {
     cy.expect(HTML(including('Warning: Instance is marked staff suppressed')).absent());
+  },
+
+  verifyHoldingsAbsent(holdingsLocation) {
+    cy.expect(Accordion({ label: including(`Holdings: ${holdingsLocation}`) }).absent());
   },
 };

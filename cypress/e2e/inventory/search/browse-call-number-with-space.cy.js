@@ -1,4 +1,5 @@
 import permissions from '../../../support/dictionary/permissions';
+import { BROWSE_CALL_NUMBER_OPTIONS } from '../../../support/constants';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -141,7 +142,7 @@ describe('Inventory', () => {
 
     it(
       'C358140 Verify that browsing for "call number" with "space" value will get the correct result (spitfire)',
-      { tags: ['spitfire', 'smoke'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
       () => {
         search(testData.exactSearch);
         BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
@@ -198,7 +199,7 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();
-        InventorySearchAndFilter.selectBrowseCallNumbers();
+        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
         InventorySearchAndFilter.byEffectiveLocation();
         InventorySearchAndFilter.verifyCallNumberBrowseNotEmptyPane();
 
