@@ -77,7 +77,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.searchColumnName(columnName);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(columnName);
         BulkEditSearchPane.changeShowColumnCheckbox(columnName);
-        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude(columnName);
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(columnName);
 
         TopMenuNavigation.navigateToApp('Bulk edit');
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');

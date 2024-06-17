@@ -1,4 +1,5 @@
 import permissions from '../../../support/dictionary/permissions';
+import { BROWSE_CALL_NUMBER_OPTIONS } from '../../../support/constants';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -198,7 +199,7 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();
-        InventorySearchAndFilter.selectBrowseCallNumbers();
+        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
         InventorySearchAndFilter.byEffectiveLocation();
         InventorySearchAndFilter.verifyCallNumberBrowseNotEmptyPane();
 
