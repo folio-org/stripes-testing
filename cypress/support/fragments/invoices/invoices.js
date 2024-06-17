@@ -277,9 +277,10 @@ export default {
     ]);
     FinanceHelper.selectFromResultsList();
     cy.get('input[name="subTotal"]').clear().type(total);
-    cy.do([fundInInvoiceSection.find(Button('%')).click(), saveAndClose.click()]);
+    cy.do([fundInInvoiceSection.find(Button('%')).click()]);
+    cy.wait(2000);
+    cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
-    cy.wait(4000);
   },
 
   checkSearchResultsContent({ records = [] } = {}) {
@@ -709,6 +710,7 @@ export default {
       saveAndClose.click(),
     ]);
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
+    cy.wait(8000);
   },
 
   changeFundInLine: (fund) => {
