@@ -77,7 +77,7 @@ describe('ui-finance: Funds', () => {
   });
 
   it(
-    'C423579 Add location when creating a fund restricted by location (thunderjet)',
+    'C434074 Existing Fund must have locations added to make it "Restricted by location" (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(defaultFund.name);
