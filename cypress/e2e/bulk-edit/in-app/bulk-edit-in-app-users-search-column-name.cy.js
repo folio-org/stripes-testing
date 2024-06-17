@@ -54,7 +54,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.searchColumnName('id');
         const columnNameId = 'User id';
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(columnNameId);
-        BulkEditSearchPane.verifyResultColumTitles(columnNameId);
+        BulkEditSearchPane.verifyResultColumnTitles(columnNameId);
         BulkEditSearchPane.clearSearchColumnNameTextfield();
 
         BulkEditSearchPane.searchColumnName('fewoh', false);
@@ -62,7 +62,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.searchColumnName('user');
         const columnNameUsername = 'Username';
         BulkEditSearchPane.uncheckShowColumnCheckbox(columnNameUsername);
-        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude(columnNameUsername);
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(columnNameUsername);
 
         TopMenuNavigation.navigateToApp('Bulk edit');
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
