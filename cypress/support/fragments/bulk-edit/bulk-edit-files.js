@@ -153,12 +153,12 @@ export default {
   },
 
   verifyMatchedResultByPermanentLocation(actualResult, expectedResult) {
-    const actualPermanentLocation = actualResult.split(',')[6];
+    const actualPermanentLocation = actualResult.split(',')[9];
     expect(actualPermanentLocation).to.eq(expectedResult);
   },
 
   verifyMatchedResultByTemporaryLocation(actualResult, expectedResult) {
-    const actualTemporaryLocation = actualResult.split(',')[7];
+    const actualTemporaryLocation = actualResult.split(',')[10];
     expect(actualTemporaryLocation).to.eq(expectedResult);
   },
 

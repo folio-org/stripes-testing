@@ -81,12 +81,13 @@ export default {
       cy.do(enterItemBarcodeButton.click());
     }
     cy.wait('@getLoans');
+    cy.wait(500);
     cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
     cy.intercept('/proxiesfor?*').as('getUsers');
     cy.do(enterRequesterBarcodeButton.click());
     cy.expect(selectServicePoint.exists);
     cy.wait('@getUsers');
-    cy.wait(500);
+    cy.wait(1000);
     cy.do(selectRequestType.choose(newRequest.requestType));
   },
 
