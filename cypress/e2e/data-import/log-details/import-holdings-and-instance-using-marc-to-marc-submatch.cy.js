@@ -107,8 +107,12 @@ describe('Data Import', () => {
         }).then((resp) => {
           testData.protectedFieldId = resp.id;
         });
-        NewInstanceStatusType.createViaApi().then((initialInstanceStatusType) => {
-          testData.instanceStatusTypeId = initialInstanceStatusType.body.id;
+        InstanceStatusTypes.getViaApi({ query: '"name"=="Electronic Resource"' }).then((type) => {
+          if (type.length === 0) {
+            NewInstanceStatusType.createViaApi().then((initialInstanceStatusType) => {
+              testData.instanceStatusTypeId = initialInstanceStatusType.body.id;
+            });
+          }
         });
         cy.login(user.username, user.password, {
           path: SettingsMenu.mappingProfilePath,

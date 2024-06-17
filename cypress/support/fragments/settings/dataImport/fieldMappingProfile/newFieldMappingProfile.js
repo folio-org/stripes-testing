@@ -321,6 +321,9 @@ const addItemNotes = (noteType, note, staffOnly) => {
     Select({ name: noteFieldName }).focus(),
     Select({ name: noteFieldName }).choose(actions.addTheseToExisting),
     Button('Add item note').click(),
+  ]);
+  cy.wait(1000);
+  cy.do([
     noteTypeField.fillIn(noteType),
     TextField('Note').fillIn(note),
     Select({ name: selectName }).focus(),
@@ -815,8 +818,9 @@ export default {
     materialsSpecified = '',
     urlPublicNote = '',
   ) => {
+    cy.do([Button('Add electronic access').click()]);
+    cy.wait(1000);
     cy.do([
-      Button('Add electronic access').click(),
       TextField('Relationship').fillIn(relationship),
       TextField('URI').fillIn(uri),
       TextField('Link text').fillIn(linkText),
