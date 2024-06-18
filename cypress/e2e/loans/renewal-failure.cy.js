@@ -179,8 +179,10 @@ describe('Renewal', () => {
     { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
     () => {
       cy.login(renewUserData.username, renewUserData.password);
+      cy.wait(2000);
       RenewalActions.renewWithoutOverrideAccess(loanId, renewUserData.id, itemData);
       cy.login(renewOverrideUserData.lastName, renewOverrideUserData.password);
+      cy.wait(2000);
       RenewalActions.renewWithOverrideAccess(loanId, renewUserData.id, itemData);
       RenewalActions.startOverriding(itemData);
       RenewalActions.fillOverrideInfo();

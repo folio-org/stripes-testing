@@ -78,7 +78,7 @@ const checkLoansPage = () => {
   cy.expect(PaneHeader(including(headers.loansPage)).exists());
 
   cy.do(Button(buttonLabels.renew).click());
-
+  cy.wait(2000);
   cy.expect(Modal({ content: including(loanInfo.notRenewed) }).exists());
 };
 
