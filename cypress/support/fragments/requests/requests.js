@@ -69,6 +69,7 @@ function createRequestApi(
   itemStatus = ITEM_STATUS_NAMES.AVAILABLE,
   requestType = REQUEST_TYPES.PAGE,
   requestLevel = REQUEST_LEVELS.ITEM,
+  namePrefix = '',
 ) {
   const userData = {
     active: true,
@@ -92,7 +93,7 @@ function createRequestApi(
     userId: null,
   };
   const instanceRecordData = {
-    instanceTitle: `autoTestInstanceTitle ${Helper.getRandomBarcode()}`,
+    instanceTitle: `${namePrefix}autoTestInstanceTitle ${Helper.getRandomBarcode()}`,
     itemBarcode: `item-barcode-${uuid()}`,
     instanceId: uuid(),
     itemId: uuid(),
@@ -427,27 +428,27 @@ export default {
     {
       title: 'Title',
       id: 'title',
-      columnIndex: 2,
+      columnIndex: 3,
     },
     {
       title: 'Type',
       id: 'type',
-      columnIndex: 5,
+      columnIndex: 6,
     },
     {
       title: 'Item barcode',
       id: 'itembarcode',
-      columnIndex: 4,
+      columnIndex: 5,
     },
     {
       title: 'Requester',
       id: 'requester',
-      columnIndex: 8,
+      columnIndex: 9,
     },
     {
       title: 'Requester Barcode',
       id: 'requesterbarcode',
-      columnIndex: 9,
+      columnIndex: 10,
     },
   ],
 
@@ -513,7 +514,6 @@ export default {
       if (!b) return -1;
       return a.localeCompare(b);
     });
-
     expect(prev).to.deep.equal(itemsClone);
   },
 
