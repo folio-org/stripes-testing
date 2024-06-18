@@ -570,8 +570,6 @@ export default {
 
     this.getSortOrder(headerId).then((order) => {
       this.getMultiColumnListCellsValues(columnIndex).then((cells) => {
-        cy.log('cells ----->');
-        cy.log(cells);
         if (order === 'ascending') this.validateStringsAscendingOrder(cells);
         else if (order === 'descending') this.validateStringsDescendingOrder(cells);
       });
