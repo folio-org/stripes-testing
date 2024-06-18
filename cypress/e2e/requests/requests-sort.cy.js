@@ -49,7 +49,7 @@ describe('ui-requests: Sort requests', () => {
   });
 
   // Test is failed. This is a known issue.
-  it('C2379 Test Request app sorting (vega)', { tags: ['smokeBroken', 'vega'] }, () => {
+  it('C2379 Test Request app sorting (vega)', { tags: ['smoke', 'vega'] }, () => {
     cy.visit(TopMenu.requestsPath);
 
     cy.intercept('GET', '/circulation/requests?*').as('getRequests');
