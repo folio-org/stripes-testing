@@ -2,7 +2,7 @@
 import { Permissions } from '../../../support/dictionary';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';

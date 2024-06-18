@@ -2,7 +2,7 @@ import { EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,

@@ -1,7 +1,7 @@
 import { FOLIO_RECORD_TYPE, ORDER_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
