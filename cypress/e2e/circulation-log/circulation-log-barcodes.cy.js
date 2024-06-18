@@ -120,7 +120,7 @@ describe('Circulation log', () => {
 
   it(
     'C17094 Verify User barcode appears in Circulation log (volaris) (TaaS)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'standalone'] },
     () => {
       const firstItemSearchResultsData = {
         userBarcode: firstUser.barcode,

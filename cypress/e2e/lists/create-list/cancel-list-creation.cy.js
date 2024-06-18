@@ -27,7 +27,7 @@ describe('lists', () => {
 
     it(
       'C411709 Verify that the button "Cancel", cancels new list creation process. (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'standalone'] },
       () => {
         // eslint-disable-next-line spaced-comment
         //cy.login(userData.username, userData.password);

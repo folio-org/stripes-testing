@@ -164,7 +164,7 @@ describe('Check In - Actions ', () => {
 
   it(
     'C398022 Check sessionId does not change when switching to other applications in scope of one check-in session (vega)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'standalone'] },
     () => {
       cy.login(userData[0].username, userData[0].password);
       cy.visit(TopMenu.checkInPath);
@@ -188,7 +188,7 @@ describe('Check In - Actions ', () => {
 
   it(
     'C398005 Check sessionId field while check-in (vega)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'standalone'] },
     () => {
       cy.login(userData[1].username, userData[1].password);
       cy.visit(TopMenu.checkInPath);

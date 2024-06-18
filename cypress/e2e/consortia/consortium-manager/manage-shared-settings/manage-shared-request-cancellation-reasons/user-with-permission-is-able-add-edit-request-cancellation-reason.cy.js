@@ -71,7 +71,7 @@ describe('Consortia', () => {
 
         it(
           'C410842 User with "Consortium manager: Can share settings to all members" permission is able to add/edit request cancellation reason shared to all affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-          { tags: ['criticalPathECS', 'thunderjet'] },
+          { tags: ['criticalPathECS', 'thunderjet', 'standalone'] },
           () => {
             TopMenuNavigation.navigateToApp('Consortium manager');
             ConsortiumManagerApp.waitLoading();
