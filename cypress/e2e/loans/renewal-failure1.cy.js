@@ -18,7 +18,7 @@ import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Renewal', () => {
+describe('Renewal 1', () => {
   let materialTypeId;
   let loanId;
   let servicePointId;
@@ -175,7 +175,7 @@ describe('Renewal', () => {
   });
 
   it(
-    'C568 Renewal: failure because loan is not renewable (vega)',
+    'C568 Renewal: failure because loan is not renewable (vega) 1',
     { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'debugTest1'] },
     () => {
       cy.login(renewUserData.username, renewUserData.password);
