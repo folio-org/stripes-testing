@@ -57,7 +57,6 @@ describe('ui-requests: Sort requests', () => {
     Requests.checkAllRequestTypes();
     Requests.validateRequestTypesChecked();
     Requests.findCreatedRequest(instanceTitlePrefix);
-    cy.pause();
 
     // Validate that the requests are sorted by Request date (oldest at top) by default
     Requests.validateRequestsDateSortingOrder('ascending');
