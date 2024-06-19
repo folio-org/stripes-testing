@@ -495,4 +495,9 @@ export default {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'Add MARC holdings record' }).absent());
   },
+
+  verifyMoveHoldingsItemsToAnotherInstanceOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'move-instance' }).absent());
+  },
 };
