@@ -79,7 +79,7 @@ describe('MARC', () => {
             localAuthFileWithInvalidHridStartsWith.baseUrl,
             localAuthFileWithInvalidHridStartsWith.isActive,
           );
-          ManageAuthorityFiles.clickSaveButton();
+          ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
           ManageAuthorityFiles.checkErrorInField(
             localAuthFileWithInvalidHridStartsWith.name,
             AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH,
@@ -103,8 +103,10 @@ describe('MARC', () => {
               localAuthFileWithValidHridStartsWith.baseUrl,
               localAuthFileWithValidHridStartsWith.isActive,
             );
-            ManageAuthorityFiles.clickSaveButton();
-            ManageAuthorityFiles.checkAfterSave(localAuthFileWithValidHridStartsWith.name);
+            ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
+            ManageAuthorityFiles.checkAfterSaveCreatedFile(
+              localAuthFileWithValidHridStartsWith.name,
+            );
             ManageAuthorityFiles.checkSourceFileExists(
               localAuthFileWithValidHridStartsWith.name,
               localAuthFileWithValidHridStartsWith.prefix,
