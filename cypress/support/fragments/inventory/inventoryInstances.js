@@ -948,6 +948,26 @@ export default {
     InventoryInstance.deleteInstanceViaApi(instance.instanceId);
   },
 
+  deleteInstanceByTitleViaApi(instanceTitle) {
+    return cy
+      .okapiRequest({
+        path: 'instance-storage/instances',
+        searchParams: {
+          limit: 100,
+          query: `title="${instanceTitle}"`,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((res) => {
+        return res.body.instances;
+      })
+      .then((instances) => {
+        instances.forEach((instance) => {
+          if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+      });
+  },
+
   createLocalCallNumberTypeViaApi: (name) => {
     return cy
       .okapiRequest({
