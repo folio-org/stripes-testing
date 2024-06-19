@@ -136,8 +136,8 @@ describe('Eureka', () => {
           },
           capabilities: {
             Settings: 3,
-            Procedural: 1,
-            Data: 4,
+            Procedural: 2,
+            Data: 8,
           },
         },
         absentCapabilitySetTables: ['Data'],
@@ -261,7 +261,7 @@ describe('Eureka', () => {
           });
           cy.wait('@capabilitiesCall').then((call) => {
             expect(call.response.statusCode).to.eq(204);
-            expect(call.request.body.capabilityIds).to.have.lengthOf(2);
+            expect(call.request.body.capabilityIds).to.have.lengthOf(11);
           });
           cy.wait('@capabilitySetsCall').then((call) => {
             expect(call.response.statusCode).to.eq(204);
