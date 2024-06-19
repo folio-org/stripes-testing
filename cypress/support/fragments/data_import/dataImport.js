@@ -468,11 +468,11 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                             },
                             holding: {
                               id:
-                                recordResponse.body.relatedHoldingsInfo[0].length === 0
+                                recordResponse.body.relatedHoldingsInfo.length === 0
                                   ? ''
                                   : recordResponse.body.relatedHoldingsInfo[0].id,
                               hrid:
-                                recordResponse.body.relatedHoldingsInfo[0].length === 0
+                                recordResponse.body.relatedHoldingsInfo.length === 0
                                   ? ''
                                   : recordResponse.body.relatedHoldingsInfo[0].hrid,
                             },

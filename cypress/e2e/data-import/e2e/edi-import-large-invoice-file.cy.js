@@ -89,7 +89,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
-        cy.wait(120000);
+        cy.wait(90000);
         Logs.waitFileIsImported(fileName);
         Logs.checkImportFile(jobProfile.profileName);
         Logs.checkQuantityRecordsInFile(Logs.quantityRecordsInInvoice.firstQuantity);
