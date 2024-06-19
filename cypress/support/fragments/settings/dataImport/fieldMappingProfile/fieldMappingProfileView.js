@@ -15,6 +15,7 @@ import {
   PaneHeader,
   Section,
   TextField,
+  Layer,
 } from '../../../../../../interactors';
 import FieldMappingProfileEditForm from './fieldMappingProfileEditForm';
 
@@ -250,7 +251,7 @@ export default {
 
   delete: (name) => {
     cy.do([
-      fullScreenView.find(actionsButton).click(),
+      Layer({ ariaLabel: 'Mapping profile details' }).find(actionsButton).click(),
       deleteButton.click(),
       Modal(including(name)).find(deleteButton).click(),
     ]);

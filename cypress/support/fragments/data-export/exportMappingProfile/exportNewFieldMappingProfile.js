@@ -29,9 +29,14 @@ export const CHECKBOX_NAMES = {
   SUPPRESS_999_FF: 'Suppress 999 ff',
 };
 
+const fillInName = (name) => {
+  cy.do(fieldName.fillIn(name));
+};
+
 export default {
+  fillInName,
   fillMappingProfile: (profile) => {
-    this.fillInName(profile.name);
+    fillInName(profile.name);
     cy.do([
       fieldName.fillIn(profile.name),
       outputFormatSelect.choose(outputFormat),
@@ -55,7 +60,7 @@ export default {
   },
 
   fillMappingProfileForItemHrid: (profileName, itemMarcField = '902', subfield = '$a') => {
-    this.fillInName(profileName);
+    fillInName(profileName);
     cy.do([
       outputFormatSelect.choose(outputFormat),
       Checkbox(CHECKBOX_NAMES.SRS).click(),
@@ -88,7 +93,7 @@ export default {
 
   createNewFieldMappingProfile(name, recordTypes) {
     this.clickNewButton();
-    this.fillInName(name);
+    fillInName(name);
     recordTypes.forEach((recordType) => {
       cy.do(Checkbox(recordType).click());
     });
@@ -131,10 +136,6 @@ export default {
       HTML('No transformations found').exists(),
     ]);
     this.verifyFieldsSuppressionTextareaDisabled(true);
-  },
-
-  fillInName(name) {
-    cy.do(fieldName.fillIn(name));
   },
 
   checkCheckbox(...names) {

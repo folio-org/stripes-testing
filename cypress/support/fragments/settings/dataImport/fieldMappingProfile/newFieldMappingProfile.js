@@ -153,8 +153,9 @@ const selectFromResultsList = (rowNumber = 0) => cy.do(organizationModal.find(Mu
 
 const addContributor = (profile) => {
   if (profile.contributor) {
+    cy.do(Button('Add contributor').click());
+    cy.wait(1500);
     cy.do([
-      Button('Add contributor').click(),
       TextField('Contributor').fillIn(profile.contributor),
       TextField('Contributor type').fillIn(`"${profile.contributorType}"`),
     ]);
@@ -163,8 +164,9 @@ const addContributor = (profile) => {
 
 const addProductId = (profile) => {
   if (profile.productId) {
+    cy.do(Button('Add product ID and product ID type').click());
+    cy.wait(1500);
     cy.do([
-      Button('Add product ID and product ID type').click(),
       TextField('Product ID').fillIn(profile.productId),
       TextField('Product ID type').fillIn(`"${profile.productIDType}"`),
     ]);
@@ -186,8 +188,9 @@ const addVendorReferenceNumber = (profile) => {
 
 const addFundDistriction = (profile) => {
   if (profile.fundId) {
+    cy.do(Button('Add fund distribution').click());
+    cy.wait(1500);
     cy.do([
-      Button('Add fund distribution').click(),
       TextField('Fund ID').fillIn(profile.fundId),
       TextField('Expense class').fillIn(profile.expenseClass),
       TextField('Value').fillIn(`"${profile.value}"`),
@@ -198,10 +201,9 @@ const addFundDistriction = (profile) => {
 
 const addLocation = (profile) => {
   if (profile.locationName) {
-    cy.do([
-      locationAccordion.find(Button('Add location')).click(),
-      TextField('Name (code)').fillIn(profile.locationName),
-    ]);
+    cy.do(locationAccordion.find(Button('Add location')).click());
+    cy.wait(1500);
+    cy.do(TextField('Name (code)').fillIn(profile.locationName));
   }
   if (profile.locationQuantityElectronic) {
     cy.do(
@@ -820,7 +822,7 @@ export default {
     urlPublicNote = '',
   ) => {
     cy.do([Button('Add electronic access').click()]);
-    cy.wait(1000);
+    cy.wait(1500);
     cy.do([
       TextField('Relationship').fillIn(relationship),
       TextField('URI').fillIn(uri),
@@ -888,7 +890,7 @@ export default {
   fillPermanentLocation: (location) => cy.do(permanentLocationField.fillIn(location)),
   fillCatalogedDate: (date = catalogedDate) => {
     cy.do(catalogedDateField.fillIn(date));
-    cy.wait(1000);
+    cy.wait(1500);
   },
   fillCallNumberType: (type) => cy.do(TextField('Call number type').fillIn(type)),
   fillCallNumberPrefix: (prefix) => cy.do(TextField('Call number prefix').fillIn(prefix)),
