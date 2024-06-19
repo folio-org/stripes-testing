@@ -108,7 +108,7 @@ describe('Inventory', () => {
     });
 
     it(
-      'C400610 Search Instances using advanced search with "AND" operator (spitfire)',
+      'C466156 Search Instances using advanced search with "AND" operator (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventoryInstances.clickAdvSearchButton();
