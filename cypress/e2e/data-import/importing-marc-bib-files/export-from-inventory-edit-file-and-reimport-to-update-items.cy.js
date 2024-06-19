@@ -197,7 +197,7 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       cy.getAdminToken().then(() => {
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.name);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         actionProfileIds.forEach((id) => {
@@ -244,7 +244,7 @@ describe('Data Import', () => {
           cy.wait('@getIds', getLongDelay()).then((req) => {
             const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
 
-            FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID[0]);
+            FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, ...expectedUUID);
           });
 
           // download exported marc file

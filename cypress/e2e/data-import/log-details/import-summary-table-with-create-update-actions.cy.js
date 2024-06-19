@@ -399,7 +399,7 @@ describe('Data Import', () => {
         cy.wait('@getIds', getLongDelay()).then((req) => {
           const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
 
-          FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID);
+          FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, ...expectedUUID);
         });
 
         // download exported marc file
