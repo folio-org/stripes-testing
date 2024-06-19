@@ -54,8 +54,6 @@ describe('Inventory', () => {
         HoldingsRecordEdit.waitLoading();
         HoldingsRecordEdit.clickAddElectronicAccessButton();
         HoldingsRecordEdit.getRelationshipsFromHoldings().then((relationshipNames) => {
-          // console.log(relationshipNames);
-          // cy.pause();
           cy.visit(SettingsMenu.urlRelationshipPath);
           UrlRelationship.verifyListOfUrlRelationshipInHoldings(relationshipNames);
         });
