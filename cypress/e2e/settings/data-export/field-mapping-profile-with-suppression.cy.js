@@ -1,7 +1,9 @@
 import permissions from '../../../support/dictionary/permissions';
 import DeleteFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/deleteFieldMappingProfile';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
-import ExportNewFieldMappingProfile, { CHECKBOX_NAMES } from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
+import ExportNewFieldMappingProfile, {
+  CHECKBOX_NAMES,
+} from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
 import ModalSelectTransformations from '../../../support/fragments/data-export/exportMappingProfile/modalSelectTransformations';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -45,7 +47,7 @@ describe('settings: data-export', () => {
 
   it(
     'C468217 Verify field mapping profile with fields for suppression (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
       ExportNewFieldMappingProfile.clickNewButton();
