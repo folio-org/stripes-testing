@@ -78,7 +78,7 @@ const checkLoansPage = () => {
   cy.expect(PaneHeader(including(headers.loansPage)).exists());
 
   cy.do(Button(buttonLabels.renew).click());
-
+  cy.wait(2000);
   cy.expect(Modal({ content: including(loanInfo.notRenewed) }).exists());
 };
 
@@ -121,6 +121,7 @@ export default {
   renewWithoutOverrideAccess(loanId, userId, itemData) {
     cy.visit(generateInitialLink(userId, loanId));
 
+    cy.wait(5000);
     checkLoansPage();
 
     checkModalTable(headers.renewConfirmation, itemData);
@@ -132,6 +133,7 @@ export default {
   renewWithOverrideAccess(loanId, userId, itemData) {
     cy.visit(generateInitialLink(userId, loanId));
 
+    cy.wait(5000);
     checkLoansPage();
 
     checkModalTable(headers.renewConfirmation, itemData);

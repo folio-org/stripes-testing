@@ -39,20 +39,29 @@ const recordTypesAccordion = filterPane.find(Accordion('Record types'));
 const resetAllButton = filterPane.find(Button('Reset all'));
 const clearFilterButton = Button({ icon: 'times-circle-solid' });
 
+const activeCheckbox = Checkbox({ id: 'clickable-filter-status-active' });
+const inactiveCheckbox = Checkbox({ id: 'clickable-filter-status-inactive' });
+const sharedCheckbox = Checkbox({ id: 'clickable-filter-visibility-shared' });
+const privateCheckbox = Checkbox({ id: 'clickable-filter-visibility-private' });
+
 export default {
   waitLoading: () => {
     cy.expect(HTML(including('Lists')).exists());
   },
 
   queryBuilderActions() {
+    this.queryBuilderActionsWithParameters('User active', '==', 'True');
+  },
+
+  queryBuilderActionsWithParameters(parameter, operator, value) {
     cy.get('#field-option-0').click();
-    cy.contains('User active').click();
-    cy.get('[data-testid="operator-option-0"]').select('==');
-    cy.get('[data-testid="data-input-select-boolType"]').select('True');
+    cy.contains(parameter).click();
+    cy.get('[data-testid="operator-option-0"]').select(operator);
+    cy.get('[data-testid="data-input-select-boolType"]').select(value);
     cy.do(testQuery.click());
-    cy.wait(3000);
+    cy.wait(5000);
     cy.do(runQuery.click());
-    cy.wait(1000);
+    cy.wait(2000);
   },
 
   actionButton() {
@@ -172,12 +181,12 @@ export default {
     return cy.get('*[class^="mclRowContainer"]').contains(listName).should('not.exist');
   },
 
-  verifyListsPaneIsEmpty() {
-    cy.expect(HTML('The list contains no items').exists());
+  verifyListIsPresent(listName) {
+    return cy.get('*[class^="mclRowContainer"]').contains(listName).should('be.visible');
   },
 
-  selectInactiveLists() {
-    cy.do(Checkbox({ id: 'clickable-filter-status-inactive' }).checkIfNotSelected());
+  verifyListsPaneIsEmpty() {
+    cy.expect(HTML('The list contains no items').exists());
   },
 
   findResultRowIndexByContent(content) {
@@ -272,6 +281,26 @@ export default {
     ]);
   },
 
+  selectActiveLists() {
+    cy.do(activeCheckbox.checkIfNotSelected());
+    cy.wait(500);
+  },
+
+  selectInactiveLists() {
+    cy.do(inactiveCheckbox.checkIfNotSelected());
+    cy.wait(500);
+  },
+
+  selectSharedLists() {
+    cy.do(sharedCheckbox.checkIfNotSelected());
+    cy.wait(500);
+  },
+
+  selectPrivateLists() {
+    cy.do(privateCheckbox.checkIfNotSelected());
+    cy.wait(500);
+  },
+
   clickOnCheckbox(name) {
     cy.do(filterPane.find(Checkbox(name)).click());
   },
@@ -294,6 +323,7 @@ export default {
   },
 
   verifyClearFilterButton(accordionName) {
+    cy.wait(200);
     cy.expect(
       filterPane
         .find(Accordion(accordionName))
@@ -311,7 +341,7 @@ export default {
     );
   },
 
-  resetAll() {
+  resetAllFilters() {
     cy.get('button[id="clickable-reset-all"]').then((element) => {
       const disabled = element.attr('disabled');
       if (!disabled) {
@@ -323,6 +353,7 @@ export default {
       statusAccordion.find(Checkbox('Active')).has({ checked: true }),
       statusAccordion.find(clearFilterButton).exists(),
     ]);
+    cy.wait(2000);
   },
 
   verifyResetAllButtonEnabled() {
@@ -333,7 +364,23 @@ export default {
     cy.expect(resetAllButton.has({ disabled: true }));
   },
 
-  verifyListsFileredByStatus: (filters) => {
+  selectList(listName) {
+    cy.contains(listName).click();
+  },
+
+  verifyListIsSaved(listName) {
+    cy.contains(`List ${listName} saved.`);
+  },
+
+  verifyDeleteListButtonIsDisabled() {
+    cy.contains('Delete list').should('be.disabled');
+  },
+
+  viewUpdatedList() {
+    cy.contains('View updated list').click();
+  },
+
+  verifyListsFilteredByStatus: (filters) => {
     const cells = [];
     cy.get('div[class^="mclRowContainer--"]')
       .find('[data-row-index]')
@@ -350,7 +397,8 @@ export default {
       });
   },
 
-  verifyListsFileredByRecordType: (filters) => {
+  verifyListsFilteredByRecordType: (filters) => {
+    cy.wait(500);
     const cells = [];
     cy.get('div[class^="mclRowContainer--"]')
       .find('[data-row-index]')
@@ -359,7 +407,6 @@ export default {
           .invoke('text')
           .then((cellValue) => {
             cells.push(cellValue);
-            cy.log(cellValue);
           });
       })
       .then(() => {
@@ -367,7 +414,7 @@ export default {
       });
   },
 
-  verifyListsFileredByVisiblity: (filters) => {
+  verifyListsFilteredByVisibility: (filters) => {
     const cells = [];
     cy.get('div[class^="mclRowContainer--"]')
       .find('[data-row-index]')

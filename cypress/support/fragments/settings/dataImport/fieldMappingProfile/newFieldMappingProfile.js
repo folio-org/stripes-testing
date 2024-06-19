@@ -1,4 +1,3 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
 import {
   Accordion,
   Button,
@@ -22,7 +21,7 @@ import {
   TextArea,
   TextField,
   including,
-} from '../../../../../interactors';
+} from '../../../../../../interactors';
 import {
   ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES,
   EXISTING_RECORD_NAMES,
@@ -30,8 +29,8 @@ import {
   INSTANCE_STATUS_TERM_NAMES,
   INCOMING_RECORD_NAMES,
   LOCATION_NAMES,
-} from '../../../constants';
-import getRandomPostfix from '../../../utils/stringTools';
+} from '../../../../constants';
+import getRandomPostfix from '../../../../utils/stringTools';
 
 const saveButton = Button('Save as profile & Close');
 const searchButton = Button('Search');
@@ -154,8 +153,9 @@ const selectFromResultsList = (rowNumber = 0) => cy.do(organizationModal.find(Mu
 
 const addContributor = (profile) => {
   if (profile.contributor) {
+    cy.do(Button('Add contributor').click());
+    cy.wait(1500);
     cy.do([
-      Button('Add contributor').click(),
       TextField('Contributor').fillIn(profile.contributor),
       TextField('Contributor type').fillIn(`"${profile.contributorType}"`),
     ]);
@@ -164,8 +164,9 @@ const addContributor = (profile) => {
 
 const addProductId = (profile) => {
   if (profile.productId) {
+    cy.do(Button('Add product ID and product ID type').click());
+    cy.wait(1500);
     cy.do([
-      Button('Add product ID and product ID type').click(),
       TextField('Product ID').fillIn(profile.productId),
       TextField('Product ID type').fillIn(`"${profile.productIDType}"`),
     ]);
@@ -187,8 +188,9 @@ const addVendorReferenceNumber = (profile) => {
 
 const addFundDistriction = (profile) => {
   if (profile.fundId) {
+    cy.do(Button('Add fund distribution').click());
+    cy.wait(1500);
     cy.do([
-      Button('Add fund distribution').click(),
       TextField('Fund ID').fillIn(profile.fundId),
       TextField('Expense class').fillIn(profile.expenseClass),
       TextField('Value').fillIn(`"${profile.value}"`),
@@ -199,10 +201,9 @@ const addFundDistriction = (profile) => {
 
 const addLocation = (profile) => {
   if (profile.locationName) {
-    cy.do([
-      locationAccordion.find(Button('Add location')).click(),
-      TextField('Name (code)').fillIn(profile.locationName),
-    ]);
+    cy.do(locationAccordion.find(Button('Add location')).click());
+    cy.wait(1500);
+    cy.do(TextField('Name (code)').fillIn(profile.locationName));
   }
   if (profile.locationQuantityElectronic) {
     cy.do(
@@ -263,6 +264,7 @@ const fillSummaryInMappingProfile = (specialMappingProfile = defaultMappingProfi
     incomingRecordTypeField.choose(incomingRecordType.marcBib),
     existingRecordType.choose(specialMappingProfile.typeValue),
   ]);
+  cy.wait(1500);
 };
 const fillSummaryForMarcAuthInMappingProfile = (specialMappingProfile = defaultMappingProfile) => {
   cy.do([
@@ -270,9 +272,11 @@ const fillSummaryForMarcAuthInMappingProfile = (specialMappingProfile = defaultM
     incomingRecordTypeField.choose(incomingRecordType.marcAuth),
     existingRecordType.choose(specialMappingProfile.typeValue),
   ]);
+  cy.wait(1500);
 };
 const fillFolioRecordType = (profile) => {
   cy.do(existingRecordType.choose(profile.typeValue));
+  cy.wait(1500);
 };
 const fillInvoiceLineDescription = (description) => {
   cy.do(Accordion('Invoice line information').find(TextField('Description*')).fillIn(description));
@@ -284,7 +288,10 @@ const fillMaterialType = (type) => cy.do(materialTypeField.fillIn(type));
 const fillStatus = (itemStatus) => cy.do(TextField('Status').fillIn(itemStatus));
 const fillPermanentLoanType = (loanType) => cy.do(TextField('Permanent loan type').fillIn(`"${loanType}"`));
 const fillInstanceStatusTerm = (statusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED) => cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`));
-const fillHoldingsType = (type) => cy.do(TextField('Holdings type').fillIn(`"${type}"`));
+const fillHoldingsType = (type) => {
+  cy.wait(1000);
+  cy.do(TextField('Holdings type').fillIn(`"${type}"`));
+};
 const selectAdminNotesAction = (numberOfmappingField, action = actions.addTheseToExisting) => {
   // number needs for using this method in filling fields for holdings and item profiles
   const adminNoteFieldName = `profile.mappingDetails.mappingFields[${numberOfmappingField}].repeatableFieldAction`;
@@ -305,10 +312,9 @@ const selectActionForStatisticalCode = (number, action = actions.addTheseToExist
 };
 const addStatisticalCode = (name, number, action) => {
   selectActionForStatisticalCode(number, action);
-  cy.do([
-    Button('Add statistical code').click(),
-    TextField('Statistical code').fillIn(`"${name}"`),
-  ]);
+  cy.do(Button('Add statistical code').click());
+  cy.wait(1500);
+  cy.do(TextField('Statistical code').fillIn(`"${name}"`));
 };
 const addItemNotes = (noteType, note, staffOnly) => {
   const noteFieldName = 'profile.mappingDetails.mappingFields[25].repeatableFieldAction';
@@ -319,6 +325,9 @@ const addItemNotes = (noteType, note, staffOnly) => {
     Select({ name: noteFieldName }).focus(),
     Select({ name: noteFieldName }).choose(actions.addTheseToExisting),
     Button('Add item note').click(),
+  ]);
+  cy.wait(1000);
+  cy.do([
     noteTypeField.fillIn(noteType),
     TextField('Note').fillIn(note),
     Select({ name: selectName }).focus(),
@@ -468,6 +477,7 @@ export default {
         cy.do(TextField('Call number').fillIn(specialMappingProfile.callNumber));
       }
     } else if (specialMappingProfile.typeValue === itemType) {
+      cy.wait(1500);
       cy.intercept('loan-types?*').as('getType');
       cy.do(materialTypeField.fillIn(materialType));
       cy.do(TextField('Permanent loan type').fillIn(permanentLoanType));
@@ -478,6 +488,7 @@ export default {
       cy.do(TextField('Status').fillIn(status));
     } else if (specialMappingProfile.typeValue === FOLIO_RECORD_TYPE.INSTANCE) {
       if ('update' in specialMappingProfile) {
+        cy.wait(1500);
         cy.do([
           catalogedDateField.fillIn(catalogedDate),
           TextField('Instance status term').fillIn(`"${INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED}"`),
@@ -506,7 +517,7 @@ export default {
       incomingRecordTypeField.choose(profile.incomingRecordType),
       existingRecordType.choose(profile.typeValue),
     ]);
-    cy.wait(1000);
+    cy.wait(1500);
     cy.get('#mapping-profiles-form').find('textarea[name="profile.description"]').clear();
     cy.wait(1000);
     if (profile.description) {
@@ -706,7 +717,10 @@ export default {
   },
   addName: (name) => cy.do(nameField.fillIn(name)),
   addIncomingRecordType: (type) => cy.do(incomingRecordTypeField.choose(type)),
-  addFolioRecordType: (folioType) => cy.do(existingRecordType.choose(folioType)),
+  addFolioRecordType: (folioType) => {
+    cy.do(existingRecordType.choose(folioType));
+    cy.wait(1500);
+  },
   fillTemporaryLocation: (location) => cy.do(TextField('Temporary').fillIn(location)),
   fillDigitizationPolicy: (policy) => cy.do(TextField('Digitization policy').fillIn(policy)),
   fillCallNumber: (number) => cy.do(TextField('Call number').fillIn(number)),
@@ -767,10 +781,9 @@ export default {
 
   addAdministrativeNote: (note, numberOfmappingField, action) => {
     selectAdminNotesAction(numberOfmappingField, action);
-    cy.do([
-      Button('Add administrative note').click(),
-      TextField('Administrative note').fillIn(`"${note}"`),
-    ]);
+    cy.do(Button('Add administrative note').click());
+    cy.wait(1000);
+    cy.do(TextField('Administrative note').fillIn(`"${note}"`));
   },
 
   changedExistingAdminNote(notes, numberOfmappingField) {
@@ -808,8 +821,9 @@ export default {
     materialsSpecified = '',
     urlPublicNote = '',
   ) => {
+    cy.do([Button('Add electronic access').click()]);
+    cy.wait(1500);
     cy.do([
-      Button('Add electronic access').click(),
       TextField('Relationship').fillIn(relationship),
       TextField('URI').fillIn(uri),
       TextField('Link text').fillIn(linkText),
@@ -868,12 +882,16 @@ export default {
       Select({ name: contentTerms }).focus(),
       Select({ name: contentTerms }).choose(actions.addTheseToExisting),
       Button('Add nature of content term').click(),
-      TextField('Nature of content term').fillIn(`"${value}"`),
     ]);
+    cy.wait(1000);
+    cy.do(TextField('Nature of content term').fillIn(`"${value}"`));
   },
 
   fillPermanentLocation: (location) => cy.do(permanentLocationField.fillIn(location)),
-  fillCatalogedDate: (date = catalogedDate) => cy.do(catalogedDateField.fillIn(date)),
+  fillCatalogedDate: (date = catalogedDate) => {
+    cy.do(catalogedDateField.fillIn(date));
+    cy.wait(1500);
+  },
   fillCallNumberType: (type) => cy.do(TextField('Call number type').fillIn(type)),
   fillCallNumberPrefix: (prefix) => cy.do(TextField('Call number prefix').fillIn(prefix)),
   fillcallNumberSuffix: (sufix) => cy.do(TextField('Call number suffix').fillIn(sufix)),
@@ -893,6 +911,9 @@ export default {
       Select({ name: holdingsNotesFieldName }).focus(),
       Select({ name: holdingsNotesFieldName }).choose(actions.addTheseToExisting),
       Button('Add holdings note').click(),
+    ]);
+    cy.wait(1000);
+    cy.do([
       noteTypeField.fillIn(type),
       TextField('Note').fillIn(`"${note}"`),
       Select({ name: selectName }).focus(),
@@ -1014,8 +1035,9 @@ export default {
       Select({ name: formerHoldingsFieldName }).focus(),
       Select({ name: formerHoldingsFieldName }).choose(action),
       Button('Add former holdings identifier').click(),
-      TextField('Former holdings ID').fillIn(`"${name}"`),
     ]);
+    cy.wait(1000);
+    cy.do(TextField('Former holdings ID').fillIn(`"${name}"`));
   },
 
   addExpenceClass: (fundDistributionSource) => {

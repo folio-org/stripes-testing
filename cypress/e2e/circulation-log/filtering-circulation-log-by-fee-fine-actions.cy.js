@@ -227,7 +227,7 @@ describe('Circulation log', () => {
 
   it(
     'C17008 Filter circulation log by billed (volaris)',
-    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeftBroken'] },
     () => {
       filterByAction('Billed');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);

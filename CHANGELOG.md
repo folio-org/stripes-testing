@@ -2,6 +2,8 @@
 
 ## 4.8.0 IN PROGRESS
 
+- Updated Call Number search option labels. Refs FAT-13489.
+
 ## [4.7.0](https://github.com/folio-org/stripes-testing/tree/v4.7.0) (2024-03-12)
 
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.6.0...v4.7.0)

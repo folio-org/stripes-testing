@@ -94,10 +94,11 @@ describe('lists', () => {
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
 
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.listsPath,
-          waiter: Lists.waitLoading,
-        });
+        // eslint-disable-next-line spaced-comment
+        // cy.login(userData.username, userData.password, {
+        //  path: TopMenu.listsPath,
+        //  waiter: Lists.waitLoading,
+        // });
 
         createdLists.forEach((list) => {
           Lists.createViaApi(list);
@@ -109,11 +110,13 @@ describe('lists', () => {
       // #1 Click on "Lists" in app navigation bar
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
-      Lists.resetAll();
+      Lists.resetAllFilters();
     });
 
     after('Delete test data', () => {
-      cy.getUserToken(userData.username, userData.password);
+      cy.getAdminToken();
+      // eslint-disable-next-line spaced-comment
+      //cy.getUserToken(userData.username, userData.password);
       createdLists.forEach((list) => {
         Lists.getViaApi().then((response) => {
           const filteredItem = response.body.content.find((item) => item.name === list.name);
@@ -141,8 +144,8 @@ describe('lists', () => {
         Lists.verifyClearFilterButtonAbsent(statusFilters.accordionName);
         Lists.verifyResetAllButtonEnabled();
         // #5 Click on "Reset all"
-        Lists.resetAll();
-        Lists.verifyListsFileredByStatus(['Active']);
+        Lists.resetAllFilters();
+        Lists.verifyListsFilteredByStatus(['Active']);
       },
     );
 
@@ -163,7 +166,7 @@ describe('lists', () => {
         });
         Lists.verifyClearFilterButton(visibilityFilter.accordionName);
         Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFileredByVisiblity(visibilityFilter.filters);
+        Lists.verifyListsFilteredByVisibility(visibilityFilter.filters);
         // #5 Click on "x"
         Lists.clickOnClearFilterButton(visibilityFilter.accordionName);
         Lists.verifyVisibilityAccordionDefaultContent();
@@ -173,7 +176,7 @@ describe('lists', () => {
         Lists.verifyCheckboxChecked('Private');
         Lists.verifyClearFilterButton(visibilityFilter.accordionName);
         Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFileredByVisiblity(['Private']);
+        Lists.verifyListsFilteredByVisibility(['Private']);
         // #7 Uncheck the "Private" visibility and click on "Shared" checkbox
         Lists.clickOnCheckbox('Private');
         Lists.verifyCheckboxUnchecked('Private');
@@ -181,7 +184,7 @@ describe('lists', () => {
         Lists.verifyCheckboxChecked('Shared');
         Lists.verifyClearFilterButton(visibilityFilter.accordionName);
         Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFileredByVisiblity(['Shared']);
+        Lists.verifyListsFilteredByVisibility(['Shared']);
       },
     );
 
@@ -203,32 +206,32 @@ describe('lists', () => {
         });
         Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
         Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFileredByRecordType(recordTypesFilters.filters);
+        Lists.verifyListsFilteredByRecordType(recordTypesFilters.filters);
         // #6 Click on "x"
         Lists.clickOnClearFilterButton(recordTypesFilters.accordionName);
         Lists.verifyRecordTypesAccordionDefaultContent();
-        Lists.verifyListsFileredByRecordType(recordTypesFilters.filters);
+        Lists.verifyListsFilteredByRecordType(recordTypesFilters.filters);
         // #7 Click on "Loans" checkbox
         Lists.clickOnCheckbox('Loans');
         Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
         Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFileredByRecordType(['Loans']);
+        Lists.verifyListsFilteredByRecordType(['Loans']);
         // #8 Click on "Items" checkbox
         Lists.clickOnCheckbox('Loans');
         Lists.verifyCheckboxUnchecked('Loans');
         Lists.clickOnCheckbox('Items');
         Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
         Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFileredByRecordType(['Items']);
+        Lists.verifyListsFilteredByRecordType(['Items']);
         // #9 Click on "Users" checkbox
         Lists.clickOnCheckbox('Items');
         Lists.verifyCheckboxUnchecked('Items');
         Lists.clickOnCheckbox('Users');
         Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
         Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFileredByRecordType(['Users']);
+        Lists.verifyListsFilteredByRecordType(['Users']);
         // #10 Click on "Reset all"
-        Lists.resetAll();
+        Lists.resetAllFilters();
         Lists.verifyRecordTypesAccordionDefaultContent();
         Lists.verifyClearFilterButtonAbsent(recordTypesFilters.accordionName);
       },

@@ -468,13 +468,13 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                             },
                             holding: {
                               id:
-                                recordResponse.body.relatedHoldingsInfo.length === 0
+                                recordResponse.body.relatedHoldingsInfo[0].length === 0
                                   ? ''
-                                  : recordResponse.body.relatedHoldingsInfo.id,
+                                  : recordResponse.body.relatedHoldingsInfo[0].id,
                               hrid:
-                                recordResponse.body.relatedHoldingsInfo.length === 0
+                                recordResponse.body.relatedHoldingsInfo[0].length === 0
                                   ? ''
-                                  : recordResponse.body.relatedHoldingsInfo.hrid,
+                                  : recordResponse.body.relatedHoldingsInfo[0].hrid,
                             },
                             item: {
                               id:
@@ -700,11 +700,9 @@ export default {
     waitLoading();
     cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(
       (isDeleteFilesButtonExists) => {
+        cy.wait(5000);
+        cy.reload();
         if (isDeleteFilesButtonExists) {
-          cy.wait(5000);
-          cy.reload();
-          cy.wait(15000);
-          cy.reload();
           cy.wait(3000);
           cy.do(Button('Delete files').click());
           cy.expect(Button('or choose files').exists());
