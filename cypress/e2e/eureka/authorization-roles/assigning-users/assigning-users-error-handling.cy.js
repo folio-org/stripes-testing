@@ -2,6 +2,7 @@ import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import TopMenu from '../../../../support/fragments/topMenu';
+import InteractorsTools from '../../../../support/utils/interactorsTools';
 
 describe('Eureka', () => {
   describe('Authorization roles', () => {
@@ -9,18 +10,29 @@ describe('Eureka', () => {
       const testData = {
         roleAName: `Auto Role A ErrHand ${getRandomPostfix()}`,
         roleBName: `Auto Role B ErrHand ${getRandomPostfix()}`,
+        postErrorMessage: 'POST request failed: unknown reason',
+        putErrorMessage1: 'PUT request failed: user NOT found',
+        putErrorMessage2: 'PUT request failed: timeout error',
+        deleteErrorMessage1: 'DELETE request failed: invalid query',
+        deleteErrorMessage2: 'DELETE request failed: system error',
+        errorCalloutType: 'error',
       };
-      const errorJson = {
-        errors: [
-          {
-            message:
-              'JSON parse error: Cannot deserialize value of type `java.util.UUID` from String "0e3d1631-b3b8-4757-99aa-d77a7a77c44Z": Non-hex character \'Z\' (value 0x5a), not valid for UUID String',
-            type: 'HttpMessageNotReadableException',
-            code: 'validation_error',
-          },
-        ],
-        total_records: 1,
-      };
+      function getErrorJson(message) {
+        return {
+          errors: [{ message }],
+          total_records: 1,
+        };
+      }
+      function getTwoErrorsJson(message1, message2) {
+        return {
+          errors: [{ message: message1 }, { message: message2 }],
+          total_records: 2,
+        };
+      }
+      const errorJsonPost = getErrorJson(testData.postErrorMessage);
+      const errorJsonPut = getTwoErrorsJson(testData.putErrorMessage1, testData.putErrorMessage2);
+      const errorJsonDelete1 = getErrorJson(testData.deleteErrorMessage1);
+      const errorJsonDelete2 = getErrorJson(testData.deleteErrorMessage2);
 
       before('Create users, roles', () => {
         cy.getAdminToken();
@@ -31,17 +43,24 @@ describe('Eureka', () => {
               testData.userA = createdUserAProperties;
               cy.createTempUser([]).then((createdUserBProperties) => {
                 testData.userB = createdUserBProperties;
-                cy.createAuthorizationRoleApi(testData.roleAName).then((role) => {
-                  testData.roleAId = role.id;
-                });
-                cy.createAuthorizationRoleApi(testData.roleBName).then((role) => {
-                  testData.roleBId = role.id;
-                  // TO DO: rewrite when users will not have admin role assigned upon creation
-                  cy.deleteRolesForUserApi(testData.userA.userId);
-                  cy.updateRolesForUserApi(testData.userB.userId, [testData.roleBId]);
-                  cy.login(testData.tempUser.username, testData.tempUser.password, {
-                    path: TopMenu.settingsAuthorizationRoles,
-                    waiter: AuthorizationRoles.waitContentLoading,
+                cy.createTempUser([]).then((createdUserCProperties) => {
+                  testData.userC = createdUserCProperties;
+                  cy.createTempUser([]).then((createdUserDProperties) => {
+                    testData.userD = createdUserDProperties;
+                    cy.createAuthorizationRoleApi(testData.roleAName).then((role) => {
+                      testData.roleAId = role.id;
+                    });
+                    cy.createAuthorizationRoleApi(testData.roleBName).then((role) => {
+                      testData.roleBId = role.id;
+                      cy.updateRolesForUserApi(testData.userA.userId, []);
+                      cy.updateRolesForUserApi(testData.userB.userId, [testData.roleBId]);
+                      cy.updateRolesForUserApi(testData.userC.userId, [testData.roleBId]);
+                      cy.updateRolesForUserApi(testData.userD.userId, [testData.roleBId]);
+                      cy.login(testData.tempUser.username, testData.tempUser.password, {
+                        path: TopMenu.settingsAuthorizationRoles,
+                        waiter: AuthorizationRoles.waitContentLoading,
+                      });
+                    });
                   });
                 });
               });
@@ -59,28 +78,61 @@ describe('Eureka', () => {
         Users.deleteViaApi(testData.tempUser.userId);
       });
 
-      it('UIROLES-53 Roles assignment error handling in UI (eureka)', { tags: [] }, () => {
-        cy.intercept('POST', '/roles/users', {
-          statusCode: 400,
-          body: errorJson,
-        }).as('usersPost');
-        cy.intercept('PUT', '/roles/users/*').as('usersPut');
+      it(
+        'C491278 Error toast notifications shown upon errors when assigning/unassigning users for roles (eureka)',
+        { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
+        () => {
+          AuthorizationRoles.searchRole(testData.roleAName);
+          AuthorizationRoles.clickOnRoleName(testData.roleAName);
+          AuthorizationRoles.clickAssignUsersButton();
+          AuthorizationRoles.selectUserInModal(testData.userA.username);
+          AuthorizationRoles.selectUserInModal(testData.userB.username);
+          cy.intercept('POST', '/roles/users', {
+            statusCode: 400,
+            body: errorJsonPost,
+          }).as('usersPost');
+          cy.intercept('PUT', '/roles/users/*', {
+            statusCode: 404,
+            body: errorJsonPut,
+          }).as('usersPut');
+          AuthorizationRoles.clickSaveInAssignModal();
+          cy.wait('@usersPost').its('response.statusCode').should('eq', 400);
+          cy.wait('@usersPut').its('response.statusCode').should('eq', 404);
+          InteractorsTools.checkCalloutExists(testData.postErrorMessage, testData.errorCalloutType);
+          InteractorsTools.checkCalloutExists(testData.putErrorMessage1, testData.errorCalloutType);
+          InteractorsTools.checkCalloutExists(testData.putErrorMessage2, testData.errorCalloutType);
 
-        AuthorizationRoles.searchRole(testData.roleAName);
-        cy.wait(1000);
-        AuthorizationRoles.clickOnRoleName(testData.roleAName);
-        AuthorizationRoles.clickAssignUsersButton();
-        cy.wait(1000);
-        AuthorizationRoles.selectUserInModal(testData.userA.username);
-        cy.wait(1000);
-        AuthorizationRoles.selectUserInModal(testData.userB.username);
-        cy.wait(1000);
-        AuthorizationRoles.clickSaveInAssignModal();
-        cy.wait(1000);
-        cy.wait('@usersPost').its('response.statusCode').should('eq', 400);
-        cy.wait('@usersPut').its('response.statusCode').should('eq', 204);
-        AuthorizationRoles.checkUsersAccordion(1);
-      });
+          cy.reload();
+          AuthorizationRoles.waitContentLoading();
+          AuthorizationRoles.searchRole(testData.roleBName);
+          AuthorizationRoles.clickOnRoleName(testData.roleBName);
+          AuthorizationRoles.clickAssignUsersButton();
+          AuthorizationRoles.selectUserInModal(testData.userB.username, false);
+          AuthorizationRoles.selectUserInModal(testData.userC.username, false);
+          AuthorizationRoles.selectUserInModal(testData.userD.username, false);
+          cy.intercept('DELETE', `/roles/users/${testData.userC.userId}`, {
+            statusCode: 422,
+            body: errorJsonDelete1,
+          }).as('usersDeleteC');
+          cy.intercept('DELETE', `/roles/users/${testData.userB.userId}`, {
+            statusCode: 501,
+            body: errorJsonDelete2,
+          }).as('usersDeleteB');
+          cy.intercept('DELETE', `/roles/users/${testData.userD.userId}`).as('usersDeleteD');
+          AuthorizationRoles.clickSaveInAssignModal();
+          cy.wait('@usersDeleteC').its('response.statusCode').should('eq', 422);
+          cy.wait('@usersDeleteB').its('response.statusCode').should('eq', 501);
+          cy.wait('@usersDeleteD').its('response.statusCode').should('eq', 204);
+          InteractorsTools.checkCalloutExists(
+            testData.deleteErrorMessage1,
+            testData.errorCalloutType,
+          );
+          InteractorsTools.checkCalloutExists(
+            testData.deleteErrorMessage2,
+            testData.errorCalloutType,
+          );
+        },
+      );
     });
   });
 });
