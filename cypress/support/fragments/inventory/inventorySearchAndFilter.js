@@ -804,6 +804,7 @@ export default {
     cy.wait(ONE_SECOND);
     holdingsPermanentLocationAccordion.find(TextField()).click();
     cy.do(holdingsPermanentLocationAccordion.find(Checkbox(location)).click());
+    cy.wait(ONE_SECOND);
   },
 
   checkRowsCount: (expectedRowsCount) => {

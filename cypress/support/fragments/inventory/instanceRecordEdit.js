@@ -1,17 +1,19 @@
 import {
   Accordion,
   Button,
+  Checkbox,
+  FieldSet,
+  PaneHeader,
+  RepeatableFieldItem,
   Section,
   Select,
+  Selection,
+  SelectionList,
   TextArea,
   TextField,
-  FieldSet,
-  Selection,
   including,
-  RepeatableFieldItem,
-  PaneHeader,
-  Checkbox,
   matching,
+  or,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
@@ -51,15 +53,29 @@ function addNatureOfContent() {
   cy.do(addNatureOfContentButton.click());
 }
 
-function addStatisticalCode() {
+function clickAddStatisticalCode() {
   cy.do(Button('Add statistical code').click());
+}
+
+function chooseStatisticalCode(code) {
+  cy.do(Button({ name: 'statisticalCodeIds[0]' }).click());
+  cy.do(SelectionList().select(code));
 }
 
 export default {
   addNatureOfContent,
-  addStatisticalCode,
+  clickAddStatisticalCode,
+  chooseStatisticalCode,
   close: () => cy.do(closeButton.click()),
-  waitLoading: () => cy.expect(Section({ id: 'instance-form' }).exists()),
+  waitLoading: () => {
+    cy.expect([
+      Section({ id: 'instance-form' }).exists(),
+      or(
+        PaneHeader(including('Edit instance')).exists(),
+        PaneHeader(including('Edit shared instance')).exists(),
+      ),
+    ]);
+  },
   // related with Actions->Overlay
   checkReadOnlyFields() {
     const readonlyTextFields = {
@@ -172,7 +188,13 @@ export default {
   saveAndClose: () => {
     cy.wait(1500);
     cy.do(saveAndCloseButton.click());
-    cy.expect([actionsButton.exists(), PaneHeader(including('Edit instance')).absent()]);
+    cy.expect([
+      actionsButton.exists(),
+      or(
+        PaneHeader(including('Edit instance')).absent(),
+        PaneHeader(including('Edit shared instance')).absent(),
+      ),
+    ]);
   },
 
   clickAddContributor() {
@@ -236,6 +258,10 @@ export default {
   editResourceTitle: (newTitle) => {
     cy.do(TextArea({ name: 'title' }).fillIn(newTitle));
     cy.expect(TextArea({ name: 'title' }).has({ value: newTitle }));
+  },
+  addStatisticalCode: (code) => {
+    clickAddStatisticalCode();
+    chooseStatisticalCode(code);
   },
   verifySuccessfulMessage: () => {
     InteractorsTools.checkCalloutMessage(

@@ -44,29 +44,33 @@ describe('lists', () => {
 
     it('C411733 Edit list: Make the list Private (corsair)', { tags: ['smoke', 'corsair'] }, () => {
       // eslint-disable-next-line spaced-comment
-      //cy.login(userData.username, userData.password);
+      //cy.login(firstUser.username, firstUser.password);
       cy.loginAsAdmin();
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
-      Lists.resetAll();
+      Lists.resetAllFilters();
       Lists.openNewListPane();
       Lists.setName(listData.name);
       Lists.setDescription(listData.name);
       Lists.selectRecordType(listData.recordType);
       Lists.selectVisibility(listData.visibility[1]);
       Lists.saveList();
-      cy.contains(`List ${listData.name} saved.`);
+      Lists.verifyListIsSaved(listData.name);
       Lists.closeListDetailsPane();
       cy.wait(3000);
       cy.login(secondUser.username, secondUser.password); // User B logs in to make sure that 'Shared' list is visible
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
-      cy.contains(listData.name).should('be.visible');
+      Lists.selectSharedLists();
+      Lists.verifyListIsPresent(listData.name);
       cy.wait(2000);
-      cy.login(firstUser.username, firstUser.password); // User A logs in to make the list 'Private'
+      // eslint-disable-next-line spaced-comment
+      //cy.login(firstUser.username, firstUser.password); // User A logs in to make the list 'Private'
+      cy.loginAsAdmin();
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
-      cy.contains(listData.name).click();
+      Lists.selectSharedLists();
+      Lists.selectList(listData.name);
       Lists.actionButton();
       Lists.editList();
       Lists.selectVisibility('Private');
@@ -76,6 +80,7 @@ describe('lists', () => {
       cy.login(secondUser.username, secondUser.password); // User B logs in to make sure that 'Private' list is not visible
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
+      Lists.selectPrivateLists();
       Lists.verifyListIsNotPresent(listData.name);
     });
 
@@ -85,7 +90,7 @@ describe('lists', () => {
       cy.loginAsAdmin();
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
-      Lists.resetAll();
+      Lists.resetAllFilters();
       Lists.openNewListPane();
       Lists.setName(listData.name);
       Lists.setDescription(listData.name);
@@ -113,6 +118,8 @@ describe('lists', () => {
       cy.login(secondUser.username, secondUser.password); // User B logs in to make sure that 'Shared' list is visible
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
+      Lists.resetAllFilters();
+      Lists.selectSharedLists();
       cy.contains(listData.name).should('be.visible');
     });
   });

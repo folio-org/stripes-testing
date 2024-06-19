@@ -13,9 +13,9 @@ import ActionProfiles from '../../../support/fragments/data_import/action_profil
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';

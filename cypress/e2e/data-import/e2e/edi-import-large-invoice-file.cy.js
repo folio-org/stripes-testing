@@ -10,8 +10,8 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InvoiceView from '../../../support/fragments/invoices/invoiceView';
 import {
   ActionProfiles as SettingsActionProfiles,

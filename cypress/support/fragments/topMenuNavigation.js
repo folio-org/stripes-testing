@@ -3,6 +3,7 @@ import { AppList } from '../../../interactors/applist';
 
 export default {
   navigateToApp(appName, subSection) {
+    cy.wait(2000);
     cy.do(AppList().choose(appName));
 
     if (subSection) {
