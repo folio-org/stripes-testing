@@ -67,7 +67,7 @@ describe('MARC', () => {
           ManageAuthorityFiles.checkCancelButtonEnabledInFile(authorityFileBlankPrefix.name);
 
           // 3 Click on the "Save" button
-          ManageAuthorityFiles.clickSaveButton();
+          ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
           ManageAuthorityFiles.checkErrorInField(
             authorityFileBlankPrefix.name,
             AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX,
@@ -84,7 +84,7 @@ describe('MARC', () => {
           ManageAuthorityFiles.checkCancelButtonEnabledInFile(authorityFileBlankPrefix.name);
 
           // 5 Click on the "Save" button
-          ManageAuthorityFiles.clickSaveButton();
+          ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
           ManageAuthorityFiles.checkErrorInField(
             authorityFileBlankPrefix.name,
             AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX,
@@ -112,7 +112,7 @@ describe('MARC', () => {
           ManageAuthorityFiles.checkCancelButtonEnabledInFile(authorityFileMultiplePrefixes.name);
 
           // 9 Click on the "Save" button
-          ManageAuthorityFiles.clickSaveButton();
+          ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
           ManageAuthorityFiles.checkErrorInField(
             authorityFileMultiplePrefixes.name,
             AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX,
