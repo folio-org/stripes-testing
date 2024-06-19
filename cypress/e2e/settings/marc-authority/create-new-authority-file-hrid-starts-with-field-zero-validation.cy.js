@@ -65,14 +65,14 @@ describe('MARC', () => {
               authorityFile.baseURL,
               authorityFile.isActive,
             );
-            ManageAuthorityFiles.clickSaveButton();
+            ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
             ManageAuthorityFiles.checkErrorInField(
               authorityFile.name,
               AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH,
               hridStartsWithValues.firstValueError,
             );
             ManageAuthorityFiles.fillHridStartsWith(hridStartsWithValues.secondValue);
-            ManageAuthorityFiles.clickSaveButton();
+            ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
             ManageAuthorityFiles.checkErrorInField(
               authorityFile.name,
               AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH,
