@@ -498,6 +498,6 @@ export default {
 
   verifyViewRequestOptionAbsent() {
     cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'Add MARC holdings record' }).absent());
+    cy.expect(Button('New request').absent());
   },
 };
