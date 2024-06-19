@@ -700,11 +700,9 @@ export default {
     waitLoading();
     cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(
       (isDeleteFilesButtonExists) => {
+        cy.wait(5000);
+        cy.reload();
         if (isDeleteFilesButtonExists) {
-          cy.wait(5000);
-          cy.reload();
-          cy.wait(15000);
-          cy.reload();
           cy.wait(3000);
           cy.do(Button('Delete files').click());
           cy.expect(Button('or choose files').exists());

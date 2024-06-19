@@ -278,6 +278,8 @@ describe('Data Import', () => {
           itemIds.push(ids.item.id);
         });
       });
+
+      cy.loginAsAdmin();
     });
 
     after('delete test data', () => {
