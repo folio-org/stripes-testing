@@ -246,7 +246,8 @@ export default {
   },
 
   edit: () => {
-    cy.do([fullScreenView.find(actionsButton).click(), Button('Edit').click()]);
+    cy.expect(fullScreenView.exists());
+    cy.do([actionsButton.click(), Button('Edit').click()]);
   },
 
   delete: (name) => {
