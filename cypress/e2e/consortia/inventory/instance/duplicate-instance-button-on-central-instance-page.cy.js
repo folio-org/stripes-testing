@@ -53,7 +53,9 @@ describe('Inventory', () => {
         InventoryNewInstance.fillResourceType(testData.newResourceType);
         InventoryNewInstance.clickSaveAndCloseButton();
         InventoryInstance.waitInstanceRecordViewOpened(testData.newResourceTitle);
-        InventoryInstance.checkInstanceDetails([{ key: 'Source', value: testData.source }]);
+        InventoryInstance.checkInstanceDetails({
+          instanceInformation: [{ key: 'Source', value: testData.source }],
+        });
       },
     );
   });
