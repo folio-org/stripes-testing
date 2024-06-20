@@ -78,7 +78,7 @@ describe('Title Level Request', () => {
     });
   });
 
-  it('C3533 Cancel request (vega) (TaaS)', { tags: ['criticalPathBroken', 'vega', 'debugT1'] }, () => {
+  it('C3533 Cancel request (vega) (TaaS) 1', { tags: ['criticalPathBroken', 'vega', 'debugT1'] }, () => {
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItemGui(itemData.barcodes[0]);
     AwaitingPickupForARequest.unselectCheckboxPrintSlip();
