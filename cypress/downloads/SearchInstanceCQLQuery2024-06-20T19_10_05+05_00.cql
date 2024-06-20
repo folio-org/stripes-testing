@@ -1,0 +1,1 @@
+((keyword all "testBulkEdit_573.1855492294335357" or isbn="testBulkEdit_573.1855492294335357" or hrid=="testBulkEdit_573.1855492294335357" or id=="testBulkEdit_573.1855492294335357") and staffSuppress=="false" and items.effectiveLocationId=="fcd64ce1-6995-48f0-840e-89ffa2288371") sortby title
