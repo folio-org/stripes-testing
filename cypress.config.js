@@ -9,14 +9,14 @@ const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
 const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
 
-const delay = async ms => new Promise(res => setTimeout(res, ms));
+const delay = async (ms) => new Promise((res) => setTimeout(res, ms));
 
 const reportportalOptions = {
   apiKey: process.env.CI_API_KEY ? process.env.CI_API_KEY : '',
   restClientConfig: {
     timeout: 360000,
   },
-}
+};
 
 module.exports = defineConfig({
   retries: {
@@ -117,9 +117,10 @@ module.exports = defineConfig({
       // very critical step, as otherwise results might not be completely pushed into
       // ReportPortal, resulting in unfinished launches and failing merges
       on('after:run', async (result) => {
-        if(result){
+        if (result) {
           if (globby.sync('rplaunchinprogress*.tmp').length > 0) {
-            console.log("Report portal. Await for a 20s...")
+            // eslint-disable-next-line no-console
+            console.log('Report portal. Await for a 20s...');
             await delay(20000);
           }
         }
