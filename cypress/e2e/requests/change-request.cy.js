@@ -28,7 +28,7 @@ describe('Title Level Request', () => {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const requestPolicyBody = {
-    requestTypes: [REQUEST_TYPES.PAGE],
+    requestTypes: [REQUEST_TYPES.PAGE, REQUEST_TYPES.HOLD],
     name: `requestPolicy${getRandomPostfix()}`,
     id: uuid(),
   };
@@ -77,13 +77,19 @@ describe('Title Level Request', () => {
           ],
         }).then((specialInstanceIds) => {
           instanceData.instanceId = specialInstanceIds.instanceId;
-
+          cy.wait(3000);
           cy.getInstance({
             limit: 1,
             expandAll: true,
             query: `"id"=="${specialInstanceIds.instanceId}"`,
           }).then((instance) => {
             instanceData.instanceHRID = instance.hrid;
+
+            if (instance.hrid === undefined) {
+              cy.log('Instance HRID is generated successfully').then(() => {
+                throw new Error('Instance HRID is not generated');
+              });
+            }
           });
         });
         RequestPolicy.createViaApi(requestPolicyBody);
@@ -129,7 +135,7 @@ describe('Title Level Request', () => {
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(testData.user.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instanceData.itemBarcode);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
@@ -139,7 +145,7 @@ describe('Title Level Request', () => {
 
   it(
     'C380544 Verify that the item information is not changed in "Item information" accordion after editing a request. (vega) (TaaS)',
-    { tags: ['criticalPathBroken', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       Requests.waitLoading();
       NewRequest.openNewRequestPane();
@@ -154,8 +160,8 @@ describe('Title Level Request', () => {
         testData.requestType,
       );
       NewRequest.verifyRequestInformation(testData.requestType);
-      NewRequest.saveRequestAndClose();
       cy.intercept('POST', 'circulation/requests').as('createRequest');
+      NewRequest.saveRequestAndClose();
       cy.wait('@createRequest').then((intercept) => {
         testData.requestId = intercept.response.body.id;
         cy.location('pathname').should('eq', `/requests/view/${testData.requestId}`);
@@ -170,6 +176,7 @@ describe('Title Level Request', () => {
       });
       cy.wait(3000);
       RequestDetail.openItemByBarcode(instanceData.itemBarcode);
+      cy.wait(1000);
       ItemRecordView.verifyLoanAndAvailabilitySection({
         permanentLoanType: testData.loanType.name,
         temporaryLoanType: '-',

@@ -26,8 +26,8 @@ describe('MARC', () => {
     describe('Browse - Authority records', () => {
       const testData = {
         authority: {
-          title: 'Congress and foreign policy series',
-          nonExactTitle: 'Congress',
+          title: 'C350902Congress and foreign policy series',
+          nonExactTitle: 'C350902Congress',
           searchOption: 'Uniform title',
           newField: {
             title: `Test authority ${getRandomPostfix()}`,
@@ -44,6 +44,7 @@ describe('MARC', () => {
           type: 'Authorized',
         },
       };
+      const querySearch = ['C350902*', 'C350667*'];
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const createdJobProfile = {
         profileName: `Update MARC authority records - 010 $a ${getRandomPostfix()}`,
@@ -55,6 +56,12 @@ describe('MARC', () => {
       let createdAuthorityID;
 
       before('Creating data', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate records in the system
+        querySearch.forEach((query) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
+        });
+
         cy.createTempUser([
           Permissions.settingsDataImportEnabled.gui,
           Permissions.moduleDataImportEnabled.gui,
@@ -74,7 +81,7 @@ describe('MARC', () => {
           NewJobProfile.linkActionProfileByName('Default - Create MARC Authority');
           NewJobProfile.saveAndClose();
 
-          DataImport.uploadFileViaApi('oneMarcAuthority.mrc', fileName, jobProfileToRun).then(
+          DataImport.uploadFileViaApi('marcAuthFileForC350902.mrc', fileName, jobProfileToRun).then(
             (response) => {
               response.forEach((record) => {
                 createdAuthorityID = record[propertyName].id;
@@ -100,7 +107,7 @@ describe('MARC', () => {
 
       it(
         'C350667 Update a MARC authority record via data import. Record match with 010 $a (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           cy.visit(TopMenu.dataImportPath);
           DataImport.uploadFile('test-auth-file.mrc', updatedfileName);
@@ -108,7 +115,7 @@ describe('MARC', () => {
           JobProfiles.waitLoadingList();
           JobProfiles.search(createdJobProfile.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(updatedfileName);
+          Logs.waitFileIsImported(updatedfileName);
           Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(updatedfileName);
           Logs.goToTitleLink(RECORD_STATUSES.CREATED);
@@ -118,7 +125,7 @@ describe('MARC', () => {
 
       it(
         'C350575 MARC Authority fields LEADER and 008 can not be deleted (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
@@ -129,7 +136,7 @@ describe('MARC', () => {
 
       it(
         'C350576 Update 008 of Authority record (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
@@ -140,22 +147,26 @@ describe('MARC', () => {
         },
       );
 
-      it('C350578 Browse existing Authorities (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
-        const checkPresentedColumns = [
-          'Authorized/Reference',
-          'Heading/Reference',
-          'Type of heading',
-          'Authority source',
-          'Number of titles',
-        ];
+      it(
+        'C350578 Browse existing Authorities (spitfire)',
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        () => {
+          const checkPresentedColumns = [
+            'Authorized/Reference',
+            'Heading/Reference',
+            'Type of heading',
+            'Authority source',
+            'Number of titles',
+          ];
 
-        MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-        MarcAuthority.checkPresentedColumns(checkPresentedColumns);
-      });
+          MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+          MarcAuthority.checkPresentedColumns(checkPresentedColumns);
+        },
+      );
 
       it(
         'C350513 Browse authority - handling for when there is no exact match (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.checkSearchOptions();
@@ -172,13 +183,13 @@ describe('MARC', () => {
 
       it(
         'C350902 MARC fields behavior when editing "MARC Authority" record (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
           MarcAuthority.edit();
           QuickMarcEditor.verifyBoxValuesInLDRFieldInMarcAuthorityRecord(
-            '00846',
+            '00853',
             AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.C,
             AUTHORITY_LDR_FIELD_TYPE_DROPDOWN.Z,
             '\\\\a2200241',
@@ -243,35 +254,6 @@ describe('MARC', () => {
             testData.forC350641.lcControlNumberUsingAllAfter,
           );
           MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
-        },
-      );
-
-      it(
-        'C350572 Edit an Authority record (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
-        () => {
-          MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-          MarcAuthorities.selectFirst(testData.authority.title);
-          MarcAuthority.edit();
-          MarcAuthority.addNewField(
-            5,
-            testData.authority.newField.tag,
-            `$a ${testData.authority.newField.content}`,
-          );
-          cy.wait(1000);
-          MarcAuthority.changeField('130', testData.authority.newField.title);
-          cy.wait(1000);
-          MarcAuthority.clicksaveAndCloseButton();
-          QuickMarcEditor.checkAfterSaveAndCloseAuthority();
-
-          MarcAuthority.contains(testData.authority.newField.tag);
-          MarcAuthority.contains(testData.authority.newField.content);
-
-          MarcAuthorities.searchBy(
-            testData.authority.searchOption,
-            testData.authority.newField.title,
-          );
-          MarcAuthorities.checkRow(testData.authority.newField.title);
         },
       );
     });

@@ -151,7 +151,7 @@ describe('Duplicate item level request', () => {
     UserEdit.changeServicePointPreferenceViaApi(userData1.userId, [servicePoint1.id]);
     Users.deleteViaApi(userData1.userId);
     Users.deleteViaApi(userData2.userId);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       defaultLocation.institutionId,
       defaultLocation.campusId,
       defaultLocation.libraryId,

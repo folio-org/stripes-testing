@@ -70,7 +70,7 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
       servicePoint: testData.servicePoint,
       shouldCheckIn: true,
     });
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
@@ -82,7 +82,7 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
 
   it(
     'C199704 Request: Patron comments field is not editable after request is created (vega) (TaaS)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'shiftLeft'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       NewRequest.openNewRequestPane();

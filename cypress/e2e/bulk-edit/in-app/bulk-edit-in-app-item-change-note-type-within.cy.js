@@ -48,8 +48,6 @@ describe('bulk-edit', () => {
             const itemData = res;
             item.hrid = res.hrid;
 
-            itemData.administrativeNotes = [notes.adminOne, notes.adminTwo];
-
             itemData.notes = [
               {
                 itemNoteTypeId: ITEM_NOTES.ACTION_NOTE,

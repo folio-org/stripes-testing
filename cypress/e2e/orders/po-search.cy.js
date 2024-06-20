@@ -37,29 +37,33 @@ describe('orders: Test PO search', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  it('C6717 Test the PO searches (thunderjet)', { tags: ['smoke', 'thunderjet'] }, () => {
-    Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
-      orderNumber = poNumber;
-      const today = new Date();
-      cy.visit(TopMenu.ordersPath);
-      Orders.checkPoSearch(
-        Orders.getSearchParamsMap(
+  it(
+    'C6717 Test the PO searches (thunderjet)',
+    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+    () => {
+      Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
+        orderNumber = poNumber;
+        const today = new Date();
+        cy.visit(TopMenu.ordersPath);
+        Orders.checkPoSearch(
+          Orders.getSearchParamsMap(
+            orderNumber,
+            DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY'),
+          ),
           orderNumber,
+        );
+        // open order to check 'date opened' search
+        Orders.searchByParameter('PO number', orderNumber);
+        Orders.selectFromResultsList(orderNumber);
+        Orders.openOrder();
+        Orders.closeThirdPane();
+        Orders.resetFilters();
+        Orders.searchByParameter(
+          'Date opened',
           DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY'),
-        ),
-        orderNumber,
-      );
-      // open order to check 'date opened' search
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      Orders.openOrder();
-      Orders.closeThirdPane();
-      Orders.resetFilters();
-      Orders.searchByParameter(
-        'Date opened',
-        DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY'),
-      );
-      Orders.checkSearchResults(orderNumber);
-    });
-  });
+        );
+        Orders.checkSearchResults(orderNumber);
+      });
+    },
+  );
 });

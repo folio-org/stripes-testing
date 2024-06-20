@@ -8,18 +8,22 @@ describe('ui-circulation-settings: Edit Staff slip settings', () => {
     cy.visit(`${SettingsMenu.circulationStaffSlipsPath}`);
   });
 
-  it('C347901 Staff clips settings (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
-    EditStaffClips.editHold(editStaffClipsHold);
-    EditStaffClips.fillAndPreviewTemplate(editStaffClipsHold);
-    EditStaffClips.editPickslip(editStaffClipsHold);
-    EditStaffClips.fillAndPreviewTemplate(editStaffClipsHold);
-    EditStaffClips.editRequestDelivery(editStaffClipsHold);
-    EditStaffClips.fillAndPreviewTemplate(editStaffClipsHold);
-    EditStaffClips.editTransit(editStaffClipsHold);
-    EditStaffClips.fillAndPreviewTemplate(editStaffClipsHold);
-    EditStaffClips.editAndClearHold();
-    EditStaffClips.editAndClearPickslip();
-    EditStaffClips.editAndClearRequestDelivery();
-    EditStaffClips.editAndClearTransit();
-  });
+  it(
+    'C347901 Staff clips settings (vega)',
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    () => {
+      EditStaffClips.editHold(editStaffClipsHold);
+      EditStaffClips.fillAndPreviewTemplate(editStaffClipsHold);
+      EditStaffClips.editPickslip(editStaffClipsHold);
+      EditStaffClips.fillAndPreviewTemplate(editStaffClipsHold);
+      EditStaffClips.editRequestDelivery(editStaffClipsHold);
+      EditStaffClips.fillAndPreviewTemplate(editStaffClipsHold);
+      EditStaffClips.editTransit(editStaffClipsHold);
+      EditStaffClips.fillAndPreviewTemplate(editStaffClipsHold);
+      EditStaffClips.editAndClearHold();
+      EditStaffClips.editAndClearPickslip();
+      EditStaffClips.editAndClearRequestDelivery();
+      EditStaffClips.editAndClearTransit();
+    },
+  );
 });

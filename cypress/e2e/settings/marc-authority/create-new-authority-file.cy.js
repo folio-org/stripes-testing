@@ -45,10 +45,9 @@ describe('MARC', () => {
 
       it(
         'C423372 Create new "Authority file" at "Settings >> MARC authority>>Manage authority files" pane (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'shiftLeft'] },
         () => {
           ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
-          ManageAuthorityFiles.checkActionTableHeaderExists();
           Object.values(DEFAULT_FOLIO_AUTHORITY_FILES).forEach((fileName) => {
             ManageAuthorityFiles.checkSourceFileExistsByName(fileName);
           });
@@ -65,8 +64,8 @@ describe('MARC', () => {
           );
           ManageAuthorityFiles.checkCancelButtonEnabled();
           ManageAuthorityFiles.checkSaveButtonEnabled();
-          ManageAuthorityFiles.clickSaveButton();
-          ManageAuthorityFiles.checkAfterSave(testData.name);
+          ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
+          ManageAuthorityFiles.checkAfterSaveCreatedFile(testData.name);
           ManageAuthorityFiles.checkSourceFileExists(
             testData.name,
             testData.prefix,
@@ -83,6 +82,7 @@ describe('MARC', () => {
         'C423992 Create new "Authority file" with empty "Base URL" field at "Settings >> MARC authority >> Manage authority files" pane (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
+          ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
           ManageAuthorityFiles.clickNewButton();
           ManageAuthorityFiles.verifyEditableRowAdded();
           ManageAuthorityFiles.verifyTableHeaders();
@@ -95,8 +95,8 @@ describe('MARC', () => {
           );
           ManageAuthorityFiles.checkCancelButtonEnabled();
           ManageAuthorityFiles.checkSaveButtonEnabled();
-          ManageAuthorityFiles.clickSaveButton();
-          ManageAuthorityFiles.checkAfterSave(testData.name);
+          ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
+          ManageAuthorityFiles.checkAfterSaveCreatedFile(testData.name);
           cy.reload();
           ManageAuthorityFiles.checkSourceFileExists(
             testData.name,

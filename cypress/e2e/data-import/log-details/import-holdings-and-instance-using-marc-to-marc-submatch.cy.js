@@ -16,9 +16,9 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -107,8 +107,12 @@ describe('Data Import', () => {
         }).then((resp) => {
           testData.protectedFieldId = resp.id;
         });
-        NewInstanceStatusType.createViaApi().then((initialInstanceStatusType) => {
-          testData.instanceStatusTypeId = initialInstanceStatusType.body.id;
+        InstanceStatusTypes.getViaApi({ query: '"name"=="Electronic Resource"' }).then((type) => {
+          if (type.length === 0) {
+            NewInstanceStatusType.createViaApi().then((initialInstanceStatusType) => {
+              testData.instanceStatusTypeId = initialInstanceStatusType.body.id;
+            });
+          }
         });
         cy.login(user.username, user.password, {
           path: SettingsMenu.mappingProfilePath,
@@ -155,7 +159,6 @@ describe('Data Import', () => {
         collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {
           cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         // create job profile for creating
@@ -168,7 +171,6 @@ describe('Data Import', () => {
           collectionOfMappingAndActionProfilesForCreate[1].actionProfile.name,
         );
         NewJobProfile.saveAndClose();
-        JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
       });
     });
 

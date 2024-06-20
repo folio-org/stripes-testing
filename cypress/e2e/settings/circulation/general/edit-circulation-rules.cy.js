@@ -110,7 +110,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
   it(
     'C2268: Add notice policy to circulation rules (volaris)',
-    { tags: ['smoke', 'volaris', 'system'] },
+    { tags: ['smoke', 'volaris', 'system', 'shiftLeft'] },
     () => {
       CirculationRules.clearCirculationRules();
       CirculationRules.fillInPriority();

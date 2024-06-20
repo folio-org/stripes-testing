@@ -56,11 +56,14 @@ export default {
 
   linkMappingProfile: (specialMappingProfileName) => {
     clickLinkProfileButton();
+    SelectMappingProfile.waitLoading();
     SelectMappingProfile.searchProfile(specialMappingProfileName);
-    cy.wait(1500);
+    cy.wait(1000);
     SelectMappingProfile.selectProfile(specialMappingProfileName);
+    cy.wait(1000);
     cy.expect(profileLinkSection.find(profileLinkButton).has({ disabled: true }));
     cy.do(Button('Save as profile & Close').click());
+    cy.wait(1000);
     cy.expect(Pane('Action profiles').find(Button('Actions')).exists());
   },
 

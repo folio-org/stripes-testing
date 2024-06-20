@@ -46,6 +46,7 @@ const importBlockedModal = Modal('Import blocked');
 const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 
 const uploadFile = (filePathName, fileName) => {
+  cy.wait(2000);
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
 };
 
@@ -469,21 +470,21 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                               id:
                                 recordResponse.body.relatedHoldingsInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedHoldingsInfo.idList[0],
+                                  : recordResponse.body.relatedHoldingsInfo[0].id,
                               hrid:
                                 recordResponse.body.relatedHoldingsInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedHoldingsInfo.hridList[0],
+                                  : recordResponse.body.relatedHoldingsInfo[0].hrid,
                             },
                             item: {
                               id:
                                 recordResponse.body.relatedItemInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedItemInfo.idList[0],
+                                  : recordResponse.body.relatedItemInfo.id,
                               hrid:
                                 recordResponse.body.relatedItemInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedItemInfo.hridList[0],
+                                  : recordResponse.body.relatedItemInfo.hrid,
                             },
                             authority: {
                               id:
@@ -699,19 +700,16 @@ export default {
     waitLoading();
     cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(
       (isDeleteFilesButtonExists) => {
+        cy.wait(5000);
+        cy.reload();
+        cy.wait(2000);
         if (isDeleteFilesButtonExists) {
-          cy.wait(5000);
-          cy.reload();
-          cy.wait(15000);
-          cy.reload();
-          cy.wait(3000);
           cy.do(Button('Delete files').click());
           cy.expect(Button('or choose files').exists());
         }
       },
     );
     cy.expect(sectionPaneJobsTitle.find(Button('or choose files')).exists());
-    cy.wait(3000);
   },
 
   clickResumeButton: () => {

@@ -69,7 +69,7 @@ describe('Request', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
       testData.folioInstances[0].barcodes[0],
     );
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
@@ -79,7 +79,7 @@ describe('Request', () => {
 
   it(
     'C545 Create new request for "Hold" type and check links to/from user and item (vega) (TaaS)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'shiftLeft'] },
     () => {
       // Create new request with item barcode and requester barcode
       NewRequest.openNewRequestPane();

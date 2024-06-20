@@ -132,7 +132,7 @@ describe('Create Item or Title level request', () => {
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
@@ -142,7 +142,7 @@ describe('Create Item or Title level request', () => {
   });
   it(
     'C350422 Check that user can create "Page" Item level request (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'shiftLeft'] },
     () => {
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       NewRequest.openNewRequestPane();

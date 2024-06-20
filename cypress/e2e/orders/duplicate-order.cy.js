@@ -89,7 +89,7 @@ describe('orders: duplicate', () => {
     Orders.deleteOrderViaApi(order.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
-    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+    NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
       location.institutionId,
       location.campusId,
       location.libraryId,
@@ -98,15 +98,19 @@ describe('orders: duplicate', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C9220: Duplicate purchase order (thunderjet)', { tags: ['smoke', 'thunderjet'] }, () => {
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    Orders.duplicateOrder();
-    InteractorsTools.checkCalloutMessage('The purchase order was successfully duplicated');
-    Orders.checkDuplicatedOrder(
-      organization.name,
-      `${user.username}, testPermFirst testMiddleName`,
-    );
-    Orders.deleteOrderViaActions();
-  });
+  it(
+    'C9220: Duplicate purchase order (thunderjet)',
+    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+    () => {
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      Orders.duplicateOrder();
+      InteractorsTools.checkCalloutMessage('The purchase order was successfully duplicated');
+      Orders.checkDuplicatedOrder(
+        organization.name,
+        `${user.username}, testPermFirst testMiddleName`,
+      );
+      Orders.deleteOrderViaActions();
+    },
+  );
 });

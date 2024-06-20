@@ -58,9 +58,10 @@ export default {
   checkStatusOfJobProfile: (status = 'Completed', rowNumber = 0) => cy.do(MultiColumnListCell({ row: rowNumber, content: status }).exists()),
 
   checkJobStatus: (fileName, status) => {
-    const newFileName = fileName.replace('/.mrc/i', '');
+    const newFileName = fileName.replace(/\.mrc$/i, '');
+
     cy.do(
-      MultiColumnListCell({ content: newFileName }).perform((element) => {
+      MultiColumnListCell({ content: including(newFileName) }).perform((element) => {
         const rowNumber = element.parentElement.getAttribute('data-row-inner');
 
         cy.expect(
@@ -81,12 +82,15 @@ export default {
     );
   },
   openFileDetails: (fileName) => {
-    cy.do(Link(fileName).click());
-    FileDetails.verifyLogDetailsPageIsOpened(fileName);
+    const newFileName = fileName.replace('.mrc', '');
+
+    cy.do(Link(including(newFileName)).click());
+    FileDetails.verifyLogDetailsPageIsOpened(newFileName);
     FileDetails.verifyResultsListIsVisible();
     // TODO need to wait until page is uploaded
     cy.wait(3500);
   },
+
   checkQuantityRecordsInFile: (quantityRecords) => cy.do(MultiColumnListCell({ row: 0, content: quantityRecords }).exists()),
 
   clickOnHotLink: (row = 0, columnIndex = 3, status = 'Created') => {

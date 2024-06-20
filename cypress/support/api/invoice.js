@@ -15,3 +15,11 @@ Cypress.Commands.add('deleteInvoiceFromStorageViaApi', (id) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('getInvoiceByStatus', (status) => {
+  const UpdatedUrl = encodeURI(`invoice/invoices?query=status==${status}&limit=1`);
+  cy.okapiRequest({
+    path: UpdatedUrl,
+    isDefaultSearchParamsRequired: false,
+  });
+});

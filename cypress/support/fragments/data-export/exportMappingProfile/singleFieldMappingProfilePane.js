@@ -8,6 +8,7 @@ import {
   TextField,
   TextArea,
   Checkbox,
+  HTML,
 } from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -38,10 +39,21 @@ export default {
         content: including(`Source: ${profileDetails.source}`),
       }),
     ]);
+    if (Object.prototype.hasOwnProperty.call(profileDetails, 'fieldsSuppression')) {
+      cy.expect(KeyValue('Fields suppression').has({ value: profileDetails.fieldsSuppression }));
+    }
+
+    if (Object.prototype.hasOwnProperty.call(profileDetails, 'transformation')) {
+      cy.expect(HTML('No transformations found').absent());
+    }
   },
 
   verifyElements() {
     cy.expect([
+      Accordion({ label: 'Summary', open: true }).exists(),
+      Accordion({ label: 'Transformations', open: true }).exists(),
+      Button('Collapse all').has({ disabled: false }),
+      Button({ icon: 'times' }).has({ disabled: false }),
       actionsButton.has({ disabled: false }),
       Button({ ariaLabel: 'Cancel' }).has({ disabled: false }),
     ]);
@@ -94,6 +106,7 @@ export default {
 
   clickEditButton() {
     cy.do(editButton.click());
+    cy.wait(2000);
   },
 
   clickDuplicateButton() {

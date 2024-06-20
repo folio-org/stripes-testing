@@ -131,7 +131,9 @@ describe('MARC', () => {
               InventoryInstance.verifySelectMarcAuthorityModal();
               MarcAuthorityBrowse.checkSearchOptions();
               MarcAuthorityBrowse.searchBy(newField.searchOption, newField.marcValue);
+              cy.wait(1000);
               MarcAuthorities.checkRow(newField.marcValue);
+              cy.wait(1000);
               MarcAuthorities.selectTitle(newField.marcValue);
               cy.wait(2000);
               InventoryInstance.clickLinkButton();

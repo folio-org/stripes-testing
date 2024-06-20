@@ -22,9 +22,12 @@ describe('lists', () => {
     });
 
     it('C411769 Delete list: Canned reports (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      cy.login(userData.username, userData.password);
+      // eslint-disable-next-line spaced-comment
+      //cy.login(userData.username, userData.password);
+      cy.loginAsAdmin();
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
+      Lists.resetAllFilters();
       Lists.expiredPatronLoan();
       Lists.actionButton();
       cy.contains('Edit list').should('be.disabled');

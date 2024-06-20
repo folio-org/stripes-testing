@@ -400,3 +400,13 @@ Cypress.Commands.add(
     }).then(({ body }) => cy.expect(body.status === 'IN_PROGRESS'));
   },
 );
+
+Cypress.Commands.add('getInventoryInstanceByStatus', (status) => {
+  const UpdatedUrl = encodeURI(
+    `search/instances?expandAll=true&limit=1&query=items.status.name==${status}`,
+  );
+  cy.okapiRequest({
+    path: UpdatedUrl,
+    isDefaultSearchParamsRequired: false,
+  });
+});

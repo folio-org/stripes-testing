@@ -6,6 +6,7 @@ import QueryModal, {
   usersFieldValues,
   stringStoresUuidOperators,
   booleanOperators,
+  QUERY_OPERATIONS,
 } from '../../../support/fragments/bulk-edit/query-modal';
 import { patronGroupNames, patronGroupUuids } from '../../../support/constants';
 
@@ -46,7 +47,7 @@ describe('bulk-edit', () => {
 
     it(
       'C436871 Verify Bulk Edit Query tab (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
@@ -67,7 +68,7 @@ describe('bulk-edit', () => {
 
     it(
       'C436746 Verify actions in the "Build query" form (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
       () => {
         cy.login(secondUser.username, secondUser.password, {
           path: TopMenu.bulkEditPath,
@@ -90,7 +91,7 @@ describe('bulk-edit', () => {
         QueryModal.verifySelectedField(usersFieldValues.userActive);
         QueryModal.verifyQueryAreaContent('(user_active  )');
         QueryModal.verifyOperatorsList(booleanOperators);
-        QueryModal.selectOperator('==');
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.verifyQueryAreaContent('(user_active == )');
         QueryModal.verifyValueColumn();
         QueryModal.selectValueFromSelect('True');
@@ -109,7 +110,7 @@ describe('bulk-edit', () => {
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.verifyOperatorColumn();
-        QueryModal.selectOperator('==', 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
         QueryModal.verifyOperatorsList(stringStoresUuidOperators, 1);
         QueryModal.chooseValueSelect(patronGroupNames.STAFF, 1);
         QueryModal.testQueryDisabled(false);

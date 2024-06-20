@@ -81,6 +81,7 @@ export default {
   },
 
   checkItemStatus: (status) => {
+    cy.wait(500);
     cy.expect(itemInformationSection.find(KeyValue('Item status', { value: status })).exists());
   },
 
@@ -176,6 +177,7 @@ export default {
   },
 
   openActions() {
+    cy.wait(500);
     cy.do(actionsButton.click());
   },
 

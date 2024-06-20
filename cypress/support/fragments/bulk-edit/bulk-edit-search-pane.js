@@ -511,16 +511,23 @@ export default {
     }
   },
 
-  verifyActionsAfterConductedInAppUploading(errors = true) {
+  verifyActionsAfterConductedInAppUploading(errors = true, instance = false) {
     cy.do(actions.click());
     cy.expect([
       Button('Download matched records (CSV)').exists(),
-      Button('Start bulk edit').exists(),
       DropdownMenu().find(HTML('Show columns')).exists(),
       DropdownMenu().find(searchColumnNameTextfield).exists(),
     ]);
     if (errors) {
       cy.expect(Button('Download errors (CSV)').exists());
+    }
+    if (instance) {
+      cy.expect([
+        Button('Start bulk edit - Instance fields').exists(),
+        Button('Start bulk edit - MARC fields').exists(),
+      ]);
+    } else {
+      cy.expect(Button('Start bulk edit').exists());
     }
   },
 
@@ -673,11 +680,11 @@ export default {
     });
   },
 
-  verifyResultColumTitles(title) {
+  verifyResultColumnTitles(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
   },
 
-  verifyResultColumTitlesDoNotInclude(title) {
+  verifyResultColumnTitlesDoNotInclude(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).absent());
   },
 
@@ -724,6 +731,7 @@ export default {
   },
 
   clickBuildQueryButton() {
+    cy.expect(buildQueryButton.has({ disabled: false }));
     cy.do(buildQueryButton.click());
   },
 
@@ -762,7 +770,26 @@ export default {
     ]);
   },
 
-  verifyElectronicAccessElementByIndex(index, expectedText) {
-    cy.get('[class^="ElectronicAccess"]').find('td').eq(index).should('contain.text', expectedText);
+  checkboxWithTextAbsent(text) {
+    cy.get('[class^="ActionMenu-"]').within(() => {
+      cy.get('[class^="checkbox-"]').each(($checkbox) => {
+        cy.wrap($checkbox).should(($el) => {
+          expect($el.text().toLowerCase()).to.not.contain(text.toLowerCase());
+        });
+      });
+    });
+  },
+
+  verifyElectronicAccessElementByIndex(index, expectedText, miniRowCount = 1) {
+    cy.get('[class^="ElectronicAccess"]')
+      .find('tr')
+      .eq(miniRowCount)
+      .find('td')
+      .eq(index)
+      .should('have.text', expectedText);
+  },
+
+  verifyRowHasEmptyElectronicAccess(index) {
+    cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
   },
 };

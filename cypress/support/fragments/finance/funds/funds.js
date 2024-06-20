@@ -71,6 +71,7 @@ const fundFormSection = Section({ id: 'pane-fund-form' });
 const locationSection = Section({ id: 'locations' });
 const editButton = Button('Edit');
 const selectLocationsModal = Modal('Select locations');
+const unreleaseEncumbranceModal = Modal('Unrelease encumbrance');
 
 export default {
   defaultUiFund: {
@@ -131,8 +132,9 @@ export default {
     return FundEditForm;
   },
   createFund(fund) {
+    cy.do([newButton.click()]);
+    cy.wait(8000);
     cy.do([
-      newButton.click(),
       nameField.fillIn(fund.name),
       codeField.fillIn(fund.code),
       externalAccountField.fillIn(fund.externalAccount),
@@ -183,6 +185,21 @@ export default {
 
   varifyLocationSectionExist() {
     cy.expect(fundFormSection.find(locationSection).exists());
+  },
+
+  varifyLocationInSection: (locationName) => {
+    cy.get('#locations').find('ul[class^=list-]').contains(locationName).should('exist');
+  },
+
+  varifyLocationIsAbsentInSection: (locationName) => {
+    cy.get('#locations').find('ul[class^=list-]').contains('li', locationName).should('not.exist');
+  },
+
+  verifyCheckboxState: (checkboxLabel, expectedState) => {
+    cy.contains('[class^="labelText"]', checkboxLabel)
+      .parent('label')
+      .find('input[type="checkbox"]')
+      .should(expectedState ? 'be.checked' : 'not.be.checked');
   },
 
   varifyLocationSectionAbsent() {
@@ -874,6 +891,14 @@ export default {
     cy.do([actionsButton.click(), editButton.click()]);
   },
 
+  removeLocation(locationName) {
+    cy.get('section#locations')
+      .contains('li', locationName)
+      .within(() => {
+        cy.get('button[aria-label*="Remove location"]').click();
+      });
+  },
+
   changeStatusOfBudget: (statusName, fund, fiscalYear) => {
     cy.wait(4000);
     cy.do([Select({ id: 'budget-status' }).choose(statusName), saveAndCloseButton.click()]);
@@ -1025,7 +1050,6 @@ export default {
   selectFund: (FundName) => {
     cy.wait(4000);
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
-    cy.wait(4000);
     FundDetails.waitLoading();
   },
 
@@ -1034,11 +1058,7 @@ export default {
   },
 
   closeTransactionDetails: () => {
-    cy.do(
-      Section({ id: 'pane-transaction-details' })
-        .find(Button({ icon: 'times' }))
-        .click(),
-    );
+    cy.do(transactionDetailSection.find(Button({ icon: 'times' })).click());
   },
 
   closeTransactionApp: (fund, fiscalYear) => {
@@ -1058,11 +1078,7 @@ export default {
   },
 
   clickInfoInTransactionDetails: () => {
-    cy.do(
-      Section({ id: 'pane-transaction-details' })
-        .find(Button({ icon: 'info' }))
-        .click(),
-    );
+    cy.do(transactionDetailSection.find(Button({ icon: 'info' })).click());
   },
 
   addAUToFund: (AUName) => {
@@ -1098,6 +1114,31 @@ export default {
       transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
       transactionDetailSection.find(KeyValue('To')).has({ value: fund }),
     );
+  },
+
+  cancelUnreleaseEncumbrance: () => {
+    cy.do(transactionDetailSection.find(Button('Unrelease encumbrance')).click());
+    cy.expect(unreleaseEncumbranceModal.exists());
+    cy.do(
+      unreleaseEncumbranceModal
+        .find(Button({ id: 'clickable-unrelease-confirmation-cancel' }))
+        .click(),
+    );
+  },
+
+  unreleaseEncumbranceButtonAbsent: () => {
+    cy.expect(transactionDetailSection.find(Button('Unrelease encumbrance')).absent());
+  },
+
+  unreleaseEncumbrance: () => {
+    cy.do(transactionDetailSection.find(Button('Unrelease encumbrance')).click());
+    cy.expect(unreleaseEncumbranceModal.exists());
+    cy.do(
+      unreleaseEncumbranceModal
+        .find(Button({ id: 'clickable-unrelease-confirmation-confirm' }))
+        .click(),
+    );
+    InteractorsTools.checkCalloutMessage('Encumbrance was unreleased');
   },
 
   varifyCanNotCreatePlannedBudget: () => {
