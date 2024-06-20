@@ -22,7 +22,7 @@ import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import OrderLineDetails from '../../support/fragments/orders/orderLineDetails';
 
-describe('Invoices', () => {
+describe('ui-finance: Fiscal Year Rollover', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
@@ -96,6 +96,7 @@ describe('Invoices', () => {
                             materialSupplier: responseOrganizations,
                             volumes: [],
                           },
+                          paymentStatus: 'Payment Not Required',
                         };
                         Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
                           firstOrder.id = firstOrderResponse.id;
@@ -160,7 +161,7 @@ describe('Invoices', () => {
   });
 
   it(
-    'C466207 POL payment status is changed to "Awaiting payment" after cancelling related paid invoice (thunderjet)',
+    'C466210 POL payment status remains "Payment not required" after cancelling related paid invoice (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
@@ -190,7 +191,7 @@ describe('Invoices', () => {
       });
       TransactionDetails.openSourceInTransactionDetails(orderLine.poLineNumber);
       OrderLineDetails.checkOrderLineDetails({
-        poLineInformation: [{ key: 'Payment status', value: 'Awaiting Payment' }],
+        poLineInformation: [{ key: 'Payment status', value: 'Payment Not Required' }],
       });
     },
   );
