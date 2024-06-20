@@ -45,6 +45,7 @@ export default {
       Checkbox(CHECKBOX_NAMES.ITEM).click(),
       addTransformationsButton.click(),
     ]);
+    cy.wait(2000);
     modalSelectTransformations.searchItemTransformationsByName(profile.holdingsTransformation);
     modalSelectTransformations.selectTransformations(
       profile.holdingsMarcField,
@@ -57,6 +58,7 @@ export default {
       profile.itemMarcField,
       profile.subfieldForItem,
     );
+    cy.wait(2000);
   },
 
   fillMappingProfileForItemHrid: (profileName, itemMarcField = '902', subfield = '$a') => {

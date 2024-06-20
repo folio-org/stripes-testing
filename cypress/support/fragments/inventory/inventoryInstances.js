@@ -68,6 +68,7 @@ const searchInstancesOptions = [
   'Contributor',
   'Title (all)',
   'Identifier (all)',
+  'Classification, normalized',
   'ISBN',
   'ISSN',
   'LCCN, normalized',
@@ -114,6 +115,7 @@ const searchInstancesOptionsValues = [
   'contributor',
   'title',
   'identifier',
+  'normalizedClassificationNumber',
   'isbn',
   'issn',
   'lccn',
@@ -155,12 +157,12 @@ const searchItemsOptionsValues = [
   'iid',
   'allFields',
 ];
-const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 14);
+const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 16);
 const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 14);
 const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 14);
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
-  .filter((option, index) => index <= 14);
+  .filter((option, index) => index <= 16);
 const advSearchHoldingsOptionsValues = searchHoldingsOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 14);
@@ -944,6 +946,26 @@ export default {
     }
 
     InventoryInstance.deleteInstanceViaApi(instance.instanceId);
+  },
+
+  deleteInstanceByTitleViaApi(instanceTitle) {
+    return cy
+      .okapiRequest({
+        path: 'instance-storage/instances',
+        searchParams: {
+          limit: 100,
+          query: `title="${instanceTitle}"`,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((res) => {
+        return res.body.instances;
+      })
+      .then((instances) => {
+        instances.forEach((instance) => {
+          if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+      });
   },
 
   createLocalCallNumberTypeViaApi: (name) => {

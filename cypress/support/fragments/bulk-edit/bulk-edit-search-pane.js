@@ -731,6 +731,7 @@ export default {
   },
 
   clickBuildQueryButton() {
+    cy.expect(buildQueryButton.has({ disabled: false }));
     cy.do(buildQueryButton.click());
   },
 

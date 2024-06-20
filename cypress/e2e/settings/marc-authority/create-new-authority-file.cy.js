@@ -64,8 +64,8 @@ describe('MARC', () => {
           );
           ManageAuthorityFiles.checkCancelButtonEnabled();
           ManageAuthorityFiles.checkSaveButtonEnabled();
-          ManageAuthorityFiles.clickSaveButton();
-          ManageAuthorityFiles.checkAfterSave(testData.name);
+          ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
+          ManageAuthorityFiles.checkAfterSaveCreatedFile(testData.name);
           ManageAuthorityFiles.checkSourceFileExists(
             testData.name,
             testData.prefix,
@@ -95,8 +95,8 @@ describe('MARC', () => {
           );
           ManageAuthorityFiles.checkCancelButtonEnabled();
           ManageAuthorityFiles.checkSaveButtonEnabled();
-          ManageAuthorityFiles.clickSaveButton();
-          ManageAuthorityFiles.checkAfterSave(testData.name);
+          ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
+          ManageAuthorityFiles.checkAfterSaveCreatedFile(testData.name);
           cy.reload();
           ManageAuthorityFiles.checkSourceFileExists(
             testData.name,
