@@ -22,12 +22,11 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://folio-testing-cypress-okapi.ci.folio.org',
-    EDGE_HOST: 'https://folio-testing-cypress-edge.ci.folio.org',
-    EDGE_API_KEY: '',
+    OKAPI_HOST: 'https://folio-snapshot-okapi.dev.folio.org',
     OKAPI_TENANT: 'diku',
     diku_login: 'diku_admin',
     diku_password: 'admin',
+    EDGE_API_KEY: '',
     is_kiwi_release: false,
     downloadTimeout: 2000,
     allure: true,
@@ -120,7 +119,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
+    baseUrl: 'https://folio-snapshot.dev.folio.org',
     testIsolation: false,
   },
 });
