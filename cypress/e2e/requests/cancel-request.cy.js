@@ -80,7 +80,6 @@ describe('Title Level Request', () => {
 
   it('C3533 Cancel request (vega) (TaaS)', { tags: ['criticalPath', 'vega', 'shiftLeft'] }, () => {
     cy.visit(TopMenu.checkInPath);
-    cy.log(itemData);
     CheckInActions.checkInItemGui(itemData.barcodes[0]);
     AwaitingPickupForARequest.unselectCheckboxPrintSlip();
     AwaitingPickupForARequest.closeModal();
