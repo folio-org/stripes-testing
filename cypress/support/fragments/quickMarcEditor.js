@@ -2654,4 +2654,24 @@ export default {
         .has({ disabled: isDisabled }),
     ]);
   },
+
+  selectOptionsIn008FieldRelfDropdowns(...options) {
+    options.forEach((option, index) => {
+      cy.do(
+        QuickMarcEditorRow({ tagValue: '008' })
+          .find(Select({ name: including(`records[3].content.Relf[${index}]`) }))
+          .choose(option),
+      );
+    });
+  },
+
+  checkOptionsSelectedIn008FieldRelfDropdowns(...options) {
+    options.forEach((option, index) => {
+      cy.expect(
+        QuickMarcEditorRow({ tagValue: '008' })
+          .find(Select({ name: including(`records[3].content.Relf[${index}]`) }))
+          .has({ checkedOptionText: option }),
+      );
+    });
+  },
 };
