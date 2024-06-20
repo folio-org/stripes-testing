@@ -9,7 +9,7 @@ describe('lists', () => {
     const userData = {};
     const listData = {
       name: getTestEntityValue('test_list'),
-      recordType: 'Loans',
+      recordType: 'Users',
       status: 'Active',
       visibility: 'Shared',
     };
@@ -24,7 +24,9 @@ describe('lists', () => {
     });
 
     afterEach('Delete a user', () => {
-      cy.getUserToken(userData.username, userData.password);
+      // eslint-disable-next-line spaced-comment
+      //cy.getUserToken(userData.username, userData.password);
+      cy.getAdminToken();
       Lists.getViaApi().then((response) => {
         const filteredItem = response.body.content.find((item) => item.name === listData.name);
         Lists.deleteViaApi(filteredItem.id);
@@ -42,7 +44,7 @@ describe('lists', () => {
         cy.loginAsAdmin();
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
-        Lists.resetAll();
+        Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -52,9 +54,9 @@ describe('lists', () => {
         Lists.queryBuilderActions();
         cy.wait(1000);
         Lists.actionButton();
-        cy.contains('Delete list').should('be.disabled');
+        Lists.verifyDeleteListButtonIsDisabled();
         cy.wait(7000);
-        cy.contains('View updated list').click();
+        Lists.viewUpdatedList();
         Lists.closeListDetailsPane();
         cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
@@ -72,7 +74,7 @@ describe('lists', () => {
         cy.loginAsAdmin();
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
-        Lists.resetAll();
+        Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -81,11 +83,11 @@ describe('lists', () => {
         Lists.buildQuery();
         Lists.queryBuilderActions();
         cy.wait(10000);
-        cy.contains('View updated list').click();
+        Lists.viewUpdatedList();
         Lists.actionButton();
         Lists.exportList();
         Lists.actionButton();
-        cy.contains('Delete list').should('be.disabled');
+        Lists.verifyDeleteListButtonIsDisabled();
         Lists.closeListDetailsPane();
         cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {

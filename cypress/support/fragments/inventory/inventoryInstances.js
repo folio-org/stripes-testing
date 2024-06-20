@@ -68,6 +68,7 @@ const searchInstancesOptions = [
   'Contributor',
   'Title (all)',
   'Identifier (all)',
+  'Classification, normalized',
   'ISBN',
   'ISSN',
   'LCCN, normalized',
@@ -114,6 +115,7 @@ const searchInstancesOptionsValues = [
   'contributor',
   'title',
   'identifier',
+  'normalizedClassificationNumber',
   'isbn',
   'issn',
   'lccn',
@@ -155,12 +157,12 @@ const searchItemsOptionsValues = [
   'iid',
   'allFields',
 ];
-const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 14);
+const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 16);
 const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 14);
 const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 14);
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
-  .filter((option, index) => index <= 14);
+  .filter((option, index) => index <= 16);
 const advSearchHoldingsOptionsValues = searchHoldingsOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 14);
@@ -320,7 +322,7 @@ export default {
     cy.do(Section({ id: 'instancesTags' }).find(TextField()).fillIn(tagName));
     cy.wait('@getTags');
     // TODO: clarify with developers what should be waited
-    cy.wait(1000);
+    cy.wait(1500);
     cy.do(Section({ id: 'instancesTags' }).find(TextField()).focus());
     cy.do(Section({ id: 'instancesTags' }).find(TextField()).click());
     cy.do(Checkbox(tagName).click());
@@ -946,6 +948,26 @@ export default {
     InventoryInstance.deleteInstanceViaApi(instance.instanceId);
   },
 
+  deleteInstanceByTitleViaApi(instanceTitle) {
+    return cy
+      .okapiRequest({
+        path: 'instance-storage/instances',
+        searchParams: {
+          limit: 100,
+          query: `title="${instanceTitle}"`,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((res) => {
+        return res.body.instances;
+      })
+      .then((instances) => {
+        instances.forEach((instance) => {
+          if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+      });
+  },
+
   createLocalCallNumberTypeViaApi: (name) => {
     return cy
       .okapiRequest({
@@ -978,9 +1000,9 @@ export default {
     oclc,
     profile = 'Inventory Single Record - Default Create Instance (Default)',
   ) => {
+    cy.do([actionsButton.click(), Button({ id: 'dropdown-clickable-import-record' }).click()]);
+    cy.wait(1000);
     cy.do([
-      actionsButton.click(),
-      Button({ id: 'dropdown-clickable-import-record' }).click(),
       Select({ name: 'selectedJobProfileId' }).choose(profile),
       singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
       singleRecordImportModal.find(Button('Import')).click(),

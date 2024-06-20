@@ -23,8 +23,16 @@ describe('lists', () => {
       });
     });
 
+    beforeEach('Login', () => {
+      cy.loginAsAdmin();
+      // cy.login(userData.username, userData.password);
+      cy.visit(TopMenu.listsPath);
+      Lists.waitLoading();
+    });
+
     after('Delete a user', () => {
-      cy.getUserToken(userData.username, userData.password);
+      cy.getAdminToken();
+      // cy.getUserToken(userData.username, userData.password);
       Lists.getViaApi().then((response) => {
         const filteredItem = response.body.content.find((item) => item.name === listData.name);
         Lists.deleteViaApi(filteredItem.id);
@@ -34,9 +42,6 @@ describe('lists', () => {
     });
 
     it('C411822  Refresh list: Inactive lists (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
       Lists.openNewListPane();
       Lists.setName(listData.name);
       Lists.setDescription(listData.name);
@@ -53,9 +58,6 @@ describe('lists', () => {
       "C411823 Refresh list: The list doesn't contain query (corsair)",
       { tags: ['criticalPath', 'corsair'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -72,9 +74,6 @@ describe('lists', () => {
       'C411824 Refresh list: Edit is in progress (corsair)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -93,9 +92,6 @@ describe('lists', () => {
       'C411833 Refresh list: Export is in progress (corsair)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -117,9 +113,6 @@ describe('lists', () => {
       'C411834 Refresh list: Cancel Refresh - less than 500 records (corsair)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -138,9 +131,6 @@ describe('lists', () => {
       'C411834 Refresh list: Cancel Refresh - more than 500 records (corsair)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);

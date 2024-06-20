@@ -188,6 +188,7 @@ describe('Loans', () => {
         ConfirmItemStatusModal.confirmItemStatus();
 
         // Navigate to loan details for that loan.
+        UserLoans.showClosedLoans();
         UserLoans.openLoanDetails(selectedItem.barcodes[0]);
         LoansPage.verifyResultsInTheRow([ITEM_STATUS_NAMES.MARKED_AS_MISSING]);
 

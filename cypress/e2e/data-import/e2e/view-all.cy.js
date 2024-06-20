@@ -1,19 +1,21 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let id;
     let instanceId;
     const filePath = 'oneMarcBib.mrc';
-    const uniqueFileName = `C11112 autotestFileName${getRandomPostfix()}.mrc`;
+    const uniquePartOfFileName = getRandomPostfix();
+    const uniqueFileName = `C11112 autotestFileName${uniquePartOfFileName}.mrc`;
+    const uniqueFileNameForSearch = `C11112 autotestFileName${uniquePartOfFileName}_1.mrc`;
 
-    before('Create test data and login', () => {
+    before('create test data', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         filePath,
@@ -22,14 +24,18 @@ describe('Data Import', () => {
       ).then((response) => {
         instanceId = response[0].instance.id;
       });
-      // fetch dynamic data from server
-      LogsViewAll.getSingleJobProfile().then(({ hrId }) => {
-        id = hrId;
-      });
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+      Logs.openViewAllLogs();
+      LogsViewAll.selectOption(LogsViewAll.options[0]);
+      LogsViewAll.searchWithTerm(uniqueFileNameForSearch);
+      LogsViewAll.getLogId().then((logId) => {
+        id = logId;
+      });
+      LogsViewAll.resetAllFilters();
+      cy.visit(TopMenu.dataImportPath);
     });
 
-    after('Delete test data', () => {
+    after('delete test data', () => {
       cy.getAdminToken();
       InventoryInstance.deleteInstanceViaApi(instanceId);
     });
@@ -40,7 +46,7 @@ describe('Data Import', () => {
       LogsViewAll.options.forEach((option) => {
         LogsViewAll.selectOption(option);
         // when option is "ID", search with hrId otherwise, with file name
-        const term = option === 'ID' ? `${id}` : uniqueFileName;
+        const term = option === 'ID' ? `${id}` : uniqueFileNameForSearch;
 
         LogsViewAll.searchWithTerm(term);
 
