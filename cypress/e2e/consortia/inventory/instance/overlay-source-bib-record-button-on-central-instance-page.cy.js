@@ -12,17 +12,17 @@ describe('Inventory', () => {
       oclcNumber: '1234568',
     };
     const updatedInstanceData = {
-      title:
-        'Dictionary of Louisiana French : as spoken in Cajun, Creole, and American Indian communities / Albert Valdman, editor ; Kevin J. Rottet, associate editor.',
-      language: 'English, French',
-      publisher: 'University Press of Mississippi',
-      placeOfPublication: 'Jackson',
-      publicationDate: '2010',
-      physicalDescription: 'XL, 892 S',
-      subject: 'French language--Dialects--Louisiana--Dictionaries',
+      title: 'Rincões dos frutos de ouro (tipos e cenarios do sul baiano) [por] Saboia Ribeiro.',
+      language: 'Portuguese',
+      publisher: 'P. Simone',
+      placeOfPublication: '[Rio de Janeiro?]',
+      publicationDate: '1933',
+      physicalDescription: '209 pages 19 cm',
+      subject: 'Conto brasileiro',
       notes: {
-        noteType: 'Bibliography note',
-        noteContent: 'Includes bibliographical references and index',
+        noteType: 'Formatted Contents Note',
+        noteContent:
+          'Os ciganos.--O caxixe.--Ferocidade.--Lucio da Florinda.--Gente nativa.--Brios sertanejos.--Destinos.--Vida aspera.--Duas mortes.--Rapsodia do rio',
       },
     };
 
@@ -76,6 +76,7 @@ describe('Inventory', () => {
         );
         InventoryInstance.openSubjectAccordion();
         InventoryInstance.verifyInstanceSubject(0, 0, updatedInstanceData.subject);
+        InventoryInstance.openInstanceNotesAccordion();
         InventoryInstance.checkInstanceNotes(
           updatedInstanceData.notes.noteType,
           updatedInstanceData.notes.noteContent,
