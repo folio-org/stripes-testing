@@ -496,6 +496,11 @@ export default {
     cy.expect(Button({ id: 'Add MARC holdings record' }).absent());
   },
 
+  verifyViewRequestOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button('New request').absent());
+  },
+
   verifyNewOrderOptionAbsent() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'clickable-create-order' }).absent());
