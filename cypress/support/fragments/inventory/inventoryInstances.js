@@ -1,6 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import uuid from 'uuid';
-import { HTML, including } from '@interactors/html';
+import { HTML, including, matching } from '@interactors/html';
 import {
   Section,
   or,
@@ -19,6 +19,7 @@ import {
   MultiColumnListRow,
   AdvancedSearch,
   AdvancedSearchRow,
+  MultiColumnListCell,
 } from '../../../../interactors';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
@@ -1357,6 +1358,15 @@ export default {
       resultsPaneContent
         .find(MultiColumnListRow({ index: 0 }))
         .has({ text: including(contributorName) }),
+    );
+  },
+
+  checkResultsCellContainsAnyOfValues(valuesArray, columnIndex = 0, rowIndex = 0) {
+    const regEx = new RegExp(`.*(${valuesArray.join('|')}).*`, 'm');
+    cy.expect(
+      resultsPaneContent
+        .find(MultiColumnListCell({ row: rowIndex, columnIndex }))
+        .has({ text: matching(regEx) }),
     );
   },
 };

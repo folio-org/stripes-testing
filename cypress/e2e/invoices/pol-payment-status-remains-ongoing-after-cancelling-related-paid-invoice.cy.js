@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import NewOrder from '../../support/fragments/orders/newOrder';
 import permissions from '../../support/dictionary/permissions';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
@@ -22,14 +22,14 @@ import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import OrderLineDetails from '../../support/fragments/orders/orderLineDetails';
 
-describe('Invoices', () => {
+describe('ui-finance: Fiscal Year Rollover', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
   const firstOrder = {
-    id: uuid(),
-    vendor: '',
-    orderType: 'One-Time',
+    ...NewOrder.getDefaultOngoingOrder,
+    orderType: 'Ongoing',
+    ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
     reEncumber: true,
   };
@@ -160,7 +160,7 @@ describe('Invoices', () => {
   });
 
   it(
-    'C466207 POL payment status is changed to "Awaiting payment" after cancelling related paid invoice (thunderjet)',
+    'C466211 POL payment status remains "Ongoing" after cancelling related paid invoice (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
@@ -190,7 +190,7 @@ describe('Invoices', () => {
       });
       TransactionDetails.openSourceInTransactionDetails(orderLine.poLineNumber);
       OrderLineDetails.checkOrderLineDetails({
-        poLineInformation: [{ key: 'Payment status', value: 'Awaiting Payment' }],
+        poLineInformation: [{ key: 'Payment status', value: 'Ongoing' }],
       });
     },
   );
