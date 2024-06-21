@@ -26,8 +26,8 @@ describe('MARC', () => {
     describe('Browse - Authority records', () => {
       const testData = {
         authority: {
-          title: 'Congress and foreign policy series',
-          nonExactTitle: 'Congress',
+          title: 'C350902Congress and foreign policy series',
+          nonExactTitle: 'C350902Congress',
           searchOption: 'Uniform title',
           newField: {
             title: `Test authority ${getRandomPostfix()}`,
@@ -44,6 +44,7 @@ describe('MARC', () => {
           type: 'Authorized',
         },
       };
+      const querySearch = ['C350902*', 'C350667*'];
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const createdJobProfile = {
         profileName: `Update MARC authority records - 010 $a ${getRandomPostfix()}`,
@@ -55,6 +56,12 @@ describe('MARC', () => {
       let createdAuthorityID;
 
       before('Creating data', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate records in the system
+        querySearch.forEach((query) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
+        });
+
         cy.createTempUser([
           Permissions.settingsDataImportEnabled.gui,
           Permissions.moduleDataImportEnabled.gui,
@@ -74,7 +81,7 @@ describe('MARC', () => {
           NewJobProfile.linkActionProfileByName('Default - Create MARC Authority');
           NewJobProfile.saveAndClose();
 
-          DataImport.uploadFileViaApi('oneMarcAuthority.mrc', fileName, jobProfileToRun).then(
+          DataImport.uploadFileViaApi('marcAuthFileForC350902.mrc', fileName, jobProfileToRun).then(
             (response) => {
               response.forEach((record) => {
                 createdAuthorityID = record[propertyName].id;
@@ -100,7 +107,7 @@ describe('MARC', () => {
 
       it(
         'C350667 Update a MARC authority record via data import. Record match with 010 $a (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           cy.visit(TopMenu.dataImportPath);
           DataImport.uploadFile('test-auth-file.mrc', updatedfileName);
@@ -182,7 +189,7 @@ describe('MARC', () => {
           MarcAuthorities.selectFirst(testData.authority.title);
           MarcAuthority.edit();
           QuickMarcEditor.verifyBoxValuesInLDRFieldInMarcAuthorityRecord(
-            '00846',
+            '00853',
             AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.C,
             AUTHORITY_LDR_FIELD_TYPE_DROPDOWN.Z,
             '\\\\a2200241',
