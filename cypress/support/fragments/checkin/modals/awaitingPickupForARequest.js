@@ -9,6 +9,7 @@ export default {
   },
   closeModal: () => {
     cy.do(Button('Close').click());
+    cy.wait(500);
   },
   verifyUnSelectedCheckboxPrintSlip: () => {
     cy.expect(modalCheckbox.is({ disabled: false, checked: false }));

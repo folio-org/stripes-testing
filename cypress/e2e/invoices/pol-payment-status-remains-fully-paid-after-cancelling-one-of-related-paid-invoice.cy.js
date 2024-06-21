@@ -22,7 +22,7 @@ import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import OrderLineDetails from '../../support/fragments/orders/orderLineDetails';
 
-describe('Invoices', () => {
+describe('Incvoices', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
@@ -39,6 +39,7 @@ describe('Invoices', () => {
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   let firstInvoice;
+  let secondInvoice;
   let user;
   let servicePointId;
   let location;
@@ -125,6 +126,23 @@ describe('Invoices', () => {
                               invoice: firstInvoice,
                               status: INVOICE_STATUSES.PAID,
                             });
+
+                            Invoices.createInvoiceWithInvoiceLineViaApi({
+                              vendorId: organization.id,
+                              fiscalYearId: defaultFiscalYear.id,
+                              poLineId: firstOrderLine.id,
+                              fundDistributions: firstOrderLine.fundDistribution,
+                              accountingCode: organization.erpCode,
+                              releaseEncumbrance: true,
+                              subTotal: 50,
+                            }).then((secondInvoiceRescponse) => {
+                              secondInvoice = secondInvoiceRescponse;
+
+                              Invoices.changeInvoiceStatusViaApi({
+                                invoice: secondInvoice,
+                                status: INVOICE_STATUSES.PAID,
+                              });
+                            });
                             Invoices.changeInvoiceStatusViaApi({
                               invoice: firstInvoice,
                               status: INVOICE_STATUSES.CANCELLED,
@@ -160,7 +178,7 @@ describe('Invoices', () => {
   });
 
   it(
-    'C466207 POL payment status is changed to "Awaiting payment" after cancelling related paid invoice (thunderjet)',
+    'C466209 POL payment status remains "Fully paid" after cancelling one of related paid invoice (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
@@ -171,26 +189,26 @@ describe('Invoices', () => {
 
       const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
-        { name: defaultFund.name, currentEncumbrance: '100.00' },
+        { name: defaultFund.name, currentEncumbrance: '50.00' },
       ]);
 
       const TransactionDetails = InvoiceLineDetails.openEncumbrancePane();
       TransactionDetails.checkTransactionDetails({
         information: [
           { key: 'Fiscal year', value: defaultFiscalYear.code },
-          { key: 'Amount', value: '100.00' },
+          { key: 'Amount', value: '50.00' },
           { key: 'Source', value: orderLine.poLineNumber },
           { key: 'Type', value: 'Encumbrance' },
           { key: 'From', value: defaultFund.name },
           { key: 'Initial encumbrance', value: '100.00' },
           { key: 'Awaiting payment', value: '0.00' },
-          { key: 'Expended', value: '0.00' },
+          { key: 'Expended', value: '50.00' },
           { key: 'Status', value: 'Unreleased' },
         ],
       });
       TransactionDetails.openSourceInTransactionDetails(orderLine.poLineNumber);
       OrderLineDetails.checkOrderLineDetails({
-        poLineInformation: [{ key: 'Payment status', value: 'Awaiting Payment' }],
+        poLineInformation: [{ key: 'Payment status', value: 'Fully Paid' }],
       });
     },
   );
