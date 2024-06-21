@@ -34,8 +34,8 @@ const testData = {
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
-    describe('Search in Inventory', () => {
-      before('Case-insensitive checks', () => {
+    describe('Case-insensitive checks', () => {
+      before('Create test data, login', () => {
         cy.getAdminToken();
         InventoryInstances.getInstancesViaApi({
           limit: 100,
