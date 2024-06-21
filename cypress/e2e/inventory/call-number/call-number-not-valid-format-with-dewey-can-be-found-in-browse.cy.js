@@ -1,4 +1,3 @@
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -7,7 +6,7 @@ import Location from '../../../support/fragments/settings/tenant/locations/newLo
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue, randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { BROWSE_CALL_NUMBER_OPTIONS } from '../../../support/constants';
+import { BROWSE_CALL_NUMBER_OPTIONS, ITEM_STATUS_NAMES } from '../../../support/constants';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
