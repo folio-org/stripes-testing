@@ -17,6 +17,7 @@ import {
   Option,
   OptionGroup,
   Keyboard,
+  MultiColumnListRow,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -149,6 +150,17 @@ export default {
     changes.forEach((value) => {
       cy.expect(
         areYouSureForm.find(MultiColumnListCell({ column, content: including(value) })).exists(),
+      );
+    });
+  },
+
+  verifyChangesInAreYouSureFormByRow(column, changes, row = 0) {
+    changes.forEach((value) => {
+      cy.expect(
+        areYouSureForm
+          .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+          .find(MultiColumnListCell({ column, content: including(value) }))
+          .exists(),
       );
     });
   },
