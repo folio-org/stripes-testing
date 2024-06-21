@@ -92,7 +92,9 @@ describe('Inventory', () => {
         InventoryNewInstance.fillResourceType(testData.newResourceType);
         InventoryNewInstance.clickSaveAndCloseButton();
         InventoryInstance.waitInstanceRecordViewOpened(testData.newResourceTitleC410923);
-        InventoryInstance.checkInstanceDetails([{ key: 'Source', value: testData.source }]);
+        InventoryInstance.checkInstanceDetails({
+          instanceInformation: [{ key: 'Source', value: testData.source }],
+        });
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           testData.instanceC410923Hrid = initialInstanceHrId;
         });
@@ -111,7 +113,9 @@ describe('Inventory', () => {
         InventoryNewInstance.fillResourceType(testData.newResourceType);
         InventoryNewInstance.clickSaveAndCloseButton();
         InventoryInstance.waitInstanceRecordViewOpened(testData.newResourceTitleC410924);
-        InventoryInstance.checkInstanceDetails([{ key: 'Source', value: testData.source }]);
+        InventoryInstance.checkInstanceDetails({
+          instanceInformation: [{ key: 'Source', value: testData.source }],
+        });
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           testData.instanceC410924Hrid = initialInstanceHrId;
         });
