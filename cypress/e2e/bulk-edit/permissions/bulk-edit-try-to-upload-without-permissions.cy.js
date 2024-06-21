@@ -59,7 +59,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C388491 Verify that User with "Bulk Edit: Local View" and "Bulk Edit: In app - Edit inventory" permissions CAN\'T edit user records (firebird)',
+      'C423653 Verify that User with "Bulk Edit: Local View" and "Bulk Edit: In app - Edit inventory" permissions CAN\'T edit user records (firebird)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyItemIdentifiersDefaultState();

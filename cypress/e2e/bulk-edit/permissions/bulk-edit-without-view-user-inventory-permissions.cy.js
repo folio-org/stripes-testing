@@ -49,7 +49,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C404389 Verify Bulk edit app without permissions for view Users and Inventory records (firebird) (TaaS)',
+      'C423654 Verify Bulk edit app without permissions for view Users and Inventory records (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyBulkEditPaneItems();

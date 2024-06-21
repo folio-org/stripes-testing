@@ -39,7 +39,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C366072 Verify Bulk edit elements in the left pane -- Users Local & In app (firebird)',
+      'C423655 Verify Bulk edit elements in the left pane -- Users Local & In app (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
