@@ -42,7 +42,7 @@ describe('bulk-edit', () => {
     );
 
     it(
-      'C413372 Verify Query tab permissions without Inventory and Users permissions (firebird)',
+      'C436742 Verify Query tab permissions without Inventory and Users permissions (firebird)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
         cy.login(userWithQueryView.username, userWithQueryView.password, {

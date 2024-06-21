@@ -37,7 +37,7 @@ describe('bulk-edit', () => {
   });
 
   it(
-    'C350929 Verify Bulk Edit app - landing page (firebird)',
+    'C423650 Verify Bulk Edit app - landing page (firebird)',
     { tags: ['smoke', 'firebird'] },
     () => {
       BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs');

@@ -9,7 +9,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import { randomFourDigitNumber } from '../../support/utils/stringTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Move holdings and item', () => {
     const holdingsCount = 2;
     const testData = {
@@ -121,8 +121,8 @@ describe('inventory', () => {
           itemMoved: true,
         });
 
-        InventoryInstance.openHoldings([testData.locations[1].name]);
         // Both items are now displaying under the second "Holdings"
+        InventoryHoldings.checkIfExpanded(testData.locations[1].name, true);
         InventoryInstance.checkHoldingsTableContent({
           name: testData.locations[1].name,
           records: [
