@@ -212,7 +212,7 @@ describe('data-import', () => {
     });
 
     it(
-      'C375108 Delete repeatable linked field which is controlled by "MARC Authority" record (spitfire) (TaaS)',
+      'C436786 Delete repeatable linked field which is controlled by "MARC Authority" record (spitfire) (TaaS)',
       { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);

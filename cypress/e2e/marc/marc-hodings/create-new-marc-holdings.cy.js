@@ -186,7 +186,7 @@ describe('MARC -> MARC Holdings', () => {
   );
 
   it(
-    'C350646 Create a new MARC Holdings record for existing "Instance" record (spitfire)',
+    'C423455 Create a new MARC Holdings record for existing "Instance" record (spitfire)',
     { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstances.searchBySource('MARC');
@@ -216,7 +216,7 @@ describe('MARC -> MARC Holdings', () => {
   );
 
   it(
-    'C350757 MARC fields behavior when creating "MARC Holdings" record (spitfire)',
+    'C476853 MARC fields behavior when creating "MARC Holdings" record (spitfire)',
     { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstances.searchByTitle(recordIDs[0]);

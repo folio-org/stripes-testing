@@ -215,7 +215,7 @@ describe('Inventory -> Contributors Browse', () => {
   );
 
   it(
-    "C358148 Verify that switching between browse options doesn't submit a form (spitfire)",
+    "C476855 Verify that switching between browse options doesn't submit a form (spitfire)",
     { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();

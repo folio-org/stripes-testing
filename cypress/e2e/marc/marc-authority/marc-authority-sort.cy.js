@@ -34,11 +34,11 @@ describe('MARC -> MARC Authority', () => {
 
     prefixValues: {
       // eslint-disable-next-line no-tabs
-      prefixValA: '010	   	$a tgm',
+      prefixValA: '010	   	‡a tgm',
       // eslint-disable-next-line no-tabs
-      prefixValB: '010	   	$a gsafd',
+      prefixValB: '010	   	‡a gsafd',
       // eslint-disable-next-line no-tabs
-      prefixValC: '010	   	$a ',
+      prefixValC: '010	   	‡a ',
     },
   };
   const marcFiles = [
@@ -120,7 +120,6 @@ describe('MARC -> MARC Authority', () => {
       MarcAuthorities.checkAuthoritySourceOptions();
       MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.optionA);
       MarcAuthorities.checkSelectedAuthoritySource(testData.facetOptions.optionA);
-      MarcAuthorities.checkValueResultsColumn(4, testData.facetOptions.optionA);
       MarcAuthorities.checkValueResultsColumn(2, testData.facetValues.valueA);
       MarcAuthorities.selectTitle(testData.facetValues.valueA);
       MarcAuthority.contains(testData.prefixValues.prefixValA);
@@ -128,7 +127,6 @@ describe('MARC -> MARC Authority', () => {
 
       MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.optionB);
       MarcAuthorities.checkSelectedAuthoritySource(testData.facetOptions.optionB);
-      MarcAuthorities.checkValueResultsColumn(4, testData.facetOptions.optionB);
       MarcAuthorities.checkValueResultsColumn(2, testData.facetValues.valueB);
       MarcAuthorities.selectTitle(testData.facetValues.valueB);
       MarcAuthority.contains(testData.prefixValues.prefixValB);
@@ -136,7 +134,7 @@ describe('MARC -> MARC Authority', () => {
 
       MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.optionC);
       MarcAuthorities.checkSelectedAuthoritySource(testData.facetOptions.optionC);
-      MarcAuthorities.checkValueResultsColumn(5, '');
+      MarcAuthorities.checkValueResultsColumn(4, '');
       MarcAuthorities.checkValueResultsColumn(2, testData.facetValues.valueC);
       MarcAuthorities.selectTitle(testData.facetValues.valueC);
       MarcAuthority.contains(testData.prefixValues.prefixValC);
