@@ -72,7 +72,7 @@ describe('Finance', () => {
         orderNumber = firstOrderResponse.poNumber;
         Orders.checkCreatedOrder(defaultOrder);
         OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
         OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
           defaultFund,
           '100',
