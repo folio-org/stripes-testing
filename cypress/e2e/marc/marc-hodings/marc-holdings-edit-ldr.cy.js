@@ -82,7 +82,7 @@ describe('MARC -> MARC Holdings', () => {
   });
 
   it(
-    'C357063 Verify "LDR" validation rules with valid data for positions 05, 06 ,17, 18 when editing record (spitfire)',
+    'C451542 Verify "LDR" validation rules with valid data for positions 05, 06 ,17, 18 when editing record (spitfire)',
     { tags: ['criticalPath', 'spitfire'] },
     () => {
       HoldingsRecordView.close();
