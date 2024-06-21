@@ -500,4 +500,14 @@ export default {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'share-local-instance' }).absent());
   },
+
+  verifyMoveItemsWithinAnInstanceOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'inventory-menu-section' }).absent());
+  },
+
+  verifyMoveHoldingsItemsToAnotherInstanceOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'move-instance' }).absent());
+  },
 };
