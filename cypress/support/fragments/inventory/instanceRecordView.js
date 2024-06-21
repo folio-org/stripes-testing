@@ -496,6 +496,11 @@ export default {
     cy.expect(Button({ id: 'Add MARC holdings record' }).absent());
   },
 
+  verifyShareLocalInstanceOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'share-local-instance' }).absent());
+  },
+
   verifyMoveItemsWithinAnInstanceOptionAbsent() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'inventory-menu-section' }).absent());
