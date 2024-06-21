@@ -46,7 +46,7 @@ const importBlockedModal = Modal('Import blocked');
 const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 
 const uploadFile = (filePathName, fileName) => {
-  cy.wait(1000);
+  cy.wait(2000);
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
 };
 
@@ -468,11 +468,11 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                             },
                             holding: {
                               id:
-                                recordResponse.body.relatedHoldingsInfo[0].length === 0
+                                recordResponse.body.relatedHoldingsInfo.length === 0
                                   ? ''
                                   : recordResponse.body.relatedHoldingsInfo[0].id,
                               hrid:
-                                recordResponse.body.relatedHoldingsInfo[0].length === 0
+                                recordResponse.body.relatedHoldingsInfo.length === 0
                                   ? ''
                                   : recordResponse.body.relatedHoldingsInfo[0].hrid,
                             },
@@ -702,15 +702,14 @@ export default {
       (isDeleteFilesButtonExists) => {
         cy.wait(5000);
         cy.reload();
+        cy.wait(2000);
         if (isDeleteFilesButtonExists) {
-          cy.wait(3000);
           cy.do(Button('Delete files').click());
           cy.expect(Button('or choose files').exists());
         }
       },
     );
     cy.expect(sectionPaneJobsTitle.find(Button('or choose files')).exists());
-    cy.wait(3000);
   },
 
   clickResumeButton: () => {

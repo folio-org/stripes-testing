@@ -495,4 +495,29 @@ export default {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'Add MARC holdings record' }).absent());
   },
+
+  verifyViewRequestOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button('New request').absent());
+  },
+
+  verifyNewOrderOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'clickable-create-order' }).absent());
+  },
+
+  verifyShareLocalInstanceOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'share-local-instance' }).absent());
+  },
+
+  verifyMoveItemsWithinAnInstanceOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'inventory-menu-section' }).absent());
+  },
+
+  verifyMoveHoldingsItemsToAnotherInstanceOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'move-instance' }).absent());
+  },
 };
