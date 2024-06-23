@@ -1,11 +1,10 @@
 import Permissions from '../../support/dictionary/permissions';
-import Affiliations, { tenantNames } from '../../support/dictionary/affiliations';
 import Users from '../../support/fragments/users/users';
 import TopMenu from '../../support/fragments/topMenu';
-import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
 import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
+import UserEdit from '../../support/fragments/users/userEdit';
 
 describe('Consortia', () => {
   const createUserData = () => ({
@@ -29,31 +28,17 @@ describe('Consortia', () => {
     cy.getAdminToken();
 
     cy.createTempUser([
-      Permissions.consortiaSettingsConsortiaAffiliationsEdit.gui,
       Permissions.uiUsersPermissions.gui,
-      Permissions.uiUsersCreate.gui,
+      Permissions.uiUserEdit.gui,
       Permissions.uiUsersPermissionsView.gui,
       Permissions.uiUsersView.gui,
-    ])
-      .then((userProperties) => {
-        user = userProperties;
-      })
-      .then(() => {
-        cy.assignAffiliationToUser(Affiliations.College, user.userId);
-        cy.setTenant(Affiliations.College);
-        cy.assignPermissionsToExistingUser(user.userId, [
-          Permissions.consortiaSettingsConsortiaAffiliationsEdit.gui,
-          Permissions.uiUsersPermissions.gui,
-          Permissions.uiUsersCreate.gui,
-          Permissions.uiUsersPermissionsView.gui,
-          Permissions.uiUsersView.gui,
-        ]);
-        cy.login(user.username, user.password, {
-          path: TopMenu.usersPath,
-          waiter: Users.waitLoading,
-        });
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.usersPath,
+        waiter: Users.waitLoading,
       });
+    });
   });
 
   after('Delete users, data', () => {
@@ -67,15 +52,16 @@ describe('Consortia', () => {
     'C388532 "Affiliation" accordion and "Affiliation" dropdown in "User permissions" accordion are NOT displayed when tenant is NOT a part of Consortia (thunderjet)',
     { tags: ['smoke', 'thunderjet'] },
     () => {
-      Users.createViaUi(testUser).then((id) => {
-        testUser.id = id;
-      });
-      ConsortiumManager.switchActiveAffiliation(tenantNames.central);
-      UsersSearchPane.searchByUsername(testUser.username);
+      UsersSearchPane.searchByUsername(user.username);
+      UsersSearchPane.openUser(user.username);
       Users.verifyUserDetailsPane();
-      UsersCard.verifyAffiliationsQuantity('2');
-      UsersCard.expandAffiliationsAccordion();
-      UsersCard.verifyAffiliationsDetails('College', 2, 'Central Office');
+      UsersCard.affiliationsAccordionIsAbsent();
+      UserEdit.openEdit();
+      UsersCard.affiliationsAccordionIsAbsent();
+      UserEdit.verifyUserPermissionsAccordion();
+      UserEdit.cancelEdit();
+      Users.verifyUserDetailsPane();
+      UsersCard.affiliationsAccordionIsAbsent();
     },
   );
 });
