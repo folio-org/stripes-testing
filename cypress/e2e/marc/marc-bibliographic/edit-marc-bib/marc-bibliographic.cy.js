@@ -40,7 +40,7 @@ describe('MARC', () => {
 
       it(
         'C10950 Edit and save a MARC record in quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
