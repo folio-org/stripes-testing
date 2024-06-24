@@ -62,7 +62,7 @@ describe('MARC', () => {
       it(
         'C360520 Import of "MARC Authority" record with valid prefix in "001" field only (spitfire)',
         {
-          tags: ['smoke', 'authority', 'spitfire'],
+          tags: ['smoke', 'authority', 'spitfire', 'shiftLeft'],
         },
         () => {
           DataImport.uploadFileViaApi('marcFileForC360520.mrc', fileName, jobProfileToRun).then(

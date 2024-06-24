@@ -28,6 +28,7 @@ describe('Inventory', () => {
       ],
       expectedSecondSearchResultC414977: 'Reckon / Steve McOrmond.',
     };
+    const querySearches = [' *Adv Search 003', ' *Adv Search 001'];
     const createdRecordIDs = [];
 
     const marcFiles = [
@@ -55,6 +56,16 @@ describe('Inventory', () => {
     ];
 
     before('Creating data', () => {
+      cy.getAdminToken();
+      // make sure there are no duplicate records in the system
+      querySearches.forEach((querySearch) => {
+        InventoryInstances.deleteInstanceByTitleViaApi(querySearch);
+      });
+      testData.expectedFirstSearchResultsC414977.forEach((expectedFirstSearchResultC414977) => {
+        InventoryInstances.deleteInstanceByTitleViaApi(expectedFirstSearchResultC414977);
+      });
+      InventoryInstances.deleteInstanceByTitleViaApi(testData.expectedSecondSearchResultC414977);
+
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
