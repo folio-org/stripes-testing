@@ -5,6 +5,7 @@ import {
   INVENTORY_008_FIELD_REGL_DROPDOWN,
   INVENTORY_008_FIELD_DTST_DROPDOWN,
   INVENTORY_008_FIELD_S_L_DROPDOWN,
+  INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES,
 } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
@@ -82,7 +83,11 @@ describe('MARC', () => {
           InventoryInstance.verifyInstanceTitle(firstInstanceTitle);
           InventoryInstance.editMarcBibliographicRecord();
 
-          QuickMarcEditor.selectFieldsDropdownOption('008', 'Conf', INVENTORY_008_FIELD_CONF_DROPDOWN.ONE);
+          QuickMarcEditor.selectFieldsDropdownOption(
+            '008',
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.CONF,
+            INVENTORY_008_FIELD_CONF_DROPDOWN.ONE,
+          );
           QuickMarcEditor.updateExistingFieldContent(7);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
@@ -95,10 +100,26 @@ describe('MARC', () => {
           InventoryInstance.verifyInstanceTitle(secondInstanceTitle);
           InventoryInstance.editMarcBibliographicRecord();
 
-          QuickMarcEditor.selectFieldsDropdownOption('008', 'Regl', INVENTORY_008_FIELD_REGL_DROPDOWN.R);
-          QuickMarcEditor.selectFieldsDropdownOption('008', 'DtSt', INVENTORY_008_FIELD_DTST_DROPDOWN.C);
-          QuickMarcEditor.selectFieldsDropdownOption('008', 'Conf', INVENTORY_008_FIELD_CONF_DROPDOWN.ONE);
-          QuickMarcEditor.selectFieldsDropdownOption('008', 'S/L', INVENTORY_008_FIELD_S_L_DROPDOWN[2]);
+          QuickMarcEditor.selectFieldsDropdownOption(
+            '008',
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.REGL,
+            INVENTORY_008_FIELD_REGL_DROPDOWN.R,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            '008',
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
+            INVENTORY_008_FIELD_DTST_DROPDOWN.C,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            '008',
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.CONF,
+            INVENTORY_008_FIELD_CONF_DROPDOWN.ONE,
+          );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            '008',
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.SL,
+            INVENTORY_008_FIELD_S_L_DROPDOWN[2],
+          );
           QuickMarcEditor.updateExistingFieldContent(7);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();

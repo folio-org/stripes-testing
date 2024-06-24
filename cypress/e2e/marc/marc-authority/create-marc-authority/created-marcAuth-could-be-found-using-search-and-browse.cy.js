@@ -66,7 +66,7 @@ describe('MARC', () => {
         'C423561 Created MARC authority record could be found using search and browse by 010, 1XX, 4XX, 5XX fields (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          MarcAuthorities.clickNewAuthorityButton();
+          MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);
           QuickMarcEditor.verifyAuthorityLookUpButton();
           QuickMarcEditor.clickAuthorityLookUpButton();

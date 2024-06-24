@@ -10,6 +10,7 @@ import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-a
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 let uuid;
@@ -100,44 +101,21 @@ describe('bulk-edit', () => {
           BulkEditFiles.verifyCSVFileRows(validHoldingUUIDsFileName, [uuid]);
 
           BulkEditLogs.downloadFileWithMatchingRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            `*${matchedRecordsFileNameValid}`,
-            [uuid],
-            'firstElement',
-            true,
-          );
+          ExportFile.verifyFileIncludes(`*${matchedRecordsFileNameValid}`, [uuid]);
 
           BulkEditLogs.downloadFileWithProposedChanges();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            previewOfProposedChangesFileName,
-            [tempLocation],
-            'temporaryLocation',
-            true,
-          );
-          BulkEditFiles.verifyMatchedResultFileContent(
-            previewOfProposedChangesFileName,
-            [permLocation],
-            'permanentLocation',
-            true,
-          );
+          ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, [
+            `${permLocation},${tempLocation}`,
+          ]);
 
           BulkEditLogs.downloadFileWithUpdatedRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            updatedRecordsFileName,
-            [tempLocation],
-            'temporaryLocation',
-            true,
-          );
-          BulkEditFiles.verifyMatchedResultFileContent(
-            updatedRecordsFileName,
-            [permLocation],
-            'permanentLocation',
-            true,
-          );
+          ExportFile.verifyFileIncludes(updatedRecordsFileName, [
+            `${permLocation},${tempLocation}`,
+          ]);
 
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.switchToHoldings();
-          InventorySearchAndFilter.searchByParameter('Holdings UUID', uuid);
+          InventorySearchAndFilter.byKeywords(uuid);
           InventorySearchAndFilter.selectSearchResultItem();
           InventorySearchAndFilter.selectViewHoldings();
           InventoryInstance.verifyHoldingsPermanentLocation(permLocation);

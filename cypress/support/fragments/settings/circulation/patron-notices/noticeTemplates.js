@@ -70,6 +70,7 @@ export default {
       searchParams: {
         query: '(cql.allRecords=1) and category=""',
       },
+      failOnStatusCode: false,
     });
   },
 };

@@ -1,7 +1,11 @@
 import moment from 'moment';
 import uuid from 'uuid';
 
-import { INSTANCE_SOURCE_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import {
+  INSTANCE_SOURCE_NAMES,
+  ITEM_STATUS_NAMES,
+  LOCATION_NAMES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -54,9 +58,9 @@ describe('Inventory', () => {
           mode: 'integrating resource',
         });
         InventoryNewInstance.clickSaveAndCloseButton();
-        InventoryInstance.checkInstanceDetails([
-          { key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO },
-        ]);
+        InventoryInstance.checkInstanceDetails({
+          instanceInformation: [{ key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO }],
+        });
 
         // Select "Add holdings"
         const HoldingsRecordEdit = InventoryInstance.pressAddHoldingsButton();
@@ -88,7 +92,7 @@ describe('Inventory', () => {
         // Expand the holdings accordion
         InventoryInstance.checkHoldingsTableContent({
           name: LOCATION_NAMES.ANNEX_UI,
-          records: [{ barcode: testData.barcode, status: 'Available' }],
+          records: [{ barcode: testData.barcode, status: ITEM_STATUS_NAMES.AVAILABLE }],
         });
       },
     );

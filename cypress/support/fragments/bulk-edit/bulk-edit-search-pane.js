@@ -14,6 +14,7 @@ import {
   including,
   TextField,
   Image,
+  MultiColumnListRow,
 } from '../../../../interactors';
 
 const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
@@ -37,6 +38,7 @@ const saveAndClose = Button('Save and close');
 const confirmChanges = Button('Confirm changes');
 const buildQueryButton = Button('Build query');
 const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' });
+const areYouSureForm = Modal('Are you sure?');
 
 export const userIdentifiers = ['User UUIDs', 'User Barcodes', 'External IDs', 'Usernames'];
 
@@ -458,6 +460,15 @@ export default {
     cy.expect(MultiColumnListCell({ column: columnName, content: value }).exists());
   },
 
+  verifyExactChangesUnderColumnsByRow(columnName, value, row = 0) {
+    cy.expect(
+      areYouSureForm
+        .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+        .find(MultiColumnListCell({ column: columnName, content: value }))
+        .exists(),
+    );
+  },
+
   verifyNonMatchedResults(...values) {
     cy.expect([
       errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
@@ -680,11 +691,11 @@ export default {
     });
   },
 
-  verifyResultColumTitles(title) {
+  verifyResultColumnTitles(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
   },
 
-  verifyResultColumTitlesDoNotInclude(title) {
+  verifyResultColumnTitlesDoNotInclude(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).absent());
   },
 
@@ -731,6 +742,7 @@ export default {
   },
 
   clickBuildQueryButton() {
+    cy.expect(buildQueryButton.has({ disabled: false }));
     cy.do(buildQueryButton.click());
   },
 

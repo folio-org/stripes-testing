@@ -1,0 +1,161 @@
+import permissions from '../../../support/dictionary/permissions';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import { ITEM_NOTES } from '../../../support/constants';
+
+let user;
+const notes = {
+  copyOne: 'copyNote',
+  copyTwo: 'copyNote',
+  checkOutOne: 'checkOutNote',
+  checkOutTwo: 'CheckOutNote',
+};
+
+const item = {
+  barcode: getRandomPostfix(),
+  instanceName: `instance-${getRandomPostfix()}`,
+};
+const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
+const matchedRecordsFileName = `*-Matched-Records-${itemBarcodesFileName}`;
+const previewFileName = `*-Updates-Preview-${itemBarcodesFileName}`;
+const changedRecordsFileName = `*-Changed-Records-${itemBarcodesFileName}`;
+
+describe('bulk-edit', () => {
+  describe('in-app approach', () => {
+    before('create test data', () => {
+      cy.createTempUser([
+        permissions.bulkEditView.gui,
+        permissions.bulkEditEdit.gui,
+        permissions.inventoryAll.gui,
+        permissions.inventoryCRUDItemNoteTypes.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
+        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+          (res) => {
+            const itemData = res;
+            item.hrid = res.hrid;
+
+            itemData.notes = [
+              {
+                itemNoteTypeId: ITEM_NOTES.COPY_NOTE,
+                note: notes.copyOne,
+                staffOnly: true,
+              },
+              {
+                itemNoteTypeId: ITEM_NOTES.COPY_NOTE,
+                note: notes.copyTwo,
+                staffOnly: false,
+              },
+            ];
+            itemData.circulationNotes = [
+              { noteType: 'Check out', note: notes.checkOutOne, staffOnly: true },
+              { noteType: 'Check out', note: notes.checkOutTwo, staffOnly: false },
+            ];
+            cy.updateItemViaApi(itemData);
+          },
+        );
+      });
+    });
+
+    after('delete test data', () => {
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
+      Users.deleteViaApi(user.userId);
+      FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(
+        matchedRecordsFileName,
+        previewFileName,
+        changedRecordsFileName,
+      );
+    });
+
+    it(
+      'C405542 Verify Bulk Edit actions for Items notes - preserve the "Staff only" flag when change note type to other group (firebird)',
+      { tags: ['criticalPath', 'firebird'] },
+      () => {
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+
+        BulkEditSearchPane.uploadFile(itemBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyMatchedResults(item.barcode);
+
+        BulkEditActions.downloadMatchedResults();
+        ExportFile.verifyFileIncludes(matchedRecordsFileName, [
+          `,Copy note;${notes.copyOne};true|Copy note;${notes.copyTwo};false,,${notes.checkOutOne} (staff only) | ${notes.checkOutTwo}`,
+        ]);
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+          'Copy note',
+          'Check out notes',
+          'Check in notes',
+          'Binding note',
+        );
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.verifyItemOptions();
+        BulkEditActions.changeNoteType('Check out note', 'Binding');
+        BulkEditActions.addNewBulkEditFilterString();
+        BulkEditActions.changeNoteType('Copy note', 'Check in note', 1);
+
+        BulkEditActions.confirmChanges();
+        BulkEditActions.downloadPreview();
+        ExportFile.verifyFileIncludes(previewFileName, [
+          `Binding;${notes.checkOutOne};true|Binding;${notes.checkOutTwo};false,${notes.copyOne} (staff only) | ${notes.copyTwo},,`,
+        ]);
+        BulkEditSearchPane.verifyExactChangesUnderColumns(
+          'Check in notes',
+          `${notes.copyOne} (staff only) | ${notes.copyTwo}`,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumns(
+          'Binding note',
+          `${notes.checkOutOne} (staff only) | ${notes.checkOutTwo}`,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Copy note', '');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out notes', '');
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyExactChangesUnderColumns(
+          'Check in notes',
+          `${notes.copyOne} (staff only) | ${notes.copyTwo}`,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumns(
+          'Binding note',
+          `${notes.checkOutOne} (staff only) | ${notes.checkOutTwo}`,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Copy note', '');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out notes', '');
+        BulkEditActions.openActions();
+        BulkEditActions.downloadChangedCSV();
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [
+          `Binding;${notes.checkOutOne};true|Binding;${notes.checkOutTwo};false,${notes.copyOne} (staff only) | ${notes.copyTwo},,`,
+        ]);
+
+        TopMenuNavigation.navigateToApp('Inventory');
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
+        ItemRecordView.waitLoading();
+        ItemRecordView.checkCheckInNote(`${notes.copyOne}${notes.copyTwo}`, 'Yes\nNo');
+        ItemRecordView.checkItemNote(
+          `${notes.checkOutOne}${notes.checkOutTwo}`,
+          'YesNo',
+          'Binding',
+        );
+        ItemRecordView.verifyTextAbsent('Check out note');
+        ItemRecordView.verifyTextAbsent('Copy note');
+      },
+    );
+  });
+});

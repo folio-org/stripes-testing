@@ -258,7 +258,9 @@ export default {
     OverdueFinePolicyName,
     LostItemFeePolicyName,
   ) {
+    cy.wait(3000);
     cy.do(availableActionsButton.click());
+    cy.wait(2000);
     cy.do(feeFineDetailsButton.click());
     cy.expect(Pane(including('Fee/fine details')).exists());
     cy.expect(feeFinePane.find(HTML(including('Overdue fine'))).exists());

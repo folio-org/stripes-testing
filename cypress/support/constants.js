@@ -1,3 +1,7 @@
+export const APPLICATION_NAMES = {
+  INVENTORY: 'Inventory',
+};
+
 export const REQUEST_METHOD = {
   DELETE: 'DELETE',
   GET: 'GET',
@@ -243,10 +247,13 @@ export const LOCATION_NAMES = {
   ONLINE_UI: 'Online',
   MAIN_LIBRARY: 'Main Library (KU/CC/DI/M)',
   MAIN_LIBRARY_UI: 'Main Library',
+  POPULAR_READING_COLLECTION: 'Popular Reading Collection (KU/CC/DI/P)',
+  POPULAR_READING_COLLECTION_UI: 'Popular Reading Collection',
 };
 
 export const LOCATION_IDS = {
   ANNEX: '53cf956f-c1df-410b-8bea-27f712cca7c0',
+  MAIN_LIBRARY: 'fcd64ce1-6995-48f0-840e-89ffa2288371',
   ONLINE: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5',
   POPULAR_READING_COLLECTION: 'b241764c-1466-4e1d-a028-1a3684a5da87',
 };
@@ -563,20 +570,42 @@ export const INVENTORY_LDR_FIELD_BLVL_DROPDOWN = {
   S: 's - Serial',
 };
 
-export const INVENTORY_008_FIELD_DROPDOWNS_NAMES = {
+export const INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES = {
   DTST: 'DtSt',
+  DATE1: 'Date 1',
+  DATE2: 'Date 2',
   CONF: 'Conf',
   FEST: 'Fest',
   INDX: 'Indx',
+  AUDN: 'Audn',
   LITF: 'LitF',
+  ILLS: 'Ills',
   COMP: 'Comp',
+  CTRY: 'Ctry',
+  CONT: 'Cont',
+  GPUB: 'GPub',
+  BIOG: 'Biog',
+  LANG: 'Lang',
+  MREC: 'MRec',
+  PART: 'Part',
+  ACCM: 'AccM',
+  LTXT: 'LTxt',
+  TRAR: 'TrAr',
+  FREQ: 'Freq',
+  SRTP: 'SrTp',
+  ORIG: 'Orig',
+  ENTW: 'EntW',
+  ALPH: 'Alph',
+  TIME: 'Time',
   FMUS: 'FMus',
+  FORM: 'Form',
   CRTP: 'CrTp',
   TMAT: 'TMat',
   TECH: 'Tech',
   FILE: 'File',
   REGL: 'Regl',
   SL: 'S/L',
+  SRCE: 'Srce',
 };
 
 export const INVENTORY_008_FIELD_DTST_DROPDOWN = {
@@ -763,4 +792,8 @@ export const ITEM_NOTES = {
   NOTE_NOTE: '8d0a5eca-25de-4391-81a9-236eeefdd20b',
   COPY_NOTE: '1dde7141-ec8a-4dae-9825-49ce14c728e7',
   ELECTRONIC_BOOKPLATE_NOTE: 'f3ae3823-d096-4c65-8734-0c1efd2ffea8',
+};
+
+export const INSTANCE_NOTES = {
+  REPRODUCTION_NOTE: 'd548fdff-b71c-4359-8055-f1c008c30f01',
 };
