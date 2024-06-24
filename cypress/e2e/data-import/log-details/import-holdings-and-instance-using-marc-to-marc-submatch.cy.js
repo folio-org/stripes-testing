@@ -548,7 +548,7 @@ describe('data-import', () => {
               name: `C397383 Update ER holdings ${getRandomPostfix()}`,
               typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
               holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
-              permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+              permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
             },
             actionProfile: {
               typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -732,7 +732,7 @@ describe('data-import', () => {
         InventoryViewSource.verifyFieldInMARCBibSource(testData.protectedField, newUri);
         InventoryViewSource.close();
         InstanceRecordView.openHoldingView();
-        HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.ONLINE_UI);
+        HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.ANNEX_UI);
 
         cy.getAdminToken().then(() => {
           // delete profiles

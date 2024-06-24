@@ -52,9 +52,9 @@ describe('data-import', () => {
         mappingProfile: {
           name: `C17033 holdings create mapping profile_${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
-          permanentLocationUI: LOCATION_NAMES.MAIN_LIBRARY_UI,
-          permanentLocationInHoldingsAccordion: `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
+          permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
+          permanentLocationUI: LOCATION_NAMES.ANNEX_UI,
+          permanentLocationInHoldingsAccordion: `${LOCATION_NAMES.ANNEX_UI} >`,
           temporaryLocation: `"${LOCATION_NAMES.ONLINE}"`,
           temporaryLocationUI: LOCATION_NAMES.ONLINE_UI,
           illPolicy: 'Unknown lending policy',
