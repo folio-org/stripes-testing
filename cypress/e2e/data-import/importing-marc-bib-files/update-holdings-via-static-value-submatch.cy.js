@@ -56,8 +56,8 @@ describe('data-import', () => {
       statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
       statisticalCodeUI: 'Book, print (books)',
       adminNote: `autotestAdminNote.${getRandomPostfix()}`,
-      permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
-      permanentLocationUI: LOCATION_NAMES.MAIN_LIBRARY_UI,
+      permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
+      permanentLocationUI: LOCATION_NAMES.ANNEX_UI,
       temporaryLocation: `"${LOCATION_NAMES.ONLINE}"`,
       temporaryLocationUI: LOCATION_NAMES.ONLINE_UI,
       shelvingTitle: `autotestShelvingTitle.${getRandomPostfix()}`,
@@ -107,7 +107,7 @@ describe('data-import', () => {
     };
     const holdingsMatchProfile = {
       profileName: `C11110 autotest holdings match profile.${getRandomPostfix()}`,
-      incomingStaticValue: 'Main Library (KU/CC/DI/M)',
+      incomingStaticValue: `${LOCATION_NAMES.ANNEX}`,
       incomingStaticRecordValue: 'Text',
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,

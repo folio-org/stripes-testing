@@ -69,11 +69,13 @@ describe('data-import', () => {
         ConfirmDelete.delete();
         ExceptionDelete.verifyExceptionMessage();
         ExceptionDelete.closeException();
+        cy.wait(1000);
         MatchProfiles.search(matchProfileToDelete.profileName);
         MatchProfiles.selectMatchProfileFromList(matchProfileToDelete.profileName);
         MatchProfileView.delete();
         ConfirmDelete.delete();
         MatchProfiles.checkCalloutMessage(calloutMessage);
+        cy.wait(1000);
         MatchProfiles.search(matchProfileToDelete.profileName);
         MatchProfiles.verifyMatchProfileAbsent();
       },

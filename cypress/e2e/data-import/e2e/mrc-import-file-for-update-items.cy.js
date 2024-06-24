@@ -243,7 +243,7 @@ describe('data-import', () => {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `autotestMappingHoldings${getRandomPostfix()}`,
           callNumberType: `"${CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS}"`,
-          permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+          permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -454,6 +454,7 @@ describe('data-import', () => {
           // download .csv file
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+          cy.wait(2000);
           InventorySearchAndFilter.saveUUIDs();
           ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
           FileManager.deleteFolder(Cypress.config('downloadsFolder'));

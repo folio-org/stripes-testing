@@ -79,6 +79,7 @@ describe('data-import', () => {
         ActionProfileView.delete();
         ConfirmDelete.confirmDeleteActionProfile();
         ActionProfiles.checkCalloutMessage(calloutMessage);
+        cy.wait(1000);
         ActionProfiles.search(actionProfileToDelete.name);
         cy.wait(2000);
         ActionProfiles.verifyActionProfileAbsent();

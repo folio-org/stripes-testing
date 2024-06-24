@@ -37,7 +37,7 @@ describe('data-import', () => {
     let holdingsHrId = null;
     let exportedFileName = null;
     let instanceHrid = null;
-    const holdingsPermanentLocation = 'Online';
+    const holdingsPermanentLocation = 'Annex';
     const recordType = 'MARC_BIBLIOGRAPHIC';
     const filePathToUpload = 'oneMarcBib.mrc';
     const marcFileNameForCreate = `C347894 marcBibFileForCreate${getRandomPostfix()}.mrc`;
@@ -62,7 +62,7 @@ describe('data-import', () => {
               name: 'permanentLocationId',
               enabled: true,
               path: 'holdings.permanentLocationId',
-              value: `"${LOCATION_NAMES.ONLINE}"`,
+              value: `"${LOCATION_NAMES.ANNEX}"`,
             },
           ],
         },
@@ -130,7 +130,7 @@ describe('data-import', () => {
     };
     const holdingsMatchProfile = {
       profileName: `C347894 autotest holdings match profile.${getRandomPostfix()}`,
-      incomingStaticValue: 'Online',
+      incomingStaticValue: 'Annex',
       incomingStaticRecordValue: 'Text',
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,

@@ -46,7 +46,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C17025 createEHoldingsMappingProf${getRandomPostfix()}`,
-          permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+          permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,

@@ -59,14 +59,14 @@ describe('data-import', () => {
         DataImport.getLogsHrIdsFromUI(numberOfLogsToDelete).then((logsHrIdsToBeDeleted) => {
           // verify that user can cancel deletion of logs
           DataImport.selectAllLogs();
-          cy.wait(2000);
+          cy.wait(8000);
           DataImport.verifyAllLogsCheckedStatus({ logsCount: numberOfLogsPerPage, checked: true });
           DataImport.verifyLogsPaneSubtitleExist(numberOfLogsPerPage);
           DataImport.openDeleteImportLogsModal();
           DataImport.cancelDeleteImportLogs();
-          cy.wait(2000);
+          cy.wait(8000);
           DataImport.verifyAllLogsCheckedStatus({ logsCount: numberOfLogsPerPage, checked: false });
-          cy.wait(2000);
+          cy.wait(8000);
           DataImport.verifyLogsPaneSubtitleAbsent();
           DataImport.verifyDeleteLogsButtonDisabled();
 
