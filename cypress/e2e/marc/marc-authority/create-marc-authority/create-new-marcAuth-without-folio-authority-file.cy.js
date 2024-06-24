@@ -45,7 +45,7 @@ describe('MARC', () => {
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
-          MarcAuthorities.clickNewAuthorityButton();
+          MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);
 
           // 2 Add 2 new fields by clicking on "+" icon and fill it as specified:

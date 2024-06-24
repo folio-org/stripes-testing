@@ -80,7 +80,7 @@ describe('MARC', () => {
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
-          MarcAuthorities.clickNewAuthorityButton();
+          MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);
 
           // 2 Click on "Authority file look-up" hyperlink

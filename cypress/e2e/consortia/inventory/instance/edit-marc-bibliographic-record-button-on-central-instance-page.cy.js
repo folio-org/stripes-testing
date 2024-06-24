@@ -64,7 +64,9 @@ describe('Inventory', () => {
         QuickMarcEditor.addNewField(testData.tag010.tag, testData.tag010.content, 3);
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.waitLoading();
-        InventoryInstance.checkInstanceDetails([{ key: 'Source', value: testData.source }]);
+        InventoryInstance.checkInstanceDetails({
+          instanceInformation: [{ key: 'Source', value: testData.source }],
+        });
       },
     );
   });

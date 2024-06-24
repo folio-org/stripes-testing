@@ -82,7 +82,7 @@ describe('MARC', () => {
           { tags: ['criticalPath', 'spitfire'] },
           () => {
             // Creating marc authority part
-            MarcAuthorities.clickNewAuthorityButton();
+            MarcAuthorities.clickActionsAndNewAuthorityButton();
             QuickMarcEditor.checkPaneheaderContains(testData.newAuthorityHeaderText);
             QuickMarcEditor.verifyAuthorityLookUpButton();
             QuickMarcEditor.clickAuthorityLookUpButton();
