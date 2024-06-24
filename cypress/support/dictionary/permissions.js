@@ -936,6 +936,10 @@ export default {
     internal: 'ui-circulation.settings.cancellation-reasons',
     gui: 'Settings (Circ): Can create, edit and remove cancellation reasons',
   },
+  settingsCircCRUDRequestPolicies: {
+    internal: 'ui-circulation.settings.request-policies',
+    gui: 'Settings (Circ): Can create, edit and remove request policies',
+  },
   settingsTenantEditLanguageLocationAndCurrency: {
     internal: 'ui-tenant-settings.settings.locale',
     gui: 'Settings (tenant): Can edit language, localization, and currency',

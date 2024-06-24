@@ -12,7 +12,7 @@ import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix from '../../support/utils/stringTools';
 import { LOCATION_NAMES, LOCATION_IDS } from '../../support/constants';
 
-let userId;
+let user;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -23,7 +23,7 @@ describe('data-export', () => {
     before('navigates to Inventory', () => {
       cy.createTempUser([permissions.inventoryAll.gui, permissions.dataExportEnableApp.gui]).then(
         (userProperties) => {
-          userId = userProperties.userId;
+          user = userProperties;
           item.instanceId = inventoryInstances.createInstanceViaApi(
             item.instanceName,
             item.itemBarcode,
@@ -40,6 +40,7 @@ describe('data-export', () => {
             body.languages = ['eng'];
             cy.updateInstance(body);
           });
+          cy.login(user.username, user.password);
         },
       );
     });
@@ -59,7 +60,7 @@ describe('data-export', () => {
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-      Users.deleteViaApi(userId);
+      Users.deleteViaApi(user.userId);
       FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*', 'SearchInstanceUUIDs*');
     });
 
