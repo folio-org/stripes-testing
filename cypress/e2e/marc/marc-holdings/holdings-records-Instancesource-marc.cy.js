@@ -29,7 +29,7 @@ describe('MARC', () => {
 
     it(
       'C345409 MARC instance record + MARC holdings record (spitfire)',
-      { tags: ['smoke', 'spitfire'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
       () => {
         // waiting until page loading
         cy.wait(10000);
