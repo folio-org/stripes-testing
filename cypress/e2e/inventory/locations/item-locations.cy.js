@@ -12,7 +12,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
-let source;
+let sourceId;
 
 describe('Inventory', () => {
   before('create inventory instance', () => {
@@ -26,7 +26,9 @@ describe('Inventory', () => {
             cy.getMaterialTypes({ limit: 1 });
             cy.getLocations({ limit: 2 });
             cy.getHoldingTypes({ limit: 1 });
-            source = InventoryHoldings.getHoldingSources({ limit: 1 });
+            InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+              sourceId = folioSource.id;
+            });
             cy.getInstanceTypes({ limit: 1 });
             ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
@@ -44,7 +46,7 @@ describe('Inventory', () => {
                 {
                   holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                   permanentLocationId: Cypress.env('locations')[0].id,
-                  sourceId: source.id,
+                  sourceId,
                 },
               ],
               items: [
@@ -107,7 +109,7 @@ describe('Inventory', () => {
       InventoryInstance.edit();
       InstanceRecordEdit.chooseTemporaryLocation(editedLocationName);
       InstanceRecordEdit.saveAndClose();
-      InventoryInstance.closeInstancePage();
+      ItemRecordView.closeDetailView();
 
       // verify results
       // Setting false because next method clicks it open
@@ -143,7 +145,7 @@ describe('Inventory', () => {
       InventoryInstance.edit();
       InstanceRecordEdit.choosePermanentLocation(toBeEditedLocationName);
       InstanceRecordEdit.saveAndClose();
-      InventoryInstance.closeInstancePage();
+      ItemRecordView.closeDetailView();
 
       // verify results
       // Setting false because next method clicks it open
