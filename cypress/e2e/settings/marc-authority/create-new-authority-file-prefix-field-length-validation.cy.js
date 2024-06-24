@@ -70,7 +70,7 @@ describe('MARC', () => {
           ManageAuthorityFiles.checkSaveButtonEnabled();
 
           // 3 Click on the "Save" button
-          ManageAuthorityFiles.clickSaveButton();
+          ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
           ManageAuthorityFiles.checkErrorInField(
             authorityFile.name,
             AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX,
@@ -86,7 +86,7 @@ describe('MARC', () => {
 
           // 5 Click on the "Save" button
           ManageAuthorityFiles.clickSaveButtonAfterEditingFile(authorityFile.name);
-          ManageAuthorityFiles.checkAfterSave(authorityFile.name);
+          ManageAuthorityFiles.checkAfterSaveCreatedFile(authorityFile.name);
           ManageAuthorityFiles.checkSourceFileExists(
             authorityFile.name,
             authorityFile.prefixes[1],
@@ -114,7 +114,7 @@ describe('MARC', () => {
 
           // 8 Click on the "Save" button
           ManageAuthorityFiles.clickSaveButtonAfterEditingFile(authorityFilePrefix24Letters.name);
-          ManageAuthorityFiles.checkAfterSave(authorityFilePrefix24Letters.name);
+          ManageAuthorityFiles.checkAfterSaveCreatedFile(authorityFilePrefix24Letters.name);
           ManageAuthorityFiles.checkSourceFileExists(
             authorityFilePrefix24Letters.name,
             authorityFilePrefix24Letters.prefix,

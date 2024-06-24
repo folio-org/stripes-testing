@@ -373,6 +373,7 @@ export default {
   },
 
   openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
+  openInstanceNotesAccordion: () => cy.do(Button({ id: 'accordion-toggle-button-instance-details-notes' }).click()),
   checkAuthorityAppIconInSection: (sectionId, value, isPresent) => {
     if (isPresent) {
       cy.expect(
@@ -1031,6 +1032,7 @@ export default {
     // TODO: clarify with developers what should be waited
     cy.wait(1500);
     cy.do(tagsPane.find(textFieldTagInput).choose(tagName));
+    cy.wait(1500);
   },
 
   checkAddedTag: (tagName, instanceTitle) => {
