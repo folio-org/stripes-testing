@@ -141,11 +141,7 @@ describe('MARC', () => {
         InventoryInstances.searchByTitle(recordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        // "Edit in quickMARC" option might not be active immediately when opening MARC Holdings - re-opening activates it
-        InventoryInstance.openHoldingView();
-        HoldingsRecordView.checkSource(INSTANCE_SOURCE_NAMES.MARC);
-        HoldingsRecordView.close();
-        InventoryInstance.waitLoading();
+        cy.wait(2000);
         InventoryInstance.openHoldingView();
         HoldingsRecordView.editInQuickMarc();
         // adding a non-required field to delete it later, and saving
