@@ -11,56 +11,26 @@ import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 const testData = {
   user: {},
   instanceIDs: [],
-  contributorSearchOption: 'Contributor',
+  titleAllSearchOption: 'Title (all)',
   allSearchOption: 'All',
-  searchQueriesKeyword: ['MALOTT, DEANES', 'malott, deanes', 'Malott, Deanes', 'Malott, McDeanes'],
-  searchQueriesContributor: [
-    'MALOTT, DEANES',
-    'malott, deanes',
-    'Malott, Deanes',
-    'Malott, McDeanes',
-  ],
-  searchQueriesAll: [
-    'MALOTT, DEANES 1898-1996',
-    'malott, deanes 1898-1996',
-    'Malott, Deanes 1898-1996',
-    'Malott, McDeanes 1898-1996',
-  ],
-  searchResultsThreeContributors: [
-    'Malott, Deanes 1898-1996',
-    'MALOTT, DEANES 1898-1996',
-    'malott, deanes 1898-1996',
-  ],
-  searchResultsOneContributor: 'Malott, McDeanes 1898-1996',
+  searchQueries: ['CASE TITLE TEST', 'case test title'],
   searchResulsAllInstances: [
-    'C464068 MSEARCH-696 Instance 1 regular case',
-    'C464068 MSEARCH-696 Instance 2 UPPER case',
-    'C464068 MSEARCH-696 Instance 3 lower case',
+    'C466069 Instance 1, Title field lower case: case test title',
+    'C466069 Instance 2, Title field UPPER case: CASE TEST TITLE',
+    'C466069 Instance 3, Alternative title field lower case',
+    'C466069 Instance 4, Alternative title field UPPER case',
+    'C466069 Instance 5, Series field lower case',
+    'C466069 Instance 6, Series field UPPER case',
   ],
-  searchResultMixedCase: 'C464068 MSEARCH-696 Instance 4 Mc Case',
 
   marcFile: {
-    marc: 'marcBibFileC464068.mrc',
-    fileName: `testMarcFileC464068.${randomFourDigitNumber()}.mrc`,
+    marc: 'marcBibFileC466069.mrc',
+    fileName: `testMarcFileC466069.${randomFourDigitNumber()}.mrc`,
     jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-    numberOfRecords: 4,
+    numberOfRecords: 6,
     propertyName: 'instance',
   },
 };
-
-const resultsInstancesTable = [
-  testData.searchResulsAllInstances,
-  testData.searchResulsAllInstances,
-  testData.searchResulsAllInstances,
-  [testData.searchResultMixedCase],
-];
-
-const resultsContributorsTable = [
-  testData.searchResultsThreeContributors,
-  testData.searchResultsThreeContributors,
-  testData.searchResultsThreeContributors,
-  [testData.searchResultsOneContributor],
-];
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -69,7 +39,7 @@ describe('Inventory', () => {
         cy.getAdminToken();
         InventoryInstances.getInstancesViaApi({
           limit: 100,
-          query: 'title="C464068 MSEARCH-696 Instance"',
+          query: 'title="C466069 Instance"',
         }).then((instances) => {
           if (instances) {
             instances.forEach(({ id }) => {
@@ -107,49 +77,28 @@ describe('Inventory', () => {
       });
 
       it(
-        'C464068 Search by "Contributor" field is case-insensitive (spitfire)',
+        'C466069 Search by "Title", "Alternative title", "Series" fields is case-insensitive (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          testData.searchQueriesKeyword.forEach((query, index) => {
+          testData.searchQueries.forEach((query) => {
             InventoryInstances.searchByTitle(query);
-            for (let rowIndex = 0; rowIndex < resultsInstancesTable[index].length; rowIndex++) {
-              InventoryInstances.checkResultsCellContainsAnyOfValues(
-                resultsContributorsTable[index],
-                2,
-                rowIndex,
-              );
-            }
-            resultsInstancesTable[index].forEach((result) => {
+            testData.searchResulsAllInstances.forEach((result) => {
               InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
             });
             InventoryInstances.resetAllFilters();
           });
 
-          testData.searchQueriesContributor.forEach((query, index) => {
-            InventoryInstances.searchInstancesWithOption(testData.contributorSearchOption, query);
-            for (let rowIndex = 0; rowIndex < resultsInstancesTable[index].length; rowIndex++) {
-              InventoryInstances.checkResultsCellContainsAnyOfValues(
-                resultsContributorsTable[index],
-                2,
-                rowIndex,
-              );
-            }
-            resultsInstancesTable[index].forEach((result) => {
+          testData.searchQueries.forEach((query) => {
+            InventoryInstances.searchInstancesWithOption(testData.titleAllSearchOption, query);
+            testData.searchResulsAllInstances.forEach((result) => {
               InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
             });
             InventoryInstances.resetAllFilters();
           });
 
-          testData.searchQueriesAll.forEach((query, index) => {
+          testData.searchQueries.forEach((query) => {
             InventoryInstances.searchInstancesWithOption(testData.allSearchOption, query);
-            for (let rowIndex = 0; rowIndex < resultsInstancesTable[index].length; rowIndex++) {
-              InventoryInstances.checkResultsCellContainsAnyOfValues(
-                resultsContributorsTable[index],
-                2,
-                rowIndex,
-              );
-            }
-            resultsInstancesTable[index].forEach((result) => {
+            testData.searchResulsAllInstances.forEach((result) => {
               InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
             });
             InventoryInstances.resetAllFilters();
