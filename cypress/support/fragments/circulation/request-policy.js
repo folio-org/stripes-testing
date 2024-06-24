@@ -1,16 +1,7 @@
 import uuid from 'uuid';
-import { getTestEntityValue } from '../../utils/stringTools';
+import { Button, Link, Pane, TextArea, TextField } from '../../../../interactors';
 import { REQUEST_TYPES } from '../../constants';
-import {
-  Button,
-  MultiColumnListCell,
-  MultiColumnListRow,
-  Pane,
-  TextField,
-  TextArea,
-  including,
-  Link,
-} from '../../../../interactors';
+import { getTestEntityValue } from '../../utils/stringTools';
 
 const actionsButton = Button('Actions');
 const actionsEditButton = Button({ id: 'dropdown-clickable-edit-item' });
@@ -42,18 +33,12 @@ export default {
   },
 
   setName(name) {
-    cy.do([
-      nameTextField.clear(),
-      nameTextField.fillIn(name),
-    ]);
+    cy.do(nameTextField.fillIn(name));
     cy.wait(1000);
   },
 
   setDescription(description) {
-    cy.do([
-      descriptionTextField.clear(),
-      descriptionTextField.fillIn(description),
-    ]);
+    cy.do(descriptionTextField.fillIn(description));
     cy.wait(1000);
   },
 
