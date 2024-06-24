@@ -209,16 +209,7 @@ describe('MARC', () => {
         before(() => {
           cy.getAdminToken();
           // make sure there are no duplicate records in the system
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: 'keyword="C389483*"',
-          }).then((records) => {
-            records.forEach((record) => {
-              if (record.authRefType === 'Authorized') {
-                MarcAuthority.deleteViaAPI(record.id, true);
-              }
-            });
-          });
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C389483*');
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
@@ -272,7 +263,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateLDR06And07Positions();
             newFields.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
-              cy.wait(1000);
+              cy.wait(500);
             });
             // wait for fields to be filled in
             cy.wait(2000);
@@ -283,6 +274,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
+            cy.wait(1000);
             newFields.forEach((field) => {
               InventoryInstance.verifyRecordAndMarcAuthIcon(
                 field.type,

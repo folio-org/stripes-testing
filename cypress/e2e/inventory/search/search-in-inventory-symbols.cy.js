@@ -23,9 +23,9 @@ describe('Inventory', () => {
         "Han'guk yŏnghwa 100-sŏn : yŏnghwa hakcha, p'yŏngnon'ga ka ppobŭn Han'guk yŏnghwa taep'yojak : \"Ch'ŏngch'un ŭi sipcharo\" esŏ \"P'iet'a\" kkaji / Han'guk Yŏngsang Charyowŏn p'yŏn.",
       ],
       titles: [
-        "Pangk'ok : Kim Ki-ch'ang changp'yŏn sosŏl.",
-        "Han'guk yŏnghwa 100-sŏn : yŏnghwa hakcha, p'yŏngnon'ga ka ppobŭn Han'guk yŏnghwa taep'yojak : \"Ch'ŏngch'un ŭi sipcharo\" esŏ \"P'iet'a\" kkaji / Han'guk Yŏngsang Charyowŏn p'yŏn.",
-        "Han'guk yŏnghwa 100-yŏn, yŏnghwa kwanggo 100-sŏn / P'yŏnjippu yŏkkŭm.",
+        "C369042Pangk'ok : Kim Ki-ch'ang changp'yŏn sosŏl.",
+        "C369042Han'guk yŏnghwa 100-sŏn : yŏnghwa hakcha, p'yŏngnon'ga ka ppobŭn Han'guk yŏnghwa taep'yojak : \"Ch'ŏngch'un ŭi sipcharo\" esŏ \"P'iet'a\" kkaji / Han'guk Yŏngsang Charyowŏn p'yŏn.",
+        "C369042Han'guk yŏnghwa 100-yŏn, yŏnghwa kwanggo 100-sŏn / P'yŏnjippu yŏkkŭm.",
       ],
       searchQueriesC368038: [
         "Mrs. Lirriper's legacy the extra Christmas number of All the year round conducted by (Charles Dickens for Christmas, 1864).",
@@ -49,7 +49,6 @@ describe('Inventory', () => {
         'MSEARCH-466 Title 8 Search by "Alternative title" field which has special characters.',
       ],
     };
-
     const expectedTitles = [
       [testData.titles[0]],
       [testData.titles[0]],
@@ -61,7 +60,6 @@ describe('Inventory', () => {
       [testData.titles[2]],
       [testData.titles[1]],
     ];
-
     const expectedTitlesC368038 = [
       testData.titlesC368038,
       testData.titlesC368038,
@@ -72,7 +70,6 @@ describe('Inventory', () => {
       [testData.titlesC368038[0], testData.titlesC368038[1], testData.titlesC368038[5]],
       [testData.titlesC368038[5]],
     ];
-
     const marcFiles = [
       {
         marc: 'marcBibFileC369042.mrc',
@@ -89,14 +86,19 @@ describe('Inventory', () => {
         propertyName: 'instance',
       },
     ];
-
+    const searchQueries = ['C369042*', 'MSEARCH-466*'];
     const createdRecordIDs = [];
 
     before('Importing data', () => {
+      cy.getAdminToken();
+      // make sure there are no duplicate records in the system
+      searchQueries.forEach((searchQuery) => {
+        InventoryInstances.deleteInstanceByTitleViaApi(searchQuery);
+      });
+
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,

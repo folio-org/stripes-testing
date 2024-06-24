@@ -13,7 +13,7 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       const testData = {
-        tag245rowIndex: 13,
+        tag245rowIndex: 14,
         tag245value1: '$a Edited $h [Sound Recording] / $c Cypress Automation',
         instanceTitle1: 'Instance • Edited [Sound Recording] / Cypress Automation',
         tag245value2: '$a Edited Twice $h [Sound Recording] / $c Cypress Automation',
