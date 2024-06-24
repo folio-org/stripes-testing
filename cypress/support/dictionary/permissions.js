@@ -1006,6 +1006,10 @@ export default {
     internal: 'ui-developer.settings.locale',
     gui: 'Settings (Developer): set session locale',
   },
+  uiSettingsTenantReadingRoom: {
+    internal: 'ui-tenant-settings.settings.reading-room-access.view',
+    gui: 'Settings (tenant): Can view reading room access',
+  },
   // Timers
   okapiTimersPatch: {
     internal: 'okapi.proxy.self.timers.patch',

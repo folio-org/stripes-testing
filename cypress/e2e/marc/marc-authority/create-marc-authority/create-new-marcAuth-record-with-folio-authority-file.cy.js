@@ -65,7 +65,7 @@ describe('MARC', () => {
         'C423536 Create a new MARC authority record with "FOLIO" authority file selected (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          MarcAuthorities.clickNewAuthorityButton();
+          MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);
           QuickMarcEditor.verifyAuthorityLookUpButton();
           QuickMarcEditor.clickAuthorityLookUpButton();

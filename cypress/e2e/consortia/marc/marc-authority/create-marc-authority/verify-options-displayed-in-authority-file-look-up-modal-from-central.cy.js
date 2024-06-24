@@ -86,7 +86,7 @@ describe('MARC', () => {
         { tags: ['criticalPathECS', 'spitfire'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
-          MarcAuthorities.clickNewAuthorityButton();
+          MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(paneHeaderCreateNewSharedMarcAuthorityRecord);
           QuickMarcEditor.verifyAuthorityLookUpButton();
 

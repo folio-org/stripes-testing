@@ -7,6 +7,7 @@ import {
   Checkbox,
   ColumnHeader,
   DropdownMenu,
+  Dropdown,
   HTML,
   Link,
   Modal,
@@ -48,13 +49,15 @@ const editorSection = Section({ id: 'quick-marc-editor-pane' });
 const typeOfHeadingSelect = MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' });
 const findAuthorityModal = Modal({ id: 'find-authority-modal' });
 const detailsMarcViewPaneheader = PaneHeader({ id: 'paneHeadermarc-view-pane' });
+const authorityActionsDropDown = Dropdown('Actions');
 
 // actions dropdown window
-const authorityActionsDropDown = DropdownMenu();
-const buttonExportSelected = authorityActionsDropDown.find(
+const authorityActionsDropDownMenu = DropdownMenu();
+const buttonExportSelected = authorityActionsDropDownMenu.find(
   Button('Export selected records (CSV/MARC)'),
 );
-const marcAuthUpdatesCsvBtn = authorityActionsDropDown.find(
+const buttonNew = authorityActionsDropDownMenu.find(Button('New'));
+const marcAuthUpdatesCsvBtn = authorityActionsDropDownMenu.find(
   Button('MARC authority headings updates (CSV)'),
 );
 
@@ -132,6 +135,10 @@ export default {
     cy.expect(PaneHeader('MARC authority').exists());
   },
   clickNewAuthorityButton() {
+    cy.do(newAuthorityButton.click());
+    QuickMarcEditorWindow.waitLoading();
+  },
+  clickActionsAndNewAuthorityButton() {
     cy.do([actionsButton.click(), newAuthorityButton.click()]);
     QuickMarcEditorWindow.waitLoading();
   },
@@ -1468,6 +1475,14 @@ export default {
         expect(cellText).to.be.oneOf([...sourceNames]);
       });
     });
+  },
+
+  checkButtonNewExistsInActionDropdown() {
+    cy.expect(buttonNew.exists());
+  },
+
+  checkAuthorityActionsDropDownExpanded() {
+    cy.expect(authorityActionsDropDown.has({ open: true }));
   },
 
   createMarcAuthorityViaAPI(

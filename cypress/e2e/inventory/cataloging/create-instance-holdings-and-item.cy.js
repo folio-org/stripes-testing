@@ -58,9 +58,9 @@ describe('Inventory', () => {
           mode: 'integrating resource',
         });
         InventoryNewInstance.clickSaveAndCloseButton();
-        InventoryInstance.checkInstanceDetails([
-          { key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO },
-        ]);
+        InventoryInstance.checkInstanceDetails({
+          instanceInformation: [{ key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO }],
+        });
 
         // Select "Add holdings"
         const HoldingsRecordEdit = InventoryInstance.pressAddHoldingsButton();
