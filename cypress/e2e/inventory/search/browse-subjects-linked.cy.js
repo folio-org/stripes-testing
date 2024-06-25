@@ -114,7 +114,7 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
-        QuickMarcEditor.clickUnlinkIconInTagField(19);
+        QuickMarcEditor.clickUnlinkIconInTagField(20);
         QuickMarcEditor.confirmUnlinkingField();
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
