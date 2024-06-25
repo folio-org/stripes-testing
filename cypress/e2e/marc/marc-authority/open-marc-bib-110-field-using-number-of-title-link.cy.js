@@ -16,7 +16,7 @@ describe('MARC', () => {
     const testData = {
       tag: '110',
       marcValue: 'C375261 Beatles',
-      rowIndex: 32,
+      rowIndex: 33,
       searchOption: 'Corporate/Conference name',
       instanceTitle: 'The Beatles in mono.',
     };
