@@ -70,6 +70,8 @@ describe('Eureka', () => {
             path: TopMenu.settingsAuthorizationRoles,
             waiter: AuthorizationRoles.waitContentLoading,
           });
+          cy.reload();
+          AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.verifyGeneralInformationWhenCollapsed(currentDate);
