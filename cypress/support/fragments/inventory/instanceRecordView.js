@@ -520,4 +520,8 @@ export default {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'move-instance' }).absent());
   },
+
+  verifyInstanceHeader(header) {
+    cy.get('#paneHeaderinstance-form-pane-title > h2').should('have.text', header);
+  },
 };
