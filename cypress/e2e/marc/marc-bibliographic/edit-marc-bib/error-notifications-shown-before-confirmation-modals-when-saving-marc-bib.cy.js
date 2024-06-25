@@ -70,19 +70,11 @@ describe('MARC', () => {
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.updateExistingTagName(testData.tag040, testData.tag0);
-          QuickMarcEditor.fillEmptyTextFieldOfField(
-            0,
-            'records[0].content.ELvl',
-            '',
-          );
+          QuickMarcEditor.fillEmptyTextFieldOfField(0, 'records[0].content.ELvl', '');
           QuickMarcEditor.deleteTag(13);
           QuickMarcEditor.updateExistingField(testData.tag300, testData.tag300content);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.errorMessage);
-          QuickMarcEditor.fillEmptyTextFieldOfField(
-            0,
-            'records[0].content.ELvl',
-            '\\',
-          );
+          QuickMarcEditor.fillEmptyTextFieldOfField(0, 'records[0].content.ELvl', '\\');
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
           QuickMarcEditor.closeCallout();

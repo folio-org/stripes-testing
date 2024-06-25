@@ -1156,6 +1156,36 @@ export default {
       cy.expect(instanceDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
     });
   },
+  checkInstanceDetails2(
+    instanceInformation,
+    statisticalCode,
+    adminNote,
+    instanceTitle,
+    // identifiers,
+    contributor,
+    publication,
+    edition,
+  ) {
+    instanceInformation.forEach(({ key, value }) => {
+      cy.expect(instanceDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
+    cy.expect(
+      MultiColumnList({ id: 'list-statistical-codes' })
+        .find(MultiColumnListCell({ content: statisticalCode }))
+        .exists(),
+    );
+    cy.expect(
+      MultiColumnList({ id: 'administrative-note-list' })
+        .find(MultiColumnListCell({ content: adminNote }))
+        .exists(),
+    );
+    cy.expect(Pane({ titleLabel: including(instanceTitle) }).exists());
+    // identifiers
+    this.verifyContributor(0, 0, contributor);
+    verifyInstancePublisher(publication);
+    cy.expect(KeyValue('Edition').has({ edition }));
+  },
+
   getId() {
     cy.url()
       .then((url) => cy.wrap(url.split('?')[0].split('/').at(-1)))
@@ -1332,15 +1362,14 @@ export default {
 
   singleOverlaySourceBibRecordModalIsPresented: () => cy.expect(singleRecordImportModal.exists()),
 
-  overlayWithOclc: (
-    oclc,
-    defaultJobProfile = 'Inventory Single Record - Default Update Instance (Default)',
-  ) => {
-    cy.do([
-      Select({ name: 'selectedJobProfileId' }).choose(defaultJobProfile),
-      singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
-      singleRecordImportModal.find(Button('Import')).click(),
-    ]);
+  overlayWithOclc: (oclc) => {
+    cy.do(
+      Select({ name: 'selectedJobProfileId' }).choose(
+        'Inventory Single Record - Default Update Instance (Default)',
+      ),
+    );
+    cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
+    cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
 
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
