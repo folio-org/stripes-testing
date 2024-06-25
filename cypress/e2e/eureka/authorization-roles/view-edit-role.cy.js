@@ -210,6 +210,8 @@ describe('Eureka', () => {
             testData.roleId
           }`;
 
+          cy.reload();
+          AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           cy.url().then((url) => expect(url).to.eq(roleViewUrl));

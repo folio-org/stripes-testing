@@ -60,6 +60,8 @@ describe('Eureka', () => {
         'C446120 Delete a role with capabilities and users assigned (eureka)',
         { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
         () => {
+          cy.reload();
+          AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.checkCapabilitiesAccordionCounter(/^[1-9]\d*$/, true);

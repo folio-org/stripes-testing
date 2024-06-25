@@ -158,6 +158,7 @@ describe('Eureka', () => {
               });
             });
           });
+          AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.clickOnCapabilitiesAccordion();
