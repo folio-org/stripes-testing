@@ -117,8 +117,8 @@ describe('Eureka', () => {
       before('Login', () => {
         cy.addCapabilitySetsToNewRoleApi(testData.roleId, testData.capabSetIds);
         cy.login(testData.user.username, testData.user.password, {
-          path: `${TopMenu.settingsAuthorizationRoles}/${testData.roleId}`,
-          waiter: AuthorizationRoles.verifyRoleViewPane,
+          path: TopMenu.settingsAuthorizationRoles,
+          waiter: AuthorizationRoles.waitContentLoading,
         });
       });
 
@@ -133,6 +133,10 @@ describe('Eureka', () => {
         'C464313 Verify capabilities shown for a role created via API with only capability set assigned (eureka)',
         { tags: ['extendedPath', 'eureka', 'eurekaPhase1'] },
         () => {
+          cy.reload();
+          AuthorizationRoles.waitContentLoading();
+          AuthorizationRoles.searchRole(testData.roleName);
+          AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           testData.capabilitySets.forEach((set) => {
             AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set);

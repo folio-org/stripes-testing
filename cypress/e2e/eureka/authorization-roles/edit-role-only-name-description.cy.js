@@ -69,7 +69,7 @@ describe('Eureka', () => {
       before('Assign capabilities and login', () => {
         cy.addCapabilitiesToNewRoleApi(testData.roleId, testData.capabIds);
         cy.login(testData.user.username, testData.user.password, {
-          path: `${TopMenu.settingsAuthorizationRoles}/${testData.roleId}`,
+          path: TopMenu.settingsAuthorizationRoles,
           waiter: AuthorizationRoles.waitContentLoading,
         });
       });
@@ -85,6 +85,10 @@ describe('Eureka', () => {
         'C424003 Editing existing authorization role (only name/description updated)',
         { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
         () => {
+          cy.reload();
+          AuthorizationRoles.waitContentLoading();
+          AuthorizationRoles.searchRole(testData.roleName);
+          AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.checkCapabilitiesAccordionCounter(
             testData.capabilities.length.toString(),
           );

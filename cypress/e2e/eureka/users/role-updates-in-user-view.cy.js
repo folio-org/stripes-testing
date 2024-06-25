@@ -62,7 +62,7 @@ describe('Eureka', () => {
       // TO DO: rewrite when users will not have admin role assigned upon creation
       cy.updateRolesForUserApi(testData.userA.userId, [testData.roleAId, testData.roleBId]);
       cy.login(testData.tempUser.username, testData.tempUser.password, {
-        path: `${TopMenu.settingsAuthorizationRoles}/${testData.roleAId}`,
+        path: TopMenu.settingsAuthorizationRoles,
         waiter: AuthorizationRoles.waitContentLoading,
       });
     });
@@ -83,6 +83,10 @@ describe('Eureka', () => {
       'C464315 User detailed view updated when changing role assignments for a user (eureka)',
       { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
       () => {
+        cy.reload();
+        AuthorizationRoles.waitContentLoading();
+        AuthorizationRoles.searchRole(testData.roleAName);
+        AuthorizationRoles.clickOnRoleName(testData.roleAName);
         AuthorizationRoles.verifyRoleViewPane(testData.roleAName);
         AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
         AuthorizationRoles.clickAssignUsersButton();

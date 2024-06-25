@@ -116,6 +116,7 @@ describe('Eureka', () => {
           cy.wait(1000);
           AuthorizationRoles.clickSaveButton();
           AuthorizationRoles.checkAfterSaveCreate(testData.roleName, testData.roleDescription);
+          AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.clickOnCapabilitySetsAccordion(false);
           AuthorizationRoles.clickOnCapabilitiesAccordion();

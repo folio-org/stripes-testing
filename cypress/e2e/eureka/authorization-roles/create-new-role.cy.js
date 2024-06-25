@@ -129,6 +129,7 @@ describe('Eureka', () => {
           });
           cy.wait(4000);
           AuthorizationRoles.checkAfterSaveCreate(testData.roleName, testData.roleDescription);
+          AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.capabilitySet);

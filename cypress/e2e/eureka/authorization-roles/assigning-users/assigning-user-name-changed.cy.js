@@ -73,6 +73,8 @@ describe('Eureka', () => {
             `\\/roles\\/users\\?.+query=roleId==${testData.roleBId}`,
           );
 
+          cy.reload();
+          AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.roleAName);
           AuthorizationRoles.clickOnRoleName(testData.roleAName);
           AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
@@ -121,7 +123,6 @@ describe('Eureka', () => {
 
           cy.intercept(usersCallRegExpGetA).as('usersGetA1');
           cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleAId}`);
-          AuthorizationRoles.verifyRoleViewPane(testData.roleAName);
           cy.wait('@usersGetA1').then((call) => {
             expect(call.response.statusCode).to.eq(200);
             expect(
@@ -130,6 +131,7 @@ describe('Eureka', () => {
               ),
             ).to.have.lengthOf(1);
           });
+          AuthorizationRoles.verifyRoleViewPane(testData.roleAName);
           AuthorizationRoles.verifyAssignedUser(testData.newLastName, testData.newFirstName);
           AuthorizationRoles.clickAssignUsersButton();
           AuthorizationRoles.selectUserInModal(testData.newUsername, false);
