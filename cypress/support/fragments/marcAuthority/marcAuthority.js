@@ -180,13 +180,6 @@ export default {
     cy.expect([calloutUpdatedRecordSuccess.exists(), rootSection.exists()]);
   },
   checkPresentedColumns: (presentedColumns) => presentedColumns.forEach((columnName) => cy.expect(MultiColumnListHeader(columnName).exists())),
-  checkLDRValue: (ldrValue) => {
-    cy.expect(
-      QuickMarcEditorRow({ tagValue: 'LDR' })
-        .find(TextArea({ ariaLabel: 'Subfield' }))
-        .has({ textContent: ldrValue }),
-    );
-  },
   check008Field: () => {
     cy.do(TextField('Lang').fillIn('abc'));
     cy.expect(TextField('abc').absent());

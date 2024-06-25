@@ -62,7 +62,7 @@ describe('Data Import', () => {
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
       });
-      // create mapping profiles
+      // create profiles
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
       NewFieldMappingProfile.addStaffSuppress(mappingProfile.staffSuppress);

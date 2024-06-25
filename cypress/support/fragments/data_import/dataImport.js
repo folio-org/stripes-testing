@@ -46,7 +46,7 @@ const importBlockedModal = Modal('Import blocked');
 const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 
 const uploadFile = (filePathName, fileName) => {
-  cy.wait(1000);
+  cy.wait(2000);
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
 };
 
@@ -529,7 +529,7 @@ export default {
     JobProfiles.waitLoadingList();
     JobProfiles.search(profileName);
     JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(fileName);
+    Logs.waitFileIsImported(fileName);
     Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(fileName);
   },
@@ -702,15 +702,14 @@ export default {
       (isDeleteFilesButtonExists) => {
         cy.wait(5000);
         cy.reload();
+        cy.wait(2000);
         if (isDeleteFilesButtonExists) {
-          cy.wait(3000);
           cy.do(Button('Delete files').click());
           cy.expect(Button('or choose files').exists());
         }
       },
     );
     cy.expect(sectionPaneJobsTitle.find(Button('or choose files')).exists());
-    cy.wait(3000);
   },
 
   clickResumeButton: () => {

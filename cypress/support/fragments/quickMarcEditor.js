@@ -1613,17 +1613,6 @@ export default {
     ]);
   },
 
-  checkAuthority008SubfieldsLength() {
-    validRecord.tag008AuthorityBytesProperties
-      .getAllProperties()
-      .map((property) => property.interactor)
-      .forEach((subfield) => {
-        cy.expect(
-          getRowInteractorByTagName('008').find(subfield).has({ maxLength: (1).toString() }),
-        );
-      });
-  },
-
   checkLinkButtonExist(tag) {
     cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).exists());
   },
@@ -1814,6 +1803,10 @@ export default {
 
   checkPaneheaderContains(text) {
     cy.expect(PaneHeader({ text: including(text) }).exists());
+  },
+
+  checkRecordStatusNew() {
+    cy.expect(Pane('Create a new  MARC authority record').has({ subtitle: 'Status:New' }));
   },
 
   verifyPaneheaderWithContentAbsent(text) {
@@ -2222,7 +2215,9 @@ export default {
   },
 
   checkOnlyBackslashesIn008Boxes() {
-    cy.get('div[data-testid="bytes-field-col"]')
+    cy.get('input[value="008"]')
+      .parents('[data-testid="quick-marc-editorid"]')
+      .find('div[data-testid="bytes-field-col"]')
       .find('input')
       .then((fields) => {
         const fieldValues = Array.from(fields, (field) => field.getAttribute('value'));
@@ -2299,6 +2294,39 @@ export default {
       'ui-quick-marc.record.fixedField-MultiLvl-text',
       'Multipart resource record level',
     );
+  },
+
+  checkDefaultFieldsInOrder() {
+    cy.expect(
+      QuickMarcEditorRow({ index: 0 })
+        .find(TextField('Field'))
+        .has({ value: 'LDR', disabled: true }),
+    );
+    cy.expect(
+      QuickMarcEditorRow({ index: 1 })
+        .find(TextField('Field'))
+        .has({ value: '001', disabled: true }),
+    );
+    this.checkEmptyContent('001');
+    cy.expect(
+      QuickMarcEditorRow({ index: 2 })
+        .find(TextField('Field'))
+        .has({ value: '005', disabled: true }),
+    );
+    this.checkEmptyContent('005');
+    cy.expect(
+      QuickMarcEditorRow({ index: 3 })
+        .find(TextField('Field'))
+        .has({ value: '008', disabled: false }),
+    );
+    this.checkOnlyBackslashesIn008Boxes();
+    cy.expect(
+      QuickMarcEditorRow({ index: 4 })
+        .find(TextField('Field'))
+        .has({ value: '999', disabled: true }),
+    );
+    this.verifyTagField(4, '999', 'f', 'f', '', '');
+    this.verifyAllBoxesInARowAreDisabled(4);
   },
 
   checkEditableQuickMarcFormIsOpened: () => {
@@ -2653,5 +2681,25 @@ export default {
         .find(TextField('Indicator', { name: including('.indicators[1]') }))
         .has({ disabled: isDisabled }),
     ]);
+  },
+
+  selectOptionsIn008FieldRelfDropdowns(...options) {
+    options.forEach((option, index) => {
+      cy.do(
+        QuickMarcEditorRow({ tagValue: '008' })
+          .find(Select({ name: including(`records[3].content.Relf[${index}]`) }))
+          .choose(option),
+      );
+    });
+  },
+
+  checkOptionsSelectedIn008FieldRelfDropdowns(...options) {
+    options.forEach((option, index) => {
+      cy.expect(
+        QuickMarcEditorRow({ tagValue: '008' })
+          .find(Select({ name: including(`records[3].content.Relf[${index}]`) }))
+          .has({ checkedOptionText: option }),
+      );
+    });
   },
 };

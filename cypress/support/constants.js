@@ -1,4 +1,6 @@
 export const APPLICATION_NAMES = {
+  DATA_EXPORT: 'Data export',
+  DATA_IMPORT: 'Data import',
   INVENTORY: 'Inventory',
 };
 
@@ -792,4 +794,8 @@ export const ITEM_NOTES = {
   NOTE_NOTE: '8d0a5eca-25de-4391-81a9-236eeefdd20b',
   COPY_NOTE: '1dde7141-ec8a-4dae-9825-49ce14c728e7',
   ELECTRONIC_BOOKPLATE_NOTE: 'f3ae3823-d096-4c65-8734-0c1efd2ffea8',
+};
+
+export const INSTANCE_NOTES = {
+  REPRODUCTION_NOTE: 'd548fdff-b71c-4359-8055-f1c008c30f01',
 };

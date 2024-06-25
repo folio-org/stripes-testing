@@ -22,7 +22,7 @@ import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import OrderLineDetails from '../../support/fragments/orders/orderLineDetails';
 
-describe('ui-finance: Fiscal Year Rollover', () => {
+describe('Invoices', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
