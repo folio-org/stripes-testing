@@ -74,6 +74,10 @@ const assignModalResultColumns = [
   'Username',
   'Email',
 ];
+const generalInformationAccordion = Accordion('General Information');
+const recordLastUpdatedHeader = generalInformationAccordion.find(
+  Button(including('Record last updated:')),
+);
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
@@ -519,5 +523,27 @@ export default {
         .click(),
     );
     cy.expect(Pane(roleName).absent());
+  },
+
+  verifyGeneralInformationWhenCollapsed: (updatedDate) => {
+    cy.expect(
+      generalInformationAccordion.has({
+        content: including(`Record last updated: ${updatedDate}`),
+      }),
+    );
+  },
+
+  verifyGeneralInformationWhenExpanded: (updatedDate, updatedUser, createdDate, createdUser) => {
+    cy.do(recordLastUpdatedHeader.click());
+    cy.expect([
+      generalInformationAccordion.has({
+        content: and(
+          including(`Record last updated: ${updatedDate}`),
+          including(`Source: ${updatedUser}`),
+          including(`Record created: ${createdDate}`),
+          including(`Source: ${createdUser}`),
+        ),
+      }),
+    ]);
   },
 };
