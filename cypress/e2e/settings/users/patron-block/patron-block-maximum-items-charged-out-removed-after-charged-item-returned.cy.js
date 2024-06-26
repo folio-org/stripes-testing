@@ -158,10 +158,7 @@ describe('Patron Block: Maximum number of items charged out', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    Conditions.resetConditionViaApi(
-      '3d7c52dc-c732-4223-8bf8-e5917801386f',
-      'Maximum number of items charged out',
-    );
+    Conditions.resetConditionViaApi('Maximum number of items charged out');
   });
 
   it(
