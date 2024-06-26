@@ -11,11 +11,11 @@ import { BROWSE_CALL_NUMBER_OPTIONS, ITEM_STATUS_NAMES } from '../../../support/
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
     const testData = {
-      firstCallNumber: `331.3.${randomFourDigitNumber()}`,
-      secondCallNumber: `331.4.${randomFourDigitNumber()}`,
-      callNumberTypeId: '95467209-6d7b-468b-94df-0f5d7ad2747d',
+      firstCallNumber: `QS 11 .GA1 E53 2024.${randomFourDigitNumber()}`,
+      secondCallNumber: `QS 11 .GA1 E53 2025.${randomFourDigitNumber()}`,
+      callNumberTypeId: 'fc388041-6cd0-4806-8a74-ebe3b9ab4c6e',
       folioInstances: [],
-      barcodes: [`451468${randomFourDigitNumber()}`, `451468${randomFourDigitNumber()}`],
+      barcodes: [`451470${randomFourDigitNumber()}`, `451470${randomFourDigitNumber()}`],
       userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     };
 
@@ -113,7 +113,7 @@ describe('Inventory', () => {
     });
 
     it(
-      'C451468 Call number of not valid format and with selected "LC" call number type can be found via browse (spitfire)',
+      'C451470 Call number of not valid format and with selected "SuDoc" call number type can be found via browse (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'shiftLeft'] },
       () => {
         InventorySearchAndFilter.selectBrowseCallNumbers();
@@ -137,7 +137,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
 
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
-          BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
+          BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
         );
         InventorySearchAndFilter.browseSearch(testData.firstCallNumber);
         InventorySearchAndFilter.verifyBrowseInventorySearchResults({
@@ -149,7 +149,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
 
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
-          BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
+          BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
         );
         InventorySearchAndFilter.browseSearch(testData.secondCallNumber);
         InventorySearchAndFilter.verifyBrowseInventorySearchResults({
