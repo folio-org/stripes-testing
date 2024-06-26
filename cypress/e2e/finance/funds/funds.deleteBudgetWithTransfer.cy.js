@@ -12,7 +12,7 @@ describe('ui-finance: Funds', () => {
 
   it(
     'C343240 Delete the budget with transfer transaction (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
     () => {
       // TODO: update test in testrail - it should contain rather business actions than buttons clicks etc.
       const hundredQunatity = 100;
