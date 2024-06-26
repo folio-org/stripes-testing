@@ -70,7 +70,7 @@ describe('Patron blocks relations with users, conditions', () => {
     UserAllFeesFines.waiveFeeFine(testData.userId, testData.chargeAmount, testData.ownerId);
     ManualCharges.deleteViaApi(testData.manualChargeId);
     UsersOwners.deleteViaApi(testData.ownerId);
-    Conditions.resetConditionViaApi(testData.testConditionId, testData.name);
+    Conditions.resetConditionViaApi(testData.name);
     Users.deleteViaApi(testData.userId);
     PatronGroups.deleteViaApi(testData.patronGroupId);
   });

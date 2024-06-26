@@ -49,7 +49,6 @@ describe('MARC', () => {
           },
         ];
         const linkedField = {
-          rowIndex: 10,
           tag: '100',
           secondBox: '1',
           thirdBox: '\\',
@@ -59,7 +58,6 @@ describe('MARC', () => {
           seventhBox: '$1 http://viaf.org/viaf/24074052',
         };
         const unlinkedField = {
-          rowIndex: 10,
           tag: '100',
           indicator0: '1',
           indicator1: '\\',
@@ -137,8 +135,7 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag700);
             QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
-            QuickMarcEditor.verifyTagFieldAfterLinking(
-              linkedField.rowIndex,
+            QuickMarcEditor.verifyTagFieldAfterLinkingByTag(
               linkedField.tag,
               linkedField.secondBox,
               linkedField.thirdBox,
@@ -147,13 +144,15 @@ describe('MARC', () => {
               linkedField.zeroSubfield,
               linkedField.seventhBox,
             );
-            QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(10);
-            QuickMarcEditor.checkUnlinkTooltipText(10, 'Unlink from MARC Authority record');
-            QuickMarcEditor.clickUnlinkIconInTagField(10);
+            QuickMarcEditor.verifyUnlinkAndViewAuthorityButtonsinFieldByTag(linkedField.tag);
+            QuickMarcEditor.checkUnlinkTooltipTextInFieldByTag(
+              linkedField.tag,
+              'Unlink from MARC Authority record',
+            );
+            QuickMarcEditor.clickUnlinkIconInFieldByTag(linkedField.tag);
             QuickMarcEditor.checkUnlinkModal(testData.tag100);
             QuickMarcEditor.confirmUnlinkingField();
-            QuickMarcEditor.verifyTagFieldAfterUnlinking(
-              unlinkedField.rowIndex,
+            QuickMarcEditor.verifyTagFieldAfterUnlinkingByTag(
               unlinkedField.tag,
               unlinkedField.indicator0,
               unlinkedField.indicator1,

@@ -247,10 +247,8 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
       cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
       InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
     });
-    Conditions.resetConditionViaApi(
-      'e5b45031-a202-4abb-917b-e1df9346fe2c',
-      'Maximum number of overdue recalls',
-    );
+    Conditions.resetConditionViaApi('Maximum number of overdue recalls');
+
     Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,

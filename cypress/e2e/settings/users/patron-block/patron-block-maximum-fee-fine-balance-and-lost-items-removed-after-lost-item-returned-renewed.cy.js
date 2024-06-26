@@ -311,14 +311,9 @@ describe('Patron Block: Lost items', () => {
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Conditions.resetConditionViaApi(
-      'cf7a0d5f-a327-4ca1-aa9e-dc55ec006b8a',
-      'Maximum outstanding fee/fine balance',
-    );
-    Conditions.resetConditionViaApi(
-      '72b67965-5b73-4840-bc0b-be8f3f6e047e',
-      'Maximum number of lost items',
-    );
+    Conditions.resetConditionViaApi('Maximum outstanding fee/fine balance');
+    Conditions.resetConditionViaApi('Maximum number of lost items');
+
     Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
@@ -348,7 +343,8 @@ describe('Patron Block: Lost items', () => {
       OverrideAndRenewModal.confirmOverrideItem();
 
       findPatron();
-      cy.wait(1000);
+      cy.wait(2000);
+      Users.checkPatronIsNotBlocked(userData.userId);
       Users.checkPatronIsNotBlockedViaApi(userData.userId);
     },
   );
@@ -372,7 +368,8 @@ describe('Patron Block: Lost items', () => {
       CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
 
       findPatron();
-      cy.wait(1000);
+      cy.wait(2000);
+      Users.checkPatronIsNotBlocked(userData.userId);
       Users.checkPatronIsNotBlockedViaApi(userData.userId);
     },
   );
@@ -399,7 +396,8 @@ describe('Patron Block: Lost items', () => {
       OverrideAndRenewModal.confirmOverrideItem();
 
       findPatron();
-      cy.wait(1000);
+      cy.wait(2000);
+      Users.checkPatronIsNotBlocked(userData.userId);
       Users.checkPatronIsNotBlockedViaApi(userData.userId);
     },
   );
@@ -423,7 +421,8 @@ describe('Patron Block: Lost items', () => {
       CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
 
       findPatron();
-      cy.wait(1000);
+      cy.wait(2000);
+      Users.checkPatronIsNotBlocked(userData.userId);
       Users.checkPatronIsNotBlockedViaApi(userData.userId);
     },
   );

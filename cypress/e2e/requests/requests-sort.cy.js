@@ -67,6 +67,9 @@ describe('ui-requests: Sort requests', () => {
     Requests.validateRequestsDateSortingOrder('descending');
 
     Requests.sortingColumns.forEach((column) => {
+      if (column.title === 'Requester Barcode') {
+        cy.get('#list-requests > [class*="mclScrollable"]').scrollTo('right');
+      }
       // Validate sort
       cy.do(MultiColumnListHeader(column.title).click());
       Requests.validateRequestsSortingOrder({
