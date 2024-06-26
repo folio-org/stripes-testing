@@ -114,7 +114,7 @@ describe('Inventory', () => {
 
     it(
       'C451470 Call number of not valid format and with selected "SuDoc" call number type can be found via browse (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'shiftLeft'] },
       () => {
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.browseSearch(testData.firstCallNumber);
