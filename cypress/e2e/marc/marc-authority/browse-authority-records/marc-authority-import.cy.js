@@ -102,6 +102,7 @@ describe('MARC', () => {
           Logs.checkJobStatus(fileName, 'Completed');
           Logs.openFileDetails(fileName);
           Logs.goToTitleLink('Apple Academic Press');
+          cy.wait(1000);
           Logs.checkAuthorityLogJSON([
             '"sourceFileId":',
             '"af045f2f-e851-4613-984c-4bc13430454a"',
@@ -128,6 +129,7 @@ describe('MARC', () => {
           Logs.checkJobStatus(fileName, 'Completed');
           Logs.openFileDetails(fileName);
           Logs.goToTitleLink('Case Reports');
+          cy.wait(1000);
           Logs.checkAuthorityLogJSON([
             '"sourceFileId":',
             '"6ddf21a6-bc2f-4cb0-ad96-473e1f82da23"',

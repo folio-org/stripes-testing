@@ -57,7 +57,7 @@ describe('Inventory', () => {
 
     it(
       'C193952 Create Instance by import of single MARC Bib record from OCLC (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
         InventorySearchAndFilter.searchByParameter('OCLC number, normalized', oclc);
         InventorySearchAndFilter.selectSearchResultItem();

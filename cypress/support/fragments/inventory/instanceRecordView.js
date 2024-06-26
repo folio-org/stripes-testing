@@ -150,7 +150,12 @@ const verifyElectronicAccessAbsent = (rowNumber = 0) => {
   );
 };
 
-const waitLoading = () => cy.expect(actionsButton.exists());
+const waitLoading = () => {
+  cy.wait(1000);
+  cy.get('#pane-instancedetails').within(() => {
+    cy.contains('button', 'Action').should('exist');
+  });
+};
 const getMultiColumnListCellsValues = (cell) => {
   const cells = [];
 
@@ -499,6 +504,11 @@ export default {
   verifyViewRequestOptionAbsent() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button('New request').absent());
+  },
+
+  verifyViewRequestOptionEnabled() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button('New request').exists());
   },
 
   verifyNewOrderOptionAbsent() {
