@@ -9,15 +9,18 @@ import {
   INVENTORY_LDR_FIELD_TYPE_DROPDOWN,
   INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES,
   INVENTORY_LDR_FIELD_DROPDOWNS_NAMES,
+  INVENTORY_LDR_FIELD_BLVL_DROPDOWN,
   INVENTORY_008_FIELD_CRTP_DROPDOWN,
   INVENTORY_008_FIELD_INDX_DROPDOWN,
 } from '../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
-    describe('Edit MARC bib', () => {
-      const instanceTitle = `C422106 Test instance title ${getRandomPostfix()}`;
-      const paneHeader = 'Edit MARC record';
+    describe('Create new MARC bib', () => {
+      const instanceTitle = `C422119 The most important book ${getRandomPostfix()}`;
+      const field245Value = { tag: '245', value: `$a ${instanceTitle}` };
+      const paneHeaderCreateRecord = 'Create a new MARC bib record';
+      const paneHeaderEditRecord = 'Edit MARC record';
       const tagLDR = 'LDR';
       const tag008 = '008';
       const optionsIn008FieldRelfDropdowns = [
@@ -33,14 +36,14 @@ describe('MARC', () => {
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
         ]).then((createdUserProperties) => {
           user.userProperties = createdUserProperties;
-          cy.createSimpleMarcBibViaAPI(instanceTitle);
+
           cy.login(user.userProperties.username, user.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          InventoryInstances.searchByTitle(instanceTitle);
         });
       });
 
@@ -51,42 +54,37 @@ describe('MARC', () => {
       });
 
       it(
-        'C422106 Save edited "MARC bib" with changed leader "Type" position to "e" and valid values in 008 "Relf" position (spitfire)',
+        'C422119 Create new "MARC bib" with leader "Type" position="e" and valid values in 008 "Relf" position (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          // 1 Click on the "Actions" button placed on the second pane → Select "Edit MARC bibliographic record" option
-          InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.checkPaneheaderContains(paneHeader);
-          QuickMarcEditor.verifyFieldsDropdownOption(
-            tagLDR,
-            INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
-            INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A,
-          );
+          // 1 Click on the "Actions" button placed on the second pane → Select "+ New MARC bibliographic record" option
+          InventoryInstance.newMarcBibRecord();
+          QuickMarcEditor.checkPaneheaderContains(paneHeaderCreateRecord);
 
-          // 2 Select following values in "Type" dropdown of "LDR" field: "Type" = e
+          // 2 Select following values in "Type" and "BLvl" dropdowns of "LDR" field:"Type" = e, "BLvl" = a
           QuickMarcEditor.selectFieldsDropdownOption(
             tagLDR,
             INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
             INVENTORY_LDR_FIELD_TYPE_DROPDOWN.E,
           );
+          QuickMarcEditor.selectFieldsDropdownOption(
+            tagLDR,
+            INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+            INVENTORY_LDR_FIELD_BLVL_DROPDOWN.A,
+          );
           QuickMarcEditor.verifyFieldsDropdownOption(
             tagLDR,
             INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.TYPE,
             INVENTORY_LDR_FIELD_TYPE_DROPDOWN.E,
           );
+          QuickMarcEditor.verifyFieldsDropdownOption(
+            tagLDR,
+            INVENTORY_LDR_FIELD_DROPDOWNS_NAMES.BLVL,
+            INVENTORY_LDR_FIELD_BLVL_DROPDOWN.A,
+          );
           cy.wait(1000);
 
-          // 3 Select following values in drodpwowns of "Relf" postion of "008" field:
-          // Relf (1st box) = a
-          // Relf (2nd box) = b
-          // Relf (3rd box) = c
-          // Relf (4th box) = d
-          QuickMarcEditor.selectOptionsIn008FieldRelfDropdowns(...optionsIn008FieldRelfDropdowns);
-          QuickMarcEditor.checkOptionsSelectedIn008FieldRelfDropdowns(
-            ...optionsIn008FieldRelfDropdowns,
-          );
-
-          // 4 Select any values in dropdowns of "008" field which are highlighted in red
+          // 3 Select any values from the dropdowns of "008" field which are highlighted in red
           QuickMarcEditor.selectFieldsDropdownOption(
             tag008,
             INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
@@ -103,13 +101,28 @@ describe('MARC', () => {
             INVENTORY_008_FIELD_INDX_DROPDOWN.NO,
           );
 
-          // 5 Click "Save & close" button
+          // 4 Select following values in drodpwowns of "Relf" postion of "008" field:
+          // Relf (1st box) = a
+          // Relf (2nd box) = b
+          // Relf (3rd box) = c
+          // Relf (4th box) = d
+          QuickMarcEditor.selectOptionsIn008FieldRelfDropdowns(...optionsIn008FieldRelfDropdowns);
+          QuickMarcEditor.checkOptionsSelectedIn008FieldRelfDropdowns(
+            ...optionsIn008FieldRelfDropdowns,
+          );
+
+          // 5 Fill in the required fields with valid data
+          QuickMarcEditor.updateExistingField(field245Value.tag, field245Value.value);
+          QuickMarcEditor.checkContentByTag(field245Value.tag, field245Value.value);
+          cy.wait(1000);
+
+          // 6 Click "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
 
-          // 6 Click on "Actions" button in third pane → Select "Edit MARC bibliographic record" option
+          // 7 Click on "Actions" button in third pane → Select "Edit MARC bibliographic record" option
           InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.checkPaneheaderContains(paneHeader);
+          QuickMarcEditor.checkPaneheaderContains(paneHeaderEditRecord);
           QuickMarcEditor.checkOptionsSelectedIn008FieldRelfDropdowns(
             ...optionsIn008FieldRelfDropdowns,
           );

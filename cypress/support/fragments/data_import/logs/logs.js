@@ -116,7 +116,7 @@ export default {
 
   checkAuthorityLogJSON: (propertiesArray) => {
     cy.do(Button('Authority').click());
-
+    cy.wait(1500);
     propertiesArray.forEach((property) => {
       cy.expect(HTML(property).exists());
     });

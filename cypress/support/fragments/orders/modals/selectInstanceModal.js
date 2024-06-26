@@ -21,7 +21,7 @@ const closeButton = selectInstanceModal.find(Button('Close'));
 const resultsList = selectInstanceModal.find(HTML({ id: 'list-plugin-find-records' }));
 
 const searchOptionSelect = Select('Search field index');
-const defaultSearchOptionValue = 'all';
+const defaultSearchOption = 'Keyword (title, contributor, identifier, HRID, UUID)';
 
 export default {
   waitLoading() {
@@ -93,7 +93,7 @@ export default {
     else cy.expect(searchOptionSelect.has({ content: not(including(searchOption)) }));
   },
   checkDefaultSearchOptionSelected() {
-    cy.expect(searchOptionSelect.has({ value: defaultSearchOptionValue }));
+    cy.expect(searchOptionSelect.has({ checkedOptionText: defaultSearchOption }));
   },
   checkSearchInputFieldValue(query) {
     cy.expect(searchInput.has({ value: query }));

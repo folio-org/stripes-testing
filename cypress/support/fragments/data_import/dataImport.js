@@ -531,7 +531,7 @@ export default {
     JobProfiles.waitLoadingList();
     JobProfiles.search(profileName);
     JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(fileName);
+    Logs.waitFileIsImported(fileName);
     Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(fileName);
   },
