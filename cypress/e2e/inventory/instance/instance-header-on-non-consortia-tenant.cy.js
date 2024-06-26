@@ -45,7 +45,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.waitLoading();
-        InstanceRecordView.verifyInstanceHeader(`Instance • ${testData.instanceTitle}`);
+        InstanceRecordView.verifyInstanceHeader(`Instance • ${testData.instanceTitle}  • MIT`);
       },
     );
   });

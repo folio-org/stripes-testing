@@ -532,6 +532,8 @@ export default {
   },
 
   verifyInstanceHeader(header) {
-    cy.get('#paneHeaderinstance-form-pane-title > h2').should('have.text', header);
+    cy.get('#paneHeaderpane-instancedetails')
+      .find('[class*="paneTitleLabel-"]')
+      .should('have.text', header);
   },
 };
