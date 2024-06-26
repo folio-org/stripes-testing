@@ -764,3 +764,5 @@ export const ITEM_NOTES = {
   COPY_NOTE: '1dde7141-ec8a-4dae-9825-49ce14c728e7',
   ELECTRONIC_BOOKPLATE_NOTE: 'f3ae3823-d096-4c65-8734-0c1efd2ffea8',
 };
+
+export const DEFAULT_LOCALE_STRING = '{"locale":"en-US","timezone":"UTC","currency":"USD"}';

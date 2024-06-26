@@ -3,6 +3,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import DateTools from '../../../support/utils/dateTools';
+import { DEFAULT_LOCALE_STRING } from '../../../support/constants';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -10,6 +11,7 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role C464307 ${getRandomPostfix()}`,
         updatedRoleName: `Auto Role C464307 ${getRandomPostfix()} UPD`,
+        localeConfigName: 'localeSettings',
       };
 
       const capabSetsToAssign = [
@@ -19,6 +21,13 @@ describe('Eureka', () => {
       ];
 
       before(() => {
+        cy.getAdminToken();
+        // set default locale settings for tenant (with UTC)
+        cy.getConfigForTenantByName(testData.localeConfigName).then((config) => {
+          const updatedConfig = { ...config };
+          updatedConfig.value = DEFAULT_LOCALE_STRING;
+          cy.updateConfigForTenantById(config.id, updatedConfig);
+        });
         cy.createTempUser([]).then((createdUserAProperties) => {
           testData.userA = createdUserAProperties;
           cy.assignCapabilitiesToExistingUser(testData.userA.userId, [], capabSetsToAssign);
@@ -47,45 +56,51 @@ describe('Eureka', () => {
         'C464307 "General Information" accordion is properly populated when creating/updating a role (eureka)',
         { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
         () => {
+          let createdDateTime;
+          let updatedDateTime;
           AuthorizationRoles.clickNewButton();
           AuthorizationRoles.fillRoleNameDescription(testData.roleName);
-          const currentDate = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
-          cy.intercept('POST', '/roles*').as('rolesCall');
+          cy.intercept('POST', '/roles*').as('createCall');
           AuthorizationRoles.clickSaveButton();
-          cy.wait('@rolesCall').then((call) => {
+          cy.wait('@createCall').then((call) => {
             testData.roleId = call.response.body.id;
+            createdDateTime = DateTools.getFormattedEndDateWithTimUTC(new Date(), true);
+            AuthorizationRoles.checkAfterSaveCreate(testData.roleName);
+            AuthorizationRoles.searchRole(testData.roleName);
+            AuthorizationRoles.clickOnRoleName(testData.roleName);
+            AuthorizationRoles.verifyGeneralInformationWhenCollapsed(createdDateTime);
+            AuthorizationRoles.verifyGeneralInformationWhenExpanded(
+              createdDateTime,
+              `${testData.userA.lastName}, ${testData.userA.firstName}`,
+              createdDateTime,
+              `${testData.userA.lastName}, ${testData.userA.firstName}`,
+            );
+            cy.logout();
+            cy.login(testData.userB.username, testData.userB.password, {
+              path: TopMenu.settingsAuthorizationRoles,
+              waiter: AuthorizationRoles.waitContentLoading,
+            });
+            cy.reload();
+            AuthorizationRoles.waitContentLoading();
+            AuthorizationRoles.searchRole(testData.roleName);
+            AuthorizationRoles.clickOnRoleName(testData.roleName);
+            AuthorizationRoles.verifyGeneralInformationWhenCollapsed(createdDateTime);
+            AuthorizationRoles.openForEdit();
+            AuthorizationRoles.fillRoleNameDescription(testData.updatedRoleName);
+            cy.intercept('PUT', '/roles/*').as('updateCall');
+            AuthorizationRoles.clickSaveButton();
+            cy.wait('@updateCall').then(() => {
+              updatedDateTime = DateTools.getFormattedEndDateWithTimUTC(new Date(), true);
+              AuthorizationRoles.checkAfterSaveEdit(testData.updatedRoleName);
+              AuthorizationRoles.verifyGeneralInformationWhenCollapsed(updatedDateTime);
+              AuthorizationRoles.verifyGeneralInformationWhenExpanded(
+                updatedDateTime,
+                `${testData.userB.lastName}, ${testData.userB.firstName}`,
+                createdDateTime,
+                `${testData.userA.lastName}, ${testData.userA.firstName}`,
+              );
+            });
           });
-          AuthorizationRoles.checkAfterSaveCreate(testData.roleName);
-          AuthorizationRoles.searchRole(testData.roleName);
-          AuthorizationRoles.clickOnRoleName(testData.roleName);
-          AuthorizationRoles.verifyGeneralInformationWhenCollapsed(currentDate);
-          AuthorizationRoles.verifyGeneralInformationWhenExpanded(
-            currentDate,
-            `${testData.userA.lastName}, ${testData.userA.firstName}`,
-            currentDate,
-            `${testData.userA.lastName}, ${testData.userA.firstName}`,
-          );
-          cy.logout();
-          cy.login(testData.userB.username, testData.userB.password, {
-            path: TopMenu.settingsAuthorizationRoles,
-            waiter: AuthorizationRoles.waitContentLoading,
-          });
-          cy.reload();
-          AuthorizationRoles.waitContentLoading();
-          AuthorizationRoles.searchRole(testData.roleName);
-          AuthorizationRoles.clickOnRoleName(testData.roleName);
-          AuthorizationRoles.verifyGeneralInformationWhenCollapsed(currentDate);
-          AuthorizationRoles.openForEdit();
-          AuthorizationRoles.fillRoleNameDescription(testData.updatedRoleName);
-          AuthorizationRoles.clickSaveButton();
-          AuthorizationRoles.checkAfterSaveEdit(testData.updatedRoleName);
-          AuthorizationRoles.verifyGeneralInformationWhenCollapsed(currentDate);
-          AuthorizationRoles.verifyGeneralInformationWhenExpanded(
-            currentDate,
-            `${testData.userB.lastName}, ${testData.userB.firstName}`,
-            currentDate,
-            `${testData.userA.lastName}, ${testData.userA.firstName}`,
-          );
         },
       );
     });
