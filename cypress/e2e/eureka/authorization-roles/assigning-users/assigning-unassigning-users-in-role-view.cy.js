@@ -66,6 +66,8 @@ describe('Eureka', () => {
         'C442837 Assigning/unassigning users for an existing authorization role (eureka)',
         { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
         () => {
+          cy.reload();
+          AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.verifyAssignedUsersAccordion();
