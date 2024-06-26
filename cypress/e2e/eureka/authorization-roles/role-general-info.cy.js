@@ -3,6 +3,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import DateTools from '../../../support/utils/dateTools';
+import { DEFAULT_LOCALE_STRING } from '../../../support/constants';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -10,6 +11,7 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role C464307 ${getRandomPostfix()}`,
         updatedRoleName: `Auto Role C464307 ${getRandomPostfix()} UPD`,
+        localeConfigName: 'localeSettings',
       };
 
       const capabSetsToAssign = [
@@ -19,6 +21,13 @@ describe('Eureka', () => {
       ];
 
       before(() => {
+        cy.getAdminToken();
+        // set default locale settings for tenant (with UTC)
+        cy.getConfigForTenantByName(testData.localeConfigName).then((config) => {
+          const updatedConfig = { ...config };
+          updatedConfig.value = DEFAULT_LOCALE_STRING;
+          cy.updateConfigForTenantById(config.id, updatedConfig);
+        });
         cy.createTempUser([]).then((createdUserAProperties) => {
           testData.userA = createdUserAProperties;
           cy.assignCapabilitiesToExistingUser(testData.userA.userId, [], capabSetsToAssign);

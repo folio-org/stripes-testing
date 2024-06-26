@@ -23,3 +23,4 @@ import './auto-linking';
 import './eholdings';
 import './consortium';
 import './auth-policies';
+import './tenant';
