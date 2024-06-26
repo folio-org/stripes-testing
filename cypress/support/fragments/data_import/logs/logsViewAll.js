@@ -275,6 +275,7 @@ export default {
   },
 
   checkByDate({ from, end }) {
+    cy.wait(2000);
     const queryString = UrlParams.getDateQueryString({ from, end });
 
     return this.getNumberOfMatchedJobs(queryString).then((count) => {
