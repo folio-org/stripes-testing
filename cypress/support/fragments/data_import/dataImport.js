@@ -39,6 +39,7 @@ const logsPane = Pane('Logs');
 const logsPaneHeader = PaneHeader({ id: 'paneHeaderpane-logs-title' });
 const orChooseFilesButton = Button('or choose files');
 const cancelImportJobModal = Modal('Cancel import job?');
+const cancelMultipleImportJobModal = Modal('Cancel multipart import job?');
 const yesButton = Button('Yes, cancel import job');
 const cancelButton = Button('No, do not cancel import');
 const dataImportNavSection = Pane({ id: 'app-settings-nav-pane' });
@@ -56,6 +57,7 @@ const uploadBunchOfDifferentFiles = (fileNames) => {
     arrayOfFiles.push(fileNames[i]);
   }
   cy.get('input[type=file]').attachFile(arrayOfFiles);
+  cy.wait(5000);
   cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
   cy.wait(1500);
 };
@@ -552,7 +554,7 @@ export default {
   },
 
   getLogsHrIdsFromUI: (logsCount = 25) => {
-    const hrIdColumnIndex = 8;
+    const hrIdColumnIndex = 9;
     const cells = [];
 
     new Array(logsCount).fill(null).forEach((_, index) => {
@@ -689,7 +691,9 @@ export default {
   verifyChooseFileButtonState: ({ isDisabled }) => cy.expect(orChooseFilesButton.has({ disabled: isDisabled })),
 
   verifyDeleteLogsButtonDisabled: () => {
+    cy.wait(1500);
     cy.do(actionsButton.click());
+    cy.wait(1500);
     cy.expect(deleteLogsButton.is({ disabled: true }));
   },
 
@@ -702,7 +706,6 @@ export default {
       (isDeleteFilesButtonExists) => {
         cy.wait(5000);
         cy.reload();
-        cy.wait(2000);
         if (isDeleteFilesButtonExists) {
           cy.do(Button('Delete files').click());
           cy.expect(Button('or choose files').exists());
@@ -736,16 +739,55 @@ export default {
   },
 
   verifyCancelImportJobModal: () => {
-    const headerModalContent = 'Are you sure that you want to cancel this import job?';
-    const modalContent =
-      'Note: Cancelled jobs cannot be restarted. Records created or updated before\nthe job is cancelled cannot yet be reverted.';
-    cy.expect([
-      cancelImportJobModal.exists(),
-      cancelImportJobModal.find(HTML(including(headerModalContent))).exists(),
-      cancelImportJobModal.find(HTML(including(modalContent))).exists(),
-      cancelImportJobModal.find(cancelButton, { disabled: true }).exists(),
-      cancelImportJobModal.find(yesButton, { disabled: false }).exists(),
-    ]);
+    return checkSplitStatus().then((resp) => {
+      if (resp.body.splitStatus === false) {
+        const headerModalContent = 'Are you sure that you want to cancel this import job?';
+        const modalContent =
+          'Note: Cancelled jobs cannot be restarted. Records created or updated before\nthe job is cancelled cannot yet be reverted.';
+        cy.expect([
+          cancelImportJobModal.exists(),
+          cancelImportJobModal.find(HTML(including(headerModalContent))).exists(),
+          cancelImportJobModal.find(HTML(including(modalContent))).exists(),
+          cancelImportJobModal.find(cancelButton, { disabled: true }).exists(),
+          cancelImportJobModal.find(yesButton, { disabled: false }).exists(),
+        ]);
+      } else {
+        const headerModalContent =
+          'Are you sure that you want to cancel this multipart import job?';
+
+        cy.expect([
+          cancelMultipleImportJobModal.exists(),
+          cancelMultipleImportJobModal.find(HTML(including(headerModalContent))).exists(),
+          cancelMultipleImportJobModal.find(HTML(including('Please note:'))).exists(),
+          cancelMultipleImportJobModal
+            .find(HTML(including('Cancelled jobs cannot be restarted.')))
+            .exists(),
+          cancelMultipleImportJobModal
+            .find(
+              HTML(
+                including(
+                  'Records created or updated before the job is cancelled cannot be reverted',
+                ),
+              ),
+            )
+            .exists(),
+          cancelMultipleImportJobModal
+            .find(HTML(including(' job parts have already been processed and will ')))
+            .exists(),
+          cancelMultipleImportJobModal
+            .find(
+              HTML(
+                including(
+                  ' remaining job parts including any that are currently in progress and all that have not yet started ',
+                ),
+              ),
+            )
+            .exists(),
+          cancelMultipleImportJobModal.find(cancelButton, { disabled: true }).exists(),
+          cancelMultipleImportJobModal.find(yesButton, { disabled: false }).exists(),
+        ]);
+      }
+    });
   },
 
   confirmDeleteImportJob: () => {

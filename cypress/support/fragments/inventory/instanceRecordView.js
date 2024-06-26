@@ -150,7 +150,12 @@ const verifyElectronicAccessAbsent = (rowNumber = 0) => {
   );
 };
 
-const waitLoading = () => cy.expect(actionsButton.exists());
+const waitLoading = () => {
+  cy.wait(1000);
+  cy.get('#pane-instancedetails').within(() => {
+    cy.contains('button', 'Action').should('exist');
+  });
+};
 const getMultiColumnListCellsValues = (cell) => {
   const cells = [];
 
@@ -501,6 +506,11 @@ export default {
     cy.expect(Button('New request').absent());
   },
 
+  verifyViewRequestOptionEnabled() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button('New request').exists());
+  },
+
   verifyNewOrderOptionAbsent() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'clickable-create-order' }).absent());
@@ -519,5 +529,11 @@ export default {
   verifyMoveHoldingsItemsToAnotherInstanceOptionAbsent() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'move-instance' }).absent());
+  },
+
+  verifyInstanceHeader(header) {
+    cy.get('#paneHeaderpane-instancedetails')
+      .find('[class*="paneTitleLabel-"]')
+      .should('have.text', header);
   },
 };
