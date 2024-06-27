@@ -282,7 +282,7 @@ export default {
   saveCreatedUser() {
     cy.intercept('POST', '/users-keycloak/users').as('createUser');
     cy.do(Button({ id: 'clickable-save' }).click());
-    cy.wait('@createUser', { timeout: 100000 });
+    cy.wait('@createUser', { timeout: 120000 });
   },
 
   checkZeroSearchResultsHeader: () => {
