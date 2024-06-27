@@ -49,6 +49,7 @@ const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 const uploadFile = (filePathName, fileName) => {
   cy.wait(2000);
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
+  cy.wait(5000);
 };
 
 const uploadBunchOfDifferentFiles = (fileNames) => {
@@ -739,7 +740,7 @@ export default {
   },
 
   verifyCancelImportJobModal: () => {
-    return checkSplitStatus().then((resp) => {
+    checkSplitStatus().then((resp) => {
       if (resp.body.splitStatus === false) {
         const headerModalContent = 'Are you sure that you want to cancel this import job?';
         const modalContent =
@@ -791,12 +792,25 @@ export default {
   },
 
   confirmDeleteImportJob: () => {
-    cy.do(cancelImportJobModal.find(yesButton).click());
+    checkSplitStatus().then((resp) => {
+      if (resp.body.splitStatus === false) {
+        cy.do(cancelImportJobModal.find(yesButton).click());
+      } else {
+        cy.do(cancelMultipleImportJobModal.find(yesButton).click());
+      }
+    });
   },
 
   cancelDeleteImportJob: () => {
-    cy.do(cancelImportJobModal.find(cancelButton).click());
-    cy.expect(cancelImportJobModal.absent());
+    checkSplitStatus().then((resp) => {
+      if (resp.body.splitStatus === false) {
+        cy.do(cancelImportJobModal.find(cancelButton).click());
+        cy.expect(cancelImportJobModal.absent());
+      } else {
+        cy.do(cancelMultipleImportJobModal.find(cancelButton).click());
+        cy.expect(cancelMultipleImportJobModal.absent());
+      }
+    });
   },
 
   waitFileIsUploaded: () => {
