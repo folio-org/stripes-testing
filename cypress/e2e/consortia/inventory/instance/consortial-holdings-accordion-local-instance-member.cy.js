@@ -50,7 +50,6 @@ describe('Inventory', () => {
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.waitContentLoading();
-
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
