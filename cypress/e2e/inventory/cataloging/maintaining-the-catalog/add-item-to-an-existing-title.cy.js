@@ -35,12 +35,17 @@ describe('Inventory', () => {
           }).location;
 
           Locations.createViaApi(testData.location).then((location) => {
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: testData.instance.instanceId,
-              permanentLocationId: location.id,
-            }).then((holding) => {
-              testData.holding = holding;
-            });
+            InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+              (holdingSources) => {
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: testData.instance.instanceId,
+                  permanentLocationId: location.id,
+                  sourceId: holdingSources[0].id,
+                }).then((holding) => {
+                  testData.holding = holding;
+                });
+              },
+            );
           });
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
