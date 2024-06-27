@@ -21,7 +21,7 @@ export const MultiSelectMenu = HTML.extend('multiselect dropdown')
     optionCount: (el) => el.querySelectorAll('li').length,
     error: (el) => el.querySelector('[class=^=multiSelectError-]').textContent,
     warning: (el) => el.querySelector('[class=^=multiSelectWarning-]').textContent,
-    loading: (el) => el.querySelector('[class^=spinner-]')
+    loading: (el) => el.querySelector('[class^=spinner-]'),
   });
 
 export const MultiSelectOption = HTML.extend('multi select option')
