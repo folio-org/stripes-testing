@@ -126,71 +126,70 @@ describe('Data Import', () => {
       // make sure there are no duplicate authority records in the system
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374167*');
 
-      cy.loginAsAdmin()
-        .then(() => {
-          // create Match profile
-          NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)
-            .then((matchProfileResponse) => {
-              matchProfile.id = matchProfileResponse.body.id;
-            })
-            .then(() => {
-              // create Field mapping profile
-              NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(
-                mappingProfile,
-              ).then((mappingProfileResponse) => {
-                mappingProfile.id = mappingProfileResponse.body.id;
-              });
-            })
-            .then(() => {
-              // create Action profile and link it to Field mapping profile
-              NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfile.id).then(
-                (actionProfileResponse) => {
-                  actionProfile.id = actionProfileResponse.body.id;
-                },
-              );
-            })
-            .then(() => {
-              // create Job profile
-              NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
-                jobProfile.profileName,
-                matchProfile.id,
-                actionProfile.id,
-              );
-            });
-
-          marcFiles.forEach((marcFile) => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                testData.createdRecordIDs.push(record[marcFile.propertyName].id);
-              });
-            });
-          });
+      // create Match profile
+      NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)
+        .then((matchProfileResponse) => {
+          matchProfile.id = matchProfileResponse.body.id;
         })
         .then(() => {
-          cy.visit(TopMenu.inventoryPath);
-          InventoryInstances.waitContentLoading();
-          twoMarcBibsToLink.forEach((marcBib) => {
-            InventoryInstances.searchByTitle(marcBib.marcBibRecord);
-            cy.wait(1500);
-            InventoryInstances.selectInstance();
-            InventoryInstance.editMarcBibliographicRecord();
-            marcBib.linkingFields.forEach((linking) => {
-              QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
-              MarcAuthorities.switchToSearch();
-              InventoryInstance.verifySelectMarcAuthorityModal();
-              InventoryInstance.verifySearchOptions();
-              InventoryInstance.searchResults(linking.value);
-              InventoryInstance.clickLinkButton();
-              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
-            });
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveAndClose();
+          // create Field mapping profile
+          NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile).then(
+            (mappingProfileResponse) => {
+              mappingProfile.id = mappingProfileResponse.body.id;
+            },
+          );
+        })
+        .then(() => {
+          // create Action profile and link it to Field mapping profile
+          NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfile.id).then(
+            (actionProfileResponse) => {
+              actionProfile.id = actionProfileResponse.body.id;
+            },
+          );
+        })
+        .then(() => {
+          // create Job profile
+          NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+            jobProfile.profileName,
+            matchProfile.id,
+            actionProfile.id,
+          );
+        });
+
+      marcFiles.forEach((marcFile) => {
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            testData.createdRecordIDs.push(record[marcFile.propertyName].id);
           });
         });
+      });
+
+      cy.loginAsAdmin({
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      }).then(() => {
+        twoMarcBibsToLink.forEach((marcBib) => {
+          InventoryInstances.searchByTitle(marcBib.marcBibRecord);
+          cy.wait(1500);
+          InventoryInstances.selectInstance();
+          InventoryInstance.editMarcBibliographicRecord();
+          marcBib.linkingFields.forEach((linking) => {
+            QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            InventoryInstance.verifySearchOptions();
+            InventoryInstance.searchResults(linking.value);
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
+          });
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveAndClose();
+        });
+      });
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
