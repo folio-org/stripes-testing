@@ -19,7 +19,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
-let source;
+let sourceId;
 let servicePointId;
 let firstName;
 
@@ -40,7 +40,9 @@ describe('Circulation log', () => {
           cy.getMaterialTypes({ limit: 1 });
           cy.getLocations({ limit: 1 });
           cy.getHoldingTypes({ limit: 1 });
-          source = InventoryHoldings.getHoldingSources({ limit: 1 });
+          InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+            sourceId = folioSource.id;
+          });
           cy.getInstanceTypes({ limit: 1 });
           ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then((res) => {
             servicePointId = res[0].id;
@@ -62,7 +64,7 @@ describe('Circulation log', () => {
               {
                 holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                 permanentLocationId: Cypress.env('locations')[0].id,
-                sourceId: source.id,
+                sourceId,
               },
             ],
             items: [

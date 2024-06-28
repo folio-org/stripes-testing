@@ -30,9 +30,9 @@ describe('MARC', () => {
         };
 
         const newFields = [
-          { rowIndex: 4, tag: '010', content: '$a n00776439' },
+          { previousFieldTag: '008', tag: '010', content: '$a n00776439' },
           {
-            rowIndex: 5,
+            previousFieldTag: '010',
             tag: '100',
             content: '$a John Doe $c Sir, $d 1909-1965 $l eng',
           },
@@ -82,7 +82,7 @@ describe('MARC', () => {
           { tags: ['criticalPath', 'spitfire'] },
           () => {
             // Creating marc authority part
-            MarcAuthorities.clickNewAuthorityButton();
+            MarcAuthorities.clickActionsAndNewAuthorityButton();
             QuickMarcEditor.checkPaneheaderContains(testData.newAuthorityHeaderText);
             QuickMarcEditor.verifyAuthorityLookUpButton();
             QuickMarcEditor.clickAuthorityLookUpButton();
@@ -90,7 +90,11 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAuthorityFileSelected(testData.sourceName);
             QuickMarcEditor.clickSaveAndCloseInModal();
             newFields.forEach((newField) => {
-              MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
+              MarcAuthority.addNewFieldAfterExistingByTag(
+                newField.previousFieldTag,
+                newField.tag,
+                newField.content,
+              );
             });
             QuickMarcEditor.checkContentByTag(newFields[0].tag, newFields[0].content);
             QuickMarcEditor.checkContentByTag(newFields[1].tag, newFields[1].content);

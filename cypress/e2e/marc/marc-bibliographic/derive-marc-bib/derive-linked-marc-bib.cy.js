@@ -82,7 +82,7 @@ describe('MARC', () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
-            InventoryInstance.verifyAndClickLinkIconByIndex(9);
+            InventoryInstance.verifyAndClickLinkIconByIndex(10);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
@@ -92,20 +92,6 @@ describe('MARC', () => {
             );
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveAndClose();
-
-            InventoryInstance.editMarcBibliographicRecord();
-            InventoryInstance.verifyAndClickLinkIconByIndex(15);
-            MarcAuthorities.switchToSearch();
-            InventoryInstance.verifySelectMarcAuthorityModal();
-            InventoryInstance.searchResults(marcFiles[2].authorityHeading);
-            MarcAuthorities.checkFieldAndContentExistence(
-              testData.tag010,
-              `$a ${marcFiles[2].authority010FieldValue}`,
-            );
-            InventoryInstance.clickLinkButton();
-            QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(15, testData.tag650);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
@@ -120,6 +106,20 @@ describe('MARC', () => {
             );
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(16, testData.tag650);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
+
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickLinkIconByIndex(17);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            InventoryInstance.searchResults(marcFiles[2].authorityHeading);
+            MarcAuthorities.checkFieldAndContentExistence(
+              testData.tag010,
+              `$a ${marcFiles[2].authority010FieldValue}`,
+            );
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(17, testData.tag650);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
@@ -147,9 +147,9 @@ describe('MARC', () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.deriveNewMarcBib();
-          QuickMarcEditor.fillLinkedFieldBox(9, 5, testData.tag240FifthBoxValue);
-          QuickMarcEditor.fillLinkedFieldBox(15, 5, testData.tag650FifthBoxValue);
-          QuickMarcEditor.fillLinkedFieldBox(16, 7, testData.tag650SeventhBoxValue);
+          QuickMarcEditor.fillLinkedFieldBox(10, 5, testData.tag240FifthBoxValue);
+          QuickMarcEditor.fillLinkedFieldBox(16, 5, testData.tag650FifthBoxValue);
+          QuickMarcEditor.fillLinkedFieldBox(17, 7, testData.tag650SeventhBoxValue);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyCalloutControlledFields([testData.tag240, testData.tag650]);
         },

@@ -205,6 +205,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
     });
 
     UserLoans.changeDueDateForAllOpenPatronLoans(userData.userId, -1);
+    Users.waitForAutomatedPatronBlocksForUser(userData.userId, 4 * 60);
   });
 
   afterEach('Returning items to original state', () => {
@@ -232,10 +233,8 @@ describe('Patron Block: Maximum number of overdue items', () => {
       cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
       InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
     });
-    Conditions.resetConditionViaApi(
-      '584fbd4f-6a34-4730-a6ca-73a6a6a9d845',
-      'Maximum number of overdue items',
-    );
+    Conditions.resetConditionViaApi('Maximum number of overdue items');
+
     Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
@@ -250,6 +249,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
     () => {
       findPatron();
       UsersCard.waitLoading();
+      cy.wait(2000);
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
       const itemForRenew = itemsData.itemsWithSeparateInstance[0];
@@ -259,7 +259,9 @@ describe('Patron Block: Maximum number of overdue items', () => {
       Renewals.renewBlockedPatron(renewComment);
 
       findPatron();
+      cy.wait(2000);
       Users.checkPatronIsNotBlocked(userData.userId);
+      Users.checkPatronIsNotBlockedViaApi(userData.userId);
     },
   );
 
@@ -269,6 +271,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
     () => {
       findPatron();
       UsersCard.waitLoading();
+      cy.wait(2000);
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
       cy.visit(TopMenu.checkInPath);
@@ -277,7 +280,9 @@ describe('Patron Block: Maximum number of overdue items', () => {
       CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
 
       findPatron();
+      cy.wait(2000);
       Users.checkPatronIsNotBlocked(userData.userId);
+      Users.checkPatronIsNotBlockedViaApi(userData.userId);
     },
   );
 });

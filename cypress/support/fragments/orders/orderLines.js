@@ -1317,10 +1317,11 @@ export default {
       createNewLocationButton.click(),
     ]);
     cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
+      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(institutionId),
       Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
     ]);
+    cy.wait(2000);
+    cy.do([selectLocationsModal.find(MultiColumnListCell(institutionId)).click()]);
     cy.do([quantityElectronicField.fillIn(quantityElectronic)]);
     cy.expect([
       electronicUnitPriceTextField.has({ value: electronicUnitPrice }),

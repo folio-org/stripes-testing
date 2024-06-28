@@ -7,6 +7,7 @@ import {
   Checkbox,
   ColumnHeader,
   DropdownMenu,
+  Dropdown,
   HTML,
   Link,
   Modal,
@@ -48,13 +49,15 @@ const editorSection = Section({ id: 'quick-marc-editor-pane' });
 const typeOfHeadingSelect = MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' });
 const findAuthorityModal = Modal({ id: 'find-authority-modal' });
 const detailsMarcViewPaneheader = PaneHeader({ id: 'paneHeadermarc-view-pane' });
+const authorityActionsDropDown = Dropdown('Actions');
 
 // actions dropdown window
-const authorityActionsDropDown = DropdownMenu();
-const buttonExportSelected = authorityActionsDropDown.find(
+const authorityActionsDropDownMenu = DropdownMenu();
+const buttonExportSelected = authorityActionsDropDownMenu.find(
   Button('Export selected records (CSV/MARC)'),
 );
-const marcAuthUpdatesCsvBtn = authorityActionsDropDown.find(
+const buttonNew = authorityActionsDropDownMenu.find(Button('New'));
+const marcAuthUpdatesCsvBtn = authorityActionsDropDownMenu.find(
   Button('MARC authority headings updates (CSV)'),
 );
 
@@ -132,6 +135,10 @@ export default {
     cy.expect(PaneHeader('MARC authority').exists());
   },
   clickNewAuthorityButton() {
+    cy.do(newAuthorityButton.click());
+    QuickMarcEditorWindow.waitLoading();
+  },
+  clickActionsAndNewAuthorityButton() {
     cy.do([actionsButton.click(), newAuthorityButton.click()]);
     QuickMarcEditorWindow.waitLoading();
   },
@@ -1137,6 +1144,23 @@ export default {
       .then(() => cells);
   },
 
+  checkBrowseReturnsRecordsAsExactMatch(recordTitle, numberOfRecord, recordType) {
+    cy.get(
+      `div[class^="mclRowContainer--"] [data-row-index]:has(button:contains("${recordTitle}"))`,
+    )
+      // check number of found records
+      .should('have.length', numberOfRecord)
+      .each(($row) => {
+        // check Reference type
+        cy.wrap($row).contains(recordType);
+        // check that the record heading is bold (has a class containing the value 'anchorLink-')
+        cy.get($row)
+          .find('button[class*= link]')
+          .invoke('attr', 'class')
+          .should('match', /anchorLink-/);
+      });
+  },
+
   checkResultListSortedByColumn(columnIndex, isAscending = true) {
     this.getResultsListByColumn(columnIndex).then((cells) => {
       if (isAscending) {
@@ -1470,6 +1494,14 @@ export default {
     });
   },
 
+  checkButtonNewExistsInActionDropdown() {
+    cy.expect(buttonNew.exists());
+  },
+
+  checkAuthorityActionsDropDownExpanded() {
+    cy.expect(authorityActionsDropDown.has({ open: true }));
+  },
+
   createMarcAuthorityViaAPI(
     authorityFilePrefix,
     authorityFileHridStartsWith,
@@ -1496,7 +1528,7 @@ export default {
     this.getMarcAuthoritiesViaApi({ limit: 100, query: `keyword="${title}"` }).then((records) => {
       records.forEach((record) => {
         if (record.authRefType === authRefType) {
-          this.deleteViaAPI(record.id);
+          this.deleteViaAPI(record.id, true);
         }
       });
     });

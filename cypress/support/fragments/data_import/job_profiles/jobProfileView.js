@@ -240,7 +240,7 @@ export default {
   },
 
   openLinkedProfileById: (id) => {
-    cy.wait(1000);
+    cy.wait(2000);
     cy.do(viewPane.find(Link({ href: including(`${id}`) })).click());
   },
 };

@@ -1,4 +1,6 @@
 export const APPLICATION_NAMES = {
+  DATA_EXPORT: 'Data export',
+  DATA_IMPORT: 'Data import',
   INVENTORY: 'Inventory',
 };
 

@@ -116,7 +116,7 @@ export default {
 
   checkAuthorityLogJSON: (propertiesArray) => {
     cy.do(Button('Authority').click());
-
+    cy.wait(1500);
     propertiesArray.forEach((property) => {
       cy.expect(HTML(property).exists());
     });
@@ -142,6 +142,7 @@ export default {
   },
 
   checkFileIsRunning: (fileName) => {
+    cy.wait(1500);
     cy.expect(runningAccordion.find(HTML(including(fileName))).exists());
   },
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),

@@ -84,13 +84,13 @@ describe('MARC', () => {
         cy.getAdminToken();
         InventoryInstance.deleteInstanceViaApi(createdAuthorityID[0]);
         InventoryInstance.deleteInstanceViaApi(createdAuthorityID[1]);
-        MarcAuthority.deleteViaAPI(createdAuthorityID[2]);
+        MarcAuthority.deleteViaAPI(createdAuthorityID[2], true);
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
       it(
         'C375231 "MARC authority headings updates (CSV)" report includes correct number of linked "MARC bib" records (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           const dataForC375231 = [
             {

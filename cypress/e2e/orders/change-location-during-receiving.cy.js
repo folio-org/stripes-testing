@@ -85,7 +85,7 @@ describe('orders: Receive piece from Order', () => {
 
   it(
     'C9177 Change location during receiving (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
     () => {
       const displaySummary = 'autotestCaption';
       Orders.searchByParameter('PO number', orderNumber);

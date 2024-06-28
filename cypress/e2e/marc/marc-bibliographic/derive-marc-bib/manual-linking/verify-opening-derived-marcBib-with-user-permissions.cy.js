@@ -43,7 +43,7 @@ describe('MARC', () => {
         ];
 
         const linkingTagAndValues = {
-          rowIndex: 10,
+          rowIndex: 11,
           value: 'C417049 Chin, Staceyann, 1972-',
           tag: 100,
         };
