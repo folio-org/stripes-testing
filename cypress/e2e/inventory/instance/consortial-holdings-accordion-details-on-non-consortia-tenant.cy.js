@@ -56,14 +56,14 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       cy.deleteHoldingRecordViaApi(testData.testInstanceIds.holdings[0].id);
-      InventoryInstance.deleteInstanceViaApi(testData.testInstanceIds.id);
+      InventoryInstance.deleteInstanceViaApi(testData.testInstanceIds.instanceId);
     });
 
     it(
       'C411621 (NON-CONSORTIA) Verify the Consortial holdings accordion details on Non-consortia tenant (folijet)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        InventoryInstances.searchByTitle(testData.instance.instanceId);
+        InventoryInstances.searchByTitle(testData.testInstanceIds.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InventoryInstance.verifyConsortiaHoldingsAccordionAbsent();
