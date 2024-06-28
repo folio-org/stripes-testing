@@ -18,6 +18,7 @@ export default {
     cy.do(overrideModal.find(CheckboxInTable({ name: 'check-all' })).click());
     cy.do(overrideModal.find(TextArea('Additional information*')).fillIn(additionalInfo));
     cy.do(overrideModal.find(Button('Override')).click());
+    cy.wait(4000);
   },
 
   fillDateAndTime: (dateString, timeString = '11:59 PM') => {
