@@ -148,6 +148,36 @@ export default {
     ]);
   },
 
+  addNewFieldAfterExistingByTag: (
+    previousFieldTag,
+    newFieldTag,
+    content,
+    indicator0 = '\\',
+    indicator1 = '\\',
+  ) => {
+    cy.do(
+      QuickMarcEditorRow({ tagValue: previousFieldTag }).perform((element) => {
+        const rowIndex = Number(element.getAttribute('data-row').match(/\d+/)[0]);
+
+        cy.do([
+          QuickMarcEditorRow({ index: rowIndex }).find(addFieldButton).click(),
+          QuickMarcEditorRow({ index: rowIndex + 1 })
+            .find(TextField({ name: `records[${rowIndex + 1}].tag` }))
+            .fillIn(newFieldTag),
+          QuickMarcEditorRow({ index: rowIndex + 1 })
+            .find(TextField({ name: `records[${rowIndex + 1}].indicators[0]` }))
+            .fillIn(indicator0),
+          QuickMarcEditorRow({ index: rowIndex + 1 })
+            .find(TextField({ name: `records[${rowIndex + 1}].indicators[1]` }))
+            .fillIn(indicator1),
+          QuickMarcEditorRow({ index: rowIndex + 1 })
+            .find(TextArea({ name: `records[${rowIndex + 1}].content` }))
+            .fillIn(content),
+        ]);
+      }),
+    );
+  },
+
   checkLinkingAuthority650: () => {
     cy.expect(buttonLink.exists());
     cy.expect(Callout('Field 650 has been linked to a MARC authority record.').exists());
