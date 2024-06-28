@@ -44,7 +44,7 @@ describe('Inventory', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InstanceRecordView.addHoldings();
-        InventoryNewHoldings.fillPermanentLocation(testData.permanentLocation);
+        InventoryNewHoldings.fillPermanentLocation(`${testData.permanentLocation} `);
         InventoryNewHoldings.saveAndClose();
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.verifyIsHoldingsCreated([`${testData.permanentLocationUI} >`]);
