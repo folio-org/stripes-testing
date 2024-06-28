@@ -166,7 +166,7 @@ describe('Data Import', () => {
         cy.visit(TopMenu.dataImportPath);
 
         // Click on the "or choose files" button,  Select file from the precondition, Click on the "Open" button
-        DataImport.uploadFileAndRetry(testData.marcFile.marc, testData.marcFile.fileName);
+        DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
 
         // Select job profile
         DataImportJobProfiles.search(jobProfile);

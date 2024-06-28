@@ -200,6 +200,26 @@ export default {
       cy.expect([KeyValue(itemNote.type).has({ value: itemNote.note })]);
     });
   },
+
+  checkMultipleItemNotesWithStaffOnly: (rowIndex, staffOnly, noteType, noteText) => {
+    cy.get('#acc05').within(() => {
+      cy.get("[class^='row---']")
+        .eq(rowIndex)
+        .within(() => {
+          cy.get("[class^='col-']")
+            .first()
+            .within(() => {
+              cy.get("[class^='kvRoot-'] [class^='kvValue---']").should('contain', staffOnly);
+            });
+
+          cy.get("[class^='col-']:nth-child(2)").within(() => {
+            cy.get("[class^='kvRoot-'] [class^='kvLabel-']").should('contain', noteType);
+            cy.get("[class^='kvRoot-'] [class^='kvValue-']").should('contain', noteText);
+          });
+        });
+    });
+  },
+
   checkFieldsConditions({ fields, section } = {}) {
     fields.forEach(({ label, conditions }) => {
       cy.expect(section.find(KeyValue(label)).has(conditions));
