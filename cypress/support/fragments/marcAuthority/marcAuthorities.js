@@ -1528,7 +1528,7 @@ export default {
     this.getMarcAuthoritiesViaApi({ limit: 100, query: `keyword="${title}"` }).then((records) => {
       records.forEach((record) => {
         if (record.authRefType === authRefType) {
-          this.deleteViaAPI(record.id);
+          this.deleteViaAPI(record.id, true);
         }
       });
     });
