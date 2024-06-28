@@ -39,6 +39,8 @@ import selectLocationModal from './modals/selectLocationModal';
 
 const path = require('path');
 
+const addRoutingListButton = Button('Add routing list');
+const routingListSection = Section({ id: 'routing-list' });
 const filtersPane = PaneContent({ id: 'order-lines-filters-pane-content' });
 const receivedtitleDetails = PaneContent({ id: 'receiving-results-pane-content' });
 const saveAndCloseButton = Button('Save & close');
@@ -2337,5 +2339,37 @@ export default {
   },
   selectOrders: () => {
     cy.do(Section({ id: 'order-lines-filters-pane' }).find(Button('Orders')).click());
+  },
+
+  openRoutingLists: () => {
+    cy.do(Button({ id: 'accordion-toggle-button-routing-list' }).click());
+  },
+
+  addRoutingListExist: () => {
+    cy.expect(routingListSection.find(addRoutingListButton).exists());
+  },
+
+  addRoutingList: () => {
+    cy.do(routingListSection.find(addRoutingListButton).click());
+  },
+
+  addRoutingListAbsent: () => {
+    cy.expect(routingListSection.find(addRoutingListButton).absent());
+  },
+
+  fillInRoutingListInfoAndSave: (name) => {
+    cy.do([TextField({ id: 'input-routing-list-name' }).fillIn(name), saveAndCloseButton.click()]);
+  },
+
+  varifyAddingRoutingList: (name) => {
+    cy.expect(routingListSection.find(MultiColumnListCell(name)).exists());
+  },
+
+  addRoutingListIsDisabled() {
+    cy.expect(addRoutingListButton.is({ disabled: true }));
+  },
+
+  clickActionsButtonInRoutingList() {
+    cy.do(routingListSection.find(actionsButton).click());
   },
 };
