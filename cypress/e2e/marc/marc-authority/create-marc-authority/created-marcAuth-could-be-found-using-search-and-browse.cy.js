@@ -27,10 +27,14 @@ describe('MARC', () => {
       const users = {};
 
       const newFields = [
-        { rowIndex: 4, tag: '010', content: '$a n00776432' },
-        { rowIndex: 5, tag: '100', content: '$a John Doe $c Sir, $d 1909-1965 $l eng' },
-        { rowIndex: 6, tag: '400', content: '$a Huan Doe $c Senior, $d 1909-1965 $l eng' },
-        { rowIndex: 7, tag: '500', content: '$a La familia' },
+        { previousFieldTag: '008', tag: '010', content: '$a n00776432' },
+        { previousFieldTag: '010', tag: '100', content: '$a John Doe $c Sir, $d 1909-1965 $l eng' },
+        {
+          previousFieldTag: '100',
+          tag: '400',
+          content: '$a Huan Doe $c Senior, $d 1909-1965 $l eng',
+        },
+        { previousFieldTag: '400', tag: '500', content: '$a La familia' },
       ];
 
       before('Create users, data', () => {
@@ -58,7 +62,7 @@ describe('MARC', () => {
       after('Delete users, data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
-        MarcAuthority.deleteViaAPI(testData.authorityId);
+        MarcAuthority.deleteViaAPI(testData.authorityId, true);
         ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
       });
 
@@ -74,7 +78,11 @@ describe('MARC', () => {
           QuickMarcEditor.verifyAuthorityFileSelected(testData.sourceName);
           QuickMarcEditor.clickSaveAndCloseInModal();
           newFields.forEach((newField) => {
-            MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
+            MarcAuthority.addNewFieldAfterExistingByTag(
+              newField.previousFieldTag,
+              newField.tag,
+              newField.content,
+            );
           });
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
