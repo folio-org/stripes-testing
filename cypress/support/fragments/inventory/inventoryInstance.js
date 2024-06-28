@@ -1652,6 +1652,10 @@ export default {
     ]);
   },
 
+  verifyConsortiaHoldingsAccordionAbsent() {
+    cy.expect(instanceDetailsSection.find(Section({ id: 'consortialHoldings' })).absent());
+  },
+
   verifyMemberSubHoldingsAccordion(memberId, isOpen = true) {
     cy.wait(2000);
     cy.expect([
