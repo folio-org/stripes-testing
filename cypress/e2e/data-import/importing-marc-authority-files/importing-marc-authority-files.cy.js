@@ -4,9 +4,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import Users from '../../../support/fragments/users/users';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import ActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import { JobProfiles as SettingsJobProfiles } from '../../../support/fragments/settings/dataImport';
 import {
@@ -38,13 +37,15 @@ describe('Data Import', () => {
         testData.userProperties = createdUserProperties;
       });
 
-      cy.loginAsAdmin({
-        path: SettingsMenu.jobProfilePath,
-        waiter: JobProfiles.waitLoadingList,
-      }).then(() => {
-        JobProfiles.createJobProfile(createdJobProfile);
-        NewJobProfile.linkActionProfileByName('Default - Create MARC Authority');
-        NewJobProfile.saveAndClose();
+      // get default Action profile
+      ActionProfile.getActionProfilesViaApi({
+        query: 'name="Default - Create MARC Authority"',
+      }).then(({ actionProfiles }) => {
+        // create Job profile
+        NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
+          createdJobProfile.profileName,
+          actionProfiles[0].id,
+        );
       });
     });
 
