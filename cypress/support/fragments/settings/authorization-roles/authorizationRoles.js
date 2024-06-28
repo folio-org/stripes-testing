@@ -33,6 +33,9 @@ const roleNameInput = TextField('Name*');
 const roleDescriptionInput = TextArea('Description');
 const selectApplicationButton = Button({ id: 'find-application-trigger' });
 const selectApplicationModal = Modal('Select application');
+const selecAllAppsCheckbox = selectApplicationModal.find(
+  Checkbox({ testId: 'select-all-applications' }),
+);
 const selectAppSearchInput = selectApplicationModal.find(
   TextField({ id: 'input-applications-search' }),
 );
@@ -155,6 +158,11 @@ export default {
       .find(Checkbox());
     cy.do(targetCheckbox.click());
     cy.expect(targetCheckbox.has({ checked: isSelected }));
+  },
+
+  selectAllApplicationsInModal: (isSelected = true) => {
+    cy.do(selecAllAppsCheckbox.click());
+    cy.expect(selecAllAppsCheckbox.has({ checked: isSelected }));
   },
 
   clickSaveInModal: () => {
@@ -545,5 +553,26 @@ export default {
         ),
       }),
     ]);
+  },
+
+  checkCapabilitySpinnersShown() {
+    cy.expect([
+      capabilitiesAccordion.find(Spinner()).exists(),
+      capabilitySetsAccordion.find(Spinner()).exists(),
+    ]);
+  },
+
+  checkCapabilitySpinnersAbsent() {
+    cy.expect([
+      capabilitiesAccordion.find(Spinner()).absent(),
+      capabilitySetsAccordion.find(Spinner()).absent(),
+      capabilitiesAccordion.find(MultiColumnListRow()).exists(),
+      capabilitySetsAccordion.find(MultiColumnListRow()).exists(),
+    ]);
+  },
+
+  openForEditWithoutChecks: () => {
+    cy.wait(1000);
+    cy.do([actionsButton.click(), editButton.click()]);
   },
 };
