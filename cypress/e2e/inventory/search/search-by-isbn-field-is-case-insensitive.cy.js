@@ -19,21 +19,21 @@ describe('Inventory', () => {
         searchQueries: ['016037622X', '016037622x'],
         searchResults: ['C466070 Instance 1, ISBN lower case', 'C466070 Instance 2, ISBN UPPER case'],
       };
-  
+
       const marcFile = {
         marc: 'marcBibFileForC466070.mrc',
         fileName: `testMarcFileC466070.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
       };
-  
+
       const createdRecordIDs = [];
-  
+
       before(() => {
         cy.getAdminToken();
         cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
           testData.user = userProperties;
-  
+
           DataImport.uploadFileViaApi(
             marcFile.marc,
             marcFile.fileName,
@@ -43,14 +43,14 @@ describe('Inventory', () => {
               createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
-  
+
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
         });
       });
-  
+
       after(() => {
         cy.getAdminToken();
         createdRecordIDs.forEach((id) => {
@@ -58,7 +58,7 @@ describe('Inventory', () => {
         });
         Users.deleteViaApi(testData.user.userId);
       });
-  
+
       it(
         'C466070 Search by "ISBN" field is case-insensitive (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
@@ -95,7 +95,7 @@ describe('Inventory', () => {
               InventorySearchAndFilter.verifySearchResult(expectedResult);
             });
           });
-  
+
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.holdingsTabIsDefault();
           InventorySearchAndFilter.verifyResultPaneEmpty();
