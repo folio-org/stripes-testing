@@ -254,6 +254,14 @@ export default {
     );
   },
 
+  closeRoutingListDetails: () => {
+    cy.do(
+      PaneHeader({ id: 'paneHeaderrouting-list-pane' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
   closePOLEditForm: () => {
     cy.do(Button({ icon: 'clickable-close-new-line-dialog' }).click());
   },
@@ -2353,6 +2361,10 @@ export default {
     cy.do(routingListSection.find(addRoutingListButton).click());
   },
 
+  addRoutingListByActions: () => {
+    cy.do([routingListSection.find(actionsButton).click(), addRoutingListButton.click()]);
+  },
+
   addRoutingListAbsent: () => {
     cy.expect(routingListSection.find(addRoutingListButton).absent());
   },
@@ -2361,8 +2373,28 @@ export default {
     cy.do([TextField({ id: 'input-routing-list-name' }).fillIn(name), saveAndCloseButton.click()]);
   },
 
+  fillInRoutingListInfoWithNotesAndSave: (name, notes) => {
+    cy.do([
+      TextField({ id: 'input-routing-list-name' }).fillIn(name),
+      TextArea({ name: 'notes' }).fillIn(notes),
+      saveAndCloseButton.click(),
+    ]);
+  },
+
   varifyAddingRoutingList: (name) => {
     cy.expect(routingListSection.find(MultiColumnListCell(name)).exists());
+  },
+
+  openRoutingList: (name) => {
+    cy.do(routingListSection.find(MultiColumnListCell(name)).find(Link()).click());
+  },
+
+  checkRoutingListNameDetails(name) {
+    cy.expect(KeyValue('Name').has({ value: name }));
+  },
+
+  checkRoutingListNotesDetails(notes) {
+    cy.expect(KeyValue('Notes').has({ value: notes }));
   },
 
   addRoutingListIsDisabled() {
