@@ -106,6 +106,7 @@ describe('Orders > Receiving and Check-in ', () => {
                           firstOrderNumber = firstOrderResponse.poNumber;
                           firstOrderLine.purchaseOrderId = firstOrderResponse.id;
                           OrderLines.createOrderLineViaApi(firstOrderLine);
+
                           Orders.updateOrderViaApi({
                             ...firstOrderResponse,
                             workflowStatus: ORDER_STATUSES.OPEN,
