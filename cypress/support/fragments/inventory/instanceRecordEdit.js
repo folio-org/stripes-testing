@@ -177,10 +177,10 @@ export default {
   choosePermanentLocation(locationName) {
     // wait fixes selection behavior
     cy.wait(1000);
-    cy.do([Selection('Permanent').open(), Selection('Permanent').choose(including(locationName))]);
+    cy.do([Selection({ id: 'additem_permanentlocation' }).choose(including(locationName))]);
   },
   chooseTemporaryLocation(locationName) {
-    cy.do([Selection('Temporary').open(), Selection('Temporary').choose(including(locationName))]);
+    cy.do([Selection({ id: 'additem_temporarylocation' }).choose(including(locationName))]);
   },
   chooseInstanceStatusTerm(statusTerm) {
     cy.do(Select('Instance status term').choose(statusTerm));

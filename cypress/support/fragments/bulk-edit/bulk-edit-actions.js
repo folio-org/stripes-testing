@@ -726,7 +726,7 @@ export default {
   },
 
   verifyNoMatchingOptionsForLocationFilter() {
-    cy.expect(HTML('No matching options').exists());
+    cy.expect(HTML('-List is empty-').exists());
   },
 
   duplicateCheckInNote(note = 'in', rowIndex = 0) {
