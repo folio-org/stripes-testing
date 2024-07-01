@@ -330,8 +330,6 @@ export default {
     ]);
     this.selectVendorOnUi(invoice.vendorName);
     cy.do([
-      Button({ name: 'accountNo' }).click(),
-      SelectionList().select(`Default (${invoice.accountingCode})`),
       batchGroupSelection.open(),
       SelectionList().select(invoice.batchGroup),
       invoicePaymentMethodSelect.choose('Cash'),
@@ -707,8 +705,9 @@ export default {
       Button({ id: 'fundDistributions-add-button' }).click(),
       Selection('Fund ID*').open(),
       SelectionList().select(fund.name.concat(' ', '(', fund.code, ')')),
-      saveAndClose.click(),
     ]);
+    cy.wait(2000);
+    cy.do([saveAndClose.click()]);
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
     cy.wait(8000);
   },
