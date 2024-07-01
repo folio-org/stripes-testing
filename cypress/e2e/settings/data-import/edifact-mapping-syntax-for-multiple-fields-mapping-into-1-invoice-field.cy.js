@@ -176,7 +176,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForFirstImport);
         Logs.checkImportFile(collectionOfProfiles[0].jobProfile.profileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForFirstImport, JOB_STATUS_NAMES.COMPLETED);
 
         cy.visit(TopMenu.invoicesPath);
         Invoices.searchByNumber(invoiceNumber);
@@ -198,7 +198,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForSecondImport);
         Logs.checkImportFile(collectionOfProfiles[1].jobProfile.profileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForSecondImport, JOB_STATUS_NAMES.COMPLETED);
 
         cy.visit(TopMenu.invoicesPath);
         Invoices.searchByNumber(invoiceNumber);

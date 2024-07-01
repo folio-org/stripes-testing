@@ -10,13 +10,13 @@ import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
+import ActionProfile from '../../../../support/fragments/settings/dataImport/actionProfiles/actionProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import { JobProfiles as SettingsJobProfiles } from '../../../../support/fragments/settings/dataImport';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
@@ -71,15 +71,17 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-        });
 
-        cy.loginAsAdmin({
-          path: SettingsMenu.jobProfilePath,
-          waiter: JobProfiles.waitLoadingList,
-        }).then(() => {
-          JobProfiles.createJobProfile(createdJobProfile);
-          NewJobProfile.linkActionProfileByName('Default - Create MARC Authority');
-          NewJobProfile.saveAndClose();
+          // get default Action profile
+          ActionProfile.getActionProfilesViaApi({
+            query: 'name="Default - Create MARC Authority"',
+          }).then(({ actionProfiles }) => {
+            // create Job profile
+            NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
+              createdJobProfile.profileName,
+              actionProfiles[0].id,
+            );
+          });
 
           DataImport.uploadFileViaApi('marcAuthFileForC350902.mrc', fileName, jobProfileToRun).then(
             (response) => {

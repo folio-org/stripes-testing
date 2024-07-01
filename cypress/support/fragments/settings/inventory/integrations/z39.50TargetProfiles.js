@@ -46,7 +46,7 @@ function addJobProfileForCreate(profile = defaultCreateInstanceJobProfileName) {
   cy.do(Button('Add job profile for import/create').click());
   cy.wait(2000);
   cy.do([
-    Selection({ singleValue: 'Select job profile for import/create' }).open(),
+    Selection({ value: including('Select job profile for import/create') }).open(),
     SelectionList().select(profile),
   ]);
 }
@@ -54,7 +54,7 @@ function addJobProfileForUpdate(profile = defaultUpdateInstanceJobProfileName) {
   cy.wait(2000);
   cy.do([
     Button('Add job profile for overlay/update').click(),
-    Selection({ singleValue: 'Select job profile for overlay/update' }).open(),
+    Selection({ value: including('Select job profile for overlay/update') }).open(),
     SelectionList().select(profile),
   ]);
 }

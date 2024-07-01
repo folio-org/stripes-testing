@@ -68,7 +68,7 @@ const source = KeyValue('Source');
 const tagButton = Button({ icon: 'tag' });
 const closeTag = Button({ icon: 'times' });
 const tagsPane = Pane('Tags');
-const textFieldTagInput = MultiSelect({ ariaLabelledby: 'input-tag-label' });
+const textFieldTagInput = MultiSelect({ label: 'Tag text area' });
 const descriptiveDataAccordion = Accordion('Descriptive data');
 const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
 const titleDataAccordion = Accordion('Title data');
@@ -1040,7 +1040,7 @@ export default {
     cy.wait(1500);
     cy.do(tagButton.click());
     cy.wait(1500);
-    cy.expect(MultiSelect({ ariaLabelledby: 'input-tag-label' }).exists(tagName));
+    cy.expect(textFieldTagInput.exists(tagName));
   },
 
   deleteTag: (tagName) => {
@@ -1650,6 +1650,10 @@ export default {
       Section({ id: 'consortialHoldings' }).exists(),
       Accordion({ id: 'consortialHoldings' }).has({ open: isOpen }),
     ]);
+  },
+
+  verifyConsortiaHoldingsAccordionAbsent() {
+    cy.expect(instanceDetailsSection.find(Section({ id: 'consortialHoldings' })).absent());
   },
 
   verifyMemberSubHoldingsAccordion(memberId, isOpen = true) {

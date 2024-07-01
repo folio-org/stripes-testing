@@ -166,7 +166,7 @@ describe('Data Import', () => {
         cy.visit(TopMenu.dataImportPath);
 
         // Click on the "or choose files" button,  Select file from the precondition, Click on the "Open" button
-        DataImport.uploadFileAndRetry(testData.marcFile.marc, testData.marcFile.fileName);
+        DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
 
         // Select job profile
         DataImportJobProfiles.search(jobProfile);
@@ -174,7 +174,7 @@ describe('Data Import', () => {
         // Click on the "Actions" button,  Select "Run", Click on the "Run" button
         DataImportJobProfiles.runImportFile();
         DataImportJobProfiles.waitFileIsImported(testData.marcFile.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(testData.marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
 
         // Go to the "Orders" app, Click "Order lines"
         cy.visit(TopMenu.orderLinesPath);

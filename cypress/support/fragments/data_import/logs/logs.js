@@ -49,7 +49,7 @@ export default {
     cy.do(viewAllLogsButton.click());
     cy.do([
       anyProfileAccordion.clickHeader(),
-      anyProfileAccordion.find(Selection({ singleValue: including('Choose job profile') })).open(),
+      anyProfileAccordion.find(Selection({ value: including('Choose job profile') })).open(),
     ]);
     cy.do(SelectionList().select(jobProfileName));
     cy.expect(MultiColumnListCell(jobProfileName).exists());
@@ -142,6 +142,7 @@ export default {
   },
 
   checkFileIsRunning: (fileName) => {
+    cy.wait(1500);
     cy.expect(runningAccordion.find(HTML(including(fileName))).exists());
   },
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),
