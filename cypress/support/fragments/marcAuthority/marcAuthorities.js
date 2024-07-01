@@ -1144,7 +1144,7 @@ export default {
       .then(() => cells);
   },
 
-  checkBrowseReturnsRecordsAsExactMatch(recordTitle, numberOfRecord, recordType) {
+  checkBrowseReturnsRecordsAsExactMatchInAuthorityModal(recordTitle, numberOfRecord, recordType) {
     cy.get(
       `div[class^="mclRowContainer--"] [data-row-index]:has(button:contains("${recordTitle}"))`,
     )
@@ -1156,6 +1156,21 @@ export default {
         // check that the record heading is bold (has a class containing the value 'anchorLink-')
         cy.get($row)
           .find('button[class*= link]')
+          .invoke('attr', 'class')
+          .should('match', /anchorLink-/);
+      });
+  },
+
+  checkBrowseReturnsRecordsAsExactMatch(recordTitle, numberOfRecord, recordType) {
+    cy.get(`div[class^="mclRowContainer--"] [data-row-index]:has(a:contains("${recordTitle}"))`)
+      // check number of found records
+      .should('have.length', numberOfRecord)
+      .each(($row) => {
+        // check Reference type
+        cy.wrap($row).contains(recordType);
+        // check that the record heading is bold (has a class containing the value 'anchorLink-')
+        cy.get($row)
+          .find('a[class*= root-]')
           .invoke('attr', 'class')
           .should('match', /anchorLink-/);
       });
