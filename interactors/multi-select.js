@@ -32,7 +32,7 @@ export const MultiSelectOption = HTML.extend('multi select option')
     return str;
   })
   .filters({
-    cursored: (el) => el.className.includes('cursor'),
+    cursored: (el) => el.className.includes('Cursor'),
     index: (el) => [...el.parentNode.children].indexOf(el),
     selected: (el) => el.className.includes('selected'),
     innerHTML: (el) => el.innerHTML,
@@ -72,7 +72,7 @@ export default createInteractor('multi select')
   .filters({
     open,
     label: (el) => el.querySelector('label').textContent,
-    id: (el) => el.parentElement.id,
+    id: (el) => el.id,
     placeholder: (el) => el.querySelector('input').placeholder,
     selected: (element) => {
       const valueList = element.querySelector('ul[class^=multiSelectValueList-]');
@@ -88,7 +88,7 @@ export default createInteractor('multi select')
     focused: (el) => Boolean(el.querySelector(':focus')),
     focusedValue: (el) => el.querySelector('ul').querySelector('button:focus').parentNode.textContent,
     error: (el) => el.querySelector('[class^=feedbackError]').textContent,
-    ariaLabelledby: (el) => el.getAttribute('aria-labelledby'),
+    ariaLabelledby: (el) => el.querySelector('[role=searchbox]').getAttribute('aria-labelledby'),
     span: (el) => el.querySelector('span').textContent,
   })
   .actions({
