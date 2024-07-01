@@ -182,7 +182,7 @@ function selectExistingRecordField(existingRecordOption) {
   cy.do(criterionValueTypeList.find(SelectionOption(existingRecordOption)).click());
   // TODO wait until option will be selected
   cy.wait(1500);
-  cy.get('#selected-criterion-value-type-item').contains(existingRecordOption);
+  cy.get('#criterion-value-type').contains(existingRecordOption);
 }
 
 function fillOnlyComparePartOfTheValue(value) {

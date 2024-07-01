@@ -51,7 +51,7 @@ describe('Data Import', () => {
         DataImport.deleteImportJob(bigFileName);
         DataImport.verifyCancelImportJobModal();
         DataImport.confirmDeleteImportJob();
-        Logs.checkStatusOfJobProfile('Stopped by user');
+        Logs.checkJobStatus(bigFileName, JOB_STATUS_NAMES.STOPPED_BY_USER);
         DataImport.selectLog();
         DataImport.openDeleteImportLogsModal();
         DataImport.confirmDeleteImportLogs();
@@ -65,7 +65,7 @@ describe('Data Import', () => {
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(smallFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(smallFileName, JOB_STATUS_NAMES.COMPLETED);
       },
     );
   });

@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -43,7 +43,7 @@ describe('Data Import', () => {
           `${testData.userProperties.firstName} ${testData.userProperties.lastName}`,
           testData.marcFileName,
         );
-        Logs.checkStatusOfJobProfile();
+        Logs.checkJobStatus(testData.marcFileName, JOB_STATUS_NAMES.COMPLETED);
       },
     );
   });

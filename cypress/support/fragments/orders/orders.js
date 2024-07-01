@@ -677,6 +677,7 @@ export default {
         path: 'orders/composite-orders',
         searchParams,
         isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
       })
       .then(({ body }) => {
         return body.purchaseOrders;

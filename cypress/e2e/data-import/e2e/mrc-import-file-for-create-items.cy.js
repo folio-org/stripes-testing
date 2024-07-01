@@ -6,6 +6,7 @@ import {
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
   RECORD_STATUSES,
+  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -167,7 +168,7 @@ describe('Data Import', () => {
         JobProfiles.search(specialJobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile();
+        Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.checkImportFile(specialJobProfile.profileName);
         Logs.openFileDetails(fileName);
         [

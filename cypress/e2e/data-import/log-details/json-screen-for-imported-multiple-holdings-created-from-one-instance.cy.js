@@ -115,7 +115,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(testData.marcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(testData.marcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(testData.marcFileName);
         FileDetails.verifyMultipleHoldingsStatus(
           testData.arrayOfHoldingsStatuses,

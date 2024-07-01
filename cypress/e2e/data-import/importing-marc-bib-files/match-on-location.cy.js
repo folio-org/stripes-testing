@@ -387,7 +387,7 @@ describe('Data Import', () => {
       JobProfiles.search(jobProfileForUpdate.profileName);
       JobProfiles.runImportFile();
       Logs.waitFileIsImported(fileNameAfterUpdate);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.checkJobStatus(fileNameAfterUpdate, JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(fileNameAfterUpdate);
       rowNumbers.forEach((rowNumber) => {
         FileDetails.checkStatusInColumn(
