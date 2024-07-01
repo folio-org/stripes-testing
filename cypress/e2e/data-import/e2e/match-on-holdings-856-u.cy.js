@@ -202,7 +202,7 @@ describe('Data Import', () => {
         JobProfiles.search(createInstanceAndEHoldingsJobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameForCreateMarcFile);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(nameForCreateMarcFile, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameForCreateMarcFile);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
@@ -218,7 +218,7 @@ describe('Data Import', () => {
           JobProfiles.search(updateEHoldingsJobProfile.profileName);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(nameForUpdateCreateMarcFile);
-          Logs.checkStatusOfJobProfile();
+          Logs.checkJobStatus(nameForUpdateCreateMarcFile, JOB_STATUS_NAMES.COMPLETED);
 
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.selectYesfilterStaffSuppress();

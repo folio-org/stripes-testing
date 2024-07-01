@@ -147,7 +147,8 @@ export default {
   },
 
   searchWithTerm(term) {
-    cy.get('#input-job-logs-search').clear().type(term);
+    const newFileName = term.replace('.mrc', '');
+    cy.get('#input-job-logs-search').clear().type(newFileName);
     cy.do(Button('Search').click());
     // need to wait until search list is populated
     cy.wait(1500);
@@ -211,7 +212,7 @@ export default {
   filterJobsByJobProfile(jobProfile) {
     cy.do([
       jobProfileAccordion.clickHeader(),
-      jobProfileAccordion.find(Selection({ singleValue: 'Choose job profile' })).open(),
+      jobProfileAccordion.find(Selection({ value: 'Choose job profile' })).open(),
       SelectionList().select(jobProfile),
     ]);
   },
@@ -221,7 +222,7 @@ export default {
   },
 
   filterJobsByUser(user) {
-    cy.do([Selection({ singleValue: 'Choose user' }).open(), SelectionList().select(user)]);
+    cy.do([Selection({ value: 'Choose user' }).open(), SelectionList().select(user)]);
   },
 
   filterJobsByInventorySingleRecordImports(filter) {
@@ -569,14 +570,14 @@ export default {
   verifyUserNameIsAbsntInFilter(userName) {
     cy.do(
       Accordion({ id: 'userId' })
-        .find(Selection({ singleValue: 'Choose user' }))
+        .find(Selection({ value: 'Choose user' }))
         .open(),
     );
     cy.get(userName).should('not.exist');
   },
 
   verifyJobProfileIsAbsntInFilter(jobProfile) {
-    cy.do(jobProfileAccordion.find(Selection({ singleValue: 'Choose job profile' })).open());
+    cy.do(jobProfileAccordion.find(Selection({ value: 'Choose job profile' })).open());
     cy.get(jobProfile).should('not.exist');
   },
 

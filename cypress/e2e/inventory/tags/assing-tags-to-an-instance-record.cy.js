@@ -32,7 +32,6 @@ describe('Inventory', () => {
           }).then((specialInstanceId) => {
             instanceId = specialInstanceId;
           });
-          cy.wait(10000);
         });
 
       cy.createTagApi(tag).then((tagId) => {

@@ -281,7 +281,7 @@ export default {
   },
   verifyStatisticalCodeIsEnabled() {
     cy.do(addStatisticalCodeButton.click());
-    cy.expect(Selection({ singleValue: 'Select code' }).visible());
+    cy.expect(Selection({ value: 'Select code' }).visible());
     cy.get('[class*=selectionControlContainer] button').should('be.enabled');
   },
   verifyNatureOfContentIsEnabled() {

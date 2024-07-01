@@ -332,7 +332,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileForCreate.name);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameMarcFileForImportCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(nameMarcFileForImportCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForImportCreate);
 
         // check the instance is created

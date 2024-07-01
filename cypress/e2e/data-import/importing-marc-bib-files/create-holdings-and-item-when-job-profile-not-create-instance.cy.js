@@ -205,7 +205,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreate);
         [
           FileDetails.columnNameInResultList.holdings,
