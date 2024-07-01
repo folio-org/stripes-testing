@@ -365,6 +365,9 @@ export default {
       orderLineTitleField.fillIn(orderLineTitleName),
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
       receivingWorkflowSelect.choose(
         RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
@@ -385,6 +388,9 @@ export default {
       orderLineTitleField.fillIn(orderLineTitleName),
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
       receivingWorkflowSelect.choose(
         RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
@@ -404,6 +410,9 @@ export default {
       orderLineTitleField.fillIn(orderLineTitleName),
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
       receivingWorkflowSelect.choose(
         RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
@@ -426,6 +435,9 @@ export default {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
       Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.RECEIPT_NOT_REQUIRED),
     ]);
@@ -455,6 +467,9 @@ export default {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
       Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.RECEIPT_NOT_REQUIRED),
     ]);
@@ -516,6 +531,9 @@ export default {
       orderLineTitleField.fillIn(orderLineTitleName),
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
       receivingWorkflowSelect.choose(
         RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY,
@@ -526,6 +544,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       fundDistributionField.fillIn('100'),
       addLocationButton.click(),
       locationSelect.click(),
@@ -540,6 +561,9 @@ export default {
       orderLineTitleField.fillIn(orderLineTitleName),
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.OTHER),
       acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
       receivingWorkflowSelect.choose(
         RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY,
@@ -550,6 +574,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       fundDistributionField.fillIn('100'),
       addLocationButton.click(),
       locationSelect.click(),
@@ -575,6 +602,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
@@ -613,6 +643,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(Button('%')).click(),
       fundDistributionField.fillIn(value),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
@@ -640,7 +673,9 @@ export default {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
-
+    ]);
+    cy.wait(2000);
+    cy.do([
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
       receivingWorkflowSelect.choose(
         RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
@@ -650,6 +685,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       Button({ id: 'fundDistribution[0].expenseClassId' }).click(),
       SelectionOption(`${expClass}`).click(),
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
@@ -683,6 +721,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
@@ -716,6 +757,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
@@ -748,6 +792,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
       Select({ name: 'eresource.materialType' }).choose(MATERIAL_TYPE_NAMES.BOOK),
@@ -780,6 +827,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
       Select({ name: 'eresource.materialType' }).choose(MATERIAL_TYPE_NAMES.BOOK),
@@ -912,6 +962,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(Button('%')).click(),
       fundDistributionField.fillIn(fundValue),
     ]);
@@ -940,6 +993,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       Button({ id: 'fundDistribution[0].expenseClassId' }).click(),
       SelectionOption(`${expenseClass}`).click(),
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
@@ -980,6 +1036,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       Button({ id: 'fundDistribution[0].expenseClassId' }).click(),
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
@@ -1001,9 +1060,9 @@ export default {
       physicalUnitPriceTextField.fillIn(unitPrice),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
-      fundDistributionField.fillIn(value),
-      saveAndCloseButton.click(),
     ]);
+    cy.wait(2000);
+    cy.do([fundDistributionField.fillIn(value), saveAndCloseButton.click()]);
     cy.wait(6000);
     submitOrderLine();
   },
@@ -1012,8 +1071,9 @@ export default {
     cy.do([
       Button({ id: `fundDistribution[${indexOfPreviusFund}].fundId` }).click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
-      TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value),
     ]);
+    cy.wait(2000);
+    cy.do([TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value)]);
   },
 
   selectOrderline: (POlinenumber) => {
@@ -1058,6 +1118,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
       saveAndCloseButton.click(),
@@ -1071,8 +1134,9 @@ export default {
       addFundDistributionButton.click(),
       Button({ id: `fundDistribution[${indexOfPreviusFund}].fundId` }).click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
-      TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value),
     ]);
+    cy.wait(2000);
+    cy.do([TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value)]);
   },
 
   addTwoFundsToPOLinPercent(
@@ -1120,7 +1184,10 @@ export default {
       orderLineTitleField.fillIn(orderLineTitleName),
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
       acquisitionMethodButton.click(),
-      SelectionOption(ORDER_FORMAT_NAMES.OTHER).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption(ACQUISITION_METHOD_NAMES.OTHER).click(),
       receivingWorkflowSelect.choose(
         RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
       ),
@@ -1129,6 +1196,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
       addLocationButton.click(),
@@ -1144,7 +1214,10 @@ export default {
       orderLineTitleField.fillIn(orderLineTitleName),
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
       acquisitionMethodButton.click(),
-      SelectionOption(ORDER_FORMAT_NAMES.OTHER).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption(ACQUISITION_METHOD_NAMES.OTHER).click(),
       receivingWorkflowSelect.choose(
         RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
       ),
@@ -1153,6 +1226,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       fundDistributionField.fillIn('100'),
       addLocationButton.click(),
       locationSelect.click(),
@@ -1167,6 +1243,9 @@ export default {
       orderLineTitleField.fillIn(orderLineTitle),
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn('2'),
@@ -1178,9 +1257,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
-      fundDistributionField.fillIn('100'),
-      saveAndCloseButton.click(),
     ]);
+    cy.wait(2000);
+    cy.do([fundDistributionField.fillIn('100'), saveAndCloseButton.click()]);
   },
 
   fillPolWithEuroCurrency(fund, unitPrice, quantity, institutionId) {
@@ -1201,6 +1280,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       fundDistributionField.fillIn('100'),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
@@ -1234,6 +1316,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       fundDistributionField.fillIn('100'),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
@@ -1254,7 +1339,9 @@ export default {
       orderLineTitleField.fillIn(orderLineTitle),
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PE_MIX),
       acquisitionMethodButton.click(),
-      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
       receivingWorkflowSelect.choose(
         RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY,
@@ -1284,7 +1371,9 @@ export default {
       orderLineTitleField.fillIn(orderLineTitle),
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PE_MIX),
       acquisitionMethodButton.click(),
-      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       SelectionOption(AUMethod).click(),
       receivingWorkflowSelect.choose(
         RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY,
@@ -1316,9 +1405,9 @@ export default {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
       acquisitionMethodButton.click(),
-      acquisitionMethodButton.click(),
-      SelectionOption(AUMethod).click(),
     ]);
+    cy.wait(2000);
+    cy.do([SelectionOption(AUMethod).click()]);
     cy.do([
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
       quantityElectronicTextField.fillIn(quantityElectronic),
@@ -1348,7 +1437,9 @@ export default {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
       acquisitionMethodButton.click(),
-      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       SelectionOption(AUMethod).click(),
       Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
     ]);
@@ -1379,9 +1470,9 @@ export default {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
-      acquisitionMethodButton.click(),
-      SelectionOption(AUMethod).click(),
     ]);
+    cy.wait(3000);
+    cy.do([SelectionOption(AUMethod).click()]);
     cy.do([
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantity),
@@ -1428,6 +1519,9 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
@@ -1473,10 +1567,9 @@ export default {
   },
 
   fillInPOLineInfoWithLocationForPEMIXResource(accountNumber, AUMethod, institutionName, quantity) {
+    cy.do([orderFormatSelect.choose(ORDER_FORMAT_NAMES.PE_MIX), acquisitionMethodButton.click()]);
+    cy.wait(2000);
     cy.do([
-      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PE_MIX),
-      acquisitionMethodButton.click(),
-      acquisitionMethodButton.click(),
       SelectionOption(AUMethod).click(),
       Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
     ]);
@@ -1740,9 +1833,9 @@ export default {
   },
 
   fillPOLWithTitleLookUp: () => {
+    cy.do([orderFormatSelect.choose(ORDER_FORMAT_NAMES.OTHER), acquisitionMethodButton.click()]);
+    cy.wait(2000);
     cy.do([
-      orderFormatSelect.choose(ORDER_FORMAT_NAMES.OTHER),
-      acquisitionMethodButton.click(),
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
       receivingWorkflowSelect.choose(
         RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
@@ -1883,11 +1976,9 @@ export default {
   },
 
   changeFundInPOL: (fund) => {
-    cy.do([
-      fundDistributionSelect.click(),
-      SelectionOption(`${fund.name} (${fund.code})`).click(),
-      saveAndCloseButton.click(),
-    ]);
+    cy.do([fundDistributionSelect.click(), SelectionOption(`${fund.name} (${fund.code})`).click()]);
+    cy.wait(2000);
+    cy.do([saveAndCloseButton.click()]);
   },
 
   checkFundInPOL: (fund) => {
