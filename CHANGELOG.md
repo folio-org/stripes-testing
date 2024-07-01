@@ -3,6 +3,7 @@
 ## 4.8.0 IN PROGRESS
 
 - Updated Call Number search option labels. Refs FAT-13489.
+- Update `<MultiSelection>` interactor. Refs STCOM-1304.
 
 ## [4.7.0](https://github.com/folio-org/stripes-testing/tree/v4.7.0) (2024-03-12)
 
