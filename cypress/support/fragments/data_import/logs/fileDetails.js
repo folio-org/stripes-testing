@@ -571,7 +571,9 @@ export default {
   },
 
   verifyLogDetailsPageIsOpened: (fileName) => {
-    cy.expect(Pane(including(fileName)).exists());
+    const newFileName = fileName.replace('.mrc', '');
+
+    cy.expect(Pane(including(newFileName)).exists());
   },
 
   verifyInstanceStatusIsHiperlink: (itmStatus, rowNumber = 0) => {

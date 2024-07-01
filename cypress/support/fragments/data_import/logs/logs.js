@@ -142,6 +142,7 @@ export default {
   },
 
   checkFileIsRunning: (fileName) => {
+    cy.wait(1500);
     cy.expect(runningAccordion.find(HTML(including(fileName))).exists());
   },
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),

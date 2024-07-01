@@ -58,7 +58,7 @@ export default {
   },
   checkReadOnlyFields: () => readonlyFields.forEach((element) => cy.expect(element.has({ disabled: true }))),
   closeWithoutSave: () => cy.do(rootForm.find(Button('Cancel')).click()),
-  fillHoldingFields({ permanentLocation, callNumber, holdingsNote } = {}) {
+  fillHoldingFields({ permanentLocation, callNumber, holdingsNote, holdingType } = {}) {
     if (permanentLocation) {
       this.changePermanentLocation(permanentLocation);
     }
@@ -69,6 +69,10 @@ export default {
 
     if (holdingsNote) {
       this.addHoldingsNotes(holdingsNote);
+    }
+
+    if (holdingType) {
+      cy.do([Select({ id: 'additem_holdingstype' }).choose(holdingType)]);
     }
   },
   changePermanentLocation: (location) => {

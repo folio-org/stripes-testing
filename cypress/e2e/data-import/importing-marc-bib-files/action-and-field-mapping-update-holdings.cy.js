@@ -199,8 +199,8 @@ describe('Data Import', () => {
       ).then((response) => {
         instanceHrid = response[0].instance.hrid;
         instanceId = response[0].instance.id;
-        holdingsHrId = response[0].holdings.hrid;
-        holdingsId = response[0].holdings.id;
+        holdingsHrId = response[0].holding.hrid;
+        holdingsId = response[0].holding.id;
       });
     });
 

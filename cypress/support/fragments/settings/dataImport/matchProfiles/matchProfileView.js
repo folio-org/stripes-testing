@@ -41,7 +41,7 @@ export default {
 
   verifyActionMenuAbsent: () => cy.expect(viewPane.find(actionsButton).absent()),
   verifyMatchProfileTitleName: (profileName) => {
-    cy.wait(1000);
+    cy.wait(2000);
     cy.get('#view-match-profile-pane-content h2').should('have.text', profileName);
   },
   verifyMatchProfileWithIncomingAndExistingValue(
