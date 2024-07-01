@@ -73,7 +73,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.searchColumnName('note');
         BulkEditSearchPane.searchColumnName('fewoh', false);
         BulkEditSearchPane.clearSearchColumnNameTextfield();
-        const columnName = 'Holdings ID';
+        const columnName = 'Holdings UUID';
         BulkEditSearchPane.searchColumnName(columnName);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(columnName);
         BulkEditSearchPane.changeShowColumnCheckbox(columnName);

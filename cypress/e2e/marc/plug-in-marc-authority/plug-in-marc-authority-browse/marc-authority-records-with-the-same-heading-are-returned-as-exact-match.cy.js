@@ -1,4 +1,7 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  MARC_AUTHORITY_BROWSE_OPTIONS,
+} from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -33,7 +36,7 @@ describe('MARC', () => {
         },
         {
           marc: 'marcFileForC442834.mrc',
-          fileName: `C442834testMarcFile.${getRandomPostfix()}.mrc`,
+          fileName: `C442834_testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           propertyName: 'authority',
         },
@@ -76,7 +79,9 @@ describe('MARC', () => {
             InventoryInstance.verifyAndClickLinkIcon('700');
             MarcAuthorities.clickReset();
             MarcAuthorities.switchToBrowse();
-            MarcAuthorities.selectSearchOptionInDropdown('Geographic name');
+            MarcAuthorities.selectSearchOptionInDropdown(
+              MARC_AUTHORITY_BROWSE_OPTIONS.GEOGRAPHIC_NAME,
+            );
           });
         });
       });
@@ -97,7 +102,7 @@ describe('MARC', () => {
           browseValues.forEach((browseValue) => {
             MarcAuthorities.searchBeats(browseValue.title);
             cy.wait(2000);
-            MarcAuthorities.checkBrowseReturnsRecordsAsExactMatch(
+            MarcAuthorities.checkBrowseReturnsRecordsAsExactMatchInAuthorityModal(
               browseValue.title,
               browseValue.numberOfRecords,
               browseValue.authRefType,

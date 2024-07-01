@@ -600,22 +600,22 @@ export default {
 
   verifyHoldingActionShowColumns() {
     cy.expect([
-      DropdownMenu().find(Checkbox('Holdings ID')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings UUID')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Version')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Holdings HRID')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Holdings type')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Former ids')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Former holdings Id')).has({ checked: false }),
       DropdownMenu()
         .find(Checkbox('Instance (Title, Publisher, Publication date)'))
         .has({ checked: false }),
-      DropdownMenu().find(Checkbox('Permanent location')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Temporary location')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Effective location')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings permanent location')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Holdings temporary location')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Holdings effective location')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Electronic access')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Call number type')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Call number prefix')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Call number')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Call number suffix')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Holdings level call number type')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings level call number prefix')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Holdings level call number')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Holdings level call number suffix')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Shelving title')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Acquisition format')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Acquisition method')).has({ checked: false }),
