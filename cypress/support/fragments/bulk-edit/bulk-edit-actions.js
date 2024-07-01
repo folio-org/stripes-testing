@@ -721,6 +721,10 @@ export default {
     cy.do(Checkbox('Apply to all items records').click());
   },
 
+  applyToItemsRecordsCheckboxExists(checked) {
+    cy.expect(Checkbox({ label: 'Apply to all items records', checked }).exists());
+  },
+
   verifyNoMatchingOptionsForLocationFilter() {
     cy.expect(HTML('No matching options').exists());
   },
@@ -1058,5 +1062,30 @@ export default {
 
   verifyCheckboxAbsent() {
     cy.expect(Checkbox().absent());
+  },
+
+  verifyCheckboxAbsentByRow(rowIndex = 0) {
+    cy.expect(RepeatableFieldItem({ index: rowIndex }).find(Checkbox()).absent());
+  },
+
+  verifyStaffOnlyCheckbox(checked = false, rowIndex = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Checkbox({ label: 'Staff only', checked }))
+        .exists(),
+    );
+  },
+
+  checkStaffOnlyCheckbox(rowIndex = 0) {
+    this.verifyStaffOnlyCheckbox(false, rowIndex);
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(Checkbox('Staff only')).click());
+  },
+
+  uncheckStaffOnlyCheckbox(rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Checkbox({ label: 'Staff only', checked: true }))
+        .click(),
+    );
   },
 };
