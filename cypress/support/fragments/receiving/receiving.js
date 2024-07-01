@@ -439,4 +439,8 @@ export default {
     cy.do(openedRequestModal.find(Button('Close')).click());
     cy.expect(openedRequestModal.absent());
   },
+
+  varifyAddingRoutingList: (name) => {
+    cy.expect(Section({ id: 'routing-list' }).find(MultiColumnListCell(name)).exists());
+  },
 };
