@@ -173,7 +173,7 @@ describe('Data Import', () => {
         Permissions.dataExportEnableApp.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
-        
+
         cy.loginAsAdmin()
           .then(() => {
             marcFiles.forEach((marcFile) => {
