@@ -23,9 +23,6 @@ const defaultClassificationBrowseNames = [
 const tableHeaderTexts = ['Name', 'Classification identifier types', 'Actions'];
 
 export default {
-  classificationBrowseSectionName,
-  classificationBrowseItem,
-
   openClassificationBrowse() {
     cy.do(
       PaneContent({ id: 'app-settings-nav-pane-content' })
