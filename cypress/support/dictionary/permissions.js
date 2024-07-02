@@ -912,6 +912,10 @@ export default {
     internal: 'ui-inventory.settings.single-record-import',
     gui: 'Settings (Inventory): Configure single-record import',
   },
+  uiInventorySettingsConfigureClassificationBrowse: {
+    internal: 'ui-inventory.settings.classification-browse',
+    gui: 'Settings (Inventory): Configure classification browse',
+  },
   settingsDataImportView: {
     internal: 'ui-data-import.settings.readOnly',
     gui: 'Data import: Can view only',
