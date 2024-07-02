@@ -177,7 +177,7 @@ describe('bulk-edit', () => {
         BulkEditActions.applyToItemsRecordsCheckboxExists(true);
 
         BulkEditActions.confirmChanges();
-        BulkEditActions.verifyAreYouSureForm(1, item.holdingsUUID);
+        BulkEditActions.verifyAreYouSureForm(1, item.holdingsHRID);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
@@ -215,7 +215,7 @@ describe('bulk-edit', () => {
         BulkEditActions.clickKeepEditingBtn();
         BulkEditActions.uncheckStaffOnlyCheckbox(7);
         BulkEditActions.confirmChanges();
-        BulkEditActions.verifyAreYouSureForm(1, item.holdingsUUID);
+        BulkEditActions.verifyAreYouSureForm(1, item.holdingsHRID);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
