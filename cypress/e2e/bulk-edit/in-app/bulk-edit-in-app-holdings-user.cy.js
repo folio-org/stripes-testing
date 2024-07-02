@@ -69,11 +69,11 @@ describe('bulk-edit', () => {
         [
           'Holdings HRID',
           'Holdings type',
-          'Permanent location',
-          'Temporary location',
-          'Call number prefix',
-          'Call number',
-          'Call number suffix',
+          'Holdings permanent location',
+          'Holdings temporary location',
+          'Holdings level call number prefix',
+          'Holdings level call number',
+          'Holdings level call number suffix',
         ].forEach((title) => {
           BulkEditSearchPane.verifyResultColumnTitles(title);
         });
@@ -113,7 +113,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Permanent location');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Holdings permanent location');
         BulkEditSearchPane.verifyChangedResults(permLocation);
         BulkEditActions.verifySuccessBanner(1);
 

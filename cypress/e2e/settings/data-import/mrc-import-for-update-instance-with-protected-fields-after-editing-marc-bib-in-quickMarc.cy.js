@@ -223,7 +223,7 @@ describe('Data Import', () => {
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(nameMarcFileForUpload);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.checkJobStatus(nameMarcFileForUpload, JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(nameMarcFileForUpload);
           [
             FileDetails.columnNameInResultList.srsMarc,

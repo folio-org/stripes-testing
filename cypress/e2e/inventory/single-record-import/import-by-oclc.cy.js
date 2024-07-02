@@ -23,12 +23,12 @@ describe('Inventory', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
         cy.login(user.username, user.password);
       });
     });
 
     beforeEach('Navigate to inventory', () => {
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
       cy.visit(TopMenu.inventoryPath);
     });
 

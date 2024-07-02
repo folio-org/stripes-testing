@@ -234,7 +234,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileUpdate.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForUpdate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForUpdate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdate);
         FileDetails.openJsonScreen(instanceTitle);
         JsonScreenView.verifyJsonScreenIsOpened();

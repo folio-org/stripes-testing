@@ -76,6 +76,7 @@ describe('MARC', () => {
           Logs.checkJobStatus(fileName, 'Completed');
           Logs.openFileDetails(fileName);
           Logs.goToTitleLink('Chemistry, Organic');
+          cy.wait(1000);
           Logs.checkAuthorityLogJSON([
             '"sourceFileId":',
             '"191874a0-707a-4634-928e-374ee9103225"',
