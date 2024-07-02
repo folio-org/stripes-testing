@@ -427,7 +427,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameMarcFileForImportUpdate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(nameMarcFileForImportUpdate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForImportUpdate);
         FileDetails.checkItemsStatusesInResultList(0, [
           RECORD_STATUSES.UPDATED,

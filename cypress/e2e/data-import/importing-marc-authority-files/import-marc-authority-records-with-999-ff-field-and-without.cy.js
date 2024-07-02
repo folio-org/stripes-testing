@@ -1,4 +1,8 @@
-import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  RECORD_STATUSES,
+  JOB_STATUS_NAMES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -45,7 +49,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile('Completed with errors');
+        Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(fileName);
         cy.wrap([0, 6]).each((rowNumber) => {
           [

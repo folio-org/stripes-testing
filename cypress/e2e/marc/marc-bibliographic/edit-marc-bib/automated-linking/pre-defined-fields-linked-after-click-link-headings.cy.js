@@ -174,6 +174,9 @@ describe('MARC', () => {
 
         before('Creating user and data', () => {
           cy.getAdminToken();
+          // make sure there are no duplicate records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C389486*');
+
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,

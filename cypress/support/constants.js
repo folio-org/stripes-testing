@@ -2,6 +2,7 @@ export const APPLICATION_NAMES = {
   DATA_EXPORT: 'Data export',
   DATA_IMPORT: 'Data import',
   INVENTORY: 'Inventory',
+  SETTINGS: 'Settings',
 };
 
 export const REQUEST_METHOD = {
@@ -320,6 +321,7 @@ export const JOB_STATUS_NAMES = {
   COMPLETED: 'Completed',
   COMPLETED_WITH_ERRORS: 'Completed with errors',
   FAILED: 'Failed',
+  STOPPED_BY_USER: 'Stopped by user',
 };
 
 export const VENDOR_NAMES = {

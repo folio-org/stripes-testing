@@ -114,7 +114,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(firstFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(firstFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(firstFileName);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
@@ -162,7 +162,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(secondFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.checkJobStatus(secondFileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(secondFileName);
         FileDetails.openInstanceInInventoryByStatus(RECORD_STATUSES.UPDATED);
         InstanceRecordView.verifyInstanceRecordViewOpened();

@@ -6,6 +6,7 @@ import {
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   RECORD_STATUSES,
+  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -211,7 +212,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(editedMarcFileName);
-        Logs.checkStatusOfJobProfile();
+        Logs.checkJobStatus(editedMarcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(editedMarcFileName);
         [
           FileDetails.columnNameInResultList.srsMarc,
