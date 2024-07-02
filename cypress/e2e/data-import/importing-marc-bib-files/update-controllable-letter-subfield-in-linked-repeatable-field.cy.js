@@ -119,33 +119,33 @@ describe('Data Import', () => {
       });
       // create Match profile
       NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)
-      .then((matchProfileResponse) => {
-        matchProfile.id = matchProfileResponse.body.id;
-      })
-      .then(() => {
-        // create Field mapping profile
-        NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
-          (mappingProfileResponse) => {
-            mappingProfile.id = mappingProfileResponse.body.id;
-          },
-        );
-      })
-      .then(() => {
-        // create Action profile and link it to Field mapping profile
-        NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfile.id).then(
-          (actionProfileResponse) => {
-            actionProfile.id = actionProfileResponse.body.id;
-          },
-        );
-      })
-      .then(() => {
-        // create Job profile
-        NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
-          jobProfile.profileName,
-          matchProfile.id,
-          actionProfile.id,
-        );
-      });
+        .then((matchProfileResponse) => {
+          matchProfile.id = matchProfileResponse.body.id;
+        })
+        .then(() => {
+          // create Field mapping profile
+          NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
+            (mappingProfileResponse) => {
+              mappingProfile.id = mappingProfileResponse.body.id;
+            },
+          );
+        })
+        .then(() => {
+          // create Action profile and link it to Field mapping profile
+          NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfile.id).then(
+            (actionProfileResponse) => {
+              actionProfile.id = actionProfileResponse.body.id;
+            },
+          );
+        })
+        .then(() => {
+          // create Job profile
+          NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+            jobProfile.profileName,
+            matchProfile.id,
+            actionProfile.id,
+          );
+        });
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
