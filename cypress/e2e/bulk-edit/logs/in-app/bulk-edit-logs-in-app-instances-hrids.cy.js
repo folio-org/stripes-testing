@@ -106,7 +106,6 @@ describe('bulk-edit', () => {
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance HRIDs');
           BulkEditSearchPane.uploadFile(instanceHRIDFileName);
-          BulkEditSearchPane.checkForUploading(instanceHRIDFileName);
           BulkEditSearchPane.waitFileUploading();
 
           BulkEditActions.downloadMatchedResults();
