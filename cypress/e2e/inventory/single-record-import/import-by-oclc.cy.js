@@ -28,6 +28,7 @@ describe('Inventory', () => {
     });
 
     beforeEach('Navigate to inventory', () => {
+      cy.getAdminToken();
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
       cy.visit(TopMenu.inventoryPath);
     });
