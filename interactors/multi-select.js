@@ -14,6 +14,19 @@ const control =
     }
   };
 
+const filter = ({ find }, value) => find(TextField({ className: including('multiSelectFilterField-') })).perform((el) => {
+  el.focus();
+  const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
+  property.set.call(el, value);
+  el.dispatchEvent(
+    new InputEvent('input', {
+      inputType: 'insertFromPaste',
+      bubbles: true,
+      cancelable: false,
+    }),
+  );
+});
+
 export const MultiSelectMenu = HTML.extend('multiselect dropdown')
   .selector('[class^=multiSelectMenu]')
   .filters({
@@ -95,19 +108,8 @@ export default createInteractor('multi select')
     toggle: ({ find }) => find(Button({ className: including('multiSelectToggleButton-') })).click(),
     open: control(),
     close: control({ shouldOpen: false }),
-    fillIn: ({ find }, value) => find(TextField({ className: including('multiSelectFilterField-') })).fillIn(value),
-    filter: ({ find }, value) => find(TextField({ className: including('multiSelectFilterField-') })).perform((el) => {
-      el.focus();
-      const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
-      property.set.call(el, value);
-      el.dispatchEvent(
-        new InputEvent('input', {
-          inputType: 'insertFromPaste',
-          bubbles: true,
-          cancelable: false,
-        }),
-      );
-    }),
+    fillIn: filter,
+    filter,
     select,
     choose: select,
     focus: ({ perform }) => perform((el) => el.querySelector('input').focus()),
