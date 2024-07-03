@@ -8,6 +8,7 @@ import {
   INVENTORY_LDR_FIELD_MULTILVL_DROPDOWN,
   INVENTORY_008_FIELD_REGL_DROPDOWN,
   INVENTORY_008_FIELD_S_L_DROPDOWN,
+  INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES,
 } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
@@ -55,11 +56,11 @@ describe('MARC', () => {
       ];
       const field008DropdownsOptionsSet = [
         {
-          name: 'Regl',
+          name: INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.REGL,
           option: INVENTORY_008_FIELD_REGL_DROPDOWN.R,
         },
         {
-          name: 'S/L',
+          name: INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.SL,
           option: INVENTORY_008_FIELD_S_L_DROPDOWN[0],
         },
       ];

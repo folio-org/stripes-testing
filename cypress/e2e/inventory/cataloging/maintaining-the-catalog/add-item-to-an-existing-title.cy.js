@@ -1,6 +1,10 @@
 import uuid from 'uuid';
 
-import { LOAN_TYPE_NAMES, MATERIAL_TYPE_NAMES } from '../../../../support/constants';
+import {
+  LOAN_TYPE_NAMES,
+  MATERIAL_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
+} from '../../../../support/constants';
 import { Permissions } from '../../../../support/dictionary';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -31,12 +35,17 @@ describe('Inventory', () => {
           }).location;
 
           Locations.createViaApi(testData.location).then((location) => {
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: testData.instance.instanceId,
-              permanentLocationId: location.id,
-            }).then((holding) => {
-              testData.holding = holding;
-            });
+            InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+              (holdingSources) => {
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: testData.instance.instanceId,
+                  permanentLocationId: location.id,
+                  sourceId: holdingSources[0].id,
+                }).then((holding) => {
+                  testData.holding = holding;
+                });
+              },
+            );
           });
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
@@ -77,7 +86,7 @@ describe('Inventory', () => {
         ItemRecordEdit.saveAndClose({ itemSaved: true });
         InventoryInstance.checkHoldingsTableContent({
           name: testData.location.name,
-          records: [{ barcode: testData.barcode, status: 'Available' }],
+          records: [{ barcode: testData.barcode, status: ITEM_STATUS_NAMES.AVAILABLE }],
         });
       },
     );

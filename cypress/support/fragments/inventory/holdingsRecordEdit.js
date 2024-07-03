@@ -58,13 +58,21 @@ export default {
   },
   checkReadOnlyFields: () => readonlyFields.forEach((element) => cy.expect(element.has({ disabled: true }))),
   closeWithoutSave: () => cy.do(rootForm.find(Button('Cancel')).click()),
-  fillHoldingFields({ permanentLocation, callNumber } = {}) {
+  fillHoldingFields({ permanentLocation, callNumber, holdingsNote, holdingType } = {}) {
     if (permanentLocation) {
       this.changePermanentLocation(permanentLocation);
     }
 
     if (callNumber) {
       this.fillCallNumber(callNumber);
+    }
+
+    if (holdingsNote) {
+      this.addHoldingsNotes(holdingsNote);
+    }
+
+    if (holdingType) {
+      cy.do([Select({ id: 'additem_holdingstype' }).choose(holdingType)]);
     }
   },
   changePermanentLocation: (location) => {
@@ -114,7 +122,7 @@ export default {
   },
   removeStatisticalCode(code) {
     cy.do(
-      RepeatableFieldItem({ singleValue: including(code) })
+      RepeatableFieldItem({ value: including(code) })
         .find(Button({ icon: 'trash' }))
         .click(),
     );
@@ -146,8 +154,11 @@ export default {
   addAdministrativeNote: (note) => {
     cy.do([createAdministrativeNoteButton.click(), administrativeNoteTextArea.fillIn(note)]);
   },
-  editHoldingsNotes: (newType, newText) => {
-    cy.do([Select('Note type*').choose(newType), TextArea({ ariaLabel: 'Note' }).fillIn(newText)]);
+  editHoldingsNotes: (newText, newType) => {
+    cy.do(TextArea({ ariaLabel: 'Note' }).fillIn(newText));
+    if (newType) {
+      cy.do(Select('Note type*').choose(newType));
+    }
   },
   fillCallNumber(callNumberValue) {
     cy.do(callNumberField.fillIn(callNumberValue));
@@ -184,6 +195,9 @@ export default {
     cy.expect(temporaryLocationList.exists());
     cy.expect(temporaryLocationList.find(HTML(including(temporarylocation))).exists());
   },
+  clickAddElectronicAccessButton: () => {
+    cy.do(addElectronicAccessButton.click());
+  },
   addElectronicAccess: (type) => {
     cy.expect(electronicAccessAccordion.exists());
     cy.do([
@@ -192,5 +206,23 @@ export default {
       uriTextarea.fillIn(type),
       Button('Save & close').click(),
     ]);
+  },
+  getRelationshipsFromHoldings: () => {
+    const relationshipNames = [];
+    return cy
+      .get('select[name="electronicAccess[0].relationshipId"]')
+      .each(($element) => {
+        cy.wrap($element)
+          .invoke('text')
+          .then((name) => {
+            relationshipNames.push(name);
+          });
+      })
+      .then(() => {
+        const resultArray = relationshipNames.map((str) => {
+          return str.replace('Select type', '').trim();
+        });
+        return Array.from(resultArray);
+      });
   },
 };

@@ -58,7 +58,7 @@ describe('Inventory', () => {
     ].forEach((element) => {
       it(
         'C609 In Accordion Identifiers --> enter different type of identifiers (folijet)',
-        { tags: ['smoke', 'folijet', 'eurekaPhase1'] },
+        { tags: ['smoke', 'folijet', 'shiftLeft'] },
         () => {
           resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
 

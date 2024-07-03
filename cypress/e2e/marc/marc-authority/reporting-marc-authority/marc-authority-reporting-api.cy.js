@@ -20,15 +20,15 @@ describe('MARC', () => {
         tag111: '111',
         tag240: '240',
         updatedTag100Value1:
-          '$a C380529 Beethoven, Ludwig the Greatest $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
+          '$a C380529 Beethoven, Ludwig van, $d 1770-1827. $t Variations test 1, $m piano, violin, cello, $n op. 44, $r E♭ major',
         updatedTag100Value2:
-          '$a C380529 Beethoven, Ludwig the Loudest $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
+          '$a C380529 Beethoven, Ludwig van, $d 1770-1827. $t Variations test 2, $m piano, violin, cello, $n op. 44, $r E♭ major',
         updatedTag111Value:
           '$a C380529 Delaware TEST $t Delaware symposia on language studies $f 1985 $j test $1 ert',
         updatedHeading1:
-          'C380529 Beethoven, Ludwig the Greatest 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
+          'C380529 Beethoven, Ludwig van, 1770-1827. Variations test 1, piano, violin, cello, op. 44, E♭ major',
         updatedHeading2:
-          'C380529 Beethoven, Ludwig the Loudest 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
+          'C380529 Beethoven, Ludwig van, 1770-1827. Variations test 2, piano, violin, cello, op. 44, E♭ major',
         updatedHeading3: 'C380529 Delaware TEST Delaware symposia on language studies 1985',
         searchOption: 'Keyword',
         sourceFileName: 'LC Name Authority file (LCNAF)',

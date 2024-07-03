@@ -156,7 +156,7 @@ describe('Export Manager', () => {
       Orders.deleteOrderViaApi(order.id);
 
       Organizations.deleteOrganizationViaApi(organization.id);
-      NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+      NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
         location.institutionId,
         location.campusId,
         location.libraryId,
@@ -167,7 +167,7 @@ describe('Export Manager', () => {
 
     it(
       'C350410: Check if a User is alerted trying to open an Order with 2 POL, having more than 1 unique accounts for export (thunderjet) (TaaS)',
-      { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['smoke', 'thunderjet', 'eurekaPhase1', 'shiftLeft'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

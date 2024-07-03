@@ -1,6 +1,4 @@
 import {
-  ACCEPTED_DATA_TYPE_NAMES,
-  ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   RECORD_STATUSES,
@@ -8,12 +6,12 @@ import {
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -27,7 +25,6 @@ import {
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
@@ -45,9 +42,9 @@ describe('Data Import', () => {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     };
     const actionProfile = {
-      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       name: `C385673 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
-      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
+      action: 'UPDATE',
+      folioRecordType: 'MARC_BIBLIOGRAPHIC',
     };
     const matchProfile = {
       profileName: `C385673 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
@@ -66,9 +63,7 @@ describe('Data Import', () => {
       recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfile = {
-      ...NewJobProfile.defaultJobProfile,
       profileName: `C385673 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
     const marcFiles = [
       {
@@ -89,23 +84,27 @@ describe('Data Import', () => {
     const linkingTagAndValues = [
       {
         rowIndex: 32,
-        value: 'Coates, Ta-Nehisi',
+        value: 'C385673 Coates, Ta-Nehisi',
         tag: 100,
       },
       {
         rowIndex: 74,
-        value: 'Chin, Staceyann, C385673',
+        value: 'C385673 Chin, Staceyann',
         tag: 700,
       },
       {
         rowIndex: 77,
-        value: 'Lee, Stan, 1922-2018',
+        value: 'C385673 Lee, Stan, 1922-2018',
         tag: 700,
       },
     ];
     const createdAuthorityIDs = [];
 
     before('Creating user', () => {
+      cy.getAdminToken();
+      // make sure there are no duplicate records in the system
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C385673*');
+
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
@@ -118,7 +117,6 @@ describe('Data Import', () => {
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -131,27 +129,35 @@ describe('Data Import', () => {
           });
         });
 
-        cy.loginAsAdmin().then(() => {
-          // create Match profile
-          NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile);
-          // create Field mapping profile
-          NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile);
-          // create Action profile and link it to Field mapping profile
-          cy.visit(SettingsMenu.actionProfilePath);
-          ActionProfiles.create(actionProfile, mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(actionProfile.name);
-          // create Job profile
-          cy.visit(SettingsMenu.jobProfilePath);
-          JobProfiles.openNewJobProfileForm();
-          NewJobProfile.fillJobProfile(jobProfile);
-          NewJobProfile.linkMatchProfile(matchProfile.profileName);
-          NewJobProfile.linkActionProfileForMatches(actionProfile.name);
-          // waiter needed for the action profile to be linked
-          cy.wait(1000);
-          NewJobProfile.saveAndClose();
-          JobProfiles.waitLoadingList();
-          JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-        });
+        // create Match profile
+        NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)
+          .then((matchProfileResponse) => {
+            matchProfile.id = matchProfileResponse.body.id;
+          })
+          .then(() => {
+            // create Field mapping profile
+            NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
+              (mappingProfileResponse) => {
+                mappingProfile.id = mappingProfileResponse.body.id;
+              },
+            );
+          })
+          .then(() => {
+            // create Action profile and link it to Field mapping profile
+            NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfile.id).then(
+              (actionProfileResponse) => {
+                actionProfile.id = actionProfileResponse.body.id;
+              },
+            );
+          })
+          .then(() => {
+            // create Job profile
+            NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+              jobProfile.profileName,
+              matchProfile.id,
+              actionProfile.id,
+            );
+          });
 
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,
@@ -212,8 +218,11 @@ describe('Data Import', () => {
         DataImport.editMarcFile(
           nameForExportedMarcFile,
           nameForUpdatedMarcFile,
-          ['aCoates, Ta-Nehisi', 'aLee, Stan,'],
-          ['aCoates, Ta-NehisiaNarrator9f01479eWriter', 'aLee, Stan,aAnother author9f01479eAUTHOR'],
+          ['aC385673 Coates, Ta-Nehisi', 'aC385673 Lee, Stan,'],
+          [
+            'aC385673 Coates, Ta-NehisiaNarrator9f01479eWriter',
+            'aC385673 Lee, Stan,aAnother author9f01479eAUTHOR',
+          ],
         );
 
         // upload the exported marc file with 999.f.f.s fields
@@ -237,7 +246,7 @@ describe('Data Import', () => {
           '100',
           '1',
           '\\',
-          '$a Coates, Ta-Nehisi',
+          '$a C385673 Coates, Ta-Nehisi',
           '$e Writer $e author.',
           '$0 http://id.loc.gov/authorities/names/n2008001084',
           '',
@@ -247,7 +256,7 @@ describe('Data Import', () => {
           '700',
           '1',
           '\\',
-          '$a Chin, Staceyann, C385673',
+          '$a C385673 Chin, Staceyann',
           '$e letterer.',
           '$0 http://id.loc.gov/authorities/names/n2008052404',
           '',
@@ -257,7 +266,7 @@ describe('Data Import', () => {
           '700',
           '1',
           '\\',
-          '$a Lee, Stan, $d 1922-2018',
+          '$a C385673 Lee, Stan, $d 1922-2018',
           '$e AUTHOR $e creator',
           '$0 http://id.loc.gov/authorities/names/n83169267',
           '',

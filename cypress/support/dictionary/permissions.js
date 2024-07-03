@@ -756,6 +756,10 @@ export default {
     internal: 'ui-finance.fund-budget.view',
     gui: 'Finance: View fund and budget',
   },
+  uiFinanceUnreleaseEncumbrance: {
+    internal: 'ui-finance.encumbrance.unrelease',
+    gui: 'Finance: Unrelease encumbrance',
+  },
   uiFinanceViewGroups: { internal: 'ui-finance.group.view', gui: 'Finance: View group' },
   uiFinanceViewLedger: { internal: 'ui-finance.ledger.view', gui: 'Finance: View ledger' },
   uiFinanceViewEditFiscalYear: {
@@ -895,6 +899,10 @@ export default {
     internal: 'ui-inventory.settings.single-record-import',
     gui: 'Settings (Inventory): Configure single-record import',
   },
+  uiInventorySettingsConfigureClassificationBrowse: {
+    internal: 'ui-inventory.settings.classification-browse',
+    gui: 'Settings (Inventory): Configure classification browse',
+  },
   settingsDataImportView: {
     internal: 'ui-data-import.view',
     gui: 'Data import: Can view only',
@@ -918,6 +926,10 @@ export default {
   settingsCircView: {
     internal: 'ui-circulation.settings.cancellation-reasons',
     gui: 'Settings (Circ): Can create, edit and remove cancellation reasons',
+  },
+  settingsCircCRUDRequestPolicies: {
+    internal: 'ui-circulation.settings.request-policies',
+    gui: 'Settings (Circ): Can create, edit and remove request policies',
   },
   settingsTenantEditLanguageLocationAndCurrency: {
     internal: 'ui-tenant-settings.settings.locale',
@@ -984,6 +996,10 @@ export default {
   uiSettingsDeveloperSessionLocale: {
     internal: 'ui-developer.settings.locale',
     gui: 'Settings (Developer): set session locale',
+  },
+  uiSettingsTenantReadingRoom: {
+    internal: 'ui-tenant-settings.settings.reading-room-access.view',
+    gui: 'Settings (tenant): Can view reading room access',
   },
   // Timers
   okapiTimersPatch: {

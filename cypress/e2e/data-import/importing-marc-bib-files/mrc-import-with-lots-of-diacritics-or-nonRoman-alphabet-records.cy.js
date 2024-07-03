@@ -73,12 +73,13 @@ describe('Data Import', () => {
       () => {
         // upload a marc file for creating of the new instance
         cy.visit(TopMenu.dataImportPath);
+        DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC6709.mrc', nameMarcFileForCreate);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameMarcFileForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(nameMarcFileForCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForCreate);
         rowNumbers.forEach((rowNumber) => {
           FileDetails.checkStatusInColumn(

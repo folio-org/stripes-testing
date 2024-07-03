@@ -152,16 +152,13 @@ describe('Patron Block: Maximum number of items charged out', () => {
       cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
       InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
     });
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    Conditions.resetConditionViaApi(
-      '3d7c52dc-c732-4223-8bf8-e5917801386f',
-      'Maximum number of items charged out',
-    );
+    Conditions.resetConditionViaApi('Maximum number of items charged out');
   });
 
   it(

@@ -9,7 +9,7 @@ Cypress.Commands.add('getConsortiaId', () => {
 });
 
 Cypress.Commands.add('assignAffiliationToUser', (affiliationTenantId, targetUserId) => {
-  cy.wait(3000);
+  cy.wait(15000);
   cy.getConsortiaId().then((consortiaId) => {
     cy.okapiRequest({
       method: 'POST',

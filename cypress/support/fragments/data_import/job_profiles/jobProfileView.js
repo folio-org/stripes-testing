@@ -23,7 +23,7 @@ const jobProfilesList = MultiColumnList({ id: 'job-profiles-list' });
 
 function waitLoading() {
   // wait for the page to be fully loaded
-  cy.wait(1500);
+  cy.wait(2000);
 }
 
 export default {
@@ -240,6 +240,7 @@ export default {
   },
 
   openLinkedProfileById: (id) => {
+    cy.wait(2000);
     cy.do(viewPane.find(Link({ href: including(`${id}`) })).click());
   },
 };

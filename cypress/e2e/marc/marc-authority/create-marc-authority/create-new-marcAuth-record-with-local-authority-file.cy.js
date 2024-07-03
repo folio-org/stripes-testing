@@ -15,7 +15,7 @@ describe('MARC', () => {
       const headerText = 'Create a new MARC authority record';
       let createdAuthorityId;
       const newField = {
-        rowIndex: 4,
+        previousFieldTag: '008',
         tag: '100',
         content: '$a C423528 Create a new MARC authority record with Local authority file test',
       };
@@ -62,7 +62,7 @@ describe('MARC', () => {
       after('Delete users, data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
-        MarcAuthority.deleteViaAPI(createdAuthorityId);
+        MarcAuthority.deleteViaAPI(createdAuthorityId, true);
         ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
         cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id, true);
       });
@@ -72,7 +72,7 @@ describe('MARC', () => {
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
-          MarcAuthorities.clickNewAuthorityButton();
+          MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);
           QuickMarcEditor.verifyAuthorityLookUpButton();
 
@@ -92,7 +92,11 @@ describe('MARC', () => {
 
           // 5 Add 1 new field by clicking on "+" icon and fill it as specified:
           // 100 \\ "$a Create a new MARC authority record with Local authority file test"
-          MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
+          MarcAuthority.addNewFieldAfterExistingByTag(
+            newField.previousFieldTag,
+            newField.tag,
+            newField.content,
+          );
           QuickMarcEditor.checkContentByTag(newField.tag, newField.content);
 
           // 6 Click on the "Save & close" button

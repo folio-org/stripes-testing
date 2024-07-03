@@ -14,12 +14,12 @@ describe('MARC', () => {
     describe('Create MARC Authority', () => {
       const headerText = 'Create a new MARC authority record';
       const newField010 = {
-        rowIndex: 4,
+        previousFieldTag: '008',
         tag: '010',
         content: '$a sj43321',
       };
       const newField100 = {
-        rowIndex: 5,
+        previousFieldTag: '010',
         tag: '100',
         content: '$a C423540 Create a new MARC authority record with not matched prefix on 010',
       };
@@ -59,7 +59,7 @@ describe('MARC', () => {
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
-          MarcAuthorities.clickNewAuthorityButton();
+          MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);
           QuickMarcEditor.verifyAuthorityLookUpButton();
 
@@ -82,8 +82,16 @@ describe('MARC', () => {
           // 010 \\ "$a <prefix value of default authority file which does NOT match the selected option><identifier value>"
           // ex.: "$a sj43321"
           // 100 \\ "$a Create a new MARC authority record with not matched prefix on 010"
-          MarcAuthority.addNewField(newField010.rowIndex, newField010.tag, newField010.content);
-          MarcAuthority.addNewField(newField100.rowIndex, newField100.tag, newField100.content);
+          MarcAuthority.addNewFieldAfterExistingByTag(
+            newField010.previousFieldTag,
+            newField010.tag,
+            newField010.content,
+          );
+          MarcAuthority.addNewFieldAfterExistingByTag(
+            newField100.previousFieldTag,
+            newField100.tag,
+            newField100.content,
+          );
           QuickMarcEditor.checkContentByTag(newField010.tag, newField010.content);
           QuickMarcEditor.checkContentByTag(newField100.tag, newField100.content);
 

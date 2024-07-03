@@ -14,9 +14,9 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
@@ -109,7 +109,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(firstMarcFileNameForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(firstMarcFileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(firstMarcFileNameForCreate);
         [
           FileDetails.columnNameInResultList.srsMarc,
@@ -172,7 +172,7 @@ describe('Data Import', () => {
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(firstFileNameAfterUpload);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.checkJobStatus(firstFileNameAfterUpload, JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(firstFileNameAfterUpload);
           FileDetails.checkStatusInColumn(
             RECORD_STATUSES.UPDATED,
@@ -238,7 +238,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(secondMarcFileNameForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(secondMarcFileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(secondMarcFileNameForCreate);
         cy.wrap(fieldsContent).each((row) => {
           cy.wait(1000);
@@ -334,7 +334,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(secondFileNameAfterUpload);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(secondFileNameAfterUpload, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(secondFileNameAfterUpload);
         cy.wrap(fieldsContent).each((row) => {
           cy.wait(1000);

@@ -215,7 +215,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     UserEdit.changeServicePointPreferenceViaApi(secondUser.userId, [servicePoint.id]);
     Users.deleteViaApi(firstUser.userId);
     Users.deleteViaApi(secondUser.userId);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       defaultLocation.institutionId,
       defaultLocation.campusId,
       defaultLocation.libraryId,
@@ -226,7 +226,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
 
   it(
     'C569: renewal failure because loan has reached maximum renewals (vega)',
-    { tags: ['smoke', 'vega', 'system', 'eurekaPhase1'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       cy.login(firstUser.username, firstUser.password, {
         path: AppPaths.getOpenLoansPath(firstUser.userId),

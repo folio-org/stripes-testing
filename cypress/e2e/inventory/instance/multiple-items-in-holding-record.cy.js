@@ -1,3 +1,4 @@
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { InventoryInstances } from '../../../support/fragments/inventory';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
@@ -82,8 +83,8 @@ describe('Inventory', () => {
           InventoryInstance.checkHoldingsTableContent({
             name: location.name,
             records: [
-              { status: 'Available', location: location.name },
-              { status: 'Available', location: location.name },
+              { status: ITEM_STATUS_NAMES.AVAILABLE, location: location.name },
+              { status: ITEM_STATUS_NAMES.AVAILABLE, location: location.name },
             ],
           });
         });

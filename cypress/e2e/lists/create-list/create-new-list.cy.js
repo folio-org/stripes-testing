@@ -22,7 +22,9 @@ describe('lists', () => {
     });
 
     afterEach('Delete a user', () => {
-      cy.getUserToken(userData.username, userData.password);
+      // eslint-disable-next-line spaced-comment
+      //cy.getUserToken(userData.username, userData.password);
+      cy.getAdminToken();
       Lists.getViaApi().then((response) => {
         const filteredItem = response.body.content.find((item) => item.name === listData.name);
         Lists.deleteViaApi(filteredItem.id);
@@ -38,7 +40,9 @@ describe('lists', () => {
         listData.status = 'Active';
         listData.visibility = 'Private';
 
-        cy.login(userData.username, userData.password);
+        // eslint-disable-next-line spaced-comment
+        //cy.login(userData.username, userData.password);
+        cy.loginAsAdmin();
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
         Lists.openNewListPane();
@@ -64,7 +68,9 @@ describe('lists', () => {
         listData.status = 'Active';
         listData.visibility = 'Shared';
 
-        cy.login(userData.username, userData.password);
+        // eslint-disable-next-line spaced-comment
+        //cy.login(userData.username, userData.password);
+        cy.loginAsAdmin();
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
         Lists.openNewListPane();
@@ -90,7 +96,9 @@ describe('lists', () => {
         listData.status = 'Active';
         listData.visibility = 'Shared';
 
-        cy.login(userData.username, userData.password);
+        // eslint-disable-next-line spaced-comment
+        //cy.login(userData.username, userData.password);
+        cy.loginAsAdmin();
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
         Lists.openNewListPane();
@@ -116,7 +124,9 @@ describe('lists', () => {
         listData.status = 'Inactive';
         listData.visibility = 'Shared';
 
-        cy.login(userData.username, userData.password);
+        // eslint-disable-next-line spaced-comment
+        //cy.login(userData.username, userData.password);
+        cy.loginAsAdmin();
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
         Lists.openNewListPane();

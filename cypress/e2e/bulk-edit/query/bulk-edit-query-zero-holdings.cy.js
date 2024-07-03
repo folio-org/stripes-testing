@@ -3,7 +3,10 @@ import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import QueryModal, { holdingsFieldValues } from '../../../support/fragments/bulk-edit/query-modal';
+import QueryModal, {
+  holdingsFieldValues,
+  QUERY_OPERATIONS,
+} from '../../../support/fragments/bulk-edit/query-modal';
 
 let user;
 const invalidUUID = uuid();
@@ -32,7 +35,7 @@ describe('bulk-edit', () => {
 
     it(
       'C446067 Verify the "Run query" button, when the query returns 0 - holdings (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkHoldingsRadio();
@@ -43,7 +46,7 @@ describe('bulk-edit', () => {
         QueryModal.verifySelectedField(holdingsFieldValues.instanceUuid);
         QueryModal.verifyQueryAreaContent('(instance_id  )');
         QueryModal.verifyOperatorColumn();
-        QueryModal.selectOperator('==');
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.verifyQueryAreaContent('(instance_id == )');
         QueryModal.verifyValueColumn();
         QueryModal.fillInValueTextfield(invalidUUID);

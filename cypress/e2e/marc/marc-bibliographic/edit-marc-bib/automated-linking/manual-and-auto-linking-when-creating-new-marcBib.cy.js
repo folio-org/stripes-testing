@@ -127,7 +127,7 @@ describe('MARC', () => {
 
         it(
           'C422149 Link certain fields manually and then use auto-linking when creating new "MARC Bib" record (spitfire)',
-          { tags: ['smoke', 'spitfire'] },
+          { tags: ['smoke', 'spitfire', 'shiftLeft'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
@@ -138,6 +138,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateLDR06And07Positions();
             newFields.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
+              cy.wait(1000);
             });
 
             QuickMarcEditor.clickLinkIconInTagField(newFields[0].rowIndex + 1);

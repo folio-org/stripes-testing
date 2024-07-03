@@ -9,7 +9,12 @@ import {
   Section,
   TextArea,
 } from '../../../../interactors';
-import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../constants';
+import {
+  FULFILMENT_PREFERENCES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
+  ITEM_STATUS_NAMES,
+} from '../../constants';
 import getRandomPostfix, { getRandomLetters } from '../../utils/stringTools';
 import users from '../users/users';
 import InventoryHoldings from './holdings/inventoryHoldings';
@@ -22,21 +27,21 @@ const itemStatusKeyValue = KeyValue('Item status');
 
 export default {
   itemsToMarkAsMissing: [
-    'Available',
-    'In process',
-    'Paged',
-    'Awaiting pickup',
-    'Awaiting delivery',
-    'In transit',
-    'Withdrawn',
+    ITEM_STATUS_NAMES.AVAILABLE,
+    ITEM_STATUS_NAMES.IN_PROCESS,
+    ITEM_STATUS_NAMES.PAGED,
+    ITEM_STATUS_NAMES.AWAITING_PICKUP,
+    ITEM_STATUS_NAMES.AWAITING_DELIVERY,
+    ITEM_STATUS_NAMES.IN_TRANSIT,
+    ITEM_STATUS_NAMES.WITHDRAWN,
   ],
 
   itemsNotToMarkAsMissing: [
-    'On order',
-    'Checked out',
-    'Claimed returned',
-    'Declared lost',
-    'Order closed',
+    ITEM_STATUS_NAMES.ON_ORDER,
+    ITEM_STATUS_NAMES.CHECKED_OUT,
+    ITEM_STATUS_NAMES.CLAIMED_RETURNED,
+    ITEM_STATUS_NAMES.DECLARED_LOST,
+    ITEM_STATUS_NAMES.ORDER_CLOSED,
   ],
 
   itemStatusesToCreate() {

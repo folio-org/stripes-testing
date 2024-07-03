@@ -66,14 +66,14 @@ describe('bulk-edit', () => {
           'Call number',
           'Call number suffix',
         ].forEach((title) => {
-          BulkEditSearchPane.verifyResultColumTitles(title);
+          BulkEditSearchPane.verifyResultColumnTitles(title);
         });
         BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
         BulkEditSearchPane.verifyHoldingActionShowColumns();
 
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Tags');
         BulkEditSearchPane.changeShowColumnCheckbox('Tags');
-        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Tags');
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude('Tags');
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Instance (Title, Publisher, Publication date)',
         );

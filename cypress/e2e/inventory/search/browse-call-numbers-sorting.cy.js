@@ -1,4 +1,8 @@
-import { CALL_NUMBER_TYPE_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import {
+  CALL_NUMBER_TYPE_NAMES,
+  LOCATION_NAMES,
+  BROWSE_CALL_NUMBER_OPTIONS,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -127,6 +131,7 @@ describe('Inventory', () => {
             index + 1,
           );
         });
+        cy.wait(1000);
 
         // #17 * Select "Browse" in toggle
         // * Select "Other scheme" browse option
@@ -244,7 +249,10 @@ describe('Inventory', () => {
 
         // #17 * Select "Browse" in toggle
         // * Select "Dewey Decimal classification" browse option
-        InventorySearchAndFilter.selectBrowseDeweyDecimal();
+        InventorySearchAndFilter.switchToBrowseTab();
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
+        );
         // * Fill browse input field with "331"
         // * Click "Search" button
         InventorySearchAndFilter.browseSearch('331');

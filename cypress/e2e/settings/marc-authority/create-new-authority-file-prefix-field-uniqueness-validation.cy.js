@@ -16,14 +16,14 @@ describe('MARC', () => {
       };
       const authorityFilesUnuniquePrefix = [
         {
-          name: `C423377 auth source file active ${getRandomPostfix()}`,
+          name: `C423377 auth source file ${getRandomPostfix()}`,
           prefix: localAuthorityFile.prefix,
           startWithNumber: '5',
           baseUrl: 'http://testurl.com/source',
           isActive: false,
         },
         {
-          name: `C423377 auth source file active ${getRandomPostfix()}`,
+          name: `C423377 auth source file ${getRandomPostfix()}`,
           prefix: 'sj',
           startWithNumber: '5',
           baseUrl: 'http://testurl.com/source',
@@ -78,7 +78,7 @@ describe('MARC', () => {
             );
             ManageAuthorityFiles.checkCancelButtonEnabled();
             ManageAuthorityFiles.checkSaveButtonEnabled();
-            ManageAuthorityFiles.clickSaveButton();
+            ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
             ManageAuthorityFiles.checkErrorInField(
               authorityFileUnuniquePrefix.name,
               AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX,

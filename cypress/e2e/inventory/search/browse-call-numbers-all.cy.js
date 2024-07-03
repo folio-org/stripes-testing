@@ -127,6 +127,7 @@ describe('Inventory', () => {
         //  * National Library of Medicine classification
         //  * Other scheme
         //  * Superintendent of Documents classification
+        InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.browseOptionsDropdownIncludesOptions(
           Object.values(BROWSE_CALL_NUMBER_OPTIONS),
         );

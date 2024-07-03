@@ -528,7 +528,7 @@ export default {
     cy.do([
       Button({ id: 'accordion-toggle-button-poNumberPrefix' }).click(),
       Button({ id: 'poNumberPrefix-selection' }).click(),
-      SelectionOption({ id: 'option-poNumberPrefix-selection-0-pref' }).click(),
+      SelectionOption('pref').click(),
     ]);
   },
   selectApprovedFilter: () => {
@@ -614,11 +614,13 @@ export default {
     cy.do([
       buttonLocationFilter.click(),
       Button('Location look-up').click(),
-      Select({ name: 'institutionId' }).choose('Københavns Universitet'),
-      Select({ name: 'campusId' }).choose('City Campus'),
-      Button({ id: 'locationId' }).click(),
-      SelectionOption('Main Library (KU/CC/DI/M) ').click(),
-      Button('Save and close').click(),
+      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn('Main Library'),
+      Button('Search').click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
+      selectLocationsModal.find(Button('Save')).click(),
       buttonLocationFilter.click(),
     ]);
   },
@@ -676,6 +678,7 @@ export default {
         path: 'orders/composite-orders',
         searchParams,
         isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
       })
       .then(({ body }) => {
         return body.purchaseOrders;

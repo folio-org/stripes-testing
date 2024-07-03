@@ -21,18 +21,24 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411731 Edit list: Canned reports (corsair)', { tags: ['smoke', 'corsair', 'eurekaPhase1'] }, () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
-      Lists.expiredPatronLoan();
-      Lists.actionButton();
-      cy.contains('Edit list').should('be.disabled');
-      Lists.closeListDetailsPane();
-      Lists.waitLoading();
-      Lists.missingItems();
-      Lists.actionButton();
-      cy.contains('Edit list').should('be.disabled');
-    });
+    it(
+      'C411731 Edit list: Canned reports (corsair)',
+      { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
+      () => {
+        // eslint-disable-next-line spaced-comment
+        //cy.login(userData.username, userData.password);
+        cy.loginAsAdmin();
+        cy.visit(TopMenu.listsPath);
+        Lists.waitLoading();
+        Lists.expiredPatronLoan();
+        Lists.actionButton();
+        cy.contains('Edit list').should('be.disabled');
+        Lists.closeListDetailsPane();
+        Lists.waitLoading();
+        Lists.missingItems();
+        Lists.actionButton();
+        cy.contains('Edit list').should('be.disabled');
+      },
+    );
   });
 });

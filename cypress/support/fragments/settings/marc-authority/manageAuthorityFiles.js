@@ -10,6 +10,7 @@ import {
   Pane,
   TextField,
   including,
+  matching,
 } from '../../../../../interactors';
 import { DEFAULT_FOLIO_AUTHORITY_FILES, AUTHORITY_FILE_TEXT_FIELD_NAMES } from '../../../constants';
 
@@ -25,6 +26,7 @@ const sourceCell = MultiColumnListCell({ columnIndex: 5 });
 const lastUpdatedCell = MultiColumnListCell({ columnIndex: 6 });
 const cancelButton = Button('Cancel');
 const saveButton = Button('Save');
+const confirmDeletionButton = Button('Yes, delete');
 const tableHeaderTexts = [
   'Name*',
   'Prefix*',
@@ -33,6 +35,7 @@ const tableHeaderTexts = [
   'Active',
   'Source',
   'Last updated by',
+  'Actions',
 ];
 const editButton = Button({ icon: 'edit' });
 const deleteButton = Button({ icon: 'trash' });
@@ -41,6 +44,9 @@ const successSaveCalloutText = (authorityFileName) => {
 };
 const successSaveEditedFileCalloutText = (authorityFileName) => {
   return `The authority file ${authorityFileName} has been successfully updated.`;
+};
+const authorityFileDeletedCalloutText = (authorityFileName) => {
+  return `Authority file ${authorityFileName} has been deleted.`;
 };
 
 const waitLoading = () => {
@@ -55,11 +61,19 @@ const clickNewButton = () => {
 
 const clickEditButton = (authorityFileName) => {
   const targetRow = manageAuthorityFilesPane.find(MultiColumnListRow(including(authorityFileName)));
+
   cy.do(targetRow.find(editButton).click());
+};
+
+const clickDeleteButton = (authorityFileName) => {
+  const targetRow = manageAuthorityFilesPane.find(MultiColumnListRow(including(authorityFileName)));
+
+  cy.do(targetRow.find(deleteButton).click());
 };
 
 const checkEditButtonInRow = (authorityFileName) => {
   const targetRow = manageAuthorityFilesPane.find(MultiColumnListRow(including(authorityFileName)));
+
   cy.expect(targetRow.find(editButton).exists());
 };
 
@@ -118,7 +132,7 @@ const checkNewButtonEnabled = (isEnabled = true) => {
   cy.expect(newButton.has({ disabled: !isEnabled }));
 };
 
-const clickSaveButton = () => {
+const clickSaveButtonAfterCreationFile = () => {
   cy.do(firstRow.find(saveButton).click());
 };
 
@@ -126,12 +140,16 @@ const clickCancelButton = () => {
   cy.do(firstRow.find(cancelButton).click());
 };
 
-const checkAfterSave = (authorityFileName) => {
+const checkAfterSaveCreatedFile = (authorityFileName) => {
   cy.expect(Callout(successSaveCalloutText(authorityFileName)).exists());
 };
 
 const checkAfterSaveEditedFile = (authorityFileName) => {
   cy.expect(Callout(successSaveEditedFileCalloutText(authorityFileName)).exists());
+};
+
+const checkAfterDeletionFile = (authorityFileName) => {
+  cy.expect(Callout(authorityFileDeletedCalloutText(authorityFileName)).exists());
 };
 
 const getEditableListRow = (rowNumber) => {
@@ -223,6 +241,7 @@ export default {
   waitLoading,
   clickNewButton,
   clickEditButton,
+  clickDeleteButton,
   checkEditButtonInRow,
   verifyEditableRowAdded,
   verifyTableHeaders,
@@ -234,10 +253,11 @@ export default {
   checkCancelButtonEnabled,
   checkSaveButtonEnabled,
   checkNewButtonEnabled,
-  clickSaveButton,
+  clickSaveButtonAfterCreationFile,
   clickCancelButton,
-  checkAfterSave,
+  checkAfterSaveCreatedFile,
   checkAfterSaveEditedFile,
+  checkAfterDeletionFile,
   getEditableListRow,
 
   fillAllFields: (name, prefix, startsWith, baseUrl, isActive) => {
@@ -297,7 +317,10 @@ export default {
 
   checkManageAuthorityFilesPaneExists(isExist = true) {
     if (isExist) {
-      cy.expect(manageAuthorityFilesPane.exists());
+      cy.expect([
+        manageAuthorityFilesPane.exists(),
+        manageAuthorityFilesPane.has({ isFullScreenView: true }),
+      ]);
     } else {
       cy.expect(manageAuthorityFilesPane.absent());
     }
@@ -329,11 +352,19 @@ export default {
     );
   },
 
-  editBaseUrlInFolioFile(authorityFileName, fieldName, fieldValue) {
+  editBaseUrlInFolioFile(authorityFileName, fieldValue) {
     const targetRow = getTargetRowWithFile(authorityFileName);
 
-    cy.do(targetRow.find(TextField({ placeholder: fieldName })).fillIn(fieldValue));
-    cy.expect(targetRow.find(TextField({ placeholder: fieldName })).has({ value: fieldValue }));
+    cy.do(
+      targetRow
+        .find(TextField({ placeholder: AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL }))
+        .fillIn(fieldValue),
+    );
+    cy.expect(
+      targetRow
+        .find(TextField({ placeholder: AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL }))
+        .has({ value: fieldValue }),
+    );
     cy.expect(targetRow.find(cancelButton).has({ disabled: false }));
     cy.expect(targetRow.find(saveButton).has({ disabled: false }));
   },
@@ -391,10 +422,6 @@ export default {
     cy.expect(targetRow.find(MultiColumnListCell(including(userName))).exists());
   },
 
-  checkActionTableHeaderExists() {
-    cy.get('#list-column-actions').should('exist').and('have.text', 'Actions');
-  },
-
   checkAuthorityFilesTableExists(isExist = true) {
     if (isExist) {
       cy.expect(Form(including('Authority files')).exists());
@@ -432,10 +459,17 @@ export default {
         targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.startsWith)).exists(),
         targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.baseUrl)).exists(),
         targetRow.find(sourceCell).has({ content: 'FOLIO' }),
+        targetRow
+          .find(MultiColumnListCell({ content: matching(/\d{1,2}\/\d{1,2}\/\d{4} by */) }))
+          .exists(),
         targetRow.find(activeCheckbox).has({ disabled: true }),
         targetRow.find(editButton).exists(),
       ]);
     });
+  },
+
+  clickConfirmDeletionButton() {
+    cy.do(confirmDeletionButton.click());
   },
 
   setAllDefaultFOLIOFilesToActiveViaAPI() {

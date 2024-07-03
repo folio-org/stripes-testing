@@ -1,4 +1,8 @@
-import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  RECORD_STATUSES,
+  JOB_STATUS_NAMES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -36,7 +40,7 @@ describe('Data Import', () => {
 
     it(
       'C359207 Checking the import to Create MARC Authority records, when incoming records do and do not have 999 ff field (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
       () => {
         DataImport.verifyUploadState();
         // upload the first .mrc file
@@ -45,7 +49,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile('Completed with errors');
+        Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(fileName);
         cy.wrap([0, 6]).each((rowNumber) => {
           [

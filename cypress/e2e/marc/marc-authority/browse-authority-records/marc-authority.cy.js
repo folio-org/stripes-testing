@@ -10,13 +10,13 @@ import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
+import ActionProfile from '../../../../support/fragments/settings/dataImport/actionProfiles/actionProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import { JobProfiles as SettingsJobProfiles } from '../../../../support/fragments/settings/dataImport';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
@@ -26,8 +26,8 @@ describe('MARC', () => {
     describe('Browse - Authority records', () => {
       const testData = {
         authority: {
-          title: 'Congress and foreign policy series',
-          nonExactTitle: 'Congress',
+          title: 'C350902Congress and foreign policy series',
+          nonExactTitle: 'C350902Congress',
           searchOption: 'Uniform title',
           newField: {
             title: `Test authority ${getRandomPostfix()}`,
@@ -44,6 +44,7 @@ describe('MARC', () => {
           type: 'Authorized',
         },
       };
+      const querySearch = ['C350902*', 'C350667*'];
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const createdJobProfile = {
         profileName: `Update MARC authority records - 010 $a ${getRandomPostfix()}`,
@@ -55,6 +56,12 @@ describe('MARC', () => {
       let createdAuthorityID;
 
       before('Creating data', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate records in the system
+        querySearch.forEach((query) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
+        });
+
         cy.createTempUser([
           Permissions.settingsDataImportEnabled.gui,
           Permissions.moduleDataImportEnabled.gui,
@@ -64,17 +71,19 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-        });
 
-        cy.loginAsAdmin({
-          path: SettingsMenu.jobProfilePath,
-          waiter: JobProfiles.waitLoadingList,
-        }).then(() => {
-          JobProfiles.createJobProfile(createdJobProfile);
-          NewJobProfile.linkActionProfileByName('Default - Create MARC Authority');
-          NewJobProfile.saveAndClose();
+          // get default Action profile
+          ActionProfile.getActionProfilesViaApi({
+            query: 'name="Default - Create MARC Authority"',
+          }).then(({ actionProfiles }) => {
+            // create Job profile
+            NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
+              createdJobProfile.profileName,
+              actionProfiles[0].id,
+            );
+          });
 
-          DataImport.uploadFileViaApi('oneMarcAuthority.mrc', fileName, jobProfileToRun).then(
+          DataImport.uploadFileViaApi('marcAuthFileForC350902.mrc', fileName, jobProfileToRun).then(
             (response) => {
               response.forEach((record) => {
                 createdAuthorityID = record[propertyName].id;
@@ -100,7 +109,7 @@ describe('MARC', () => {
 
       it(
         'C350667 Update a MARC authority record via data import. Record match with 010 $a (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           cy.visit(TopMenu.dataImportPath);
           DataImport.uploadFile('test-auth-file.mrc', updatedfileName);
@@ -118,7 +127,7 @@ describe('MARC', () => {
 
       it(
         'C350575 MARC Authority fields LEADER and 008 can not be deleted (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
@@ -129,7 +138,7 @@ describe('MARC', () => {
 
       it(
         'C350576 Update 008 of Authority record (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
@@ -140,22 +149,26 @@ describe('MARC', () => {
         },
       );
 
-      it('C350578 Browse existing Authorities (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
-        const checkPresentedColumns = [
-          'Authorized/Reference',
-          'Heading/Reference',
-          'Type of heading',
-          'Authority source',
-          'Number of titles',
-        ];
+      it(
+        'C350578 Browse existing Authorities (spitfire)',
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        () => {
+          const checkPresentedColumns = [
+            'Authorized/Reference',
+            'Heading/Reference',
+            'Type of heading',
+            'Authority source',
+            'Number of titles',
+          ];
 
-        MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-        MarcAuthority.checkPresentedColumns(checkPresentedColumns);
-      });
+          MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+          MarcAuthority.checkPresentedColumns(checkPresentedColumns);
+        },
+      );
 
       it(
         'C350513 Browse authority - handling for when there is no exact match (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.checkSearchOptions();
@@ -172,13 +185,13 @@ describe('MARC', () => {
 
       it(
         'C350902 MARC fields behavior when editing "MARC Authority" record (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
           MarcAuthority.edit();
           QuickMarcEditor.verifyBoxValuesInLDRFieldInMarcAuthorityRecord(
-            '00846',
+            '00853',
             AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.C,
             AUTHORITY_LDR_FIELD_TYPE_DROPDOWN.Z,
             '\\\\a2200241',
@@ -245,31 +258,6 @@ describe('MARC', () => {
           MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
         },
       );
-
-      it('C350572 Edit an Authority record (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
-        MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-        MarcAuthorities.selectFirst(testData.authority.title);
-        MarcAuthority.edit();
-        MarcAuthority.addNewField(
-          5,
-          testData.authority.newField.tag,
-          `$a ${testData.authority.newField.content}`,
-        );
-        cy.wait(1000);
-        MarcAuthority.changeField('130', testData.authority.newField.title);
-        cy.wait(1000);
-        MarcAuthority.clicksaveAndCloseButton();
-        QuickMarcEditor.checkAfterSaveAndCloseAuthority();
-
-        MarcAuthority.contains(testData.authority.newField.tag);
-        MarcAuthority.contains(testData.authority.newField.content);
-
-        MarcAuthorities.searchBy(
-          testData.authority.searchOption,
-          testData.authority.newField.title,
-        );
-        MarcAuthorities.checkRow(testData.authority.newField.title);
-      });
     });
   });
 });

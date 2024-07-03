@@ -1,13 +1,14 @@
 import uuid from 'uuid';
 import { Permissions } from '../../../support/dictionary';
+import { APPLICATION_NAMES } from '../../../support/constants';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -109,10 +110,9 @@ describe('Inventory', () => {
         Permissions.enableStaffSuppressFacet.gui,
       ]).then((userProperties) => {
         testData.userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+
+        cy.login(userProperties.username, userProperties.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       });
     });
 
@@ -131,7 +131,6 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {
         InventoryInstances.searchByTitle(testData.searchQuery);
-        InventorySearchAndFilter.switchToInstance();
         InventoryInstances.checkColumnHeaderSort(testData.titleHeader);
         InventoryInstances.checkResultListSortedByColumn(1);
         InventoryInstances.clickColumnHeader(testData.titleHeader);

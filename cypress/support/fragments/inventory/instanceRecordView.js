@@ -150,7 +150,12 @@ const verifyElectronicAccessAbsent = (rowNumber = 0) => {
   );
 };
 
-const waitLoading = () => cy.expect(actionsButton.exists());
+const waitLoading = () => {
+  cy.wait(1000);
+  cy.get('#pane-instancedetails').within(() => {
+    cy.contains('button', 'Action').should('exist');
+  });
+};
 const getMultiColumnListCellsValues = (cell) => {
   const cells = [];
 
@@ -489,5 +494,46 @@ export default {
   verifyEditInstanceButtonIsEnabled() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'edit-instance' }).has({ disabled: false }));
+  },
+
+  verifyAddMARCHoldingsRecordOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'Add MARC holdings record' }).absent());
+  },
+
+  verifyViewRequestOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button('New request').absent());
+  },
+
+  verifyViewRequestOptionEnabled() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button('New request').exists());
+  },
+
+  verifyNewOrderOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'clickable-create-order' }).absent());
+  },
+
+  verifyShareLocalInstanceOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'share-local-instance' }).absent());
+  },
+
+  verifyMoveItemsWithinAnInstanceOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'inventory-menu-section' }).absent());
+  },
+
+  verifyMoveHoldingsItemsToAnotherInstanceOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'move-instance' }).absent());
+  },
+
+  verifyInstanceHeader(header) {
+    cy.get('#paneHeaderpane-instancedetails')
+      .find('[class*="paneTitleLabel-"]')
+      .should('have.text', header);
   },
 };

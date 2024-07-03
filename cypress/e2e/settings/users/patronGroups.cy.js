@@ -16,7 +16,7 @@ describe('Patron blocks relations with users, conditions', () => {
   const testData = {};
   it(
     "C11020 Verify user information display when automated patron block 'Maximum outstanding fee/fine balance' exists for patron (vega)",
-    { tags: ['smoke', 'vega', 'system'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
     () => {
       testData.chargeAmount = 100;
 
@@ -70,7 +70,7 @@ describe('Patron blocks relations with users, conditions', () => {
     UserAllFeesFines.waiveFeeFine(testData.userId, testData.chargeAmount, testData.ownerId);
     ManualCharges.deleteViaApi(testData.manualChargeId);
     UsersOwners.deleteViaApi(testData.ownerId);
-    Conditions.resetConditionViaApi(testData.testConditionId, testData.name);
+    Conditions.resetConditionViaApi(testData.name);
     Users.deleteViaApi(testData.userId);
     PatronGroups.deleteViaApi(testData.patronGroupId);
   });

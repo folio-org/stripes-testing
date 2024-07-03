@@ -127,22 +127,7 @@ describe('orders: export', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    Orders.unOpenOrder();
-    // Need to wait until the order is opened before deleting it
-    cy.wait(2000);
     cy.getAdminToken();
-    Orders.deleteOrderViaApi(order.id);
-
-    Organizations.deleteOrganizationViaApi(organization.id);
-    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-      location.institutionId,
-      location.campusId,
-      location.libraryId,
-      location.id,
-    );
     Users.deleteViaApi(user.userId);
   });
 

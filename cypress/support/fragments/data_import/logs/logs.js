@@ -49,7 +49,7 @@ export default {
     cy.do(viewAllLogsButton.click());
     cy.do([
       anyProfileAccordion.clickHeader(),
-      anyProfileAccordion.find(Selection({ singleValue: including('Choose job profile') })).open(),
+      anyProfileAccordion.find(Selection({ value: including('Choose job profile') })).open(),
     ]);
     cy.do(SelectionList().select(jobProfileName));
     cy.expect(MultiColumnListCell(jobProfileName).exists());
@@ -58,7 +58,7 @@ export default {
   checkStatusOfJobProfile: (status = 'Completed', rowNumber = 0) => cy.do(MultiColumnListCell({ row: rowNumber, content: status }).exists()),
 
   checkJobStatus: (fileName, status) => {
-    const newFileName = fileName.replace('.mrc', '');
+    const newFileName = fileName.replace(/\.mrc$/i, '');
 
     cy.do(
       MultiColumnListCell({ content: including(newFileName) }).perform((element) => {
@@ -90,6 +90,7 @@ export default {
     // TODO need to wait until page is uploaded
     cy.wait(3500);
   },
+
   checkQuantityRecordsInFile: (quantityRecords) => cy.do(MultiColumnListCell({ row: 0, content: quantityRecords }).exists()),
 
   clickOnHotLink: (row = 0, columnIndex = 3, status = 'Created') => {
@@ -115,7 +116,7 @@ export default {
 
   checkAuthorityLogJSON: (propertiesArray) => {
     cy.do(Button('Authority').click());
-
+    cy.wait(1500);
     propertiesArray.forEach((property) => {
       cy.expect(HTML(property).exists());
     });
@@ -141,6 +142,7 @@ export default {
   },
 
   checkFileIsRunning: (fileName) => {
+    cy.wait(1500);
     cy.expect(runningAccordion.find(HTML(including(fileName))).exists());
   },
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),

@@ -12,7 +12,7 @@ describe('ui-finance: Ledgers', () => {
 
   it(
     'C4053 Create a new ledger (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       const defaultLedger = NewLedger.defaultLedger;
 

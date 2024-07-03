@@ -97,7 +97,7 @@ describe('Inventory', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
       Location.deleteViaApi(location.id);
       [...Array(3)].forEach((_, index) => {
-        Location.deleteViaApiIncludingInstitutionCampusLibrary(
+        Location.deleteInstitutionCampusLibraryLocationViaApi(
           itemData.instances[index].defaultLocation.institutionId,
           itemData.instances[index].defaultLocation.campusId,
           itemData.instances[index].defaultLocation.libraryId,

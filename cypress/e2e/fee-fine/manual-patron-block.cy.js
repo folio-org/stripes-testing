@@ -46,28 +46,36 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
     Users.deleteViaApi(userId);
   });
 
-  it('C476: Scenario#1&Scenario#2 (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
-    UsersSearchPane.searchByKeywords(userName);
-    UsersCard.patronBlocksAccordionCovered();
+  it(
+    'C476: Scenario#1&Scenario#2 (vega)',
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    () => {
+      UsersSearchPane.searchByKeywords(userName);
+      UsersCard.patronBlocksAccordionCovered();
 
-    UsersSearchPane.searchByKeywords(userName);
-    UsersCard.createAndSaveNewPatronBlock(testDescription);
-    // Scenario#2
-    UsersCard.submitPatronInformation(testDescription);
-    UsersCard.selectPatronBlock(testDescription);
-    UsersCard.deletePatronBlock();
-  });
-  it('C476: Scenario#3&Scenario#4 (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
-    UsersSearchPane.searchByKeywords(userName);
-    UsersCard.openPatronBlocks();
-    // Scenario#3
-    UsersCard.createPatronBlock();
-    UsersCard.submitNewBlockPageOpen();
-    // Scenario#4
-    UsersCard.closeNewBlockPage();
-    UsersCard.patronBlocksAccordionCovered();
-  });
-  it('C476: Scenario#5,6,7,8,9 (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
+      UsersSearchPane.searchByKeywords(userName);
+      UsersCard.createAndSaveNewPatronBlock(testDescription);
+      // Scenario#2
+      UsersCard.submitPatronInformation(testDescription);
+      UsersCard.selectPatronBlock(testDescription);
+      UsersCard.deletePatronBlock();
+    },
+  );
+  it(
+    'C476: Scenario#3&Scenario#4 (vega)',
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    () => {
+      UsersSearchPane.searchByKeywords(userName);
+      UsersCard.openPatronBlocks();
+      // Scenario#3
+      UsersCard.createPatronBlock();
+      UsersCard.submitNewBlockPageOpen();
+      // Scenario#4
+      UsersCard.closeNewBlockPage();
+      UsersCard.patronBlocksAccordionCovered();
+    },
+  );
+  it('C476: Scenario#5,6,7,8,9 (vega)', { tags: ['smoke', 'vega', 'system', 'shiftLeft'] }, () => {
     // scenario#5
     UsersSearchPane.searchByKeywords(userName);
     UsersCard.patronBlocksAccordionCovered();
@@ -86,25 +94,29 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
     // scenario#9
     UsersCard.deletePatronBlock();
   });
-  it('C476: Scenario#10,11,12,13,14,15,16 (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
-    UsersSearchPane.searchByKeywords(userName);
-    UsersCard.patronBlocksAccordionCovered();
+  it(
+    'C476: Scenario#10,11,12,13,14,15,16 (vega)',
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    () => {
+      UsersSearchPane.searchByKeywords(userName);
+      UsersCard.patronBlocksAccordionCovered();
 
-    UsersSearchPane.searchByKeywords(userName);
-    // scenario#10
-    UsersCard.createNewPatronBlock(testDescription);
-    // scenario#11
-    UsersCard.selectTodayExpirationDate();
-    UsersCard.submitWrongExpirationDate();
-    UsersCard.selectTomorrowExpirationDate();
-    // scenario#12
-    UsersCard.saveAndClose();
-    UsersCard.submitPatronInformation(testDescription);
-    // scenario#13,14,15,16
-    UsersCard.selectPatronBlock(testDescription);
-    UsersCard.deletePatronBlock();
-  });
-  it('C476: Scenario#17,18 (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
+      UsersSearchPane.searchByKeywords(userName);
+      // scenario#10
+      UsersCard.createNewPatronBlock(testDescription);
+      // scenario#11
+      UsersCard.selectTodayExpirationDate();
+      UsersCard.submitWrongExpirationDate();
+      UsersCard.selectTomorrowExpirationDate();
+      // scenario#12
+      UsersCard.saveAndClose();
+      UsersCard.submitPatronInformation(testDescription);
+      // scenario#13,14,15,16
+      UsersCard.selectPatronBlock(testDescription);
+      UsersCard.deletePatronBlock();
+    },
+  );
+  it('C476: Scenario#17,18 (vega)', { tags: ['smoke', 'vega', 'system', 'shiftLeft'] }, () => {
     UsersSearchPane.searchByKeywords(userName);
     UsersCard.openPatronBlocks();
     UsersCard.createPatronBlock();

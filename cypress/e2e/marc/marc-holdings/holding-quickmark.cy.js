@@ -80,7 +80,7 @@ describe('MARC', () => {
 
     it(
       'C345390 Add a field to a record using quickMARC (spitfire)',
-      { tags: ['smoke', 'spitfire'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
       () => {
         QuickMarcEditor.addRow(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
         QuickMarcEditor.checkInitialContent(
@@ -101,7 +101,7 @@ describe('MARC', () => {
       },
     );
 
-    it('C345398 Edit MARC 008 (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
+    it('C345398 Edit MARC 008 (spitfire)', { tags: ['smoke', 'spitfire', 'shiftLeft'] }, () => {
       // Wait until the page to be loaded fully.
       cy.wait(1000);
       QuickMarcEditor.checkNotExpectedByteLabelsInTag008Holdings();
@@ -129,7 +129,7 @@ describe('MARC', () => {
 
     it(
       'C345400 Attempt to save a record without a MARC 852 (spitfire)',
-      { tags: ['smoke', 'spitfire'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
       () => {
         QuickMarcEditor.getRegularTagContent('852').then((initialTagContent) => {
           QuickMarcEditor.deleteTag(5);

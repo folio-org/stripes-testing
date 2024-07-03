@@ -77,7 +77,7 @@ describe('Inventory', () => {
         cy.deleteHoldingRecordViaApi(itemData.testInstanceIds.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(itemData.testInstanceIds.instanceId);
 
-        Location.deleteViaApiIncludingInstitutionCampusLibrary(
+        Location.deleteInstitutionCampusLibraryLocationViaApi(
           defaultLocation.institutionId,
           defaultLocation.campusId,
           defaultLocation.libraryId,

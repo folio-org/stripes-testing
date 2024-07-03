@@ -14,6 +14,7 @@ import {
   including,
   TextField,
   Image,
+  MultiColumnListRow,
 } from '../../../../interactors';
 
 const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
@@ -37,6 +38,7 @@ const saveAndClose = Button('Save and close');
 const confirmChanges = Button('Confirm changes');
 const buildQueryButton = Button('Build query');
 const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' });
+const areYouSureForm = Modal('Are you sure?');
 
 export const userIdentifiers = ['User UUIDs', 'User Barcodes', 'External IDs', 'Usernames'];
 
@@ -458,6 +460,15 @@ export default {
     cy.expect(MultiColumnListCell({ column: columnName, content: value }).exists());
   },
 
+  verifyExactChangesUnderColumnsByRow(columnName, value, row = 0) {
+    cy.expect(
+      areYouSureForm
+        .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+        .find(MultiColumnListCell({ column: columnName, content: value }))
+        .exists(),
+    );
+  },
+
   verifyNonMatchedResults(...values) {
     cy.expect([
       errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
@@ -511,16 +522,23 @@ export default {
     }
   },
 
-  verifyActionsAfterConductedInAppUploading(errors = true) {
+  verifyActionsAfterConductedInAppUploading(errors = true, instance = false) {
     cy.do(actions.click());
     cy.expect([
       Button('Download matched records (CSV)').exists(),
-      Button('Start bulk edit').exists(),
       DropdownMenu().find(HTML('Show columns')).exists(),
       DropdownMenu().find(searchColumnNameTextfield).exists(),
     ]);
     if (errors) {
       cy.expect(Button('Download errors (CSV)').exists());
+    }
+    if (instance) {
+      cy.expect([
+        Button('Start bulk edit - Instance fields').exists(),
+        Button('Start bulk edit - MARC fields').exists(),
+      ]);
+    } else {
+      cy.expect(Button('Start bulk edit').exists());
     }
   },
 
@@ -582,43 +600,37 @@ export default {
 
   verifyHoldingActionShowColumns() {
     cy.expect([
-      DropdownMenu().find(Checkbox('Holdings ID')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Version')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings UUID')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Holdings HRID')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Holdings type')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Former ids')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Former holdings Id')).has({ checked: false }),
       DropdownMenu()
         .find(Checkbox('Instance (Title, Publisher, Publication date)'))
         .has({ checked: false }),
-      DropdownMenu().find(Checkbox('Permanent location')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Temporary location')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Effective location')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings permanent location')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Holdings temporary location')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Electronic access')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Call number type')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Call number prefix')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Call number')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Call number suffix')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Holdings level call number type')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings level call number prefix')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings level call number')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings level call number suffix')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Shelving title')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Acquisition format')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Acquisition method')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Receipt status')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Note')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Administrative note')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Ill policy')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('ILL policy')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Retention policy')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Digitization policy')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings statements')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings statements for indexes')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings statements for supplements')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Copy number')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings statement')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings statement for indexes')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings statement for supplements')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings copy number')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Number of items')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Receiving history')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Suppress from discovery')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Suppress from discovery')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Statistical codes')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Tags')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Source')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Instance HRID')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Item barcode')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Source')).has({ checked: true }),
     ]);
   },
 
@@ -673,11 +685,11 @@ export default {
     });
   },
 
-  verifyResultColumTitles(title) {
+  verifyResultColumnTitles(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
   },
 
-  verifyResultColumTitlesDoNotInclude(title) {
+  verifyResultColumnTitlesDoNotInclude(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).absent());
   },
 
@@ -724,6 +736,8 @@ export default {
   },
 
   clickBuildQueryButton() {
+    cy.wait(2000);
+    cy.expect(buildQueryButton.has({ disabled: false }));
     cy.do(buildQueryButton.click());
   },
 
@@ -762,7 +776,26 @@ export default {
     ]);
   },
 
-  verifyElectronicAccessElementByIndex(index, expectedText) {
-    cy.get('[class^="ElectronicAccess"]').find('td').eq(index).should('contain.text', expectedText);
+  checkboxWithTextAbsent(text) {
+    cy.get('[class^="ActionMenu-"]').within(() => {
+      cy.get('[class^="checkbox-"]').each(($checkbox) => {
+        cy.wrap($checkbox).should(($el) => {
+          expect($el.text().toLowerCase()).to.not.contain(text.toLowerCase());
+        });
+      });
+    });
+  },
+
+  verifyElectronicAccessElementByIndex(index, expectedText, miniRowCount = 1) {
+    cy.get('[class^="ElectronicAccess"]')
+      .find('tr')
+      .eq(miniRowCount)
+      .find('td')
+      .eq(index)
+      .should('have.text', expectedText);
+  },
+
+  verifyRowHasEmptyElectronicAccess(index) {
+    cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
   },
 };

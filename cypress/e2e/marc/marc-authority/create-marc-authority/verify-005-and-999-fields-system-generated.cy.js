@@ -5,22 +5,31 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
-import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
-import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../../support/constants';
+import getRandomPostfix, {
+  getRandomLetters,
+  randomFourDigitNumber,
+} from '../../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Create MARC Authority', () => {
+      const randomPostfix = getRandomPostfix();
       const todayDate = moment(new Date()).format('YYYYMMDD');
       const headerText = 'Create a new MARC authority record';
+      const localAuthFile = {
+        name: `C423500 auth source file active ${randomPostfix}`,
+        prefix: `${getRandomLetters(4)}`,
+        startWithNumber: '1',
+        isActive: true,
+      };
       const tag999 = '999';
       const newField010 = {
-        rowIndex: 4,
+        previousFieldTag: '008',
         tag: '010',
-        content: '$a n000232',
+        content: `$a ${localAuthFile.prefix}${randomFourDigitNumber()}`,
       };
       const newField100 = {
-        rowIndex: 5,
+        previousFieldTag: '010',
         tag: '100',
         content: '$a 005 and 999 auto-generated test',
       };
@@ -36,8 +45,16 @@ describe('MARC', () => {
         ])
           .then((userProperties) => {
             users.userProperties = userProperties;
-
-            ManageAuthorityFiles.setAllDefaultFOLIOFilesToActiveViaAPI();
+          })
+          .then(() => {
+            cy.createAuthoritySourceFileUsingAPI(
+              localAuthFile.prefix,
+              localAuthFile.startWithNumber,
+              localAuthFile.name,
+              localAuthFile.isActive,
+            ).then((sourceId) => {
+              localAuthFile.id = sourceId;
+            });
           })
           .then(() => {
             cy.login(users.userProperties.username, users.userProperties.password, {
@@ -51,7 +68,7 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
         MarcAuthority.deleteViaAPI(createdAuthorityId);
-        ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
+        cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id, true);
       });
 
       it(
@@ -59,7 +76,7 @@ describe('MARC', () => {
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
-          MarcAuthorities.clickNewAuthorityButton();
+          MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);
           QuickMarcEditor.verifyAuthorityLookUpButton();
 
@@ -68,15 +85,24 @@ describe('MARC', () => {
           // Select any option
           // Click on the "Save & close" button in "Select authority file" modal
           QuickMarcEditor.clickAuthorityLookUpButton();
-          QuickMarcEditor.selectAuthorityFile(DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE);
+          QuickMarcEditor.selectAuthorityFile(localAuthFile.name);
           QuickMarcEditor.clickSaveAndCloseInModal();
           QuickMarcEditor.checkPaneheaderContains(headerText);
+          cy.wait(1000);
 
           // 3 Add 2 new fields by clicking on "+" icon and fill them as specified:
           // 010 \\ "$a <<enter a value in format <Prefix><Value> in accordance to selected authority file>>", ex.: "n000232"
           // 100 \\ "$a 005 and 999 auto-generated test"
-          MarcAuthority.addNewField(newField010.rowIndex, newField010.tag, newField010.content);
-          MarcAuthority.addNewField(newField100.rowIndex, newField100.tag, newField100.content);
+          MarcAuthority.addNewFieldAfterExistingByTag(
+            newField010.previousFieldTag,
+            newField010.tag,
+            newField010.content,
+          );
+          MarcAuthority.addNewFieldAfterExistingByTag(
+            newField100.previousFieldTag,
+            newField100.tag,
+            newField100.content,
+          );
           QuickMarcEditor.checkContentByTag(newField010.tag, newField010.content);
           QuickMarcEditor.checkContentByTag(newField100.tag, newField100.content);
 

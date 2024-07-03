@@ -1,4 +1,5 @@
 import { HTML, including } from '@interactors/html';
+import { not } from 'bigtest';
 import FileManager from '../../utils/fileManager';
 import {
   Modal,
@@ -16,6 +17,7 @@ import {
   Option,
   OptionGroup,
   Keyboard,
+  MultiColumnListRow,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -33,6 +35,7 @@ const downloadPreviewBtn = Button('Download preview');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
+const startBulkEditInstanceButton = Button('Start bulk edit - Instance fields');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
 const confirmChangesButton = Button('Confirm changes');
@@ -54,6 +57,10 @@ const bulkPageSelections = {
 export default {
   openStartBulkEditForm() {
     cy.do(startBulkEditLocalButton.click());
+  },
+  openStartBulkEditInstanceForm() {
+    cy.do(startBulkEditInstanceButton.click());
+    cy.wait(1000);
   },
   openInAppStartBulkEditFrom() {
     cy.do(startBulkEditButton.click());
@@ -143,6 +150,17 @@ export default {
     changes.forEach((value) => {
       cy.expect(
         areYouSureForm.find(MultiColumnListCell({ column, content: including(value) })).exists(),
+      );
+    });
+  },
+
+  verifyChangesInAreYouSureFormByRow(column, changes, row = 0) {
+    changes.forEach((value) => {
+      cy.expect(
+        areYouSureForm
+          .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+          .find(MultiColumnListCell({ column, content: including(value) }))
+          .exists(),
       );
     });
   },
@@ -576,7 +594,16 @@ export default {
     );
   },
 
+  selectFromUnchangedSelect(selection, rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ id: 'urlRelationship', selectClass: not(including('isChanged')) }))
+        .choose(selection),
+    );
+  },
+
   findValue(type, rowIndex = 0) {
+    cy.wait(2000);
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
       RepeatableFieldItem({ index: rowIndex })
@@ -590,6 +617,14 @@ export default {
     this.fillInFirstTextArea(oldNote, rowIndex);
     this.selectSecondAction('Replace with', rowIndex);
     this.fillInSecondTextArea(newNote, rowIndex);
+  },
+
+  electronicAccessReplaceWith(property, oldValue, newValue, rowIndex = 0) {
+    this.findValue(property, rowIndex);
+    cy.wait(2000);
+    this.selectFromUnchangedSelect(oldValue, rowIndex);
+    this.selectSecondAction('Replace with', rowIndex);
+    this.selectFromUnchangedSelect(newValue, rowIndex);
   },
 
   noteRemove(noteType, note, rowIndex = 0) {
@@ -686,8 +721,12 @@ export default {
     cy.do(Checkbox('Apply to all items records').click());
   },
 
+  applyToItemsRecordsCheckboxExists(checked) {
+    cy.expect(Checkbox({ label: 'Apply to all items records', checked }).exists());
+  },
+
   verifyNoMatchingOptionsForLocationFilter() {
-    cy.expect(HTML('No matching options').exists());
+    cy.expect(HTML('-List is empty-').exists());
   },
 
   duplicateCheckInNote(note = 'in', rowIndex = 0) {
@@ -1023,5 +1062,30 @@ export default {
 
   verifyCheckboxAbsent() {
     cy.expect(Checkbox().absent());
+  },
+
+  verifyCheckboxAbsentByRow(rowIndex = 0) {
+    cy.expect(RepeatableFieldItem({ index: rowIndex }).find(Checkbox()).absent());
+  },
+
+  verifyStaffOnlyCheckbox(checked = false, rowIndex = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Checkbox({ label: 'Staff only', checked }))
+        .exists(),
+    );
+  },
+
+  checkStaffOnlyCheckbox(rowIndex = 0) {
+    this.verifyStaffOnlyCheckbox(false, rowIndex);
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(Checkbox('Staff only')).click());
+  },
+
+  uncheckStaffOnlyCheckbox(rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Checkbox({ label: 'Staff only', checked: true }))
+        .click(),
+    );
   },
 };

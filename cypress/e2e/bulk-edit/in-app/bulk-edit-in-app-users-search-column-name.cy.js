@@ -39,7 +39,7 @@ describe('bulk-edit', () => {
 
     it(
       'C423566 Verify "Search column name" search box for Users (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft'] },
       () => {
         cy.viewport(1000, 660);
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
@@ -54,7 +54,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.searchColumnName('id');
         const columnNameId = 'User id';
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(columnNameId);
-        BulkEditSearchPane.verifyResultColumTitles(columnNameId);
+        BulkEditSearchPane.verifyResultColumnTitles(columnNameId);
         BulkEditSearchPane.clearSearchColumnNameTextfield();
 
         BulkEditSearchPane.searchColumnName('fewoh', false);
@@ -62,7 +62,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.searchColumnName('user');
         const columnNameUsername = 'Username';
         BulkEditSearchPane.uncheckShowColumnCheckbox(columnNameUsername);
-        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude(columnNameUsername);
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(columnNameUsername);
 
         TopMenuNavigation.navigateToApp('Bulk edit');
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');

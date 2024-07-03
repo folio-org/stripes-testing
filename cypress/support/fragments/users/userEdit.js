@@ -312,6 +312,10 @@ export default {
     cy.do([Button('Cancel').click(), Button('Close without saving').click()]);
   },
 
+  cancelEdit() {
+    cy.do(Button('Cancel').click());
+  },
+
   saveAndClose() {
     cy.wait(1000);
     cy.do(saveAndCloseBtn.click());

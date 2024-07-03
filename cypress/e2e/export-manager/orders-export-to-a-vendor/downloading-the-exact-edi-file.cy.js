@@ -152,7 +152,7 @@ describe('Export Manager', () => {
       Orders.deleteOrderViaApi(order.id);
 
       Organizations.deleteOrganizationViaApi(organization.id);
-      NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+      NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
         location.institutionId,
         location.campusId,
         location.libraryId,

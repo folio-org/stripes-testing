@@ -85,7 +85,7 @@ describe('Orders: Receiving and Check-in', () => {
 
   it(
     'C343213 Receive pieces for package order (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

@@ -205,6 +205,10 @@ export default {
     cy.do(Checkbox('Active').click());
   },
 
+  selectPendingStatus: () => {
+    cy.do(Checkbox('Pending').click());
+  },
+
   selectIsDonorFilter: (isDonor) => {
     if (isDonor === 'Yes') {
       cy.do([
@@ -219,10 +223,6 @@ export default {
         toggleButtonIsDonor.click(),
       ]);
     }
-  },
-
-  selectPendingStatus: () => {
-    cy.do(Checkbox('Pending').click());
   },
 
   checkOrganizationFilter: () => {
@@ -422,6 +422,7 @@ export default {
   resetFilters: () => {
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true })); // Actual : true
+    cy.wait(2000);
   },
 
   checkSearchResults: (organization) => {
@@ -430,17 +431,11 @@ export default {
   },
 
   selectYesInIsVendor: () => {
-    cy.do([
-      Button({ id: 'accordion-toggle-button-org-filter-isVendor' }).click(),
-      Checkbox('Yes').click(),
-    ]);
+    cy.do([Button({ id: 'accordion-toggle-button-isVendor' }).click(), Checkbox('Yes').click()]);
   },
 
   selectNoInIsVendor: () => {
-    cy.do([
-      Button({ id: 'accordion-toggle-button-org-filter-isVendor' }).click(),
-      Checkbox('No').click(),
-    ]);
+    cy.do([Button({ id: 'accordion-toggle-button-isVendor' }).click(), Checkbox('No').click()]);
   },
 
   selectVendor: () => {

@@ -9,6 +9,15 @@ const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
 const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
 
+const delay = async (ms) => new Promise((res) => setTimeout(res, ms));
+
+const reportportalOptions = {
+  apiKey: process.env.CI_API_KEY ? process.env.CI_API_KEY : '',
+  restClientConfig: {
+    timeout: 360000,
+  },
+};
+
 module.exports = defineConfig({
   retries: {
     runMode: 0,
@@ -26,6 +35,8 @@ module.exports = defineConfig({
     OKAPI_TENANT: 'diku2',
     diku_login: 'folio',
     diku_password: 'folio',
+    EDGE_HOST: 'https://edge-diku2.int.aws.folio.org',
+    EDGE_API_KEY: '',
     is_kiwi_release: false,
     downloadTimeout: 2000,
     allure: true,
@@ -38,6 +49,7 @@ module.exports = defineConfig({
     runAsAdmin: true,
     systemRoleName: 'System admin role',
   },
+  reporterOptions: reportportalOptions,
   e2e: {
     async setupNodeEvents(on, config) {
       allureWriter(on, config);
@@ -102,6 +114,19 @@ module.exports = defineConfig({
           const filePath = path.join(downloadsFolder, filename);
           return fs.readFileSync(filePath, 'utf-8');
         },
+      });
+
+      // keep Cypress running until the ReportPortal reporter is finished. this is a
+      // very critical step, as otherwise results might not be completely pushed into
+      // ReportPortal, resulting in unfinished launches and failing merges
+      on('after:run', async (result) => {
+        if (result) {
+          if (globby.sync('rplaunchinprogress*.tmp').length > 0) {
+            // eslint-disable-next-line no-console
+            console.log('Report portal. Await for a 20s...');
+            await delay(20000);
+          }
+        }
       });
 
       // fix for cypress-testrail-simple plugin

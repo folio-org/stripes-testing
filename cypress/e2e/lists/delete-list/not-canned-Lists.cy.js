@@ -21,29 +21,39 @@ describe('lists', () => {
         userData.userId = userProperties.userId;
       });
     });
-    it('C411768 Delete list: Positive case (corsair)', { tags: ['smoke', 'corsair', 'eurekaPhase1'] }, () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
-      Lists.openNewListPane();
-      Lists.setName(listData.name);
-      Lists.setDescription(listData.name);
-      Lists.selectRecordType(listData.recordType);
-      Lists.selectVisibility(listData.visibility);
-      Lists.saveList();
-      Lists.actionButton();
-      cy.contains('Delete list').click();
-      Lists.DeleteListModal();
-      cy.contains(`List ${listData.name} deleted.`);
-    });
+    it(
+      'C411768 Delete list: Positive case (corsair)',
+      { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
+      () => {
+        // eslint-disable-next-line spaced-comment
+        //cy.login(userData.username, userData.password);
+        cy.loginAsAdmin();
+        cy.visit(TopMenu.listsPath);
+        Lists.waitLoading();
+        Lists.resetAllFilters();
+        Lists.openNewListPane();
+        Lists.setName(listData.name);
+        Lists.setDescription(listData.name);
+        Lists.selectRecordType(listData.recordType);
+        Lists.selectVisibility(listData.visibility);
+        Lists.saveList();
+        Lists.actionButton();
+        cy.contains('Delete list').click();
+        Lists.DeleteListModal();
+        cy.contains(`List ${listData.name} deleted.`);
+      },
+    );
 
     it(
       'C411772 Delete list: "Edit list" mode (corsair)',
       { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
-        cy.login(userData.username, userData.password);
+        // eslint-disable-next-line spaced-comment
+        //cy.login(userData.username, userData.password);
+        cy.loginAsAdmin();
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
+        Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);

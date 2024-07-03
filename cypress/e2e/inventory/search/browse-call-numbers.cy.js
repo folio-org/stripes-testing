@@ -44,7 +44,7 @@ describe('ui-inventory: browse call numbers', () => {
 
   it(
     'C350377 Verify the "Browse subjects" search option on the Instances tab (spitfire)',
-    { tags: ['smoke', 'spitfire', 'eurekaPhase1'] },
+    { tags: ['smoke', 'spitfire', 'shiftLeft'] },
     () => {
       InventorySearchAndFilter.instanceTabIsDefault();
       InventorySearchAndFilter.switchToBrowseTab();
@@ -62,7 +62,7 @@ describe('ui-inventory: browse call numbers', () => {
 
   it(
     'C350378 Verify the "Browse subjects" search option on the Holdings tab (spitfire)',
-    { tags: ['smoke', 'spitfire', 'eurekaPhase1'] },
+    { tags: ['smoke', 'spitfire', 'shiftLeft'] },
     () => {
       InventorySearchAndFilter.instanceTabIsDefault();
       InventorySearchAndFilter.switchToHoldings();
@@ -74,7 +74,7 @@ describe('ui-inventory: browse call numbers', () => {
 
   it(
     'C350379 Verify the "Browse subjects" search option on the Item tab (spitfire)',
-    { tags: ['smoke', 'spitfire', 'eurekaPhase1'] },
+    { tags: ['smoke', 'spitfire', 'shiftLeft'] },
     () => {
       InventorySearchAndFilter.instanceTabIsDefault();
       InventorySearchAndFilter.switchToItem();

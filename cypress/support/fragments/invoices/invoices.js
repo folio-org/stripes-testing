@@ -277,9 +277,10 @@ export default {
     ]);
     FinanceHelper.selectFromResultsList();
     cy.get('input[name="subTotal"]').clear().type(total);
-    cy.do([fundInInvoiceSection.find(Button('%')).click(), saveAndClose.click()]);
+    cy.do([fundInInvoiceSection.find(Button('%')).click()]);
+    cy.wait(2000);
+    cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
-    cy.wait(4000);
   },
 
   checkSearchResultsContent({ records = [] } = {}) {
@@ -329,8 +330,6 @@ export default {
     ]);
     this.selectVendorOnUi(invoice.vendorName);
     cy.do([
-      Button({ name: 'accountNo' }).click(),
-      SelectionList().select(`Default (${invoice.accountingCode})`),
       batchGroupSelection.open(),
       SelectionList().select(invoice.batchGroup),
       invoicePaymentMethodSelect.choose('Cash'),
@@ -706,9 +705,11 @@ export default {
       Button({ id: 'fundDistributions-add-button' }).click(),
       Selection('Fund ID*').open(),
       SelectionList().select(fund.name.concat(' ', '(', fund.code, ')')),
-      saveAndClose.click(),
     ]);
+    cy.wait(2000);
+    cy.do([saveAndClose.click()]);
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
+    cy.wait(8000);
   },
 
   changeFundInLine: (fund) => {

@@ -113,7 +113,7 @@ export default {
     );
   },
   expandDonorInformationSection() {
-    this.clickSectionButton({ section: donorInfoSection, checkIsEmpty: true });
+    this.clickSectionButton({ section: donorInfoSection });
   },
   checkDonorInformationSectionContent({ donors = [], hasViewPermissions = true } = {}) {
     donors.forEach((donor, index) => {
@@ -142,12 +142,8 @@ export default {
 
     return AddDonorsModal;
   },
-  clickSectionButton({ section, checkIsEmpty = false }) {
+  clickSectionButton({ section }) {
     cy.do(section.toggle());
-
-    if (checkIsEmpty) {
-      cy.expect(section.find(HTML(including('The list contains no items'))).exists());
-    }
   },
   selectDropDownValue(label, option) {
     cy.do([

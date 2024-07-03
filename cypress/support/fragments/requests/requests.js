@@ -69,6 +69,7 @@ function createRequestApi(
   itemStatus = ITEM_STATUS_NAMES.AVAILABLE,
   requestType = REQUEST_TYPES.PAGE,
   requestLevel = REQUEST_LEVELS.ITEM,
+  namePrefix = '',
 ) {
   const userData = {
     active: true,
@@ -93,7 +94,7 @@ function createRequestApi(
     userId: null,
   };
   const instanceRecordData = {
-    instanceTitle: `autoTestInstanceTitle ${Helper.getRandomBarcode()}`,
+    instanceTitle: `${namePrefix}autoTestInstanceTitle ${Helper.getRandomBarcode()}`,
     itemBarcode: `item-barcode-${uuid()}`,
     instanceId: uuid(),
     itemId: uuid(),
@@ -245,7 +246,6 @@ function waitLoadingTags() {
     url: '/tags?limit=10000',
   }).as('getTags');
   cy.wait('@getTags');
-  // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(1000);
 }
 
@@ -309,8 +309,16 @@ export default {
   },
 
   findCreatedRequest(title) {
+    cy.expect(Pane({ id: 'pane-filter' }).exists());
+    cy.expect(
+      Pane({ title: 'Search & filter' })
+        .find(TextField({ id: 'input-request-search' }))
+        .exists(),
+    );
+    cy.wait(1500);
     cy.do(TextField({ id: 'input-request-search' }).fillIn(title));
     cy.do(Pane({ title: 'Search & filter' }).find(Button('Search')).click());
+    cy.wait(1500);
   },
 
   selectAllOpenRequests() {
@@ -421,27 +429,27 @@ export default {
     {
       title: 'Title',
       id: 'title',
-      columnIndex: 2,
+      columnIndex: 3,
     },
     {
       title: 'Type',
       id: 'type',
-      columnIndex: 5,
+      columnIndex: 6,
     },
     {
       title: 'Item barcode',
       id: 'itembarcode',
-      columnIndex: 4,
+      columnIndex: 5,
     },
     {
       title: 'Requester',
       id: 'requester',
-      columnIndex: 8,
+      columnIndex: 9,
     },
     {
       title: 'Requester Barcode',
       id: 'requesterbarcode',
-      columnIndex: 9,
+      columnIndex: 10,
     },
   ],
 
@@ -507,7 +515,6 @@ export default {
       if (!b) return -1;
       return a.localeCompare(b);
     });
-
     expect(prev).to.deep.equal(itemsClone);
   },
 

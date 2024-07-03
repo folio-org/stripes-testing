@@ -1,6 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import uuid from 'uuid';
-import { HTML, including } from '@interactors/html';
+import { HTML, including, matching } from '@interactors/html';
 import {
   Section,
   or,
@@ -19,6 +19,7 @@ import {
   MultiColumnListRow,
   AdvancedSearch,
   AdvancedSearchRow,
+  MultiColumnListCell,
 } from '../../../../interactors';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
@@ -68,6 +69,7 @@ const searchInstancesOptions = [
   'Contributor',
   'Title (all)',
   'Identifier (all)',
+  'Classification, normalized',
   'ISBN',
   'ISSN',
   'LCCN, normalized',
@@ -87,7 +89,7 @@ const searchHoldingsOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
   'ISBN',
   'ISSN',
-  'Call number, eye readable',
+  'Call number, not normalized',
   'Call number, normalized',
   'Holdings notes (all)',
   'Holdings administrative notes',
@@ -100,7 +102,7 @@ const searchItemsOptions = [
   'Barcode',
   'ISBN',
   'ISSN',
-  'Effective call number (item), eye readable',
+  'Effective call number (item), not normalized',
   'Effective call number (item), normalized',
   'Item notes (all)',
   'Item administrative notes',
@@ -114,6 +116,7 @@ const searchInstancesOptionsValues = [
   'contributor',
   'title',
   'identifier',
+  'normalizedClassificationNumber',
   'isbn',
   'issn',
   'lccn',
@@ -155,12 +158,12 @@ const searchItemsOptionsValues = [
   'iid',
   'allFields',
 ];
-const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 14);
+const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 16);
 const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 14);
 const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 14);
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
-  .filter((option, index) => index <= 14);
+  .filter((option, index) => index <= 16);
 const advSearchHoldingsOptionsValues = searchHoldingsOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 14);
@@ -320,7 +323,7 @@ export default {
     cy.do(Section({ id: 'instancesTags' }).find(TextField()).fillIn(tagName));
     cy.wait('@getTags');
     // TODO: clarify with developers what should be waited
-    cy.wait(1000);
+    cy.wait(1500);
     cy.do(Section({ id: 'instancesTags' }).find(TextField()).focus());
     cy.do(Section({ id: 'instancesTags' }).find(TextField()).click());
     cy.do(Checkbox(tagName).click());
@@ -946,6 +949,26 @@ export default {
     InventoryInstance.deleteInstanceViaApi(instance.instanceId);
   },
 
+  deleteInstanceByTitleViaApi(instanceTitle) {
+    return cy
+      .okapiRequest({
+        path: 'instance-storage/instances',
+        searchParams: {
+          limit: 100,
+          query: `title="${instanceTitle}"`,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((res) => {
+        return res.body.instances;
+      })
+      .then((instances) => {
+        instances.forEach((instance) => {
+          if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+      });
+  },
+
   createLocalCallNumberTypeViaApi: (name) => {
     return cy
       .okapiRequest({
@@ -978,9 +1001,9 @@ export default {
     oclc,
     profile = 'Inventory Single Record - Default Create Instance (Default)',
   ) => {
+    cy.do([actionsButton.click(), Button({ id: 'dropdown-clickable-import-record' }).click()]);
+    cy.wait(1000);
     cy.do([
-      actionsButton.click(),
-      Button({ id: 'dropdown-clickable-import-record' }).click(),
       Select({ name: 'selectedJobProfileId' }).choose(profile),
       singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
       singleRecordImportModal.find(Button('Import')).click(),
@@ -1193,11 +1216,7 @@ export default {
   },
 
   verifySelectedSearchOption(option) {
-    cy.expect(
-      inventorySearchAndFilterInput.has({
-        value: searchInstancesOptionsValues[searchInstancesOptions.indexOf(option)],
-      }),
-    );
+    cy.expect(inventorySearchAndFilterInput.has({ checkedOptionText: option }));
   },
 
   searchInstancesWithOption(option = searchInstancesOptions[0], value) {
@@ -1339,6 +1358,15 @@ export default {
       resultsPaneContent
         .find(MultiColumnListRow({ index: 0 }))
         .has({ text: including(contributorName) }),
+    );
+  },
+
+  checkResultsCellContainsAnyOfValues(valuesArray, columnIndex = 0, rowIndex = 0) {
+    const regEx = new RegExp(`.*(${valuesArray.join('|')}).*`, 'm');
+    cy.expect(
+      resultsPaneContent
+        .find(MultiColumnListCell({ row: rowIndex, columnIndex }))
+        .has({ text: matching(regEx) }),
     );
   },
 };

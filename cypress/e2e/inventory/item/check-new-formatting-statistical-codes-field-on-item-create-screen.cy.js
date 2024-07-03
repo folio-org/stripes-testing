@@ -1,5 +1,10 @@
 import { matching } from '@interactors/html';
-import { LOAN_TYPE_NAMES, LOCATION_NAMES, MATERIAL_TYPE_NAMES } from '../../../support/constants';
+import {
+  LOAN_TYPE_NAMES,
+  LOCATION_NAMES,
+  MATERIAL_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { ItemRecordEdit } from '../../../support/fragments/inventory';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -105,7 +110,7 @@ describe('Inventory', () => {
         InteractorsTools.checkCalloutMessage(matching(new RegExp(testData.calloutMessage)));
 
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
-        InventoryInstance.openItemByStatus('Available');
+        InventoryInstance.openItemByStatus(ITEM_STATUS_NAMES.AVAILABLE);
         InventoryItems.edit();
         ItemRecordEdit.waitLoading(testData.instanceData.instanceTitle);
 

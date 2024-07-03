@@ -71,7 +71,7 @@ describe('ui-finance: Funds', () => {
 
   it(
     'C4059 Test the search and filter options for funds (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       FinanceHelp.checkZeroSearchResultsMessage();
 

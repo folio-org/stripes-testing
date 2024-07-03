@@ -2,7 +2,10 @@ import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import QueryModal, { itemFieldValues } from '../../../support/fragments/bulk-edit/query-modal';
+import QueryModal, {
+  itemFieldValues,
+  QUERY_OPERATIONS,
+} from '../../../support/fragments/bulk-edit/query-modal';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import { LOCATION_NAMES, LOCATION_IDS } from '../../../support/constants';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -57,7 +60,7 @@ describe('bulk-edit', () => {
         QueryModal.verifySelectedField(itemFieldValues.temporaryLocation);
         QueryModal.verifyQueryAreaContent('(item_temporary_location_name  )');
         QueryModal.verifyOperatorColumn();
-        QueryModal.selectOperator('==');
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.verifyQueryAreaContent('(item_temporary_location_name == )');
         QueryModal.verifyValueColumn();
         QueryModal.chooseValueSelect(LOCATION_NAMES.ONLINE_UI);
@@ -80,7 +83,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.searchColumnName('note');
         const columnNameNote = 'Action note';
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(columnNameNote);
-        BulkEditSearchPane.verifyResultColumTitles(columnNameNote);
+        BulkEditSearchPane.verifyResultColumnTitles(columnNameNote);
         BulkEditSearchPane.searchColumnName('fewoh', false);
         BulkEditSearchPane.clearSearchColumnNameTextfield();
         BulkEditSearchPane.verifyActionsDropdownScrollable();
@@ -88,7 +91,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.searchColumnName(columnName);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(columnName);
         BulkEditSearchPane.changeShowColumnCheckbox(columnName);
-        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude(columnName);
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(columnName);
       },
     );
   });

@@ -81,6 +81,10 @@ describe('MARC', () => {
 
         before(() => {
           cy.getAdminToken();
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422145*');
+
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -134,23 +138,27 @@ describe('MARC', () => {
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             newFieldsForC388562.forEach((newField) => {
               QuickMarcEditor.updateExistingField(newField.tag, newField.content);
+              cy.wait(1000);
             });
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
 
             QuickMarcEditor.updateExistingField(
               testData.tags.tag245,
-              '$a A New Record $0 3052044C388562',
+              '$a A New Record $0 2052044C388562',
             );
+            cy.wait(500);
             QuickMarcEditor.updateExistingField(
               newFieldsForC388562[3].tag,
               `${newFieldsForC388562[3].content} $0 y015016`,
             );
+            cy.wait(500);
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
 
             QuickMarcEditor.updateExistingField(
               newFieldsForC388562[0].tag,
               `${newFieldsForC388562[0].content} $0 y016017`,
             );
+            cy.wait(500);
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout(
@@ -159,7 +167,7 @@ describe('MARC', () => {
             InventoryInstance.verifyAndClickLinkIcon(newFieldsForC388562[0].tag);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
-            InventoryInstance.searchResultsWithOption('Identifier (all)', '3052044C388562');
+            InventoryInstance.searchResultsWithOption('Identifier (all)', '2052044C388562');
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
               newFieldsForC388562[0].tag,
@@ -171,16 +179,19 @@ describe('MARC', () => {
               newFieldsForC388562[1].tag,
               `${newFieldsForC388562[1].content} $0 n99036055`,
             );
+            cy.wait(500);
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.updateExistingField(
               newFieldsForC388562[1].tag,
               newFieldsForC388562[1].content,
             );
+            cy.wait(500);
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.updateExistingField(
               newFieldsForC388562[1].tag,
               `${newFieldsForC388562[1].content} $0 y011022`,
             );
+            cy.wait(500);
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.updateExistingField(
               newFieldsForC388562[1].tag,
@@ -190,10 +201,10 @@ describe('MARC', () => {
 
             QuickMarcEditor.updateExistingField(
               newFieldsForC388562[2].tag,
-              `${newFieldsForC388562[1].content} $0 sh85095299C388562`,
+              `${newFieldsForC388562[1].content} $0 sh75095299C388562`,
             );
             // need to wait button will be enabled
-            cy.wait(3000);
+            cy.wait(2000);
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout('Field 650 has been linked to MARC authority record(s).');

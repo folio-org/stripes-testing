@@ -74,7 +74,7 @@ describe('orders: Receive piece from Order', () => {
     Orders.deleteOrderViaApi(orderID);
     Organizations.deleteOrganizationViaApi(organization.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+    NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
       location.institutionId,
       location.campusId,
       location.libraryId,
@@ -85,7 +85,7 @@ describe('orders: Receive piece from Order', () => {
 
   it(
     'C9177 Change location during receiving (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       const displaySummary = 'autotestCaption';
       Orders.searchByParameter('PO number', orderNumber);

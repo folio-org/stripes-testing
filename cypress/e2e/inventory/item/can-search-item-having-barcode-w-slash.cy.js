@@ -1,3 +1,4 @@
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import {
   InventoryInstances,
@@ -85,7 +86,7 @@ describe('Inventory', () => {
         // Expand the holdings accordion
         InventoryInstance.checkHoldingsTableContent({
           name: testData.location.name,
-          records: [{ barcode: testData.barcodes[0], status: 'Available' }],
+          records: [{ barcode: testData.barcodes[0], status: ITEM_STATUS_NAMES.AVAILABLE }],
         });
 
         // "Search & filter" section select "Item" tab

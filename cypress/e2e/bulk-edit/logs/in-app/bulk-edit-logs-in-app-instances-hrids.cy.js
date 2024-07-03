@@ -106,18 +106,17 @@ describe('bulk-edit', () => {
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance HRIDs');
           BulkEditSearchPane.uploadFile(instanceHRIDFileName);
-          BulkEditSearchPane.checkForUploading(instanceHRIDFileName);
           BulkEditSearchPane.waitFileUploading();
 
           BulkEditActions.downloadMatchedResults();
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Instance UUID');
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Staff suppress');
-          BulkEditSearchPane.verifyResultColumTitles('Staff suppress');
+          BulkEditSearchPane.verifyResultColumnTitles('Staff suppress');
           ExportFile.verifyFileIncludes(matchedRecordsFileName, [
             `${folioItem.instanceId},false,false,`,
             `${marcInstances[0].instanceId},false,false,`,
           ]);
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditInstanceForm();
           BulkEditActions.verifyModifyLandingPageBeforeModifying();
           BulkEditActions.selectOption('Staff suppress');
           BulkEditSearchPane.verifyInputLabel('Staff suppress');

@@ -40,7 +40,7 @@ describe('orders: Test PO search', () => {
 
   it(
     'C6717 Test the PO searches (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         orderNumber = poNumber;
@@ -53,7 +53,6 @@ describe('orders: Test PO search', () => {
           ),
           orderNumber,
         );
-        cy.wait(5000);
         // open order to check 'date opened' search
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

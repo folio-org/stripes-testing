@@ -116,14 +116,14 @@ describe('bulk-edit', () => {
           BulkEditActions.downloadMatchedResults();
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Instance UUID');
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Staff suppress');
-          BulkEditSearchPane.verifyResultColumTitles('Staff suppress');
+          BulkEditSearchPane.verifyResultColumnTitles('Staff suppress');
           ExportFile.verifyFileIncludes(matchedRecordsFileName, [
             `${folioItem.instanceId},false,true,`,
             `${marcInstances[0].instanceId},false,true,`,
             `${unsuppressedFolioItem.instanceId},false,false,`,
             `${marcInstances[1].instanceId},false,,`,
           ]);
-          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditActions.openStartBulkEditInstanceForm();
           BulkEditActions.verifyModifyLandingPageBeforeModifying();
           BulkEditActions.selectOption('Staff suppress');
           BulkEditSearchPane.verifyInputLabel('Staff suppress');

@@ -1,19 +1,20 @@
 import { HTML, including } from '@interactors/html';
 import {
   Accordion,
-  KeyValue,
-  Pane,
   Button,
-  TextField,
-  MultiColumnList,
   Callout,
-  PaneHeader,
+  KeyValue,
   Link,
+  MultiColumnList,
   MultiColumnListCell,
+  Pane,
+  PaneHeader,
+  TextField,
 } from '../../../../../interactors';
-import ItemRecordEdit from './itemRecordEdit';
+import { ITEM_STATUS_NAMES } from '../../../constants';
 import dateTools from '../../../utils/dateTools';
 import ConfirmDeleteItemModal from '../modals/confirmDeleteItemModal';
+import ItemRecordEdit from './itemRecordEdit';
 
 const actionsButton = Button('Actions');
 const loanAccordion = Accordion('Loan and availability');
@@ -63,16 +64,16 @@ const findRowAndClickLink = (enumerationValue) => {
 const getAssignedHRID = () => cy.then(() => KeyValue('Item HRID').value());
 
 const itemStatuses = {
-  onOrder: 'On order',
-  inProcess: 'In process',
-  available: 'Available',
-  missing: 'Missing',
-  inTransit: 'In transit',
-  paged: 'Paged',
-  awaitingPickup: 'Awaiting pickup',
-  checkedOut: 'Checked out',
-  declaredLost: 'Declared lost',
-  awaitingDelivery: 'Awaiting delivery',
+  onOrder: ITEM_STATUS_NAMES.ON_ORDER,
+  inProcess: ITEM_STATUS_NAMES.IN_PROCESS,
+  available: ITEM_STATUS_NAMES.AVAILABLE,
+  missing: ITEM_STATUS_NAMES.MISSING,
+  inTransit: ITEM_STATUS_NAMES.IN_TRANSIT,
+  paged: ITEM_STATUS_NAMES.PAGED,
+  awaitingPickup: ITEM_STATUS_NAMES.AWAITING_PICKUP,
+  checkedOut: ITEM_STATUS_NAMES.CHECKED_OUT,
+  declaredLost: ITEM_STATUS_NAMES.DECLARED_LOST,
+  awaitingDelivery: ITEM_STATUS_NAMES.AWAITING_DELIVERY,
 };
 
 export default {
@@ -199,6 +200,26 @@ export default {
       cy.expect([KeyValue(itemNote.type).has({ value: itemNote.note })]);
     });
   },
+
+  checkMultipleItemNotesWithStaffOnly: (rowIndex, staffOnly, noteType, noteText) => {
+    cy.get('#acc05').within(() => {
+      cy.get("[class^='row---']")
+        .eq(rowIndex)
+        .within(() => {
+          cy.get("[class^='col-']")
+            .first()
+            .within(() => {
+              cy.get("[class^='kvRoot-'] [class^='kvValue---']").should('contain', staffOnly);
+            });
+
+          cy.get("[class^='col-']:nth-child(2)").within(() => {
+            cy.get("[class^='kvRoot-'] [class^='kvLabel-']").should('contain', noteType);
+            cy.get("[class^='kvRoot-'] [class^='kvValue-']").should('contain', noteText);
+          });
+        });
+    });
+  },
+
   checkFieldsConditions({ fields, section } = {}) {
     fields.forEach(({ label, conditions }) => {
       cy.expect(section.find(KeyValue(label)).has(conditions));

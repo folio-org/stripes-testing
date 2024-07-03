@@ -25,7 +25,7 @@ const close = (profileName) => cy.do(Pane({ title: profileName }).find(iconButto
 
 const search = (profileName) => {
   // TODO: clarify with developers what should be waited
-  cy.wait(1500);
+  cy.wait(2000);
   cy.expect(resultsPane.find(searchField).exists());
   cy.do(searchField.focus());
   cy.expect(resultsPane.find(searchField).exists());
@@ -53,6 +53,7 @@ export default {
   selectActionProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
 
   checkActionProfilePresented: (profileName) => {
+    cy.wait(1500);
     search(profileName);
     cy.expect(MultiColumnListCell(profileName).exists());
   },

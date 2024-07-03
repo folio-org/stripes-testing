@@ -180,7 +180,7 @@ describe('ui-users-loans: Loans', () => {
     UsersOwners.deleteViaApi(testData.ownerId);
     cy.deleteHoldingRecordViaApi(itemsData.holdingId);
     InventoryInstance.deleteInstanceViaApi(itemsData.instanceId);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,

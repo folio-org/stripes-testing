@@ -23,12 +23,13 @@ describe('Inventory', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
         cy.login(user.username, user.password);
       });
     });
 
     beforeEach('Navigate to inventory', () => {
+      cy.getAdminToken();
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
       cy.visit(TopMenu.inventoryPath);
     });
 
@@ -57,7 +58,7 @@ describe('Inventory', () => {
 
     it(
       'C193952 Create Instance by import of single MARC Bib record from OCLC (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
         InventorySearchAndFilter.searchByParameter('OCLC number, normalized', oclc);
         InventorySearchAndFilter.selectSearchResultItem();

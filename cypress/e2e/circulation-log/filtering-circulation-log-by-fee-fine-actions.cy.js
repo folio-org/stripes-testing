@@ -192,7 +192,7 @@ describe('Circulation log', () => {
 
   it(
     'C17064 Check the Actions button from filtering Circulation log by transferred partially (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -207,7 +207,7 @@ describe('Circulation log', () => {
 
   it(
     'C17063 Filter circulation log by transferred partially (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       filterByAction('Transferred partially');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
@@ -227,7 +227,7 @@ describe('Circulation log', () => {
 
   it(
     'C17008 Filter circulation log by billed (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeftBroken'] },
     () => {
       filterByAction('Billed');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
@@ -236,7 +236,7 @@ describe('Circulation log', () => {
 
   it(
     'C17062 Check the Actions button from filtering Circulation log by transferred fully (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -251,7 +251,7 @@ describe('Circulation log', () => {
 
   it(
     'C17061 Filter circulation log by transferred fully (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       filterByAction('Transferred fully');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
@@ -260,7 +260,7 @@ describe('Circulation log', () => {
 
   it(
     'C17052 Check the Actions button from filtering Circulation log by Paid partially (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -275,7 +275,7 @@ describe('Circulation log', () => {
 
   it(
     'C17051 Filter circulation log by paid partially (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       filterByAction('Paid partially');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
@@ -284,7 +284,7 @@ describe('Circulation log', () => {
 
   it(
     'C17050 Check the Actions button from filtering Circulation log by Paid fully (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -299,7 +299,7 @@ describe('Circulation log', () => {
 
   it(
     'C17049 Filter circulation log by paid fully (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       filterByAction('Paid fully');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
@@ -308,7 +308,7 @@ describe('Circulation log', () => {
 
   it(
     'C17060 Check the Actions button from filtering Circulation log by refunded partially (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -327,7 +327,7 @@ describe('Circulation log', () => {
 
   it(
     'C17059 Filter circulation log by refunded partially (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       filterByAction('Refunded partially');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
@@ -336,7 +336,7 @@ describe('Circulation log', () => {
 
   it(
     'C17058 Check the Actions button from filtering Circulation log by refunded fully (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -355,7 +355,7 @@ describe('Circulation log', () => {
 
   it(
     'C17057 Filter circulation log by refunded fully (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       filterByAction('Refunded fully');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
@@ -364,7 +364,7 @@ describe('Circulation log', () => {
 
   it(
     'C17056 Check the Actions button from filtering Circulation log by waived partially (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -379,7 +379,7 @@ describe('Circulation log', () => {
 
   it(
     'C17055 Filter circulation log by waived partially (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       filterByAction('Waived partially');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
@@ -388,7 +388,7 @@ describe('Circulation log', () => {
 
   it(
     'C17054 Check the Actions button from filtering Circulation log by waived fully (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -403,7 +403,7 @@ describe('Circulation log', () => {
 
   it(
     'C17053 Filter circulation log by waived fully (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       filterByAction('Waived fully');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
@@ -412,7 +412,7 @@ describe('Circulation log', () => {
 
   it(
     'C17066 Check the Actions button from filtering Circulation log by cancelled as error (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -432,7 +432,7 @@ describe('Circulation log', () => {
 
   it(
     'C17065 Filter circulation log by cancelled as error (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'shiftLeft'] },
     () => {
       filterByAction('Cancelled as error', `Amount: ${fullAmount}. Cancellation reason`);
     },

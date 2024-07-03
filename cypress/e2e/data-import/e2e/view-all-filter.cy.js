@@ -34,6 +34,7 @@ describe('Data Import', () => {
       });
       // import with Single record import
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
+      cy.wait(5000);
       InventoryInstances.importWithOclc(testData.oclcNumber);
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
@@ -52,7 +53,7 @@ describe('Data Import', () => {
         JobProfiles.search(DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(testData.fileNameForFailedImport);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.FAILED);
+        Logs.checkJobStatus(testData.fileNameForFailedImport, JOB_STATUS_NAMES.FAILED);
 
         DataImport.uploadFileViaApi(
           testData.pathToStaticFile,
