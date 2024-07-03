@@ -7,5 +7,5 @@ FROM cypress/factory:3.5.4
 
 WORKDIR /opt/app
 RUN npm install --save-dev cypress
-RUN npm install -g node-gyp-install
-RUN node-gyp-install
+RUN npm uninstall node-sass
+RUN npm i sass --save
