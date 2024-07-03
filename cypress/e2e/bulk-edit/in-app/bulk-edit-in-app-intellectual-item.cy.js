@@ -46,7 +46,7 @@ describe('bulk-edit', () => {
 
     it(
       'C367922 Verify that User can update item status with "Intellectual item" (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'test1365'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

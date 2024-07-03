@@ -38,7 +38,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353964 Verify uploading file with Usernames (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'test1365'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('Usernames');
