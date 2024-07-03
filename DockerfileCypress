@@ -7,3 +7,4 @@ FROM cypress/factory:3.5.4
 
 WORKDIR /opt/app
 RUN npm install --save-dev cypress
+RUN apt-get update; apt install -y curl python-is-python3 pkg-config
