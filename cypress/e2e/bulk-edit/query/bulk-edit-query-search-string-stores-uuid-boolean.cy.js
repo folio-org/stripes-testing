@@ -39,7 +39,7 @@ describe('bulk-edit', () => {
 
     it(
       'C436741 Query builder - Search users that belong to a specific patron group and have "Active" status ("String stores UUID" and "Boolean" property types) (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'test1365'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkUsersRadio();

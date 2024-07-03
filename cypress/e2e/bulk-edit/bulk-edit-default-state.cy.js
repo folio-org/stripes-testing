@@ -28,7 +28,7 @@ describe('bulk-edit', () => {
 
   it(
     'C374177 Verify default state switching between record types (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'test1365'] },
     () => {
       BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.verifyFirstOptionRecordIdentifierDropdown('Select record identifier');

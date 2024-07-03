@@ -70,7 +70,7 @@ describe('bulk-edit', () => {
 
     it(
       'C446055 Verify switching between "Identifier" and "Query" tabs (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'test1365'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.isHoldingsRadioChecked(false);
