@@ -7,4 +7,3 @@ FROM cypress/factory:3.5.4
 
 WORKDIR /opt/app
 RUN npm install --save-dev cypress
-RUN npm install --global --production windows-build-tools
