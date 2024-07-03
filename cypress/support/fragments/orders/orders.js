@@ -527,7 +527,7 @@ export default {
     cy.do([
       Button({ id: 'accordion-toggle-button-poNumberPrefix' }).click(),
       Button({ id: 'poNumberPrefix-selection' }).click(),
-      SelectionOption({ id: 'option-poNumberPrefix-selection-0-pref' }).click(),
+      SelectionOption('pref').click(),
     ]);
   },
   selectApprovedFilter: () => {
