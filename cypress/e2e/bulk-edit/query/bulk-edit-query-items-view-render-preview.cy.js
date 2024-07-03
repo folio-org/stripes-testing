@@ -70,7 +70,7 @@ describe('bulk-edit', () => {
 
     it(
       'C436737 Render preview after query executed (Items - View) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'test1365'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkItemsRadio();

@@ -68,7 +68,7 @@ describe('bulk-edit', () => {
 
     it(
       'C360119 Verify that different Holdings identifiers are supported for Bulk edit (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'test1365'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');

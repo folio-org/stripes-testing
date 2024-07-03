@@ -40,7 +40,7 @@ describe('bulk-edit', () => {
 
     it(
       'C360090 Verify switching between Inventory record types radio buttons (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'test1365'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,

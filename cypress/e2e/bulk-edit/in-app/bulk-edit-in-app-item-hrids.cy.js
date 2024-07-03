@@ -48,7 +48,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353622 Verify uploading file with Item HRIDs (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'test1365'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');
