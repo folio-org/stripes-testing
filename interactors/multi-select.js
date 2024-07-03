@@ -101,7 +101,7 @@ export default createInteractor('multi select')
     focused: (el) => Boolean(el.querySelector(':focus')),
     focusedValue: (el) => el.querySelector('ul').querySelector('button:focus').parentNode.textContent,
     error: (el) => el.querySelector('[class^=feedbackError]').textContent,
-    ariaLabelledby: (el) => el.querySelector('[role=searchbox]').getAttribute('aria-labelledby'),
+    ariaLabelledby: (el) => el.querySelector('[role=combobox]').getAttribute('aria-labelledby'),
     span: (el) => el.querySelector('span').textContent,
   })
   .actions({
