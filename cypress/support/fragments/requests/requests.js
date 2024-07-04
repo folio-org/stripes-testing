@@ -348,7 +348,7 @@ export default {
   addTag(tag) {
     waitLoadingTags();
     cy.wait(1000);
-    cy.do(tagsPane.find(MultiSelect({ ariaLabelledby: 'input-tag-label' })).choose(tag));
+    cy.do(tagsPane.find(MultiSelect({ id: 'input-tag' })).choose(tag));
     // TODO investigate what to wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000);
@@ -446,7 +446,7 @@ export default {
       columnIndex: 9,
     },
     {
-      title: 'Requester Barcode',
+      title: 'Requester barcode',
       id: 'requesterbarcode',
       columnIndex: 10,
     },
@@ -454,7 +454,7 @@ export default {
 
   columns: [
     {
-      title: 'Request Date',
+      title: 'Request date',
       id: 'requestdate',
       columnIndex: 1,
     },
