@@ -10,13 +10,19 @@ describe('lists', () => {
     const listData = {
       name: getTestEntityValue('test_list'),
       recordType: 'Users',
-      status: ['Active', 'Inactive'],
       visibility: 'Private',
     };
 
     before('Create a user', () => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.listsAll.gui,
+        Permissions.uiUsersView.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiUsersViewLoans.gui,
+        Permissions.uiOrganizationsView.gui,
+      ]).then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
@@ -24,15 +30,14 @@ describe('lists', () => {
     });
 
     beforeEach('Login', () => {
-      cy.loginAsAdmin();
-      // cy.login(userData.username, userData.password);
+      cy.login(userData.username, userData.password);
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
+      Lists.resetAllFilters();
     });
 
     after('Delete a user', () => {
-      cy.getAdminToken();
-      // cy.getUserToken(userData.username, userData.password);
+      cy.getUserToken(userData.username, userData.password);
       Lists.getViaApi().then((response) => {
         const filteredItem = response.body.content.find((item) => item.name === listData.name);
         Lists.deleteViaApi(filteredItem.id);
@@ -47,7 +52,7 @@ describe('lists', () => {
       Lists.setDescription(listData.name);
       Lists.selectRecordType(listData.recordType);
       Lists.selectVisibility(listData.visibility);
-      Lists.selectStatus(listData.status[1]);
+      Lists.selectStatus('Inactive');
       Lists.buildQuery();
       Lists.queryBuilderActions();
       Lists.actionButton();
@@ -63,7 +68,7 @@ describe('lists', () => {
         Lists.setDescription(listData.name);
         Lists.selectRecordType(listData.recordType);
         Lists.selectVisibility(listData.visibility);
-        Lists.selectStatus(listData.status[1]);
+        Lists.selectStatus('Inactive');
         Lists.saveList();
         Lists.actionButton();
         cy.contains('Refresh list').should('be.disabled');
@@ -79,7 +84,7 @@ describe('lists', () => {
         Lists.setDescription(listData.name);
         Lists.selectRecordType(listData.recordType);
         Lists.selectVisibility(listData.visibility);
-        Lists.selectStatus(listData.status[0]);
+        Lists.selectStatus('Active');
         Lists.saveList();
         Lists.actionButton();
         Lists.editList();
@@ -97,7 +102,7 @@ describe('lists', () => {
         Lists.setDescription(listData.name);
         Lists.selectRecordType(listData.recordType);
         Lists.selectVisibility(listData.visibility);
-        Lists.selectStatus(listData.status[0]);
+        Lists.selectStatus('Active');
         Lists.buildQuery();
         Lists.queryBuilderActions();
         cy.wait(17000);
@@ -118,7 +123,7 @@ describe('lists', () => {
         Lists.setDescription(listData.name);
         Lists.selectRecordType(listData.recordType);
         Lists.selectVisibility(listData.visibility);
-        Lists.selectStatus(listData.status[0]);
+        Lists.selectStatus('Active');
         Lists.buildQuery();
         Lists.queryBuilderActions();
         Lists.actionButton();
@@ -136,10 +141,10 @@ describe('lists', () => {
         Lists.setDescription(listData.name);
         Lists.selectRecordType(listData.recordType);
         Lists.selectVisibility(listData.visibility);
-        Lists.selectStatus(listData.status[0]);
+        Lists.selectStatus('Active');
         Lists.buildQuery();
         cy.get('#field-option-0').click();
-        cy.contains('User active').click();
+        cy.contains('User - Active').click();
         cy.get('[data-testid="operator-option-0"]').select('==');
         cy.get('[data-testid="data-input-select-boolType"]').select('False');
         cy.get('button:contains("Test query")').click();
