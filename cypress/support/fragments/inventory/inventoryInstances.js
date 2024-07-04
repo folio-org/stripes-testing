@@ -1377,6 +1377,5 @@ export default {
       body: body,
       isDefaultSearchParamsRequired: false,
     })
-    cy.wait(10000)
   },
 };

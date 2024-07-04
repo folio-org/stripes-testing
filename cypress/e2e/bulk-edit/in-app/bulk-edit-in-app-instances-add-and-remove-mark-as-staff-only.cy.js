@@ -15,7 +15,7 @@ import { instanceFieldValues, STRING_OPERATORS } from '../../../support/fragment
 import QueryModal from '../../../support/fragments/bulk-edit/query-modal';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 import { INSTANCE_STATUS_TERM_IDS, INSTANCE_RESOURCE_TYPE_IDS, INSTANCE_NOTE_IDS } from '../../../support/constants';
-import instanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 let user;
 const randomNumberForTitles = getRandomPostfix();
@@ -239,7 +239,7 @@ describe('bulk-edit', () => {
         ];
 
         notesToCheck.forEach((note) => {
-          instanceRecordView.checkMultipleItemNotesWithStaffOnly(
+          InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
             note.rowIndex,
             note.staffOnly,
             note.noteType,
@@ -257,7 +257,7 @@ describe('bulk-edit', () => {
         ];
 
         notesToCheck.forEach((note) => {
-          instanceRecordView.checkMultipleItemNotesWithStaffOnly(
+          InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
             note.rowIndex,
             note.staffOnly,
             note.noteType,
