@@ -192,6 +192,6 @@ export default {
   checkOptionSelectedInClassificationIdentifierTypesDropdown(browseOption, option) {
     const targetRow = this.getTargetRowWithClassificationName(browseOption);
 
-    cy.expect(targetRow.find(MultiSelect({ selected: including(option) })).exists());
+    cy.expect(targetRow.find(MultiSelect({ selected: option })).exists());
   },
 };

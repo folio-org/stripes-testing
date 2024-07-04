@@ -56,7 +56,7 @@ describe('Inventory', () => {
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           defaultClassificationBrowseNames.forEach((classificationBrowseName) => {
-            // 1 Click on the "Edit" (pencil) icon next to the browse option
+            // Click on the "Edit" (pencil) icon next to the browse option
             ClassificationBrowse.clickEditButtonInBrowseOption(classificationBrowseName);
             ClassificationBrowse.checkClassificationIdentifierTypesExistsInBrowseoption(
               classificationBrowseName,
@@ -67,7 +67,7 @@ describe('Inventory', () => {
               false,
             );
 
-            // 2 Click on the multi-select dropdown element displayed in the "Classification identifier types" column of the browse option
+            // Click on the multi-select dropdown element displayed in the "Classification identifier types" column of the browse option
             ClassificationBrowse.expandClassificationIdentifierTypesDropdownInBrowseOption(
               classificationBrowseName,
             );
@@ -76,18 +76,18 @@ describe('Inventory', () => {
               localClassificationIdentifierType.name,
             );
 
-            // 3 Select any option from expanded multi-select dropdown
+            // Select any option from expanded multi-select dropdown
             ClassificationBrowse.selectClassificationIdentifierTypesDropdownOption(optionToSelect);
             ClassificationBrowse.checkOptionSelectedInClassificationIdentifierTypesDropdown(
               classificationBrowseName,
-              optionToSelect,
+              [optionToSelect],
             );
             ClassificationBrowse.checkClassificationIdentifierTypesDropdownExpanded(
               classificationBrowseName,
             );
             ClassificationBrowse.checkSaveButtonEnabledInBrowseOption(classificationBrowseName);
 
-            // 4 Click on the "Cancel" button
+            // Click on the "Cancel" button
             ClassificationBrowse.clickCancelButtonInBrowseOption(classificationBrowseName);
             cy.wait(1000);
             ClassificationBrowse.checkEditButtonInBrowseOption(classificationBrowseName);
