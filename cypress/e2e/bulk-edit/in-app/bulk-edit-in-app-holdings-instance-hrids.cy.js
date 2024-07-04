@@ -1,11 +1,7 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
@@ -45,19 +41,16 @@ describe('bulk-edit', () => {
                 permanentLocation = location.name;
               },
             );
+            delete holdings[0].temporaryLocationId;
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+            });
           })
           .then(() => {
             cy.login(user.username, user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
             });
-            InventorySearchAndFilter.switchToHoldings();
-            InventorySearchAndFilter.byKeywords(item.instanceName);
-            InventoryInstance.openHoldingView();
-            HoldingsRecordView.edit();
-            HoldingsRecordEdit.clearTemporaryLocation();
-            HoldingsRecordEdit.saveAndClose();
-            cy.visit(TopMenu.bulkEditPath);
           });
       });
     });

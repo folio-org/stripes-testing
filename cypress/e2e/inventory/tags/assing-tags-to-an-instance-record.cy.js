@@ -32,7 +32,6 @@ describe('Inventory', () => {
           }).then((specialInstanceId) => {
             instanceId = specialInstanceId;
           });
-          cy.wait(10000);
         });
 
       cy.createTagApi(tag).then((tagId) => {
@@ -51,7 +50,7 @@ describe('Inventory', () => {
 
     it(
       'C196769 Assign tags to an Instance record (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);

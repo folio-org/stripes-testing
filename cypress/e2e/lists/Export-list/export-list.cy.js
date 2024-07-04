@@ -10,13 +10,19 @@ describe('lists', () => {
     const listData = {
       name: getTestEntityValue('test_list'),
       recordType: 'Loans',
-      status: ['Active', 'Inactive'],
       visibility: 'Shared',
     };
 
     beforeEach('Create a user', () => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.listsAll.gui,
+        Permissions.uiUsersView.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiUsersViewLoans.gui,
+        Permissions.uiOrganizationsView.gui,
+      ]).then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
@@ -64,7 +70,7 @@ describe('lists', () => {
       Lists.setDescription(listData.name);
       Lists.selectRecordType(listData.recordType);
       Lists.selectVisibility(listData.visibility);
-      Lists.selectStatus(listData.status[1]);
+      Lists.selectStatus('Inactive');
       Lists.buildQuery();
       Lists.queryBuilderActions();
       Lists.actionButton();
@@ -165,7 +171,7 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.buildQuery();
         cy.get('#field-option-0').click();
-        cy.contains('User first name').click();
+        cy.contains('User - First name').click();
         cy.get('[data-testid="operator-option-0"]').select('==');
         cy.get('[data-testid="input-value-0"]').type('ABCD');
         cy.get('button:contains("Test query")').click();

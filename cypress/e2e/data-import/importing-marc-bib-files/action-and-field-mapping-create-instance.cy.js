@@ -73,7 +73,7 @@ describe('Data Import', () => {
 
     it(
       'C11103 Action and field mapping: Create an instance (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -109,7 +109,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(marcFileForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(marcFileForCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileForCreate);
         [
           FileDetails.columnNameInResultList.srsMarc,

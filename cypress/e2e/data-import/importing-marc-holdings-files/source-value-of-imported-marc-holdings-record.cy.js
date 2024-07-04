@@ -94,7 +94,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileForCreatingHoldings);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(editedMarcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(editedMarcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(editedMarcFileName);
         [
           FileDetails.columnNameInResultList.srsMarc,

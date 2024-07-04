@@ -275,7 +275,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreate);
         [
           FileDetails.columnNameInResultList.srsMarc,
@@ -346,7 +346,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForUpdate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForUpdate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdate);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.UPDATED,
@@ -440,7 +440,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreate);
         [
           FileDetails.columnNameInResultList.srsMarc,
@@ -501,7 +501,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForUpdate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForUpdate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdate);
         [
           FileDetails.columnNameInResultList.srsMarc,
@@ -629,7 +629,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreate);
         [
           FileDetails.columnNameInResultList.srsMarc,
@@ -726,7 +726,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForUpdate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForUpdate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdate);
         [
           FileDetails.columnNameInResultList.srsMarc,

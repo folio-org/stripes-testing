@@ -53,7 +53,7 @@ describe('Inventory', () => {
 
     it(
       'C15850 Create a fast add record from Inventory. Monograph. (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventoryActions.openNewFastAddRecordForm();
@@ -71,7 +71,8 @@ describe('Inventory', () => {
           InteractorsTools.checkCalloutMessage(
             FastAdd.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS,
           );
-          InventorySearchAndFilter.searchInstanceByTitle(
+          InventorySearchAndFilter.searchByParameter(
+            'Title (all)',
             FastAddNewRecord.fastAddNewRecordFormDetails.resourceTitle,
           );
           FastAddNewRecord.openRecordDetails();
@@ -139,7 +140,7 @@ describe('Inventory', () => {
           InteractorsTools.checkCalloutMessage(
             FastAdd.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS,
           );
-          InventorySearchAndFilter.searchInstanceByTitle(fastAddRecord.resourceTitle);
+          InventorySearchAndFilter.searchByParameter('Title (all)', fastAddRecord.resourceTitle);
           FastAddNewRecord.openRecordDetails();
 
           // verify instance details

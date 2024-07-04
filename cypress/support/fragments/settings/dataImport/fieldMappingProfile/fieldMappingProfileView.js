@@ -259,7 +259,10 @@ export default {
   },
 
   duplicate: () => {
-    cy.do([fullScreenView.find(actionsButton).click(), Button('Duplicate').click()]);
+    cy.do([
+      Layer({ ariaLabel: 'Mapping profile details' }).find(actionsButton).click(),
+      Button('Duplicate').click(),
+    ]);
     cy.expect(Pane({ title: 'New field mapping profile' }).exists());
     cy.wait(1500);
   },
@@ -296,8 +299,8 @@ export default {
     cy.expect(Accordion(accordion).find(KeyValue(sectionName)).has({ value }));
   },
   verifyInstanceStatusTerm: (status) => cy.expect(KeyValue('Instance status term').has({ value: status })),
-  verifyActionMenuAbsent: () => cy.expect(fullScreenView.find(actionsButton).absent()),
-  verifyMappingProfileOpened: () => cy.expect(fullScreenView.exists()),
+  verifyActionMenuAbsent: () => cy.expect(Layer({ ariaLabel: 'Mapping profile details' }).find(actionsButton).absent()),
+  verifyMappingProfileOpened: () => cy.expect(Layer({ ariaLabel: 'Mapping profile details' }).exists()),
   verifyVendorName: (vendorName) => cy.expect(KeyValue('Vendor name').has({ value: vendorName })),
   verifyCurrency: (value) => cy.expect(KeyValue('Currency').has({ value })),
   verifyDefaultPurchaseOrderLinesLimit: (value) => cy.expect(KeyValue('Purchase order lines limit setting').has({ value })),

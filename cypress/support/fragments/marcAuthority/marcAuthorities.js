@@ -1144,6 +1144,38 @@ export default {
       .then(() => cells);
   },
 
+  checkBrowseReturnsRecordsAsExactMatchInAuthorityModal(recordTitle, numberOfRecord, recordType) {
+    cy.get(
+      `div[class^="mclRowContainer--"] [data-row-index]:has(button:contains("${recordTitle}"))`,
+    )
+      // check number of found records
+      .should('have.length', numberOfRecord)
+      .each(($row) => {
+        // check Reference type
+        cy.wrap($row).contains(recordType);
+        // check that the record heading is bold (has a class containing the value 'anchorLink-')
+        cy.get($row)
+          .find('button[class*= link]')
+          .invoke('attr', 'class')
+          .should('match', /anchorLink-/);
+      });
+  },
+
+  checkBrowseReturnsRecordsAsExactMatch(recordTitle, numberOfRecord, recordType) {
+    cy.get(`div[class^="mclRowContainer--"] [data-row-index]:has(a:contains("${recordTitle}"))`)
+      // check number of found records
+      .should('have.length', numberOfRecord)
+      .each(($row) => {
+        // check Reference type
+        cy.wrap($row).contains(recordType);
+        // check that the record heading is bold (has a class containing the value 'anchorLink-')
+        cy.get($row)
+          .find('a[class*= root-]')
+          .invoke('attr', 'class')
+          .should('match', /anchorLink-/);
+      });
+  },
+
   checkResultListSortedByColumn(columnIndex, isAscending = true) {
     this.getResultsListByColumn(columnIndex).then((cells) => {
       if (isAscending) {
@@ -1511,7 +1543,7 @@ export default {
     this.getMarcAuthoritiesViaApi({ limit: 100, query: `keyword="${title}"` }).then((records) => {
       records.forEach((record) => {
         if (record.authRefType === authRefType) {
-          this.deleteViaAPI(record.id);
+          this.deleteViaAPI(record.id, true);
         }
       });
     });

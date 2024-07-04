@@ -176,6 +176,14 @@ export default {
         .exists(),
     );
   }),
+  checkHoldingsNoteByRowForDifferentNoteTypes: (value = [], row = 0) => value.forEach((text) => {
+    cy.expect(
+      MultiColumnList({ id: `list-holdings-notes-${row}` })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ content: text }))
+        .exists(),
+    );
+  }),
   checkMarkAsSuppressedFromDiscovery: () => cy.expect(
     holdingsRecordViewSection
       .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))

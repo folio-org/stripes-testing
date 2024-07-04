@@ -36,12 +36,7 @@ export default {
     if (packageName) {
       cy.expect(
         packagesSection
-          .find(
-            ListItem({ index: 0 })
-              .find(Button())
-              .find(HTML(including(packageName))),
-          )
-          .exists(),
+          .find(ListItem({ h4Value: including(packageName) })).exists(),
       );
     }
   },

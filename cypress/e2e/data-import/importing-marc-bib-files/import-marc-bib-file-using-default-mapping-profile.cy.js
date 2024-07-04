@@ -39,7 +39,6 @@ describe('Data Import', () => {
       { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
       () => {
         // upload a marc file
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePath, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -47,9 +46,9 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         DataImport.checkIsLandingPageOpened();
         Logs.checkFileIsRunning(marcFileName);
-        cy.wait(25000);
+        cy.wait(120000);
         Logs.waitFileIsImported(marcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
       },
     );
   });

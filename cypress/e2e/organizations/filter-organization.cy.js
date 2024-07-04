@@ -3,10 +3,13 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-organizations: Filtering organization', () => {
-  const organization = { ...NewOrganization.specialOrganization };
+  const organization = {
+    ...NewOrganization.specialOrganization,
+    status: 'Pending',
+    isVendor: false,
+  };
 
   before(() => {
-    cy.loginAsAdmin();
     cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
@@ -19,21 +22,21 @@ describe('ui-organizations: Filtering organization', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
   [
-    { filterActions: Organizations.selectActiveStatus },
-    { filterActions: Organizations.selectYesInIsVendor },
+    { filterActions: Organizations.selectPendingStatus },
+    { filterActions: Organizations.selectNoInIsVendor },
     { filterActions: Organizations.selectCountryFilter },
     { filterActions: Organizations.selectLanguageFilter },
     { filterActions: Organizations.selectCashInPaymentMethod },
   ].forEach((filter) => {
     it(
       'C6713: Test the Organizations app filters (except Tags) (thunderjet)',
-      { tags: ['smoke', 'thunderjet'] },
+      { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
       () => {
-        // cy.visit(TopMenu.organizationsPath);
         filter.filterActions();
         Organizations.checkOrganizationFilter();
         Organizations.selectOrganization(organization.name);
         Organizations.checkOrganizationInfo(organization);
+        Organizations.closeDetailsPane();
         Organizations.resetFilters();
       },
     );
