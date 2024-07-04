@@ -30,6 +30,7 @@ export const holdingsFieldValues = {
 };
 export const instanceFieldValues = {
   instanceHrid: 'Instance HRID',
+  instanceResourceTitle: 'Instance - Title'
 };
 export const itemFieldValues = {
   instanceId: 'Instance ID',
@@ -53,14 +54,6 @@ export const dateTimeOperators = [
   '<',
   '>=',
   '<=',
-  'is null/empty',
-];
-export const stringOperators = [
-  'Select operator',
-  'equals',
-  'not equal to',
-  'contains',
-  'starts with',
   'is null/empty',
 ];
 export const stringStoresUuidOperators = [
@@ -99,6 +92,15 @@ export const QUERY_OPERATIONS = {
   CONTAINS: 'contains',
   START_WITH: 'starts with',
 };
+
+export const STRING_OPERATORS = {
+  PLACEHOLDER: 'Select operator',
+  EQUAL: 'equals',
+  NOT_EQUAL: 'not equal to',
+  CONTAINS: 'contains',
+  START_WITH: 'starts with',
+  IS_NULL: 'is null/empty',
+}
 
 export default {
   exists() {

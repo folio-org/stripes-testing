@@ -1369,4 +1369,14 @@ export default {
         .has({ text: matching(regEx) }),
     );
   },
+
+  createMarcBibViaApi(body) {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'records-editor/records',
+      body: body,
+      isDefaultSearchParamsRequired: false,
+    })
+    cy.wait(10000)
+  },
 };
