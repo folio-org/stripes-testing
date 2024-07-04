@@ -11,10 +11,17 @@ import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import { instanceFieldValues, STRING_OPERATORS } from '../../../support/fragments/bulk-edit/query-modal';
+import {
+  instanceFieldValues,
+  STRING_OPERATORS,
+} from '../../../support/fragments/bulk-edit/query-modal';
 import QueryModal from '../../../support/fragments/bulk-edit/query-modal';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
-import { INSTANCE_STATUS_TERM_IDS, INSTANCE_RESOURCE_TYPE_IDS, INSTANCE_NOTE_IDS } from '../../../support/constants';
+import {
+  INSTANCE_STATUS_TERM_IDS,
+  INSTANCE_RESOURCE_TYPE_IDS,
+  INSTANCE_NOTE_IDS,
+} from '../../../support/constants';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 let user;
@@ -38,42 +45,71 @@ const folioFields = {
       note: `Reproduction note FOLIO ${getRandomPostfix()}`,
       staffOnly: true,
     },
-  ]
-}
+  ],
+};
 const marcFields = {
   245: `${randomNumberForTitles} Test Instance notes - Staff only MARC`,
   533: `Reproduction note MARC ${getRandomPostfix()}`,
   583: `Action note MARC ${getRandomPostfix()}`,
-}
+};
 const marcInstanceBody = {
-  externalId: "00000000-0000-0000-0000-000000000000",
+  externalId: '00000000-0000-0000-0000-000000000000',
   fields: [
     {
-      tag: "008",
-      content: { "Type": "a", "BLvl": "s", "DtSt": "|", "Date1": "\\\\\\\\", "Date2": "\\\\\\\\", "Ctry": "\\\\\\", "Audn": "\\", "Form": "\\", "Cont": ["\\", "\\", "\\"], "GPub": "\\", "Conf": "|", "Fest": "\\", "Indx": "\\", "LitF": "\\", "Biog": "\\", "Lang": "\\\\\\", "MRec": "\\", "Srce": "\\", "Freq": "\\", "Orig": "\\", "S/L": "|", "Regl": "|", "SrTp": "\\", "EntW": "\\", "Alph": "\\" },
+      tag: '008',
+      content: {
+        Type: 'a',
+        BLvl: 's',
+        DtSt: '|',
+        Date1: '\\\\\\\\',
+        Date2: '\\\\\\\\',
+        Ctry: '\\\\\\',
+        Audn: '\\',
+        Form: '\\',
+        Cont: ['\\', '\\', '\\'],
+        GPub: '\\',
+        Conf: '|',
+        Fest: '\\',
+        Indx: '\\',
+        LitF: '\\',
+        Biog: '\\',
+        Lang: '\\\\\\',
+        MRec: '\\',
+        Srce: '\\',
+        Freq: '\\',
+        Orig: '\\',
+        'S/L': '|',
+        Regl: '|',
+        SrTp: '\\',
+        EntW: '\\',
+        Alph: '\\',
+      },
     },
     {
-      tag: "245",
-      content: `$a ${marcFields[245]}`, "indicators": ["\\", "\\"]
+      tag: '245',
+      content: `$a ${marcFields[245]}`,
+      indicators: ['\\', '\\'],
     },
     {
-      tag: "533",
-      content: `$a ${marcFields[533]}`, "indicators": ["\\", "\\"]
+      tag: '533',
+      content: `$a ${marcFields[533]}`,
+      indicators: ['\\', '\\'],
     },
     {
-      tag: "583",
-      content: `$a ${marcFields[583]}`, "indicators": ["\\", "\\"]
-    }
+      tag: '583',
+      content: `$a ${marcFields[583]}`,
+      indicators: ['\\', '\\'],
+    },
   ],
-  leader: "00000nas\\a2200000uu\\4500",
-  marcFormat: "BIBLIOGRAPHIC",
-  parsedRecordDtoId: "00000000-0000-0000-0000-000000000000",
+  leader: '00000nas\\a2200000uu\\4500',
+  marcFormat: 'BIBLIOGRAPHIC',
+  parsedRecordDtoId: '00000000-0000-0000-0000-000000000000',
   parsedRecordId: uuid(),
   relatedRecordVersion: 1,
   suppressDiscovery: false,
-  updateInfo: { recordState: "NEW" },
-  _actionType: "create"
-}
+  updateInfo: { recordState: 'NEW' },
+  _actionType: 'create',
+};
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -93,22 +129,22 @@ describe('bulk-edit', () => {
           body.title = folioFields.title;
           body.shared = false;
           body.statusId = INSTANCE_STATUS_TERM_IDS.CATALOGED;
-          body.notes = folioFields.notes
-          body.instanceTypeId = folioFields.instanceTypeId
+          body.notes = folioFields.notes;
+          body.instanceTypeId = folioFields.instanceTypeId;
           cy.updateInstance(body);
         });
-        InventoryInstances.createMarcBibViaApi(marcInstanceBody)
+        InventoryInstances.createMarcBibViaApi(marcInstanceBody);
 
-        cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${marcFields[245]}"` }).then(
-          (instance) => {
-            marcInstance.instanceId = instance.id
-          },
-        ).then(() => {
-          cy.getInstanceById(marcInstance.instanceId).then((body) => {
-            body.statusId = INSTANCE_STATUS_TERM_IDS.CATALOGED;
-            cy.updateInstance(body);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${marcFields[245]}"` })
+          .then((instance) => {
+            marcInstance.instanceId = instance.id;
           })
-        })
+          .then(() => {
+            cy.getInstanceById(marcInstance.instanceId).then((body) => {
+              body.statusId = INSTANCE_STATUS_TERM_IDS.CATALOGED;
+              cy.updateInstance(body);
+            });
+          });
 
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
@@ -122,11 +158,17 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(folioItem.itemBarcode);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(marcInstance.itemBarcode);
-      [identifiersQueryFilename, matchedRecordsFileName, previewFileName, changedRecordsFileName, errorsFromCommittingFileName].forEach((fileName) => {
+      [
+        identifiersQueryFilename,
+        matchedRecordsFileName,
+        previewFileName,
+        changedRecordsFileName,
+        errorsFromCommittingFileName,
+      ].forEach((fileName) => {
         cy.get(`@${fileName}`).then((name) => {
           FileManager.deleteFileFromDownloadsByMask(name);
-        })
-      })
+        });
+      });
     });
 
     it(
@@ -139,7 +181,9 @@ describe('bulk-edit', () => {
         QueryModal.verify();
         QueryModal.selectField(instanceFieldValues.instanceResourceTitle);
         QueryModal.selectOperator(STRING_OPERATORS.START_WITH);
-        QueryModal.fillInValueTextfield(`${randomNumberForTitles} Test Instance notes - Staff only`);
+        QueryModal.fillInValueTextfield(
+          `${randomNumberForTitles} Test Instance notes - Staff only`,
+        );
         QueryModal.clickTestQuery();
         QueryModal.verifyPreviewOfRecordsMatched();
         QueryModal.clickRunQuery();
@@ -148,7 +192,9 @@ describe('bulk-edit', () => {
         cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
         BulkEditActions.downloadMatchedResults();
         cy.wait('@getPreview').then((interception) => {
-          const interceptedUuid = interception.request.url.match(/bulk-operations\/([a-f0-9-]+)\/preview/)[1];
+          const interceptedUuid = interception.request.url.match(
+            /bulk-operations\/([a-f0-9-]+)\/preview/,
+          )[1];
           const identifiersQueryFilename = `*Query-${interceptedUuid}.csv`;
           cy.wrap(identifiersQueryFilename).as('identifiersQueryFilename');
           const matchedRecordsFileName = `*-Matched-Records-Query-${interceptedUuid}.csv`;
@@ -165,13 +211,13 @@ describe('bulk-edit', () => {
           'Action note',
           'Reproduction note',
         );
-        BulkEditSearchPane.verifySpecificItemsMatched(folioItem.instanceId, marcInstance.instanceId);
+        BulkEditSearchPane.verifySpecificItemsMatched(
+          folioItem.instanceId,
+          marcInstance.instanceId,
+        );
         cy.get('@matchedRecordsFileName').then((fileName) => {
-          ExportFile.verifyFileIncludes(fileName, [
-            folioItem.instanceId,
-            marcInstance.instanceId,
-          ]);
-        })
+          ExportFile.verifyFileIncludes(fileName, [folioItem.instanceId, marcInstance.instanceId]);
+        });
         BulkEditActions.openStartBulkEditInstanceForm();
         BulkEditActions.markAsStaffOnly('Action note');
         BulkEditActions.addNewBulkEditFilterString();
@@ -207,11 +253,13 @@ describe('bulk-edit', () => {
             `Action note;${folioFields.notes[0].note};true|Reproduction note;${folioFields.notes[1].note};false\n`,
             `Reproduction note;${marcFields[533]};false|Action note;${marcFields[583]};true\n`,
           ]);
-        })
+        });
         BulkEditActions.commitChanges();
         BulkEditActions.verifySuccessBanner(1);
         BulkEditSearchPane.verifyChangedResults(folioItem.instanceId);
-        BulkEditSearchPane.verifyReasonForError('Bulk edit of instance notes is not supported for MARC Instances.');
+        BulkEditSearchPane.verifyReasonForError(
+          'Bulk edit of instance notes is not supported for MARC Instances.',
+        );
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         BulkEditActions.downloadErrors();
@@ -219,23 +267,35 @@ describe('bulk-edit', () => {
           ExportFile.verifyFileIncludes(fileName, [
             `Action note;${folioFields.notes[0].note};true|Reproduction note;${folioFields.notes[1].note};false\n`,
           ]);
-        })
+        });
         cy.get('@changedRecordsFileName').then((fileName) => {
-          ExportFile.verifyFileIncludes(fileName, [
-            `Reproduction note;${marcFields[533]};true|Action note;${marcFields[583]};false\n`,
-          ], false);
-        })
+          ExportFile.verifyFileIncludes(
+            fileName,
+            [`Reproduction note;${marcFields[533]};true|Action note;${marcFields[583]};false\n`],
+            false,
+          );
+        });
         cy.get('@errorsFromCommittingFileName').then((fileName) => {
           ExportFile.verifyFileIncludes(fileName, [marcInstance.instanceId]);
-        })
+        });
 
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.searchInstanceByTitle(folioItem.instanceName);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         let notesToCheck = [
-          { rowIndex: 0, staffOnly: 'Yes', noteType: 'Action note', noteText: folioFields.notes[0].note },
-          { rowIndex: 1, staffOnly: 'No', noteType: 'Reproduction note', noteText: folioFields.notes[1].note },
+          {
+            rowIndex: 0,
+            staffOnly: 'Yes',
+            noteType: 'Action note',
+            noteText: folioFields.notes[0].note,
+          },
+          {
+            rowIndex: 1,
+            staffOnly: 'No',
+            noteType: 'Reproduction note',
+            noteText: folioFields.notes[1].note,
+          },
         ];
 
         notesToCheck.forEach((note) => {
@@ -247,13 +307,18 @@ describe('bulk-edit', () => {
           );
         });
 
-        cy.visit(TopMenu.inventoryPath)
+        cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByTitle(marcFields[245]);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         notesToCheck = [
           { rowIndex: 0, staffOnly: 'No', noteType: 'Action note', noteText: marcFields[583] },
-          { rowIndex: 1, staffOnly: 'No', noteType: 'Reproduction note', noteText: marcFields[533] },
+          {
+            rowIndex: 1,
+            staffOnly: 'No',
+            noteType: 'Reproduction note',
+            noteText: marcFields[533],
+          },
         ];
 
         notesToCheck.forEach((note) => {
@@ -264,7 +329,7 @@ describe('bulk-edit', () => {
             note.noteText,
           );
         });
-        cy.visit(TopMenu.bulkEditPath)
+        cy.visit(TopMenu.bulkEditPath);
         BulkEditSearchPane.openLogsSearch();
         BulkEditLogs.checkInstancesCheckbox();
         BulkEditLogs.clickActionsRunBy(user.username);
@@ -272,19 +337,13 @@ describe('bulk-edit', () => {
 
         BulkEditLogs.downloadQueryIdentifiers();
         cy.get('@identifiersQueryFilename').then((fileName) => {
-          ExportFile.verifyFileIncludes(fileName, [
-            folioItem.instanceId,
-            marcInstance.instanceId,
-          ]);
-        })
+          ExportFile.verifyFileIncludes(fileName, [folioItem.instanceId, marcInstance.instanceId]);
+        });
 
         BulkEditLogs.downloadFileWithMatchingRecords();
         cy.get('@matchedRecordsFileName').then((fileName) => {
-          ExportFile.verifyFileIncludes(fileName, [
-            folioItem.instanceId,
-            marcInstance.instanceId,
-          ]);
-        })
+          ExportFile.verifyFileIncludes(fileName, [folioItem.instanceId, marcInstance.instanceId]);
+        });
 
         BulkEditLogs.downloadFileWithProposedChanges();
         cy.get('@previewFileName').then((fileName) => {
@@ -292,24 +351,26 @@ describe('bulk-edit', () => {
             `Action note;${folioFields.notes[0].note};true|Reproduction note;${folioFields.notes[1].note};false\n`,
             `Reproduction note;${marcFields[533]};false|Action note;${marcFields[583]};true\n`,
           ]);
-        })
+        });
 
         BulkEditLogs.downloadFileWithUpdatedRecords();
         cy.get('@changedRecordsFileName').then((fileName) => {
           ExportFile.verifyFileIncludes(fileName, [
             `Action note;${folioFields.notes[0].note};true|Reproduction note;${folioFields.notes[1].note};false\n`,
           ]);
-        })
+        });
         cy.get('@changedRecordsFileName').then((fileName) => {
-          ExportFile.verifyFileIncludes(fileName, [
-            `Reproduction note;${marcFields[533]};true|Action note;${marcFields[583]};false\n`,
-          ], false);
-        })
+          ExportFile.verifyFileIncludes(
+            fileName,
+            [`Reproduction note;${marcFields[533]};true|Action note;${marcFields[583]};false\n`],
+            false,
+          );
+        });
 
         BulkEditLogs.downloadFileWithCommitErrors();
         cy.get('@errorsFromCommittingFileName').then((fileName) => {
           ExportFile.verifyFileIncludes(fileName, [marcInstance.instanceId]);
-        })
+        });
       },
     );
   });
