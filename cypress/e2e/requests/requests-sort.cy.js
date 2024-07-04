@@ -62,12 +62,12 @@ describe('ui-requests: Sort requests', () => {
     Requests.validateRequestsDateSortingOrder('ascending');
 
     // Click column header Request Date to verify that they reverse sort
-    cy.do(MultiColumnListHeader('Request Date').click());
+    cy.do(MultiColumnListHeader('Request date').click());
     Requests.waitLoadingRequests();
     Requests.validateRequestsDateSortingOrder('descending');
 
     Requests.sortingColumns.forEach((column) => {
-      if (column.title === 'Requester Barcode') {
+      if (column.title === 'Requester barcode') {
         cy.get('#list-requests > [class*="mclScrollable"]').scrollTo('right');
       }
       // Validate sort
