@@ -12,17 +12,30 @@ describe('lists', () => {
       name: getTestEntityValue('test_list'),
       recordType: 'Loans',
       status: 'Active',
-      visibility: ['Private', 'Shared'],
     };
 
     beforeEach('Create a user', () => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.listsAll.gui,
+        Permissions.uiUsersView.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiUsersViewLoans.gui,
+        Permissions.uiOrganizationsView.gui,
+      ]).then((userProperties) => {
         firstUser.username = userProperties.username;
         firstUser.password = userProperties.password;
         firstUser.userId = userProperties.userId;
       });
-      cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.listsAll.gui,
+        Permissions.uiUsersView.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiUsersViewLoans.gui,
+        Permissions.uiOrganizationsView.gui,
+      ]).then((userProperties) => {
         secondUser.username = userProperties.username;
         secondUser.password = userProperties.password;
         secondUser.userId = userProperties.userId;
@@ -30,9 +43,7 @@ describe('lists', () => {
     });
 
     afterEach('Delete a user', () => {
-      // eslint-disable-next-line spaced-comment
-      //cy.getUserToken(firstUser.username, firstUser.password);
-      cy.getAdminToken();
+      cy.getUserToken(firstUser.username, firstUser.password);
       Lists.getViaApi().then((response) => {
         const filteredItem = response.body.content.find((item) => item.name === listData.name);
         Lists.deleteViaApi(filteredItem.id);
@@ -43,9 +54,7 @@ describe('lists', () => {
     });
 
     it('C411733 Edit list: Make the list Private (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      // eslint-disable-next-line spaced-comment
-      //cy.login(firstUser.username, firstUser.password);
-      cy.loginAsAdmin();
+      cy.login(firstUser.username, firstUser.password);
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
       Lists.resetAllFilters();
@@ -53,7 +62,7 @@ describe('lists', () => {
       Lists.setName(listData.name);
       Lists.setDescription(listData.name);
       Lists.selectRecordType(listData.recordType);
-      Lists.selectVisibility(listData.visibility[1]);
+      Lists.selectVisibility('Shared');
       Lists.saveList();
       Lists.verifyListIsSaved(listData.name);
       Lists.closeListDetailsPane();
@@ -64,9 +73,7 @@ describe('lists', () => {
       Lists.selectSharedLists();
       Lists.verifyListIsPresent(listData.name);
       cy.wait(2000);
-      // eslint-disable-next-line spaced-comment
-      //cy.login(firstUser.username, firstUser.password); // User A logs in to make the list 'Private'
-      cy.loginAsAdmin();
+      cy.login(firstUser.username, firstUser.password); // User A logs in to make the list 'Private'
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
       Lists.selectSharedLists();
@@ -81,13 +88,11 @@ describe('lists', () => {
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
       Lists.selectPrivateLists();
-      Lists.verifyListIsNotPresent(listData.name);
+      Lists.verifyListsPaneIsEmpty();
     });
 
     it('C411736 Edit list: Make the list Shared (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      // eslint-disable-next-line spaced-comment
-      //cy.login(userData.username, userData.password);
-      cy.loginAsAdmin();
+      cy.login(firstUser.username, firstUser.password);
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
       Lists.resetAllFilters();
@@ -95,7 +100,7 @@ describe('lists', () => {
       Lists.setName(listData.name);
       Lists.setDescription(listData.name);
       Lists.selectRecordType(listData.recordType);
-      Lists.selectVisibility(listData.visibility[0]);
+      Lists.selectVisibility('Private');
       Lists.saveList();
       cy.contains(`List ${listData.name} saved.`);
       Lists.closeListDetailsPane();
@@ -103,7 +108,7 @@ describe('lists', () => {
       cy.login(secondUser.username, secondUser.password); // User B logs in to make sure that 'Shared' list is not visible
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
-      Lists.verifyListIsNotPresent(listData.name);
+      Lists.verifyListsPaneIsEmpty();
       cy.wait(2000);
       cy.login(firstUser.username, firstUser.password); // User A logs in to make the list 'Shared'
       cy.visit(TopMenu.listsPath);
