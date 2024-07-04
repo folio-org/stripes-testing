@@ -89,16 +89,22 @@ describe('lists', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.listsAll.gui,
+        Permissions.uiUsersView.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiUsersViewLoans.gui,
+        Permissions.uiOrganizationsView.gui,
+      ]).then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
 
-        // eslint-disable-next-line spaced-comment
-        // cy.login(userData.username, userData.password, {
-        //  path: TopMenu.listsPath,
-        //  waiter: Lists.waitLoading,
-        // });
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
 
         createdLists.forEach((list) => {
           Lists.createViaApi(list);
@@ -115,8 +121,7 @@ describe('lists', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      // eslint-disable-next-line spaced-comment
-      //cy.getUserToken(userData.username, userData.password);
+      cy.getUserToken(userData.username, userData.password);
       createdLists.forEach((list) => {
         Lists.getViaApi().then((response) => {
           const filteredItem = response.body.content.find((item) => item.name === list.name);
