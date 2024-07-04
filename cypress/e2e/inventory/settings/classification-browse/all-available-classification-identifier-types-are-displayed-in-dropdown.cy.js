@@ -90,7 +90,7 @@ describe('Inventory', () => {
             // Click on the "Cancel" button
             ClassificationBrowse.clickCancelButtonInBrowseOption(classificationBrowseName);
             cy.wait(1000);
-            ClassificationBrowse.checkEditButtonInBrowseOption(classificationBrowseName);
+            ClassificationBrowse.checkClassificationBrowseInTable(classificationBrowseName, '');
           });
         },
       );
