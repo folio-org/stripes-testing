@@ -124,6 +124,18 @@ export default {
     cy.do(targetRow.find(editButton).click());
   },
 
+  checkEditButtonInBrowseOption(browseOption) {
+    const targetRow = this.getTargetRowWithClassificationName(browseOption);
+
+    cy.expect(targetRow.find(editButton).exists());
+  },
+
+  clickCancelButtonInBrowseOption(browseOption) {
+    const targetRow = this.getTargetRowWithClassificationName(browseOption);
+
+    cy.do(targetRow.find(cancelButton).click());
+  },
+
   checkClassificationIdentifierTypesExistsInBrowseoption(browseOption) {
     const targetRow = this.getTargetRowWithClassificationName(browseOption);
 
@@ -149,6 +161,12 @@ export default {
     cy.expect(targetRow.find(classificationIdentifierTypesDropdown).has({ open: true }));
   },
 
+  checkClassificationIdentifierTypesDropdownExpanded(browseOption) {
+    const targetRow = this.getTargetRowWithClassificationName(browseOption);
+
+    cy.expect(targetRow.find(classificationIdentifierTypesDropdown).has({ open: true }));
+  },
+
   checkClassificationIdentifierTypesDropdownOption(dropdownOption) {
     cy.then(() => MultiSelectMenu().optionList()).then((options) => {
       cy.wrap(options).then(
@@ -171,8 +189,9 @@ export default {
     cy.do(MultiSelectMenu().find(MultiSelectOption(option)).click());
   },
 
-  checkOptionSelectedInClassificationIdentifierTypesDropdown(option) {
-    // cy.expect(MultiSelect({ selected: option }).exists());
-    cy.expect(MultiSelect({ selectedCount: option }).exists());
+  checkOptionSelectedInClassificationIdentifierTypesDropdown(browseOption, option) {
+    const targetRow = this.getTargetRowWithClassificationName(browseOption);
+
+    cy.expect(targetRow.find(MultiSelect({ selected: including(option) })).exists());
   },
 };
