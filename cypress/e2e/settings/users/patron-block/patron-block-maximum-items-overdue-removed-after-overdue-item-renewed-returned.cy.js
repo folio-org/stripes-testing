@@ -258,6 +258,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
       UserLoans.renewItem(itemForRenew.barcode, true);
       Renewals.renewBlockedPatron(renewComment);
 
+      cy.wait(10000);
       findPatron();
       cy.wait(2000);
       Users.checkPatronIsNotBlocked(userData.userId);
@@ -279,6 +280,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
       CheckInActions.checkInItemGui(itemForCheckIn.barcode);
       CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
 
+      cy.wait(10000);
       findPatron();
       cy.wait(2000);
       Users.checkPatronIsNotBlocked(userData.userId);

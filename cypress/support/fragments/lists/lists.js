@@ -50,7 +50,7 @@ export default {
   },
 
   queryBuilderActions() {
-    this.queryBuilderActionsWithParameters('User active', '==', 'True');
+    this.queryBuilderActionsWithParameters('User - Active', '==', 'True');
   },
 
   queryBuilderActionsWithParameters(parameter, operator, value) {
