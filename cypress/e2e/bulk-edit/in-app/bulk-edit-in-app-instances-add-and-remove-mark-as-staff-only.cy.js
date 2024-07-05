@@ -124,6 +124,7 @@ describe('bulk-edit', () => {
           folioItem.instanceName,
           folioItem.itemBarcode,
         );
+        InventoryInstances.createMarcBibViaApi(marcInstanceBody);
         cy.getInstanceById(folioItem.instanceId).then((body) => {
           body.title = folioFields.title;
           body.shared = false;
@@ -132,7 +133,6 @@ describe('bulk-edit', () => {
           body.instanceTypeId = folioFields.instanceTypeId;
           cy.updateInstance(body);
         });
-        InventoryInstances.createMarcBibViaApi(marcInstanceBody);
 
         cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${marcFields[245]}"` })
           .then((instance) => {
@@ -156,18 +156,7 @@ describe('bulk-edit', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(folioItem.itemBarcode);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(marcInstance.itemBarcode);
-      [
-        identifiersQueryFilename,
-        matchedRecordsFileName,
-        previewFileName,
-        changedRecordsFileName,
-        errorsFromCommittingFileName,
-      ].forEach((fileName) => {
-        cy.get(`@${fileName}`).then((name) => {
-          FileManager.deleteFileFromDownloadsByMask(name);
-        });
-      });
+      InventoryInstance.deleteInstanceViaApi(marcInstance.instanceId);
     });
 
     it(
@@ -337,11 +326,13 @@ describe('bulk-edit', () => {
         BulkEditLogs.downloadQueryIdentifiers();
         cy.get('@identifiersQueryFilename').then((fileName) => {
           ExportFile.verifyFileIncludes(fileName, [folioItem.instanceId, marcInstance.instanceId]);
+          FileManager.deleteFileFromDownloadsByMask(fileName);
         });
 
         BulkEditLogs.downloadFileWithMatchingRecords();
         cy.get('@matchedRecordsFileName').then((fileName) => {
           ExportFile.verifyFileIncludes(fileName, [folioItem.instanceId, marcInstance.instanceId]);
+          FileManager.deleteFileFromDownloadsByMask(fileName);
         });
 
         BulkEditLogs.downloadFileWithProposedChanges();
@@ -350,6 +341,7 @@ describe('bulk-edit', () => {
             `Action note;${folioFields.notes[0].note};true|Reproduction note;${folioFields.notes[1].note};false\n`,
             `Reproduction note;${marcFields[533]};false|Action note;${marcFields[583]};true\n`,
           ]);
+          FileManager.deleteFileFromDownloadsByMask(fileName);
         });
 
         BulkEditLogs.downloadFileWithUpdatedRecords();
@@ -357,18 +349,18 @@ describe('bulk-edit', () => {
           ExportFile.verifyFileIncludes(fileName, [
             `Action note;${folioFields.notes[0].note};true|Reproduction note;${folioFields.notes[1].note};false\n`,
           ]);
-        });
-        cy.get('@changedRecordsFileName').then((fileName) => {
           ExportFile.verifyFileIncludes(
             fileName,
             [`Reproduction note;${marcFields[533]};true|Action note;${marcFields[583]};false\n`],
             false,
           );
+          FileManager.deleteFileFromDownloadsByMask(fileName);
         });
 
         BulkEditLogs.downloadFileWithCommitErrors();
         cy.get('@errorsFromCommittingFileName').then((fileName) => {
           ExportFile.verifyFileIncludes(fileName, [marcInstance.instanceId]);
+          FileManager.deleteFileFromDownloadsByMask(fileName);
         });
       },
     );
