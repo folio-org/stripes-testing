@@ -8,7 +8,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { INSTANCE_NOTES } from '../../../support/constants';
+import { INSTANCE_NOTE_IDS } from '../../../support/constants';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import inventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -53,12 +53,12 @@ describe('bulk-edit', () => {
           cy.getInstanceById(instanceId).then((body) => {
             body.notes = [
               {
-                instanceNoteTypeId: INSTANCE_NOTES.REPRODUCTION_NOTE,
+                instanceNoteTypeId: INSTANCE_NOTE_IDS.REPRODUCTION_NOTE,
                 note: notes.reproductionNote,
                 staffOnly: false,
               },
               {
-                instanceNoteTypeId: INSTANCE_NOTES.REPRODUCTION_NOTE,
+                instanceNoteTypeId: INSTANCE_NOTE_IDS.REPRODUCTION_NOTE,
                 note: notes.reproductionNoteStaffOnly,
                 staffOnly: true,
               },
