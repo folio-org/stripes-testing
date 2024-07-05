@@ -13,6 +13,8 @@ const testData = {
   instanceIDs: [],
   querySearchOption: 'Query search',
   titleAllSearchOption: 'Title (all)',
+  subjectSearchOption: 'Subject',
+  contributorSearchOption: 'Contributor',
   searchQueriesC473260: [
     'title all "C473260 Arbeitauto und Mühe : Untersuchungenauto zur Bedeutungsgeschichte altengl. Wörter / von Klaus R. Grinda."',
     'title all "C473260 Arbeitauto und Muhe : Untersuchungenauto zur Bedeutungsgeschichte altengl. Worter / von Klaus R. Grinda."',
@@ -25,27 +27,46 @@ const testData = {
     'C471497 Zurauto Aktualität Maxauto Frischs',
     'C471497 Zurauto Aktualitat Maxauto Frischs',
   ],
+  searchQueriesC471496: [
+    'C473260 Arbeitauto und Mühe : Untersuchungenauto zur Bedeutungsgeschichte altengl. Wörter / von Klaus R. Grinda.',
+    'C473260 Arbeitauto und Muhe : Untersuchungenauto zur Bedeutungsgeschichte altengl. Worter / von Klaus R. Grinda.',
+  ],
+  searchQueriesC471495: [
+    'C471495 Māoriauto poetry --21st centuryauto',
+    'C471495 Maoriauto poetry --21st centuryauto',
+  ],
+  searchQueriesC471494: ['C471494 Wærn, Hakonauto', 'C471494 Waern, Hakonauto'],
   searchResultC473260:
     'C473260 Arbeitauto und Mühe : Untersuchungenauto zur Bedeutungsgeschichte altengl. Wörter / von Klaus R. Grinda.',
   searchResultC471498: "C471498 Aus Jacobi's Gartenauto : Furioso : aus Beethoven's Jugendauto",
   searchResultC471497: 'C471497 "Manauto will werden, nichtauto gewesen sein"',
+  searchResultC471495:
+    "C471495 Kupuauto : a collection of contemporary Māori poetryauto / nā Hana O'Regan rāua ko Charisma Rangipunga ; Māori text edited by Timoti Karetū ; English text edited by Tipene O'Reganauto.",
+  searchResultC471494:
+    'C471494 Elpannanauto och dess ekonomiska förutsättningar / av Hakonauto Wærn',
 
   marcFile: {
     marc: 'marcBibFileDiacritics.mrc',
     fileName: `testMarcBibFileDiacritics.${randomFourDigitNumber()}.mrc`,
     jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-    numberOfRecords: 3,
+    numberOfRecords: 5,
     propertyName: 'instance',
   },
 
-  instanceTitleTitlePrefixes: ['C473260 Arbeitauto', 'C471498 Aus', 'C471497'],
+  instanceTitlePrefixes: [
+    'C473260 Arbeitauto',
+    'C471498 Aus',
+    'C471497',
+    'C471495 Kupuauto',
+    'C471494 Elpannanauto',
+  ],
 };
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
-      testData.instanceTitleTitlePrefixes.forEach((titlePrefix) => {
+      testData.instanceTitlePrefixes.forEach((titlePrefix) => {
         InventoryInstances.getInstancesViaApi({
           limit: 100,
           query: `title="${titlePrefix}"`,
@@ -122,6 +143,50 @@ describe('Inventory', () => {
         testData.searchQueriesC471497.forEach((query) => {
           InventoryInstances.searchInstancesWithOption(testData.titleAllSearchOption, query);
           InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResultC471497, true);
+          InventorySearchAndFilter.checkRowsCount(1);
+          InventoryInstances.resetAllFilters();
+        });
+      },
+    );
+
+    it(
+      'C471496 Search for Instance which has diacritics in "Title" field using "Title (all)" search option (spitfire)',
+      { tags: ['criticalPath', 'spitfire'] },
+      () => {
+        testData.searchQueriesC471496.forEach((query) => {
+          InventoryInstances.searchInstancesWithOption(testData.titleAllSearchOption, query);
+          InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResultC473260, true);
+          InventorySearchAndFilter.checkRowsCount(1);
+          InventoryInstances.resetAllFilters();
+        });
+      },
+    );
+
+    it(
+      'C471495 Search for subjects which has diacritics (spitfire)',
+      { tags: ['criticalPath', 'spitfire'] },
+      () => {
+        testData.searchQueriesC471495.forEach((query) => {
+          InventoryInstances.searchInstancesWithOption(testData.subjectSearchOption, query);
+          InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResultC471495, true);
+          InventorySearchAndFilter.checkRowsCount(1);
+          InventoryInstances.resetAllFilters();
+        });
+      },
+    );
+
+    it(
+      'C471494 Search for contributors which has diacritics (spitfire)',
+      { tags: ['criticalPath', 'spitfire'] },
+      () => {
+        testData.searchQueriesC471494.forEach((query) => {
+          InventoryInstances.searchInstancesWithOption(testData.contributorSearchOption, query);
+          InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResultC471494, true);
+          InventoryInstances.checkResultsCellContainsAnyOfValues(
+            [testData.searchQueriesC471494[0]],
+            2,
+            0,
+          );
           InventorySearchAndFilter.checkRowsCount(1);
           InventoryInstances.resetAllFilters();
         });
