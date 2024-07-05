@@ -129,11 +129,11 @@ export default {
     cy.do(TextArea({ name: 'description' }).fillIn(value));
   },
 
-  selectRecordTypeOld(option) {
+  selectRecordType(option) {
     cy.get('select[name=recordType]').select(option);
   },
 
-  selectRecordType(option) {
+  selectRecordTypeOld(option) {
     cy.get('button[name=recordType]')
       .click()
       .then(() => {

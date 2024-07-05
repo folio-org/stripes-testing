@@ -223,6 +223,7 @@ export default {
         ...body,
       },
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
 
