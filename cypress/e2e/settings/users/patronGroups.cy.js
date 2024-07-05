@@ -21,7 +21,7 @@ describe('Patron blocks relations with users, conditions', () => {
       testData.chargeAmount = 100;
 
       cy.getAdminToken();
-      const patronGroupName = `auttestPatronGroup${getRandomPostfix()}`;
+      const patronGroupName = `autotestPatronGroup${getRandomPostfix()}`;
       PatronGroups.createViaApi(patronGroupName).then((patronGroupId) => {
         testData.patronGroupId = patronGroupId;
         Users.createViaApi({ ...Users.defaultUser, patronGroup: patronGroupId }).then(
@@ -56,6 +56,7 @@ describe('Patron blocks relations with users, conditions', () => {
                   UsersCard.startFeeFine();
                   UserCharge.fillRequiredFields(owner, manualCharge.feeFineType);
                   UserCharge.chargeOnly();
+                  Users.waitForAutomatedPatronBlocksForUser(testData.userId, 4 * 60);
                   // TODO: clarify the issue when error message is not presented in cypress env time to time
                   UsersCard.hasSaveError(UsersCard.errors.patronHasBlocksInPlace);
                 });
