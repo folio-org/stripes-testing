@@ -42,7 +42,7 @@ describe('MARC', () => {
       });
 
       it(
-        'C423992 Create new "Authority file" with empty "Base URL" field at "Settings >> MARC authority >> Manage authority files" pane (spitfire)',
+        'C477597 Create new "Authority file" with empty "Base URL" field at "Settings >> MARC authority >> Manage authority files" pane (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           ManageAuthorityFiles.clickNewButton();
