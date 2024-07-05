@@ -1374,8 +1374,8 @@ export default {
     cy.okapiRequest({
       method: 'POST',
       path: 'records-editor/records',
-      body: body,
+      body,
       isDefaultSearchParamsRequired: false,
-    })
+    });
   },
 };

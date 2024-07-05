@@ -1,28 +1,27 @@
 import uuid from 'uuid';
+import {
+  INSTANCE_NOTE_IDS,
+  INSTANCE_RESOURCE_TYPE_IDS,
+  INSTANCE_STATUS_TERM_IDS,
+} from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import FileManager from '../../../support/utils/fileManager';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import {
+import QueryModal, {
   instanceFieldValues,
   STRING_OPERATORS,
 } from '../../../support/fragments/bulk-edit/query-modal';
-import QueryModal from '../../../support/fragments/bulk-edit/query-modal';
-import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
-import {
-  INSTANCE_STATUS_TERM_IDS,
-  INSTANCE_RESOURCE_TYPE_IDS,
-  INSTANCE_NOTE_IDS,
-} from '../../../support/constants';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const randomNumberForTitles = getRandomPostfix();
@@ -30,7 +29,7 @@ const folioItem = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
-let marcInstance = {};
+const marcInstance = {};
 const folioFields = {
   title: `${randomNumberForTitles} Test Instance notes - Staff only FOLIO`,
   instanceTypeId: INSTANCE_RESOURCE_TYPE_IDS.TEXT,

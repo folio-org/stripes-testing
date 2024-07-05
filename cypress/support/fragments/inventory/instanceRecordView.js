@@ -547,7 +547,7 @@ export default {
           cy.get('[role="gridcell"]')
             .eq(0).should('contain', staffOnly);
 
-            cy.get('[role="gridcell"]')
+          cy.get('[role="gridcell"]')
             .eq(1).should('contain', noteText);
         });
     });

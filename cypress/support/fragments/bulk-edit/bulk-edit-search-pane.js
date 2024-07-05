@@ -477,7 +477,7 @@ export default {
           .find(MultiColumnListCell({ column: columnName, content: value }))
           .exists(),
       );
-    })
+    });
   },
 
   verifyNonMatchedResults(...values) {

@@ -805,8 +805,8 @@ export const INSTANCE_NOTE_IDS = {
 
 export const INSTANCE_STATUS_TERM_IDS = {
   CATALOGED: '9634a5ab-9228-4703-baf2-4d12ebc77d56'
-}
+};
 
 export const INSTANCE_RESOURCE_TYPE_IDS = {
   TEXT: '6312d172-f0cf-40f6-b27d-9fa8feaf332f'
-}
+};

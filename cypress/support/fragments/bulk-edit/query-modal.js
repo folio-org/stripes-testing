@@ -100,7 +100,7 @@ export const STRING_OPERATORS = {
   CONTAINS: 'contains',
   START_WITH: 'starts with',
   IS_NULL: 'is null/empty',
-}
+};
 
 export default {
   exists() {
