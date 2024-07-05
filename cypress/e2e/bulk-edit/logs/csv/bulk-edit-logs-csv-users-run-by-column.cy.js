@@ -65,7 +65,7 @@ describe('Bulk Edit - Logs', () => {
   });
 
   it(
-    'C380628 Verify how User\'s names are displayed in "Run by" column of Bulk edit Logs (firebird) (TaaS)',
+    'C496147 Verify how User\'s names are displayed in "Run by" column of Bulk edit Logs (firebird) (TaaS)',
     { tags: ['extendedPath', 'firebird'] },
     () => {
       BulkEditSearchPane.openLogsSearch();

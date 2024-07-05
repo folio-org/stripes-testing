@@ -61,7 +61,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C360114 Verify that User can upload file with Holdings UUIDs (firebird)',
+      'C499612 Verify that User can upload file with Holdings UUIDs (firebird)',
       { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
