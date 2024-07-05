@@ -79,7 +79,9 @@ const select = async (interactor, values) => {
 
 export default createInteractor('multi select')
   .locator((el) => {
-    const label = document.getElementById(el.getAttribute('aria-labelledby'));
+    const filterfield = el.querySelector('[role=searchbox]');
+    const ariaLabelledby = filterfield.getAttribute('aria-labelledby').split(' ')[0];
+    const label = document.getElementById(ariaLabelledby);
     return (label && label.textContent) || '';
   })
   .selector('[role=application][class^=multiSelectContainer-]')
