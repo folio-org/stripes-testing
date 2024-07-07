@@ -122,6 +122,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         secondFiscalYear.code,
         'None',
         'Transfer',
+        'Initial encumbrance',
       );
     });
 

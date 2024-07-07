@@ -5,7 +5,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
-import BankingInformation from '../../support/fragments/settings/organizations/bankingInformation';
+// import BankingInformation from '../../support/fragments/settings/organizations/bankingInformation';
 
 describe('Organizations', () => {
   const firstOrganization = { ...NewOrganization.defaultUiOrganizations };
@@ -30,7 +30,7 @@ describe('Organizations', () => {
 
   before(() => {
     cy.getAdminToken();
-    BankingInformation.setBankingInformationValue(true);
+    // BankingInformation.setBankingInformationValue(true);
     Organizations.createOrganizationViaApi(firstOrganization).then((responseOrganizations) => {
       firstOrganization.id = responseOrganizations;
       cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
@@ -86,7 +86,7 @@ describe('Organizations', () => {
     Organizations.closeDetailsPane();
     Organizations.deleteOrganizationViaApi(firstOrganization.id);
     Organizations.deleteOrganizationViaApi(secondOrganization.id);
-    BankingInformation.setBankingInformationValue(false);
+    // BankingInformation.setBankingInformationValue(false);
     Users.deleteViaApi(user.userId);
     Users.deleteViaApi(C423432User.userId);
   });
