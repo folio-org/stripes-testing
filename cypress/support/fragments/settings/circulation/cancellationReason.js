@@ -9,6 +9,13 @@ import {
 
 const newButton = Button({ id: 'clickable-add-request-cancellation-reasons' });
 const cancellationReasonTextField = TextField({ name: 'items[0].name' });
+const cancellationReasonDescriptionTextField = TextField({ name: 'items[0].description' });
+const cancellationReasonPublicDescriptionTextField = TextField({
+  name: 'items[0].publicDescription',
+});
+const confirmTrashButton = Button({
+  id: 'clickable-delete-controlled-vocab-entry-confirmation-confirm',
+});
 const saveButton = Button('Save');
 
 export const reasonsActions = {
@@ -28,6 +35,12 @@ export default {
 
   setCancellationReasonName(name) {
     cy.do(cancellationReasonTextField.fillIn(name));
+  },
+
+  setCancellationReason(reason) {
+    cy.do(cancellationReasonPublicDescriptionTextField.fillIn(reason.publicDescription));
+    cy.do(cancellationReasonDescriptionTextField.fillIn(reason.description));
+    cy.do(cancellationReasonTextField.fillIn(reason.name));
   },
 
   saveCancellationReason() {
@@ -72,18 +85,28 @@ export default {
   clickEditButtonForReason(name) {
     const row = MultiColumnListRow({ content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
-    row
-      .find(actionsCell)
-      .find(Button({ icon: 'edit' }))
-      .click();
+    cy.log();
+    cy.do(
+      row
+        .find(actionsCell)
+        .find(Button({ icon: 'edit' }))
+        .click(),
+    );
   },
 
   clickTrashButtonForReason(name) {
     const row = MultiColumnListRow({ content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
-    row
-      .find(actionsCell)
-      .find(Button({ icon: 'trash' }))
-      .click();
+    cy.log();
+    cy.do(
+      row
+        .find(actionsCell)
+        .find(Button({ icon: 'trash' }))
+        .click(),
+    );
+  },
+
+  clickTrashButtonConfirm() {
+    cy.do(confirmTrashButton.click());
   },
 };
