@@ -31,7 +31,7 @@ describe('eHoldings', () => {
           Permissions.moduleeHoldingsEnabled.gui,
         ]).then((userProperties) => {
           userId = userProperties.userId;
-          
+
           cy.login(userProperties.username, userProperties.password, {
             path: TopMenu.eholdingsPath,
             waiter: EHoldingsTitlesSearch.waitLoading,

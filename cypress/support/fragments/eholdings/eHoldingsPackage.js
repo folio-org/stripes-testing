@@ -143,7 +143,7 @@ export default {
 
   addTag: () => {
     const newTag = `tag${getRandomPostfix()}`;
-    cy.then(() => tagsSection.find(MultiSelect()).selected()).then((selectedTags) => {
+    cy.then(() => tagsSection.find(MultiSelect()).selected()).then(() => {
       cy.do(tagsSection.find(MultiSelect()).fillIn(newTag));
       cy.do(MultiSelectOption(`Add tag for: ${newTag}`).click());
     });
