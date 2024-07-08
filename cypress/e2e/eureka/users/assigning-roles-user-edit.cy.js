@@ -37,7 +37,7 @@ describe('Eureka', () => {
           capabsToAssign,
           capabSetsToAssign,
         );
-        cy.updateRolesForUserApi(testData.tempUser.userId, []);
+        if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.tempUser.userId, []);
       });
       cy.createTempUser([]).then((createdUserAProperties) => {
         testData.userA = createdUserAProperties;

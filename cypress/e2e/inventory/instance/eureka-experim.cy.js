@@ -120,7 +120,7 @@ describe('eureka test', () => {
         capabsToAssign,
         capabsSetsToAssign,
       );
-      cy.updateRolesForUserApi(testData.user3.userId, []);
+      if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user3.userId, []);
       cy.login(testData.user3.username, testData.user3.password);
       cy.wait(10000);
       Users.deleteViaApi(testData.user3.userId);

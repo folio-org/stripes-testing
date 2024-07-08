@@ -259,7 +259,7 @@ Cypress.Commands.add('getCapabilitySetIdViaApi', ({ type, resource, action }) =>
   return cy.get('@capabSetId');
 });
 
-Cypress.Commands.add('updateRolesForUserApi', (userId, roleIds) => {
+Cypress.Commands.add('updateRolesForUserApi', (userId, roleIds, ignoreErrors = false) => {
   cy.okapiRequest({
     method: 'PUT',
     path: `roles/users/${userId}`,
@@ -268,6 +268,7 @@ Cypress.Commands.add('updateRolesForUserApi', (userId, roleIds) => {
       roleIds: [...roleIds],
     },
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   });
 });
 

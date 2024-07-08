@@ -52,10 +52,16 @@ describe('Eureka', () => {
                     });
                     cy.createAuthorizationRoleApi(testData.roleBName).then((role) => {
                       testData.roleBId = role.id;
-                      cy.updateRolesForUserApi(testData.userA.userId, []);
-                      cy.updateRolesForUserApi(testData.userB.userId, [testData.roleBId]);
-                      cy.updateRolesForUserApi(testData.userC.userId, [testData.roleBId]);
-                      cy.updateRolesForUserApi(testData.userD.userId, [testData.roleBId]);
+                      if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, []);
+                      if (Cypress.env('runAsAdmin')) {
+                        cy.updateRolesForUserApi(testData.userB.userId, [testData.roleBId]);
+                        cy.updateRolesForUserApi(testData.userC.userId, [testData.roleBId]);
+                        cy.updateRolesForUserApi(testData.userD.userId, [testData.roleBId]);
+                      } else {
+                        cy.addRolesToNewUserApi(testData.userB.userId, [testData.roleBId]);
+                        cy.addRolesToNewUserApi(testData.userC.userId, [testData.roleBId]);
+                        cy.addRolesToNewUserApi(testData.userD.userId, [testData.roleBId]);
+                      }
                       cy.login(testData.tempUser.username, testData.tempUser.password, {
                         path: TopMenu.settingsAuthorizationRoles,
                         waiter: AuthorizationRoles.waitContentLoading,

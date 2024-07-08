@@ -29,7 +29,7 @@ describe('Eureka', () => {
           cy.createTempUser([]).then((createdUserProperties) => {
             testData.tempUser = createdUserProperties;
             cy.assignCapabilitiesToExistingUser(testData.tempUser.userId, [], capabSetsToAssign);
-            cy.updateRolesForUserApi(testData.tempUser.userId, []);
+            if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.tempUser.userId, []);
             cy.createTempUser([], testData.groupAName).then((createdUserAProperties) => {
               testData.userA = createdUserAProperties;
               cy.createTempUser([], testData.groupBName).then((createdUserBProperties) => {
@@ -38,9 +38,10 @@ describe('Eureka', () => {
                   testData.userC = createdUserCProperties;
                   cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
                     testData.roleId = role.id;
-                    cy.updateRolesForUserApi(testData.userA.userId, [testData.roleId]);
-                    cy.updateRolesForUserApi(testData.userB.userId, []);
-                    cy.updateRolesForUserApi(testData.userC.userId, []);
+                    if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, [testData.roleId]);
+                    else cy.addRolesToNewUserApi(testData.userA.userId, [testData.roleId]);
+                    if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userB.userId, []);
+                    if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userC.userId, []);
                     cy.login(testData.tempUser.username, testData.tempUser.password, {
                       path: TopMenu.settingsAuthorizationRoles,
                       waiter: AuthorizationRoles.waitContentLoading,
