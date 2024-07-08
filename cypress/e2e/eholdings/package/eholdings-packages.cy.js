@@ -31,21 +31,23 @@ describe('eHoldings', () => {
           Permissions.moduleeHoldingsEnabled.gui,
         ]).then((userProperties) => {
           userId = userProperties.userId;
-          EHoldingsPackages.getNotSelectedPackageIdViaApi().then((specialPackage) => {
-            cy.login(userProperties.username, userProperties.password, {
-              path: `${TopMenu.eholdingsPath}/packages/${specialPackage.id}`,
-              waiter: () => EHoldingsPackage.waitLoading(specialPackage.name),
-            });
-            cy.wait(3000);
-            EHoldingsPackage.addToHoldings();
-            cy.wait(3000);
-            EHoldingsPackage.verifyHoldingStatus();
-            cy.wait(3000);
-            EHoldingsPackage.filterTitles();
-            EHoldingsPackage.checkEmptyTitlesList();
-            // reset test data
-            EHoldingsPackage.removeFromHoldings();
+          
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: EHoldingsTitlesSearch.waitLoading,
           });
+          EHoldingSearch.switchToPackages();
+          EHoldingsPackagesSearch.byName('123Library eBooks');
+          EHoldingsPackages.openPackage();
+          cy.wait(3000);
+          EHoldingsPackage.addToHoldings();
+          cy.wait(3000);
+          EHoldingsPackage.verifyHoldingStatus();
+          cy.wait(3000);
+          EHoldingsPackage.filterTitles();
+          EHoldingsPackage.checkEmptyTitlesList();
+          // reset test data
+          EHoldingsPackage.removeFromHoldings();
         });
       },
     );
@@ -68,6 +70,7 @@ describe('eHoldings', () => {
           EHoldingsPackagesSearch.byName();
           EHoldingsPackages.openPackage().then((selectedPackage) => {
             const addedTag1 = EHoldingsPackage.addTag();
+            cy.reload();
             const addedTag2 = EHoldingsPackage.addTag();
             EHoldingsPackage.closePackage();
             EHoldingsPackagesSearch.byName(selectedPackage);
