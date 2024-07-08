@@ -170,7 +170,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
                     }
                   }
 
-                  for (const capablitySetObject of capabilitiesCollection) {
+                  for (const capablitySetObject of capabilitySetsCollection) {
                     if (capablitySetObject.permission === currentPermission) {
                       capabilitySetsIds.push(capablitySetObject.id);
                       break;
