@@ -1,28 +1,24 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { INSTANCE_NOTE_IDS } from '../../../support/constants';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import inventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
+import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 
 let user;
-const notes = {
-  reproductionNote: 'Instance reproduction note',
-  reproductionNoteStaffOnly: 'Instance reproduction note Staff only',
-};
-
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${instanceUUIDsFileName}`;
 const previewFileName = `*-Updates-Preview-${instanceUUIDsFileName}`;
-const errorsFromCommittingFileName = `*-Committing-changes-Errors-${instanceUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${instanceUUIDsFileName}`;
 const folioItem = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
@@ -32,12 +28,14 @@ const marcInstance = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
+const adminNote = `Te;st: [administrative] no*te ${getRandomPostfix()}.csv`;
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditEdit.gui,
+        permissions.bulkEditLogsView.gui,
         permissions.uiInventoryViewCreateEditInstances.gui,
       ]).then((userProperties) => {
         user = userProperties;
@@ -51,22 +49,11 @@ describe('bulk-edit', () => {
         );
         [marcInstance.instanceId, folioItem.instanceId].forEach((instanceId) => {
           cy.getInstanceById(instanceId).then((body) => {
-            body.notes = [
-              {
-                instanceNoteTypeId: INSTANCE_NOTE_IDS.REPRODUCTION_NOTE,
-                note: notes.reproductionNote,
-                staffOnly: false,
-              },
-              {
-                instanceNoteTypeId: INSTANCE_NOTE_IDS.REPRODUCTION_NOTE,
-                note: notes.reproductionNoteStaffOnly,
-                staffOnly: true,
-              },
-            ];
+            body.administrativeNotes = [adminNote];
             cy.updateInstance(body);
           });
         });
-        inventoryHoldings.getHoldingsMarcSource().then((marcSource) => {
+        InventoryHoldings.getHoldingsMarcSource().then((marcSource) => {
           cy.getInstanceById(marcInstance.instanceId).then((body) => {
             body.source = marcSource.name;
             body.sourceId = marcSource.id;
@@ -86,91 +73,102 @@ describe('bulk-edit', () => {
 
     after('delete test data', () => {
       cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(folioItem.itemBarcode);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(marcInstance.itemBarcode);
-      Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
       FileManager.deleteFileFromDownloadsByMask(
+        instanceUUIDsFileName,
         matchedRecordsFileName,
         previewFileName,
-        errorsFromCommittingFileName,
         changedRecordsFileName,
       );
     });
 
     it(
-      'C466315 Bulk edit Instance fields - change note type within the group (firebird)',
+      'C466312 Bulk edit Instance fields - find and remove administrative note (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
         BulkEditSearchPane.uploadFile(instanceUUIDsFileName);
+        BulkEditSearchPane.checkForUploading(instanceUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.downloadMatchedResults();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Instance UUID',
-          'Reproduction note',
-          'General note',
+          'Source',
+          'Administrative note',
         );
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Source', 'FOLIO');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Source', 'MARC');
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [
-          folioItem.instanceId,
-          marcInstance.instanceId,
+          `,${adminNote},${folioItem.instanceName},`,
+          `,${adminNote},${marcInstance.instanceName},`,
         ]);
         BulkEditActions.openStartBulkEditInstanceForm();
-        ExportFile.verifyFileIncludes(matchedRecordsFileName, [
-          folioItem.instanceId,
-          marcInstance.instanceId,
-        ]);
-        BulkEditActions.changeNoteType('Reproduction note', 'General note');
+        BulkEditActions.verifyModifyLandingPageBeforeModifying();
+        BulkEditActions.verifyItemAdminstrativeNoteActions();
+        BulkEditActions.noteRemove('Administrative note', adminNote);
+        BulkEditSearchPane.isConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
-        [0, 1].forEach((row) => {
-          BulkEditActions.verifyChangesInAreYouSureFormByRow(
-            'General note',
-            [`${notes.reproductionNote} | ${notes.reproductionNoteStaffOnly} (staff only)`],
-            row,
-          );
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByRow('Reproduction note', '', row);
-        });
-
+        BulkEditSearchPane.verifyInputLabel(
+          '2 records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.',
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow('Administrative note', '', 0);
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow('Administrative note', '', 1);
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          `,General note;${notes.reproductionNote};false|General note;${notes.reproductionNoteStaffOnly};true\n`,
+          `,,${folioItem.instanceName},`,
+          `,,${marcInstance.instanceName},`,
         ]);
-        ExportFile.verifyFileIncludes(previewFileName, ['Reproduction note'], false);
         BulkEditActions.commitChanges();
-        BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyChangesUnderColumns('General note', [
-          `${notes.reproductionNote} | ${notes.reproductionNoteStaffOnly} (staff only)`,
-        ]);
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Reproduction note', '');
-        BulkEditSearchPane.verifyInputLabel(
-          `${instanceUUIDsFileName}: 2 entries * 1 records changed * 2 errors`,
-        );
-        BulkEditSearchPane.verifyReasonForError(
-          'Bulk edit of instance notes is not supported for MARC Instances',
-        );
+        BulkEditActions.verifySuccessBanner(2);
+        BulkEditSearchPane.verifyChangedResults(folioItem.instanceId, marcInstance.instanceId);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        BulkEditActions.downloadErrors();
-        ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-          'Bulk edit of instance notes is not supported for MARC Instances',
-        ]);
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `,General note;${notes.reproductionNote};false|General note;${notes.reproductionNoteStaffOnly};true\n`,
+          `,,${folioItem.instanceName},`,
+          `,,${marcInstance.instanceName},`,
         ]);
-        TopMenuNavigation.navigateToApp('Inventory');
-        InventorySearchAndFilter.searchInstanceByTitle(folioItem.instanceName);
-        InventoryInstances.selectInstance();
-        InventoryInstance.waitLoading();
-        InventoryInstance.checkInstanceNotes('General note', notes.reproductionNote);
-        InventoryInstance.checkInstanceNotes('General note', notes.reproductionNoteStaffOnly);
 
-        TopMenuNavigation.navigateToApp('Inventory');
-        InventorySearchAndFilter.searchInstanceByTitle(marcInstance.instanceName);
-        InventoryInstances.selectInstance();
-        InventoryInstance.waitLoading();
-        InventoryInstance.checkInstanceNotes('Reproduction note', notes.reproductionNote);
-        InventoryInstance.checkInstanceNotes('Reproduction note', notes.reproductionNoteStaffOnly);
+        [folioItem.instanceName, marcInstance.instanceName].forEach((title) => {
+          TopMenuNavigation.navigateToApp('Inventory');
+          InventorySearchAndFilter.searchInstanceByTitle(title);
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          ItemRecordView.verifyTextAbsent(adminNote);
+        });
+
+        cy.visit(TopMenu.bulkEditPath);
+        BulkEditSearchPane.openLogsSearch();
+        BulkEditLogs.checkInstancesCheckbox();
+        BulkEditLogs.clickActionsRunBy(user.username);
+        BulkEditLogs.verifyLogsRowActionWhenCompleted();
+
+        BulkEditLogs.downloadFileUsedToTrigger();
+        BulkEditFiles.verifyCSVFileRows(instanceUUIDsFileName, [
+          marcInstance.instanceId,
+          folioItem.instanceId,
+        ]);
+        // hello
+        BulkEditLogs.downloadFileWithMatchingRecords();
+        ExportFile.verifyFileIncludes(matchedRecordsFileName, [
+          `,${adminNote},${folioItem.instanceName},`,
+          `,${adminNote},${marcInstance.instanceName},`,
+        ]);
+
+        BulkEditLogs.downloadFileWithProposedChanges();
+        ExportFile.verifyFileIncludes(previewFileName, [
+          `,,${folioItem.instanceName},`,
+          `,,${marcInstance.instanceName},`,
+        ]);
+
+        BulkEditLogs.downloadFileWithUpdatedRecords();
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [
+          `,,${folioItem.instanceName},`,
+          `,,${marcInstance.instanceName},`,
+        ]);
       },
     );
   });
