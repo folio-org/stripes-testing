@@ -16,7 +16,10 @@ describe('Inventory', () => {
         admNotesOption: 'Instance administrative notes',
         identifierAllOption: 'Identifier (all)',
         allOption: 'All',
-        searchQueries: ['INSTANCE NOTE AND ADMNOTE CASE TEST', 'instance note and admnote case test'],
+        searchQueries: [
+          'INSTANCE NOTE AND ADMNOTE CASE TEST',
+          'instance note and admnote case test',
+        ],
         searchResultsAll: [
           'C466074 Instance 1, Instance note lower case',
           'C466074 Instance 2, Instance note UPPER case',
@@ -63,9 +66,10 @@ describe('Inventory', () => {
             });
           });
 
-          cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-            testData.instanceTypeId = instanceTypes[0].id;
-          })
+          cy.getInstanceTypes({ limit: 1 })
+            .then((instanceTypes) => {
+              testData.instanceTypeId = instanceTypes[0].id;
+            })
             .then(() => {
               InventoryInstances.createFolioInstanceViaApi({
                 instance: {
@@ -102,7 +106,7 @@ describe('Inventory', () => {
         });
         testData.instances.forEach((instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.instanceId);
-        })
+        });
         Users.deleteViaApi(testData.user.userId);
       });
 
