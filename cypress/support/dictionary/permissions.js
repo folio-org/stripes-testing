@@ -126,13 +126,12 @@ export default {
     gui: 'MARC Authority: Create new MARC authority record',
   },
   // Inventory
-  // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: {
-    internal: ['ui-inventory.all-permissions.TEMPORARY'],
+    internal: 'ui-inventory.all-permissions.TEMPORARY',
     gui: 'Inventory: All permissions',
   },
   uiCallNumberBrowse: {
-    internal: 'browse.call-numbers.instances.collection.get',
+    internal: 'ui-inventory.call-number-browse.view',
     gui: 'Call number browse: View permissions ',
   },
   uiSubjectBrowse: {
