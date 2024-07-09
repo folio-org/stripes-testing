@@ -2495,4 +2495,14 @@ export default {
   clickActionsButtonInRoutingList() {
     cy.do(routingListSection.find(actionsButton).click());
   },
+
+  deleteRoutingList() {
+    cy.do([
+      actionsButton.click(),
+      Button('Delete').click(),
+      Modal('Delete Routing list')
+        .find(Button({ id: 'clickable-delete-routing-list-confirmation-confirm' }))
+        .click(),
+    ]);
+  },
 };
