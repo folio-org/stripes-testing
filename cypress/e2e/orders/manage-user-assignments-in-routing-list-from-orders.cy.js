@@ -134,11 +134,9 @@ describe('Orders > Receiving and Check-in ', () => {
     });
     cy.createTempUser([permissions.uiOrdersEdit.gui]).then((secondUserProperties) => {
       secondUser = secondUserProperties;
-      console.log(secondUser);
     });
     cy.createTempUser([permissions.uiOrdersEdit.gui]).then((userProperties) => {
       user = userProperties;
-      console.log(user);
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
