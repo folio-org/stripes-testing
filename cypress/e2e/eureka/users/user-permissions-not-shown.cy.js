@@ -21,7 +21,7 @@ describe('Eureka', () => {
         cy.createUserGroupApi().then((group) => {
           testData.userGroup = group;
         });
-        cy.login(testData.tempUser.username, testData.tempUser.password);
+        cy.loginAsAdmin();
       });
     });
 

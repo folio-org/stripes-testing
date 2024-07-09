@@ -37,35 +37,32 @@ describe('Eureka', () => {
       before('Create users, roles', () => {
         cy.getAdminToken();
         cy.getUserGroups().then(() => {
-          cy.createTempUser([]).then((createdUserProperties) => {
-            testData.tempUser = createdUserProperties;
-            cy.createTempUser([]).then((createdUserAProperties) => {
-              testData.userA = createdUserAProperties;
-              cy.createTempUser([]).then((createdUserBProperties) => {
-                testData.userB = createdUserBProperties;
-                cy.createTempUser([]).then((createdUserCProperties) => {
-                  testData.userC = createdUserCProperties;
-                  cy.createTempUser([]).then((createdUserDProperties) => {
-                    testData.userD = createdUserDProperties;
-                    cy.createAuthorizationRoleApi(testData.roleAName).then((role) => {
-                      testData.roleAId = role.id;
-                    });
-                    cy.createAuthorizationRoleApi(testData.roleBName).then((role) => {
-                      testData.roleBId = role.id;
-                      if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, []);
-                      if (Cypress.env('runAsAdmin')) {
-                        cy.updateRolesForUserApi(testData.userB.userId, [testData.roleBId]);
-                        cy.updateRolesForUserApi(testData.userC.userId, [testData.roleBId]);
-                        cy.updateRolesForUserApi(testData.userD.userId, [testData.roleBId]);
-                      } else {
-                        cy.addRolesToNewUserApi(testData.userB.userId, [testData.roleBId]);
-                        cy.addRolesToNewUserApi(testData.userC.userId, [testData.roleBId]);
-                        cy.addRolesToNewUserApi(testData.userD.userId, [testData.roleBId]);
-                      }
-                      cy.login(testData.tempUser.username, testData.tempUser.password, {
-                        path: TopMenu.settingsAuthorizationRoles,
-                        waiter: AuthorizationRoles.waitContentLoading,
-                      });
+          cy.createTempUser([]).then((createdUserAProperties) => {
+            testData.userA = createdUserAProperties;
+            cy.createTempUser([]).then((createdUserBProperties) => {
+              testData.userB = createdUserBProperties;
+              cy.createTempUser([]).then((createdUserCProperties) => {
+                testData.userC = createdUserCProperties;
+                cy.createTempUser([]).then((createdUserDProperties) => {
+                  testData.userD = createdUserDProperties;
+                  cy.createAuthorizationRoleApi(testData.roleAName).then((role) => {
+                    testData.roleAId = role.id;
+                  });
+                  cy.createAuthorizationRoleApi(testData.roleBName).then((role) => {
+                    testData.roleBId = role.id;
+                    if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, []);
+                    if (Cypress.env('runAsAdmin')) {
+                      cy.updateRolesForUserApi(testData.userB.userId, [testData.roleBId]);
+                      cy.updateRolesForUserApi(testData.userC.userId, [testData.roleBId]);
+                      cy.updateRolesForUserApi(testData.userD.userId, [testData.roleBId]);
+                    } else {
+                      cy.addRolesToNewUserApi(testData.userB.userId, [testData.roleBId]);
+                      cy.addRolesToNewUserApi(testData.userC.userId, [testData.roleBId]);
+                      cy.addRolesToNewUserApi(testData.userD.userId, [testData.roleBId]);
+                    }
+                    cy.loginAsAdmin({
+                      path: TopMenu.settingsAuthorizationRoles,
+                      waiter: AuthorizationRoles.waitContentLoading,
                     });
                   });
                 });
@@ -81,7 +78,6 @@ describe('Eureka', () => {
         cy.deleteAuthorizationRoleApi(testData.roleBId);
         Users.deleteViaApi(testData.userA.userId);
         Users.deleteViaApi(testData.userB.userId);
-        Users.deleteViaApi(testData.tempUser.userId);
       });
 
       it(
