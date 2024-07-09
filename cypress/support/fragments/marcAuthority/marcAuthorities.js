@@ -46,7 +46,7 @@ const searchButton = Button({ id: 'submit-authorities-search' });
 const browseSearchAndFilterInput = Select('Search field index');
 const marcViewSection = Section({ id: 'marc-view-pane' });
 const editorSection = Section({ id: 'quick-marc-editor-pane' });
-const typeOfHeadingSelect = MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' });
+const typeOfHeadingSelect = MultiSelect({ label: 'Type of heading' });
 const findAuthorityModal = Modal({ id: 'find-authority-modal' });
 const detailsMarcViewPaneheader = PaneHeader({ id: 'paneHeadermarc-view-pane' });
 const authorityActionsDropDown = Dropdown('Actions');
@@ -585,7 +585,7 @@ export default {
   chooseAuthoritySourceOption: (option) => {
     cy.do([
       cy.wait(1000), // without wait will immediately close accordion
-      MultiSelect({ ariaLabelledby: 'sourceFileId-multiselect-label' }).select([including(option)]),
+      MultiSelect({ label: 'Authority source' }).select([including(option)]),
     ]);
   },
 
