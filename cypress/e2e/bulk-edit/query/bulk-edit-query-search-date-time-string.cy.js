@@ -1,13 +1,13 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import QueryModal, {
+  QUERY_OPERATIONS,
+  STRING_OPERATORS,
+  dateTimeOperators,
+  usersFieldValues,
+} from '../../../support/fragments/bulk-edit/query-modal';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import QueryModal, {
-  usersFieldValues,
-  dateTimeOperators,
-  stringOperators,
-  QUERY_OPERATIONS,
-} from '../../../support/fragments/bulk-edit/query-modal';
 import DateTools from '../../../support/utils/dateTools';
 
 let user;
@@ -101,7 +101,7 @@ describe('bulk-edit', () => {
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 2);
-        QueryModal.verifyOperatorsList(stringOperators, 2);
+        QueryModal.verifyOperatorsList(STRING_OPERATORS, 2);
         QueryModal.verifyQueryAreaContent(
           `(user_expiration_date >= "${todayDateWithDashes}") AND (user_expiration_date <= "${nextWeekDateWithDashes}") AND (user_last_name starts with )`,
         );
