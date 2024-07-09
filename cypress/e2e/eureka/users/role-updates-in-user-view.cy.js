@@ -59,7 +59,6 @@ describe('Eureka', () => {
 
     before('Assign roles, login', () => {
       cy.getAdminToken();
-      // TO DO: rewrite when users will not have admin role assigned upon creation
       if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, [testData.roleAId, testData.roleBId]);
       else cy.addRolesToNewUserApi(testData.userA.userId, [testData.roleAId, testData.roleBId]);
       cy.login(testData.tempUser.username, testData.tempUser.password, {
