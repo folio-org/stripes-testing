@@ -16,7 +16,14 @@ describe('lists', () => {
 
     beforeEach('Create a user', () => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.listsAll.gui,
+        Permissions.uiUsersView.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiUsersViewLoans.gui,
+        Permissions.uiOrganizationsView.gui,
+      ]).then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
@@ -24,8 +31,7 @@ describe('lists', () => {
     });
 
     afterEach('Delete a user', () => {
-      // eslint-disable-next-line spaced-comment
-      //cy.getUserToken(userData.username, userData.password);
+      cy.getUserToken(userData.username, userData.password);
       cy.getAdminToken();
       Lists.getViaApi().then((response) => {
         const filteredItem = response.body.content.find((item) => item.name === listData.name);
@@ -39,9 +45,7 @@ describe('lists', () => {
       'C411770 Delete list: Refresh is in progress (corsair)',
       { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
       () => {
-        // eslint-disable-next-line spaced-comment
-        //cy.login(userData.username, userData.password);
-        cy.loginAsAdmin();
+        cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
         Lists.resetAllFilters();
@@ -69,9 +73,7 @@ describe('lists', () => {
       'C411771 Delete list: Export is in progress (corsair)',
       { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
       () => {
-        // eslint-disable-next-line spaced-comment
-        //cy.login(userData.username, userData.password);
-        cy.loginAsAdmin();
+        cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
         Lists.resetAllFilters();

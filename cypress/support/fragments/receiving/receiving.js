@@ -443,4 +443,12 @@ export default {
   varifyAddingRoutingList: (name) => {
     cy.expect(Section({ id: 'routing-list' }).find(MultiColumnListCell(name)).exists());
   },
+
+  openRoutingListsSection: () => {
+    cy.do(Button({ id: 'accordion-toggle-button-routing-list' }).click());
+  },
+
+  addRoutingListExist: () => {
+    cy.expect(Button('Add routing list').exists());
+  },
 };

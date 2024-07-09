@@ -113,7 +113,11 @@ const poLineDetails = {
   receiptStatus: lineDetails.find(Select('Receipt status')),
 };
 const selectLocationsModal = Modal('Select locations');
-
+const findUserButton = Button({ id: 'clickable-plugin-find-user' });
+const userSearchModal = Modal('Select User');
+const searchTextField = TextField({ type: 'search' });
+const firstSearchResult = MultiColumnListCell({ row: 0, columnIndex: 0 });
+const checkboxAll = Checkbox();
 const submitOrderLine = () => {
   cy.wait(4000);
   const submitButton = Button('Submit');
@@ -2539,5 +2543,51 @@ export default {
 
   clickActionsButtonInRoutingList() {
     cy.do(routingListSection.find(actionsButton).click());
+  },
+
+  deleteRoutingList() {
+    cy.do([
+      actionsButton.click(),
+      Button('Delete').click(),
+      Modal('Delete Routing list')
+        .find(Button({ id: 'clickable-delete-routing-list-confirmation-confirm' }))
+        .click(),
+    ]);
+  },
+
+  editRoutingList() {
+    cy.do([actionsButton.click(), Button('Edit').click()]);
+  },
+
+  addUserToRoutingList() {
+    cy.do(Button({ id: 'clickable-plugin-find-user' }).click());
+  },
+
+  unAssignAllUsers() {
+    cy.do([
+      Button({ id: 'clickable-remove-all-permissions' }).click(),
+      Modal('Unassign all users').find(Button('Yes')).click(),
+    ]);
+  },
+
+  assignUser: (userName) => {
+    cy.do([
+      findUserButton.click(),
+      userSearchModal.find(searchTextField).fillIn(userName),
+      searchButton.click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
+      userSearchModal.find(firstSearchResult).find(checkboxAll).click(),
+      userSearchModal.find(Button('Save')).click(),
+    ]);
+  },
+
+  checkUserIsAdded(user) {
+    cy.expect(MultiColumnListCell(including(user)).exists());
+  },
+
+  checkUserIsAbsent(user) {
+    cy.expect(MultiColumnListCell(including(user)).absent());
   },
 };

@@ -536,4 +536,16 @@ export default {
       .find('[class*="paneTitleLabel-"]')
       .should('have.text', header);
   },
+
+  checkMultipleItemNotesWithStaffOnly: (rowIndex, staffOnly, noteType, noteText) => {
+    cy.get('#instance-details-notes').within(() => {
+      cy.get(`[id="list-instance-notes-${rowIndex}"]`).within(() => {
+        cy.get('[role="columnheader"]').eq(1).should('have.text', noteType);
+
+        cy.get('[role="gridcell"]').eq(0).should('contain', staffOnly);
+
+        cy.get('[role="gridcell"]').eq(1).should('contain', noteText);
+      });
+    });
+  },
 };

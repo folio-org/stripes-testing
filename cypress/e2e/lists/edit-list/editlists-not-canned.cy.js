@@ -16,7 +16,14 @@ describe('lists', () => {
 
     beforeEach('Create a user', () => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.listsAll.gui,
+        Permissions.uiUsersView.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiUsersViewLoans.gui,
+        Permissions.uiOrganizationsView.gui,
+      ]).then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
@@ -24,9 +31,7 @@ describe('lists', () => {
     });
 
     afterEach('Delete a user', () => {
-      // eslint-disable-next-line spaced-comment
-      //cy.getUserToken(userData.username, userData.password);
-      cy.getAdminToken();
+      cy.getUserToken(userData.username, userData.password);
       Lists.getViaApi().then((response) => {
         const filteredItem = response.body.content.find((item) => item.name === listData.name);
         Lists.deleteViaApi(filteredItem.id);
@@ -39,9 +44,7 @@ describe('lists', () => {
       'C411737 Edit list: Refresh is in progress (corsair)',
       { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
-        // eslint-disable-next-line spaced-comment
-        //cy.login(userData.username, userData.password);
-        cy.loginAsAdmin();
+        cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
         Lists.resetAllFilters();
@@ -66,9 +69,7 @@ describe('lists', () => {
       'C411738 Edit list: Export is in progress (corsair)',
       { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
-        // eslint-disable-next-line spaced-comment
-        //cy.login(userData.username, userData.password);
-        cy.loginAsAdmin();
+        cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
         Lists.resetAllFilters();
@@ -96,9 +97,7 @@ describe('lists', () => {
       'C411734 Edit list: Make the list Inactive (corsair)',
       { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
       () => {
-        // eslint-disable-next-line spaced-comment
-        //cy.login(userData.username, userData.password);
-        cy.loginAsAdmin();
+        cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
         Lists.resetAllFilters();
@@ -126,34 +125,28 @@ describe('lists', () => {
       },
     );
 
-    it(
-      'C411735 Edit list: Make the list Active (corsair)',
-      { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
-      () => {
-        // eslint-disable-next-line spaced-comment
-        //cy.login(userData.username, userData.password);
-        cy.loginAsAdmin();
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
-        Lists.resetAllFilters();
-        Lists.openNewListPane();
-        Lists.setName(listData.name);
-        Lists.setDescription(listData.name);
-        Lists.selectRecordType(listData.recordType);
-        Lists.selectVisibility(listData.visibility);
-        Lists.selectStatus(listData.status[1]);
-        Lists.saveList();
-        Lists.closeListDetailsPane();
-        cy.wait(2000);
-        cy.contains(listData.name).click();
-        cy.wait(2000);
-        Lists.actionButton();
-        Lists.editList();
-        Lists.selectStatus('Active');
-        Lists.saveList();
-        cy.contains(`List ${listData.name} saved.`);
-        cy.contains(`${listData.name} is active. Refresh ${listData.name} to see list contents`);
-      },
-    );
+    it('C411735 Edit list: Make the list Active (corsair)', { tags: ['smoke', 'corsair'] }, () => {
+      cy.login(userData.username, userData.password);
+      cy.visit(TopMenu.listsPath);
+      Lists.waitLoading();
+      Lists.resetAllFilters();
+      Lists.openNewListPane();
+      Lists.setName(listData.name);
+      Lists.setDescription(listData.name);
+      Lists.selectRecordType(listData.recordType);
+      Lists.selectVisibility(listData.visibility);
+      Lists.selectStatus(listData.status[1]);
+      Lists.saveList();
+      Lists.closeListDetailsPane();
+      cy.wait(2000);
+      cy.contains(listData.name).click();
+      cy.wait(2000);
+      Lists.actionButton();
+      Lists.editList();
+      Lists.selectStatus('Active');
+      Lists.saveList();
+      cy.contains(`List ${listData.name} saved.`);
+      cy.contains(`${listData.name} is active. Refresh ${listData.name} to see list contents`);
+    });
   });
 });

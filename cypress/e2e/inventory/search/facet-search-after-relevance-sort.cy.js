@@ -22,7 +22,7 @@ describe('Inventory', () => {
       relevanceSortOption: 'Relevance',
       instanceAccordions: [
         'Language',
-        'Resource Type',
+        'Resource type',
         'Suppress from discovery',
         'Source',
         'Tags',

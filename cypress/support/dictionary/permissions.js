@@ -1001,6 +1001,10 @@ export default {
     internal: 'ui-tenant-settings.settings.reading-room-access.view',
     gui: 'Settings (tenant): Can view reading room access',
   },
+  uiSettingsTenantReadingRoomAll: {
+    internal: 'ui-tenant-settings.settings.reading-room-access.all',
+    gui: 'Settings (tenant): Can create, edit and remove reading room access',
+  },
   // Timers
   okapiTimersPatch: {
     internal: 'okapi.proxy.self.timers.patch',

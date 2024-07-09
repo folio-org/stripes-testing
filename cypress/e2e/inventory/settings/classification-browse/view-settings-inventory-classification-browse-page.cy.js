@@ -1,8 +1,8 @@
-import { Permissions } from '../../../support/dictionary';
-import { APPLICATION_NAMES } from '../../../support/constants';
-import Users from '../../../support/fragments/users/users';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import ClassificationBrowse from '../../../support/fragments/settings/inventory/instances/classificationBrowse';
+import { Permissions } from '../../../../support/dictionary';
+import { APPLICATION_NAMES } from '../../../../support/constants';
+import Users from '../../../../support/fragments/users/users';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import ClassificationBrowse from '../../../../support/fragments/settings/inventory/instances/classificationBrowse';
 
 describe('Inventory', () => {
   describe('Settings', () => {

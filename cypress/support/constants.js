@@ -806,6 +806,15 @@ export const ITEM_NOTES = {
 
 export const DEFAULT_LOCALE_STRING = '{"locale":"en-US","timezone":"UTC","currency":"USD"}';
 
-export const INSTANCE_NOTES = {
+export const INSTANCE_NOTE_IDS = {
+  ACTION_NOTE: '1c017b8d-c783-4f63-b620-079f7a5b9c07',
   REPRODUCTION_NOTE: 'd548fdff-b71c-4359-8055-f1c008c30f01',
+};
+
+export const INSTANCE_STATUS_TERM_IDS = {
+  CATALOGED: '9634a5ab-9228-4703-baf2-4d12ebc77d56',
+};
+
+export const INSTANCE_RESOURCE_TYPE_IDS = {
+  TEXT: '6312d172-f0cf-40f6-b27d-9fa8feaf332f',
 };

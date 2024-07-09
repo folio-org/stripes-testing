@@ -47,6 +47,9 @@ const updatedRecordBtn = DropdownMenu().find(Button('File with updated records')
 const errorsCommittingBtn = DropdownMenu().find(
   Button('File with errors encountered when committing the changes'),
 );
+const queryIdentifiersBtn = DropdownMenu().find(
+  Button('File with identifiers of the records affected by bulk update'),
+);
 const logsActionButton = Button({ icon: 'ellipsis' });
 const newCheckbox = Checkbox('New');
 const retrievingRecordsCheckbox = Checkbox('Retrieving records');
@@ -426,12 +429,27 @@ export default {
     ]);
   },
 
+  verifyLogsRowActionWithoutMatchingErrorWithCommittingErrorsQuery() {
+    cy.expect([
+      queryIdentifiersBtn.exists(),
+      matchingRecordsBtn.exists(),
+      previewPorposedChangesBtn.exists(),
+      updatedRecordBtn.exists(),
+      errorsCommittingBtn.exists(),
+    ]);
+  },
+
   verifyLogsRowActionWhenCompletedWithErrorsWithoutModification() {
     cy.expect([triggerBtn.exists(), errorsEncounteredBtn.exists()]);
   },
 
   waitingFileDownload() {
     cy.wait(3000);
+  },
+
+  downloadQueryIdentifiers() {
+    cy.do(queryIdentifiersBtn.click());
+    this.waitingFileDownload();
   },
 
   downloadFileUsedToTrigger() {

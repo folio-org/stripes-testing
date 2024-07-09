@@ -21,7 +21,7 @@ describe('Inventory', () => {
       titleHeader: 'Title',
       instanceAccordions: [
         'Language',
-        'Resource Type',
+        'Resource type',
         'Staff suppress',
         'Suppress from discovery',
         'Source',
