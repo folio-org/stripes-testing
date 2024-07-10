@@ -48,7 +48,7 @@ const oldEmail = TextField({ testid: 'input-email-0' });
 const newEmail = TextField({ testid: 'input-email-1' });
 
 const bulkPageSelections = {
-  valueType: Select({ content: including('Select option') }),
+  valueType: Selection({ value: including('Select control') }),
   action: Select({ content: including('Select action') }),
   itemStatus: Select({ content: including('Select item status') }),
   patronGroup: Select({ content: including('Select patron group') }),
