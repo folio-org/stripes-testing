@@ -6,12 +6,13 @@ import {
   TextField,
   including,
 } from '../../../../../interactors';
+import { REQUEST_METHOD } from '../../../constants';
 
 const newButton = Button({ id: 'clickable-add-request-cancellation-reasons' });
-const cancellationReasonTextField = TextField({ name: 'items[0].name' });
-const cancellationReasonDescriptionTextField = TextField({ name: 'items[0].description' });
+const cancellationReasonTextField = TextField({ placeholder: 'name' });
+const cancellationReasonDescriptionTextField = TextField({ placeholder: 'description' });
 const cancellationReasonPublicDescriptionTextField = TextField({
-  name: 'items[0].publicDescription',
+  placeholder: 'publicDescription',
 });
 const confirmTrashButton = Button({
   id: 'clickable-delete-controlled-vocab-entry-confirmation-confirm',
@@ -37,10 +38,12 @@ export default {
     cy.do(cancellationReasonTextField.fillIn(name));
   },
 
-  setCancellationReason(reason) {
-    cy.do(cancellationReasonPublicDescriptionTextField.fillIn(reason.publicDescription));
-    cy.do(cancellationReasonDescriptionTextField.fillIn(reason.description));
-    cy.do(cancellationReasonTextField.fillIn(reason.name));
+  fillCancellationReason(reason) {
+    cy.do([
+      cancellationReasonPublicDescriptionTextField.fillIn(reason.publicDescription),
+      cancellationReasonDescriptionTextField.fillIn(reason.description),
+      cancellationReasonTextField.fillIn(reason.name),
+    ]);
   },
 
   saveCancellationReason() {
@@ -57,12 +60,12 @@ export default {
 
   verifyReasonInTheList({ name, description = '', publicDescription = '', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name) });
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
       row.find(MultiColumnListCell({ columnIndex: 1, content: description })).exists(),
       row.find(MultiColumnListCell({ columnIndex: 2, content: publicDescription })).exists(),
     ]);
+    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     if (actions.length === 0) {
       cy.expect(row.find(actionsCell).has({ content: '' }));
     } else {
@@ -85,7 +88,6 @@ export default {
   clickEditButtonForReason(name) {
     const row = MultiColumnListRow({ content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
-    cy.log();
     cy.do(
       row
         .find(actionsCell)
@@ -97,7 +99,6 @@ export default {
   clickTrashButtonForReason(name) {
     const row = MultiColumnListRow({ content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
-    cy.log();
     cy.do(
       row
         .find(actionsCell)
@@ -108,5 +109,29 @@ export default {
 
   clickTrashButtonConfirm() {
     cy.do(confirmTrashButton.click());
+    cy.wait(2000);
+  },
+
+  getCancellationReasonsViaAPI() {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.GET,
+        path: 'cancellation-reason-storage/cancellation-reasons',
+      })
+      .then((response) => {
+        return response.body.cancellationReasons;
+      });
+  },
+
+  deleteCancellationReasonByNameViaAPI(name) {
+    this.getCancellationReasonsViaAPI().then((reasons) => {
+      const reason = reasons.find((r) => r.name === name);
+      if (reason !== undefined) {
+        cy.okapiRequest({
+          method: REQUEST_METHOD.DELETE,
+          path: `cancellation-reason-storage/cancellation-reasons/${reason.id}`,
+        });
+      }
+    });
   },
 };
