@@ -23,7 +23,8 @@ UI modules and platforms. This repository contains:
 ## Running
 
 First, install dependencies with npm or yarn.
-* To run Cypress tests at the CLI, run `npm run cypress`.
+* To run all Cypress tests at the CLI, run `npx cypress run`.
+* To run a specific Cypress test at the CLI, run `npx cypress run --spec ./path/to/spec.cy.js`
 * To open the Cypress test-runner in a browser, run `npx cypress open`.
 
 ## Prerequisites
