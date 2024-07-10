@@ -520,7 +520,7 @@ export default {
   calendarEdit: {
     internal: 'ui-calendar.create',
     gui: 'Settings (Calendar): Can create, view, and edit calendar events',
-    dateils: ['ui-calendar.update'],
+    details: ['ui-calendar.update'],
   },
   calendarView: {
     internal: 'ui-calendar.view',
