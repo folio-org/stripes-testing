@@ -126,6 +126,7 @@ export default {
     gui: 'MARC Authority: Create new MARC authority record',
   },
   // Inventory
+  // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: {
     internal: 'ui-inventory.all-permissions.TEMPORARY',
     gui: 'Inventory: All permissions',
@@ -182,6 +183,7 @@ export default {
   inventoryViewCreateEditInstances: {
     internal: 'records-editor.records.item.get',
     gui: 'All records-editor permissions',
+    details: ['obsolete'],
   },
   uiInventoryViewCreateEditItems: {
     internal: 'ui-inventory.item.edit',
@@ -512,12 +514,13 @@ export default {
   },
   uiRequestsReorderQueue: {
     internal: 'ui-requests.reorderQueue',
-    gui: 'Requests: Requests: Reorder queue',
+    gui: 'Requests: Reorder queue',
   },
   // Calendar
   calendarEdit: {
-    internal: 'ui-calendar.edit',
+    internal: 'ui-calendar.create',
     gui: 'Settings (Calendar): Can create, view, and edit calendar events',
+    details: ['ui-calendar.update'],
   },
   calendarView: {
     internal: 'ui-calendar.view',
@@ -1000,14 +1003,11 @@ export default {
     internal: 'ui-tenant-settings.settings.reading-room-access.view',
     gui: 'Settings (tenant): Can view reading room access',
   },
-  uiSettingsTenantReadingRoomAll: {
-    internal: 'ui-tenant-settings.settings.reading-room-access.all',
-    gui: 'Settings (tenant): Can create, edit and remove reading room access',
-  },
   // Timers
   okapiTimersPatch: {
     internal: 'okapi.proxy.self.timers.patch',
     gui: 'Okapi - patch timer for current tenant',
+    details: ['noDisplayName'],
   },
   // Export manager
   exportManagerAll: {
@@ -1024,7 +1024,7 @@ export default {
   },
   transferExports: {
     internal: 'ui-plugin-bursar-export.bursar-exports.all',
-    gui: 'Bursar exports: Bursar admin',
+    gui: 'Transfer exports: Modify configuration and start jobs',
   },
   // OAI-PMH
   oaipmhView: {
@@ -1055,39 +1055,48 @@ export default {
   consortiaSettingsConsortiaAffiliationsEdit: {
     internal: 'ui-consortia-settings.consortia.affiliations.edit',
     gui: 'Consortia: Assign and unassign affiliations',
+    details: ['obsolete'],
   },
   consortiaSettingsConsortiaAffiliationsView: {
     internal: 'ui-consortia-settings.consortia.affiliations.view',
     gui: 'Consortia: View affiliations',
+    details: ['obsolete'],
   },
   consortiaInventoryShareLocalInstance: {
     internal: 'consortia.inventory.share.local.instance',
     gui: 'Inventory: Share local instance with consortium',
+    details: ['obsolete'],
   },
   consortiaSettingsSettingsMembershipEdit: {
     internal: 'ui-consortia-settings.settings.membership.edit',
     gui: 'Settings (Consortia): Can view and edit consortia membership',
+    details: ['obsolete'],
   },
   consortiaSettingsSettingsMembershipView: {
     internal: 'ui-consortia-settings.settings.membership.view',
     gui: 'Settings (Consortia): Can view consortia membership',
+    details: ['obsolete'],
   },
   // Consortium manager
   consortiaSettingsConsortiumManagerEdit: {
     internal: 'ui-consortia-settings.consortium-manager.edit',
     gui: 'Consortium manager: Can create, edit and remove settings',
+    details: ['obsolete'],
   },
   consortiaSettingsConsortiumManagerShare: {
     internal: 'ui-consortia-settings.consortium-manager.share',
     gui: 'Consortium manager: Can share settings to all members',
+    details: ['obsolete'],
   },
   consortiaSettingsConsortiumManagerView: {
     internal: 'ui-consortia-settings.consortium-manager.view',
     gui: 'Consortium manager: Can view existing settings',
+    details: ['obsolete'],
   },
   consortiaSettingsConsortiumManagerDepartmentsCreateEditView: {
     internal: 'ui-users.settings.departments.create.edit.view',
     gui: 'Settings (Users): Can create, edit, and view departments',
+    details: ['obsolete'],
   },
   consortiaSettingsConsortiumManagerPatronGroupsAll: {
     internal: 'ui-users.settings.usergroups.all',
