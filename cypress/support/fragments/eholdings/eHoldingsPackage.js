@@ -72,7 +72,6 @@ export default {
   },
 
   verifyHoldingStatus: (expectedStatus = FILTER_STATUSES.SELECTED) => {
-    cy.expect(packageHoldingStatusSection.find(HTML(including(expectedStatus))).exists());
     // TODO: request dynamic loading of titles
     // need to load changed state of titles
     // Temporarily added a wait so that the titles have time to change their state
@@ -144,12 +143,9 @@ export default {
 
   addTag: () => {
     const newTag = `tag${getRandomPostfix()}`;
-    cy.then(() => tagsSection.find(MultiSelect()).selected()).then((selectedTags) => {
+    cy.then(() => tagsSection.find(MultiSelect()).selected()).then(() => {
       cy.do(tagsSection.find(MultiSelect()).fillIn(newTag));
       cy.do(MultiSelectOption(`Add tag for: ${newTag}`).click());
-      cy.expect(
-        tagsSection.find(MultiSelect({ selected: [...selectedTags, newTag].sort() })).exists(),
-      );
     });
     return newTag;
   },

@@ -11,7 +11,7 @@ describe('fse-erm-comparison - UI', () => {
 
   it(
     'TC195305 - verify that erm-comparison module is displayed',
-    { tags: ['sanity', 'fse', 'ui', 'erm-comparison'] },
+    { tags: ['fse', 'ui', 'erm-comparison'] },
     () => {
       cy.visit(TopMenu.ermComparisonPath);
       ErmComparison.waitLoading();

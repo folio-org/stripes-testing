@@ -23,7 +23,7 @@ describe('Inventory', () => {
       contributorsSortOption: 'Contributors',
       instanceAccordions: [
         'Language',
-        'Resource Type',
+        'Resource type',
         'Suppress from discovery',
         'Source',
         'Tags',

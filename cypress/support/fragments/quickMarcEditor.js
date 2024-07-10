@@ -615,6 +615,9 @@ export default {
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(TextArea()).has({ value: content }));
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(tagBox).has({ value: tag }));
     cy.expect(Tooltip().has({ text: 'Move field down a row' }));
+    cy.expect(
+      QuickMarcEditorRow({ index: newRowNumber }).find(arrowDownButton).has({ focused: true }),
+    );
   },
 
   verifyAfterMovingFieldDownLastEditableRow(newRowNumber, tag, content) {
@@ -622,6 +625,9 @@ export default {
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(tagBox).has({ value: tag }));
     cy.expect(Tooltip().has({ text: 'Move field up a row' }));
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(arrowDownButton).absent());
+    cy.expect(
+      QuickMarcEditorRow({ index: newRowNumber }).find(arrowUpButton).has({ focused: true }),
+    );
   },
 
   moveCursorToTagBox(rowNumber) {
@@ -631,6 +637,12 @@ export default {
 
   verifyTagBoxIsFocused(rowNumber) {
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(tagBox).has({ focused: true }));
+  },
+
+  verifyDeleteButtonInFocus(rowNumber) {
+    cy.expect(
+      QuickMarcEditorRow({ index: rowNumber }).find(deleteFieldButton).has({ focused: true }),
+    );
   },
 
   movetoFourthBoxUsingTab(rowNumber) {
@@ -826,6 +838,10 @@ export default {
     cy.expect(Tooltip().has({ text: 'Delete this field' }));
   },
 
+  checkDeleteThisFieldHoverText() {
+    cy.expect(Tooltip().has({ text: 'Delete this field' }));
+  },
+
   checkAfterDeleteLastEditableField(tag) {
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).absent());
     cy.expect(Tooltip().has({ text: 'Move field up a row' }));
@@ -936,9 +952,23 @@ export default {
     );
   },
 
-  verifyEditableFieldIcons(rowNumber, isDeleteFieldButtonShown = true) {
-    cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).exists());
-    cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).exists());
+  verifyEditableFieldIcons(
+    rowNumber,
+    isArrowUpButtonShown,
+    isArrowDownButtonShown,
+    isDeleteFieldButtonShown = true,
+  ) {
+    if (isArrowUpButtonShown) {
+      cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).exists());
+    } else {
+      cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).absent());
+    }
+    if (isArrowDownButtonShown) {
+      cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).exists());
+    } else {
+      cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).absent());
+    }
+
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(addFieldButton).exists());
     if (isDeleteFieldButtonShown) {
       cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(deleteFieldButton).exists());
@@ -959,6 +989,9 @@ export default {
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(TextArea()).has({ value: content }));
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(tagBox).has({ value: tag }));
     cy.expect(Tooltip().has({ text: 'Move field up a row' }));
+    cy.expect(
+      QuickMarcEditorRow({ index: newRowNumber }).find(arrowUpButton).has({ focused: true }),
+    );
   },
 
   verifyAfterMovingFieldUpFirstEditableRow(newRowNumber, tag, content) {
@@ -966,6 +999,9 @@ export default {
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(tagBox).has({ value: tag }));
     cy.expect(Tooltip().has({ text: 'Move field down a row' }));
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(arrowUpButton).absent());
+    cy.expect(
+      QuickMarcEditorRow({ index: newRowNumber }).find(arrowDownButton).has({ focused: true }),
+    );
   },
 
   checkFieldContentMatch(selector, regExp) {

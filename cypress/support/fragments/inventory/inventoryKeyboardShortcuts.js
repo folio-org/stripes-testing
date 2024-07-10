@@ -73,7 +73,7 @@ export default {
     cy.get(`[name="records[${rowNumber}].content"]`).type('{insert} the second subfield is: ');
     QuickMarcEditor.checkContent(
       '$a  the first subfield is: test5 $a  the second subfield is: test6',
-      6,
+      rowNumber,
     );
   },
 };
