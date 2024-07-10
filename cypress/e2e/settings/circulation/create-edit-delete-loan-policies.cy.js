@@ -14,6 +14,7 @@ describe('Permissions -> Circulation', () => {
     loanable: false,
   };
   const editLoanPolicies = {
+    id: uuid(),
     name: 'new name',
     description: 'new description',
     loanable: false,
@@ -38,13 +39,8 @@ describe('Permissions -> Circulation', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    LoanPolicy.getApi().then((response) => {
-      if (response && response.loanPolicies) {
-        response.loanPolicies.forEach((policy) => {
-          LoanPolicy.deleteApi(policy.id);
-        });
-      }
-    });
+    // LoanPolicy.deleteLoanPolicyByIdViaAPI(newLoanPolicy.id); don't working 'deleteLoanPolicyByIdViaAPI'
+    // LoanPolicy.deleteLoanPolicyByIdViaAPI(editLoanPolicies.id);
     Users.deleteViaApi(userData.userId);
   });
 
@@ -54,31 +50,28 @@ describe('Permissions -> Circulation', () => {
     () => {
       // Create a new loan policies
       LoanPolicy.clickNewButton();
-      LoanPolicy.fillLoanPolicies(newLoanPolicy);
+      LoanPolicy.fillLoanPoliciesWithUncheckedBox(newLoanPolicy);
       LoanPolicy.saveAndCloseLoanPolicies();
       InteractorsTools.checkCalloutMessage(
         `The Loan policy ${newLoanPolicy.name} was successfully created.`,
       );
-      //   LoanPolicy.verifyReasonInTheList(newLoanPolicy);
 
       // Edit the cancellation reason
       LoanPolicy.clickActionsButton();
       LoanPolicy.clickEditButton();
-      LoanPolicy.fillLoanPolicies(editLoanPolicies);
+      LoanPolicy.fillLoanPoliciesWithUncheckedBox(editLoanPolicies);
       LoanPolicy.saveAndCloseLoanPolicies();
       InteractorsTools.checkCalloutMessage(
         `The Loan policy ${editLoanPolicies.name} was successfully updated.`,
       );
-      //   LoanPolicy.verifyReasonInTheList(editLoanPolicies);
 
       // Remove the loan policies
       LoanPolicy.clickActionsButton();
       LoanPolicy.clickDeleteButton();
-      LoanPolicy.clickConfirmDeleteButton();
+      LoanPolicy.clickDeleteButton(); // Double call to confirm deletion
       InteractorsTools.checkCalloutMessage(
         `The Loan policy ${editLoanPolicies.name} was successfully deleted.`,
       );
-      //   LoanPolicy.verifyNoReasonInTheList(editLoanPolicies.name);
     },
   );
 });
