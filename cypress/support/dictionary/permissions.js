@@ -904,6 +904,7 @@ export default {
   uiInventorySettingsConfigureClassificationBrowse: {
     internal: 'ui-inventory.settings.classification-browse',
     gui: 'Settings (Inventory): Configure classification browse',
+    details: ['absentInEvrk'],
   },
   settingsDataImportView: {
     internal: 'ui-data-import.view',
@@ -1002,6 +1003,7 @@ export default {
   uiSettingsTenantReadingRoom: {
     internal: 'ui-tenant-settings.settings.reading-room-access.view',
     gui: 'Settings (tenant): Can view reading room access',
+    details: ['absentInEvrk'],
   },
   // Timers
   okapiTimersPatch: {
