@@ -104,6 +104,9 @@ export default {
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
     cy.expect(Callout({ textContent: text }).is({ type: calloutType }));
   },
+  checkCalloutContainsMessage: (text, calloutType = calloutTypes.success) => {
+    cy.expect(Callout({ textContent: including(text) }).is({ type: calloutType }));
+  },
   closeCalloutMessage: () => cy.do(
     Callout()
       .find(Button({ icon: 'times' }))

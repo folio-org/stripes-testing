@@ -82,7 +82,7 @@ describe('eHoldings', () => {
           eHoldingsTitle.waitPackagesLoading();
           eHoldingsTitle.filterPackages(FILTER_STATUSES.SELECTED, selectedResource.package);
           eHoldingsTitle.waitPackagesLoading();
-          eHoldingsTitle.openResource();
+          eHoldingsTitle.openResource(1);
           eHoldingsResourceView.goToEdit();
           eHoldingsResourceEdit.swicthToCustomCoverageDates();
 
