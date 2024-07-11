@@ -10,6 +10,7 @@ import {
   Dropdown,
   HTML,
   Link,
+  ListRow,
   Modal,
   MultiColumnList,
   MultiColumnListCell,
@@ -50,6 +51,7 @@ const typeOfHeadingSelect = MultiSelect({ label: 'Type of heading' });
 const findAuthorityModal = Modal({ id: 'find-authority-modal' });
 const detailsMarcViewPaneheader = PaneHeader({ id: 'paneHeadermarc-view-pane' });
 const authorityActionsDropDown = Dropdown('Actions');
+const checkboxSeletAuthorityRecord = Checkbox({ ariaLabel: 'Select Authority record' });
 
 // actions dropdown window
 const authorityActionsDropDownMenu = DropdownMenu();
@@ -648,12 +650,24 @@ export default {
   },
 
   downloadSelectedRecordWithRowIdx(checkBoxNumber = 0) {
+    cy.do(MultiColumnListRow({ index: checkBoxNumber }).find(checkboxSeletAuthorityRecord).click());
+    cy.do([actionsButton.click(), exportSelectedRecords.click()]);
+  },
+
+  checkSelectAuthorityRecordCheckbox(recordTitle) {
     cy.do(
-      MultiColumnListRow({ index: checkBoxNumber })
-        .find(Checkbox({ ariaLabel: 'Select Authority record' }))
+      ListRow({ content: including(recordTitle) })
+        .find(checkboxSeletAuthorityRecord)
         .click(),
     );
-    cy.do([actionsButton.click(), exportSelectedRecords.click()]);
+  },
+
+  checkSelectAuthorityRecordCheckboxChecked(recordTitle, isChecked = true) {
+    cy.expect(
+      ListRow({ content: including(recordTitle) })
+        .find(checkboxSeletAuthorityRecord)
+        .has({ checked: isChecked }),
+    );
   },
 
   selectAllRecords() {
@@ -1006,6 +1020,14 @@ export default {
       PaneHeader('MARC authority')
         .find(HTML(including(text)))
         .exists(),
+    );
+  },
+
+  verifyTextOfPaneHeaderMarcAuthorityAbsent(text) {
+    cy.expect(
+      PaneHeader('MARC authority')
+        .find(HTML(including(text)))
+        .absent(),
     );
   },
 
