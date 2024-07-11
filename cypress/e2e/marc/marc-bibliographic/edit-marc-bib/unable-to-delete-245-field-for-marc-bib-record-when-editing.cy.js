@@ -73,10 +73,10 @@ describe('MARC', () => {
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.checkFieldsExist([testData.tag245]);
-          QuickMarcEditor.verifyEditableFieldIcons(testData.rowNumber, false);
+          QuickMarcEditor.verifyEditableFieldIcons(testData.rowNumber, true, true, false);
           QuickMarcEditor.addNewField(testData.tag250, testData.content, testData.rowNumber);
           QuickMarcEditor.updateExistingTagName(testData.tag250, testData.tag245);
-          QuickMarcEditor.verifyEditableFieldIcons(testData.rowNumber + 1, false);
+          QuickMarcEditor.verifyEditableFieldIcons(testData.rowNumber + 1, true, true, false);
         },
       );
     });

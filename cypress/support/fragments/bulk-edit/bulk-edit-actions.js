@@ -14,8 +14,6 @@ import {
   Select,
   TextArea,
   Selection,
-  Option,
-  OptionGroup,
   Keyboard,
   MultiColumnListRow,
 } from '../../../../interactors';
@@ -48,7 +46,7 @@ const oldEmail = TextField({ testid: 'input-email-0' });
 const newEmail = TextField({ testid: 'input-email-1' });
 
 const bulkPageSelections = {
-  valueType: Select({ content: including('Select option') }),
+  valueType: Selection({ value: including('Select control') }),
   action: Select({ content: including('Select action') }),
   itemStatus: Select({ content: including('Select item status') }),
   patronGroup: Select({ content: including('Select patron group') }),
@@ -394,6 +392,7 @@ export default {
         .find(bulkPageSelections.valueType)
         .choose(`Temporary ${type} location`),
     );
+    cy.wait(1000);
     if (type === 'item') {
       cy.do(
         RepeatableFieldItem({ index: rowIndex })
@@ -401,8 +400,9 @@ export default {
           .choose('Replace with'),
       );
     }
+    cy.wait(1000);
     cy.do(Button('Select control\nSelect location').click());
-    cy.get('[class^=selectionFilter-]').type(location);
+    cy.get('[class^=selectionFilter-]').eq(1).type(location);
   },
 
   addNewBulkEditFilterString() {
@@ -500,9 +500,15 @@ export default {
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
         .choose('Temporary loan type'),
+    ]);
+    cy.wait(1000);
+    cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.action)
         .choose('Replace with'),
+    ]);
+    cy.wait(1000);
+    cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(Button({ id: 'loanType' }))
         .click(),
@@ -515,6 +521,9 @@ export default {
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
         .choose('Temporary loan type'),
+    ]);
+    cy.wait(1000);
+    cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.action)
         .choose('Clear field'),
@@ -533,8 +542,20 @@ export default {
     if (holdings) cy.expect(Checkbox('Apply to all items records').has({ checked: value }));
   },
 
+  clickOptionsSelection(rowIndex = 0) {
+    cy.wait(1000);
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).focus(),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).open(),
+    ]);
+    cy.wait(1000);
+  },
+
   verifyItemAdminstrativeNoteActions(rowIndex = 0) {
     const options = ['Add note', 'Remove all', 'Find (full field search)', 'Change note type'];
+    if (rowIndex === 0) {
+      cy.do([RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).open()]);
+    }
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
@@ -662,6 +683,9 @@ export default {
       'Change note type',
       'Duplicate to',
     ];
+    if (rowIndex === 0) {
+      cy.do([RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).open()]);
+    }
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
@@ -697,6 +721,9 @@ export default {
   },
 
   removeMarkAsStaffOnly(type, rowIndex = 0) {
+    if (rowIndex === 0) {
+      cy.do([RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).open()]);
+    }
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
       RepeatableFieldItem({ index: rowIndex })
@@ -706,6 +733,9 @@ export default {
   },
 
   changeNoteType(type, newType, rowIndex = 0) {
+    if (rowIndex === 0) {
+      cy.do([RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).open()]);
+    }
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
       RepeatableFieldItem({ index: rowIndex })
@@ -945,52 +975,26 @@ export default {
   },
 
   verifyHoldingsOptions() {
+    this.clickOptionsSelection();
     cy.expect([
-      Option({ value: 'ADMINISTRATIVE_NOTE' }).exists(),
-      OptionGroup('Electronic access')
-        .find(Option({ value: 'ELECTRONIC_ACCESS_URI' }))
-        .exists(),
-      OptionGroup('Electronic access')
-        .find(Option({ value: 'ELECTRONIC_ACCESS_URL_RELATIONSHIP' }))
-        .exists(),
-      OptionGroup('Electronic access')
-        .find(Option({ value: 'ELECTRONIC_ACCESS_LINK_TEXT' }))
-        .exists(),
-      OptionGroup('Electronic access')
-        .find(Option({ value: 'ELECTRONIC_ACCESS_MATERIALS_SPECIFIED' }))
-        .exists(),
-      OptionGroup('Electronic access')
-        .find(Option({ value: 'ELECTRONIC_ACCESS_URL_PUBLIC_NOTE' }))
-        .exists(),
-      OptionGroup('Holdings location')
-        .find(Option({ value: 'PERMANENT_HOLDINGS_LOCATION' }))
-        .exists(),
-      OptionGroup('Holdings location')
-        .find(Option({ value: 'TEMPORARY_HOLDINGS_LOCATION' }))
-        .exists(),
-      OptionGroup('Holdings notes')
-        .find(Option({ text: 'Action note' }))
-        .exists(),
-      OptionGroup('Holdings notes')
-        .find(Option({ text: 'Binding' }))
-        .exists(),
-      OptionGroup('Holdings notes')
-        .find(Option({ text: 'Copy note' }))
-        .exists(),
-      OptionGroup('Holdings notes')
-        .find(Option({ text: 'Electronic bookplate' }))
-        .exists(),
-      OptionGroup('Holdings notes')
-        .find(Option({ text: 'Note' }))
-        .exists(),
-      OptionGroup('Holdings notes')
-        .find(Option({ text: 'Provenance' }))
-        .exists(),
-      OptionGroup('Holdings notes')
-        .find(Option({ text: 'Reproduction' }))
-        .exists(),
-      Option({ value: 'SUPPRESS_FROM_DISCOVERY' }).exists(),
+      SelectionOption('Administrative note').exists(),
+      SelectionOption('Link text').exists(),
+      SelectionOption('Materials specified').exists(),
+      SelectionOption('URI').exists(),
+      SelectionOption('URL public note').exists(),
+      SelectionOption('URL Relationship').exists(),
+      SelectionOption('Permanent holdings location').exists(),
+      SelectionOption('Temporary holdings location').exists(),
+      SelectionOption('Action note').exists(),
+      SelectionOption('Binding').exists(),
+      SelectionOption('Copy note').exists(),
+      SelectionOption('Electronic bookplate').exists(),
+      SelectionOption('Note').exists(),
+      SelectionOption('Provenance').exists(),
+      SelectionOption('Reproduction').exists(),
+      SelectionOption('Suppress from discovery').exists(),
     ]);
+    this.clickOptionsSelection();
   },
 
   fillLocation(location) {
@@ -1004,46 +1008,26 @@ export default {
   },
 
   verifyItemOptions() {
+    this.clickOptionsSelection();
     cy.expect([
-      Option({ value: 'ADMINISTRATIVE_NOTE' }).exists(),
-      Option({ value: 'CHECK_IN_NOTE' }).exists(),
-      Option({ value: 'CHECK_OUT_NOTE' }).exists(),
-      OptionGroup('Item notes')
-        .find(Option({ text: 'Action note' }))
-        .exists(),
-      OptionGroup('Item notes')
-        .find(Option({ text: 'Binding' }))
-        .exists(),
-      OptionGroup('Item notes')
-        .find(Option({ text: 'Copy note' }))
-        .exists(),
-      OptionGroup('Item notes')
-        .find(Option({ text: 'Electronic bookplate' }))
-        .exists(),
-      OptionGroup('Item notes')
-        .find(Option({ text: 'Note' }))
-        .exists(),
-      OptionGroup('Item notes')
-        .find(Option({ text: 'Provenance' }))
-        .exists(),
-      OptionGroup('Item notes')
-        .find(Option({ text: 'Reproduction' }))
-        .exists(),
-      Option({ value: 'STATUS' }).exists(),
-      OptionGroup('Loan type')
-        .find(Option({ value: 'PERMANENT_LOAN_TYPE' }))
-        .exists(),
-      OptionGroup('Loan type')
-        .find(Option({ value: 'TEMPORARY_LOAN_TYPE' }))
-        .exists(),
-      OptionGroup('Location')
-        .find(Option({ value: 'TEMPORARY_LOCATION' }))
-        .exists(),
-      OptionGroup('Location')
-        .find(Option({ value: 'TEMPORARY_LOCATION' }))
-        .exists(),
-      Option({ value: 'SUPPRESS_FROM_DISCOVERY' }).exists(),
+      SelectionOption('Administrative note').exists(),
+      SelectionOption('Check in note').exists(),
+      SelectionOption('Check out note').exists(),
+      SelectionOption('Check out note').exists(),
+      SelectionOption('Binding').exists(),
+      SelectionOption('Copy note').exists(),
+      SelectionOption('Electronic bookplate').exists(),
+      SelectionOption('Note').exists(),
+      SelectionOption('Provenance').exists(),
+      SelectionOption('Reproduction').exists(),
+      SelectionOption('Item status').exists(),
+      SelectionOption('Permanent loan type').exists(),
+      SelectionOption('Temporary loan type').exists(),
+      SelectionOption('Permanent item location').exists(),
+      SelectionOption('Temporary item location').exists(),
+      SelectionOption('Suppress from discovery').exists(),
     ]);
+    this.clickOptionsSelection();
   },
 
   selectType(type, rowIndex = 1, whichSelect = 0) {

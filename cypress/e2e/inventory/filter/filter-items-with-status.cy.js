@@ -15,7 +15,7 @@ const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
 const holdingId = uuid();
 const title = `Filter items with status test ${Number(new Date())}`;
-let source;
+const testData = {};
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -25,12 +25,24 @@ describe('Inventory', () => {
         cy.login(userProperties.username, userProperties.password);
         cy.getAdminToken()
           .then(() => {
-            cy.getLoanTypes({ limit: 1 });
-            cy.getMaterialTypes({ limit: 1 });
-            cy.getLocations({ limit: 2 });
-            cy.getHoldingTypes({ limit: 1 });
-            source = InventoryHoldings.getHoldingSources({ limit: 1 });
-            cy.getInstanceTypes({ limit: 1 });
+            cy.getMaterialTypes({ query: 'name="book"' }).then((res) => {
+              testData.materialType = res.id;
+            });
+            cy.getLocations({ limit: 1 }).then((res) => {
+              testData.location = res.id;
+            });
+            cy.getHoldingTypes({ limit: 1 }).then((res) => {
+              testData.holdingType = res[0].id;
+            });
+            InventoryHoldings.getHoldingSources({ limit: 1 }).then((res) => {
+              testData.holdingSource = res[0].id;
+            });
+            cy.getInstanceTypes({ limit: 1 }).then((res) => {
+              testData.instanceType = res[0].id;
+            });
+            cy.getLoanTypes({ limit: 1 }).then((res) => {
+              testData.loanType = res[0].id;
+            });
             ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
               limit: 1,
@@ -54,9 +66,9 @@ describe('Inventory', () => {
               },
               holdings: [
                 {
-                  holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-                  permanentLocationId: Cypress.env('locations')[0].id,
-                  sourceId: source.id,
+                  holdingsTypeId: testData.holdingType,
+                  permanentLocationId: testData.location,
+                  sourceId: testData.holdingSource,
                   holdingId,
                 },
               ],
