@@ -156,6 +156,7 @@ describe('MARC', () => {
         });
         MarcAuthorities.checkSearchOptions();
         MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+        cy.wait(2000);
         MarcAuthorities.chooseTypeOfHeading(headingTypes);
 
         MarcAuthorities.clickActionsButton();
