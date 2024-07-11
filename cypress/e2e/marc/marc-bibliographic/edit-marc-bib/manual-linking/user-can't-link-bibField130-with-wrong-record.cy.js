@@ -97,7 +97,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
     cy.getAdminToken();
     // make sure there are no duplicate records in the system
     MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380452*');
-    
+
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
