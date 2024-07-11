@@ -226,7 +226,7 @@ describe('MARC', () => {
           InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[0]);
           InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[1]);
           for (let i = 2; i < 22; i++) {
-            MarcAuthority.deleteViaAPI(createdRecordsIDs[i]);
+            MarcAuthority.deleteViaAPI(createdRecordsIDs[i], true);
           }
         });
 
