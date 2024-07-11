@@ -382,6 +382,7 @@ export default {
     cy.do(searchInput.fillIn(value));
     cy.expect(searchInput.has({ value }));
     cy.do(browseSearchAndFilterInput.choose(searchOption));
+    cy.expect(browseSearchAndFilterInput.has({ checkedOptionText: searchOption }));
     cy.expect(searchButton.is({ disabled: false }));
     cy.do(searchButton.click());
   },
