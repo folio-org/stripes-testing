@@ -1,3 +1,4 @@
+import { LOCATION_IDS } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -35,6 +36,10 @@ describe('bulk-edit', () => {
           query: `"instanceId"="${instanceId}"`,
         }).then((holdings) => {
           uuid = holdings[0].id;
+          cy.updateHoldingRecord(holdings[0].id, {
+            ...holdings[0],
+            permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
+          });
           FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, uuid);
         });
         cy.login(user.username, user.password, {
