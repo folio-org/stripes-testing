@@ -17,7 +17,28 @@ describe('Permissions -> Circulation', () => {
     id: uuid(),
     name: 'new name',
     description: 'new description',
-    loanable: false,
+    loanable: true,
+    loans: {
+      profileId: 'Rolling',
+      period: {
+        duration: 3,
+        intervalId: 'Week(s)',
+        closedLibraryDueDateManagementId: 'Keep the current due date',
+      },
+    },
+    renewable: true,
+    renewals: {
+      numberOfRenewalsAllowed: '3',
+      renewFromId: 'Current due date',
+    },
+    requestManagement: {
+      holds: {
+        alternateCheckoutLoanPeriod: {
+          duration: 3,
+          intervalId: 'Day(s)',
+        },
+      },
+    },
   };
 
   before('Prepare test data', () => {
@@ -39,8 +60,8 @@ describe('Permissions -> Circulation', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    // LoanPolicy.deleteLoanPolicyByIdViaAPI(newLoanPolicy.id); don't working 'deleteLoanPolicyByIdViaAPI'
-    // LoanPolicy.deleteLoanPolicyByIdViaAPI(editLoanPolicies.id);
+    LoanPolicy.deleteLoanPolicyByIdViaAPI(newLoanPolicy.id);
+    LoanPolicy.deleteLoanPolicyByIdViaAPI(editLoanPolicies.id);
     Users.deleteViaApi(userData.userId);
   });
 
