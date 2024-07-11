@@ -22,7 +22,7 @@ describe('MARC', () => {
           linkedIconText: 'Linked to MARC authority',
           accordion: 'Contributor',
           bib710AfterUnlinking: [
-            26,
+            27,
             '710',
             '2',
             '0',
@@ -47,14 +47,14 @@ describe('MARC', () => {
         const createdRecordIDs = [];
 
         const bib710FieldValues = [
-          26,
+          27,
           testData.tag710,
           '2',
           '0',
           '$a C375081 University. $b School of Social Work $e term. $t test',
         ];
         const bib710AfterLinkingToAuth110 = [
-          26,
+          27,
           testData.tag710,
           '2',
           '0',
@@ -65,6 +65,10 @@ describe('MARC', () => {
         ];
 
         before('Creating user', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375081*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -141,7 +145,7 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkFieldsExist([testData.tag710]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib710AfterLinkingToAuth110);
-            QuickMarcEditor.clickUnlinkIconInTagField(26);
+            QuickMarcEditor.clickUnlinkIconInTagField(27);
             QuickMarcEditor.checkUnlinkModal(testData.tag710);
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib710AfterUnlinking);
