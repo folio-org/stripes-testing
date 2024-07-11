@@ -133,7 +133,7 @@ describe('bulk-edit', () => {
           body.instanceTypeId = folioFields.instanceTypeId;
           cy.updateInstance(body);
         });
-
+        cy.wait(2000);
         cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${marcFields[245]}"` })
           .then((instance) => {
             marcInstance.instanceId = instance.id;
@@ -246,7 +246,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifySuccessBanner(1);
         BulkEditSearchPane.verifyChangedResults(folioItem.instanceId);
         BulkEditSearchPane.verifyReasonForError(
-          'Bulk edit of instance notes is not supported for MARC Instances.',
+          'Instance is controlled by MARC record, these fields are blocked and can not be updated:',
         );
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
