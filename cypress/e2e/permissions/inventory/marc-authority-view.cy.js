@@ -44,7 +44,7 @@ describe('Permissions', () => {
 
     it(
       'C350967 quickMARC: View MARC bibliographic record (spitfire)',
-      { tags: ['smoke', 'spitfire'] },
+      { tags: ['smokeBroken', 'spitfire'] },
       () => {
         cy.login(userData.name, userData.password, {
           path: TopMenu.inventoryPath,
