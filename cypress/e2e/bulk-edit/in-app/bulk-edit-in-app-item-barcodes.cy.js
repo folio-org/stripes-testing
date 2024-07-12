@@ -202,6 +202,7 @@ describe('bulk-edit', () => {
 
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.clickOptionsSelection();
 
         const possibleActions = [
           'Temporary item location',
