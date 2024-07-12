@@ -117,7 +117,32 @@ export default {
     cy.wait(1000);
   },
 
-  verifyLoanPolicy(verifyKey, verifyValue) {
+  verifyLoanPolicy(loanPolicy) {
+    if (loanPolicy.name) {
+      this.verifyKeyValue('Loan policy name', loanPolicy.name);
+    }
+    if (loanPolicy.description) {
+      this.verifyKeyValue('Description', loanPolicy.description);
+    }
+
+    if (loanPolicy.loanable) {
+      this.verifyKeyValue('Loan profile', loanPolicy.loans.profile);
+      this.verifyKeyValue(
+        'Loan period',
+        `${loanPolicy.loans.period.duration} ${loanPolicy.loans.period.interval}`,
+      );
+      this.verifyKeyValue(
+        'Closed library due date management',
+        loanPolicy.loans.period.closedLibraryDueDateManagement,
+      );
+    }
+
+    if (loanPolicy.renewable) {
+      this.verifyKeyValue('Renewable', loanPolicy.renewable ? 'Yes' : 'No');
+    }
+  },
+
+  verifyKeyValue(verifyKey, verifyValue) {
     cy.expect(KeyValue(verifyKey, { value: verifyValue }).exists());
   },
 

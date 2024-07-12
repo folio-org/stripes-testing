@@ -7,12 +7,12 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Permissions -> Circulation', () => {
   const userData = {};
-  const newLoanPolicies = {
+  const newLoanPolicy = {
     name: uuid(),
     description: 'description',
     loanable: false,
   };
-  const editLoanPolicies = {
+  const editLoanPolicy = {
     name: uuid(),
     description: 'new description',
     loanable: true,
@@ -58,8 +58,8 @@ describe('Permissions -> Circulation', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    LoanPolicy.deleteLoanPolicyByNameViaAPI(newLoanPolicies.name);
-    LoanPolicy.deleteLoanPolicyByNameViaAPI(editLoanPolicies.name);
+    LoanPolicy.deleteLoanPolicyByNameViaAPI(newLoanPolicy.name);
+    LoanPolicy.deleteLoanPolicyByNameViaAPI(editLoanPolicy.name);
     Users.deleteViaApi(userData.userId);
   });
 
@@ -69,45 +69,33 @@ describe('Permissions -> Circulation', () => {
     () => {
       // Create a new loan policies
       LoanPolicy.clickNewButton();
-      LoanPolicy.fillLoanPolicy(newLoanPolicies);
+      LoanPolicy.fillLoanPolicy(newLoanPolicy);
       LoanPolicy.saveAndCloseLoanPolicy();
       InteractorsTools.checkCalloutMessage(
-        `The Loan policy ${newLoanPolicies.name} was successfully created.`,
+        `The Loan policy ${newLoanPolicy.name} was successfully created.`,
       );
-      LoanPolicy.selectLoanPolicyByName(newLoanPolicies.name);
-      LoanPolicy.verifyLoanPolicy('Loan policy name', newLoanPolicies.name);
-      LoanPolicy.verifyLoanPolicy('Description', newLoanPolicies.description);
+      LoanPolicy.selectLoanPolicyByName(newLoanPolicy.name);
+      LoanPolicy.verifyLoanPolicy(newLoanPolicy);
 
       // Edit the cancellation reason
       LoanPolicy.clickActionsButton();
       LoanPolicy.clickEditButton();
-      LoanPolicy.fillLoanPolicy(editLoanPolicies);
+      LoanPolicy.fillLoanPolicy(editLoanPolicy);
       LoanPolicy.saveAndCloseLoanPolicy();
       InteractorsTools.checkCalloutMessage(
-        `The Loan policy ${editLoanPolicies.name} was successfully updated.`,
+        `The Loan policy ${editLoanPolicy.name} was successfully updated.`,
       );
-      LoanPolicy.selectLoanPolicyByName(editLoanPolicies.name);
-      LoanPolicy.verifyLoanPolicy('Loan policy name', editLoanPolicies.name);
-      LoanPolicy.verifyLoanPolicy('Description', editLoanPolicies.description);
-      LoanPolicy.verifyLoanPolicy('Loan profile', editLoanPolicies.loans.profile);
-      LoanPolicy.verifyLoanPolicy(
-        'Loan period',
-        editLoanPolicies.loans.period.duration + ' ' + editLoanPolicies.loans.period.interval,
-      );
-      LoanPolicy.verifyLoanPolicy(
-        'Closed library due date management',
-        editLoanPolicies.loans.period.closedLibraryDueDateManagement,
-      );
-      LoanPolicy.verifyLoanPolicy('Renewable', editLoanPolicies.renewable ? 'Yes' : 'No');
+      LoanPolicy.selectLoanPolicyByName(editLoanPolicy.name);
+      LoanPolicy.verifyLoanPolicy(editLoanPolicy);
 
       // Remove the loan policies
       LoanPolicy.clickActionsButton();
       LoanPolicy.clickDeleteButton();
       LoanPolicy.confirm();
       InteractorsTools.checkCalloutMessage(
-        `The Loan policy ${editLoanPolicies.name} was successfully deleted.`,
+        `The Loan policy ${editLoanPolicy.name} was successfully deleted.`,
       );
-      LoanPolicy.verifyLoanPolicyInNotInTheList(editLoanPolicies.name);
+      LoanPolicy.verifyLoanPolicyInNotInTheList(editLoanPolicy.name);
     },
   );
 });
