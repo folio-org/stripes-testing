@@ -2525,6 +2525,10 @@ export default {
     ]);
   },
 
+  deleteUserFromRoutingList(user) {
+    cy.do(Button({ id: `clickable-remove-user-${user}` }).click());
+  },
+
   assignUser: (userName) => {
     cy.do([
       findUserButton.click(),
