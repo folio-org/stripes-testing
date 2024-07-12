@@ -20,7 +20,7 @@ const checkBoxLoanable = Checkbox({ id: 'loanable' });
 const selectLoanProfile = Select({ name: 'loansPolicy.profileId' });
 const textFieldPeriodDuration = TextField({ name: 'loansPolicy.period.duration' });
 const selectPeriodInterval = Select({ name: 'loansPolicy.period.intervalId' });
-const selectClosedLibraryDueDateManagementId = Select({
+const selectClosedLibraryDueDateManagement = Select({
   name: 'loansPolicy.closedLibraryDueDateManagementId',
 });
 const checkBoxRenewable = Checkbox({ id: 'renewable' });
@@ -58,12 +58,12 @@ export default {
 
   fillLoans(loanPolicy) {
     cy.do([
-      selectLoanProfile.choose(loanPolicy.loans.profileId),
+      selectLoanProfile.choose(loanPolicy.loans.profile),
       cy.wait(500),
       textFieldPeriodDuration.fillIn(loanPolicy.loans.period.duration.toString()),
-      selectPeriodInterval.choose(loanPolicy.loans.period.intervalId),
-      selectClosedLibraryDueDateManagementId.choose(
-        loanPolicy.loans.period.closedLibraryDueDateManagementId,
+      selectPeriodInterval.choose(loanPolicy.loans.period.interval),
+      selectClosedLibraryDueDateManagement.choose(
+        loanPolicy.loans.period.closedLibraryDueDateManagement,
       ),
     ]);
     if (loanPolicy.renewable) {
@@ -80,12 +80,12 @@ export default {
       textFieldNumberOfRenewalsAllowed.fillIn(
         loanPolicy.renewals.numberOfRenewalsAllowed.toString(),
       ),
-      selectRenewFrom.choose(loanPolicy.renewals.renewFromId),
+      selectRenewFrom.choose(loanPolicy.renewals.renewFrom),
       textFieldAlternateLoanPeriodDuration.fillIn(
         loanPolicy.requestManagement.holds.alternateCheckoutLoanPeriod.duration.toString(),
       ),
       selectAlternateLoanPeriodInterval.choose(
-        loanPolicy.requestManagement.holds.alternateCheckoutLoanPeriod.intervalId,
+        loanPolicy.requestManagement.holds.alternateCheckoutLoanPeriod.interval,
       ),
     ]);
   },
@@ -117,12 +117,8 @@ export default {
     cy.wait(1000);
   },
 
-  verifyLoanPolicyName(name) {
-    cy.expect(KeyValue('Loan policy name', { value: name }).exists());
-  },
-
-  verifyLoanPolicyDescription(description) {
-    cy.expect(KeyValue('Description', { value: description }).exists());
+  verifyLoanPolicy(verifyKey, verifyValue) {
+    cy.expect(KeyValue(verifyKey, { value: verifyValue }).exists());
   },
 
   verifyLoanPolicyInNotInTheList(name) {
