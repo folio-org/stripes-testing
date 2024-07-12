@@ -35,7 +35,7 @@ export default {
     cy.do(newButton.click());
   },
 
-  fillLoanPoliciesWithUncheckedBox(loanPolicy) {
+  fillLoanPolicy(loanPolicy) {
     cy.do([
       textBoxName.fillIn(loanPolicy.name),
       textAreaDescription.fillIn(loanPolicy.description),
@@ -82,7 +82,7 @@ export default {
     ]);
   },
 
-  saveAndCloseLoanPolicies() {
+  saveAndCloseLoanPolicy() {
     cy.do(saveAndCloseButton.click());
     cy.wait(1000);
   },
@@ -99,7 +99,12 @@ export default {
     cy.do(deleteButton.click());
   },
 
-  getLoanPolicyViaAPI() {
+  confirm() {
+    cy.wait(1000);
+    cy.do(deleteButton.click());
+  },
+
+  getLoanPoliciesViaAPI() {
     return cy
       .okapiRequest({
         method: 'GET',
@@ -110,9 +115,9 @@ export default {
       });
   },
 
-  deleteLoanPolicyByIdViaAPI(id) {
-    this.getLoanPolicyViaAPI().then((loans) => {
-      const loan = loans.find((r) => r.id === id);
+  deleteLoanPolicyByNameViaAPI(name) {
+    this.getLoanPoliciesViaAPI().then((loans) => {
+      const loan = loans.find((l) => l.name === name);
       if (loan !== undefined) {
         cy.okapiRequest({
           method: 'DELETE',

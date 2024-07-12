@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import Permissions from '../../../support/dictionary/permissions';
 import LoanPolicy from '../../../support/fragments/circulation/loan-policy';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -8,13 +7,11 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 describe('Permissions -> Circulation', () => {
   const userData = {};
   const newLoanPolicy = {
-    id: uuid(),
     name: 'name',
     description: 'description',
     loanable: false,
   };
   const editLoanPolicies = {
-    id: uuid(),
     name: 'new name',
     description: 'new description',
     loanable: true,
@@ -60,8 +57,8 @@ describe('Permissions -> Circulation', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    LoanPolicy.deleteLoanPolicyByIdViaAPI(newLoanPolicy.id);
-    LoanPolicy.deleteLoanPolicyByIdViaAPI(editLoanPolicies.id);
+    LoanPolicy.deleteLoanPolicyByNameViaAPI(newLoanPolicy.name);
+    LoanPolicy.deleteLoanPolicyByNameViaAPI(editLoanPolicies.name);
     Users.deleteViaApi(userData.userId);
   });
 
@@ -71,8 +68,8 @@ describe('Permissions -> Circulation', () => {
     () => {
       // Create a new loan policies
       LoanPolicy.clickNewButton();
-      LoanPolicy.fillLoanPoliciesWithUncheckedBox(newLoanPolicy);
-      LoanPolicy.saveAndCloseLoanPolicies();
+      LoanPolicy.fillLoanPolicy(newLoanPolicy);
+      LoanPolicy.saveAndCloseLoanPolicy();
       InteractorsTools.checkCalloutMessage(
         `The Loan policy ${newLoanPolicy.name} was successfully created.`,
       );
@@ -80,8 +77,8 @@ describe('Permissions -> Circulation', () => {
       // Edit the cancellation reason
       LoanPolicy.clickActionsButton();
       LoanPolicy.clickEditButton();
-      LoanPolicy.fillLoanPoliciesWithUncheckedBox(editLoanPolicies);
-      LoanPolicy.saveAndCloseLoanPolicies();
+      LoanPolicy.fillLoanPolicy(editLoanPolicies);
+      LoanPolicy.saveAndCloseLoanPolicy();
       InteractorsTools.checkCalloutMessage(
         `The Loan policy ${editLoanPolicies.name} was successfully updated.`,
       );
@@ -89,7 +86,7 @@ describe('Permissions -> Circulation', () => {
       // Remove the loan policies
       LoanPolicy.clickActionsButton();
       LoanPolicy.clickDeleteButton();
-      LoanPolicy.clickDeleteButton(); // Double call to confirm deletion
+      LoanPolicy.confirm();
       InteractorsTools.checkCalloutMessage(
         `The Loan policy ${editLoanPolicies.name} was successfully deleted.`,
       );
