@@ -122,8 +122,7 @@ describe('MARC', () => {
             QuickMarcEditor.clickKeepLinkingButton();
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(75);
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(76);
-            // TODO: check if button not enabled is bug or not
-            // QuickMarcEditor.checkButtonSaveAndCloseEnable();
+            QuickMarcEditor.verifySaveAndCloseButtonDisabled();
             QuickMarcEditor.verifyTagFieldAfterLinking(
               75,
               '700',
