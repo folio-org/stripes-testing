@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import {
   Button,
   Checkbox,
@@ -6,8 +7,10 @@ import {
   Select,
   TextArea,
   TextField,
+  Heading,
 } from '../../../../interactors';
 import { LIBRARY_DUE_DATE_MANAGMENT, LOAN_PROFILE } from '../../constants';
+import { getTestEntityValue } from '../../utils/stringTools';
 
 const newButton = Button({ id: 'clickable-create-entry' });
 const saveAndCloseButton = Button({ id: 'footer-save-entity' });
@@ -33,9 +36,35 @@ const selectAlternateLoanPeriodInterval = Select({
   name: 'requestManagement.holds.alternateCheckoutLoanPeriod.intervalId',
 });
 
+const getDefaultRollingLoanPolicy = (limit = '') => {
+  const defaultLoanPolicy = {
+    loanable: true,
+    loansPolicy: {
+      closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
+      itemLimit: limit,
+      period: { duration: 3, intervalId: 'Hours' },
+      profileId: 'Rolling',
+    },
+    name: getTestEntityValue(),
+    renewable: true,
+    renewalsPolicy: { numberAllowed: '2', renewFromId: 'SYSTEM_DATE' },
+  };
+  return defaultLoanPolicy;
+};
+
+export const defaultLoanPolicy = {
+  id: uuid(),
+  name: getTestEntityValue(),
+  description: 'description',
+  loanable: false,
+  renewable: false,
+};
+
 export default {
+  getDefaultRollingLoanPolicy,
+
   waitLoading() {
-    cy.get('.paneTitleLabel---MZtJM').contains('Loan policies').should('exist');
+    cy.expect(Heading('Loan policies').exists());
     cy.wait(1000);
   },
 
@@ -205,6 +234,10 @@ export default {
           intervalId: 'Weeks',
         },
         profileId: LOAN_PROFILE.ROLLING,
+      },
+      renewable: false,
+      renewalsPolicy: {
+        unlimited: true,
       },
     });
   },
