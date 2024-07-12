@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import Permissions from '../../../support/dictionary/permissions';
 import LoanPolicy from '../../../support/fragments/circulation/loan-policy';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -7,12 +8,12 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 describe('Permissions -> Circulation', () => {
   const userData = {};
   const newLoanPolicy = {
-    name: 'name',
+    name: uuid(),
     description: 'description',
     loanable: false,
   };
   const editLoanPolicies = {
-    name: 'new name',
+    name: uuid(),
     description: 'new description',
     loanable: true,
     loans: {
@@ -73,6 +74,9 @@ describe('Permissions -> Circulation', () => {
       InteractorsTools.checkCalloutMessage(
         `The Loan policy ${newLoanPolicy.name} was successfully created.`,
       );
+      LoanPolicy.selectLoanPolicyByName(newLoanPolicy.name);
+      LoanPolicy.verifyLoanPolicyName(newLoanPolicy.name);
+      LoanPolicy.verifyLoanPolicyDescription(newLoanPolicy.description);
 
       // Edit the cancellation reason
       LoanPolicy.clickActionsButton();
@@ -90,6 +94,7 @@ describe('Permissions -> Circulation', () => {
       InteractorsTools.checkCalloutMessage(
         `The Loan policy ${editLoanPolicies.name} was successfully deleted.`,
       );
+      LoanPolicy.verifyLoanPolicyInNotInTheList(editLoanPolicies.name);
     },
   );
 });

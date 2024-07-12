@@ -1,5 +1,13 @@
+import {
+  Button,
+  Checkbox,
+  KeyValue,
+  NavListItem,
+  Select,
+  TextArea,
+  TextField,
+} from '../../../../interactors';
 import { LIBRARY_DUE_DATE_MANAGMENT, LOAN_PROFILE } from '../../constants';
-import { Button, TextField, TextArea, Checkbox, Select } from '../../../../interactors';
 
 const newButton = Button({ id: 'clickable-create-entry' });
 const saveAndCloseButton = Button({ id: 'footer-save-entity' });
@@ -104,6 +112,23 @@ export default {
     cy.do(deleteButton.click());
   },
 
+  selectLoanPolicyByName(name) {
+    cy.do(NavListItem(name).click());
+    cy.wait(1000);
+  },
+
+  verifyLoanPolicyName(name) {
+    cy.expect(KeyValue('Loan policy name', { value: name }).exists());
+  },
+
+  verifyLoanPolicyDescription(description) {
+    cy.expect(KeyValue('Description', { value: description }).exists());
+  },
+
+  verifyLoanPolicyInNotInTheList(name) {
+    cy.expect(NavListItem(name).absent());
+  },
+
   getLoanPoliciesViaAPI() {
     return cy
       .okapiRequest({
@@ -119,10 +144,7 @@ export default {
     this.getLoanPoliciesViaAPI().then((loans) => {
       const loan = loans.find((l) => l.name === name);
       if (loan !== undefined) {
-        cy.okapiRequest({
-          method: 'DELETE',
-          path: `loan-policy-storage/loan-policies/${loan.id}`,
-        });
+        this.deleteApi(loan.id);
       }
     });
   },
