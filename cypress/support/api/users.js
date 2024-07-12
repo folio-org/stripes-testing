@@ -334,3 +334,44 @@ Cypress.Commands.add(
     });
   },
 );
+
+Cypress.Commands.add('checkIfUserHasKeycloakApi', (userId, ignoreErrors = true) => {
+  cy.okapiRequest({
+    path: `users-keycloak/auth-users/${userId}`,
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
+  }).then(({ status }) => {
+    return status;
+  });
+});
+
+Cypress.Commands.add('promoteUserToKeycloakApi', (userId, ignoreErrors = false) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: `users-keycloak/auth-users/${userId}`,
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
+  }).then(({ status }) => {
+    return status;
+  });
+});
+
+Cypress.Commands.add('createUserWithoutKeycloakInEurekaApi', (userBody) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'users',
+    body: userBody,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body.id;
+  });
+});
+
+Cypress.Commands.add('deleteUserWithoutKeycloakInEurekaApi', (userId) => {
+  return cy.okapiRequest({
+    method: 'DELETE',
+    path: `users/${userId}`,
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
+  });
+});
