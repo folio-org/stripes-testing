@@ -23,7 +23,7 @@ describe('eHoldings', () => {
 
     it(
       'C688 Add all titles in a package to your holdings (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      { tags: ['smoke', 'spitfire'] },
       () => {
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,
@@ -37,7 +37,7 @@ describe('eHoldings', () => {
             waiter: EHoldingsTitlesSearch.waitLoading,
           });
           EHoldingSearch.switchToPackages();
-          EHoldingsPackagesSearch.byName('123Library eBooks');
+          EHoldingsPackagesSearch.byName('Airiti eBooks');
           EHoldingsPackages.openPackage();
           cy.wait(3000);
           EHoldingsPackage.addToHoldings();

@@ -222,11 +222,11 @@ describe('Data Import', () => {
       Users.deleteViaApi(testData.userProperties.userId);
       InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
       createdAuthorityIDs.forEach((id, index) => {
-        if (index) MarcAuthority.deleteViaAPI(id);
+        if (index) MarcAuthority.deleteViaAPI(id, true);
       });
-      MarcFieldProtection.deleteViaApi(firstFieldId);
-      MarcFieldProtection.deleteViaApi(secondFieldId);
-      MarcFieldProtection.deleteViaApi(thirdFieldId);
+      MarcFieldProtection.deleteViaApi(firstFieldId, true);
+      MarcFieldProtection.deleteViaApi(secondFieldId, true);
+      MarcFieldProtection.deleteViaApi(thirdFieldId, true);
       // clean up generated profiles
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);

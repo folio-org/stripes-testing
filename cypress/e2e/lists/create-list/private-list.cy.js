@@ -73,7 +73,7 @@ describe('lists', () => {
         cy.login(secondUser.username, secondUser.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
-        Lists.verifyListsPaneIsEmpty();
+        Lists.verifyListIsNotPresent(listData.name);
       },
     );
   });
