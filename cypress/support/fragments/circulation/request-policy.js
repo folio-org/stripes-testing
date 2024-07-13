@@ -64,4 +64,24 @@ export default {
       path: `request-policy-storage/request-policies/${id}`,
     });
   },
+
+  getRequestPoliciesViaAPI() {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'request-policy-storage/request-policies',
+      })
+      .then((response) => {
+        return response.body.loanPolicies;
+      });
+  },
+
+  deleteReuqestPolicyByNameViaAPI(name) {
+    this.getRequestPoliciesViaAPI().then((policies) => {
+      const policy = policies.find((p) => p.name === name);
+      if (policy !== undefined) {
+        this.deleteViaApi(policy.id);
+      }
+    });
+  },
 };
