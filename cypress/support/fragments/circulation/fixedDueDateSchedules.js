@@ -148,7 +148,7 @@ export default {
       });
   },
 
-  getFixedDueDateSchedulesByNameViaAPI: () => {
+  getFixedDueDateSchedulesByNameViaAPI() {
     return cy
       .okapiRequest({
         method: 'GET',
@@ -159,7 +159,7 @@ export default {
       });
   },
 
-  deleteFixedDueDateSchedulesByNameViaAPI: (name) => {
+  deleteFixedDueDateSchedulesByNameViaAPI(name) {
     this.getFixedDueDateSchedulesByNameViaAPI().then((schedules) => {
       const schedule = schedules.find((s) => s.name === name);
       if (schedule !== undefined) {
