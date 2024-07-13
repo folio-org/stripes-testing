@@ -194,9 +194,6 @@ describe('MARC', () => {
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
 
-              linkableFields.forEach((tag) => {
-                QuickMarcEditor.setRulesForField(tag, true);
-              });
               linkingTagAndValues.forEach((linking) => {
                 QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
                 MarcAuthorities.switchToSearch();
@@ -253,6 +250,13 @@ describe('MARC', () => {
                 field.boxSeventh,
               );
             });
+
+            // move this step here from the precondition due to a concurrency issue in parallel runs
+            cy.getAdminToken();
+            linkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, true);
+            });
+
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout(
