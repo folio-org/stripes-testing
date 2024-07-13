@@ -214,7 +214,7 @@ describe('Data Import', () => {
         DataImport.editMarcFile(
           nameForExportedMarcFile,
           nameForUpdatedMarcFile,
-          ['aC375098 Chin, Staceyann,', 'eauthor', 'aC375098 The other side of paradise :'],
+          ['aC375098 Chin, Staceyann,', 'eauthor.', 'aC375098 The other side of paradise :'],
           [
             'aC375098 Chin, S-nn',
             'eProducereNarratorctestutest4prf',

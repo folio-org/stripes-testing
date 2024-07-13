@@ -18,7 +18,7 @@ describe('MARC', () => {
           tag100: '100',
           tag010: '010',
           tag240: '240',
-          authority100FieldValue: 'Coates, Ta-Nehisi',
+          authority100FieldValue: 'C365134 Coates, Ta-Nehisi',
           authority010FieldValue: 'n 2008001084',
           successMsg:
             'This record has successfully saved and is in process. Changes may not appear immediately.',
@@ -114,7 +114,7 @@ describe('MARC', () => {
               '100',
               '1',
               '\\',
-              '$a Coates, Ta-Nehisi',
+              '$a C365134 Coates, Ta-Nehisi',
               '$e author.',
               '$0 http://id.loc.gov/authorities/names/n2008001084',
               '',
