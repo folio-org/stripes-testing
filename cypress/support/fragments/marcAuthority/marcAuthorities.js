@@ -891,6 +891,7 @@ export default {
 
   closeAuthoritySourceOption() {
     cy.do(sourceFileAccordion.find(Button({ icon: 'times' })).click());
+    cy.wait(1000);
   },
 
   checkResultList(records) {
