@@ -76,6 +76,7 @@ const searchInstancesOptions = [
   'OCLC number, normalized',
   'Instance notes (all)',
   'Instance administrative notes',
+  'Place of publication',
   'Subject',
   'Effective call number (item), shelving order',
   'Instance HRID',
@@ -96,6 +97,8 @@ const searchHoldingsOptions = [
   'Holdings HRID',
   'Holdings UUID',
   'All',
+  'Query search',
+  'Advanced search',
 ];
 const searchItemsOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
@@ -110,6 +113,8 @@ const searchItemsOptions = [
   'Item HRID',
   'Item UUID',
   'All',
+  'Query search',
+  'Advanced search',
 ];
 const searchInstancesOptionsValues = [
   'all',
@@ -123,6 +128,7 @@ const searchInstancesOptionsValues = [
   'oclc',
   'instanceNotes',
   'instanceAdministrativeNotes',
+  'placeOfPublication',
   'subject',
   'callNumber',
   'hrid',
@@ -1232,6 +1238,24 @@ export default {
   verifyInstanceSearchOptions() {
     searchInstancesOptions.forEach((searchOption) => {
       cy.expect(inventorySearchAndFilterInput.has({ content: including(searchOption) }));
+    });
+  },
+
+  verifyInstanceSearchOptionsInOrder() {
+    cy.wrap(inventorySearchAndFilterInput.allOptionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(searchInstancesOptions));
+    });
+  },
+
+  verifyHoldingsSearchOptionsInOrder() {
+    cy.wrap(inventorySearchAndFilterInput.allOptionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(searchHoldingsOptions));
+    });
+  },
+
+  verifyItemSearchOptionsInOrder() {
+    cy.wrap(inventorySearchAndFilterInput.allOptionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(searchItemsOptions));
     });
   },
 
