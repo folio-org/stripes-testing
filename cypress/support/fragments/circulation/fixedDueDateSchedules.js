@@ -20,11 +20,6 @@ const buttonDelete = Button('Delete');
 const buttonSave = Button({ id: 'clickable-save-fixedDueDateSchedule' });
 const keyName = 'Fixed due date schedule name';
 const keyDescription = 'Description';
-const inputScheduleName = TextField({ id: 'input_schedule_name' });
-const inputScheduleDescription = TextArea({ name: 'description' });
-const scheduleFrom = (index) => TextField({ name: `schedules[${index}].from` });
-const scheduleTo = (index) => TextField({ name: `schedules[${index}].to` });
-const scheduleDue = (index) => TextField({ name: `schedules[${index}].due` });
 
 export default {
   waitLoading() {
@@ -34,21 +29,6 @@ export default {
 
   clickButtonNew() {
     cy.do(buttonCreateSchedule.click());
-  },
-
-  fillScheduleInfoAll(data) {
-    cy.do([
-      cy.wait(5000),
-      inputScheduleName.fillIn(data.name),
-      inputScheduleDescription.fillIn(data.description),
-      ...data.schedules
-        .map((schedule, index) => [
-          scheduleFrom(index).fillIn(schedule.from),
-          scheduleTo(index).fillIn(schedule.to),
-          scheduleDue(index).fillIn(schedule.due),
-        ])
-        .flat(),
-    ]);
   },
 
   clickSaveAndClose() {
@@ -63,23 +43,21 @@ export default {
 
   checkSchedules(schedules) {
     schedules.forEach((schedule) => {
-      cy.contains(`${moment(schedule.from).format(detailsFormat)}`).should('be.visible');
-      cy.contains(`${moment(schedule.to).format(detailsFormat)}`).should('be.visible');
-      cy.contains(`${moment(schedule.due).format(detailsFormat)}`).should('be.visible');
+      cy.get('#fixedDueDateSchedule')
+        .contains(`${moment(schedule.from).format(detailsFormat)}`)
+        .should('be.visible');
+      cy.get('#fixedDueDateSchedule')
+        .contains(`${moment(schedule.to).format(detailsFormat)}`)
+        .should('be.visible');
+      cy.get('#fixedDueDateSchedule')
+        .contains(`${moment(schedule.due).format(detailsFormat)}`)
+        .should('be.visible');
     });
   },
 
   checkGeneralInfoNotExist(generalInfo) {
     cy.expect(KeyValue(keyName, { value: generalInfo.name }).absent());
     cy.expect(KeyValue(keyDescription, { value: generalInfo.description }).absent());
-  },
-
-  checkSchedulesNotExist(schedules) {
-    schedules.forEach((schedule) => {
-      cy.contains(`${moment(schedule.from).format(detailsFormat)}`).should('not.exist');
-      cy.contains(`${moment(schedule.to).format(detailsFormat)}`).should('not.exist');
-      cy.contains(`${moment(schedule.due).format(detailsFormat)}`).should('not.exist');
-    });
   },
 
   clickActionsButton() {
@@ -95,14 +73,8 @@ export default {
     cy.do(buttonDelete.click());
   },
 
-  editScheduleAll(name, newScheduleData) {
-    cy.do([NavListItem(name).click(), Button('Actions').click(), Button('Edit').click()]);
-    this.fillScheduleInfoAll({ name, ...newScheduleData });
-    cy.do(buttonSave.click());
-  },
-
   fillScheduleInfo(data) {
-    cy.expect(Pane(`Edit: ${data.name}`).exists());
+    cy.expect(Pane({ id: 'fixed-due-date-schedule-pane' }).exists());
     cy.do([
       TextField({ id: 'input_schedule_name' }).fillIn(data.name),
       TextArea({ name: 'description' }).fillIn(data.description),
