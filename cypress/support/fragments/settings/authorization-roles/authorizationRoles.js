@@ -335,11 +335,16 @@ export default {
     );
   },
 
-  verifyCapabilityCheckboxChecked: ({ table, resource, action }, isSelected = true) => {
+  verifyCapabilityCheckboxChecked: (
+    { table, resource, action },
+    isSelected = true,
+    isEnabled = null,
+  ) => {
     const targetCheckbox = capabilitiesAccordion
       .find(capabilityTables[table])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
     cy.expect(targetCheckbox.has({ checked: isSelected }));
+    if (isEnabled === true || isEnabled === false) cy.expect(targetCheckbox.has({ disabled: !isEnabled }));
   },
 
   verifyCapabilityTableAbsent(tableName) {
