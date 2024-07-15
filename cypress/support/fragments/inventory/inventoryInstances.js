@@ -1022,6 +1022,7 @@ export default {
   ) => {
     cy.do([actionsButton.click(), Button({ id: 'dropdown-clickable-import-record' }).click()]);
     cy.expect(singleRecordImportModal.exists());
+    cy.pause();
     cy.do(Select({ name: 'selectedJobProfileId' }).choose(profile));
     cy.wait(1000);
     cy.do([

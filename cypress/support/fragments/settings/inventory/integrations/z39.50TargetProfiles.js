@@ -154,6 +154,25 @@ export default {
       },
       isDefaultSearchParamsRequired: false,
     });
+
+    cy.okapiRequest({
+      method: 'PUT',
+      path: 'copycat/profiles/8594713d-4525-4cc7-b138-a07db4692c37',
+      body: {
+        name: 'Library of Congress',
+        url: 'lx2.loc.gov:210/LCDB',
+        externalIdQueryMap: '@attr 1=9 $identifier',
+        internalIdEmbedPath: '999ff$i',
+        createJobProfileId: defaultCreateInstanceJobProfileId,
+        updateJobProfileId: defaultUpdateInstanceJobProfileId,
+        allowedCreateJobProfileIds: [defaultCreateInstanceJobProfileId],
+        allowedUpdateJobProfileIds: [defaultUpdateInstanceJobProfileId],
+        targetOptions: { preferredRecordSyntax: 'usmarc' },
+        externalIdentifierType: 'c858e4f2-2b6b-4385-842b-60732ee14abb',
+        enabled: false,
+      },
+      isDefaultSearchParamsRequired: false,
+    });
   },
 
   openTargetProfile: (id = defaultCopyCatProfileId) => {
