@@ -2,6 +2,7 @@ export const APPLICATION_NAMES = {
   DATA_EXPORT: 'Data export',
   DATA_IMPORT: 'Data import',
   INVENTORY: 'Inventory',
+  SETTINGS: 'Settings',
 };
 
 export const REQUEST_METHOD = {
@@ -320,6 +321,7 @@ export const JOB_STATUS_NAMES = {
   COMPLETED: 'Completed',
   COMPLETED_WITH_ERRORS: 'Completed with errors',
   FAILED: 'Failed',
+  STOPPED_BY_USER: 'Stopped by user',
 };
 
 export const VENDOR_NAMES = {
@@ -796,6 +798,15 @@ export const ITEM_NOTES = {
   ELECTRONIC_BOOKPLATE_NOTE: 'f3ae3823-d096-4c65-8734-0c1efd2ffea8',
 };
 
-export const INSTANCE_NOTES = {
+export const INSTANCE_NOTE_IDS = {
+  ACTION_NOTE: '1c017b8d-c783-4f63-b620-079f7a5b9c07',
   REPRODUCTION_NOTE: 'd548fdff-b71c-4359-8055-f1c008c30f01',
+};
+
+export const INSTANCE_STATUS_TERM_IDS = {
+  CATALOGED: '9634a5ab-9228-4703-baf2-4d12ebc77d56'
+};
+
+export const INSTANCE_RESOURCE_TYPE_IDS = {
+  TEXT: '6312d172-f0cf-40f6-b27d-9fa8feaf332f'
 };

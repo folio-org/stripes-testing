@@ -109,7 +109,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(marcFileForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(marcFileForCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileForCreate);
         [
           FileDetails.columnNameInResultList.srsMarc,

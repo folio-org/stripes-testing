@@ -469,6 +469,17 @@ export default {
     );
   },
 
+  verifyExactChangesUnderColumnsByIdentifier(identifier, columnName, value) {
+    cy.then(() => areYouSureForm.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect(
+        areYouSureForm
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: columnName, content: value }))
+          .exists(),
+      );
+    });
+  },
+
   verifyNonMatchedResults(...values) {
     cy.expect([
       errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
@@ -600,43 +611,37 @@ export default {
 
   verifyHoldingActionShowColumns() {
     cy.expect([
-      DropdownMenu().find(Checkbox('Holdings ID')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Version')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings UUID')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Holdings HRID')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Holdings type')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Former ids')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Former holdings Id')).has({ checked: false }),
       DropdownMenu()
         .find(Checkbox('Instance (Title, Publisher, Publication date)'))
         .has({ checked: false }),
-      DropdownMenu().find(Checkbox('Permanent location')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Temporary location')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Effective location')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings permanent location')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Holdings temporary location')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Electronic access')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Call number type')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Call number prefix')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Call number')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Call number suffix')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Holdings level call number type')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings level call number prefix')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings level call number')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings level call number suffix')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Shelving title')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Acquisition format')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Acquisition method')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Receipt status')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Note')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Administrative note')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Ill policy')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('ILL policy')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Retention policy')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Digitization policy')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings statements')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings statements for indexes')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings statements for supplements')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Copy number')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings statement')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings statement for indexes')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings statement for supplements')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings copy number')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Number of items')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Receiving history')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Suppress from discovery')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Suppress from discovery')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Statistical codes')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Tags')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Source')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Instance HRID')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Item barcode')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Source')).has({ checked: true }),
     ]);
   },
 

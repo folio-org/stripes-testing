@@ -912,6 +912,10 @@ export default {
     internal: 'ui-inventory.settings.single-record-import',
     gui: 'Settings (Inventory): Configure single-record import',
   },
+  uiInventorySettingsConfigureClassificationBrowse: {
+    internal: 'ui-inventory.settings.classification-browse',
+    gui: 'Settings (Inventory): Configure classification browse',
+  },
   settingsDataImportView: {
     internal: 'ui-data-import.settings.readOnly',
     gui: 'Data import: Can view only',
@@ -1009,6 +1013,10 @@ export default {
   uiSettingsTenantReadingRoom: {
     internal: 'ui-tenant-settings.settings.reading-room-access.view',
     gui: 'Settings (tenant): Can view reading room access',
+  },
+  uiSettingsTenantReadingRoomAll: {
+    internal: 'ui-tenant-settings.settings.reading-room-access.all',
+    gui: 'Settings (tenant): Can create, edit and remove reading room access',
   },
   // Timers
   okapiTimersPatch: {

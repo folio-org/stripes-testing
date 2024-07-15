@@ -16,11 +16,11 @@ let user;
 
 const notes = {
   admin: 'Admin_Note_text',
-  copy: 'Note_text',
-  electronicBookplate: 'Note_text',
-  checkIn: 'Note_text',
-  checkOut: 'Note_text',
-  action: 'Note_text',
+  copy: 'copy-Note_text',
+  electronicBookplate: 'electronicBookplate-Note_text',
+  checkIn: 'checkIn-Note_text',
+  checkOut: 'checkOut-Note_text',
+  action: 'action-Note_text',
 };
 
 const item = {

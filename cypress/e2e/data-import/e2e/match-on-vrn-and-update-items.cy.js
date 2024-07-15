@@ -8,6 +8,7 @@ import {
   VENDOR_NAMES,
   RECORD_STATUSES,
   LOCATION_NAMES,
+  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import {
@@ -278,7 +279,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfilesData.name);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(editedMarcFileName);
-        Logs.checkStatusOfJobProfile();
+        Logs.checkJobStatus(editedMarcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(editedMarcFileName);
         FileDetails.checkItemsStatusesInResultList(0, [
           RECORD_STATUSES.CREATED,

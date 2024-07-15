@@ -5,7 +5,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
-import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
+import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -23,7 +23,12 @@ describe('MARC', () => {
         REFERENCE: 'Reference',
         AUTHREF: 'Auth/Ref',
       };
-
+      const localAuthFile = {
+        name: `C423561 auth source file active ${getRandomPostfix()}`,
+        prefix: getRandomLetters(8),
+        startWithNumber: '1',
+        isActive: true,
+      };
       const users = {};
 
       const newFields = [
@@ -39,6 +44,14 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        cy.createAuthoritySourceFileUsingAPI(
+          localAuthFile.prefix,
+          localAuthFile.startWithNumber,
+          localAuthFile.name,
+          localAuthFile.isActive,
+        ).then((sourceId) => {
+          localAuthFile.id = sourceId;
+        });
 
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -48,8 +61,6 @@ describe('MARC', () => {
         ])
           .then((userProperties) => {
             users.userProperties = userProperties;
-
-            ManageAuthorityFiles.setAllDefaultFOLIOFilesToActiveViaAPI();
           })
           .then(() => {
             cy.login(users.userProperties.username, users.userProperties.password, {
@@ -62,8 +73,7 @@ describe('MARC', () => {
       after('Delete users, data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
-        MarcAuthority.deleteViaAPI(testData.authorityId, true);
-        ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
+        MarcAuthority.deleteViaAPI(localAuthFile.id, true);
       });
 
       it(
@@ -74,8 +84,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);
           QuickMarcEditor.verifyAuthorityLookUpButton();
           QuickMarcEditor.clickAuthorityLookUpButton();
-          QuickMarcEditor.selectAuthorityFile(testData.sourceName);
-          QuickMarcEditor.verifyAuthorityFileSelected(testData.sourceName);
+          QuickMarcEditor.selectAuthorityFile(localAuthFile.name);
+          QuickMarcEditor.verifyAuthorityFileSelected(localAuthFile.name);
           QuickMarcEditor.clickSaveAndCloseInModal();
           newFields.forEach((newField) => {
             MarcAuthority.addNewFieldAfterExistingByTag(
@@ -84,6 +94,7 @@ describe('MARC', () => {
               newField.content,
             );
           });
+          cy.wait(1000);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);

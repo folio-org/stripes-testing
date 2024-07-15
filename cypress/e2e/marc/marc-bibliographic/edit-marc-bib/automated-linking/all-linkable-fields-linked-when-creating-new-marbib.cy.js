@@ -223,10 +223,6 @@ describe('MARC', () => {
             });
           });
 
-          linkableFields.forEach((tag) => {
-            QuickMarcEditor.setRulesForField(tag, true);
-          });
-
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -265,6 +261,13 @@ describe('MARC', () => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
               cy.wait(500);
             });
+
+            // move this step here from the precondition due to a concurrency issue in parallel runs
+            cy.getAdminToken();
+            linkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, true);
+            });
+
             // wait for fields to be filled in
             cy.wait(2000);
             QuickMarcEditor.clickLinkHeadingsButton();

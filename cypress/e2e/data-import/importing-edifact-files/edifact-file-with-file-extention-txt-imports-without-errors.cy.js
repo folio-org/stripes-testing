@@ -124,7 +124,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(testData.fileName);
         Logs.checkImportFile(jobProfile.profileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(testData.fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(testData.fileName);
         FileDetails.verifyEachInvoiceStatusInColunm(RECORD_STATUSES.CREATED);
         FileDetails.openInvoiceLine(RECORD_STATUSES.CREATED);

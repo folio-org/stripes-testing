@@ -180,7 +180,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameMarcFile);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(nameMarcFile, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFile);
         // check created instance
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);

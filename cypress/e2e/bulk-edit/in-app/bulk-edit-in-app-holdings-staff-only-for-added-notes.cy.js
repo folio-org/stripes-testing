@@ -9,11 +9,13 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import { electronicAccessRelationshipId,
+import {
+  electronicAccessRelationshipId,
   electronicAccessRelationshipName,
   LOCATION_IDS,
   LOCATION_NAMES,
-  HOLDING_NOTES } from '../../../support/constants';
+  HOLDING_NOTES,
+} from '../../../support/constants';
 
 let user;
 const item = {
@@ -109,7 +111,7 @@ describe('bulk-edit', () => {
         let contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${electronicAccess[0].uri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [contentToVerify]);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
-        BulkEditSearchPane.verifyMatchedResults(item.holdingsUUID);
+        BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
           electronicAccessRelationshipName.RESOURCE,
@@ -175,7 +177,7 @@ describe('bulk-edit', () => {
         BulkEditActions.applyToItemsRecordsCheckboxExists(true);
 
         BulkEditActions.confirmChanges();
-        BulkEditActions.verifyAreYouSureForm(1, item.holdingsUUID);
+        BulkEditActions.verifyAreYouSureForm(1, item.holdingsHRID);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
@@ -213,7 +215,7 @@ describe('bulk-edit', () => {
         BulkEditActions.clickKeepEditingBtn();
         BulkEditActions.uncheckStaffOnlyCheckbox(7);
         BulkEditActions.confirmChanges();
-        BulkEditActions.verifyAreYouSureForm(1, item.holdingsUUID);
+        BulkEditActions.verifyAreYouSureForm(1, item.holdingsHRID);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
