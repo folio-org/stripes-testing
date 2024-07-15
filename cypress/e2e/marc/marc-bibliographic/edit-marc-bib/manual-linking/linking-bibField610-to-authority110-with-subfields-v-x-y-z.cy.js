@@ -17,7 +17,7 @@ describe('MARC', () => {
         const testData = {
           tag610: '610',
           linkedIconText: 'Linked to MARC authority',
-          subjectValue: 'Radio "Roma". Hrvatski program test--TestV--TestX--TestY--TestZ',
+          subjectValue: 'C377025 Radio "Roma". Hrvatski program test--TestV--TestX--TestY--TestZ',
         };
 
         const marcFiles = [
@@ -39,7 +39,7 @@ describe('MARC', () => {
         const createdRecordIDs = [];
 
         const bib610FieldValues = [
-          18,
+          19,
           testData.tag610,
           '2',
           '0',
@@ -47,11 +47,11 @@ describe('MARC', () => {
         ];
 
         const bib610AfterLinkingToAuth110 = [
-          18,
+          19,
           testData.tag610,
           '2',
           '0',
-          '$a Radio "Roma". $b Hrvatski program',
+          '$a C377025 Radio "Roma". $b Hrvatski program',
           '$u test $v TestV $x TestX $y TestY $z TestZ',
           '$0 4510955',
           '',
@@ -59,6 +59,9 @@ describe('MARC', () => {
 
         before('Creating user and data', () => {
           cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C377025*');
+
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,

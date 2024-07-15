@@ -25,7 +25,6 @@ describe('MARC', () => {
           },
           fieldContents: {
             tag245Content: 'New title',
-            tagLDRContent: '00000naa\\a2200000uu\\4500',
           },
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         };
@@ -72,6 +71,10 @@ describe('MARC', () => {
         const createdAuthorityIDs = [];
 
         before(() => {
+          cy.getAdminToken();
+          // make sure there are no duplicate records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C410883*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -106,7 +109,7 @@ describe('MARC', () => {
           cy.getAdminToken();
           Users.deleteViaApi(userData.userId);
           for (let i = 0; i < 2; i++) {
-            MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
+            MarcAuthority.deleteViaAPI(createdAuthorityIDs[i], true);
           }
           InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[2]);
         });
@@ -150,16 +153,18 @@ describe('MARC', () => {
               testData.tags.tag245,
               `$a ${testData.fieldContents.tag245Content}`,
             );
-            QuickMarcEditor.updateExistingField(
-              testData.tags.tagLDR,
-              testData.fieldContents.tagLDRContent,
-            );
+            QuickMarcEditor.updateLDR06And07Positions();
+
             newFields.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
+              cy.wait(500);
             });
+
+            cy.getAdminToken();
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
+            cy.wait(1000);
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout(
               'Field 240 and 711 has been linked to MARC authority record(s).',
