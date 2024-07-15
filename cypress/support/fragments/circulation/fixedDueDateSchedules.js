@@ -1,15 +1,15 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import getRandomPostfix from '../../utils/stringTools';
+import uuid from 'uuid';
 import {
   Button,
-  NavListItem,
-  TextArea,
-  TextField,
-  Pane,
   Heading,
   KeyValue,
+  NavListItem,
+  Pane,
+  TextArea,
+  TextField,
 } from '../../../../interactors';
+import getRandomPostfix from '../../utils/stringTools';
 
 const createFormat = 'YYYY/MM/DD';
 const detailsFormat = 'M/D/YYYY';
