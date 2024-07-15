@@ -1,16 +1,15 @@
 import { including } from '@interactors/html';
 import {
   Button,
-  TextField,
-  Pane,
-  Link,
+  Callout,
   KeyValue,
-  Selection,
-  SelectionList,
-  Select,
+  Link,
   MultiColumnListHeader,
   MultiColumnListRow,
-  Callout,
+  Pane,
+  Select,
+  Selection,
+  TextField,
 } from '../../../../../../interactors';
 
 const oclcWorldcatPane = Pane('✓ OCLC WorldCat');
@@ -44,18 +43,14 @@ function addJobProfileForCreate(profile = defaultCreateInstanceJobProfileName) {
   // wait until elements will be displayed on page
   cy.wait(2000);
   cy.do(Button('Add job profile for import/create').click());
-  cy.wait(2000);
-  cy.do([
-    Selection({ value: including('Select job profile for import/create') }).open(),
-    SelectionList().select(profile),
-  ]);
+  cy.wait(1000);
+  cy.do(Selection({ value: including('Select job profile for import/create') }).choose(profile));
 }
 function addJobProfileForUpdate(profile = defaultUpdateInstanceJobProfileName) {
   cy.wait(2000);
   cy.do([
     Button('Add job profile for overlay/update').click(),
-    Selection({ value: including('Select job profile for overlay/update') }).open(),
-    SelectionList().select(profile),
+    Selection({ value: including('Select job profile for overlay/update') }).choose(profile),
   ]);
 }
 

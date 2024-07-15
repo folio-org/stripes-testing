@@ -47,7 +47,7 @@ const importBlockedModal = Modal('Import blocked');
 const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 
 const uploadFile = (filePathName, fileName) => {
-  cy.wait(2000);
+  this.waitLoading();
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
   cy.wait(5000);
 };
@@ -706,10 +706,8 @@ export default {
     cy.reload();
     cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(
       (isDeleteFilesButtonExists) => {
-        cy.wait(5000);
-        if (isDeleteFilesButtonExists) {
+        while (isDeleteFilesButtonExists) {
           cy.do(Button('Delete files').click());
-          cy.expect(Button('or choose files').exists());
         }
       },
     );

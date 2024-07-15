@@ -997,14 +997,28 @@ export default {
     cy.do(Checkbox(source).click());
   },
 
+  importWithOclcViaApi: (oclcNumber) => {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'copycat/imports',
+      body: {
+        externalIdentifier: oclcNumber,
+        profileId: 'f26df83c-aa25-40b6-876e-96852c3d4fd4',
+        selectedJobProfileId: 'd0ebb7b0-2f0f-11eb-adc1-0242ac120002',
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   importWithOclc: (
     oclc,
     profile = 'Inventory Single Record - Default Create Instance (Default)',
   ) => {
     cy.do([actionsButton.click(), Button({ id: 'dropdown-clickable-import-record' }).click()]);
+    cy.expect(singleRecordImportModal.exists());
+    cy.do(Select({ name: 'selectedJobProfileId' }).choose(profile));
     cy.wait(1000);
     cy.do([
-      Select({ name: 'selectedJobProfileId' }).choose(profile),
       singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
       singleRecordImportModal.find(Button('Import')).click(),
     ]);
