@@ -20,9 +20,9 @@ const confirmDeleteButton = Button({ id: 'clickable-delete-item-confirmation-con
 const nameTextField = TextField({ id: 'request_policy_name' });
 const descriptionTextField = TextArea({ id: 'request_policy_description' });
 const saveAndCloseButton = Button({ id: 'footer-save-entity' });
-const holdChechbox = Checkbox({ id: 'hold-checkbox' });
-const pageChechbox = Checkbox({ id: 'page-checkbox' });
-const recallChechbox = Checkbox({ id: 'recall-checkbox' });
+const holdCheckbox = Checkbox({ id: 'hold-checkbox' });
+const pageCheckbox = Checkbox({ id: 'page-checkbox' });
+const recallCheckbox = Checkbox({ id: 'recall-checkbox' });
 const requestTypesListSelector =
   '[data-test-kv-value="true"] [data-test-request-types-list="true"] ul';
 
@@ -55,15 +55,15 @@ export default {
     this.setName(requestPolicy.name);
     this.setDescription(requestPolicy.description);
     cy.do(
-      requestPolicy.holdable ? holdChechbox.checkIfNotSelected() : holdChechbox.uncheckIfSelected(),
+      requestPolicy.holdable ? holdCheckbox.checkIfNotSelected() : holdCheckbox.uncheckIfSelected(),
     );
     cy.do(
-      requestPolicy.pageable ? pageChechbox.checkIfNotSelected() : pageChechbox.uncheckIfSelected(),
+      requestPolicy.pageable ? pageCheckbox.checkIfNotSelected() : pageCheckbox.uncheckIfSelected(),
     );
     cy.do(
       requestPolicy.recallable
-        ? recallChechbox.checkIfNotSelected()
-        : recallChechbox.uncheckIfSelected(),
+        ? recallCheckbox.checkIfNotSelected()
+        : recallCheckbox.uncheckIfSelected(),
     );
   },
 
