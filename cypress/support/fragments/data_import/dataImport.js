@@ -47,7 +47,7 @@ const importBlockedModal = Modal('Import blocked');
 const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 
 const uploadFile = (filePathName, fileName) => {
-  this.waitLoading();
+  cy.expect(sectionPaneJobsTitle.exists());
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
   cy.wait(5000);
 };
