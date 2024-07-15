@@ -1,12 +1,13 @@
 import uuid from 'uuid';
 import {
   Button,
+  Checkbox,
+  including,
+  KeyValue,
   Link,
   Pane,
   TextArea,
   TextField,
-  KeyValue,
-  Checkbox,
 } from '../../../../interactors';
 import { REQUEST_TYPES } from '../../constants';
 import { getTestEntityValue } from '../../utils/stringTools';
@@ -23,8 +24,6 @@ const saveAndCloseButton = Button({ id: 'footer-save-entity' });
 const holdCheckbox = Checkbox({ id: 'hold-checkbox' });
 const pageCheckbox = Checkbox({ id: 'page-checkbox' });
 const recallCheckbox = Checkbox({ id: 'recall-checkbox' });
-const requestTypesListSelector =
-  '[data-test-kv-value="true"] [data-test-request-types-list="true"] ul';
 
 export const defaultRequestPolicy = {
   requestTypes: [REQUEST_TYPES.HOLD],
@@ -84,21 +83,13 @@ export default {
       requestPolicy.pageable ? 'Page' : null,
       requestPolicy.recallable ? 'Recall' : null,
     ].filter(Boolean);
-    this.verifyRequestTypesAllowed(allowedRequestTypes);
+    allowedRequestTypes.forEach((requestType) => {
+      cy.expect(KeyValue('Request types allowed', { value: including(requestType) }).exists());
+    });
   },
 
   verifyKeyValue(verifyKey, verifyValue) {
     cy.expect(KeyValue(verifyKey, { value: verifyValue }).exists());
-  },
-
-  verifyRequestTypesAllowed(verifyValues) {
-    cy.get(requestTypesListSelector)
-      .should('exist')
-      .within(() => {
-        verifyValues.forEach((value) => {
-          cy.contains('li', value).should('exist');
-        });
-      });
   },
 
   verifyRequestPolicyInNotInTheList(name) {
