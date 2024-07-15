@@ -81,7 +81,6 @@ describe('Inventory', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InstanceRecordView.duplicate();
-        cy.pause();
         InventoryNewInstance.fillResourceTitle(testDataC410929.newResourceTitle);
         InventoryNewInstance.fillResourceType(testDataC410929.newResourceType);
         InventoryNewInstance.clickSaveAndCloseButton();
