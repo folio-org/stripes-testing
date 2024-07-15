@@ -191,7 +191,6 @@ describe('Data Import', () => {
         Logs.waitFileIsImported(fileNameForUpdateInstance);
         Logs.checkJobStatus(fileNameForUpdateInstance, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdateInstance);
-        cy.pause();
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
         Logs.verifyInstanceStatus(1, 3, RECORD_STATUSES.NO_ACTION);
         Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
