@@ -20,7 +20,7 @@ describe('MARC', () => {
           tag730: '730',
           linkedIconText: 'Linked to MARC authority',
           bib730AfterUnlinking: [
-            67,
+            66,
             '730',
             '\\',
             '\\',
@@ -45,14 +45,14 @@ describe('MARC', () => {
         const createdRecordIDs = [];
 
         const bib730FieldValues = [
-          67,
+          66,
           testData.tag730,
           '\\',
           '\\',
           '$a C375083 The Gone with the Wind $1 tre $2 test $w one',
         ];
         const bib730AfterLinkingToAuth130 = [
-          67,
+          66,
           testData.tag730,
           '\\',
           '\\',
@@ -134,7 +134,7 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkFieldsExist([testData.tag730]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib730AfterLinkingToAuth130);
-            QuickMarcEditor.clickUnlinkIconInTagField(67);
+            QuickMarcEditor.clickUnlinkIconInTagField(66);
             QuickMarcEditor.checkUnlinkModal(testData.tag730);
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib730AfterUnlinking);
