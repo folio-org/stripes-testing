@@ -71,6 +71,10 @@ describe('MARC', () => {
         const createdAuthorityIDs = [];
 
         before(() => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380728*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
@@ -80,7 +84,6 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,

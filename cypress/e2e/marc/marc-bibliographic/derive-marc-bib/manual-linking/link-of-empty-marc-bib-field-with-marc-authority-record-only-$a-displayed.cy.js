@@ -54,6 +54,10 @@ describe('MARC', () => {
         const bib700AfterUnLinkingToAuth100 = [testData.rowIndex, testData.tag700, '1', '\\', '$a'];
 
         before('Creating user and test data', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380758*');
+
           cy.createTempUser([
             Permissions.moduleDataImportEnabled.gui,
             Permissions.inventoryAll.gui,
@@ -63,16 +67,14 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                DataImport.uploadFileViaApi(
-                  marcFile.marc,
-                  marcFile.fileName,
-                  marcFile.jobProfileToRun,
-                ).then((response) => {
-                  response.forEach((record) => {
-                    testData.createdRecordsIDs.push(record[marcFile.propertyName].id);
-                  });
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  testData.createdRecordsIDs.push(record[marcFile.propertyName].id);
                 });
               });
             });
