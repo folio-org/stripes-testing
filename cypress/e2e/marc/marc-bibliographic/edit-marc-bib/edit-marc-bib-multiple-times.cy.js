@@ -8,6 +8,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
