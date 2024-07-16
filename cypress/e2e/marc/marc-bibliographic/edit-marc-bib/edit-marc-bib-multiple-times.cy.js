@@ -38,6 +38,10 @@ describe('MARC', () => {
       let instanceId;
 
       before('Create test data', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C350697*');
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,

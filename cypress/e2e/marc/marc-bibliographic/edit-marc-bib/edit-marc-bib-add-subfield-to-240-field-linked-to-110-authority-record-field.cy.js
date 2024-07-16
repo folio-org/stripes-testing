@@ -67,6 +67,10 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Create test data', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C376597*');
+
         cy.loginAsAdmin({
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
