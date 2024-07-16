@@ -6,7 +6,6 @@ import {
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -77,7 +76,7 @@ describe('MARC', () => {
           marcFiles[1].fileName,
           marcFiles[1].jobProfileToRun,
         );
-        JobProfiles.waitFileIsImported(marcFiles[1].fileName);
+        Logs.waitFileIsImported(marcFiles[1].fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFiles[1].fileName);
         Logs.getCreatedItemsID().then((link) => {
