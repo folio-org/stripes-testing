@@ -1,9 +1,9 @@
 import uuid from 'uuid';
-import Permissions from '../../../../support/dictionary/permissions.js';
-import NoticePolicyTemplate from '../../../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate.js';
-import SettingsMenu from '../../../../support/fragments/settingsMenu.js';
-import Users from '../../../../support/fragments/users/users.js';
-import InteractorsTools from '../../../../support/utils/interactorsTools.js';
+import Permissions from '../../../../support/dictionary/permissions';
+import NoticePolicyTemplate from '../../../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import Users from '../../../../support/fragments/users/users';
+import InteractorsTools from '../../../../support/utils/interactorsTools';
 
 describe('Permissions -> Circulation', () => {
   const userData = {};

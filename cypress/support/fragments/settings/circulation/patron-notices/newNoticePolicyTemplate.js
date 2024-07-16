@@ -118,6 +118,7 @@ export default {
     cy.do(bodyField.fillIn(noticePolicyTemplate.body));
     cy.expect(bodyField.has({ value: noticePolicyTemplate.body }));
 
+    cy.wait(1000);
     if (autoSave) {
       cy.do(saveButton.click());
     }
