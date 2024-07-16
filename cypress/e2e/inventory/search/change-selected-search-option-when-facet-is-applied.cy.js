@@ -27,11 +27,11 @@ const testData = {
     contributor: 'Contributor',
     holdingUUID: {
       title: 'Holdings UUID',
-      value: 'hid',
+      value: 'holdingsId',
     },
     holdingHRID: {
       title: 'Holdings HRID',
-      value: 'hrid',
+      value: 'holdingsHrid',
     },
     barcode: {
       title: 'Barcode',
@@ -54,8 +54,7 @@ const testData = {
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
-      cy.getAdminToken();
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })
+      cy.getAdminToken()
         .then(() => {
           InventoryInstances.getInstancesViaApi({
             limit: 100,
@@ -63,7 +62,7 @@ describe('Inventory', () => {
           }).then((instances) => {
             if (instances) {
               instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
+                InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
               });
             }
           });

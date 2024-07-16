@@ -59,25 +59,16 @@ describe('MARC', () => {
         },
       ];
       const linkingTagAndValues = {
-        rowIndex: 16,
+        rowIndex: 15,
         value: 'C422055 Kerouac, Jack, 1922-1969',
         tag: '100',
       };
 
       before('Creating user and data', () => {
-        cy.getAdminToken().then(() => {
-          MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C422055"' }).then(
-            (records) => {
-              records.forEach((record) => {
-                if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
-                }
-              });
-            },
-          );
-        });
-
         cy.getAdminToken();
+        // make sure there are no duplicate records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422055*');
+
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
