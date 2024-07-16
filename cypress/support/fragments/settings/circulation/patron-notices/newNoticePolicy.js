@@ -29,6 +29,8 @@ const sections = {
 const noticePolicyForm = Form({ testId: 'form' });
 const saveButton = noticePolicyForm.find(Button('Save & close'));
 const activeCheckbox = Checkbox({ id: 'notice_policy_active' });
+const keyName = 'Patron notice policy name';
+const keyDescription = 'Description';
 
 export const actionsButtons = {
   edit: Button({ id: 'dropdown-clickable-edit-item' }),
@@ -121,6 +123,15 @@ export default {
     return cy.expect(NavListItem(patronNoticePolicy.name).exists());
   },
 
+  verifyNoticePolicyInTheList(patronNoticePolicy) {
+    cy.expect(KeyValue(keyName, { value: patronNoticePolicy.name }).exists());
+    cy.expect(KeyValue(keyDescription, { value: patronNoticePolicy.description }).exists());
+  },
+
+  verifyNoticePolicyNotInTheList: (patronNoticePolicy) => {
+    return cy.expect(NavListItem(patronNoticePolicy.name).absent());
+  },
+
   checkInitialState() {
     cy.expect([
       Heading('New patron notice policy').exists(),
@@ -185,11 +196,51 @@ export default {
     this.save();
   },
 
+  duplicateAndFillPolicy(patronNoticePolicy) {
+    cy.do([actionsButton.click(), Button({ id: 'dropdown-clickable-duplicate-item' }).click()]);
+    this.fillGeneralInformation(patronNoticePolicy);
+  },
+
   deletePolicy() {
     cy.do([
       actionsButton.click(),
       Button({ id: 'dropdown-clickable-delete-item' }).click(),
       Button({ id: 'clickable-delete-item-confirmation-confirm' }).click(),
     ]);
+  },
+
+  clickEditNoticePolicy(patronNoticePolicy) {
+    cy.do([
+      NavListItem(patronNoticePolicy.name).click(),
+      actionsButton.click(),
+      actionsButtons.edit.click(),
+    ]);
+  },
+
+  getPatronNoticePoliciesByNameViaAPI() {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'patron-notice-policy-storage/patron-notice-policies',
+      })
+      .then((response) => {
+        return response.body.patronNoticePolicies;
+      });
+  },
+
+  deletePatronNoticePolicyByNameViaAPI(name) {
+    this.getPatronNoticePoliciesByNameViaAPI().then((policies) => {
+      const policy = policies.find((p) => p.name === name);
+      if (policy !== undefined) {
+        this.deleteApi(policy.id);
+      }
+    });
+  },
+
+  deleteApi(id) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `patron-notice-policy-storage/patron-notice-policies/${id}`,
+    });
   },
 };
