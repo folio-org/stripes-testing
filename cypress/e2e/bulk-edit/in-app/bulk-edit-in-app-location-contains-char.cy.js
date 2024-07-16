@@ -68,6 +68,7 @@ describe('bulk-edit', () => {
       'C357064 Verify Items bulk edit if the location name contains "/" (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
+        cy.viewport(2560, 1440);
         // Select "Inventory-items" record type => Select "Items barcode" from "Record identifier" dropdown
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
@@ -90,8 +91,8 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [
           item.barcode,
-          'Permanent Location',
-          'Temporary Location',
+          'Item permanent location',
+          'Item temporary location',
         ]);
         // Click "Actions" menu => Select "Start Bulk edit" option
         BulkEditActions.openInAppStartBulkEditFrom();
@@ -110,8 +111,8 @@ describe('bulk-edit', () => {
         ExportFile.verifyFileIncludes(previewFileName, [
           item.barcode,
           locationName,
-          'Permanent Location',
-          'Temporary Location',
+          'Item permanent location',
+          'Item temporary location',
         ]);
         // Click the "Commit changes" button
         BulkEditActions.commitChanges();
@@ -122,8 +123,8 @@ describe('bulk-edit', () => {
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
           item.barcode,
           locationName,
-          'Permanent Location',
-          'Temporary Location',
+          'Item permanent location',
+          'Item temporary location',
         ]);
         // Go to the "Inventory" app => Search for the updated Items
         cy.visit(TopMenu.inventoryPath);
