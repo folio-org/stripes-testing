@@ -34,7 +34,7 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {
       updated100Field: [
-        34,
+        33,
         '100',
         '1',
         '\\',
@@ -44,7 +44,7 @@ describe('Data Import', () => {
         '',
       ],
       updated700Field: [
-        76,
+        75,
         '700',
         '1',
         '\\',
@@ -127,12 +127,12 @@ describe('Data Import', () => {
     ];
     const linkingTagAndValues = [
       {
-        rowIndex: 33,
+        rowIndex: 32,
         value: 'C377006 Coates, Ta-Nehisi',
         tag: '100',
       },
       {
-        rowIndex: 79,
+        rowIndex: 78,
         value: 'C377006 Lee, Stan, 1922-2018',
         tag: '700',
       },

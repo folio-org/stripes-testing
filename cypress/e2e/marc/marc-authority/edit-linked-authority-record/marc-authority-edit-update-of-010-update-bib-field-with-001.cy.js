@@ -20,7 +20,7 @@ describe('MARC', () => {
         authority100FieldValue: 'Erbil, H. Yıldırım',
         searchOption: 'Keyword',
         linked100Field: [
-          16,
+          17,
           '100',
           '1',
           '\\',
@@ -30,7 +30,7 @@ describe('MARC', () => {
           '',
         ],
         updated100Field: [
-          16,
+          17,
           '100',
           '1',
           '\\',

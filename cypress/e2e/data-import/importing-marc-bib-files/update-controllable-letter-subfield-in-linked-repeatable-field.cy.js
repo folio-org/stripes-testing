@@ -42,7 +42,7 @@ describe('Data Import', () => {
       instanceTitle:
         "Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
       updated700Field: [
-        75,
+        74,
         '700',
         '1',
         '\\',
@@ -97,14 +97,15 @@ describe('Data Import', () => {
     ];
     const linkingTagAndValue = {
       tag: '700',
-      rowIndex: 79,
+      rowIndex: 78,
       value: 'C385660 Lee, Stan,',
     };
 
     before('Creating test data', () => {
       cy.getAdminToken().then(() => {
         // make sure there are no duplicate records in the system
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380519*');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C385660*');
+
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -243,7 +244,7 @@ describe('Data Import', () => {
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated700Field);
-        QuickMarcEditor.openLinkingAuthorityByIndex(75);
+        QuickMarcEditor.openLinkingAuthorityByIndex(74);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.markedValue);
       },
     );

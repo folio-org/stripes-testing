@@ -17,7 +17,7 @@ const testData = {
     defaultSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
     holdingUUID: {
       title: 'Holdings UUID',
-      value: 'hid',
+      value: 'holdingsId',
     },
     barcode: {
       title: 'Barcode',
