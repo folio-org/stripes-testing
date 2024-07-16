@@ -20,7 +20,7 @@ describe('MARC', () => {
         },
         edited100Field: {
           tag: '100',
-          rowIndex: 16,
+          rowIndex: 15,
           content: ['edited 100 - once', 'edited 100 - twice', 'edited 100 - three times'],
         },
         added500Fields: {
@@ -107,7 +107,7 @@ describe('MARC', () => {
             // *The "Save & close" button became clickable.
             QuickMarcEditor.verifySaveAndCloseButtonEnabled();
             // #9 Delete an existing MARC tag (NOT 035, 1XX).
-            QuickMarcEditor.deleteField(29);
+            QuickMarcEditor.deleteField(28);
             // *A tag deleted.
             QuickMarcEditor.checkAfterDeleteField(deletedFieldTag);
             // *The "Save & close" button stays clickable.
@@ -142,7 +142,7 @@ describe('MARC', () => {
               testData.edited100Field.tag,
               testData.edited100Field.content[index],
             );
-            InventoryViewSource.verifyAbsenceOfValueInRow(deletedFieldTag, 29);
+            InventoryViewSource.verifyAbsenceOfValueInRow(deletedFieldTag, 28);
             // #13 Return to the "Instance" record by clicking on "X"icon.
             InventoryViewSource.close();
             // Detail view of "Instance" record opened in the third pane.

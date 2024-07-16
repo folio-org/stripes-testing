@@ -18,7 +18,7 @@ describe('MARC', () => {
           createdRecordIDs: [],
           contributor: 'Coates, Ta-Nehisi',
           bib100AfterLinkingToAuth100: [
-            33,
+            32,
             '100',
             '1',
             '\\',
@@ -47,7 +47,7 @@ describe('MARC', () => {
         ];
         const linkingTagAndValue = {
           tag: '100',
-          rowIndex: 33,
+          rowIndex: 32,
           value: 'C366573 Coates, Ta-Nehisi,',
         };
 

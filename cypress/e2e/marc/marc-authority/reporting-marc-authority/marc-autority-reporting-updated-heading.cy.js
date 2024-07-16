@@ -59,7 +59,7 @@ describe('MARC', () => {
       const dataForC375220 = [
         {
           recordTitle: createdAuthorityID[0],
-          index: 18,
+          index: 17,
           tagValue: '240',
           marcValue:
             'C375220 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
@@ -67,7 +67,7 @@ describe('MARC', () => {
         {
           recordTitle: createdAuthorityID[0],
           tagValue: '700',
-          index: 50,
+          index: 49,
           marcValue:
             'C375220 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
         },

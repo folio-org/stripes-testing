@@ -48,12 +48,16 @@ describe('MARC', () => {
         },
       ];
       const linkingTagAndValue = {
-        rowIndex: 11,
+        rowIndex: 10,
         value: 'C374140 Treaties',
         tag: '240',
       };
 
       before('Creating user, importing and linking records', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate authority records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374140*');
+
         cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(

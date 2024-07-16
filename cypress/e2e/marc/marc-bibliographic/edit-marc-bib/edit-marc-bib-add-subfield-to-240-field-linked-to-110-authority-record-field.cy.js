@@ -18,7 +18,7 @@ describe('MARC', () => {
         tag110: '110',
         tag240: '240',
         linked240FieldValues: [
-          18,
+          17,
           '240',
           '1',
           '0',
@@ -138,7 +138,7 @@ describe('MARC', () => {
           QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked240FieldValues);
 
           testData.updateLinkedFieldValues.forEach((fifthBoxValue, index) => {
-            QuickMarcEditor.updateLinkedFifthBox(18, fifthBoxValue);
+            QuickMarcEditor.updateLinkedFifthBox(17, fifthBoxValue);
             // Need to wait until empty field is updated with the first value
             if (!index) cy.wait(500);
             testData.linked240FieldValues[5] = fifthBoxValue;
