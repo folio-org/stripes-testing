@@ -28,14 +28,9 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
       // import with Single record import
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
-      cy.wait(5000);
-      InventoryInstances.importWithOclc(testData.oclcNumber);
+      InventoryInstances.importWithOclcViaApi(testData.oclcNumber);
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         testData.user = userProperties;
@@ -115,6 +110,8 @@ describe('Data Import', () => {
       // FILTER By "User"
       LogsViewAll.openUserIdAccordion();
       LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
+      LogsViewAll.waitUIToBeFiltered();
+      LogsViewAll.checkByUserName(`${testData.user.firstName} ${testData.user.lastName}`);
       LogsViewAll.resetAllFilters();
 
       // FILTER By "Inventory single record imports"

@@ -18,6 +18,12 @@ export default {
     cy.do(SelectionList().filter(packageName));
     cy.do(SelectionList().select(packageName));
   },
+  fillInRequiredPropertiesWhenNotEnglishSession: (packageName, titleName) => {
+    cy.do(TextField({ name: 'name' }).fillIn(titleName));
+    cy.do(Selection({ name: 'packageId' }).open());
+    cy.do(SelectionList().filter(packageName));
+    cy.do(SelectionList().select(packageName));
+  },
   saveAndClose: () => {
     cy.do(Button({ type: 'submit' }).click());
   },

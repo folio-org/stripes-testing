@@ -176,6 +176,7 @@ function selectMatchCriterion(matchCriterion) {
 
 function selectExistingRecordField(existingRecordOption) {
   cy.do(criterionValueTypeButton.click());
+  cy.wait(1000);
   cy.do(criterionValueTypeList.find(SelectionOption(existingRecordOption)).click());
   // TODO wait until option will be selected
   cy.wait(1500);
@@ -242,6 +243,7 @@ export default {
       }
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
       cy.do(criterionValueTypeButton.click());
+      cy.wait(1000);
       cy.do(criterionValueTypeList.find(SelectionOption(instanceOption)).click());
       // TODO need to wait until profile will be filled
       cy.wait(1500);
@@ -270,6 +272,7 @@ export default {
       }
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
       cy.do(criterionValueTypeButton.click());
+      cy.wait(1000);
       cy.do(criterionValueTypeList.find(SelectionOption(holdingsOption)).click());
       // TODO need to wait until profile will be filled
       cy.wait(1500);
@@ -284,6 +287,7 @@ export default {
       }
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
       cy.do(criterionValueTypeButton.click());
+      cy.wait(1000);
       cy.do(criterionValueTypeList.find(SelectionOption(itemOption)).click());
       // TODO need to wait until profile will be filled
       cy.wait(1500);
@@ -319,6 +323,7 @@ export default {
     selectExistingRecordType(existingRecordType);
     fillStaticValue(incomingStaticValue, incomingStaticRecordValue);
     selectMatchCriterion(matchCriterion);
+    cy.wait(1000);
     selectExistingRecordField(existingRecordOption);
   },
 
