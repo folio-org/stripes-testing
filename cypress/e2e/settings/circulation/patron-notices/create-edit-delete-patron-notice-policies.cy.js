@@ -1,9 +1,9 @@
 import uuid from 'uuid';
-import Permissions from '../../../../support/dictionary/permissions.js';
-import PatronNoticePolicy from '../../../../support/fragments/settings/circulation/patron-notices/newNoticePolicy.js';
-import SettingsMenu from '../../../../support/fragments/settingsMenu.js';
-import Users from '../../../../support/fragments/users/users.js';
-import InteractorsTools from '../../../../support/utils/interactorsTools.js';
+import Permissions from '../../../../support/dictionary/permissions';
+import PatronNoticePolicy from '../../../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import Users from '../../../../support/fragments/users/users';
+import InteractorsTools from '../../../../support/utils/interactorsTools';
 
 describe('Permissions -> Circulation', () => {
   const userData = {};
@@ -68,7 +68,7 @@ describe('Permissions -> Circulation', () => {
       PatronNoticePolicy.verifyNoticePolicyInTheList(duplicateNoticePolicy);
 
       // Edit the patron notice policy
-      PatronNoticePolicy.clickEditNoticy(duplicateNoticePolicy);
+      PatronNoticePolicy.clickEditNoticePolicy(duplicateNoticePolicy);
       PatronNoticePolicy.fillGeneralInformation(editNoticePolicy);
       PatronNoticePolicy.save();
       InteractorsTools.checkCalloutMessage(

@@ -30,7 +30,7 @@ const noticePolicyForm = Form({ testId: 'form' });
 const saveButton = noticePolicyForm.find(Button('Save & close'));
 const activeCheckbox = Checkbox({ id: 'notice_policy_active' });
 const keyName = 'Patron notice policy name';
-const keyDescripion = 'Description';
+const keyDescription = 'Description';
 
 export const actionsButtons = {
   edit: Button({ id: 'dropdown-clickable-edit-item' }),
@@ -125,7 +125,7 @@ export default {
 
   verifyNoticePolicyInTheList(patronNoticePolicy) {
     cy.expect(KeyValue(keyName, { value: patronNoticePolicy.name }).exists());
-    cy.expect(KeyValue(keyDescripion, { value: patronNoticePolicy.description }).exists());
+    cy.expect(KeyValue(keyDescription, { value: patronNoticePolicy.description }).exists());
   },
 
   verifyNoticePolicyNotInTheList: (patronNoticePolicy) => {
@@ -209,7 +209,7 @@ export default {
     ]);
   },
 
-  clickEditNoticy(patronNoticePolicy) {
+  clickEditNoticePolicy(patronNoticePolicy) {
     cy.do([
       NavListItem(patronNoticePolicy.name).click(),
       actionsButton.click(),
