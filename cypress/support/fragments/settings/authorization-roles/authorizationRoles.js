@@ -580,4 +580,9 @@ export default {
     cy.wait(1000);
     cy.do([actionsButton.click(), editButton.click()]);
   },
+
+  closeRoleEditView: () => {
+    cy.do(editRolePane.find(Button({ icon: 'times' })).click());
+    cy.expect(editRolePane.absent());
+  },
 };
