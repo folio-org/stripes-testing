@@ -212,7 +212,7 @@ export default {
   filterJobsByJobProfile(jobProfile) {
     cy.do([
       jobProfileAccordion.clickHeader(),
-      jobProfileAccordion.find(Selection({ value: 'Choose job profile' })).open(),
+      jobProfileAccordion.find(Selection({ value: including('Choose job profile') })).open(),
       SelectionList().select(jobProfile),
     ]);
   },
@@ -222,7 +222,7 @@ export default {
   },
 
   filterJobsByUser(user) {
-    cy.do([Selection({ value: 'Choose user' }).open(), SelectionList().select(user)]);
+    cy.do([Selection({ value: including('Choose user') }).open(), SelectionList().select(user)]);
   },
 
   filterJobsByInventorySingleRecordImports(filter) {
