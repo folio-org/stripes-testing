@@ -176,11 +176,7 @@ function selectMatchCriterion(matchCriterion) {
 
 function selectExistingRecordField(existingRecordOption) {
   cy.do(criterionValueTypeButton.click());
-  cy.wait(1000);
-  cy.do(criterionValueTypeList.find(SelectionOption(existingRecordOption)).click());
-  // TODO wait until option will be selected
-  cy.wait(1500);
-  cy.get('#criterion-value-type').contains(existingRecordOption);
+  cy.do(criterionValueTypeList.select(existingRecordOption));
 }
 
 function fillOnlyComparePartOfTheValue(value) {
