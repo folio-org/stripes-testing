@@ -40,17 +40,17 @@ describe('Data Import', () => {
     let userId = null;
     const randomIdentifierCode = `(OCoLC)847143${generateItemBarcode()}8`;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
-    const filePathForCreateInstance = 'marcFileForMatchOnIdentifierForCreate.mrc';
-    const filePathForUpdateInstance = 'marcFileForMatchOnIdentifierForUpdate_3.mrc';
+    const filePathForCreateInstance = 'marcFileForC347830.mrc';
+    const filePathForUpdateInstance = 'marcFileForC347830_1.mrc';
     const editedMarcFileNameForCreate = `C347830 marcFileForCreate${getRandomPostfix()}.mrc`;
     const editedMarcFileNameForUpdate = `C347830 marcFileForUpdate${getRandomPostfix()}.mrc`;
     const fileNameForCreateInstance = `C347830 autotestFile${getRandomPostfix()}.mrc`;
     const fileNameForUpdateInstance = `C347830 autotestFile${getRandomPostfix()}.mrc`;
     const instanceGeneralNote = 'IDENTIFIER UPDATE 3';
     const resourceIdentifiers = [
-      { type: 'UPC', value: 'ORD32671387-4' },
+      { type: 'UPC', value: 'ORD32671387-6' },
       { type: 'OCLC', value: randomIdentifierCode },
-      { type: 'Invalid UPC', value: 'ORD32671387-4' },
+      { type: 'Invalid UPC', value: 'ORD32671387-6' },
       { type: 'System control number', value: '(AMB)84714376518561876438' },
     ];
     const matchProfile = {

@@ -2,10 +2,10 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   BATCH_GROUP,
   FOLIO_RECORD_TYPE,
+  JOB_STATUS_NAMES,
   PAYMENT_METHOD,
   RECORD_STATUSES,
   VENDOR_NAMES,
-  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -14,14 +14,15 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import InvoiceView from '../../../support/fragments/invoices/invoiceView';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -117,8 +118,8 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileName);
         Logs.checkImportFile(jobProfile.profileName);
-        Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(fileName);
+        LogsViewAll.verifyJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED);
+        LogsViewAll.openFileDetails(fileName);
         FileDetails.verifyEachInvoiceStatusInColunm(RECORD_STATUSES.CREATED);
         cy.wait(2000);
         FileDetails.verifyEachInvoiceTitleInColunm();
