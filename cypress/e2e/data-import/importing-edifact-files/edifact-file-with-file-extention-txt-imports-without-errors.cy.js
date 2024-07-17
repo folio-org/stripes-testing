@@ -14,8 +14,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import InvoiceLineDetails from '../../../support/fragments/invoices/invoiceLineDetails';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import {
@@ -23,6 +22,8 @@ import {
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -124,8 +125,8 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(testData.fileName);
         Logs.checkImportFile(jobProfile.profileName);
-        Logs.checkJobStatus(testData.fileName, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(testData.fileName);
+        LogsViewAll.verifyJobStatus(testData.fileName, JOB_STATUS_NAMES.COMPLETED);
+        LogsViewAll.openFileDetails(testData.fileName);
         FileDetails.verifyEachInvoiceStatusInColunm(RECORD_STATUSES.CREATED);
         FileDetails.openInvoiceLine(RECORD_STATUSES.CREATED);
 
