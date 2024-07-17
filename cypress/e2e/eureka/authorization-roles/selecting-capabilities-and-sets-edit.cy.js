@@ -1,4 +1,4 @@
-import Users from '../../../support/fragments/users/users';
+// import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
@@ -56,6 +56,19 @@ describe('Eureka', () => {
             action: 'Execute',
           },
         ],
+        additionalCapabilitySets: [
+          {
+            table: 'Data',
+            resource: 'Calendar',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Licenses Contacts',
+            action: 'View',
+          },
+        ],
+        numberOfCapabilitiesInAdditionalSets: 5,
       };
 
       testData.capabilitySet.application = testData.applicationName;
@@ -65,6 +78,9 @@ describe('Eureka', () => {
       testData.additionalCapabilities.forEach((capability) => {
         capability.application = testData.applicationName;
       });
+      testData.additionalCapabilitySets.forEach((set) => {
+        set.application = testData.applicationName;
+      });
 
       const capabilitiesInSetSelected = testData.capabilitiesInSet.filter(
         (capab, index) => index <= 2,
@@ -73,40 +89,44 @@ describe('Eureka', () => {
         (capab, index) => index > 2,
       );
 
-      const capabSetsForTestUser = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
-      ];
+      // TO DO: uncomment code for running under test user when evrk2 is rebuilt
+      // const capabSetsForTestUser = [
+      //   { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
+      //   { type: 'Data', resource: 'Capabilities', action: 'Manage' },
+      //   { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+      // ];
 
       before('Create user, data', () => {
-        cy.createTempUser([]).then((createdUserProperties) => {
-          testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsForTestUser);
-          if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
-          cy.createAuthorizationRoleApi(testData.roleName, testData.roleDescription).then(
-            (role) => {
-              testData.roleId = role.id;
-              capabilitiesInSetSelected.forEach((capability) => {
-                capability.type = capability.table;
-                cy.getCapabilityIdViaApi(capability).then((capabId) => {
-                  testData.capabIds.push(capabId);
-                });
-              });
-              testData.additionalCapabilities.forEach((capability) => {
-                capability.type = capability.table;
-                cy.getCapabilityIdViaApi(capability).then((capabId) => {
-                  testData.capabIds.push(capabId);
-                });
-              });
-            },
-          );
+        // cy.createTempUser([]).then((createdUserProperties) => {
+        //   testData.user = createdUserProperties;
+        //   cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsForTestUser);
+        // if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
+        cy.getAdminToken();
+        cy.createAuthorizationRoleApi(testData.roleName, testData.roleDescription).then((role) => {
+          testData.roleId = role.id;
+          capabilitiesInSetSelected.forEach((capability) => {
+            capability.type = capability.table;
+            cy.getCapabilityIdViaApi(capability).then((capabId) => {
+              testData.capabIds.push(capabId);
+            });
+          });
+          testData.additionalCapabilities.forEach((capability) => {
+            capability.type = capability.table;
+            cy.getCapabilityIdViaApi(capability).then((capabId) => {
+              testData.capabIds.push(capabId);
+            });
+          });
         });
       });
+      // });
 
       before('Assign capabilities, login', () => {
         cy.addCapabilitiesToNewRoleApi(testData.roleId, testData.capabIds);
-        cy.login(testData.user.username, testData.user.password, {
+        // cy.login(testData.user.username, testData.user.password, {
+        //   path: TopMenu.settingsAuthorizationRoles,
+        //   waiter: AuthorizationRoles.waitContentLoading,
+        // });
+        cy.loginAsAdmin({
           path: TopMenu.settingsAuthorizationRoles,
           waiter: AuthorizationRoles.waitContentLoading,
         });
@@ -114,7 +134,7 @@ describe('Eureka', () => {
 
       after('Delete user, data', () => {
         cy.getAdminToken();
-        Users.deleteViaApi(testData.user.userId);
+        // Users.deleteViaApi(testData.user.userId);
         cy.deleteCapabilitiesFromRoleApi(testData.roleId);
         cy.deleteAuthorizationRoleApi(testData.roleId);
       });
@@ -127,8 +147,9 @@ describe('Eureka', () => {
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.openForEdit();
 
-          // workaround for https://folio-org.atlassian.net/browse/UIROLES-104
+          // TO DO: remove this workaround after https://folio-org.atlassian.net/browse/UIROLES-104 is fixed
           AuthorizationRoles.closeRoleEditView();
+          AuthorizationRoles.verifyRoleViewPane(testData.roleName);
           AuthorizationRoles.openForEdit();
 
           AuthorizationRoles.fillRoleNameDescription(testData.updatedRoleName);
@@ -161,12 +182,18 @@ describe('Eureka', () => {
           capabilitiesInSetUnselected.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxUncheckedAndEnabled(capability);
           });
+          testData.additionalCapabilitySets.forEach((capabilitySet) => {
+            AuthorizationRoles.selectCapabilitySetCheckbox(capabilitySet);
+          });
           AuthorizationRoles.clickSaveButton();
 
           AuthorizationRoles.checkAfterSaveEdit(testData.roleName);
-          AuthorizationRoles.checkCapabilitySetsAccordionCounter('0');
+          AuthorizationRoles.checkCapabilitySetsAccordionCounter('2');
           AuthorizationRoles.checkCapabilitiesAccordionCounter(
-            capabilitiesInSetSelected.length + testData.additionalCapabilities.length + '',
+            capabilitiesInSetSelected.length +
+              testData.additionalCapabilities.length +
+              testData.numberOfCapabilitiesInAdditionalSets +
+              '',
           );
         },
       );

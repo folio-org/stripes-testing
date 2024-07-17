@@ -231,7 +231,7 @@ export default {
     cy.wait(2000);
     cy.expect([
       Pane(roleName).exists(),
-      Spinner().absent(),
+      Pane(roleName).find(Spinner()).absent(),
       capabilitiesAccordion.has({ open: false }),
       capabilitySetsAccordion.has({ open: false }),
     ]);
@@ -310,7 +310,7 @@ export default {
     cy.do([actionsButton.click(), editButton.click()]);
     cy.expect([
       editRolePane.exists(),
-      Spinner().absent(),
+      editRolePane.find(Spinner()).absent(),
       capabilitiesAccordion.has({ open: true }),
       capabilitySetsAccordion.exists(),
       saveButton.exists(),
@@ -523,7 +523,7 @@ export default {
   verifyRoleViewPane: (roleName) => {
     cy.expect([
       Pane(roleName).exists(),
-      Spinner().absent(),
+      Pane(roleName).find(Spinner()).absent(),
       capabilitiesAccordion.has({ open: false }),
       capabilitySetsAccordion.has({ open: false }),
     ]);
