@@ -811,3 +811,7 @@ export const INSTANCE_STATUS_TERM_IDS = {
 export const INSTANCE_RESOURCE_TYPE_IDS = {
   TEXT: '6312d172-f0cf-40f6-b27d-9fa8feaf332f',
 };
+
+export const LOAN_TYPE_IDS = {
+  SELECTED: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845',
+};
