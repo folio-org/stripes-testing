@@ -38,30 +38,29 @@ describe('MARC', () => {
       // make sure there are no duplicate authority records in the system
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C466085*');
 
-      cy.createTempUser([
-        Permissions.inventoryAll.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      ]).then((createdUserProperties) => {
-        user = createdUserProperties;
+      cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
+        (createdUserProperties) => {
+          user = createdUserProperties;
 
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdAuthorityIDs.push(record[marcFile.propertyName].id);
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].id);
+              });
             });
           });
-        });
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-        });
-        MarcAuthorities.switchToSearch();
-      });
+          cy.login(user.username, user.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
+          MarcAuthorities.switchToSearch();
+        },
+      );
     });
 
     after('Delete user, test data', () => {
