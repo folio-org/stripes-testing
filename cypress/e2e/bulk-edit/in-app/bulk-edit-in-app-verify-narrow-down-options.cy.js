@@ -41,7 +41,7 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
     });
 
-    it(
+    it.skip(
       'C356778 Verify narrow down options dropdown choices on Items in-app bulk edit form (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {

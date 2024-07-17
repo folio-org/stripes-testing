@@ -82,22 +82,22 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.actionsIsShown();
 
         const expectedColumnTitles = [
+          'Item effective location',
+          'Effective call number',
           'Item HRID',
           'Barcode',
-          'Effective call number',
-          'Status',
           'Material type',
           'Permanent loan type',
           'Temporary loan type',
-          'Item effective location',
+          'Status',
         ];
         expectedColumnTitles.forEach((title) => BulkEditSearchPane.verifyResultColumnTitles(title));
 
         BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
         BulkEditActions.verifyItemActionDropdownItems();
 
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Item ID');
-        BulkEditSearchPane.verifyResultColumnTitles('Item ID');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Item UUID');
+        BulkEditSearchPane.verifyResultColumnTitles('Item UUID');
       },
     );
 
