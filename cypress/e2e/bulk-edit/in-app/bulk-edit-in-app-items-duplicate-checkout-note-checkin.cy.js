@@ -73,7 +73,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
-        cy.pause();
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Check out notes', 'Check in notes');
         BulkEditActions.openInAppStartBulkEditFrom();
