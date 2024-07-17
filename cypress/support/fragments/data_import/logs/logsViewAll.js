@@ -8,6 +8,7 @@ import {
   Modal,
   MultiColumnList,
   MultiColumnListCell,
+  MultiColumnListRow,
   MultiColumnListHeader,
   Pane,
   PaneContent,
@@ -612,6 +613,22 @@ export default {
       logsResultPane
         .find(MultiColumnListCell({ row: 0, content: including(newFileName) }))
         .exists(),
+    );
+  },
+  verifyJobStatus: (fileName, status) => {
+    const newFileName = fileName.replace(/\.mrc$/i, '');
+
+    cy.do(
+      MultiColumnListCell({ content: including(newFileName) }).perform((element) => {
+        const rowNumber = element.parentElement.getAttribute('data-row-inner');
+
+        cy.expect(
+          MultiColumnList({ id: 'list-data-import' })
+            .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+            .find(MultiColumnListCell({ content: status }))
+            .exists(),
+        );
+      }),
     );
   },
 };
