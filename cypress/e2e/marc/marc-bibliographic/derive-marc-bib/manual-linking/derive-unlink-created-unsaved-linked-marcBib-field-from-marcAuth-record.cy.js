@@ -21,12 +21,12 @@ describe('MARC', () => {
         const newFields = [
           {
             tag: '700',
-            rowIndex: 84,
+            rowIndex: 82,
             content: '$a',
             searchOption: 'Keyword',
             marcValue: 'C366555 Sprouse, Chris',
             bib700AfterLinkingToAuth100: [
-              84,
+              82,
               '700',
               '\\',
               '\\',
@@ -35,16 +35,16 @@ describe('MARC', () => {
               '$0 http://id.loc.gov/authorities/names/nb98017694',
               '',
             ],
-            bib700AfterUnlinking: [84, '700', '\\', '\\', '$a'],
+            bib700AfterUnlinking: [82, '700', '\\', '\\', '$a'],
           },
           {
             tag: '700',
-            rowIndex: 85,
+            rowIndex: 83,
             content: '$a C366555 Sabino, J.',
             searchOption: 'Keyword',
             marcValue: 'C366555 Sabino, Joe',
             bib700AfterLinkingToAuth100: [
-              85,
+              83,
               '700',
               '\\',
               '\\',
@@ -53,7 +53,7 @@ describe('MARC', () => {
               '$0 http://id.loc.gov/authorities/names/no2011137752',
               '',
             ],
-            bib700AfterUnlinking: [85, '700', '\\', '\\', '$a C366555 Sabino, J.'],
+            bib700AfterUnlinking: [83, '700', '\\', '\\', '$a C366555 Sabino, J.'],
           },
         ];
         const marcFiles = [
@@ -140,8 +140,8 @@ describe('MARC', () => {
           { tags: ['extendedPath', 'spitfire'] },
           () => {
             InventoryInstance.deriveNewMarcBib();
-            QuickMarcEditor.addNewField(newFields[0].tag, newFields[0].content, 83);
-            QuickMarcEditor.addNewField(newFields[1].tag, newFields[1].content, 84);
+            QuickMarcEditor.addNewField(newFields[0].tag, newFields[0].content, 81);
+            QuickMarcEditor.addNewField(newFields[1].tag, newFields[1].content, 82);
 
             QuickMarcEditor.clickLinkIconInTagField(newFields[0].rowIndex);
             MarcAuthorities.switchToSearch();

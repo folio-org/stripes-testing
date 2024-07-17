@@ -553,9 +553,6 @@ export default {
 
   verifyItemAdminstrativeNoteActions(rowIndex = 0) {
     const options = ['Add note', 'Remove all', 'Find (full field search)', 'Change note type'];
-    if (rowIndex === 0) {
-      cy.do([RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).open()]);
-    }
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
@@ -721,21 +718,20 @@ export default {
   },
 
   removeMarkAsStaffOnly(type, rowIndex = 0) {
-    if (rowIndex === 0) {
-      cy.do([RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).open()]);
-    }
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
+    ]);
+    cy.wait(2000);
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.action)
         .choose('Remove mark as staff only'),
     ]);
+    cy.wait(2000);
   },
 
   changeNoteType(type, newType, rowIndex = 0) {
-    if (rowIndex === 0) {
-      cy.do([RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).open()]);
-    }
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
       RepeatableFieldItem({ index: rowIndex })
@@ -798,6 +794,7 @@ export default {
   },
 
   confirmChanges() {
+    cy.wait(2000);
     cy.do(confirmChangesButton.click());
     cy.expect(Modal().find(MultiColumnListCell()).exists());
   },
@@ -841,6 +838,7 @@ export default {
   },
 
   commitChanges() {
+    cy.wait(2000);
     cy.do([Modal().find(Button('Commit changes')).click()]);
   },
 
@@ -890,7 +888,7 @@ export default {
         .find(Checkbox({ name: 'Item effective location', checked: true, disabled: isDisabled }))
         .exists(),
       dropdownMenu
-        .find(Checkbox({ name: 'Call number', checked: false, disabled: isDisabled }))
+        .find(Checkbox({ name: 'Effective call number', checked: true, disabled: isDisabled }))
         .exists(),
       dropdownMenu
         .find(Checkbox({ name: 'Item HRID', checked: true, disabled: isDisabled }))
@@ -905,7 +903,7 @@ export default {
         .find(Checkbox({ name: 'Temporary loan type', checked: true, disabled: isDisabled }))
         .exists(),
       dropdownMenu
-        .find(Checkbox({ name: 'Item ID', checked: false, disabled: isDisabled }))
+        .find(Checkbox({ name: 'Item UUID', checked: false, disabled: isDisabled }))
         .exists(),
       dropdownMenu
         .find(Checkbox({ name: 'Former identifiers', checked: false, disabled: isDisabled }))
@@ -1006,7 +1004,6 @@ export default {
 
   fillLocation(location) {
     cy.do([
-      locationSelection.open(),
       locationSelection.filterOptions(location),
       // need to wait until value will be applied
       cy.wait(1000),

@@ -76,6 +76,7 @@ const searchInstancesOptions = [
   'OCLC number, normalized',
   'Instance notes (all)',
   'Instance administrative notes',
+  'Place of publication',
   'Subject',
   'Effective call number (item), shelving order',
   'Instance HRID',
@@ -96,6 +97,8 @@ const searchHoldingsOptions = [
   'Holdings HRID',
   'Holdings UUID',
   'All',
+  'Query search',
+  'Advanced search',
 ];
 const searchItemsOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
@@ -110,6 +113,8 @@ const searchItemsOptions = [
   'Item HRID',
   'Item UUID',
   'All',
+  'Query search',
+  'Advanced search',
 ];
 const searchInstancesOptionsValues = [
   'all',
@@ -123,6 +128,7 @@ const searchInstancesOptionsValues = [
   'oclc',
   'instanceNotes',
   'instanceAdministrativeNotes',
+  'placeOfPublication',
   'subject',
   'callNumber',
   'hrid',
@@ -997,14 +1003,28 @@ export default {
     cy.do(Checkbox(source).click());
   },
 
+  importWithOclcViaApi: (oclcNumber) => {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'copycat/imports',
+      body: {
+        externalIdentifier: oclcNumber,
+        profileId: 'f26df83c-aa25-40b6-876e-96852c3d4fd4',
+        selectedJobProfileId: 'd0ebb7b0-2f0f-11eb-adc1-0242ac120002',
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   importWithOclc: (
     oclc,
     profile = 'Inventory Single Record - Default Create Instance (Default)',
   ) => {
     cy.do([actionsButton.click(), Button({ id: 'dropdown-clickable-import-record' }).click()]);
+    cy.expect(singleRecordImportModal.exists());
+    cy.do(Select({ name: 'selectedJobProfileId' }).choose(profile));
     cy.wait(1000);
     cy.do([
-      Select({ name: 'selectedJobProfileId' }).choose(profile),
       singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
       singleRecordImportModal.find(Button('Import')).click(),
     ]);
@@ -1232,6 +1252,24 @@ export default {
   verifyInstanceSearchOptions() {
     searchInstancesOptions.forEach((searchOption) => {
       cy.expect(inventorySearchAndFilterInput.has({ content: including(searchOption) }));
+    });
+  },
+
+  verifyInstanceSearchOptionsInOrder() {
+    cy.wrap(inventorySearchAndFilterInput.allOptionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(searchInstancesOptions));
+    });
+  },
+
+  verifyHoldingsSearchOptionsInOrder() {
+    cy.wrap(inventorySearchAndFilterInput.allOptionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(searchHoldingsOptions));
+    });
+  },
+
+  verifyItemSearchOptionsInOrder() {
+    cy.wrap(inventorySearchAndFilterInput.allOptionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(searchItemsOptions));
     });
   },
 

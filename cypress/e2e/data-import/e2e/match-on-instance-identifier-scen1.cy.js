@@ -57,7 +57,7 @@ describe('Data Import', () => {
       instanceOption: 'Identifier: UPC',
     };
     const mappingProfile = {
-      name: `autotestMappingProf${getRandomPostfix()}`,
+      name: `C347828 autotestMappingProf${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       suppressFromDiscavery: 'Mark for all affected records',
       catalogedDate: '"2021-12-01"',
@@ -65,16 +65,25 @@ describe('Data Import', () => {
       instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
     };
     const actionProfile = {
-      name: `autotestActionProf${getRandomPostfix()}`,
+      name: `C347828 autotestActionProf${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const jobProfile = {
-      profileName: `autotestJobProf${getRandomPostfix()}`,
+      profileName: `C347828 autotestJobProf${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('Create test data and login', () => {
+      cy.getAdminToken();
+      InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
+        (instances) => {
+          instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
+        },
+      );
+
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.dataImportDeleteLogs.gui,
@@ -86,18 +95,11 @@ describe('Data Import', () => {
         Permissions.invoiceSettingsAll.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
+
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
-
-        InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
-          (instances) => {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          },
-        );
       });
     });
 

@@ -158,11 +158,11 @@ export default {
     waitLoading();
     if (numberOfProfiles === 0) {
       cy.get('[id*="branch-ROOT-MATCH"]').should('not.exist');
-      cy.get('[id^="accordion-match-ROOT-static"]').each(($element) => {
+      cy.get('[id^="accordion-match-ROOT-editable"]').each(($element) => {
         cy.wrap($element)
           .invoke('text')
           .then((text) => {
-            const initialText = text.slice(11);
+            const initialText = text.slice(11, 41);
             expect(initialText).to.equal('This section contains no items');
           });
       });
