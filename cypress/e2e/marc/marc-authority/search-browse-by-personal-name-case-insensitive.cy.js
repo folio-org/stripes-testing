@@ -10,22 +10,15 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('MARC', () => {
   describe('MARC Authority', () => {
     const keywordSearchOption = 'Keyword';
-    const identifierAllSearchOption = 'Identifier (all)';
-    const searchQueries = ['np13011996', 'NP13011996'];
-    const searchResults = [
-      'C466085 Authority 1, 001 identifier lower case test',
-      'C466085 Authority 2, 001 identifier UPPER case test',
-      'C466085 Authority 3, 010 identifier lower case test',
-      'C466085 Authority 4, 010 identifier UPPER case test',
-      'C466085 Authority 5, 024 identifier lower case test',
-      'C466085 Authority 6, 024 identifier UPPER case test',
-      'C466085 Authority 7, 035 identifier lower case test',
-      'C466085 Authority 8, 035 identifier UPPER case test',
+    const personalNameSearchOption = 'Personal name';
+    const personalNameFields = [
+      'C466086 PERSONAL NAME CASE TEST',
+      'C466086 personal name case test',
     ];
     const marcFiles = [
       {
-        marc: 'marcAuthFileForC466085.mrc',
-        fileName: `C466085testMarcFile.${getRandomPostfix()}.mrc`,
+        marc: 'marcAuthFileForC466086.mrc',
+        fileName: `C466086testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         propertyName: 'authority',
       },
@@ -36,7 +29,7 @@ describe('MARC', () => {
     before('Create user, test data', () => {
       cy.getAdminToken();
       // make sure there are no duplicate authority records in the system
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C466085*');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C466086*');
 
       cy.createTempUser([
         Permissions.inventoryAll.gui,
@@ -73,26 +66,42 @@ describe('MARC', () => {
     });
 
     it(
-      'C466085 Search by "Identifier" field is case-insensitive (spitfire)',
+      'C466086 Search/Browse by "Personal name" field is case-insensitive (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        searchQueries.forEach((query) => {
+        // execute search by "Keyword" option
+        personalNameFields.forEach((query) => {
           MarcAuthorities.searchByParameter(keywordSearchOption, query);
           cy.wait(1000);
-          searchResults.forEach((result) => {
+          personalNameFields.forEach((result) => {
             MarcAuthorities.checkAfterSearch('Authorized', result);
           });
           MarcAuthorities.clickResetAndCheck(query);
           cy.wait(500);
         });
 
-        searchQueries.forEach((query) => {
-          MarcAuthorities.searchByParameter(identifierAllSearchOption, query);
+        // execute search by "Personal name" option
+        personalNameFields.forEach((query) => {
+          MarcAuthorities.searchByParameter(personalNameSearchOption, query);
           cy.wait(1000);
-          searchResults.forEach((result) => {
+          personalNameFields.forEach((result) => {
             MarcAuthorities.checkAfterSearch('Authorized', result);
           });
           MarcAuthorities.clickResetAndCheck(query);
+          cy.wait(500);
+        });
+
+        MarcAuthorities.switchToBrowse();
+
+        // execute browse by "Personal name" option
+        personalNameFields.forEach((query) => {
+          MarcAuthorities.searchByParameter(personalNameSearchOption, query);
+          cy.wait(1000);
+          personalNameFields.forEach((result) => {
+            MarcAuthorities.checkAfterSearch('Authorized', result);
+          });
+          MarcAuthorities.clickReset();
+          MarcAuthorities.checkRecordsResultListIsAbsent();
           cy.wait(500);
         });
       },
