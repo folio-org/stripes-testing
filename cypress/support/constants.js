@@ -801,6 +801,7 @@ export const ITEM_NOTES = {
 export const INSTANCE_NOTE_IDS = {
   ACTION_NOTE: '1c017b8d-c783-4f63-b620-079f7a5b9c07',
   REPRODUCTION_NOTE: 'd548fdff-b71c-4359-8055-f1c008c30f01',
+  DISSERTATION_NOTE: 'b73cc9c2-c9fa-49aa-964f-5ae1aa754ecd',
 };
 
 export const INSTANCE_STATUS_TERM_IDS = {
