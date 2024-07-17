@@ -20,14 +20,14 @@ describe('MARC', () => {
         const fields = [
           {
             tag: '700',
-            rowIndex: 76,
+            rowIndex: 75,
             content:
               '$a C366553 Sprouse, Chris, $e artist. $0 http://id.loc.gov/authorities/names/no98105698',
             newContent: '$a',
             marcValue: 'C366553 Sprouse, Chris',
             searchOption: 'Keyword',
             bib700AfterLinkingToAuth100: [
-              76,
+              75,
               '700',
               '1',
               '\\',
@@ -36,17 +36,17 @@ describe('MARC', () => {
               '$0 http://id.loc.gov/authorities/names/nb98017694',
               '',
             ],
-            bib700AfterUnlinking: [76, '700', '1', '\\', '$a'],
+            bib700AfterUnlinking: [75, '700', '1', '\\', '$a'],
           },
           {
             tag: '700',
-            rowIndex: 78,
+            rowIndex: 77,
             content: '$a C366553 Sabino, Joe, $e letterer.',
             newContent: '$a C366553 Sabino, J. $e Musician',
             marcValue: 'C366553 Sabino, Joe',
             searchOption: 'Keyword',
             bib700AfterLinkingToAuth100: [
-              78,
+              77,
               '700',
               '1',
               '\\',
@@ -55,17 +55,17 @@ describe('MARC', () => {
               '$0 http://id.loc.gov/authorities/names/no2011137752',
               '',
             ],
-            bib700AfterUnlinking: [78, '700', '1', '\\', '$a C366553 Sabino, J. $e Musician'],
+            bib700AfterUnlinking: [77, '700', '1', '\\', '$a C366553 Sabino, J. $e Musician'],
           },
           {
             tag: '700',
-            rowIndex: 79,
+            rowIndex: 78,
             content:
               '$a C366553 Lee, Stan, $d 1922-2018, $e creator. $0 http://id.loc.gov/authorities/names/n83169267',
             marcValue: 'C366553 Lee, Stan,',
             searchOption: 'Keyword',
             bib700AfterLinkingToAuth100: [
-              79,
+              78,
               '700',
               '1',
               '\\',
@@ -75,7 +75,7 @@ describe('MARC', () => {
               '',
             ],
             bib700AfterUnlinking: [
-              79,
+              78,
               '700',
               '1',
               '\\',
