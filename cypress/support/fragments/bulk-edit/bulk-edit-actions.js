@@ -755,6 +755,13 @@ export default {
     cy.expect(Checkbox({ label: 'Apply to all items records', checked }).exists());
   },
 
+  applyToHoldingsItemsRecordsCheckboxExists(checked) {
+    cy.expect([
+      Checkbox({ label: 'Apply to all items records', checked }).exists(),
+      Checkbox({ label: 'Apply to all holdings records', checked }).exists(),
+    ]);
+  },
+
   verifyNoMatchingOptionsForLocationFilter() {
     cy.expect(HTML('-List is empty-').exists());
   },
