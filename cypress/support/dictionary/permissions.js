@@ -362,6 +362,10 @@ export default {
     internal: 'ui-circulation.settings.view-overdue-fines-policies',
     gui: 'Settings (Circ): Can view overdue fine policies',
   },
+  uiCirculationViewCreateEditDeleteFixedDueDateSchedules: {
+    internal: 'ui-circulation.settings.fixed-due-date-schedules',
+    gui: 'Settings (Circ): Can create, edit and remove fixed due date schedules',
+  },
   // Users
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUsersView: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },

@@ -87,7 +87,12 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.holdingHRID);
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Note', 'Temporary location', noteType);
+        BulkEditActions.openActionsIfNotYet();
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+          'Note',
+          'Holdings temporary location',
+          noteType,
+        );
         BulkEditSearchPane.verifySpecificItemsMatched(holdingsNote);
 
         const location = 'Online';
@@ -118,7 +123,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.holdingHRID);
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Note', 'Temporary location');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Note', 'Holdings temporary location');
         BulkEditSearchPane.verifySpecificItemsMatched(holdingsNote);
 
         const newLocation = 'Annex';

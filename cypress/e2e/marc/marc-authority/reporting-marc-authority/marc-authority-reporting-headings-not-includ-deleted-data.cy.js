@@ -69,13 +69,13 @@ describe('MARC', () => {
 
       const dataForC380532 = [
         {
-          index: 18,
+          index: 17,
           tagValue: '240',
           marcValue: 'C380532 Beethoven, Ludwig van,',
         },
         {
           tagValue: '100',
-          index: 17,
+          index: 16,
           marcValue: 'C380532 Kerouac, Jack, 1922-1969',
         },
       ];

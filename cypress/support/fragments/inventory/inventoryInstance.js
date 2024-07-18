@@ -997,25 +997,12 @@ export default {
     );
   },
 
-  checkPrecedingTitle: (rowNumber, title, isbn, issn) => {
+  checkPrecedingTitle: (title, isbn, issn) => {
     cy.expect(
-      MultiColumnList({ id: 'precedingTitles' })
-        .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: title }))
-        .exists(),
+      instanceDetailsSection.find(MultiColumnListCell({ content: including(title) })).exists(),
     );
-    cy.expect(
-      MultiColumnList({ id: 'precedingTitles' })
-        .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: isbn }))
-        .exists(),
-    );
-    cy.expect(
-      MultiColumnList({ id: 'precedingTitles' })
-        .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: issn }))
-        .exists(),
-    );
+    cy.expect(instanceDetailsSection.find(MultiColumnListCell({ content: isbn })).exists());
+    cy.expect(instanceDetailsSection.find(MultiColumnListCell({ content: issn })).exists());
   },
 
   edit() {

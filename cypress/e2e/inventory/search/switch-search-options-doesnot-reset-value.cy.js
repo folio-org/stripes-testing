@@ -13,14 +13,14 @@ describe('Inventory', () => {
       instanceQuerySearchOption: 'Query search',
       instanceQuerySearchValue: 'querySearch',
       holdingsHRIDOption: 'Holdings HRID',
-      holdingsHRIDValue: 'hrid',
+      holdingsHRIDValue: 'holdingsHrid',
       holdingsUUIDOption: 'Holdings UUID',
-      holdingsUUIDValue: 'hid',
+      holdingsUUIDValue: 'holdingsId',
       itemHRIDOption: 'Item HRID',
       itemHRIDValue: 'itemHrid',
       itemUUIDOption: 'Item UUID',
       itemUUIDValue: 'iid',
-      defaultValue: 'all',
+      defaultValue: 'Keyword (title, contributor, identifier, HRID, UUID)',
     };
     before('Create test data', () => {
       cy.getAdminToken();

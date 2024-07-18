@@ -52,6 +52,7 @@ const findAuthorityModal = Modal({ id: 'find-authority-modal' });
 const detailsMarcViewPaneheader = PaneHeader({ id: 'paneHeadermarc-view-pane' });
 const authorityActionsDropDown = Dropdown('Actions');
 const checkboxSeletAuthorityRecord = Checkbox({ ariaLabel: 'Select Authority record' });
+const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
 
 // actions dropdown window
 const authorityActionsDropDownMenu = DropdownMenu();
@@ -549,6 +550,7 @@ export default {
       marcViewSection.absent(),
       SearchField({ id: 'textarea-authorities-search', value: searchValue }).absent(),
       selectField.has({ content: including('Keyword') }),
+      searchResults.find(HTML(including(emptyResultsMessage))).exists(),
     ]);
   },
 
