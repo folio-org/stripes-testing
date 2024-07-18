@@ -145,15 +145,12 @@ describe('Orders > Receiving and Check-in ', () => {
     () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);
-      OrderLines.selectPOLInOrder();
+      Orders.receiveOrderViaActions();
+      Receiving.selectLinkFromResultsList();
       OrderLines.openRoutingLists();
       OrderLines.addRoutingListExist();
       OrderLines.addRoutingList();
       OrderLines.fillInRoutingListInfoAndSave(routingList1);
-      OrderLines.varifyAddingRoutingList(routingList1);
-      OrderLines.backToEditingOrder();
-      Orders.receiveOrderViaActions();
-      Receiving.selectLinkFromResultsList();
       Receiving.varifyAddingRoutingList(routingList1);
     },
   );
