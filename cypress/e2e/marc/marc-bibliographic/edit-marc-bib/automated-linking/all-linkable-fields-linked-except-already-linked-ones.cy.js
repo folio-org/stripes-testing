@@ -259,7 +259,7 @@ describe('MARC', () => {
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
-
+            cy.wait(2000);
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout(
@@ -278,6 +278,7 @@ describe('MARC', () => {
                 field.boxSeventh,
               );
             });
+            cy.wait(1000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
