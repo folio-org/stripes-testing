@@ -170,7 +170,7 @@ describe('Data Import', () => {
 
     it(
       'C401727 Verify that 3 successive update actions for Holdings proceed without errors (folijet)',
-      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create field mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();

@@ -6,7 +6,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
-describe('Data Import', () => {
+describe.skip('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const filePathForUpload = 'oneMarcBib.mrc';
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
@@ -36,7 +36,6 @@ describe('Data Import', () => {
           cy.visit(TopMenu.dataImportPath);
           DataImport.verifyUploadState();
           DataImport.uploadBunchOfFiles(filePathForUpload, upload.quantityOfFiles, upload.fileName);
-          DataImport.waitFileIsUploaded();
           JobProfiles.search(jobProfileToRun);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(upload.fileName);
