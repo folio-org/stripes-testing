@@ -8,6 +8,7 @@ import {
   HTML,
   Accordion,
   Image,
+  MultiColumnList,
 } from '../../../../interactors';
 
 const viewAllLogsButton = Button('View all');
@@ -22,8 +23,8 @@ const endedRunningAccordion = Accordion({ headline: 'Ended running' });
 const jobProfileAccordion = Accordion({ headline: 'Job profile' });
 const logsMainPane = Pane('Logs');
 const logsIcon = Image({ alt: 'Data export loader for MARC records' });
-const recordsFoundText = HTML({ id: 'paneHeaderpane-results-subtitle' });
-const logsTable = HTML({ id: 'search-results-list' });
+const recordsFoundText = HTML({ id: 'paneHeaderdata-export-logs-pane-subtitle' });
+const logsTable = MultiColumnList();
 const errorsInExportYesOptionId = 'clickable-filter-status-fail';
 const errorsInExportNoOptionId = 'clickable-filter-status-completed';
 const errorsInExportCrossButton = Button({ icon: 'times-circle-solid' });

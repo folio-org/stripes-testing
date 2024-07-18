@@ -22,17 +22,16 @@ describe('MARC', () => {
           811, 830,
         ];
         const createdRecordIDs = [];
-        const naturalIds = ['n2008052404C388552', 'sh96007532C388552', 'sh99014708C388552'];
         const preLinkedFields = [
           {
             tag: '655',
-            value: 'AutobiographyC388552',
-            rowIndex: 41,
+            value: 'C388552 Autobiography',
+            rowIndex: 40,
           },
           {
             tag: '655',
-            value: 'BiographiesC388552',
-            rowIndex: 43,
+            value: 'C388552 Biographies',
+            rowIndex: 42,
           },
         ];
 
@@ -54,19 +53,9 @@ describe('MARC', () => {
         ];
 
         before('Create test data', () => {
-          // Making sure there are no duplicate authority records in the system before auto-linking
-          cy.getAdminToken().then(() => {
-            naturalIds.forEach((id) => {
-              MarcAuthorities.getMarcAuthoritiesViaApi({
-                limit: 200,
-                query: `naturalId="${id}*" and authRefType=="Authorized"`,
-              }).then((records) => {
-                records.forEach((record) => {
-                  MarcAuthority.deleteViaAPI(record.id);
-                });
-              });
-            });
-          });
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388552*');
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
@@ -137,63 +126,64 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.updateExistingFieldContent(
-              31,
+              30,
               '$a Normal authors $z Jamaica $v Biography. $0 sh99014708C388552 $9 acc6b9cb-c607-4a4f-8505-a0f1a4492295',
             );
             QuickMarcEditor.updateExistingFieldContent(
-              32,
+              31,
               '$a Normal activists $z Jamaica $v Biography. $0 sh96007532C388552 $9 test123',
             );
             QuickMarcEditor.updateExistingFieldContent(
-              30,
+              29,
               '$a Authors, Jamaican $y 21st century $v Biography. $0 sh850099229 $9 acc6b9cb-c607-4a4f-8505-a0f1a4492233',
             );
             QuickMarcEditor.updateExistingFieldContent(
-              17,
+              16,
               '$a Chin, Staceyann, $d 1972- $e author. $0 n20080524049C388552 $9 test567',
             );
             QuickMarcEditor.fillEmptyTextAreaOfField(
-              41,
-              'records[41].subfieldGroups.uncontrolledAlpha',
+              40,
+              'records[40].subfieldGroups.uncontrolledAlpha',
               '$9 test333',
             );
             QuickMarcEditor.fillEmptyTextAreaOfField(
-              43,
-              'records[43].subfieldGroups.uncontrolledNumber',
+              42,
+              'records[42].subfieldGroups.uncontrolledNumber',
               '$2 fast $9 acc6b9cb-c607-4a4f-8505-a0f1a4492211',
             );
-            QuickMarcEditor.updateExistingFieldContent(16, '$a 818/.6 $2 22 $9 test891');
+            QuickMarcEditor.updateExistingFieldContent(15, '$a 818/.6 $2 22 $9 test891');
+            cy.wait(1000);
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout('Field 650 has been linked to MARC authority record(s).');
             QuickMarcEditor.checkCallout(
               'Field 100 and 650 must be set manually by selecting the link icon.',
             );
 
+            QuickMarcEditor.verifyRowLinked(30, true);
             QuickMarcEditor.verifyRowLinked(31, true);
-            QuickMarcEditor.verifyRowLinked(32, true);
-            QuickMarcEditor.verifyRowLinked(17, false);
-            QuickMarcEditor.verifyRowLinked(30, false);
-            QuickMarcEditor.checkValueAbsent(17, '$9');
+            QuickMarcEditor.verifyRowLinked(16, false);
+            QuickMarcEditor.verifyRowLinked(29, false);
+            QuickMarcEditor.checkValueAbsent(16, '$9');
+            QuickMarcEditor.checkValueAbsent(29, '$9');
             QuickMarcEditor.checkValueAbsent(30, '$9');
             QuickMarcEditor.checkValueAbsent(31, '$9');
-            QuickMarcEditor.checkValueAbsent(32, '$9');
+            QuickMarcEditor.checkValueExist(14, '$9');
             QuickMarcEditor.checkValueExist(15, '$9');
-            QuickMarcEditor.checkValueExist(16, '$9');
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t650\t  0\t$a Normal authors $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh99014708C388552 $9`,
+              `${marcAuthIcon}\n\t650\t  0\t$a C388552 Normal authors $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh99014708C388552 $9`,
             );
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t650\t  0\t$a Normal activists $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh96007532C388552 $9`,
+              `${marcAuthIcon}\n\t650\t  0\t$a C388552 Normal activists $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh96007532C388552 $9`,
             );
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t655\t  2\t$a AutobiographyC388552 $0 http://id.loc.gov/authorities/subjects/sh85010050 $9`,
+              `${marcAuthIcon}\n\t655\t  2\t$a C388552 Autobiography $0 http://id.loc.gov/authorities/subjects/sh85010050 $9`,
             );
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t655\t  7\t$a BiographiesC388552 $0 http://id.loc.gov/authorities/genreForms/gf2014026049 $9`,
+              `${marcAuthIcon}\n\t655\t  7\t$a C388552 Biographies $0 http://id.loc.gov/authorities/genreForms/gf2014026049 $9`,
             );
             InventoryViewSource.contains('$2 fast');
           },

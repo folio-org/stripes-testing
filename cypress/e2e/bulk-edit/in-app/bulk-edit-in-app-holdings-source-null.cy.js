@@ -58,8 +58,8 @@ describe('bulk-edit', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       FileManager.deleteFile(`cypress/fixtures/${holdingHRIDsFileName}`);
     });
-
-    it(
+    // test case is obsolete
+    it.skip(
       'C380592 Verify that Holdings without "Source" populated can be updated (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {

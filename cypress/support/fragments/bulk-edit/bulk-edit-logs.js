@@ -16,6 +16,7 @@ import {
   SelectionOption,
 } from '../../../../interactors';
 import { ListRow } from '../../../../interactors/multi-column-list';
+import BulkEditSearchPane from './bulk-edit-search-pane';
 
 const bulkEditPane = Pane(including('Bulk edit'));
 const logsToggle = Button('Logs');
@@ -47,7 +48,9 @@ const updatedRecordBtn = DropdownMenu().find(Button('File with updated records')
 const errorsCommittingBtn = DropdownMenu().find(
   Button('File with errors encountered when committing the changes'),
 );
-const queryIdentifiersBtn = DropdownMenu().find(Button('File with identifiers of the records affected by bulk update'));
+const queryIdentifiersBtn = DropdownMenu().find(
+  Button('File with identifiers of the records affected by bulk update'),
+);
 const logsActionButton = Button({ icon: 'ellipsis' });
 const newCheckbox = Checkbox('New');
 const retrievingRecordsCheckbox = Checkbox('Retrieving records');
@@ -137,7 +140,7 @@ export default {
   },
 
   verifyCellsValues(column, status) {
-    this.getMultiColumnListCellsValues(column)
+    BulkEditSearchPane.getMultiColumnListCellsValues(column)
       .should('have.length.at.least', 1)
       .each((value) => {
         expect(value).to.eq(status);
@@ -145,7 +148,7 @@ export default {
   },
 
   verifyDateCellsValues(column, fromDate, toDate) {
-    this.getMultiColumnListCellsValues(column)
+    BulkEditSearchPane.getMultiColumnListCellsValues(column)
       .should('have.length.at.least', 1)
       .each((value) => {
         if (!value.includes('No value set')) {
@@ -185,7 +188,7 @@ export default {
   },
 
   verifyLogsRecordTypesAccordionCollapsed() {
-    this.recordTypesAccordionExpanded(false);
+    BulkEditSearchPane.recordTypesAccordionExpanded(false);
     cy.expect([usersCheckbox.absent(), holdingsCheckbox.absent(), itemsCheckbox.absent()]);
   },
 
@@ -204,7 +207,7 @@ export default {
   },
 
   verifyLogsRecordTypesAccordionExistsAndUnchecked() {
-    this.recordTypesAccordionExpanded(true);
+    BulkEditSearchPane.recordTypesAccordionExpanded(true);
     cy.expect([
       usersCheckbox.has({ checked: false }),
       holdingsCheckbox.has({ checked: false }),

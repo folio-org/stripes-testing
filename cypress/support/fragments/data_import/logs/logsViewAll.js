@@ -8,6 +8,7 @@ import {
   Modal,
   MultiColumnList,
   MultiColumnListCell,
+  MultiColumnListRow,
   MultiColumnListHeader,
   Pane,
   PaneContent,
@@ -212,7 +213,7 @@ export default {
   filterJobsByJobProfile(jobProfile) {
     cy.do([
       jobProfileAccordion.clickHeader(),
-      jobProfileAccordion.find(Selection({ value: 'Choose job profile' })).open(),
+      jobProfileAccordion.find(Selection({ value: including('Choose job profile') })).open(),
       SelectionList().select(jobProfile),
     ]);
   },
@@ -222,7 +223,7 @@ export default {
   },
 
   filterJobsByUser(user) {
-    cy.do([Selection({ value: 'Choose user' }).open(), SelectionList().select(user)]);
+    cy.do([Selection({ value: including('Choose user') }).open(), SelectionList().select(user)]);
   },
 
   filterJobsByInventorySingleRecordImports(filter) {
@@ -612,6 +613,22 @@ export default {
       logsResultPane
         .find(MultiColumnListCell({ row: 0, content: including(newFileName) }))
         .exists(),
+    );
+  },
+  verifyJobStatus: (fileName, status) => {
+    const newFileName = fileName.replace(/\.mrc$/i, '');
+
+    cy.do(
+      MultiColumnListCell({ content: including(newFileName) }).perform((element) => {
+        const rowNumber = element.parentElement.getAttribute('data-row-inner');
+
+        cy.expect(
+          MultiColumnList({ id: 'list-data-import' })
+            .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+            .find(MultiColumnListCell({ content: status }))
+            .exists(),
+        );
+      }),
     );
   },
 };

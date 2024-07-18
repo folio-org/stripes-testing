@@ -13,7 +13,7 @@ const deleteFieldsModal = Modal('Delete fields');
 
 const saveAndClose = () => {
   // need to wait until data will be filled in
-  cy.wait(1500);
+  cy.wait(2000);
   cy.do(Button('Save & close').click());
 };
 
