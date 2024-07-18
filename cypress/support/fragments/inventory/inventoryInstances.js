@@ -149,6 +149,8 @@ const searchHoldingsOptionsValues = [
   'holdingsHrid',
   'hid',
   'allFields',
+  'querySearch',
+  'advancedSearch',
 ];
 const searchItemsOptionsValues = [
   'keyword',
@@ -163,19 +165,21 @@ const searchItemsOptionsValues = [
   'itemHrid',
   'iid',
   'allFields',
+  'querySearch',
+  'advancedSearch',
 ];
-const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 16);
-const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 14);
-const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 14);
+const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 17);
+const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 9);
+const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 11);
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
-  .filter((option, index) => index <= 16);
+  .filter((option, index) => index <= 17);
 const advSearchHoldingsOptionsValues = searchHoldingsOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
-  .filter((option, index) => index <= 14);
+  .filter((option, index) => index <= 9);
 const advSearchItemsOptionsValues = searchItemsOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
-  .filter((option, index) => index <= 14);
+  .filter((option, index) => index <= 11);
 
 const actionsSortSelect = Select({ dataTestID: 'sort-by-selection' });
 
