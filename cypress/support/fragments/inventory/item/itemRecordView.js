@@ -56,10 +56,11 @@ const closeDetailView = () => {
   cy.expect(Pane(including('Item')).absent());
 };
 const findRowAndClickLink = (enumerationValue) => {
-  cy.get(`div[class^="mclCell-"]:contains('${enumerationValue}')`).then((cell) => {
-    const row = cell.closest('div[class^="mclRow-"]');
-    row.find('button').click();
-  });
+  cy.get(`div[class^="mclCell-"]:contains('${enumerationValue}')`)
+    .closest('div[class^="mclRow-"]')
+    .within(() => {
+      cy.get('a').click();
+    });
 };
 const getAssignedHRID = () => cy.then(() => KeyValue('Item HRID').value());
 
