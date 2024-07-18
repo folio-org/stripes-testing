@@ -57,6 +57,7 @@ export default {
     cy.do(Accordion({ id: 'tag-accordion' }).clickHeader());
     cy.wait('@getTags');
     cy.expect(tagSelect.exists());
+    cy.wait(1000);
     cy.do(tagSelect.choose(tag));
   },
 
