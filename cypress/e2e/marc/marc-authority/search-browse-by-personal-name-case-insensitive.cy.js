@@ -11,6 +11,7 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     const keywordSearchOption = 'Keyword';
     const personalNameSearchOption = 'Personal name';
+    const recordType = 'Authorized';
     const personalNameFields = [
       'C466086 PERSONAL NAME CASE TEST',
       'C466086 personal name case test',
@@ -74,7 +75,7 @@ describe('MARC', () => {
           MarcAuthorities.searchByParameter(keywordSearchOption, query);
           cy.wait(1000);
           personalNameFields.forEach((result) => {
-            MarcAuthorities.checkAfterSearch('Authorized', result);
+            MarcAuthorities.checkAfterSearch(recordType, result);
           });
           MarcAuthorities.clickResetAndCheck(query);
           cy.wait(500);
@@ -85,7 +86,7 @@ describe('MARC', () => {
           MarcAuthorities.searchByParameter(personalNameSearchOption, query);
           cy.wait(1000);
           personalNameFields.forEach((result) => {
-            MarcAuthorities.checkAfterSearch('Authorized', result);
+            MarcAuthorities.checkAfterSearch(recordType, result);
           });
           MarcAuthorities.clickResetAndCheck(query);
           cy.wait(500);
@@ -98,7 +99,7 @@ describe('MARC', () => {
           MarcAuthorities.searchByParameter(personalNameSearchOption, query);
           cy.wait(1000);
           personalNameFields.forEach((result) => {
-            MarcAuthorities.checkAfterSearch('Authorized', result);
+            MarcAuthorities.checkAfterSearch(recordType, result);
           });
           MarcAuthorities.clickReset();
           MarcAuthorities.checkRecordsResultListIsAbsent();
