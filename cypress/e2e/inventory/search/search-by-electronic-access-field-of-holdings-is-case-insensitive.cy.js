@@ -29,7 +29,7 @@ describe('Inventory', () => {
           },
           {
             title: "C466080 Instance 2, Holding's Electronic access lower case test",
-            uri: 'WWW.HOLDINGSCASE.COM/TEST/URI	',
+            uri: 'WWW.HOLDINGSCASE.COM/TEST/URI',
             linkText: 'HOLDINGS LINK TEXT CASE TEST',
             materialsSpecification: 'HOLDINGS MATERIALS CASE TEST',
             urlPublicNote: 'HOLDINGS PUBLIC NOTE CASE TEST',
