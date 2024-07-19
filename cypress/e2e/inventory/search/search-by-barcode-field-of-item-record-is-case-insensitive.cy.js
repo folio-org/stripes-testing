@@ -6,7 +6,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import { getTestEntityValue, randomFourDigitNumber } from '../../../support/utils/stringTools';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
