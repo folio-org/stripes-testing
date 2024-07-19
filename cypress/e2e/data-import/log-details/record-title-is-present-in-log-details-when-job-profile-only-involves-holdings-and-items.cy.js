@@ -151,7 +151,7 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(userProperties.username, userProperties.password);
+        cy.loginAsAdmin();
         // create Field mapping profile for export
         cy.visit(SettingsMenu.exportMappingProfilePath);
         ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
@@ -160,6 +160,10 @@ describe('Data Import', () => {
         cy.visit(SettingsMenu.exportJobProfilePath);
         ExportJobProfiles.createJobProfile(exportJobProfileName, exportMappingProfile.name);
       });
+    });
+
+    beforeEach('Login', () => {
+      cy.login(user.username, user.password);
     });
 
     after('Delete user', () => {
