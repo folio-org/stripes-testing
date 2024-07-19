@@ -152,7 +152,6 @@ describe('bulk-edit', () => {
           marcInstance.instanceId,
           folioItem.instanceId,
         ]);
-        // hello
         BulkEditLogs.downloadFileWithMatchingRecords();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [
           `,${adminNote},${folioItem.instanceName},`,
