@@ -62,7 +62,7 @@ describe('Eureka', () => {
       // TO DO: rewrite when users will not have admin role assigned upon creation
       cy.updateRolesForUserApi(testData.userA.userId, [testData.roleAId, testData.roleBId]);
       cy.login(testData.tempUser.username, testData.tempUser.password, {
-        path: `${TopMenu.settingsAuthorizationRoles}/${testData.roleAId}`,
+        path: TopMenu.settingsAuthorizationRoles,
         waiter: AuthorizationRoles.waitContentLoading,
       });
     });
@@ -83,6 +83,8 @@ describe('Eureka', () => {
       'C464315 User detailed view updated when changing role assignments for a user (eureka)',
       { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
       () => {
+        AuthorizationRoles.searchRole(testData.roleAName);
+        AuthorizationRoles.clickOnRoleName(testData.roleAName);
         AuthorizationRoles.verifyRoleViewPane(testData.roleAName);
         AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
         AuthorizationRoles.clickAssignUsersButton();
@@ -94,7 +96,8 @@ describe('Eureka', () => {
           false,
         );
 
-        cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleCId}`);
+        AuthorizationRoles.searchRole(testData.roleCName);
+        AuthorizationRoles.clickOnRoleName(testData.roleCName);
         AuthorizationRoles.verifyRoleViewPane(testData.roleCName);
         AuthorizationRoles.verifyAssignedUser(
           testData.userA.lastName,
@@ -112,7 +115,10 @@ describe('Eureka', () => {
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNames([testData.roleBName, testData.roleCName]);
 
-        cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleBId}`);
+        cy.visit(TopMenu.settingsAuthorizationRoles);
+        AuthorizationRoles.waitContentLoading();
+        AuthorizationRoles.searchRole(testData.roleBName);
+        AuthorizationRoles.clickOnRoleName(testData.roleBName);
         AuthorizationRoles.verifyRoleViewPane(testData.roleBName);
         AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
         AuthorizationRoles.clickAssignUsersButton();
@@ -124,7 +130,8 @@ describe('Eureka', () => {
           false,
         );
 
-        cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleCId}`);
+        AuthorizationRoles.searchRole(testData.roleCName);
+        AuthorizationRoles.clickOnRoleName(testData.roleCName);
         AuthorizationRoles.verifyRoleViewPane(testData.roleCName);
         AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
         AuthorizationRoles.clickAssignUsersButton();
