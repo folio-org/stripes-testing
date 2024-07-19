@@ -25,7 +25,6 @@ const item = {
 };
 const itemUUIDsFileName = `itemUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${itemUUIDsFileName}`;
-// const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const previewFileName = `*-Updates-Preview-${itemUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${itemUUIDsFileName}`;
 
