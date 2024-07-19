@@ -9,11 +9,15 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import { INSTANCE_NOTE_IDS } from '../../../support/constants';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
 let user;
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${instanceUUIDsFileName}`;
 const previewFileName = `*-Updates-Preview-${instanceUUIDsFileName}`;
+const changedRecordsFileName = `*-Changed-Records-${instanceUUIDsFileName}`;
 const folioItem = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
@@ -22,12 +26,13 @@ const marcInstance = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
-const newReproductionNote = 'NEW reproduction note  ~,!,@,#,$,%,^,&,(,),~,{.[,]<},>,ø, Æ, §,';
 
 const notes = {
-  dissertationNote: 'Test instance note',
-  dissertationNoteStaffOnly: 'test instance note',
-  reproductionNote: 'reproduction note',
+  dissertationNote: 'test instance note',
+  dissertationNoteStaffOnly: 'test instance note staff only',
+  dataQualityNote: 'data quality note',
+  exhibitionsNote: 'exhibitions note',
+  administrativeNote: 'administrative note',
 };
 
 describe('bulk-edit', () => {
@@ -46,8 +51,9 @@ describe('bulk-edit', () => {
           marcInstance.instanceName,
           marcInstance.itemBarcode,
         );
-        [marcInstance.instanceId, folioItem.instanceId].forEach((instanceId) => {
-          cy.getInstanceById(instanceId).then((body) => {
+        [marcInstance, folioItem].forEach((instance) => {
+          cy.getInstanceById(instance.instanceId).then((body) => {
+            instance.hrid = body.hrid;
             body.notes = [
               {
                 instanceNoteTypeId: INSTANCE_NOTE_IDS.DISSERTATION_NOTE,
@@ -57,11 +63,6 @@ describe('bulk-edit', () => {
               {
                 instanceNoteTypeId: INSTANCE_NOTE_IDS.DISSERTATION_NOTE,
                 note: notes.dissertationNoteStaffOnly,
-                staffOnly: false,
-              },
-              {
-                instanceNoteTypeId: INSTANCE_NOTE_IDS.REPRODUCTION_NOTE,
-                note: notes.reproductionNote,
                 staffOnly: false,
               },
             ];
@@ -77,7 +78,7 @@ describe('bulk-edit', () => {
         });
         FileManager.createFile(
           `cypress/fixtures/${instanceUUIDsFileName}`,
-          `${marcInstance.instanceId}\n${folioItem.instanceId}`,
+          `${folioItem.instanceId}\n${marcInstance.instanceId}`,
         );
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
@@ -92,11 +93,15 @@ describe('bulk-edit', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(folioItem.itemBarcode);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(marcInstance.itemBarcode);
       FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName, previewFileName);
+      FileManager.deleteFileFromDownloadsByMask(
+        matchedRecordsFileName,
+        previewFileName,
+        changedRecordsFileName,
+      );
     });
 
     it(
-      'C468214 Verify Bulk Edit actions for Instance notes - find-replace and find-remove (firebird)',
+      'C468192 Verify Bulk Edit actions for Instance notes - remove all and add note (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
@@ -105,76 +110,101 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.downloadMatchedResults();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Instance UUID', 'Source');
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Source', 'FOLIO');
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Source', 'MARC');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Instance UUID');
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [
           folioItem.instanceId,
           marcInstance.instanceId,
         ]);
         BulkEditActions.openStartBulkEditInstanceForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
-        BulkEditActions.noteRemove('Dissertation note', notes.dissertationNote);
+        BulkEditActions.noteRemoveAll('Dissertation note');
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.noteReplaceWith(
-          'Reproduction note',
-          notes.reproductionNote,
-          newReproductionNote,
-          1,
-        );
+        BulkEditActions.addItemNote('Data quality note', notes.dataQualityNote, 1);
+        BulkEditActions.verifyStaffOnlyCheckbox(false, 1);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.selectOption('Staff suppress', 2);
-        BulkEditSearchPane.verifyInputLabel('Staff suppress', 2);
-        BulkEditActions.selectSecondAction('Set true', 2);
+        BulkEditActions.addItemNote('Exhibitions note', notes.exhibitionsNote, 2);
+        BulkEditActions.checkStaffOnlyCheckbox(2);
         BulkEditActions.addNewBulkEditFilterString();
-        const suppressFromDiscovery = true;
-        BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 3);
-        BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(true);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.addItemNote('Administrative note', notes.administrativeNote, 3);
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyInputLabel(
           '2 records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.',
         );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
-          'Suppress from discovery',
-          'true',
-          0,
-        );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
-          'Suppress from discovery',
-          'true',
-          1,
-        );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow('Staff suppress', 'true', 0);
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow('Staff suppress', 'true', 1);
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
-          'Dissertation note',
-          notes.dissertationNoteStaffOnly,
-          0,
-        );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
-          'Dissertation note',
-          notes.dissertationNoteStaffOnly,
-          1,
-        );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
-          'Reproduction note',
-          newReproductionNote,
-          0,
-        );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
-          'Reproduction note',
-          newReproductionNote,
-          1,
-        );
+        [0, 1].forEach((row) => {
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByRow('Dissertation note', '', row);
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+            'Administrative note',
+            notes.administrativeNote,
+            row,
+          );
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+            'Data quality note',
+            notes.dataQualityNote,
+            row,
+          );
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+            'Exhibitions note',
+            `${notes.exhibitionsNote} (staff only)`,
+            row,
+          );
+        });
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          `${marcInstance.instanceId},true,true,`,
-          `${folioItem.instanceId},true,true,`,
-          `,"Dissertation note;${notes.dissertationNoteStaffOnly};false|Reproduction note;${newReproductionNote};false"\n`,
+          [`${marcInstance.hrid},MARC,,,,${notes.administrativeNote}`],
         ]);
+        ExportFile.verifyFileIncludes(previewFileName, [
+          [`${folioItem.hrid},FOLIO,,,,${notes.administrativeNote}`],
+        ]);
+        ExportFile.verifyFileIncludes(previewFileName, [
+          [
+            `Data quality note;${notes.dataQualityNote};false|Exhibitions note;${notes.exhibitionsNote};true`,
+          ],
+        ]);
+        ExportFile.verifyFileIncludes(previewFileName, ['Dissertation note'], false);
         BulkEditActions.commitChanges();
-        BulkEditSearchPane.verifyReasonForError(marcInstance.instanceId);
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow('Dissertation note', '');
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+          'Administrative note',
+          notes.administrativeNote,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+          'Data quality note',
+          notes.dataQualityNote,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+          'Exhibitions note',
+          `${notes.exhibitionsNote} (staff only)`,
+        );
+
+        BulkEditActions.openActions();
+        BulkEditActions.downloadChangedCSV();
+        ExportFile.verifyFileIncludes(previewFileName, [
+          [`${folioItem.hrid},FOLIO,,,,${notes.administrativeNote}`],
+        ]);
+        ExportFile.verifyFileIncludes(previewFileName, [
+          [
+            `Data quality note;${notes.dataQualityNote};false|Exhibitions note;${notes.exhibitionsNote};true`,
+          ],
+        ]);
+        ExportFile.verifyFileIncludes(previewFileName, ['Dissertation note'], false);
+
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.searchInstanceByTitle(folioItem.instanceName);
+        InventoryInstances.selectInstance();
+        InventoryInstance.waitLoading();
+        ItemRecordView.checkItemAdministrativeNote(notes.administrativeNote);
+        InventoryInstance.checkInstanceNotes('Data quality note', notes.dataQualityNote);
+        InventoryInstance.checkInstanceNotes('Exhibitions note', notes.exhibitionsNote);
+        ItemRecordView.verifyTextAbsent('Dissertation note');
+
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.searchInstanceByTitle(marcInstance.instanceName);
+        InventoryInstances.selectInstance();
+        InventoryInstance.waitLoading();
+        ItemRecordView.checkItemAdministrativeNote(notes.administrativeNote);
+        InventoryInstance.checkInstanceNotes('Dissertation note', notes.dissertationNote);
+        ItemRecordView.verifyTextAbsent('Data quality note');
+        ItemRecordView.verifyTextAbsent('Exhibitions note');
       },
     );
   });
