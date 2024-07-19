@@ -80,6 +80,7 @@ const firstNameField = TextField({ id: 'adduser_firstname' });
 const emailField = TextField({ id: 'adduser_email' });
 let totalRows;
 const usersPath = Cypress.env('eureka') ? '/users-keycloak/users/*' : '/users/*';
+const userRoleDeleteIcon = Button({ id: including('clickable-remove-user-role') });
 
 // servicePointIds is array of ids
 const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
@@ -646,20 +647,22 @@ export default {
     });
   },
 
+  verifyUserRoleNamesOrdered(roleNames) {
+    roleNames.forEach((roleName, index) => {
+      cy.expect(
+        userRolesAccordion
+          .find(ListItem(including(roleName), { index }).find(userRoleDeleteIcon))
+          .exists(),
+      );
+    });
+  },
+
   verifyUserRolesRowsCount(expectedCount) {
     cy.expect(userRolesAccordion.find(List()).has({ count: expectedCount }));
   },
 
   removeOneRole(roleName) {
-    cy.do(
-      userRolesAccordion
-        .find(
-          ListItem(including(roleName)).find(
-            Button({ id: including('clickable-remove-user-role') }),
-          ),
-        )
-        .click(),
-    );
+    cy.do(userRolesAccordion.find(ListItem(including(roleName)).find(userRoleDeleteIcon)).click());
   },
 
   unassignAllRoles(isConfirmed = true) {

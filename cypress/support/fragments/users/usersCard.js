@@ -569,6 +569,12 @@ export default {
     });
   },
 
+  verifyUserRoleNamesOrdered(roleNames) {
+    roleNames.forEach((roleName, index) => {
+      cy.expect(userRolesAccordion.find(ListItem(including(roleName), { index })).exists());
+    });
+  },
+
   verifyUserRolesAccordionEmpty() {
     cy.expect(userRolesAccordion.find(HTML(userRolesEmptyText)).exists());
   },

@@ -105,14 +105,14 @@ describe('Eureka', () => {
         UserEdit.selectRoleInModal(testData.roleAName);
         UserEdit.selectRoleInModal(testData.roleBName);
         UserEdit.saveAndCloseRolesModal();
-        UserEdit.verifyUserRoleNames([testData.roleAName, testData.roleBName]);
+        UserEdit.verifyUserRoleNamesOrdered([testData.roleAName, testData.roleBName]);
         UserEdit.verifyUserRolesRowsCount(2);
 
         UserEdit.clickAddUserRolesButton();
         UserEdit.selectRoleInModal(testData.roleAName, false);
         UserEdit.selectRoleInModal(testData.roleCName);
         UserEdit.saveAndCloseRolesModal();
-        UserEdit.verifyUserRoleNames([testData.roleBName, testData.roleCName]);
+        UserEdit.verifyUserRoleNamesOrdered([testData.roleBName, testData.roleCName]);
         UserEdit.verifyUserRolesRowsCount(2);
         cy.intercept('GET', '/roles/users*').as('rolesCall');
         UserEdit.saveAndClose();
@@ -122,7 +122,7 @@ describe('Eureka', () => {
         });
         UsersCard.verifyUserRolesCounter('2');
         UsersCard.clickUserRolesAccordion();
-        UsersCard.verifyUserRoleNames([testData.roleBName, testData.roleCName]);
+        UsersCard.verifyUserRoleNamesOrdered([testData.roleBName, testData.roleCName]);
 
         cy.visit(TopMenu.settingsAuthorizationRoles);
         AuthorizationRoles.waitContentLoading();

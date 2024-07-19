@@ -122,7 +122,7 @@ describe('Eureka', () => {
         UserEdit.checkUserEditPaneOpened();
         UserEdit.verifyUserRolesCounter('4');
         UserEdit.clickUserRolesAccordion();
-        UserEdit.verifyUserRoleNames([
+        UserEdit.verifyUserRoleNamesOrdered([
           testData.roleAName,
           testData.roleBName,
           testData.roleCName,
@@ -130,10 +130,14 @@ describe('Eureka', () => {
         ]);
         UserEdit.removeOneRole(testData.roleBName);
         UserEdit.verifyUserRolesRowsCount(3);
-        UserEdit.verifyUserRoleNames([testData.roleAName, testData.roleCName, testData.roleDName]);
+        UserEdit.verifyUserRoleNamesOrdered([
+          testData.roleAName,
+          testData.roleCName,
+          testData.roleDName,
+        ]);
         UserEdit.removeOneRole(testData.roleDName);
         UserEdit.verifyUserRolesRowsCount(2);
-        UserEdit.verifyUserRoleNames([testData.roleAName, testData.roleCName]);
+        UserEdit.verifyUserRoleNamesOrdered([testData.roleAName, testData.roleCName]);
         UserEdit.saveAndClose();
         UserEdit.checkUserEditPaneOpened(false);
         cy.reload();
@@ -167,7 +171,7 @@ describe('Eureka', () => {
         UserEdit.checkUserEditPaneOpened();
         UserEdit.verifyUserRolesCounter('2');
         UserEdit.clickUserRolesAccordion();
-        UserEdit.verifyUserRoleNames([testData.roleAName, testData.roleCName]);
+        UserEdit.verifyUserRoleNamesOrdered([testData.roleAName, testData.roleCName]);
         UserEdit.verifyUserRolesRowsCount(2);
         UserEdit.unassignAllRoles();
         UserEdit.verifyUserRolesAccordionEmpty();
