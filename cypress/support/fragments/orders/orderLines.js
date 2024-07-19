@@ -1060,13 +1060,16 @@ export default {
   },
 
   editFundInPOL(fund, unitPrice, value) {
+    cy.wait(4000);
     cy.do([
       physicalUnitPriceTextField.fillIn(unitPrice),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
     ]);
-    cy.wait(2000);
-    cy.do([fundDistributionField.fillIn(value), saveAndCloseButton.click()]);
+    cy.wait(4000);
+    cy.do(fundDistributionField.fillIn(value));
+    cy.wait(4000);
+    cy.do(saveAndCloseButton.click());
     cy.wait(6000);
     submitOrderLine();
   },
