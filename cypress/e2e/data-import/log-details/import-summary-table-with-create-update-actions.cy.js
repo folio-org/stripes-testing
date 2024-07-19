@@ -392,6 +392,7 @@ describe('Data Import', () => {
           'Subject',
           collectionOfProfilesForCreate[0].mappingProfile.modifications.data,
         );
+        cy.wait(1500);
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
 

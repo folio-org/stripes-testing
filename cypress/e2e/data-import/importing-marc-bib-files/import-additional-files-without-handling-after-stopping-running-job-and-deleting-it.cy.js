@@ -41,6 +41,7 @@ describe('Data Import', () => {
       () => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
+        DataImport.waitLoading();
         DataImport.uploadFile('oneThousandMarcBib.mrc', bigFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
