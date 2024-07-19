@@ -53,7 +53,6 @@ describe('bulk-edit', () => {
         );
         [marcInstance, folioItem].forEach((instance) => {
           cy.getInstanceById(instance.instanceId).then((body) => {
-            console.log(body);
             instance.hrid = body.hrid;
             body.administrativeNotes = [notes.adminNote];
             body.notes = [
