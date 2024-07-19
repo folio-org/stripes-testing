@@ -539,7 +539,7 @@ export default {
 
   uploadExportedFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
-    cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
+    cy.get('div[class^="progressInfo-"]', getLongDelay()).should('not.exist');
   },
 
   getLinkToAuthority: (title) => cy.then(() => Button(title).href()),
