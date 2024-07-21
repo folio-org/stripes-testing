@@ -10,7 +10,6 @@ import {
   Section,
   Select,
   SelectionList,
-  SelectionOption,
   TextArea,
   TextField,
 } from '../../../../../../interactors';
@@ -79,7 +78,7 @@ function fillExistingRecordSections({ existingRecordFields }) {
 function fillName(profileName) {
   cy.do(nameTextField.fillIn(profileName));
   // wait for data to be loaded
-  cy.wait(10000);
+  cy.wait(7000);
 }
 
 function selectExistingRecordType(existingRecordType) {
@@ -238,11 +237,7 @@ export default {
         fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
       }
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
-      cy.do(criterionValueTypeButton.click());
-      cy.wait(1000);
-      cy.do(criterionValueTypeList.find(SelectionOption(instanceOption)).click());
-      // TODO need to wait until profile will be filled
-      cy.wait(1500);
+      selectExistingRecordField(instanceOption);
     } else if (existingRecordType === 'MARC_AUTHORITY') {
       selectExistingRecordType(existingRecordType);
       selectIncomingRecordType('MARC Authority');
@@ -267,11 +262,7 @@ export default {
         fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
       }
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
-      cy.do(criterionValueTypeButton.click());
-      cy.wait(1000);
-      cy.do(criterionValueTypeList.find(SelectionOption(holdingsOption)).click());
-      // TODO need to wait until profile will be filled
-      cy.wait(1500);
+      selectExistingRecordField(holdingsOption);
     } else {
       cy.do(matchProfileDetailsAccordion.find(Button({ dataId: 'ITEM' })).click());
       fillIncomingRecordFields(incomingRecordFields.field, 'field');
@@ -282,11 +273,7 @@ export default {
         fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
       }
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
-      cy.do(criterionValueTypeButton.click());
-      cy.wait(1000);
-      cy.do(criterionValueTypeList.find(SelectionOption(itemOption)).click());
-      // TODO need to wait until profile will be filled
-      cy.wait(1500);
+      selectExistingRecordField(itemOption);
     }
   },
 
