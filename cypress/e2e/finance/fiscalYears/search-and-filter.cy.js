@@ -1,9 +1,13 @@
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../../support/fragments/topMenu';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('ui-finance: Fiscal Year', () => {
-  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+  const defaultFiscalYear = {
+    ...FiscalYears.defaultUiFiscalYear,
+    name: `1autotest_year_${getRandomPostfix()}`,
+  };
 
   before(() => {
     cy.getAdminToken();
