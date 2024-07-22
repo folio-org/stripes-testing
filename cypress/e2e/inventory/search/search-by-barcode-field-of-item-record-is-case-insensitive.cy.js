@@ -6,53 +6,35 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import { getTestEntityValue, randomFourDigitNumber } from '../../../support/utils/stringTools';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     describe('Case-insensitive checks', () => {
       const testData = {
         allOption: 'All',
-        querySearchOption: 'Query search',
-        searchResults: [
-          "C466080 Instance 1, Holding's Electronic access lower case test",
-          "C466080 Instance 2, Holding's Electronic access lower case test",
-        ],
+        barcodeOption: 'Barcode',
         instances: [
           {
-            title: "C466080 Instance 1, Holding's Electronic access lower case test",
-            uri: 'www.holdingscase.com/test/uri',
-            linkText: 'holdings link text case test',
-            materialsSpecification: 'holdings materials case test',
-            urlPublicNote: 'holdings public note case test',
-            barcode: `466080${randomFourDigitNumber()}`,
+            title: "C466081 Instance 1, Item's barcode lower case",
+            barcode: 'CSC001',
           },
           {
-            title: "C466080 Instance 2, Holding's Electronic access lower case test",
-            uri: 'WWW.HOLDINGSCASE.COM/TEST/URI',
-            linkText: 'HOLDINGS LINK TEXT CASE TEST',
-            materialsSpecification: 'HOLDINGS MATERIALS CASE TEST',
-            urlPublicNote: 'HOLDINGS PUBLIC NOTE CASE TEST',
-            barcode: `466080${randomFourDigitNumber()}`,
+            title: "C466081 Instance 2, Item's barcode number UPPER case",
+            barcode: 'csc0011',
           },
         ],
-        valueProp: ['uri', 'linkText', 'materialsSpecification', 'urlPublicNote'],
+        searchValues: ['CSC001*', 'csc001*'],
         userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
       };
 
-      const search = (option, value, isHoldingElectronic = false) => {
-        testData.instances.forEach((instance) => {
-          InventorySearchAndFilter.selectSearchOptions(option, '');
-          InventorySearchAndFilter.executeSearch(
-            isHoldingElectronic
-              ? `holdings.electronicAccess any "${instance[value]}"`
-              : instance[value],
-          );
-          testData.searchResults.forEach((expectedResult) => {
-            InventorySearchAndFilter.verifySearchResult(expectedResult);
-          });
-          InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+      const search = (option, value) => {
+        InventorySearchAndFilter.selectSearchOptions(option, '');
+        InventorySearchAndFilter.executeSearch(value);
+        testData.instances.forEach((expectedResult) => {
+          InventorySearchAndFilter.verifySearchResult(expectedResult.title);
         });
+        InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
       };
 
       before('Create user, test data', () => {
@@ -87,14 +69,6 @@ describe('Inventory', () => {
                   {
                     holdingsTypeId: testData.holdingTypeId,
                     permanentLocationId: testData.defaultLocation.id,
-                    electronicAccess: [
-                      {
-                        uri: instance.uri,
-                        linkText: instance.linkText,
-                        materialsSpecification: instance.materialsSpecification,
-                        publicNote: instance.urlPublicNote,
-                      },
-                    ],
                   },
                 ],
                 items: [
@@ -131,16 +105,17 @@ describe('Inventory', () => {
       });
 
       it(
-        'C466080 Search by "Electronic access" field of "Holdings" record is case-insensitive (spitfire)',
+        'C466081 Search by "Barcode" field of "Item" record is case-insensitive (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          InventorySearchAndFilter.switchToHoldings();
-          InventorySearchAndFilter.holdingsTabIsDefault();
-          testData.valueProp.forEach((value) => {
-            search(testData.allOption, value);
+          InventorySearchAndFilter.switchToItem();
+          InventorySearchAndFilter.itemTabIsDefault();
+
+          testData.searchValues.forEach((value) => {
+            search(testData.barcodeOption, value);
           });
-          testData.valueProp.forEach((value) => {
-            search(testData.querySearchOption, value, true);
+          testData.searchValues.forEach((value) => {
+            search(testData.allOption, value);
           });
         },
       );
