@@ -153,6 +153,23 @@ export default {
     InteractorsTools.checkCalloutMessage('The piece  was successfully received');
   },
 
+  editDisplayOnHoldingAndAddDisplayToPublicPiece() {
+    cy.do(editPieceModal.find(Checkbox('Display on holding')).click());
+    cy.expect(editPieceModal.find(Checkbox('Display to public')).exists());
+    cy.do(editPieceModal.find(Checkbox('Display to public')).click());
+    cy.do(Button('Save & close').click());
+    cy.wait(1000);
+    InteractorsTools.checkCalloutMessage('The piece was successfully saved');
+  },
+
+  receiveWithoutDisplayOnHoldingPiece(displaySummary) {
+    cy.do(editPieceModal.find(TextField('Display summary')).fillIn(displaySummary));
+    this.openDropDownInEditPieceModal();
+    cy.do(Button('Quick receive').click());
+    cy.wait(1000);
+    InteractorsTools.checkCalloutMessage('The piece  was successfully received');
+  },
+
   addPieceProcess: (caption, enumeration) => {
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([

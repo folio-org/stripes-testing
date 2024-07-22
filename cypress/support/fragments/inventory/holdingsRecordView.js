@@ -307,4 +307,10 @@ export default {
 
     return checkboxElement.checked === expectedState;
   },
+
+  checkAbsentRecordInReceivingHistory(record) {
+    cy.expect(
+      Section({ id: 'receiving-history-accordion' }).find(MultiColumnListCell(record)).absent(),
+    );
+  },
 };
