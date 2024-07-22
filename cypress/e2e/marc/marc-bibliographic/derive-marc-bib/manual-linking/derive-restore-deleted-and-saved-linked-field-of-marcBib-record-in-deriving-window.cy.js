@@ -53,7 +53,7 @@ describe('MARC', () => {
         ];
 
         const linkingTagAndValue = {
-          rowIndex: 33,
+          rowIndex: 32,
           value: 'C366577 Coates, Ta-Nehisi',
           tag: 100,
         };
