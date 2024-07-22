@@ -426,6 +426,7 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                 },
               );
 
+              cy.wait(5000);
               getParentJobExecutionId().then((jobExecutionResponse) => {
                 const parentJobExecutionId = jobExecutionResponse.body.jobExecutions.find(
                   (exec) => exec.sourcePath === sourcePath,
