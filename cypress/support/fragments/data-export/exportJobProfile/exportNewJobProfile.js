@@ -19,10 +19,9 @@ const selectMappingProfileDropdown = Select({ name: 'mappingProfileId' });
 
 export default {
   fillJobProfile: (profileName, mappingProfileName) => {
-    cy.do([
-      TextField({ id: 'job-profile-name' }).fillIn(profileName),
-      Select({ id: 'mapping-profile-id' }).choose(mappingProfileName),
-    ]);
+    cy.do(TextField({ id: 'job-profile-name' }).fillIn(profileName));
+    cy.wait(2000);
+    cy.do(Select({ name: 'mappingProfileId' }).choose(mappingProfileName));
   },
 
   saveJobProfile: () => {

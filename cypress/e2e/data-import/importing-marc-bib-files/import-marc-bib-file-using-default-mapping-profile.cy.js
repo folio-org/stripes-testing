@@ -47,7 +47,6 @@ describe('Data Import', () => {
         DataImport.checkIsLandingPageOpened();
         Logs.checkFileIsRunning(marcFileName);
         cy.wait(120000);
-        Logs.waitFileIsImported(marcFileName);
         Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
       },
     );
