@@ -704,6 +704,14 @@ export default {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).absent());
   },
 
+  verifyAreYouSureColumnTitlesDoNotInclude(title) {
+    cy.expect(areYouSureForm.find(MultiColumnListHeader(title)).absent());
+  },
+
+  verifyChangedColumnTitlesDoNotInclude(title) {
+    cy.expect(changesAccordion.find(MultiColumnListHeader(title)).absent());
+  },
+
   verifyPaneRecordsCount(value) {
     cy.expect(bulkEditPane.find(HTML(`${value} records match`)).exists());
   },
