@@ -141,6 +141,18 @@ export default {
     InteractorsTools.checkCalloutMessage('The piece was successfully saved');
   },
 
+  receiveDisplayOnHoldingPiece(displaySummary) {
+    cy.do([
+      editPieceModal.find(TextField('Display summary')).fillIn(displaySummary),
+      editPieceModal.find(Checkbox('Display on holding')).click(),
+    ]);
+    cy.expect(editPieceModal.find(Checkbox('Display to public')).exists());
+    this.openDropDownInEditPieceModal();
+    cy.do(Button('Quick receive').click());
+    cy.wait(1000);
+    InteractorsTools.checkCalloutMessage('The piece  was successfully received');
+  },
+
   addPieceProcess: (caption, enumeration) => {
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
