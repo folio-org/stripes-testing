@@ -123,11 +123,11 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.holdingHRID);
+        BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Note', 'Holdings temporary location');
-        BulkEditSearchPane.verifySpecificItemsMatched(holdingsNote);
+        BulkEditSearchPane.verifySpecificItemsMatched(item.holdingHRID);
 
         const newLocation = 'Annex';
-        BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.replaceTemporaryLocation(newLocation, 'holdings');
         BulkEditActions.confirmChanges();

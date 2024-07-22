@@ -92,7 +92,7 @@ describe('bulk-edit', () => {
 
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [
-          `,Action note;${notes.action};false|Electronic bookplate;${notes.elbook};false,`,
+          `,${notes.action},,,${notes.elbook},`,
         ]);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Action note',
@@ -107,18 +107,14 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyChangesInAreYouSureForm('Action note', ['']);
         BulkEditActions.verifyChangesInAreYouSureForm('Note', [notes.note]);
         BulkEditActions.downloadPreview();
-        ExportFile.verifyFileIncludes(previewFileName, [
-          `,Electronic bookplate;${notes.elbook};false|Note;${notes.note};false,`,
-        ]);
+        ExportFile.verifyFileIncludes(previewFileName, [`,${notes.elbook},${notes.note},`]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyExactChangesUnderColumns('Action note', '');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Note', notes.note);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `,Electronic bookplate;${notes.elbook};false|Note;${notes.note};false,`,
-        ]);
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [`,${notes.elbook},${notes.note},`]);
 
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToHoldings();
