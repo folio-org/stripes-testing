@@ -159,7 +159,7 @@ export default {
     if (rowCount === 0) {
       cy.expect(MultiColumnList().absent());
     } else {
-      cy.expect(MultiColumnList({ id: 'list-data-import' }).has({ rowCount }));
+      cy.expect(dataImportList.has({ rowCount }));
     }
   },
 
@@ -278,7 +278,7 @@ export default {
   checkByDate({ from, end }) {
     cy.wait(2000);
     const queryString = UrlParams.getDateQueryString({ from, end });
-
+    cy.wait(2000);
     return this.getNumberOfMatchedJobs(queryString).then((count) => {
       // ensure MultiColumnList is filtered by Date
       this.checkRowsCount(count);
@@ -419,11 +419,7 @@ export default {
 
   viewAllIsOpened: () => {
     cy.expect(searchFilterPane.exists());
-    cy.expect(
-      Pane('Logs')
-        .find(MultiColumnList({ id: 'list-data-import' }))
-        .exists(),
-    );
+    cy.expect(Pane('Logs').find(dataImportList).exists());
   },
 
   selectAllLogs: () => {
@@ -461,11 +457,7 @@ export default {
   openFileDetails: (fileName) => {
     const newFileName = fileName.replace('.mrc', '');
 
-    cy.do(
-      MultiColumnList({ id: 'list-data-import' })
-        .find(Link(including(newFileName)))
-        .click(),
-    );
+    cy.do(dataImportList.find(Link(including(newFileName))).click());
     // TODO need to wait until page is uploaded
     cy.wait(3500);
   },
@@ -609,10 +601,15 @@ export default {
 
   verifySearchResult(fileName) {
     const newFileName = fileName.replace('.mrc', '');
-    cy.expect(
-      logsResultPane
-        .find(MultiColumnListCell({ row: 0, content: including(newFileName) }))
-        .exists(),
+
+    cy.do(
+      MultiColumnListCell({ content: including(newFileName) }).perform((element) => {
+        const rowNumber = element.parentElement.getAttribute('data-row-inner');
+
+        cy.expect(
+          dataImportList.find(MultiColumnListRow({ indexRow: `row-${rowNumber}` })).exists(),
+        );
+      }),
     );
   },
   verifyJobStatus: (fileName, status) => {
@@ -623,7 +620,7 @@ export default {
         const rowNumber = element.parentElement.getAttribute('data-row-inner');
 
         cy.expect(
-          MultiColumnList({ id: 'list-data-import' })
+          dataImportList
             .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
             .find(MultiColumnListCell({ content: status }))
             .exists(),
