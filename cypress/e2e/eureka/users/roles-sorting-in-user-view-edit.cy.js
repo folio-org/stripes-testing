@@ -1,15 +1,14 @@
-/* eslint-disable no-unused-vars */
 import Users from '../../../support/fragments/users/users';
 import UsersCard from '../../../support/fragments/users/usersCard';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import TopMenu from '../../../support/fragments/topMenu';
 import { randomizeArray } from '../../../support/utils/arrays';
+import UserEdit from '../../../support/fragments/users/userEdit';
 
 describe('Eureka', () => {
   describe('Users', () => {
     const testData = {
-      allRoleNames: [
+      allRoleNamesSorted: [
         `!role ${getRandomPostfix()}`,
         `0 role ${getRandomPostfix()}`,
         `0_role ${getRandomPostfix()}`,
@@ -24,9 +23,10 @@ describe('Eureka', () => {
       ],
     };
 
-    const originalRoles = randomizeArray(testData.allRoleNames).filter((role) => {
-      return !role.includes('0_role') && !role.includes('User role C');
+    const originalRoleNames = randomizeArray(testData.allRoleNamesSorted).filter((role) => {
+      return role !== testData.allRoleNamesSorted[2] && role !== testData.allRoleNamesSorted[9];
     });
+    const roleToRemove = testData.allRoleNamesSorted[6];
 
     const capabSetsForTestUser = [
       { type: 'Data', resource: 'Roles Users', action: 'Manage' },
@@ -54,7 +54,7 @@ describe('Eureka', () => {
         testData.userA = createdUserAProperties;
         if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, []);
       });
-      testData.allRoleNames.forEach((roleName) => {
+      testData.allRoleNamesSorted.forEach((roleName) => {
         cy.createAuthorizationRoleApi(roleName).then((role) => {
           testData[roleName] = {};
           testData[roleName].id = role.id;
@@ -64,7 +64,7 @@ describe('Eureka', () => {
 
     before('Assign roles, login', () => {
       cy.getAdminToken();
-      const originalRoleIds = originalRoles.map((roleName) => testData[roleName].id);
+      const originalRoleIds = originalRoleNames.map((roleName) => testData[roleName].id);
       if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, originalRoleIds);
       else cy.addRolesToNewUserApi(testData.userA.userId, originalRoleIds);
       cy.login(testData.tempUser.username, testData.tempUser.password, {
@@ -86,66 +86,39 @@ describe('Eureka', () => {
       'C476793 Roles rows are sorted when viewing/editing a user (eureka)',
       { tags: ['criticalPath', 'eureka'] },
       () => {
-        // cy.reload();
-        // AuthorizationRoles.waitContentLoading();
-        // AuthorizationRoles.searchRole(testData.roleAName);
-        // AuthorizationRoles.clickOnRoleName(testData.roleAName);
-        // AuthorizationRoles.verifyRoleViewPane(testData.roleAName);
-        // AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
-        // AuthorizationRoles.clickAssignUsersButton();
-        // AuthorizationRoles.selectUserInModal(testData.userA.username, false);
-        // AuthorizationRoles.clickSaveInAssignModal();
-        // AuthorizationRoles.verifyAssignedUser(
-        //   testData.userA.lastName,
-        //   testData.userA.firstName,
-        //   false,
-        // );
-
-        // cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleCId}`);
-        // AuthorizationRoles.verifyRoleViewPane(testData.roleCName);
-        // AuthorizationRoles.verifyAssignedUser(
-        //   testData.userA.lastName,
-        //   testData.userA.firstName,
-        //   false,
-        // );
-        // AuthorizationRoles.clickAssignUsersButton();
-        // AuthorizationRoles.selectUserInModal(testData.userA.username);
-        // AuthorizationRoles.clickSaveInAssignModal();
-        // AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
-
-        UsersCard.verifyUserRolesCounter(originalRoles.length + '');
+        UsersCard.verifyUserRolesCounter(originalRoleNames.length + '');
         UsersCard.clickUserRolesAccordion();
-        UsersCard.verifyUserRoleNames(originalRoles);
+        UsersCard.verifyUserRoleNamesOrdered(originalRoleNames);
 
-        // cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleBId}`);
-        // AuthorizationRoles.verifyRoleViewPane(testData.roleBName);
-        // AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
-        // AuthorizationRoles.clickAssignUsersButton();
-        // AuthorizationRoles.selectUserInModal(testData.userA.username, false);
-        // AuthorizationRoles.clickSaveInAssignModal();
-        // AuthorizationRoles.verifyAssignedUser(
-        //   testData.userA.lastName,
-        //   testData.userA.firstName,
-        //   false,
-        // );
+        UserEdit.openEdit();
+        UserEdit.verifyUserRolesCounter(originalRoleNames.length + '');
+        UserEdit.clickUserRolesAccordion();
+        UserEdit.verifyUserRoleNames(originalRoleNames);
+        UserEdit.verifyUserRoleNamesOrdered(originalRoleNames);
+        UserEdit.verifyUserRolesRowsCount(originalRoleNames.length);
+        UserEdit.removeOneRole(roleToRemove);
+        UserEdit.verifyUserRoleNamesOrdered(
+          originalRoleNames.filter((roleName) => roleName !== roleToRemove),
+        );
+        UserEdit.verifyUserRolesRowsCount(originalRoleNames.length - 1);
 
-        // cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleCId}`);
-        // AuthorizationRoles.verifyRoleViewPane(testData.roleCName);
-        // AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
-        // AuthorizationRoles.clickAssignUsersButton();
-        // AuthorizationRoles.selectUserInModal(testData.userA.username, false);
-        // AuthorizationRoles.clickSaveInAssignModal();
-        // AuthorizationRoles.verifyAssignedUser(
-        //   testData.userA.lastName,
-        //   testData.userA.firstName,
-        //   false,
-        // );
+        UserEdit.clickAddUserRolesButton();
+        UserEdit.verifySelectRolesModal();
+        UserEdit.selectRoleInModal(testData.allRoleNamesSorted[9]);
+        UserEdit.selectRoleInModal(testData.allRoleNamesSorted[2]);
+        UserEdit.saveAndCloseRolesModal();
+        UserEdit.verifyUserRoleNamesOrdered(
+          testData.allRoleNamesSorted.filter((roleName) => roleName !== roleToRemove),
+        );
+        UserEdit.verifyUserRolesRowsCount(testData.allRoleNamesSorted.length - 1);
 
-        // cy.visit(`${TopMenu.usersPath}/preview/${testData.userA.userId}`);
-        // UsersCard.waitLoading();
-        // UsersCard.verifyUserRolesCounter('0');
-        // UsersCard.clickUserRolesAccordion();
-        // UsersCard.verifyUserRolesAccordionEmpty();
+        UserEdit.saveAndClose();
+        UsersCard.waitLoading();
+        UsersCard.verifyUserRolesCounter(testData.allRoleNamesSorted.length - 1 + '');
+        UsersCard.clickUserRolesAccordion();
+        UsersCard.verifyUserRoleNamesOrdered(
+          testData.allRoleNamesSorted.filter((roleName) => roleName !== roleToRemove),
+        );
       },
     );
   });
