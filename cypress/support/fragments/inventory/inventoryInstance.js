@@ -819,6 +819,10 @@ export default {
     return HoldingsRecordView;
   },
 
+  viewHoldings: () => {
+    cy.do(viewHoldingsButton.click());
+  },
+
   expandConsortiaHoldings() {
     cy.wait(2000);
     cy.do(consortiaHoldingsAccordion.clickHeader());
