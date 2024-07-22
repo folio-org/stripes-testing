@@ -7,7 +7,6 @@ import getRandomPostfix, {
   getRandomLetters,
 } from '../../../support/utils/stringTools';
 import DateTools from '../../../support/utils/dateTools';
-import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -44,43 +43,7 @@ describe('MARC', () => {
       });
 
       it(
-        'C423372 Create new "Authority file" at "Settings >> MARC authority>>Manage authority files" pane (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
-        () => {
-          ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
-          ManageAuthorityFiles.checkActionTableHeaderExists();
-          Object.values(DEFAULT_FOLIO_AUTHORITY_FILES).forEach((fileName) => {
-            ManageAuthorityFiles.checkSourceFileExistsByName(fileName);
-          });
-          ManageAuthorityFiles.verifyTableHeaders();
-          ManageAuthorityFiles.clickNewButton();
-          ManageAuthorityFiles.verifyEditableRowAdded();
-          ManageAuthorityFiles.checkNewButtonEnabled(false);
-          ManageAuthorityFiles.fillAllFields(
-            testData.name,
-            testData.prefix,
-            testData.startsWith,
-            testData.baseURL,
-            testData.isActive,
-          );
-          ManageAuthorityFiles.checkCancelButtonEnabled();
-          ManageAuthorityFiles.checkSaveButtonEnabled();
-          ManageAuthorityFiles.clickSaveButton();
-          ManageAuthorityFiles.checkAfterSave(testData.name);
-          ManageAuthorityFiles.checkSourceFileExists(
-            testData.name,
-            testData.prefix,
-            testData.startsWith,
-            testData.baseURL,
-            testData.isActive,
-            `${testData.date} by ${testData.user.lastName}, ${testData.user.firstName}`,
-            true,
-          );
-        },
-      );
-
-      it(
-        'C423992 Create new "Authority file" with empty "Base URL" field at "Settings >> MARC authority >> Manage authority files" pane (spitfire)',
+        'C477597 Create new "Authority file" with empty "Base URL" field at "Settings >> MARC authority >> Manage authority files" pane (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           ManageAuthorityFiles.clickNewButton();

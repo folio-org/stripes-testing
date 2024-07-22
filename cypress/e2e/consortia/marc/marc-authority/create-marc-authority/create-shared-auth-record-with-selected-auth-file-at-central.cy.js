@@ -80,7 +80,7 @@ describe('MARC', () => {
         Users.deleteViaApi(users.userProperties.userId);
         MarcAuthority.deleteViaAPI(testData.authorityId);
         ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
-        cy.deleteAuthoritySourceFileViaAPI(testData.authSourceID);
+        cy.deleteAuthoritySourceFileViaAPI(testData.authSourceID, true);
       });
 
       it(
@@ -114,7 +114,7 @@ describe('MARC', () => {
 
           MarcAuthorities.chooseAuthoritySourceOption(testData.sourceName);
           MarcAuthorities.checkResultsSelectedByAuthoritySource([testData.sourceName]);
-          MarcAuthorities.selectTitle(testData.marcValue);
+          MarcAuthorities.selectItemTitleIncluding(testData.marcValue);
           MarcAuthorities.checkAfterSearch(
             testData.AUTHORIZED,
             `${testData.sharedIcon}${testData.marcValue}`,

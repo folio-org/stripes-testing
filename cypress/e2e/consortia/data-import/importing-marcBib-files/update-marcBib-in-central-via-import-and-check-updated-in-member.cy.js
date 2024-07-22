@@ -169,7 +169,6 @@ describe('Data Import', () => {
       cy.setTenant(Affiliations.College);
       InventoryHoldings.deleteHoldingRecordViaApi(testData.holding.id);
       Locations.deleteViaApi(testData.collegeLocation);
-      InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
       cy.resetTenant();
       InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);

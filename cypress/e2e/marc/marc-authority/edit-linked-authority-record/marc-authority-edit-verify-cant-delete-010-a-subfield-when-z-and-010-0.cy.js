@@ -64,14 +64,14 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         ]).then((createdUserProperties) => {
           userData = createdUserProperties;
-
+          // make sure there are no duplicate records in the system
           InventoryInstances.getInstancesViaApi({
             limit: 100,
             query: `title="${testData.instanceTitle}"`,
           }).then((instances) => {
             if (instances) {
               instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
+                InventoryInstance.deleteInstanceViaApi(id, true);
               });
             }
           });

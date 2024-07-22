@@ -39,7 +39,7 @@ describe('Inventory', () => {
             testData.instanceId = response[0].instance.id;
 
             InventoryInstance.shareInstanceViaApi(
-              response[0].instance.id,
+              testData.instanceId,
               testData.consortiaId,
               Affiliations.College,
               Affiliations.Consortia,

@@ -17,6 +17,7 @@ describe('Data Import', () => {
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const uniquePartOfFileName = getRandomPostfix();
     const uniqueFileName = `C380637 autotestFileName${uniquePartOfFileName}.mrc`;
+    const uniqueFileNameForSearch = `C380637 autotestFileName${uniquePartOfFileName}_1.mrc`;
 
     before('Create test data and login', () => {
       cy.getAdminToken();
@@ -50,9 +51,9 @@ describe('Data Import', () => {
         JobProfiles.checkListOfExistingProfilesIsDisplayed();
         JobProfiles.search(jobProfileToRun);
         JobProfileView.verifyJobProfileOpened();
-        JobProfileView.verifyJobsUsingThisProfileSection(uniqueFileName);
-        JobProfileView.openLogDetailsPageView(uniqueFileName);
-        FileDetails.verifyLogDetailsPageIsOpened(uniqueFileName);
+        JobProfileView.verifyJobsUsingThisProfileSection(uniqueFileNameForSearch);
+        JobProfileView.openLogDetailsPageView(uniqueFileNameForSearch);
+        FileDetails.verifyLogDetailsPageIsOpened(uniqueFileNameForSearch);
       },
     );
   });

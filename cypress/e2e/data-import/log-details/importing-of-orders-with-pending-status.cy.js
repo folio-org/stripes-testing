@@ -169,7 +169,6 @@ describe('Data Import', () => {
           );
           FileDetails.verifyStatusHasLinkToOrder(order.rowNumber);
           FileDetails.openOrder(RECORD_STATUSES.CREATED, order.rowNumber);
-          OrderLines.waitLoading();
           OrderLines.verifyOrderTitle(order.title);
           OrderLines.getAssignedPOLNumber().then((initialNumber) => {
             const orderNumber = initialNumber.replace(/-\d/, '');

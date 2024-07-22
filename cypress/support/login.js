@@ -1,6 +1,7 @@
 import localforage from 'localforage';
 
-import { Button, Dropdown, TextField, Heading, including, TextInput } from '../../interactors';
+import { Button, Dropdown, TextField, Heading, TextInput, including } from '../../interactors';
+import { adminUsernames } from './dictionary/affiliations';
 
 Cypress.Commands.add(
   'login',
@@ -63,16 +64,13 @@ Cypress.Commands.add('loginAsAdmin', (visitPath) => {
 });
 
 Cypress.Commands.add('loginAsCollegeAdmin', (visitPath) => {
-  cy.login('ECS0001Admin', Cypress.env('diku_password'), visitPath);
-  cy.getAdminToken();
+  cy.login(adminUsernames.college, Cypress.env('diku_password'), visitPath);
 });
 
 Cypress.Commands.add('loginAsUniversityAdmin', (visitPath) => {
-  cy.login('ECS0005Admin', Cypress.env('diku_password'), visitPath);
-  cy.getAdminToken();
+  cy.login(adminUsernames.university, Cypress.env('diku_password'), visitPath);
 });
 
 Cypress.Commands.add('loginAsConsortiumAdmin', (visitPath) => {
-  cy.login('consortium_admin', Cypress.env('diku_password'), visitPath);
-  cy.getAdminToken();
+  cy.login('ecs_admin', Cypress.env('diku_password'), visitPath);
 });

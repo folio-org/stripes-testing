@@ -83,7 +83,7 @@ describe('Orders: Receiving and Check-in', () => {
       Receiving.selectPiece(displaySummary);
       Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePiece(enumeration);
-      Receiving.selectInstanceInReceive(orderLineTitle);
+      Receiving.clickTitleInstanceLink();
       // inventory part
       InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.findRowAndClickLink(copyNumber);

@@ -221,7 +221,7 @@ export const RECEIVING_WORKFLOW_NAMES = {
 };
 
 export const ACQUISITION_METHOD_NAMES = {
-  APPROVAL_PLAN: 'Approval plan',
+  APPROVAL_PLAN: 'Approval Plan',
   DDA: 'Demand driven acquisitions (DDA)',
   DEPOSITORY: 'Depository',
   EBA: 'Evidence based acquisitions (EBA)',
@@ -555,6 +555,44 @@ export const INVENTORY_LDR_FIELD_BLVL_DROPDOWN = {
   I: 'i - Integrating resource',
   M: 'm - Monograph/Item',
   S: 's - Serial',
+};
+
+export const INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES = {
+  DTST: 'DtSt',
+  DATE1: 'Date 1',
+  DATE2: 'Date 2',
+  CONF: 'Conf',
+  FEST: 'Fest',
+  INDX: 'Indx',
+  AUDN: 'Audn',
+  LITF: 'LitF',
+  ILLS: 'Ills',
+  COMP: 'Comp',
+  CTRY: 'Ctry',
+  CONT: 'Cont',
+  GPUB: 'GPub',
+  BIOG: 'Biog',
+  LANG: 'Lang',
+  MREC: 'MRec',
+  PART: 'Part',
+  ACCM: 'AccM',
+  LTXT: 'LTxt',
+  TRAR: 'TrAr',
+  FREQ: 'Freq',
+  SRTP: 'SrTp',
+  ORIG: 'Orig',
+  ENTW: 'EntW',
+  ALPH: 'Alph',
+  TIME: 'Time',
+  FMUS: 'FMus',
+  FORM: 'Form',
+  CRTP: 'CrTp',
+  TMAT: 'TMat',
+  TECH: 'Tech',
+  FILE: 'File',
+  REGL: 'Regl',
+  SL: 'S/L',
+  SRCE: 'Srce',
 };
 
 export const INVENTORY_008_FIELD_DROPDOWNS_NAMES = {

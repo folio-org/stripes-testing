@@ -22,7 +22,7 @@ describe.skip('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      for (let i = 0; i < 26; i++) {
+      for (let i = 0; i < 4; i++) {
         const fileNameToUpload = `C358137 autotestFile${getRandomPostfix()}.mrc`;
 
         DataImport.uploadFileViaApi(filePathToUpload, fileNameToUpload, jobProfileToRun).then(
@@ -79,10 +79,12 @@ describe.skip('Data Import', () => {
         DataImport.getLogsHrIdsFromUI(numberOfLogsToDelete).then((logsHrIdsToBeDeleted) => {
           // verify that user can cancel deletion of logs
           DataImport.selectAllLogs();
+          cy.wait(2000);
           DataImport.verifyAllLogsCheckedStatus({ logsCount: numberOfLogsPerPage, checked: true });
           DataImport.verifyLogsPaneSubtitleExist(numberOfLogsPerPage);
           DataImport.openDeleteImportLogsModal();
           DataImport.cancelDeleteImportLogs();
+          cy.wait(2000);
           DataImport.verifyAllLogsCheckedStatus({ logsCount: numberOfLogsPerPage, checked: false });
           DataImport.verifyLogsPaneSubtitleAbsent();
           DataImport.verifyDeleteLogsButtonDisabled();

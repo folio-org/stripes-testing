@@ -31,7 +31,6 @@ import Locations from '../../../../support/fragments/settings/tenant/location-se
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import { getLongDelay } from '../../../../support/utils/cypressTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
@@ -141,12 +140,12 @@ describe('Data Import', () => {
             });
           },
         );
-        // adding Holdings for shared Instance
         const collegeLocationData = Locations.getDefaultLocation({
           servicePointId: ServicePoints.getDefaultServicePoint().id,
         }).location;
         Locations.createViaApi(collegeLocationData).then((location) => {
           testData.collegeLocation = location;
+          // adding Holdings for shared Instance
           InventoryHoldings.createHoldingRecordViaApi({
             instanceId: testData.sharedInstanceId,
             permanentLocationId: testData.collegeLocation.id,
@@ -182,11 +181,10 @@ describe('Data Import', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId[0]);
+      InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
       cy.setTenant(Affiliations.College);
       InventoryHoldings.deleteHoldingRecordViaApi(testData.holding.id);
       Locations.deleteViaApi(testData.collegeLocation);
-      InventoryInstance.deleteInstanceViaApi(testData.instanceIdOnMemberTenant);
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -202,28 +200,25 @@ describe('Data Import', () => {
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.verifySelectedRecords(1);
         InventorySearchAndFilter.exportInstanceAsMarc();
-        cy.intercept('/data-export/quick-export').as('getHrid');
-        cy.wait('@getHrid', getLongDelay()).then((req) => {
-          const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
+        cy.setTenant(Affiliations.College).then(() => {
           // download exported marc file
-          cy.setTenant(Affiliations.College).then(() => {
-            // use cy.getToken function to get toket for current tenant
-            cy.visit(TopMenu.dataExportPath);
-            ExportFile.downloadExportedMarcFileWithRecordHrid(
-              expectedRecordHrid,
+          cy.visit(TopMenu.dataExportPath);
+          cy.wait(1000);
+          ExportFile.getExportedFileNameViaApi().then((name) => {
+            testData.marcFile.exportedFileName = name;
+
+            ExportFile.downloadExportedMarcFile(testData.marcFile.exportedFileName);
+            // change exported file
+            DataImport.replace999SubfieldsInPreupdatedFile(
               testData.marcFile.exportedFileName,
+              testData.marcFile.marcFileForModify,
+              testData.marcFile.modifiedMarcFile,
             );
-            FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
           });
         });
+        cy.resetTenant();
 
-        // change exported file
-        DataImport.replace999SubfieldsInPreupdatedFile(
-          testData.marcFile.exportedFileName,
-          testData.marcFile.marcFileForModify,
-          testData.marcFile.modifiedMarcFile,
-        );
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();

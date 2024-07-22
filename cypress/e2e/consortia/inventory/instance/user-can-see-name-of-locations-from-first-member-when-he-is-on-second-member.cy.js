@@ -9,11 +9,13 @@ import ItemRecordView from '../../../../support/fragments/inventory/item/itemRec
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
     let user;
     const testData = {
+      instanceTitle: `C423392 Instance title${getRandomPostfix()}`,
       itemBarcode: uuid(),
     };
 
@@ -32,6 +34,7 @@ describe('Inventory', () => {
           cy.assignPermissionsToExistingUser(user.userId, [Permissions.inventoryAll.gui]);
           cy.resetTenant();
 
+          cy.getAdminToken();
           cy.assignAffiliationToUser(Affiliations.University, user.userId);
           cy.setTenant(Affiliations.University);
           cy.assignPermissionsToExistingUser(user.userId, [Permissions.inventoryAll.gui]);
@@ -106,7 +109,8 @@ describe('Inventory', () => {
       'C423392 (CONSORTIA) User can see the the name of locations from Member tenant when he is on the second Member tenant (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet'] },
       () => {
-        InventoryInstances.searchByTitle(testData.instanceIds.instanceId);
+        cy.wait(5000);
+        InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.verifyConsortiaHoldingsAccordion();
         InventoryInstance.expandConsortiaHoldings();

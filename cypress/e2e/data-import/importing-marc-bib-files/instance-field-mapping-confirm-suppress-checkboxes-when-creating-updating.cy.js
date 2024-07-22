@@ -114,7 +114,7 @@ describe('Data Import', () => {
         Logs.waitFileIsImported(marcFileName);
         Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(marcFileName);
         FileDetails.openJsonScreen(instanceTitle);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.openMarcSrsTab();

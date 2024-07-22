@@ -91,7 +91,9 @@ describe('Create Item or Title level request', () => {
         expandAll: true,
         query: `"id"=="${instanceData.instanceId}"`,
       }).then((instance) => {
-        instanceData.instanceHRID = instance.hrid;
+        cy.wait(3000).then(() => {
+          instanceData.instanceHRID = instance.hrid;
+        });
       });
       Requests.createNewRequestViaApi({
         fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,

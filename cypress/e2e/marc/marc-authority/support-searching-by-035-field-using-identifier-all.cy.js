@@ -60,13 +60,14 @@ describe('MARC', () => {
         .then((userProperties) => {
           testData.user = userProperties;
           Object.values(testData.authRows).forEach((query) => {
+            // make sure there are no duplicate records in the system
             MarcAuthorities.getMarcAuthoritiesViaApi({
               limit: 100,
               query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
             }).then((authorities) => {
               if (authorities) {
                 authorities.forEach(({ id }) => {
-                  MarcAuthority.deleteViaAPI(id);
+                  MarcAuthority.deleteViaAPI(id, true);
                 });
               }
             });

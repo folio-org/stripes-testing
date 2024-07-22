@@ -184,7 +184,7 @@ describe('Data Import', () => {
           InventoryEditMarcRecord.deleteField(fieldNumber);
         });
         InventoryEditMarcRecord.editField('$a Louisiana $2 fast', '$a Louisiana $2 fast $5 amb');
-        InventoryEditMarcRecord.addField('920', 'This should be a protected field', 28);
+        InventoryEditMarcRecord.addField('920', 'This should be a protected field', 27);
         InventoryEditMarcRecord.saveAndClose();
         InventoryEditMarcRecord.confirmDeletingField();
         InventoryInstance.waitInstanceRecordViewOpened(instanceTitle);

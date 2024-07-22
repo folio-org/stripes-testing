@@ -43,7 +43,7 @@ describe('ui-invoices-settings: Export batch voucher', () => {
   };
 
   before(() => {
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
     });

@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -6,6 +7,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import SettingsJobProfile from '../../../support/fragments/settings/dataImport/jobProfiles/jobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
@@ -13,13 +15,13 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe.skip('Data Import', () => {
   describe('End to end scenarios', () => {
+    let jobProfileId;
     const startedDate = new Date();
     const completedDate = startedDate;
     // format date as YYYY-MM-DD
     const formattedStart = DateTools.getFormattedDate({ date: startedDate });
     // api endpoint expects completedDate increased by 1 day
     completedDate.setDate(completedDate.getDate() + 1);
-    const jobProfileId = '6eefa4c6-bbf7-4845-ad82-de7fc5abd0e3';
 
     const firstTestData = {
       instanceIds: [],
@@ -32,7 +34,14 @@ describe.skip('Data Import', () => {
       jobProfileName: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
     };
 
-    before('Create test data and login', () => {
+    before(() => {
+      cy.getAdminToken();
+      SettingsJobProfile.getJobProfilesViaApi({
+        query: `name="${secondTestData.jobProfileName}"`,
+      }).then(({ jobProfiles }) => {
+        jobProfileId = jobProfiles[0].id;
+      });
+
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.dataImportDeleteLogs.gui,
@@ -44,7 +53,7 @@ describe.skip('Data Import', () => {
           waiter: DataImport.waitLoading,
         });
         // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 3; i++) {
           const bibFileName = `C358136 autotestFileName${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFileViaApi(
@@ -68,7 +77,7 @@ describe.skip('Data Import', () => {
           waiter: DataImport.waitLoading,
         });
         // Log list should contain at least 30-35 import jobs
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 3; i++) {
           const authFileName = `C358136 autotestFileName${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFileViaApi(

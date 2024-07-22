@@ -52,6 +52,7 @@ const testData = {
 describe('Inventory', () => {
   describe('Subject Browse', () => {
     before('Create test data', () => {
+      // make sure there are no duplicate records in the system
       cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         InventoryInstances.getInstancesViaApi({
@@ -71,7 +72,7 @@ describe('Inventory', () => {
           }).then((authorities) => {
             if (authorities) {
               authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
+                MarcAuthority.deleteViaAPI(id, true);
               });
             }
           });

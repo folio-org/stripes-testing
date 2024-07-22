@@ -38,7 +38,6 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-
         Logs.openFileDetails(fileName);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InstanceRecordView.verifyInstancePaneExists();

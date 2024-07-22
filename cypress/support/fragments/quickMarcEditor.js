@@ -415,9 +415,9 @@ const holdingsLocationSaveButton = holdingsLocationModal.find(Button('Save and c
 const defaultValidLdr = '00000naa\\a2200000uu\\4500';
 const defaultValidHoldingsLdr = '00000nu\\\\\\2200000un\\4500';
 const defaultValid008Values = {
-  Type: '\\',
-  BLvl: '\\',
-  DtSt: '\\',
+  Type: 'a',
+  BLvl: 'a',
+  DtSt: '|',
   Date1: '\\\\\\\\',
   Date2: '\\\\\\\\',
   Ctry: '\\\\\\',
@@ -429,10 +429,10 @@ const defaultValid008Values = {
   Form: '\\',
   Cont: ['\\', '\\', '\\', '\\'],
   GPub: '\\',
-  Conf: '\\',
-  Fest: '\\',
-  Indx: '\\',
-  LitF: '\\',
+  Conf: '|',
+  Fest: '|',
+  Indx: '|',
+  LitF: '|',
   Biog: '\\',
 };
 const defaultValid008HoldingsValues = {
@@ -1660,6 +1660,10 @@ export default {
 
   checkButtonSaveAndCloseEnable() {
     cy.expect(saveAndCloseButtonEnabled.exists());
+  },
+
+  checkButtonSaveAndCloseDisabled() {
+    cy.expect(saveAndCloseButtonDisabled.exists());
   },
 
   checkDeleteButtonExist(rowIndex) {

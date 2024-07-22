@@ -1,4 +1,3 @@
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -24,36 +23,26 @@ describe('Data Import', () => {
     const numberOfLogsToDelete = '1';
     const filePath = 'oneMarcBib.mrc';
     const fileName = `C358534 autotestFile${getRandomPostfix()}.mrc`;
-    const mappingProfile = {
-      name: `C358534 instance mapping profile ${getRandomPostfix()}`,
-    };
-    const actionProfile = {
-      name: `C358534 instance action profile ${getRandomPostfix()}`,
-      action: 'CREATE',
-      folioRecordType: FOLIO_RECORD_TYPE.INSTANCE,
-    };
-    const jobProfile = {
-      name: `C358534 job profile ${getRandomPostfix()}`,
-    };
+    const mappingProfileName = `C358534 instance mapping profile ${getRandomPostfix()}`;
+    const actionProfileName = `C358534 instance action profile ${getRandomPostfix()}`;
+    const jobProfileName = `C358534 job profile ${getRandomPostfix()}`;
 
     before('create user and login', () => {
       cy.getAdminToken();
-      NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile).then(
+      NewFieldMappingProfile.createMappingProfileViaApi(mappingProfileName).then(
         (mappingProfileResponse) => {
           NewActionProfile.createActionProfileViaApi(
-            actionProfile,
+            actionProfileName,
             mappingProfileResponse.body.id,
           ).then((actionProfileResponse) => {
             NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
-              jobProfile,
+              jobProfileName,
               actionProfileResponse.body.id,
             );
           });
         },
       );
-
-      // upload a marc file for creating of the new instance
-      DataImport.uploadFileViaApi(filePath, fileName, jobProfile.name).then((response) => {
+      DataImport.uploadFileViaApi(filePath, fileName, jobProfileName).then((response) => {
         instanceId = response[0].instance.id;
       });
 
@@ -69,9 +58,9 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.name);
-        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
-        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfileName);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileName);
         Users.deleteViaApi(user.userId);
         InventoryInstance.deleteInstanceViaApi(instanceId);
       });
@@ -82,15 +71,15 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         Logs.openViewAllLogs();
-        LogsViewAll.filterJobsByJobProfile(jobProfile.name);
-        LogsViewAll.checkByJobProfileName(jobProfile.name);
+        LogsViewAll.filterJobsByJobProfile(jobProfileName);
+        LogsViewAll.checkByJobProfileName(jobProfileName);
         DataImport.selectAllLogs();
         DataImport.openDeleteImportLogsModal();
         DataImport.confirmDeleteImportLogs();
         InteractorsTools.checkCalloutMessage(
           `${numberOfLogsToDelete} data import logs have been successfully deleted.`,
         );
-        LogsViewAll.verifyJobProfileIsAbsntInFilter(jobProfile.name);
+        LogsViewAll.verifyJobProfileIsAbsntInFilter(jobProfileName);
       },
     );
   });

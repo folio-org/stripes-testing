@@ -91,7 +91,7 @@ describe('bulk-edit', () => {
         // Select "Temporary item location" from "Options" dropdown and "Replace with" option from "Select option" dropdown;
         const newLocation1 = 'Online';
         BulkEditActions.selectOption('Temporary item location');
-        BulkEditActions.selectSecondAction('Replace with');
+        BulkEditActions.selectSecondAction('Replace with', 0);
         BulkEditActions.locationLookupExists();
         BulkEditActions.selectLocation(newLocation1);
         // Click on the "Plus" icon

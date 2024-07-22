@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -38,8 +39,8 @@ describe('Data Import', () => {
         Logs.openViewAllLogs();
         LogsViewAll.checkByReverseChronologicalOrder();
         LogsViewAll.getAllLogsColumnsResults(jobProfileColumn).then((beforeFilteringCells) => {
-          LogsViewAll.filterJobsByJobProfile('Inventory Single Record - Default Create Instance');
-          LogsViewAll.checkByJobProfileName('Inventory Single Record - Default Create Instance');
+          LogsViewAll.filterJobsByJobProfile(DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS);
+          LogsViewAll.checkByJobProfileName(DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS);
           LogsViewAll.getAllLogsColumnsResults(jobProfileColumn).then(
             (afterFilteringByJobProfileCells) => {
               cy.expect(beforeFilteringCells).to.not.deep.equal(afterFilteringByJobProfileCells);

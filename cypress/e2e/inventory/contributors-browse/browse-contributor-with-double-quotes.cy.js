@@ -20,8 +20,8 @@ describe('Inventory', () => {
       numOfRecords: 1,
     };
     let createdAuthorityID;
-    const notExactSearchName = '"Giuseppe"';
-    const exactSearchName = 'Dalla Torre, "Giuseppe"';
+    const notExactSearchName = '"C397324 Giuseppe"';
+    const exactSearchName = 'C397324 Dalla Torre, "Giuseppe"';
 
     before('Creating user and test data', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {

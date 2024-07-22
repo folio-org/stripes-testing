@@ -1,8 +1,7 @@
 import { Permissions } from '../../../support/dictionary';
-import { Budgets, Funds } from '../../../support/fragments/finance';
+import { Budgets, FundDetails, Funds } from '../../../support/fragments/finance';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import FundDetails from '../../../support/fragments/finance/funds/fundDetails';
 
 describe('Finance', () => {
   describe('Funds', () => {

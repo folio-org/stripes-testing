@@ -66,7 +66,7 @@ describe('bulk-edit', () => {
         BulkEditActions.isSelectActionAbsent();
 
         BulkEditActions.selectOption('Temporary holdings location');
-        BulkEditActions.selectSecondAction('Clear field');
+        BulkEditActions.selectSecondAction('Clear field', 0);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditSearchPane.isConfirmButtonDisabled(true);
         BulkEditActions.verifyNewBulkEditRow();

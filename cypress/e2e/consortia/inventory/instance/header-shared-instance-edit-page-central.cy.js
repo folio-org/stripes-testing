@@ -31,6 +31,11 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
         (userProperties) => {
           testData.user = userProperties;
+
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         },
       );
     });
@@ -48,11 +53,7 @@ describe('Inventory', () => {
       'C404355 (CONSORTIA) Verify the header of a shared Instance on edit page for the Central tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-
+        cy.wait(5000);
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();

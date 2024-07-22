@@ -94,7 +94,7 @@ describe('MARC', () => {
         ];
 
         before('Creating test data', () => {
-          // make sure there are no duplicate authority records in the system
+          // make sure there are no duplicate records in the system
           cy.getAdminToken().then(() => {
             MarcAuthorities.getMarcAuthoritiesViaApi({
               limit: 100,
@@ -102,7 +102,7 @@ describe('MARC', () => {
             }).then((records) => {
               records.forEach((record) => {
                 if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
+                  MarcAuthority.deleteViaAPI(record.id, true);
                 }
               });
             });
@@ -161,7 +161,7 @@ describe('MARC', () => {
             newFields.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
             });
-            cy.wait(1000);
+            cy.wait(3000);
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(5);
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(6);

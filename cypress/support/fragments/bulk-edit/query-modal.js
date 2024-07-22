@@ -35,7 +35,6 @@ export const itemFieldValues = {
   instanceId: 'Instance ID',
   itemStatus: 'Item status',
   holdingsId: 'Holdings ID',
-  temporaryLocation: 'Item temporary location name',
 };
 export const usersFieldValues = {
   expirationDate: 'User expiration date',
@@ -85,9 +84,6 @@ export const booleanOperators = ['Select operator', '==', '!=', 'is null/empty']
 export default {
   exists() {
     cy.expect(buildQueryModal.exists());
-  },
-  absent() {
-    cy.expect(buildQueryModal.absent());
   },
   verify(firstline = true) {
     this.exists();
@@ -256,10 +252,6 @@ export default {
 
   xButttonDisabled(disabled = true) {
     cy.expect(xButton.has({ disabled }));
-  },
-
-  clickXButtton() {
-    cy.do(xButton.click());
   },
 
   addNewRow(row = 0) {

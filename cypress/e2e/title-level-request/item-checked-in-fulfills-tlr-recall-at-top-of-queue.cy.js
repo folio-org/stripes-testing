@@ -108,6 +108,7 @@ describe('Request queue. TLR', () => {
           permissions.uiRequestsEdit.gui,
           permissions.checkinAll.gui,
           permissions.inventoryAll.gui,
+          permissions.folio_admin.gui,
         ]).then((userPropertiesForMainUser) => {
           users.mainUser = userPropertiesForMainUser;
           UserEdit.addServicePointViaApi(

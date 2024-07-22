@@ -8,7 +8,7 @@ import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-a
 import DateTools from '../../../../support/utils/dateTools';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
-import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 const afterThreeMonthsDate = DateTools.getAfterThreeMonthsDateObj();
@@ -75,15 +75,15 @@ describe('bulk-edit', () => {
           BulkEditActions.downloadChangedCSV();
 
           BulkEditSearchPane.openLogsSearch();
-          BulkEditLogs.verifyLogsPane();
-          BulkEditLogs.checkUsersCheckbox();
-          BulkEditLogs.clickActionsRunBy(user.username);
-          BulkEditLogs.verifyLogsRowActionWhenCompleted();
+          BulkEditSearchPane.verifyLogsPane();
+          BulkEditSearchPane.checkUsersCheckbox();
+          BulkEditSearchPane.clickActionsRunBy(user.username);
+          BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
 
-          BulkEditLogs.downloadFileUsedToTrigger();
+          BulkEditSearchPane.downloadFileUsedToTrigger();
           BulkEditFiles.verifyCSVFileRows(validUserBarcodesFileName, [user.barcode]);
 
-          BulkEditLogs.downloadFileWithMatchingRecords();
+          BulkEditSearchPane.downloadFileWithMatchingRecords();
           BulkEditFiles.verifyMatchedResultFileContent(
             `*${matchedRecordsFileName}`,
             [user.barcode],
@@ -91,33 +91,17 @@ describe('bulk-edit', () => {
             true,
           );
 
-          BulkEditLogs.downloadFileWithProposedChanges();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            previewOfProposedChangesFileName,
-            ['graduate'],
-            'patronGroup',
-            true,
-          );
-          BulkEditFiles.verifyMatchedResultFileContent(
-            previewOfProposedChangesFileName,
-            [newExpirationDate.dateWithDashes],
-            'expirationDate',
-            true,
-          );
+          BulkEditSearchPane.downloadFileWithProposedChanges();
+          ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, [
+            'graduate',
+            newExpirationDate.dateWithDashes,
+          ]);
 
-          BulkEditLogs.downloadFileWithUpdatedRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            updatedRecordsFileName,
-            ['graduate'],
-            'patronGroup',
-            true,
-          );
-          BulkEditFiles.verifyMatchedResultFileContent(
-            updatedRecordsFileName,
-            [newExpirationDate.dateWithDashes],
-            'expirationDate',
-            true,
-          );
+          BulkEditSearchPane.downloadFileWithUpdatedRecords();
+          ExportFile.verifyFileIncludes(updatedRecordsFileName, [
+            'graduate',
+            newExpirationDate.dateWithDashes,
+          ]);
 
           cy.visit(TopMenu.usersPath);
           UsersSearchPane.searchByUsername(user.username);

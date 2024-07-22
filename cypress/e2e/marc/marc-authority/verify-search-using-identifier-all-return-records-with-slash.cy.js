@@ -33,6 +33,7 @@ describe('MARC', () => {
     const createdAuthorityID = [];
 
     before('Creating data', () => {
+      // make sure there are no duplicate records in the system
       cy.getAdminToken();
       testData.searchResults.forEach((query) => {
         MarcAuthorities.getMarcAuthoritiesViaApi({
@@ -41,7 +42,7 @@ describe('MARC', () => {
         }).then((authorities) => {
           if (authorities) {
             authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id);
+              MarcAuthority.deleteViaAPI(id, true);
             });
           }
         });

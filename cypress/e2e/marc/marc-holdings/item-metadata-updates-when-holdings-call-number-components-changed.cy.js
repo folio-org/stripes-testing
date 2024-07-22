@@ -85,7 +85,11 @@ describe('MARC', () => {
         marcFiles[1].jobProfileToRun,
       );
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-
+      DataImport.uploadFileViaApi(
+        marcFiles[1].editedFileName,
+        marcFiles[1].fileName,
+        marcFiles[1].jobProfileToRun,
+      );
       JobProfiles.waitFileIsImported(marcFiles[1].fileName);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFiles[1].fileName);

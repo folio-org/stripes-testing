@@ -46,6 +46,7 @@ describe('MARC', () => {
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const headerContent = {
         initialHeaderContent: {
+          source: { firstName: 'folio-aqa', name: 'folio-aqa' },
           marcData: {
             headingTypeFrom1XX: 'C360092 Jackson, Peter,',
             headingType: 'Personal name',

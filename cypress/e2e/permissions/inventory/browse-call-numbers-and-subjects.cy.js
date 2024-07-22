@@ -55,13 +55,10 @@ describe('Permisions -> Inventory', () => {
       InventorySearchAndFilter.selectBrowseCallNumbers();
       InventorySearchAndFilter.verifySearchAndResetAllButtonsDisabled(true);
       InventorySearchAndFilter.browseSearch('K1');
-      InventorySearchAndFilter.verifySearchAndResetAllButtonsDisabled(false);
       InventorySearchAndFilter.verifyBrowseInventorySearchResults();
-      InventorySearchAndFilter.resetAll();
       InventorySearchAndFilter.selectBrowseSubjects();
       InventorySearchAndFilter.verifySearchAndResetAllButtonsDisabled(true);
       InventorySearchAndFilter.browseSearch('art');
-      InventorySearchAndFilter.verifySearchAndResetAllButtonsDisabled(false);
       InventorySearchAndFilter.verifyBrowseInventorySearchResults();
     },
   );

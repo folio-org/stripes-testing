@@ -13,15 +13,15 @@ describe('Data Import', () => {
     const testData = {
       mappingProfiles: [
         {
-          name: `A-C377038 ${getRandomPostfix()}`,
+          name: `A_C377038_${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
         {
-          name: `B-C377038${getRandomPostfix()}`,
+          name: `B_C377038_${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
         {
-          name: `Z-C377038${getRandomPostfix()}`,
+          name: `Z_C377038_${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
       ],

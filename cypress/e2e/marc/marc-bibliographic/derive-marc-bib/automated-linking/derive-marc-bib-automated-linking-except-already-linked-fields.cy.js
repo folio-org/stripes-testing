@@ -186,7 +186,7 @@ describe('MARC', () => {
         ];
 
         before('Creating user and data', () => {
-          // make sure there are no duplicate authority records in the system before auto-linking
+          // make sure there are no duplicate records in the system before auto-linking
           cy.getAdminToken().then(() => {
             MarcAuthorities.getMarcAuthoritiesViaApi({
               limit: 200,
@@ -194,7 +194,7 @@ describe('MARC', () => {
             }).then((records) => {
               records.forEach((record) => {
                 if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
+                  MarcAuthority.deleteViaAPI(record.id, true);
                 }
               });
             });
@@ -205,7 +205,7 @@ describe('MARC', () => {
             }).then((records) => {
               records.forEach((record) => {
                 if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
+                  MarcAuthority.deleteViaAPI(record.id, true);
                 }
               });
             });

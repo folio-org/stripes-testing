@@ -86,7 +86,9 @@ describe('Create Item or Title level request', () => {
         expandAll: true,
         query: `"id"=="${instanceData.instanceId}"`,
       }).then((instance) => {
-        instanceData.instanceHRID = instance.hrid;
+        cy.wait(3000).then(() => {
+          instanceData.instanceHRID = instance.hrid;
+        });
       });
       TitleLevelRequests.enableTLRViaApi();
       cy.login(userData.username, userData.password, {
@@ -115,7 +117,6 @@ describe('Create Item or Title level request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.disableTLRViaApi();
   });
   it(
     'C347888 Check that user can create Title level request from User app (use Actions) (vega) (Taas)',

@@ -78,7 +78,9 @@ describe('Title Level Request', () => {
         expandAll: true,
         query: `"id"=="${instanceData.instanceId}"`,
       }).then((instance) => {
-        testData.instanceHRID = instance.hrid;
+        cy.wait(3000).then(() => {
+          testData.instanceHRID = instance.hrid;
+        });
       });
       TitleLevelRequests.enableTLRViaApi();
       Requests.createNewRequestViaApi({

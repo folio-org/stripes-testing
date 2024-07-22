@@ -85,6 +85,7 @@ describe('Inventory', () => {
           `${testData.collegeLocation.name} (${testData.collegeLocation.code}) `,
         );
         InventoryInstance.checkInstanceHrId(testData.instanceHRID);
+        cy.wait(2000);
         // need to reload page because source is FOLIO-shared
         cy.reload();
         InstanceRecordView.verifyInstanceSource(testData.instanceSource);
@@ -107,7 +108,7 @@ describe('Inventory', () => {
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
         InventorySearchAndFilter.searchInstanceByHRID(testData.instanceHRID);
         InventoryInstance.waitLoading();
-        InventoryInstance.verifyConsortiaHoldingsAccordion(false);
+        InventoryInstance.verifyConsortiaHoldingsAccordion();
         InventoryInstance.expandConsortiaHoldings();
         InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.College);
         InventoryInstance.expandMemberSubHoldings(Affiliations.College);

@@ -40,15 +40,13 @@ describe('Inventory', () => {
         [marcFile.newInstanceTitle],
       );
       cy.getAdminToken();
-      cy.setTenant(Affiliations.College);
       DataImport.uploadFileViaApi(
         marcFile.editedFileName,
         marcFile.fileName,
-        marcFile.jobProfileToRun,
+        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       ).then((response) => {
         testData.instanceId = response[0].instance.id;
       });
-      cy.resetTenant();
 
       cy.getAdminToken();
       cy.createTempUser([
@@ -82,8 +80,14 @@ describe('Inventory', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      cy.setTenant(Affiliations.College);
-      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"hrid"=="${testData.instanceHRID}"`,
+      }).then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+      FileManager.deleteFile(`cypress/fixtures/${marcFile.editedFileName}`);
     });
 
     it(

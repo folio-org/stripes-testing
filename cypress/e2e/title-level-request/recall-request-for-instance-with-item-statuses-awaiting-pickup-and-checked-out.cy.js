@@ -159,13 +159,14 @@ describe('Title level Request', () => {
       })
       .then(() => {
         TitleLevelRequests.enableTLRViaApi();
-        cy.wait(3000);
         cy.getInstance({
           limit: 1,
           expandAll: true,
           query: `"id"=="${instanceData.instanceId}"`,
         }).then((instance) => {
-          instanceData.instanceHRID = instance.hrid;
+          cy.wait(3000).then(() => {
+            instanceData.instanceHRID = instance.hrid;
+          });
         });
       })
       .then(() => {

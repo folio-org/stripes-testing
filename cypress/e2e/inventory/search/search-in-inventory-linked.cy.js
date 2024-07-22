@@ -65,6 +65,31 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before('Importing data, linking Bib fields', () => {
+      cy.getAdminToken()
+        .then(() => {
+          InventoryInstances.getInstancesViaApi({
+            limit: 100,
+            query: 'title="Prayer*"',
+          }).then((instances) => {
+            if (instances) {
+              instances.forEach(({ id }) => {
+                InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
+              });
+            }
+          });
+        })
+        .then(() => {
+          MarcAuthorities.getMarcAuthoritiesViaApi({
+            limit: 100,
+            query: 'keyword="C375256" and (authRefType==("Authorized" or "Auth/Ref"))',
+          }).then((authorities) => {
+            if (authorities) {
+              authorities.forEach(({ id }) => {
+                MarcAuthority.deleteViaAPI(id, true);
+              });
+            }
+          });
+        });
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 

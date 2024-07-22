@@ -125,7 +125,7 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
-
+            // make sure there are no duplicate records in the system
             testData.searchAuthorityQueries.forEach((query) => {
               MarcAuthorities.getMarcAuthoritiesViaApi({
                 limit: 100,
@@ -133,7 +133,7 @@ describe('MARC', () => {
               }).then((authorities) => {
                 if (authorities) {
                   authorities.forEach(({ id }) => {
-                    MarcAuthority.deleteViaAPI(id);
+                    MarcAuthority.deleteViaAPI(id, true);
                   });
                 }
               });

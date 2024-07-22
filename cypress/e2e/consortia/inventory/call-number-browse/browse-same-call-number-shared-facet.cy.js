@@ -95,7 +95,7 @@ describe('Inventory', () => {
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFiles[0].jobProfileToRun);
               JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFiles[0].fileNameImported);
+              Logs.waitFileIsImported(marcFiles[0].fileNameImported);
               Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
               Logs.openFileDetails(marcFiles[0].fileNameImported);
               for (let i = 0; i < marcFiles[0].numberOftitles; i++) {
@@ -112,7 +112,7 @@ describe('Inventory', () => {
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFiles[1].jobProfileToRun);
               JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFiles[1].fileNameImported);
+              Logs.waitFileIsImported(marcFiles[1].fileNameImported);
               Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
               Logs.openFileDetails(marcFiles[1].fileNameImported);
               for (let i = 0; i < marcFiles[1].numberOftitles; i++) {
@@ -132,7 +132,7 @@ describe('Inventory', () => {
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFiles[2].jobProfileToRun);
               JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFiles[2].fileNameImported);
+              Logs.waitFileIsImported(marcFiles[2].fileNameImported);
               Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
               Logs.openFileDetails(marcFiles[2].fileNameImported);
               for (let i = 0; i < marcFiles[2].numberOftitles; i++) {

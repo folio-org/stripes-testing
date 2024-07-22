@@ -96,6 +96,7 @@ const searchInstanceByHRID = (id) => {
     TextArea({ id: 'input-inventory-search' }).fillIn(id),
     searchButton.click(),
   ]);
+  cy.wait(1500);
 };
 
 const searchHoldingsByHRID = (hrid) => {
@@ -1070,5 +1071,10 @@ export default {
       stuffSupressAccordion.clickHeader(),
       stuffSupressAccordion.find(Checkbox({ id: 'clickable-filter-staffSuppress-true' })).click(),
     ]);
+    cy.wait(1500);
+  },
+
+  clearSharedFilter() {
+    cy.do(sharedAccordion.find(Button({ ariaLabel: including('Clear selected filters') })).click());
   },
 };

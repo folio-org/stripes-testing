@@ -32,17 +32,17 @@ export default {
   },
 
   checkIsSortedAlphabetically({ array = [], accuracy = 1 } = {}) {
+    cy.wait(5000);
     const result = array.reduce((acc, it) => {
       if (acc.length) {
         const prev = acc[acc.length - 1].value;
-        const current = it.toLowerCase();
 
+        const current = it.toLowerCase();
         return [...acc, { value: current, order: prev.localeCompare(current) }];
       } else {
         return [{ value: it.toLowerCase(), order: 0 }];
       }
     }, []);
-
     const invalidOrder = result.filter(({ order }) => order > 0);
     return (invalidOrder.length * 100) / array.length < accuracy;
   },

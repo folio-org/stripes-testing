@@ -126,12 +126,12 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      // make sure there are no duplicate authority records in the system
+      // make sure there are no duplicate records in the system
       MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C374167"' }).then(
         (records) => {
           records.forEach((record) => {
             if (record.authRefType === 'Authorized') {
-              MarcAuthority.deleteViaAPI(record.id);
+              MarcAuthority.deleteViaAPI(record.id, true);
             }
           });
         },

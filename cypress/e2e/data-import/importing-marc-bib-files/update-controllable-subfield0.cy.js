@@ -109,7 +109,7 @@ describe('Data Import', () => {
     const linkingTagAndValues = [
       {
         rowIndex: 75,
-        value: 'Chin, Staceyann C385665',
+        value: 'C385665Chin, Staceyann',
       },
       {
         rowIndex: 76,
@@ -124,6 +124,18 @@ describe('Data Import', () => {
     const subfield = '$9';
 
     before('Creating user', () => {
+      // make sure there are no duplicate records in the system
+      cy.getAdminToken();
+      MarcAuthorities.getMarcAuthoritiesViaApi({
+        limit: 100,
+        query: 'keyword="C385665*" and (authRefType==("Authorized" or "Auth/Ref"))',
+      }).then((authorities) => {
+        if (authorities) {
+          authorities.forEach(({ id }) => {
+            MarcAuthority.deleteViaAPI(id, true);
+          });
+        }
+      });
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
@@ -263,7 +275,7 @@ describe('Data Import', () => {
           '700',
           '1',
           '\\',
-          '$a Chin, Staceyann C385665',
+          '$a C385665Chin, Staceyann',
           '$e letterer.',
           '$0 http://id.loc.gov/authorities/names/n2008052404',
           '',

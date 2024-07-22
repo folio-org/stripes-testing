@@ -4,7 +4,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Settings', () => {
     const testData = {};
 

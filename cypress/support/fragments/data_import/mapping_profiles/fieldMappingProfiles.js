@@ -1,20 +1,20 @@
-import { including, HTML } from '@interactors/html';
+import { HTML, including } from '@interactors/html';
 import {
   Button,
-  MultiColumnListCell,
-  TextField,
-  Pane,
-  MultiColumnListRow,
-  PaneContent,
   Form,
   MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Pane,
+  PaneContent,
+  TextField,
 } from '../../../../../interactors';
-import { getLongDelay } from '../../../utils/cypressTools';
-import FieldMappingProfileEdit from './fieldMappingProfileEdit';
-import NewFieldMappingProfile from './newFieldMappingProfile';
-import FieldMappingProfileView from './fieldMappingProfileView';
 import Callout from '../../../../../interactors/callout';
 import ArrayUtils from '../../../utils/arrays';
+import { getLongDelay } from '../../../utils/cypressTools';
+import FieldMappingProfileEdit from './fieldMappingProfileEdit';
+import FieldMappingProfileView from './fieldMappingProfileView';
+import NewFieldMappingProfile from './newFieldMappingProfile';
 
 const actionsButton = Button('Actions');
 const searchButton = Button('Search');
@@ -166,16 +166,19 @@ export default {
 
   verifyProfilesIsSortedInAlphabeticalOrder: () => {
     const cells = [];
+
     cy.get('div[class^="mclRowContainer--"]')
       .find('[data-row-index]')
       .each(($row) => {
         cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
           .invoke('text')
           .then((cellValue) => {
+            cy.wait(1000);
             cells.push(cellValue);
-            cy.log(cellValue);
           });
       })
-      .then(() => cy.expect(ArrayUtils.checkIsSortedAlphabetically({ array: cells })).to.equal(true));
+      .then(() => {
+        cy.expect(ArrayUtils.checkIsSortedAlphabetically({ array: cells })).to.equal(true);
+      });
   },
 };

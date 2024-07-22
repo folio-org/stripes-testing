@@ -122,7 +122,7 @@ describe('MARC', () => {
         ];
 
         before('Create test data', () => {
-          // Making sure there are no duplicate authority records in the system before auto-linking
+          // making sure there are no duplicate authority records in the system before auto-linking
           cy.getAdminToken().then(() => {
             naturalIds.forEach((id) => {
               MarcAuthorities.getMarcAuthoritiesViaApi({
@@ -130,7 +130,7 @@ describe('MARC', () => {
                 query: `naturalId="${id}" and (authRefType=="Authorized")`,
               }).then((records) => {
                 records.forEach((record) => {
-                  MarcAuthority.deleteViaAPI(record.id);
+                  MarcAuthority.deleteViaAPI(record.id, true);
                 });
               });
             });

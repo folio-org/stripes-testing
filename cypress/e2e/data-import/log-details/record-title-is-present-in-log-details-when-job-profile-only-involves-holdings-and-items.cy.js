@@ -324,6 +324,7 @@ describe('Data Import', () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(testData.firstHrid);
         InstanceRecordView.verifyInstancePaneExists();
+        cy.wait(1500);
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(csvFileName, 'SearchInstanceUUIDs*');

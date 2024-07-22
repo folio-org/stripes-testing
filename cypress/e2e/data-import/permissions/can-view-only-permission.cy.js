@@ -14,7 +14,9 @@ describe('Data Import', () => {
   describe('Permissions', () => {
     let user;
     let instnaceId;
-    const uniqueFileName = `C356780 autotestFileName${getRandomPostfix()}.mrc`;
+    const uniquePartOfFileName = getRandomPostfix();
+    const uniqueFileName = `C356780 autotestFileName${uniquePartOfFileName}.mrc`;
+    const uniqueFileNameForSearch = `C356780 autotestFileName${uniquePartOfFileName}_1.mrc`;
 
     before('Create test data and login', () => {
       cy.getAdminToken();
@@ -53,7 +55,7 @@ describe('Data Import', () => {
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
-        LogsViewAll.searchWithTerm(uniqueFileName);
+        LogsViewAll.searchWithTerm(uniqueFileNameForSearch);
         LogsViewAll.openFileDetails(uniqueFileName);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstances.verifyInstanceDetailsView();

@@ -125,7 +125,9 @@ describe('Create Item or Title level request', () => {
         expandAll: true,
         query: `"id"=="${instanceData.instanceId}"`,
       }).then((instance) => {
-        testData.instanceHRID = instance.hrid;
+        cy.wait(3000).then(() => {
+          testData.instanceHRID = instance.hrid;
+        });
       });
       Checkout.checkoutItemViaApi({
         id: uuid(),

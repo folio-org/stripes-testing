@@ -37,7 +37,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C436741 Query builder - Search users that belong to a specific patron group and have "Active" status ("String stores UUID" and "Boolean" property types) (firebird)',
+      'C471490 Query builder - Search users that belong to a specific patron group and have "Active" status ("String stores UUID" and "Boolean" property types) (firebird)',
       { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
@@ -66,24 +66,22 @@ describe('bulk-edit', () => {
         QueryModal.verifyQueryAreaContent('(user_patron_group in )');
         QueryModal.verifyValueColumn();
         QueryModal.fillInValueMultiselect(patronGroupNames.STAFF);
-        QueryModal.verifyQueryAreaContent(`(user_patron_group in ("${patronGroupUuids.STAFF}"))`);
+        QueryModal.verifyQueryAreaContent(`(user_patron_group in "${patronGroupUuids.STAFF}")`);
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.chooseFromValueMultiselect(patronGroupNames.FACULTY);
         QueryModal.verifyQueryAreaContent(
-          `(user_patron_group in ("${patronGroupUuids.STAFF}","${patronGroupUuids.FACULTY}"))`,
+          `(user_patron_group in "${patronGroupUuids.STAFF}","${patronGroupUuids.FACULTY}")`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.removeValueFromMultiselect(patronGroupNames.STAFF);
         QueryModal.removeValueFromMultiselect(patronGroupNames.FACULTY);
-        QueryModal.verifyQueryAreaContent('(user_patron_group in ())');
+        QueryModal.verifyQueryAreaContent('(user_patron_group in )');
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.chooseFromValueMultiselect(patronGroupNames.UNDERGRAD);
-        QueryModal.verifyQueryAreaContent(
-          `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}"))`,
-        );
+        QueryModal.verifyQueryAreaContent(`(user_patron_group in "${patronGroupUuids.UNDERGRAD}")`);
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.addNewRow();
@@ -94,7 +92,7 @@ describe('bulk-edit', () => {
         QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
         QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, true);
         QueryModal.verifyQueryAreaContent(
-          `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (  )`,
+          `(user_patron_group in "${patronGroupUuids.UNDERGRAD}") AND (  )`,
         );
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
@@ -103,7 +101,7 @@ describe('bulk-edit', () => {
         QueryModal.verifyOperatorsList(booleanOperators, 1);
         QueryModal.selectOperator('==', 1);
         QueryModal.verifyQueryAreaContent(
-          `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (user_active == )`,
+          `(user_patron_group in "${patronGroupUuids.UNDERGRAD}") AND (user_active == )`,
         );
         QueryModal.verifyValueColumn();
         QueryModal.testQueryDisabled();
@@ -112,7 +110,7 @@ describe('bulk-edit', () => {
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.verifyQueryAreaContent(
-          `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (user_active == "true")`,
+          `(user_patron_group in "${patronGroupUuids.UNDERGRAD}") AND (user_active == "true")`,
         );
         QueryModal.addNewRow(1);
         QueryModal.verifyBooleanColumn(2);
@@ -127,7 +125,7 @@ describe('bulk-edit', () => {
         QueryModal.verifyOperatorsList(booleanOperators, 2);
         QueryModal.selectOperator('!=', 2);
         QueryModal.verifyQueryAreaContent(
-          `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (user_active == "true") AND (user_active != )`,
+          `(user_patron_group in "${patronGroupUuids.UNDERGRAD}") AND (user_active == "true") AND (user_active != )`,
         );
         QueryModal.verifyValueColumn();
         QueryModal.testQueryDisabled();
@@ -136,11 +134,11 @@ describe('bulk-edit', () => {
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.verifyQueryAreaContent(
-          `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (user_active == "true") AND (user_active != "false")`,
+          `(user_patron_group in "${patronGroupUuids.UNDERGRAD}") AND (user_active == "true") AND (user_active != "false")`,
         );
         QueryModal.clickGarbage(2);
         QueryModal.verifyQueryAreaContent(
-          `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (user_active == "true")`,
+          `(user_patron_group in "${patronGroupUuids.UNDERGRAD}") AND (user_active == "true")`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();

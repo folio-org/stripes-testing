@@ -79,6 +79,7 @@ export default {
     cy.do(searchButton.click());
   },
   clearSearchField() {
+    cy.wait(2000);
     cy.get('#orders-filters-pane-content').find('#input-record-search').clear();
   },
   waitLoading() {
@@ -449,6 +450,7 @@ export default {
   },
 
   selectStatusInSearch: (orderStatus) => {
+    cy.wait(6000);
     cy.do(Accordion({ id: 'workflowStatus' }).clickHeader());
     switch (orderStatus) {
       case 'Closed':

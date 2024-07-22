@@ -124,4 +124,62 @@ describe('bulk-edit', () => {
       );
     });
   });
+
+  after('delete test data', () => {
+    cy.getAdminToken();
+    FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
+    Users.deleteViaApi(user.userId);
+    Users.deleteViaApi(userForTesting.userId);
+  });
+
+  it(
+    'C496147 Verify how User\'s names are displayed in "Run by" column of Bulk edit Logs (firebird) (TaaS)',
+    { tags: ['extendedPath', 'firebird'] },
+    () => {
+      BulkEditSearchPane.openLogsSearch();
+      BulkEditSearchPane.verifyLogsPane();
+      BulkEditSearchPane.checkUsersCheckbox();
+      BulkEditSearchPane.verifyActionsRunBy(userForTesting.lastName);
+
+      cy.getUsers({ limit: 1, query: `username=${userForTesting.username}` }).then((users) => {
+        cy.updateUser({
+          ...users[0],
+          personal: {
+            ...users[0].personal,
+            firstName: names.first,
+          },
+        });
+      });
+      cy.reload();
+      BulkEditSearchPane.verifyActionsRunBy(`${userForTesting.lastName}, ${names.first}`);
+
+      cy.getUsers({ limit: 1, query: `username=${userForTesting.username}` }).then((users) => {
+        cy.updateUser({
+          ...users[0],
+          personal: {
+            ...users[0].personal,
+            middleName: names.middle,
+          },
+        });
+      });
+      cy.reload();
+      BulkEditSearchPane.verifyActionsRunBy(
+        `${userForTesting.lastName}, ${names.first} ${names.middle}`,
+      );
+
+      cy.getUsers({ limit: 1, query: `username=${userForTesting.username}` }).then((users) => {
+        cy.updateUser({
+          ...users[0],
+          personal: {
+            ...users[0].personal,
+            preferredFirstName: names.preferred,
+          },
+        });
+      });
+      cy.reload();
+      BulkEditSearchPane.verifyActionsRunBy(
+        `${userForTesting.lastName}, ${names.preferred} ${names.middle}`,
+      );
+    },
+  );
 });

@@ -14,21 +14,22 @@ describe('Inventory', () => {
   describe('Advanced search', () => {
     const testData = {
       advSearchOption: 'Advanced search',
-      expectedSearchResult: 'The Beatles in mono. Adv search 001',
+      expectedSearchResult: 'C400610 The Beatles in mono. Adv search 001',
       callNumberValue: 'YCN002003400616',
       itemBarcode: 'ITBRCC400616',
       expectedSearchResultsC400616: [
-        'Humans and machines Adv Search 003',
-        'Mediterranean conference on medical and biological engineering and computing 2013 Adv Search 003',
+        'C400616 Humans and machines Adv Search 003',
+        'C400616 Mediterranean conference on medical and biological engineering and computing 2013 Adv Search 003',
       ],
       expectedFirstSearchResultsC414977: [
-        'Queer comrades : gay identity and Tongzhi activism in postsocialist China / Hongwei Bao.',
-        'Queer festivals : challenging collective identities in a transnational europe / Konstantinos Eleftheriadis.',
-        'Sexuality, iconography, and fiction in French : queering the martyr / Jason James Hartford.',
+        'C414977 Queer comrades : gay identity and Tongzhi activism in postsocialist China / Hongwei Bao.',
+        'C414977 Queer festivals : challenging collective identities in a transnational europe / Konstantinos Eleftheriadis.',
+        'C414977 Sexuality, iconography, and fiction in French : queering the martyr / Jason James Hartford.',
       ],
-      expectedSecondSearchResultC414977: 'Reckon / Steve McOrmond.',
+      expectedSecondSearchResultC414977: 'C414977 Reckon / Steve McOrmond.',
     };
     const createdRecordIDs = [];
+    const testsIds = ['C400610', 'C400616', 'C414977'];
 
     const marcFiles = [
       {
@@ -55,6 +56,19 @@ describe('Inventory', () => {
     ];
 
     before('Creating data', () => {
+      cy.getAdminToken();
+      testsIds.forEach((testId) => {
+        InventoryInstances.getInstancesViaApi({
+          limit: 100,
+          query: `title="${testId}*"`,
+        }).then((instances) => {
+          if (instances) {
+            instances.forEach(({ id }) => {
+              InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
+            });
+          }
+        });
+      });
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(

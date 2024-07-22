@@ -30,7 +30,7 @@ describe('MARC', () => {
       });
 
       it(
-        'C422104 A new "MARC bib" record is opened in QuickMARC UI (spitfire) (TaaS)',
+        'C494045 A new "MARC bib" record is opened in QuickMARC UI (spitfire) (TaaS)',
         {
           tags: ['criticalPath', 'spitfire'],
         },

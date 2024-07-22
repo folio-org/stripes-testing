@@ -15,7 +15,7 @@ describe('MARC', () => {
       const testData = {
         forC359206: {
           lcControlNumberA: 'n  00000911',
-          lcControlNumberB: 'n  79125030',
+          lcControlNumberB: 'n  79125031',
           searchOption: 'Identifier (all)',
           valueA: 'Erbil, H. Yıldırım',
           valueB: 'Twain, Mark,',
@@ -245,7 +245,7 @@ describe('MARC', () => {
       );
 
       it(
-        'C380567 MARC Authority plug-in | Search using "Corporate/Conference name" option (spitfire)',
+        'C494102 MARC Authority plug-in | Search using "Corporate/Conference name" option (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           cy.getAdminToken();
@@ -367,7 +367,7 @@ describe('MARC', () => {
       );
 
       it(
-        'C380566 MARC Authority plug-in | Search using "Personal name" option (spitfire)',
+        'C494092 MARC Authority plug-in | Search using "Personal name" option (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           cy.getAdminToken();

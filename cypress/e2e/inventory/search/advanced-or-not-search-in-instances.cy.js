@@ -32,6 +32,18 @@ describe('Inventory', () => {
     before('Creating data', () => {
       cy.getAdminToken()
         .then(() => {
+          InventoryInstances.getInstancesViaApi({
+            limit: 100,
+            query: 'title="Roma council*"',
+          }).then((instances) => {
+            if (instances) {
+              instances.forEach(({ id }) => {
+                InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
+              });
+            }
+          });
+        })
+        .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             testData.instanceTypeId = instanceTypes[0].id;
           });

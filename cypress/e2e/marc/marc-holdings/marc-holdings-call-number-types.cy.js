@@ -59,14 +59,13 @@ describe('MARC', () => {
 
     const instanceFile = {
       marc: 'marcBibFileC389500.mrc',
-      fileName: `testMarcFile.C389500.${getRandomPostfix()}.mrc`,
+      fileName: `C389500 testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-      propertyName: 'instance',
     };
 
     const holdingsFile = {
       marc: 'marcHoldingsFileC389500.mrc',
-      fileName: `testMarcFile.C389500.${getRandomPostfix()}.mrc`,
+      fileName: `C389500 testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_HOLDINGS_AND_SRS,
       numOfRecords: 6,
     };

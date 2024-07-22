@@ -76,6 +76,18 @@ describe('MARC', () => {
         const createdRecordIDs = [];
 
         before('Creating user and data', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate records in the system
+          MarcAuthorities.getMarcAuthoritiesViaApi({
+            limit: 100,
+            query: 'keyword="C380449*" and (authRefType==("Authorized" or "Auth/Ref"))',
+          }).then((authorities) => {
+            if (authorities) {
+              authorities.forEach(({ id }) => {
+                MarcAuthority.deleteViaAPI(id, true);
+              });
+            }
+          });
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -196,6 +208,7 @@ describe('MARC', () => {
               testData.authorityFieldValue.field150,
             );
             MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionA);
+            MarcAuthorities.selectTitle(testData.authorityFieldValue.field150);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.checkCallout(testData.errorMessage);
             InventoryInstance.verifySelectMarcAuthorityModal();
@@ -206,6 +219,7 @@ describe('MARC', () => {
             );
             MarcAuthorities.closeAuthoritySourceOption();
             MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionB);
+            MarcAuthorities.selectTitle(testData.authorityFieldValue.field151);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.checkCallout(testData.errorMessage);
             InventoryInstance.verifySelectMarcAuthorityModal();

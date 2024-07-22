@@ -38,7 +38,7 @@ const deleteLogsModalConfirmButton = deleteLogsModal.find(Button('Yes, delete'))
 const logsPane = Pane('Logs');
 const logsPaneHeader = PaneHeader({ id: 'paneHeaderpane-logs-title' });
 const orChooseFilesButton = Button('or choose files');
-const cancelImportJobModal = Modal('Cancel import job?');
+const cancelImportJobModal = Modal('Cancel multipart import job?');
 const yesButton = Button('Yes, cancel import job');
 const cancelButton = Button('No, do not cancel import');
 const dataImportNavSection = Pane({ id: 'app-settings-nav-pane' });
@@ -444,6 +444,7 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                   const childJobExecutionId = resp2.body.jobExecutions[0].id;
 
                   return getRecordSourceId(childJobExecutionId).then((resp3) => {
+                    // TODO redesign method for several records
                     const sourceRecords = resp3.body.entries;
                     const infos = [];
 
@@ -469,21 +470,21 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                               id:
                                 recordResponse.body.relatedHoldingsInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedHoldingsInfo.id,
+                                  : recordResponse.body.relatedHoldingsInfo[0].id,
                               hrid:
                                 recordResponse.body.relatedHoldingsInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedHoldingsInfo.hrid,
+                                  : recordResponse.body.relatedHoldingsInfo[0].hrid,
                             },
                             item: {
                               id:
                                 recordResponse.body.relatedItemInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedItemInfo.id,
+                                  : recordResponse.body.relatedItemInfo[0].id,
                               hrid:
                                 recordResponse.body.relatedItemInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedItemInfo.hrid,
+                                  : recordResponse.body.relatedItemInfo[0].hrid,
                             },
                             authority: {
                               id:
@@ -551,7 +552,7 @@ export default {
   },
 
   getLogsHrIdsFromUI: (logsCount = 25) => {
-    const hrIdColumnIndex = 8;
+    const hrIdColumnIndex = 9;
     const cells = [];
 
     new Array(logsCount).fill(null).forEach((_, index) => {
@@ -738,13 +739,10 @@ export default {
   },
 
   verifyCancelImportJobModal: () => {
-    const headerModalContent = 'Are you sure that you want to cancel this import job?';
-    const modalContent =
-      'Note: Cancelled jobs cannot be restarted. Records created or updated before\nthe job is cancelled cannot yet be reverted.';
+    const headerModalContent = 'Are you sure that you want to cancel this multipart import job?';
     cy.expect([
       cancelImportJobModal.exists(),
       cancelImportJobModal.find(HTML(including(headerModalContent))).exists(),
-      cancelImportJobModal.find(HTML(including(modalContent))).exists(),
       cancelImportJobModal.find(cancelButton, { disabled: true }).exists(),
       cancelImportJobModal.find(yesButton, { disabled: false }).exists(),
     ]);

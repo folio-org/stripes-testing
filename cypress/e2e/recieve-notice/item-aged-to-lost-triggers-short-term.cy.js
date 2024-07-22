@@ -25,7 +25,7 @@ import Users from '../../support/fragments/users/users';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 
 // Test is skipped because implementation is not completed
-describe.skip('Patron notices', () => {
+describe('Patron notices', () => {
   describe('Loan notice triggers', () => {
     const patronGroup = {
       name: getTestEntityValue('groupToTestNotices'),
@@ -286,7 +286,6 @@ describe.skip('Patron notices', () => {
 
         cy.visit(TopMenu.checkInPath);
         CheckInActions.checkInItemByBarcode(itemBarcode);
-
         cy.visit(TopMenu.circulationLogPath);
         // wait to check that we don't get new "Item aged to lost - after - recurring" notice because item was returned
         cy.wait(10000);

@@ -16,24 +16,29 @@ describe('Data Import', () => {
     const testData = {
       mappingProfiles: [
         {
-          name: `A-C377046${getRandomPostfix()}`,
+          name: `A-C377046_${getRandomPostfix()}`,
+          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
         {
-          name: `B-C377046${getRandomPostfix()}`,
+          name: `B-C377046_${getRandomPostfix()}`,
+          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
         {
-          name: `C-C377046${getRandomPostfix()}`,
+          name: `C-C377046_${getRandomPostfix()}`,
+          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
         {
-          name: `D-C377046${getRandomPostfix()}`,
+          name: `D-C377046_${getRandomPostfix()}`,
+          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
         {
-          name: `Z-C377046${getRandomPostfix()}`,
+          name: `Z-C377046_${getRandomPostfix()}`,
+          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
       ],
 
       newMappingProfile: {
-        name: `E-C377046${getRandomPostfix()}`,
+        name: `E-C377046_${getRandomPostfix()}`,
         typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       },
     };
@@ -83,7 +88,6 @@ describe('Data Import', () => {
         // #5 Select "Action profiles" -> click "Actions" button -> Select "New action profile" option
         cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.openNewActionProfileForm();
-
         // #6 Click "Link profile" button
         NewActionProfile.clickLinkProfileButton();
         SelectProfileModal.verifyProfilesIsSortedInAlphabeticalOrder();

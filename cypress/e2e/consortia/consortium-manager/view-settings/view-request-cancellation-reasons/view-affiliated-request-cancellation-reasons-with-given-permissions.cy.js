@@ -7,6 +7,7 @@ import Affiliations, { tenantNames } from '../../../../../support/dictionary/aff
 import ConsortiumManagerApp, {
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import RequestCancellationReasonsConsortiumManager from '../../../../../support/fragments/consortium-manager/circulation/requestCancellationReasonsConsortiumManager';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -113,10 +114,10 @@ describe('Consortium manager', () => {
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
           cy.resetTenant();
-          cy.login(testData.user834.username, testData.user834.password, {
-            path: TopMenu.consortiumManagerPath,
-            waiter: ConsortiumManagerApp.waitLoading,
-          });
+          cy.login(testData.user834.username, testData.user834.password);
+          // Without waiter, permissions aren't loading
+          cy.wait(10000);
+          TopMenuNavigation.navigateToApp('Consortium manager');
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);

@@ -134,8 +134,8 @@ describe('Data Import', () => {
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
-        ].forEach((column) => {
-          FileDetails.checkStatusInColumn(RECORD_STATUSES.NO_ACTION, column);
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.NO_ACTION, columnName);
         });
         FileDetails.openJsonScreen(title);
         JsonScreenView.verifyJsonScreenIsOpened();

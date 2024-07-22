@@ -14,7 +14,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Browse in Inventory', () => {
   const testData = {
-    contributorName: 'Lee, Stan, 1922-2018',
+    contributorName: 'C388531 Lee, Stan, 1922-2018',
   };
 
   const marcFiles = [
@@ -44,6 +44,18 @@ describe('Browse in Inventory', () => {
   const createdAuthorityIDs = [];
 
   before('Creating data', () => {
+    // make sure there are no duplicate records in the system
+    cy.getAdminToken();
+    MarcAuthorities.getMarcAuthoritiesViaApi({
+      limit: 100,
+      query: 'keyword="C388531" and (authRefType==("Authorized" or "Auth/Ref"))',
+    }).then((authorities) => {
+      if (authorities) {
+        authorities.forEach(({ id }) => {
+          MarcAuthority.deleteViaAPI(id, true);
+        });
+      }
+    });
     cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 

@@ -171,6 +171,7 @@ describe('Data Import', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+      cy.setTenant(Affiliations.College);
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);

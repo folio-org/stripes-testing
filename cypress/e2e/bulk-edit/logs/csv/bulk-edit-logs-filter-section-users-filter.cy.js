@@ -6,7 +6,6 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 describe('bulk-edit', () => {
   describe('logs', () => {
@@ -106,62 +105,62 @@ describe('bulk-edit', () => {
       });
 
       it(
-        'C409495 Filters section: Users filter (firebird) (TaaS)',
+        'C468262 Filters section: Users filter (firebird) (TaaS)',
         { tags: ['extendedPath', 'firebird'] },
         () => {
           BulkEditSearchPane.openLogsSearch();
-          BulkEditLogs.verifyLogsPane();
+          BulkEditSearchPane.verifyLogsPane();
 
-          BulkEditLogs.checkUsersCheckbox();
-          BulkEditLogs.checkHoldingsCheckbox();
-          BulkEditLogs.checkItemsCheckbox();
-          BulkEditLogs.verifyClearSelectedButtonExists('Record types');
-          BulkEditLogs.resetAllBtnIsDisabled(false);
-          BulkEditLogs.verifyLogsTableHeaders();
+          BulkEditSearchPane.checkUsersCheckbox();
+          BulkEditSearchPane.checkHoldingsCheckbox();
+          BulkEditSearchPane.checkItemsCheckbox();
+          BulkEditSearchPane.verifyClearSelectedButtonExists('Record types');
+          BulkEditSearchPane.resetAllBtnIsDisabled(false);
+          BulkEditSearchPane.verifyLogsTableHeaders();
 
-          BulkEditLogs.clickUserAccordion();
-          BulkEditLogs.clickChooseUserUnderUserAccordion();
+          BulkEditSearchPane.clickUserAccordion();
+          BulkEditSearchPane.clickChooseUserUnderUserAccordion();
 
-          BulkEditLogs.fillUserFilterInput(users[1].username);
-          BulkEditLogs.verifyDropdown(users[1].username);
-          BulkEditLogs.selectUserFromDropdown(users[1].username);
-          BulkEditLogs.verifyClearSelectedButtonExists(tastData.usersAccordion);
-          BulkEditLogs.resetAllBtnIsDisabled(false);
-          BulkEditLogs.verifyCellsValues(
+          BulkEditSearchPane.fillUserFilterInput(users[1].username);
+          BulkEditSearchPane.verifyDropdown(users[1].username);
+          BulkEditSearchPane.selectUserFromDropdown(users[1].username);
+          BulkEditSearchPane.verifyClearSelectedButtonExists(tastData.usersAccordion);
+          BulkEditSearchPane.resetAllBtnIsDisabled(false);
+          BulkEditSearchPane.verifyCellsValues(
             8,
             `${users[1].username}, ${users[1].firstName} ${Users.defaultUser.personal.middleName}`,
           );
 
-          BulkEditLogs.clickChooseUserUnderUserAccordion();
-          BulkEditLogs.fillUserFilterInput(users[2].username);
-          BulkEditLogs.verifyDropdown(users[2].username);
-          BulkEditLogs.selectUserFromDropdown(users[2].username);
-          BulkEditLogs.verifyClearSelectedButtonExists(tastData.usersAccordion);
-          BulkEditLogs.resetAllBtnIsDisabled(false);
-          BulkEditLogs.verifyCellsValues(
+          BulkEditSearchPane.clickChooseUserUnderUserAccordion();
+          BulkEditSearchPane.fillUserFilterInput(users[2].username);
+          BulkEditSearchPane.verifyDropdown(users[2].username);
+          BulkEditSearchPane.selectUserFromDropdown(users[2].username);
+          BulkEditSearchPane.verifyClearSelectedButtonExists(tastData.usersAccordion);
+          BulkEditSearchPane.resetAllBtnIsDisabled(false);
+          BulkEditSearchPane.verifyCellsValues(
             8,
             `${users[2].username}, ${users[2].firstName} ${Users.defaultUser.personal.middleName}`,
           );
 
-          BulkEditLogs.clickClearSelectedButton(tastData.usersAccordion);
-          BulkEditLogs.verifyClearSelectedButtonExists(tastData.usersAccordion, false);
-          BulkEditLogs.verifyLogsPaneHeader();
+          BulkEditSearchPane.clickClearSelectedButton(tastData.usersAccordion);
+          BulkEditSearchPane.verifyClearSelectedButtonExists(tastData.usersAccordion, false);
+          BulkEditSearchPane.verifyLogsPaneHeader();
 
-          BulkEditLogs.clickChooseUserUnderUserAccordion();
-          BulkEditLogs.fillUserFilterInput(users[1].username);
-          BulkEditLogs.verifyDropdown(users[1].username);
-          BulkEditLogs.selectUserFromDropdown(users[1].username);
-          BulkEditLogs.verifyClearSelectedButtonExists(tastData.usersAccordion);
-          BulkEditLogs.resetAllBtnIsDisabled(false);
-          BulkEditLogs.verifyCellsValues(
+          BulkEditSearchPane.clickChooseUserUnderUserAccordion();
+          BulkEditSearchPane.fillUserFilterInput(users[1].username);
+          BulkEditSearchPane.verifyDropdown(users[1].username);
+          BulkEditSearchPane.selectUserFromDropdown(users[1].username);
+          BulkEditSearchPane.verifyClearSelectedButtonExists(tastData.usersAccordion);
+          BulkEditSearchPane.resetAllBtnIsDisabled(false);
+          BulkEditSearchPane.verifyCellsValues(
             8,
             `${users[1].username}, ${users[1].firstName} ${Users.defaultUser.personal.middleName}`,
           );
 
-          BulkEditLogs.clickChooseUserUnderUserAccordion();
-          BulkEditLogs.fillUserFilterInput(users[0].username);
-          BulkEditLogs.verifyUserIsNotInUserList(users[0].username);
-          BulkEditLogs.verifyEmptyUserDropdown();
+          BulkEditSearchPane.clickChooseUserUnderUserAccordion();
+          BulkEditSearchPane.fillUserFilterInput(users[0].username);
+          BulkEditSearchPane.verifyUserIsNotInUserList(users[0].username);
+          BulkEditSearchPane.verifyEmptyUserDropdown();
         },
       );
     });

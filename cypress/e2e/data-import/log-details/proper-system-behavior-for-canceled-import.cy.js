@@ -43,6 +43,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.checkFileIsRunning(firstMarcFileName);
+        cy.wait(5000);
         DataImport.deleteImportJob(firstMarcFileName);
         DataImport.verifyCancelImportJobModal();
         DataImport.cancelDeleteImportJob();

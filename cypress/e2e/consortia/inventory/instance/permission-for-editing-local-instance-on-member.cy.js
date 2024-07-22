@@ -19,7 +19,6 @@ describe('Inventory', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui])
         .then((userProperties) => {
           testData.user = userProperties;
@@ -47,7 +46,9 @@ describe('Inventory', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
+      cy.resetTenant();
       cy.setTenant(Affiliations.College);
+      cy.wait(5000);
       InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
     });
 
@@ -55,6 +56,7 @@ describe('Inventory', () => {
       'C407749 (CONSORTIA) Verify the permission for editing local instances on Member tenant (consortia) (folijet)',
       { tags: ['smokeECS', 'folijet'] },
       () => {
+        cy.wait(5000);
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {

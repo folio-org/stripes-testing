@@ -58,7 +58,7 @@ export default {
   checkStatusOfJobProfile: (status = 'Completed', rowNumber = 0) => cy.do(MultiColumnListCell({ row: rowNumber, content: status }).exists()),
 
   checkJobStatus: (fileName, status) => {
-    const newFileName = fileName.replace('.mrc', '');
+    const newFileName = fileName.replace(/\.mrc$/i, '');
 
     cy.do(
       MultiColumnListCell({ content: including(newFileName) }).perform((element) => {
@@ -196,7 +196,8 @@ export default {
 
   waitFileIsImported: (fileName) => {
     const newFileName = fileName.replace(/\.mrc$/i, '');
-    cy.expect(runningAccordion.find(HTML(including(newFileName))).absent(), getLongDelay(240000));
+
+    cy.expect(runningAccordion.find(HTML(including(newFileName))).absent(), getLongDelay(300000));
     cy.expect(
       MultiColumnList({ id: 'job-logs-list' })
         .find(Button(including(newFileName)))
@@ -208,4 +209,21 @@ export default {
     .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
     .find(Link({ href: including('/data-import/log/') }))
     .text()),
+
+  getCreatedItemLinkByNumber(recordNumber) {
+    cy.do(
+      searchResultList
+        .find(MultiColumnListCell({ columnIndex: 0, content: `${recordNumber}` }))
+        .perform((element) => {
+          const rowIndex = element.parentElement.getAttribute('data-row-inner');
+          cy.wrap(
+            searchResultList
+              .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+              .find(Link('Created'))
+              .href(),
+          ).as('link');
+        }),
+    );
+    return cy.get('@link');
+  },
 };

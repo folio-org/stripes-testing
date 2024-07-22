@@ -90,7 +90,9 @@ describe('Title Level Request. Request detail', () => {
             expandAll: true,
             query: `"id"=="${instanceData.instanceId}"`,
           }).then((instance) => {
-            instanceHRID = instance.hrid;
+            cy.wait(3000).then(() => {
+              instanceHRID = instance.hrid;
+            });
           });
         });
       })
@@ -194,6 +196,8 @@ describe('Title Level Request. Request detail', () => {
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(tlrCheckboxExists);
       NewRequest.verifyTitleLevelRequestsCheckbox(unchecked);
+      cy.log('-------------');
+      cy.log(instanceHRID);
       NewRequest.enterHridInfo(instanceHRID);
       NewRequest.verifyItemInformation(['0', instanceData.title]);
       NewRequest.enableTitleLevelRequest();

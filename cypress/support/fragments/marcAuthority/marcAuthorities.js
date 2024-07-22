@@ -237,6 +237,8 @@ export default {
     }
   },
 
+  selectItemTitleIncluding: (title) => cy.do(Button(including(title)).click()),
+
   clickOnNumberOfTitlesLink(columnIndex, linkValue) {
     cy.wrap(MultiColumnListCell({ columnIndex, content: linkValue }).find(Link()).href()).as(
       'link',
