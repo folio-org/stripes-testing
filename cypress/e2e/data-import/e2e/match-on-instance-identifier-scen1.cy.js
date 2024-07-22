@@ -34,6 +34,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let userId;
+    const filePathForCreateInstance = 'marcFileForC347828.mrc';
+    const filePathForUpdateInstance = 'marcFileForC347828_1.mrc';
     const fileNameForCreateInstance = `C347828 autotestFile${getRandomPostfix()}.mrc`;
     const fileNameForUpdateInstance = `C347828 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
@@ -119,10 +121,7 @@ describe('Data Import', () => {
       { tags: ['criticalPath', 'folijet'] },
       () => {
         DataImport.verifyUploadState();
-        DataImport.uploadFile(
-          'marcFileForMatchOnIdentifierForCreate.mrc',
-          fileNameForCreateInstance,
-        );
+        DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
@@ -181,10 +180,7 @@ describe('Data Import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
-        DataImport.uploadFile(
-          'marcFileForMatchOnIdentifierForUpdate_1.mrc',
-          fileNameForUpdateInstance,
-        );
+        DataImport.uploadFile(filePathForUpdateInstance, fileNameForUpdateInstance);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();

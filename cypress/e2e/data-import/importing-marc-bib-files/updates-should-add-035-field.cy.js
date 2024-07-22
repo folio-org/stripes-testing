@@ -92,9 +92,12 @@ describe('Data Import', () => {
     });
 
     beforeEach('Login', () => {
-      cy.login(user.username, user.password, {
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
+      cy.login(user.username, user.password);
+    });
+
+    after('Delete user', () => {
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
       });
     });
 
@@ -102,6 +105,7 @@ describe('Data Import', () => {
       'C358998 Data Import Updates should add 035 field from 001/003, if HRID already exists (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
+        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         // upload the first .mrc file
         DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
@@ -196,7 +200,6 @@ describe('Data Import', () => {
           InventoryViewSource.contains('(LTSCA)303845');
 
           cy.getAdminToken().then(() => {
-            Users.deleteViaApi(user.userId);
             SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
             SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
             SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -375,7 +378,6 @@ describe('Data Import', () => {
         });
 
         cy.getAdminToken().then(() => {
-          Users.deleteViaApi(user.userId);
           SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
           SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
           SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);

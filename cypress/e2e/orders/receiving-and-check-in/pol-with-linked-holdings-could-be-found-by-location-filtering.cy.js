@@ -250,6 +250,7 @@ describe('Orders > Receiving and Check-in ', () => {
       Receiving.checkExistingPOLInReceivingList(`${secondOrderNumber}-1`);
       Receiving.checkExistingPOLInReceivingList(`${thirdOrderNumber}-1`);
       Receiving.checkExistingPOLInReceivingList(`${fourthOrderNumber}-1`);
+      Orders.resetFilters();
     },
   );
 });
