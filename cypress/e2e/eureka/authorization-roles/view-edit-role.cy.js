@@ -29,12 +29,6 @@ describe('Eureka', () => {
           {
             application: 'app-platform-complete',
             table: 'Data',
-            resource: 'Licenses Agreements LinkedLicenses',
-            action: 'View',
-          },
-          {
-            application: 'app-platform-complete',
-            table: 'Data',
             resource: 'Licenses Licenses Collection',
             action: 'View',
           },
@@ -151,7 +145,7 @@ describe('Eureka', () => {
         testData.originalCapabilities[2],
       ];
       const originalCapabilitiesInSecondSet = testData.originalCapabilitiesInSets.filter(
-        (capab, index) => index > 3 && index < 8,
+        (capab, index) => index > 2 && index < 7,
       );
 
       const capabSetsToAssign = [
