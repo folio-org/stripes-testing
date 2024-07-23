@@ -1,12 +1,9 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
-import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -35,14 +32,8 @@ describe('Inventory', () => {
         'C442817 Test LCCN normalized Sz record 9 (no spaces)',
       ],
     };
-
-    const marcFile = {
-      marc: 'marcBibFileForC442817.mrc',
-      fileName: `testMarcFileC442817.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-      propertyName: 'instance',
-    };
-
+    // create an array of file names
+    const mrkFiles = Array.from({ length: 9 }, (_, i) => `marcBibFileForC442817_${i + 1}.mrk`);
     const createdRecordIDs = [];
 
     before(() => {
@@ -50,14 +41,12 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 
-        DataImport.uploadFileViaApi(
-          marcFile.marc,
-          marcFile.fileName,
-          marcFile.jobProfileToRun,
-        ).then((response) => {
-          response.forEach((record) => {
-            createdRecordIDs.push(record[marcFile.propertyName].id);
-          });
+        mrkFiles.forEach((mrkFile) => {
+          InventoryInstances.createMarcBibliographicRecordViaApiByReadingFromMrkFile(mrkFile).then(
+            (createdMarcBibliographicId) => {
+              createdRecordIDs.push(createdMarcBibliographicId);
+            },
+          );
         });
 
         cy.login(testData.user.username, testData.user.password, {
