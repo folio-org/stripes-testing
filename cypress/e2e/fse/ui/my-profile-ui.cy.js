@@ -11,7 +11,7 @@ describe('fse-my-profile - UI', () => {
   });
 
   it(
-    'TCXXXXX - verify that change password page is displayed',
+    'TC195470 - verify that change password page is displayed',
     { tags: ['fse', 'ui', 'myProfile'] },
     () => {
       cy.visit(SettingsMenu.myProfilePath);

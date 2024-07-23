@@ -21,7 +21,7 @@ describe('fse-settings - UI', () => {
   );
 
   it(
-    'TCXXXX - verify software versions page is displayed',
+    'TC195469 - verify software versions page is displayed',
     { tags: ['sanity', 'fse', 'ui', 'settings'] },
     () => {
       cy.visit(SettingsMenu.softwareVersionsPath);
