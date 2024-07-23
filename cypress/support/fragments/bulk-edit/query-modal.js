@@ -42,7 +42,7 @@ export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
   firstName: 'User — First name',
   lastName: 'User — Last name',
-  patronGroup: 'User — Patron group',
+  patronGroup: 'Group — Group',
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
 };

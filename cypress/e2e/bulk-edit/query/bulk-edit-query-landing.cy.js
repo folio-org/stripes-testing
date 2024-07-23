@@ -4,11 +4,11 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import QueryModal, {
   usersFieldValues,
-  stringStoresUuidOperators,
   booleanOperators,
   QUERY_OPERATIONS,
+  STRING_OPERATORS,
 } from '../../../support/fragments/bulk-edit/query-modal';
-import { patronGroupNames, patronGroupUuids } from '../../../support/constants';
+import { patronGroupNames } from '../../../support/constants';
 
 let user;
 let secondUser;
@@ -106,17 +106,17 @@ describe('bulk-edit', () => {
         QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
         QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, true);
         QueryModal.selectField(usersFieldValues.patronGroup, 1);
-        QueryModal.verifyQueryAreaContent('(users.active == "true") AND (users.patron_group  )');
+        QueryModal.verifyQueryAreaContent('(users.active == "true") AND (groups.group  )');
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
-        QueryModal.verifyOperatorsList(stringStoresUuidOperators, 1);
-        QueryModal.chooseValueSelect(patronGroupNames.STAFF, 1);
+        QueryModal.verifyOperatorsList(STRING_OPERATORS, 1);
+        QueryModal.fillInValueTextfield(patronGroupNames.STAFF, 1);
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.verifyQueryAreaContent(
-          `(users.active == "true") AND (users.patron_group == "${patronGroupUuids.STAFF}")`,
+          `(users.active == "true") AND (groups.group == "${patronGroupNames.STAFF}")`,
         );
         QueryModal.clickGarbage(1);
         QueryModal.testQueryDisabled(false);
