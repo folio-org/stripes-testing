@@ -89,15 +89,15 @@ describe('bulk-edit', () => {
         QueryModal.verify();
         QueryModal.selectField(usersFieldValues.userActive);
         QueryModal.verifySelectedField(usersFieldValues.userActive);
-        QueryModal.verifyQueryAreaContent('(user_active  )');
+        QueryModal.verifyQueryAreaContent('(users.active  )');
         QueryModal.verifyOperatorsList(booleanOperators);
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-        QueryModal.verifyQueryAreaContent('(user_active == )');
+        QueryModal.verifyQueryAreaContent('(users.active == )');
         QueryModal.verifyValueColumn();
         QueryModal.selectValueFromSelect('True');
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
-        QueryModal.verifyQueryAreaContent('(user_active == "true")');
+        QueryModal.verifyQueryAreaContent('(users.active == "true")');
         QueryModal.addNewRow();
         QueryModal.verifyBooleanColumn();
         QueryModal.verifyEmptyField(1);
@@ -106,7 +106,7 @@ describe('bulk-edit', () => {
         QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
         QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, true);
         QueryModal.selectField(usersFieldValues.patronGroup, 1);
-        QueryModal.verifyQueryAreaContent('(user_active == "true") AND (user_patron_group  )');
+        QueryModal.verifyQueryAreaContent('(users.active == "true") AND (users.patron_group  )');
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.verifyOperatorColumn();
@@ -116,7 +116,7 @@ describe('bulk-edit', () => {
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.verifyQueryAreaContent(
-          `(user_active == "true") AND (user_patron_group == "${patronGroupUuids.STAFF}")`,
+          `(users.active == "true") AND (users.patron_group == "${patronGroupUuids.STAFF}")`,
         );
         QueryModal.clickGarbage(1);
         QueryModal.testQueryDisabled(false);

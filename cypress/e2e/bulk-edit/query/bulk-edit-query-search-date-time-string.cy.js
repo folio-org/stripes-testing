@@ -51,11 +51,11 @@ describe('bulk-edit', () => {
         QueryModal.verifyFieldsSortedAlphabetically();
         QueryModal.selectField(usersFieldValues.expirationDate);
         QueryModal.verifySelectedField(usersFieldValues.expirationDate);
-        QueryModal.verifyQueryAreaContent('(user_expiration_date  )');
+        QueryModal.verifyQueryAreaContent('(users.expiration_date  )');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator('>=');
         QueryModal.verifyOperatorsList(dateTimeOperators);
-        QueryModal.verifyQueryAreaContent('(user_expiration_date >= )');
+        QueryModal.verifyQueryAreaContent('(users.expiration_date >= )');
         QueryModal.verifyValueColumn();
         const todayDate = DateTools.getCurrentDate();
         const todayDateWithDashes = DateTools.getCurrentDateForFiscalYear();
@@ -70,7 +70,7 @@ describe('bulk-edit', () => {
         QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
         QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, true);
         QueryModal.verifyQueryAreaContent(
-          `(user_expiration_date >= "${todayDateWithDashes}") AND (  )`,
+          `(users.expiration_date >= "${todayDateWithDashes}") AND (  )`,
         );
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
@@ -81,7 +81,7 @@ describe('bulk-edit', () => {
         const nextWeekDateWithDashes = DateTools.getSomeDaysAfterTomorrowDateForFiscalYear(3);
         QueryModal.pickDate(nextWeekDate, 1);
         QueryModal.verifyQueryAreaContent(
-          `(user_expiration_date >= "${todayDateWithDashes}") AND (user_expiration_date <= "${nextWeekDateWithDashes}")`,
+          `(users.expiration_date >= "${todayDateWithDashes}") AND (users.expiration_date <= "${nextWeekDateWithDashes}")`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
@@ -96,18 +96,18 @@ describe('bulk-edit', () => {
         QueryModal.selectField(usersFieldValues.lastName, 2);
         QueryModal.verifySelectedField(usersFieldValues.lastName, 2);
         QueryModal.verifyQueryAreaContent(
-          `(user_expiration_date >= "${todayDateWithDashes}") AND (user_expiration_date <= "${nextWeekDateWithDashes}") AND (user_last_name  )`,
+          `(users.expiration_date >= "${todayDateWithDashes}") AND (users.expiration_date <= "${nextWeekDateWithDashes}") AND (users.last_name  )`,
         );
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 2);
         QueryModal.verifyOperatorsList(STRING_OPERATORS, 2);
         QueryModal.verifyQueryAreaContent(
-          `(user_expiration_date >= "${todayDateWithDashes}") AND (user_expiration_date <= "${nextWeekDateWithDashes}") AND (user_last_name starts with )`,
+          `(users.expiration_date >= "${todayDateWithDashes}") AND (users.expiration_date <= "${nextWeekDateWithDashes}") AND (users.last_name starts with )`,
         );
         QueryModal.fillInValueTextfield('cypressTestUser', 2);
         QueryModal.verifyQueryAreaContent(
-          `(user_expiration_date >= "${todayDateWithDashes}") AND (user_expiration_date <= "${nextWeekDateWithDashes}") AND (user_last_name starts with "cypressTestUser")`,
+          `(users.expiration_date >= "${todayDateWithDashes}") AND (users.expiration_date <= "${nextWeekDateWithDashes}") AND (users.last_name starts with "cypressTestUser")`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
@@ -126,7 +126,7 @@ describe('bulk-edit', () => {
         QueryModal.selectOperator(QUERY_OPERATIONS.CONTAINS, 3);
         QueryModal.fillInValueTextfield('testPermFirst', 3);
         QueryModal.verifyQueryAreaContent(
-          `(user_expiration_date >= "${todayDateWithDashes}") AND (user_expiration_date <= "${nextWeekDateWithDashes}") AND (user_last_name starts with "cypressTestUser") AND (user_first_name contains "testPermFirst")`,
+          `(users.expiration_date >= "${todayDateWithDashes}") AND (users.expiration_date <= "${nextWeekDateWithDashes}") AND (users.last_name starts with "cypressTestUser") AND (users.first_name contains "testPermFirst")`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();

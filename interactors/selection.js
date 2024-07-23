@@ -65,6 +65,9 @@ export default HTML.extend('selection')
   })
   .actions({
     open: ({ perform }) => perform(toggle),
+    filter: async ({ perform }, value) => {
+      return perform(() => SelectionList().filter(value));
+    },
     filterOptions: async ({ perform }, value) => {
       const optionsList = document.querySelector('[class^=selectionListRoot]');
       if (!(optionsList && isVisible(optionsList))) {
@@ -77,6 +80,9 @@ export default HTML.extend('selection')
       if (!(optionsList && isVisible(optionsList))) {
         await perform(toggle);
       }
+      return perform(() => SelectionList().find(SelectionOption(value)).click());
+    },
+    chooseWithoutVerification: async ({ perform }, value) => {
       return perform(() => SelectionList().find(SelectionOption(value)).click());
     },
     focus: ({ perform }) => perform((el) => el.querySelector('button').focus()),

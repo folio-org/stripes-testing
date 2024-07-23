@@ -52,15 +52,15 @@ describe('bulk-edit', () => {
         QueryModal.verifyFieldsSortedAlphabetically();
         QueryModal.selectField(usersFieldValues.patronGroup);
         QueryModal.verifySelectedField(usersFieldValues.patronGroup);
-        QueryModal.verifyQueryAreaContent('(user_patron_group  )');
+        QueryModal.verifyQueryAreaContent('(users.patron_group  )');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-        QueryModal.verifyQueryAreaContent('(user_patron_group == )');
+        QueryModal.verifyQueryAreaContent('(users.patron_group == )');
         QueryModal.verifyValueColumn();
         QueryModal.chooseValueSelect(patronGroupNames.STAFF);
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
-        QueryModal.verifyQueryAreaContent(`(user_patron_group == "${patronGroupUuids.STAFF}")`);
+        QueryModal.verifyQueryAreaContent(`(users.patron_group == "${patronGroupUuids.STAFF}")`);
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.clickTestQuery();

@@ -55,16 +55,16 @@ describe('bulk-edit', () => {
         QueryModal.verifyFieldsSortedAlphabetically();
         QueryModal.selectField(itemFieldValues.itemStatus);
         QueryModal.verifySelectedField(itemFieldValues.itemStatus);
-        QueryModal.verifyQueryAreaContent('(item_status  )');
+        QueryModal.verifyQueryAreaContent('(items.status_name  )');
         QueryModal.verifyOperatorColumn();
         QueryModal.verifyOperatorsList(enumOperators);
         QueryModal.selectOperator('not in');
-        QueryModal.verifyQueryAreaContent('(item_status not in (""))');
+        QueryModal.verifyQueryAreaContent('(items.status_name not in (""))');
         QueryModal.verifyValueColumn();
         QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.ON_ORDER);
         QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.AGED_TO_LOST);
         QueryModal.verifyQueryAreaContent(
-          `(item_status not in ("${ITEM_STATUS_NAMES.ON_ORDER}","${ITEM_STATUS_NAMES.AGED_TO_LOST}"))`,
+          `(items.status_name not in ("${ITEM_STATUS_NAMES.ON_ORDER}","${ITEM_STATUS_NAMES.AGED_TO_LOST}"))`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
@@ -75,7 +75,7 @@ describe('bulk-edit', () => {
         QueryModal.chooseFromValueMultiselect(ITEM_STATUS_NAMES.AVAILABLE);
         QueryModal.chooseFromValueMultiselect(ITEM_STATUS_NAMES.MISSING);
         QueryModal.verifyQueryAreaContent(
-          `(item_status not in ("${ITEM_STATUS_NAMES.AVAILABLE}","${ITEM_STATUS_NAMES.MISSING}"))`,
+          `(items.status_name not in ("${ITEM_STATUS_NAMES.AVAILABLE}","${ITEM_STATUS_NAMES.MISSING}"))`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
