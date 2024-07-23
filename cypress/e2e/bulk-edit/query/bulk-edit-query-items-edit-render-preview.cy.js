@@ -58,14 +58,14 @@ describe('bulk-edit', () => {
         QueryModal.verifyFieldsSortedAlphabetically();
         QueryModal.selectField(itemFieldValues.temporaryLocation);
         QueryModal.verifySelectedField(itemFieldValues.temporaryLocation);
-        QueryModal.verifyQueryAreaContent('(item_temporary_location_name  )');
+        QueryModal.verifyQueryAreaContent('(temporary_location.name  )');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-        QueryModal.verifyQueryAreaContent('(item_temporary_location_name == )');
+        QueryModal.verifyQueryAreaContent('(temporary_location.name == )');
         QueryModal.verifyValueColumn();
         QueryModal.chooseValueSelect(LOCATION_NAMES.ONLINE_UI);
         QueryModal.verifyQueryAreaContent(
-          `(item_temporary_location_name == "${LOCATION_IDS.ONLINE}")`,
+          `(temporary_location.name == "${LOCATION_NAMES.ONLINE_UI}")`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
