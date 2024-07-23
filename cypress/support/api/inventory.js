@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { recurse } from 'cypress-recurse';
 import { INSTANCE_SOURCE_NAMES } from '../constants';
 import QuickMarcEditor from '../fragments/quickMarcEditor';
 
@@ -408,5 +409,40 @@ Cypress.Commands.add('getInventoryInstanceByStatus', (status) => {
   cy.okapiRequest({
     path: UpdatedUrl,
     isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('createMarcBibliographicViaAPI', (LDR, fields) => {
+  cy.okapiRequest({
+    path: 'records-editor/records',
+    method: 'POST',
+    isDefaultSearchParamsRequired: false,
+    body: {
+      _actionType: 'create',
+      leader: LDR,
+      fields,
+      suppressDiscovery: false,
+      marcFormat: 'BIBLIOGRAPHIC',
+    },
+  }).then(({ body }) => {
+    recurse(
+      () => {
+        return cy.okapiRequest({
+          method: 'GET',
+          path: `records-editor/records/status?qmRecordId=${body.qmRecordId}`,
+          isDefaultSearchParamsRequired: false,
+        });
+      },
+      (response) => response.body.status === 'CREATED',
+      {
+        limit: 10,
+        timeout: 80000,
+        delay: 5000,
+      },
+    ).then((response) => {
+      cy.wrap(response.body.externalId).as('createdMarcBibliographicId');
+
+      return cy.get('@createdMarcBibliographicId');
+    });
   });
 });
