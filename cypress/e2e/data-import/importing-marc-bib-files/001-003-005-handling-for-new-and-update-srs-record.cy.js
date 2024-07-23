@@ -98,6 +98,7 @@ describe('Data Import', () => {
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+        Permissions.dataExportEnableApp.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
 

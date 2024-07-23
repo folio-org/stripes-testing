@@ -66,7 +66,7 @@ describe('Data Import', () => {
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
-        user = userProperties.user;
+        user = userProperties;
       });
 
       cy.loginAsAdmin({

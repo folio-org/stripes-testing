@@ -23,7 +23,7 @@ describe('Data Import', () => {
       });
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
-        user = userProperties.user;
+        user = userProperties;
 
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,

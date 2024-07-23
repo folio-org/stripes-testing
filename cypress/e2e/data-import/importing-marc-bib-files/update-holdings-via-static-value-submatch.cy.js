@@ -138,7 +138,7 @@ describe('Data Import', () => {
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
-        user = userProperties.user;
+        user = userProperties;
 
         cy.login(user.username, user.password, {
           path: SettingsMenu.mappingProfilePath,

@@ -55,7 +55,7 @@ describe('Data Import', () => {
         Permissions.settingsDataImportEnabled.gui,
         Permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
       ]).then((userProperties) => {
-        user = userProperties.user;
+        user = userProperties;
 
         cy.login(user.username, user.password);
       });
