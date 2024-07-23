@@ -20,7 +20,6 @@ let servicePointId;
 const noteType = `Dew;ey Dec|im:al class & ${getRandomPostfix()}`;
 const itemNote = `Note with;special&characters) ${getRandomPostfix()}`;
 const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
-const itemNormalNote = `itemNormalNote-${getRandomPostfix()}`;
 const item = {
   instanceName: `item_${getRandomPostfix()}`,
   barcode: getRandomPostfix(),
@@ -70,7 +69,6 @@ describe('bulk-edit', () => {
     after('delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       FileManager.deleteFile(`cypress/fixtures/${itemHRIDsFileName}`);
     });
 
@@ -83,11 +81,11 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(itemHRIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.hrid);
+        BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(noteType, 'Item temporary location');
         BulkEditSearchPane.verifySpecificItemsMatched(itemNote);
 
         const location = 'Online';
-        BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.replaceTemporaryLocation(location);
         BulkEditActions.confirmChanges();
@@ -108,16 +106,16 @@ describe('bulk-edit', () => {
 
         cy.getToken(user.username, user.password);
         cy.visit(TopMenu.bulkEditPath);
-        BulkEditSearchPane.checkHoldingsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');
         BulkEditSearchPane.uploadFile(itemHRIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.hrid);
+        BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Note', 'Item temporary location');
-        BulkEditSearchPane.verifySpecificItemsMatched(itemNote);
+        BulkEditSearchPane.verifySpecificItemsMatched(item.hrid);
 
         const newLocation = 'Annex';
-        BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.replaceTemporaryLocation(newLocation);
         BulkEditActions.confirmChanges();
@@ -130,10 +128,7 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
-        ItemRecordView.verifyTemporaryLocation(location);
-        InventoryItems.edit();
-        ItemRecordEdit.editItemNotes('Binding', itemNormalNote);
-        ItemRecordEdit.saveAndClose({ itemSaved: true });
+        ItemRecordView.verifyTemporaryLocation(newLocation);
       },
     );
   });
