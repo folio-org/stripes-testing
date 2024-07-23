@@ -97,7 +97,7 @@ describe('Data Import', () => {
       completedDate.setDate(completedDate.getDate() + 1);
 
       LogsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });
-
+      cy.wait(1800);
       const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
       LogsViewAll.checkByDate({ from: formattedStart, end: formattedEnd });
       LogsViewAll.resetAllFilters();
