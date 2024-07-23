@@ -92,8 +92,9 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.holdingHRID);
         BulkEditActions.downloadMatchedResults();
+        ExportFile.verifyFileIncludes(matchedRecordsFileName, [`FOLIO,,,,${notes.admin},`]);
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [
-          `${notes.admin},Binding;${notes.binding};false|Provenance;${notes.provenance};false,`,
+          `,${notes.binding},,,,${notes.provenance},`,
         ]);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Administrative note',
@@ -112,8 +113,9 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyChangesInAreYouSureForm('Administrative note', ['']);
         BulkEditActions.verifyChangesInAreYouSureForm('Binding note', ['']);
         BulkEditActions.downloadPreview();
+        ExportFile.verifyFileIncludes(previewFileName, ['FOLIO,,,,,']);
         ExportFile.verifyFileIncludes(previewFileName, [
-          `,,Provenance;${notes.provenance};false|Reproduction;${notes.reproduction};false,`,
+          `,${notes.provenance},${notes.reproduction},`,
         ]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
@@ -121,8 +123,9 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumns('Binding note', '');
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
+        ExportFile.verifyFileIncludes(changedRecordsFileName, ['FOLIO,,,,,']);
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `,,Provenance;${notes.provenance};false|Reproduction;${notes.reproduction};false,`,
+          `,${notes.provenance},${notes.reproduction},`,
         ]);
 
         TopMenuNavigation.navigateToApp('Inventory');
