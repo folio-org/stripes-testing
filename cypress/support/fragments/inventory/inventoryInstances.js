@@ -29,6 +29,8 @@ import InventoryItems from './item/inventoryItems';
 import Arrays from '../../utils/arrays';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES, REQUEST_METHOD } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
+import parseMrkFile from '../../utils/parseMrkFile';
+import FileManager from '../../utils/fileManager';
 
 const rootSection = Section({ id: 'pane-results' });
 const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
@@ -182,6 +184,38 @@ const advSearchItemsOptionsValues = searchItemsOptionsValues
   .filter((option, index) => index <= 11);
 
 const actionsSortSelect = Select({ dataTestID: 'sort-by-selection' });
+
+const defaultField008Values = {
+  Alph: '\\',
+  Audn: '\\',
+  BLvl: 's',
+  Biog: '\\',
+  Comp: '\\\\',
+  Conf: '|',
+  Cont: ['\\', '\\', '\\'],
+  Ctry: '\\\\\\',
+  Date1: '\\\\\\\\',
+  Date2: '\\\\\\\\',
+  DtSt: '|',
+  EntW: '\\',
+  FMus: '\\',
+  Fest: '\\',
+  Form: '\\',
+  Freq: '\\',
+  GPub: '\\',
+  Indx: '\\',
+  Lang: '\\\\\\',
+  LitF: '\\',
+  MRec: '\\',
+  Orig: '\\',
+  Part: '\\',
+  Regl: '|',
+  'S/L': '|',
+  SrTp: '\\',
+  Srce: '\\',
+  TrAr: '\\',
+  Type: 'a',
+};
 
 const createInstanceViaAPI = (instanceWithSpecifiedNewId) => {
   return cy.okapiRequest({
@@ -999,6 +1033,35 @@ export default {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `call-number-types/${id}`,
+    });
+  },
+
+  createMarcBibliographicRecordViaApiByReadingFromMrkFile(
+    mrkFileName,
+    field008Values = defaultField008Values,
+    additionalFields = [],
+  ) {
+    return new Promise((resolve) => {
+      FileManager.readFile(`cypress/fixtures/${mrkFileName}`).then((fileContent) => {
+        const parsedFromMrkFileFields = parseMrkFile(fileContent);
+        const tag008 = {
+          // default 008 field values
+          tag: '008',
+          content: field008Values,
+        };
+        // add to the fields array default 008 field values
+        parsedFromMrkFileFields.fields.unshift(tag008);
+
+        // add additional fields to the fields array which wasn't parsed in the parseMrkFile() method, e.g. '006', '007'
+        parsedFromMrkFileFields.fields.push(...additionalFields);
+
+        cy.createMarcBibliographicViaAPI(
+          parsedFromMrkFileFields.leader,
+          parsedFromMrkFileFields.fields,
+        ).then((createdMarcBibliographicId) => {
+          resolve(createdMarcBibliographicId);
+        });
+      });
     });
   },
 
