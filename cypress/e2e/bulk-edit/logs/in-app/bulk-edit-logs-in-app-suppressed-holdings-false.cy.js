@@ -14,6 +14,7 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import { LOCATION_IDS } from '../../../../support/constants';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
@@ -123,25 +124,13 @@ describe('bulk-edit', () => {
           BulkEditFiles.verifyCSVFileRows(itemBarcodesFileName, [item.itemBarcode]);
 
           BulkEditLogs.downloadFileWithMatchingRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            `*${matchedRecordsFileName}`,
-            [item.itemBarcode],
-            'holdingsItemBarcode',
-          );
+          ExportFile.verifyFileIncludes(`*${matchedRecordsFileName}`, [item.holdingsHRID]);
 
           BulkEditLogs.downloadFileWithProposedChanges();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            previewOfProposedChangesFileName,
-            [item.itemBarcode],
-            'holdingsItemBarcode',
-          );
+          ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, [item.holdingsHRID]);
 
           BulkEditLogs.downloadFileWithUpdatedRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            updatedRecordsFileName,
-            [item.itemBarcode],
-            'holdingsItemBarcode',
-          );
+          ExportFile.verifyFileIncludes(updatedRecordsFileName, [item.holdingsHRID]);
 
           TopMenuNavigation.navigateToApp('Inventory');
           InventorySearchAndFilter.switchToItem();

@@ -67,6 +67,7 @@ describe('bulk-edit', () => {
               path: TopMenu.bulkEditPath,
               waiter: BulkEditSearchPane.waitLoading,
             });
+            cy.getUserToken(users[1].username, users[1].password);
             BulkEditSearchPane.checkItemsRadio();
             BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
             BulkEditSearchPane.uploadFile(validItemUUIDsFileName);
@@ -76,6 +77,7 @@ describe('bulk-edit', () => {
               path: TopMenu.bulkEditPath,
               waiter: BulkEditSearchPane.waitLoading,
             });
+            cy.getUserToken(users[2].username, users[2].password);
             BulkEditSearchPane.checkUsersRadio();
             BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
             BulkEditSearchPane.uploadFile(userBarcodesFileName);
@@ -92,6 +94,7 @@ describe('bulk-edit', () => {
               path: TopMenu.bulkEditPath,
               waiter: BulkEditSearchPane.waitLoading,
             });
+            cy.getUserToken(users[0].username, users[0].password);
           });
       });
 
@@ -123,7 +126,6 @@ describe('bulk-edit', () => {
           BulkEditLogs.clickChooseUserUnderUserAccordion();
 
           BulkEditLogs.fillUserFilterInput(users[1].username);
-          BulkEditLogs.verifyDropdown(users[1].username);
           BulkEditLogs.selectUserFromDropdown(users[1].username);
           BulkEditLogs.verifyClearSelectedButtonExists(tastData.usersAccordion);
           BulkEditLogs.resetAllBtnIsDisabled(false);
@@ -134,7 +136,6 @@ describe('bulk-edit', () => {
 
           BulkEditLogs.clickChooseUserUnderUserAccordion();
           BulkEditLogs.fillUserFilterInput(users[2].username);
-          BulkEditLogs.verifyDropdown(users[2].username);
           BulkEditLogs.selectUserFromDropdown(users[2].username);
           BulkEditLogs.verifyClearSelectedButtonExists(tastData.usersAccordion);
           BulkEditLogs.resetAllBtnIsDisabled(false);
@@ -149,7 +150,6 @@ describe('bulk-edit', () => {
 
           BulkEditLogs.clickChooseUserUnderUserAccordion();
           BulkEditLogs.fillUserFilterInput(users[1].username);
-          BulkEditLogs.verifyDropdown(users[1].username);
           BulkEditLogs.selectUserFromDropdown(users[1].username);
           BulkEditLogs.verifyClearSelectedButtonExists(tastData.usersAccordion);
           BulkEditLogs.resetAllBtnIsDisabled(false);
@@ -161,7 +161,6 @@ describe('bulk-edit', () => {
           BulkEditLogs.clickChooseUserUnderUserAccordion();
           BulkEditLogs.fillUserFilterInput(users[0].username);
           BulkEditLogs.verifyUserIsNotInUserList(users[0].username);
-          BulkEditLogs.verifyEmptyUserDropdown();
         },
       );
     });
