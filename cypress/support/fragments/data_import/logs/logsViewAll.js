@@ -276,9 +276,9 @@ export default {
   },
 
   checkByDate({ from, end }) {
-    cy.wait(2000);
+    cy.wait(5000);
     const queryString = UrlParams.getDateQueryString({ from, end });
-    cy.wait(2000);
+
     return this.getNumberOfMatchedJobs(queryString).then((count) => {
       // ensure MultiColumnList is filtered by Date
       this.checkRowsCount(count);
