@@ -23,6 +23,7 @@ describe('Eureka', () => {
     userC.username = `usercc451632${getRandomPostfix()}`;
 
     before('Create data', () => {
+      Cypress.session.clearCurrentSessionData();
       cy.getAdminToken();
       cy.getUserGroups().then((groupId) => {
         userA.patronGroup = groupId;

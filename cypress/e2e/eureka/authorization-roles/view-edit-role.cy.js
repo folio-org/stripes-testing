@@ -29,12 +29,6 @@ describe('Eureka', () => {
           {
             application: 'app-platform-complete',
             table: 'Data',
-            resource: 'Licenses Agreements LinkedLicenses',
-            action: 'View',
-          },
-          {
-            application: 'app-platform-complete',
-            table: 'Data',
             resource: 'Licenses Licenses Collection',
             action: 'View',
           },
@@ -136,8 +130,8 @@ describe('Eureka', () => {
           },
           capabilities: {
             Settings: 3,
-            Procedural: 2,
-            Data: 8,
+            Procedural: 1,
+            Data: 4,
           },
         },
         absentCapabilitySetTables: ['Data'],
@@ -151,7 +145,7 @@ describe('Eureka', () => {
         testData.originalCapabilities[2],
       ];
       const originalCapabilitiesInSecondSet = testData.originalCapabilitiesInSets.filter(
-        (capab, index) => index > 3 && index < 8,
+        (capab, index) => index > 2 && index < 7,
       );
 
       const capabSetsToAssign = [
@@ -263,7 +257,7 @@ describe('Eureka', () => {
           });
           cy.wait('@capabilitiesCall').then((call) => {
             expect(call.response.statusCode).to.eq(204);
-            expect(call.request.body.capabilityIds).to.have.lengthOf(11);
+            expect(call.request.body.capabilityIds).to.have.lengthOf(2);
           });
           cy.wait('@capabilitySetsCall').then((call) => {
             expect(call.response.statusCode).to.eq(204);
