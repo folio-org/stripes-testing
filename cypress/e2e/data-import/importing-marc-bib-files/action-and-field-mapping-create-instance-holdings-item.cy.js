@@ -155,7 +155,7 @@ describe('Data Import', () => {
           8,
         );
         NewFieldMappingProfile.addNatureOfContentTerms(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.natureOfContent,
+          `"${collectionOfMappingAndActionProfiles[0].mappingProfile.natureOfContent}"`,
         );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(

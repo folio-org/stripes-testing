@@ -1,9 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   FOLIO_RECORD_TYPE,
-  INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
-  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -11,10 +9,9 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -26,42 +23,44 @@ import NewFieldMappingProfile from '../../../support/fragments/settings/dataImpo
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
+    let user;
     let instanceHrid;
-    let userId;
-    const quantityOfItems = '1';
-    const marcFileForCreate = `C11103 autotestFile${getRandomPostfix()}.mrc`;
+    const thirdTitle = 'Alison Dorsetto / Lizzy Stewart.';
+    const fifthTitle =
+      'Unlocking the future : the urban imagination in contemporary Chinese science fiction / Luo Xiaoming.';
+    const errorMessage =
+      "Mapped Instance is invalid: [Value 'electronic' is not a UUID for natureOfContentTermIds field]";
+    const filePathToUpload = 'marcBibFileForC466143.mrc';
+    const marcFileName = `C466143 marcBibFile${getRandomPostfix()}.mrc`;
     const mappingProfile = {
-      name: `C11103 autotest mapping profile.${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-      actionForSuppress: 'Mark for all affected records',
-      catalogedDate: '"2021-02-24"',
-      catalogedDateUI: '2021-02-24',
-      instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
-      statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
-      statisticalCodeUI: 'Book, print (books)',
-      natureOfContent: 'bibliography',
+      name: `C466143 Create instance with NoC${getRandomPostfix()}`,
+      catalogedDate: '###TODAY###',
+      catalogedDateUI: DateTools.getFormattedDate({ date: new Date() }),
+      natureOfContent: '949$n',
     };
     const actionProfile = {
+      name: `C466143 Create instance with NoC${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-      name: `C11103 autotest action profile.${getRandomPostfix()}`,
     };
     const jobProfile = {
-      profileName: `C11103 autotest job profile.${getRandomPostfix()}`,
+      profileName: `C466143 Create instance with NoC${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('Create user and login', () => {
+    before('Create test data and login', () => {
+      cy.getAdminToken();
       cy.createTempUser([
-        Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
+        Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
-        Permissions.enableStaffSuppressFacet.gui,
       ]).then((userProperties) => {
-        userId = userProperties.userId;
+        user = userProperties;
 
         cy.login(userProperties.username, userProperties.password, {
           path: SettingsMenu.mappingProfilePath,
@@ -72,7 +71,7 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
-        Users.deleteViaApi(userId);
+        Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
@@ -85,68 +84,52 @@ describe('Data Import', () => {
     });
 
     it(
-      'C11103 Action and field mapping: Create an instance (folijet)',
-      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
+      'C466143 No empty value created for absent 949$n for Nature of Content field (folijet)',
+      { tags: ['criticalPath', 'folijet'] },
       () => {
-        // create mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-        NewFieldMappingProfile.addStaffSuppress(mappingProfile.actionForSuppress);
-        NewFieldMappingProfile.addSuppressFromDiscovery(mappingProfile.actionForSuppress);
-        NewFieldMappingProfile.addPreviouslyHeld(mappingProfile.actionForSuppress);
         NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogedDate);
-        NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.statusTerm);
-        NewFieldMappingProfile.addStatisticalCode(mappingProfile.statisticalCode, 8);
-        NewFieldMappingProfile.addNatureOfContentTerms(`"${mappingProfile.natureOfContent}"`);
+        NewFieldMappingProfile.addNatureOfContentTerms(mappingProfile.natureOfContent);
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
-        // create action profile
         cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.create(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
-        // create job profile
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfile);
-        NewJobProfile.linkActionProfileByName(actionProfile.name);
+        NewJobProfile.linkActionProfile(actionProfile);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-        // upload a marc file for creating of the new instance
+        // upload a marc file for creating
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
-        DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreate);
+        DataImport.uploadFile(filePathToUpload, marcFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(marcFileForCreate);
-        Logs.checkJobStatus(marcFileForCreate, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFileForCreate);
-        [
-          FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.instance,
-        ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
+        Logs.waitFileIsImported(marcFileName);
+        Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.openFileDetails(marcFileName);
+        FileDetails.openJsonScreen(thirdTitle);
+        JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.openMarcSrsTab();
+        JsonScreenView.getInstanceHrid().then((hrid) => {
+          instanceHrid = hrid;
         });
-        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
-        FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems);
+        JsonScreenView.verifyContentNotExistInTab('"n":');
+        JsonScreenView.openInstanceTab();
+        JsonScreenView.verifyContentInTab('"natureOfContentTermIds": []');
 
-        // open Instance for getting hrid
-        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHrid = initialInstanceHrId;
-
-          cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.selectYesfilterStaffSuppress();
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-          InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
-          InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
-          InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
-          InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
-          InstanceRecordView.verifyNatureOfContent(mappingProfile.natureOfContent);
-        });
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(marcFileName);
+        FileDetails.openJsonScreen(fifthTitle);
+        JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.verifyContentInTab(errorMessage);
       },
     );
   });

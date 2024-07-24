@@ -49,7 +49,7 @@ const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 const uploadFile = (filePathName, fileName) => {
   cy.expect(sectionPaneJobsTitle.exists());
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
-  cy.wait(5000);
+  cy.wait(10000);
 };
 
 const uploadBunchOfDifferentFiles = (fileNames) => {
@@ -703,13 +703,14 @@ export default {
     // because this is possible by design
     // that's why we need waiting until previous file will be uploaded, reload page and delete uploaded file
     waitLoading();
+    cy.wait(10000);
+    cy.reload();
+    cy.wait(5000);
     cy.allure().startStep('Delete files before upload file');
-    waitLoading();
     cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(
       (isDeleteFilesButtonExists) => {
         if (isDeleteFilesButtonExists) {
-          cy.wait(20000);
-          cy.reload();
+          cy.do(Button('Delete files').click());
           cy.expect(Button('or choose files').exists());
           cy.allure().endStep();
         }

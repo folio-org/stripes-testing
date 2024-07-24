@@ -53,6 +53,9 @@ export default {
   verifyContentInTab: (value) => {
     cy.expect(HTML(including(value)).exists());
   },
+  verifyContentNotExistInTab: (value) => {
+    cy.expect(HTML(including(value)).absent());
+  },
 
   verifyTabsPresented: () => {
     cy.expect([

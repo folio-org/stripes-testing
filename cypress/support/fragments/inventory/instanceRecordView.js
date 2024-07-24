@@ -253,7 +253,7 @@ export default {
     cy.expect(
       Accordion('Title data')
         .find(MultiColumnList({ id: 'precedingTitles' }))
-        .find(MultiColumnListCell({ content: title }))
+        .find(MultiColumnListCell({ content: including(title) }))
         .exists(),
     );
   },
@@ -261,7 +261,7 @@ export default {
     cy.expect(
       Accordion('Title data')
         .find(MultiColumnList({ id: 'succeedingTitles' }))
-        .find(MultiColumnListCell({ content: title }))
+        .find(MultiColumnListCell({ content: including(title) }))
         .exists(),
     );
   },
@@ -539,17 +539,13 @@ export default {
 
   checkMultipleItemNotesWithStaffOnly: (rowIndex, staffOnly, noteType, noteText) => {
     cy.get('#instance-details-notes').within(() => {
-      cy.get(`[id="list-instance-notes-${rowIndex}"]`)
-        .within(() => {
-          cy.get('[role="columnheader"]')
-            .eq(1).should('have.text', noteType);
+      cy.get(`[id="list-instance-notes-${rowIndex}"]`).within(() => {
+        cy.get('[role="columnheader"]').eq(1).should('have.text', noteType);
 
-          cy.get('[role="gridcell"]')
-            .eq(0).should('contain', staffOnly);
+        cy.get('[role="gridcell"]').eq(0).should('contain', staffOnly);
 
-          cy.get('[role="gridcell"]')
-            .eq(1).should('contain', noteText);
-        });
+        cy.get('[role="gridcell"]').eq(1).should('contain', noteText);
+      });
     });
   },
 };
