@@ -685,7 +685,7 @@ export default {
       const fileRows = fileContent.split('\n');
 
       expect(fileRows[0].trim()).to.equal(
-        '"Name (Fund)","Code (Fund)","Status (Fund)","Type","Group (Code)","Acquisition unit","Transfer from","Transfer to","External account number","Description","Name (Budget)","Status (Budget)","Allowable encumbrance","Allowable expenditure","Initial allocation","Increase","Decrease","Total allocation","Transfers","Total Funding","Encumbered (Budget)","Awaiting payment (Budget)","Expended (Budget)","Unavailable","Over encumbered","Over expended","Cash balance","Available","Credited","Name (Exp Class)","Code (Exp Class)","Status (Exp Class)","Encumbered (Exp Class)","Awaiting payment (Exp Class)","Expended (Exp Class)","Percentage of total expended"',
+        '"Name (Fund)","Code (Fund)","Status (Fund)","Type","Group (Code)","Acquisition unit","Transfer from","Transfer to","External account number","Description","Name (Budget)","Status (Budget)","Allowable encumbrance","Allowable expenditure","Initial allocation","Increase","Decrease","Total allocation","Transfers","Total Funding","Encumbered (Budget)","Awaiting payment (Budget)","Expended (Budget)","Credited (Budget)","Unavailable","Over encumbered","Over expended","Cash balance","Available","Name (Exp Class)","Code (Exp Class)","Status (Exp Class)","Encumbered (Exp Class)","Awaiting payment (Exp Class)","Expended (Exp Class)","Credited (Exp Class)","Percentage of total expended"',
       );
 
       const actualData = fileRows[1].trim().split(',');
@@ -698,8 +698,8 @@ export default {
       expect(actualData[14]).to.equal(initialAllocation);
       expect(actualData[17]).to.equal(totalAllocation);
       expect(actualData[19]).to.equal(totalFunding);
-      expect(actualData[26]).to.equal(cashBalance);
-      expect(actualData[27]).to.equal(available);
+      expect(actualData[27]).to.equal(cashBalance);
+      expect(actualData[28]).to.equal(available);
     });
   },
 

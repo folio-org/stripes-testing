@@ -84,14 +84,14 @@ describe('Orders > Receiving and Check-in ', () => {
                             listUnitPrice: 100.0,
                             currency: 'USD',
                             discountType: 'percentage',
-                            quantityPhysical: 2,
+                            quantityPhysical: 1,
                             poLineEstimatedPrice: 100.0,
                           },
                           fundDistribution: [
                             { code: firstFund.code, fundId: firstFund.id, value: 100 },
                           ],
                           locations: [
-                            { locationId: location.id, quantity: 2, quantityPhysical: 2 },
+                            { locationId: location.id, quantity: 1, quantityPhysical: 1 },
                           ],
                           acquisitionMethod: params.body.acquisitionMethods[0].id,
                           physical: {
@@ -132,7 +132,7 @@ describe('Orders > Receiving and Check-in ', () => {
         });
       });
     });
-
+    cy.logout();
     cy.createTempUser([
       permissions.uiOrdersEdit.gui,
       permissions.uiReceivingViewEditCreate.gui,
@@ -157,7 +157,6 @@ describe('Orders > Receiving and Check-in ', () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);
       OrderLines.selectPOLInOrder();
-      OrderLines.addRoutingListByActions();
       OrderLines.openRoutingList(routingList1);
       OrderLines.deleteRoutingList();
       OrderLines.backToEditingOrder();
