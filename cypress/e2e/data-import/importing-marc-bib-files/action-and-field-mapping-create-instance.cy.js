@@ -54,11 +54,12 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('Login', () => {
+    before('Create user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
+        Permissions.enableStaffSuppressFacet.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
 
@@ -96,7 +97,7 @@ describe('Data Import', () => {
         NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogedDate);
         NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.statusTerm);
         NewFieldMappingProfile.addStatisticalCode(mappingProfile.statisticalCode, 8);
-        NewFieldMappingProfile.addNatureOfContentTerms(mappingProfile.natureOfContent);
+        NewFieldMappingProfile.addNatureOfContentTerms(`"${mappingProfile.natureOfContent}"`);
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);

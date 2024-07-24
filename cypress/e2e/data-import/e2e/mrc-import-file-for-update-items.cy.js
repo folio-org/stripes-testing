@@ -269,6 +269,9 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
+        Permissions.enableStaffSuppressFacet.gui,
+        Permissions.dataExportEnableSettings.gui,
+        Permissions.dataExportEnableApp.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
 

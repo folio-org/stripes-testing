@@ -884,7 +884,7 @@ export default {
       Button('Add nature of content term').click(),
     ]);
     cy.wait(1000);
-    cy.do(TextField('Nature of content term').fillIn(`"${value}"`));
+    cy.do(TextField('Nature of content term').fillIn(value));
   },
 
   fillPermanentLocation: (location) => cy.do(permanentLocationField.fillIn(location)),

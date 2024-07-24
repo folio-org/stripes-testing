@@ -119,6 +119,7 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
+        Permissions.enableStaffSuppressFacet.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
 
@@ -153,7 +154,7 @@ describe('Data Import', () => {
         8,
       );
       NewFieldMappingProfile.addNatureOfContentTerms(
-        collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.natureOfContent,
+        `"${collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.natureOfContent}"`,
       );
       NewFieldMappingProfile.save();
       FieldMappingProfileView.closeViewMode(
