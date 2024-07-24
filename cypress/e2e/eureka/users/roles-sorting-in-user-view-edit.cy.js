@@ -23,9 +23,11 @@ describe('Eureka', () => {
       ],
     };
 
-    const originalRoleNames = randomizeArray(testData.allRoleNamesSorted).filter((role) => {
+    const originalRoleNamesSorted = testData.allRoleNamesSorted.filter((role) => {
       return role !== testData.allRoleNamesSorted[2] && role !== testData.allRoleNamesSorted[9];
     });
+    const originalRoleNamesRandomized = randomizeArray([...originalRoleNamesSorted]);
+
     const roleToRemove = testData.allRoleNamesSorted[6];
 
     const capabSetsForTestUser = [
@@ -64,7 +66,7 @@ describe('Eureka', () => {
 
     before('Assign roles, login', () => {
       cy.getAdminToken();
-      const originalRoleIds = originalRoleNames.map((roleName) => testData[roleName].id);
+      const originalRoleIds = originalRoleNamesRandomized.map((roleName) => testData[roleName].id);
       if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, originalRoleIds);
       else cy.addRolesToNewUserApi(testData.userA.userId, originalRoleIds);
       cy.login(testData.tempUser.username, testData.tempUser.password, {
@@ -75,7 +77,7 @@ describe('Eureka', () => {
 
     after('Delete roles, users', () => {
       cy.getAdminToken();
-      testData.allRoleNames.forEach((roleName) => {
+      testData.allRoleNamesSorted.forEach((roleName) => {
         cy.deleteAuthorizationRoleApi(testData[roleName].id);
       });
       Users.deleteViaApi(testData.userA.userId);
@@ -86,21 +88,21 @@ describe('Eureka', () => {
       'C476793 Roles rows are sorted when viewing/editing a user (eureka)',
       { tags: ['criticalPath', 'eureka'] },
       () => {
-        UsersCard.verifyUserRolesCounter(originalRoleNames.length + '');
+        UsersCard.verifyUserRolesCounter(originalRoleNamesRandomized.length + '');
         UsersCard.clickUserRolesAccordion();
-        UsersCard.verifyUserRoleNamesOrdered(originalRoleNames);
+        UsersCard.verifyUserRoleNamesOrdered(originalRoleNamesSorted);
 
         UserEdit.openEdit();
-        UserEdit.verifyUserRolesCounter(originalRoleNames.length + '');
+        UserEdit.verifyUserRolesCounter(originalRoleNamesRandomized.length + '');
         UserEdit.clickUserRolesAccordion();
-        UserEdit.verifyUserRoleNames(originalRoleNames);
-        UserEdit.verifyUserRoleNamesOrdered(originalRoleNames);
-        UserEdit.verifyUserRolesRowsCount(originalRoleNames.length);
+        UserEdit.verifyUserRoleNames(originalRoleNamesRandomized);
+        UserEdit.verifyUserRoleNamesOrdered(originalRoleNamesSorted);
+        UserEdit.verifyUserRolesRowsCount(originalRoleNamesRandomized.length);
         UserEdit.removeOneRole(roleToRemove);
         UserEdit.verifyUserRoleNamesOrdered(
-          originalRoleNames.filter((roleName) => roleName !== roleToRemove),
+          originalRoleNamesSorted.filter((roleName) => roleName !== roleToRemove),
         );
-        UserEdit.verifyUserRolesRowsCount(originalRoleNames.length - 1);
+        UserEdit.verifyUserRolesRowsCount(originalRoleNamesRandomized.length - 1);
 
         UserEdit.clickAddUserRolesButton();
         UserEdit.verifySelectRolesModal();
