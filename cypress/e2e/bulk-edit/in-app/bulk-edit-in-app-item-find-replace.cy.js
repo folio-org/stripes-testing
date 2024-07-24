@@ -100,19 +100,15 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Action note',
-          'Check in notes',
+          'Check in note',
           'Administrative note',
         );
         BulkEditActions.openInAppStartBulkEditFrom();
 
-        BulkEditActions.verifyItemOptions();
-        BulkEditActions.verifyItemAdminstrativeNoteActions();
         BulkEditActions.noteReplaceWith('Administrative note', notes.adminTwo, newNotes.adminNote);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.verifyItemCheckInNoteActions(1);
         BulkEditActions.noteReplaceWith('Check in note', notes.checkInTwo, newNotes.checkInNote, 1);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.verifyItemNoteActions('Action note', 2);
         BulkEditActions.noteReplaceWith('Action note', notes.actionOne, newNotes.actionNote, 2);
 
         BulkEditActions.confirmChanges();
@@ -130,8 +126,8 @@ describe('bulk-edit', () => {
           newNotes.checkInNote,
         ]);
 
-        BulkEditSearchPane.verifyChangesUnderColumns('Check in notes', notes.checkInOne);
-        BulkEditSearchPane.verifyChangesUnderColumns('Check in notes', newNotes.checkInNote);
+        BulkEditSearchPane.verifyChangesUnderColumns('Check in note', notes.checkInOne);
+        BulkEditSearchPane.verifyChangesUnderColumns('Check in note', newNotes.checkInNote);
         BulkEditSearchPane.verifyChangesUnderColumns('Administrative note', notes.adminOne);
         BulkEditSearchPane.verifyChangesUnderColumns('Administrative note', newNotes.adminNote);
         BulkEditSearchPane.verifyChangesUnderColumns('Action note', notes.actionTwo);

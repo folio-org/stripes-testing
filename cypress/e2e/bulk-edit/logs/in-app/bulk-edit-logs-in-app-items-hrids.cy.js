@@ -207,7 +207,7 @@ describe('bulk-edit', () => {
           ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, [item1.id, item2.id]);
 
           BulkEditLogs.downloadFileWithUpdatedRecords();
-          ExportFile.verifyFileIncludes(updatedRecordsFileName, [item1.id, item2.id]);
+          ExportFile.verifyFileIncludes(updatedRecordsFileName, [item1.id]);
 
           BulkEditLogs.downloadFileWithCommitErrors();
           ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [item2.hrid]);
