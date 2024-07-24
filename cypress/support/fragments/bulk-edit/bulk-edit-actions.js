@@ -767,10 +767,14 @@ export default {
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
         .choose(`Check ${note} note`),
+    ]);
+    cy.wait(1000);
+    cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.action)
         .choose('Duplicate to'),
     ]);
+    cy.wait(1000);
     if (note === 'in') {
       cy.expect(
         RepeatableFieldItem({ index: rowIndex })
@@ -906,7 +910,7 @@ export default {
         .find(Checkbox({ name: 'Item UUID', checked: false, disabled: isDisabled }))
         .exists(),
       dropdownMenu
-        .find(Checkbox({ name: 'Former identifiers', checked: false, disabled: isDisabled }))
+        .find(Checkbox({ name: 'Former identifier', checked: false, disabled: isDisabled }))
         .exists(),
       dropdownMenu
         .find(Checkbox({ name: 'Accession number', checked: false, disabled: isDisabled }))

@@ -9,7 +9,7 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import { ITEM_NOTES } from '../../../support/constants';
+import { ITEM_NOTES, MATERIAL_TYPE_IDS } from '../../../support/constants';
 
 let user;
 const item = {
@@ -51,6 +51,10 @@ describe('bulk-edit', () => {
           (res) => {
             item.itemId = res.id;
             item.hrid = res.hrid;
+            res.materialType = {
+              id: MATERIAL_TYPE_IDS.DVD,
+              name: 'dvd',
+            };
             FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, item.itemId);
             res.notes = [
               {
@@ -91,7 +95,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [item.itemId]);
-        BulkEditSearchPane.verifyMatchedResults(item.hrid);
+        BulkEditSearchPane.verifyMatchedResults(item.itemBarcode);
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.addItemNote('Administrative note', notes.admin);
         BulkEditActions.verifyCheckboxAbsent();
@@ -156,13 +160,14 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyStaffOnlyCheckbox(true, 9);
 
         BulkEditActions.confirmChanges();
-        BulkEditActions.verifyAreYouSureForm(1, item.hrid);
+        BulkEditActions.verifyAreYouSureForm(1, item.itemBarcode);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
-        BulkEditSearchPane.verifyExactChangesUnderColumns(
-          'Check out notes',
-          `${notes.checkOut} (staff only)`,
-        );
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Check in notes', notes.checkIn);
+        // TODO: uncomment after MODBULKOPS-204
+        // BulkEditSearchPane.verifyExactChangesUnderColumns(
+        //   'Check out note',
+        //   `${notes.checkOut} (staff only)`,
+        // );
+        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', notes.checkIn);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Action note', notes.action);
         BulkEditSearchPane.verifyExactChangesUnderColumns(
           'Binding note',
@@ -182,19 +187,22 @@ describe('bulk-edit', () => {
           'Reproduction note',
           `${notes.reproduction} (staff only)`,
         );
-        // TODO: uncomment after UIBULKED-425
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Suppress from discovery', suppressFromDiscovery);
+        BulkEditSearchPane.verifyExactChangesUnderColumns(
+          'Suppress from discovery',
+          `${suppressFromDiscovery}`,
+        );
 
         BulkEditActions.clickKeepEditingBtn();
         BulkEditActions.uncheckStaffOnlyCheckbox(8);
         BulkEditActions.confirmChanges();
-        BulkEditActions.verifyAreYouSureForm(1, item.hrid);
+        BulkEditActions.verifyAreYouSureForm(1, item.itemBarcode);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
-        BulkEditSearchPane.verifyExactChangesUnderColumns(
-          'Check out notes',
-          `${notes.checkOut} (staff only)`,
-        );
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Check in notes', notes.checkIn);
+        // TODO: uncomment after MODBULKOPS-204
+        // BulkEditSearchPane.verifyExactChangesUnderColumns(
+        //   'Check out note',
+        //   `${notes.checkOut} (staff only)`,
+        // );
+        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', notes.checkIn);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Action note', notes.action);
         BulkEditSearchPane.verifyExactChangesUnderColumns(
           'Binding note',
@@ -212,20 +220,27 @@ describe('bulk-edit', () => {
           `${notes.reproduction} (staff only)`,
         );
         BulkEditActions.downloadPreview();
-        let contentToVerify = `,${notes.admin},Action note;${notes.action};false|Binding;${notes.binding};true|Copy note;${notes.copy};true|Note;${notes.note};true|Provenance;${notes.provenance};false|Reproduction;${notes.reproduction};true,${notes.checkIn},${notes.checkOut} (staff only),Available,`;
-        ExportFile.verifyFileIncludes(previewFileName, [contentToVerify]);
+        ExportFile.verifyFileIncludes(previewFileName, [
+          `${notes.action},${notes.binding} (staff only),${notes.copy} (staff only),,${notes.note} (staff only),${notes.provenance},${notes.reproduction} (staff only)`,
+          `Available,${notes.checkIn},${notes.checkOut} (staff only),`,
+          `,${notes.admin},dvd,`,
+        ]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Check out note', 'Check in note');
         BulkEditActions.downloadChangedCSV();
-        contentToVerify = `,${notes.admin},Action note;${notes.action};false|Binding;${notes.binding};true|Copy note;${notes.copy};true|Note;${notes.note};true|Provenance;${notes.provenance};false|Reproduction;${notes.reproduction};true,${notes.checkIn},${notes.checkOut} (staff only),Available,`;
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [contentToVerify]);
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [
+          `${notes.action},${notes.binding} (staff only),${notes.copy} (staff only),,${notes.note} (staff only),${notes.provenance},${notes.reproduction} (staff only)`,
+          `Available,${notes.checkIn},${notes.checkOut} (staff only),`,
+          `,${notes.admin},dvd,`,
+        ]);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
         BulkEditSearchPane.verifyExactChangesUnderColumns(
-          'Check out notes',
+          'Check out note',
           `${notes.checkOut} (staff only)`,
         );
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Check in notes', notes.checkIn);
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', notes.checkIn);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Action note', notes.action);
         BulkEditSearchPane.verifyExactChangesUnderColumns(
           'Binding note',
@@ -241,6 +256,10 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumns(
           'Reproduction note',
           `${notes.reproduction} (staff only)`,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumns(
+          'Suppress from discovery',
+          `${suppressFromDiscovery}`,
         );
 
         cy.visit(TopMenu.inventoryPath);

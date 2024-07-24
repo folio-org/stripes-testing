@@ -815,3 +815,7 @@ export const INSTANCE_RESOURCE_TYPE_IDS = {
 export const LOAN_TYPE_IDS = {
   SELECTED: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845',
 };
+
+export const MATERIAL_TYPE_IDS = {
+  DVD: '5ee11d91-f7e8-481d-b079-65d708582ccc',
+};
