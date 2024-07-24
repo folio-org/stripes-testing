@@ -37,6 +37,7 @@ export default {
   createMappingProfile: (mappingProfile) => {
     openNewMappingProfileForm();
     exportNewFieldMappingProfile.fillMappingProfile(mappingProfile);
+    cy.wait(5000);
     saveMappingProfile();
   },
 

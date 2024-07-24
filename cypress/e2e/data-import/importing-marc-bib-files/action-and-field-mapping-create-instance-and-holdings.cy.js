@@ -5,6 +5,7 @@ import {
   JOB_STATUS_NAMES,
   LOCATION_NAMES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -12,9 +13,6 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -25,13 +23,18 @@ import {
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
+    let userId;
     const marcFileName = `C11105 autotestFile${getRandomPostfix()}.mrc`;
     const filePathForUpload = 'marcBibFileForC11105.mrc';
     const title = "101 things I wish I'd known when I started using hypnosis";
@@ -86,14 +89,23 @@ describe('Data Import', () => {
     };
 
     before('Login', () => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.mappingProfilePath,
-        waiter: FieldMappingProfiles.waitLoading,
+      cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+      ]).then((userProperties) => {
+        userId = userProperties.userId;
+
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
       });
     });
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
+        Users.deleteViaApi(userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
           SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);

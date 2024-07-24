@@ -6,15 +6,13 @@ import {
   MATERIAL_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
@@ -23,13 +21,18 @@ import {
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
+    let user;
     const marcFileName = `C11122 autotestFile${getRandomPostfix()}.mrc`;
     const filePathForUpload = 'marcBibFileForC11122.mrc';
     const collectionOfMappingAndActionProfiles = [
@@ -67,15 +70,24 @@ describe('Data Import', () => {
       profileName: `C11122 autotest job profile_${getRandomPostfix()}`,
     };
 
-    before('Login', () => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.mappingProfilePath,
-        waiter: FieldMappingProfiles.waitLoading,
+    before('Create user and login', () => {
+      cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
       });
     });
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
           SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
