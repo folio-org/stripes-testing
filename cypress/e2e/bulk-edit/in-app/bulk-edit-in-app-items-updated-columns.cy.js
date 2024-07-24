@@ -41,6 +41,7 @@ describe('bulk-edit', () => {
           (res) => {
             const itemData = res;
             item.itemId = res.id;
+            item.hrid = res.hrid;
             itemData.circulationNotes = [
               { noteType: 'Check in', note: notes.checkInNote, staffOnly: false },
             ];
@@ -89,8 +90,8 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [item.barcode]);
         const columnNames = [
-          'Check out notes',
-          'Check in notes',
+          'Check out note',
+          'Check in note',
           'Suppress from discovery',
           'Administrative note',
           'Note',
@@ -127,16 +128,16 @@ describe('bulk-edit', () => {
 
         BulkEditActions.confirmChanges();
         BulkEditActions.downloadPreview();
-        ExportFile.verifyFileIncludes(previewFileName, [notes.admin]);
-        ExportFile.verifyFileIncludes(previewFileName, [`${notes.noteNote} (staff only)`]);
         ExportFile.verifyFileIncludes(previewFileName, [
-          `, Available,${notes.checkInNote},${notes.checkInNote},Online,,,${suppressFromDiscovery}`,
+          notes.admin,
+          `${suppressFromDiscovery},${item.hrid}`,
+          `${notes.noteNote} (staff only),,,Reading room,,Available,${notes.checkInNote},${notes.checkInNote},Online,,`,
         ]);
 
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
         // TODO: uncomment after MODBULKOPS-204
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check out notes', notes.checkOutNote);
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check in notes', notes.checkOutNote);
+        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', notes.checkOutNote);
+        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', notes.checkOutNote);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Note', `${notes.noteNote} (staff only)`);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Status', 'Available');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Permanent loan type', 'Reading room');
@@ -147,8 +148,8 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check out notes', notes.checkOutNote);
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check in notes', notes.checkOutNote);
+        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', notes.checkOutNote);
+        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', notes.checkOutNote);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Note', `${notes.noteNote} (staff only)`);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Status', 'Available');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Permanent loan type', 'Reading room');
@@ -157,10 +158,10 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumns('Item temporary location', '');
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [notes.admin]);
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [`${notes.noteNote} (staff only)`]);
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `,Available,${notes.checkInNote},${notes.checkInNote},Online,,,${suppressFromDiscovery}`,
+          notes.admin,
+          `${suppressFromDiscovery},${item.hrid}`,
+          `${notes.noteNote} (staff only),,,Reading room,,Available,${notes.checkInNote},${notes.checkInNote},Online,,`,
         ]);
 
         TopMenuNavigation.navigateToApp('Inventory');

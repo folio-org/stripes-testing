@@ -82,8 +82,8 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Action note',
-          'Check out notes',
-          'Check in notes',
+          'Check out note',
+          'Check in note',
         );
         BulkEditActions.openInAppStartBulkEditFrom();
 
@@ -107,8 +107,8 @@ describe('bulk-edit', () => {
           checkOutNote,
         ]);
 
-        BulkEditSearchPane.verifyChangesUnderColumns('Check in notes', checkInNote);
-        BulkEditSearchPane.verifyChangesUnderColumns('Check out notes', checkOutNote);
+        BulkEditSearchPane.verifyChangesUnderColumns('Check in note', checkInNote);
+        BulkEditSearchPane.verifyChangesUnderColumns('Check out note', checkOutNote);
         BulkEditSearchPane.verifyChangesUnderColumns('Action note', actionNote);
 
         TopMenuNavigation.navigateToApp('Inventory');
