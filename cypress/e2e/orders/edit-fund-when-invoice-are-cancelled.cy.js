@@ -157,6 +157,9 @@ describe('ui-orders: Orders', () => {
       Invoices.selectInvoiceLine();
       Invoices.checkFundInInvoiceLine(firstFund);
       TopMenuNavigation.navigateToApp('Finance');
+      Funds.closeMenu();
+      Funds.closeBudgetDetails();
+      Funds.closeFundDetails();
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);
       Funds.selectBudgetDetails();
