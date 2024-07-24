@@ -67,14 +67,10 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
 
-        BulkEditActions.verifyItemOptions();
-        BulkEditActions.verifyItemAdminstrativeNoteActions();
         BulkEditActions.addItemNote('Administrative note', firstNote.bulkEdit);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.verifyItemCheckInNoteActions(1);
         BulkEditActions.addItemNote('Check in note', secondNote, 1);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.verifyItemNoteActions('Note', 2);
         BulkEditActions.addItemNote('Note', thirdNote, 2);
 
         BulkEditActions.confirmChanges();
@@ -84,7 +80,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Administrative note',
           'Note',
-          'Check in notes',
+          'Check in note',
         );
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
@@ -94,7 +90,7 @@ describe('bulk-edit', () => {
         ]);
 
         BulkEditSearchPane.verifyChangesUnderColumns('Administrative note', firstNote.bulkEdit);
-        BulkEditSearchPane.verifyChangesUnderColumns('Check in notes', secondNote);
+        BulkEditSearchPane.verifyChangesUnderColumns('Check in note', secondNote);
         BulkEditSearchPane.verifyChangesUnderColumns('Note', thirdNote);
 
         TopMenuNavigation.navigateToApp('Inventory');

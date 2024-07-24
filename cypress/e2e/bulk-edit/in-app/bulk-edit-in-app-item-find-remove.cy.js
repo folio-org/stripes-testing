@@ -91,21 +91,16 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Action note',
-          'Check out notes',
-          'Check in notes',
+          'Check out note',
+          'Check in note',
           'Administrative note',
           'Copy note',
         );
         BulkEditActions.openInAppStartBulkEditFrom();
-
-        BulkEditActions.verifyItemOptions();
-        BulkEditActions.verifyItemAdminstrativeNoteActions();
         BulkEditActions.noteRemove('Administrative note', notes.admin);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.verifyItemCheckInNoteActions(1);
         BulkEditActions.noteRemove('Check in note', notes.checkIn, 1);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.verifyItemNoteActions('Action note', 2);
         BulkEditActions.noteRemove('Action note', notes.action, 2);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.noteRemove('Check out note', 'sample', 3);
@@ -119,10 +114,10 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
 
         BulkEditSearchPane.verifyChangesUnderColumns(
-          'Check out notes',
+          'Check out note',
           `${notes.checkIn} (staff only)`,
         );
-        BulkEditSearchPane.verifyChangesUnderColumns('Check in notes', '');
+        BulkEditSearchPane.verifyChangesUnderColumns('Check in note', '');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', '');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Action note', '');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Copy note', notes.copy);

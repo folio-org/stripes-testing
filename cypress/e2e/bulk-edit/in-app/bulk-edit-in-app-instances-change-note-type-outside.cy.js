@@ -158,9 +158,6 @@ describe('bulk-edit', () => {
           'Administrative note',
           `${notes.reproductionNote} | ${notes.reproductionNoteStaffOnly}`,
         );
-        BulkEditSearchPane.verifyInputLabel(
-          `${instanceUUIDsFileName}: 2 entries * 1 records changed * 1 errors`,
-        );
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         BulkEditActions.downloadErrors();

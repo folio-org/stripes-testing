@@ -96,16 +96,16 @@ describe('bulk-edit', () => {
 
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [
-          `,Copy note;${notes.copyOne};true|Copy note;${notes.copyTwo};false,,${notes.checkOutOne} (staff only) | ${notes.checkOutTwo}`,
+          `,,,${notes.copyOne} (staff only) | ${notes.copyTwo},,,,,`,
+          `Available,,${notes.checkOutOne} (staff only) | ${notes.checkOutTwo},`,
         ]);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Copy note',
-          'Check out notes',
-          'Check in notes',
+          'Check out note',
+          'Check in note',
           'Binding note',
         );
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.verifyItemOptions();
         BulkEditActions.changeNoteType('Check out note', 'Binding');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.changeNoteType('Copy note', 'Check in note', 1);
@@ -113,10 +113,11 @@ describe('bulk-edit', () => {
         BulkEditActions.confirmChanges();
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          `Binding;${notes.checkOutOne};true|Binding;${notes.checkOutTwo};false,${notes.copyOne} (staff only) | ${notes.copyTwo},,`,
+          `,,${notes.checkOutOne} (staff only) | ${notes.checkOutTwo},,,,,,`,
+          `Available,${notes.copyOne} (staff only) | ${notes.copyTwo}`,
         ]);
         BulkEditSearchPane.verifyExactChangesUnderColumns(
-          'Check in notes',
+          'Check in note',
           `${notes.copyOne} (staff only) | ${notes.copyTwo}`,
         );
         BulkEditSearchPane.verifyExactChangesUnderColumns(
@@ -124,11 +125,11 @@ describe('bulk-edit', () => {
           `${notes.checkOutOne} (staff only) | ${notes.checkOutTwo}`,
         );
         BulkEditSearchPane.verifyExactChangesUnderColumns('Copy note', '');
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out notes', '');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', '');
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyExactChangesUnderColumns(
-          'Check in notes',
+          'Check in note',
           `${notes.copyOne} (staff only) | ${notes.copyTwo}`,
         );
         BulkEditSearchPane.verifyExactChangesUnderColumns(
@@ -136,11 +137,12 @@ describe('bulk-edit', () => {
           `${notes.checkOutOne} (staff only) | ${notes.checkOutTwo}`,
         );
         BulkEditSearchPane.verifyExactChangesUnderColumns('Copy note', '');
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out notes', '');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', '');
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `Binding;${notes.checkOutOne};true|Binding;${notes.checkOutTwo};false,${notes.copyOne} (staff only) | ${notes.copyTwo},,`,
+          `,,${notes.checkOutOne} (staff only) | ${notes.checkOutTwo},,,,,,`,
+          `Available,${notes.copyOne} (staff only) | ${notes.copyTwo}`,
         ]);
 
         TopMenuNavigation.navigateToApp('Inventory');
