@@ -68,8 +68,8 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [item.barcode]);
         let columnNames = [
-          'Check out notes',
-          'Check in notes',
+          'Check out note',
+          'Check in note',
           'Suppress from discovery',
           'Administrative note',
           'Note',
@@ -129,8 +129,8 @@ describe('bulk-edit', () => {
         });
         BulkEditSearchPane.verifyExactChangesUnderColumns('Permanent loan type', type);
         // TODO: uncomment after MODBULKOPS-204
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check out notes', notes.checkInNote);
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check in notes', notes.checkInNote);
+        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', notes.checkInNote);
+        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', notes.checkInNote);
 
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
@@ -138,8 +138,8 @@ describe('bulk-edit', () => {
           BulkEditSearchPane.verifyChangedColumnTitlesDoNotInclude(column);
         });
         BulkEditSearchPane.verifyExactChangesUnderColumns('Permanent loan type', type);
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check out notes', notes.checkInNote);
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check in notes', notes.checkInNote);
+        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', notes.checkInNote);
+        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', notes.checkInNote);
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToItem();

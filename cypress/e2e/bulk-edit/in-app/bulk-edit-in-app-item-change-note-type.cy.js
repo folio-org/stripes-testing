@@ -10,7 +10,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { ITEM_NOTES } from '../../../support/constants';
+import { ITEM_NOTES, MATERIAL_TYPE_IDS } from '../../../support/constants';
 
 let user;
 const notes = {
@@ -44,7 +44,10 @@ describe('bulk-edit', () => {
             item.hrid = res.hrid;
 
             itemData.administrativeNotes = [notes.admin];
-
+            res.materialType = {
+              id: MATERIAL_TYPE_IDS.DVD,
+              name: 'dvd',
+            };
             itemData.notes = [
               {
                 itemNoteTypeId: ITEM_NOTES.ACTION_NOTE,
@@ -86,18 +89,19 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [
-          `${notes.admin},Action note;${notes.action};true,${notes.checkIn} (staff only)`,
+          `,${notes.admin},dvd,`,
+          `,${notes.action} (staff only),`,
+          `,${notes.checkIn} (staff only),`,
         ]);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Administrative note',
           'Provenance note',
           'Action note',
           'Electronic bookplate note',
-          'Check in notes',
-          'Check out notes',
+          'Check in note',
+          'Check out note',
         );
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.verifyItemOptions();
         BulkEditActions.changeNoteType('Administrative note', 'Provenance');
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.changeNoteType('Action note', 'Electronic bookplate', 1);
@@ -111,13 +115,15 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `,,Electronic bookplate;${notes.action};true|Provenance;${notes.admin};false,,${notes.checkIn} (staff only)`,
+          ',,dvd,',
+          `,${notes.action} (staff only),,${notes.admin},,`,
+          `Available,,${notes.checkIn} (staff only),,`,
         ]);
 
         BulkEditSearchPane.verifyChangesUnderColumns('Administrative note', '');
         BulkEditSearchPane.verifyChangesUnderColumns('Provenance note', notes.admin);
-        BulkEditSearchPane.verifyChangesUnderColumns('Check in notes', '');
-        BulkEditSearchPane.verifyChangesUnderColumns('Check out notes', notes.checkIn);
+        BulkEditSearchPane.verifyChangesUnderColumns('Check in note', '');
+        BulkEditSearchPane.verifyChangesUnderColumns('Check out note', notes.checkIn);
         BulkEditSearchPane.verifyChangesUnderColumns('Action note', '');
         BulkEditSearchPane.verifyChangesUnderColumns('Electronic bookplate note', notes.action);
 

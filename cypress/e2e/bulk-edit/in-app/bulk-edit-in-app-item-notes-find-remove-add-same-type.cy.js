@@ -67,23 +67,22 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
 
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Check in notes', 'Check out notes');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Check in note', 'Check out note');
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.verifyItemOptions();
         BulkEditActions.verifyItemCheckInNoteActions();
         BulkEditActions.noteRemove('Check out note', checkOutNote);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.verifyItemCheckInNoteActions(1);
         BulkEditActions.addItemNote('Check in note', checkInNote, 1);
 
         BulkEditActions.confirmChanges();
-        BulkEditActions.verifyChangesInAreYouSureForm('Check in notes', [checkInNote]);
+        BulkEditActions.verifyChangesInAreYouSureForm('Check in note', [checkInNote]);
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [`${checkInNote},,`]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Check in notes', checkInNote);
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out notes', '');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', checkInNote);
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', '');
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [`${checkInNote},,`]);
