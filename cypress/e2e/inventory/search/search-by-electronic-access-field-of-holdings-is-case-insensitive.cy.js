@@ -116,10 +116,6 @@ describe('Inventory', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          InventorySearchAndFilter.instanceTabIsDefault();
-          InventorySearchAndFilter.switchToItem();
-          InventorySearchAndFilter.selectSearchOption(testData.allOption);
-          cy.wait(1000);
         });
       });
 

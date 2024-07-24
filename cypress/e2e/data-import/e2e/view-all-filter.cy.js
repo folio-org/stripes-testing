@@ -97,7 +97,7 @@ describe('Data Import', () => {
       completedDate.setDate(completedDate.getDate() + 1);
 
       LogsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });
-
+      cy.wait(1800);
       const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
       LogsViewAll.checkByDate({ from: formattedStart, end: formattedEnd });
       LogsViewAll.resetAllFilters();
@@ -110,7 +110,6 @@ describe('Data Import', () => {
       // FILTER By "User"
       LogsViewAll.openUserIdAccordion();
       LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
-      LogsViewAll.waitUIToBeFiltered();
       LogsViewAll.checkByUserName(`${testData.user.firstName} ${testData.user.lastName}`);
       LogsViewAll.resetAllFilters();
 
@@ -127,6 +126,7 @@ describe('Data Import', () => {
       // FILTER By more than one filter
       // in this case, filter by "User" and "Errors in Import"
       LogsViewAll.selectNofilterJobsByErrors();
+      LogsViewAll.waitUIToBeFiltered();
       LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
       LogsViewAll.checkByErrorsInImportAndUser(
         JOB_STATUS_NAMES.COMPLETED,

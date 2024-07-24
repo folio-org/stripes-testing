@@ -7,14 +7,12 @@ import {
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
@@ -24,11 +22,15 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -37,6 +39,7 @@ describe('Data Import', () => {
     const marcFieldProtected = ['507', '920'];
     const marcFieldProtectionId = [];
     let instanceHrid = null;
+    let userId = null;
 
     // data from .mrc file
     const dataFromField001 = 'ocn894025734';
@@ -96,8 +99,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    beforeEach('Create test data and login', () => {
-      cy.loginAsAdmin();
+    before('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         marcFieldProtected.forEach((field) => {
           MarcFieldProtection.createViaApi({
@@ -113,6 +115,17 @@ describe('Data Import', () => {
           });
         });
       });
+
+      cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+      ]).then((userProperties) => {
+        userId = userProperties.userId;
+
+        cy.login(userProperties.username, userProperties.password);
+      });
     });
 
     after('Delete test data', () => {
@@ -120,6 +133,7 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${fileNameForUpdate}`);
       cy.getAdminToken().then(() => {
+        Users.deleteViaApi(userId);
         marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteViaApi(field));
         // delete profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
