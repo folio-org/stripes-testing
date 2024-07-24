@@ -703,14 +703,13 @@ export default {
     // because this is possible by design
     // that's why we need waiting until previous file will be uploaded, reload page and delete uploaded file
     waitLoading();
-    cy.wait(20000);
-    cy.reload();
     cy.allure().startStep('Delete files before upload file');
     waitLoading();
     cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(
       (isDeleteFilesButtonExists) => {
         if (isDeleteFilesButtonExists) {
-          cy.do(Button('Delete files').click());
+          cy.wait(20000);
+          cy.reload();
           cy.expect(Button('or choose files').exists());
           cy.allure().endStep();
         }
