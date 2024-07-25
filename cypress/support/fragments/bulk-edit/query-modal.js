@@ -43,6 +43,7 @@ export const usersFieldValues = {
   firstName: 'User — First name',
   lastName: 'User — Last name',
   patronGroup: 'Group — Group',
+  preferredContactType: 'User — Preferred contact type',
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
 };
@@ -54,14 +55,6 @@ export const dateTimeOperators = [
   '<',
   '>=',
   '<=',
-  'is null/empty',
-];
-export const stringStoresUuidOperators = [
-  'Select operator',
-  'equals',
-  'not equal to',
-  'in',
-  'not in',
   'is null/empty',
 ];
 export const stringStoresUuidButMillionOperators = [
@@ -99,6 +92,15 @@ export const STRING_OPERATORS = {
   NOT_EQUAL: 'not equal to',
   CONTAINS: 'contains',
   START_WITH: 'starts with',
+  IS_NULL: 'is null/empty',
+};
+
+export const STRING_STORES_UUID_OPERATORS = {
+  PLACEHOLDER: 'Select operator',
+  EQUAL: 'equals',
+  NOT_EQUAL: 'not equal to',
+  IN: 'in',
+  NOT_IN: 'not in',
   IS_NULL: 'is null/empty',
 };
 
@@ -234,6 +236,7 @@ export default {
     for (let i = 0; i < text.length; i++) {
       cy.do([Keyboard.backspace()]);
     }
+    cy.do(buildQueryModal.click());
   },
 
   chooseFromValueMultiselect(text, row = 0) {
@@ -251,6 +254,7 @@ export default {
     cy.contains('[data-test-selection-option-segment="true"]', text)
       .parent()
       .siblings('[icon="times"]')
+      .focus()
       .click();
   },
 
