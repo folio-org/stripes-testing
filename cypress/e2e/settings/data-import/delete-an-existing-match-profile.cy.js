@@ -1,4 +1,4 @@
-import { EXISTING_RECORD_NAMES } from '../../../support/constants';
+import { EXISTING_RECORD_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import {
@@ -14,10 +14,21 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 
 describe('Data Import', () => {
   describe('Settings', () => {
     let user;
+    const mappingProfile = {
+      name: `C2341 autotest mapping profile_${getRandomPostfix()}`,
+      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+    };
+    const actionProfile = {
+      name: `C2341 autotest action profile_${getRandomPostfix()}`,
+      action: 'UPDATE',
+      folioRecordType: 'MARC_BIBLIOGRAPHIC',
+    };
     const matchProfileToDelete = {
       profileName: `C2341 autotest match profile_${getRandomStringCode(8)}`,
       incomingRecordFields: {
@@ -30,7 +41,7 @@ describe('Data Import', () => {
       existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const matchProfileToCreate = {
-      profileName: `autotest matchProfileForCreate${getRandomPostfix()}`,
+      profileName: `C2341 autotest matchProfileForCreate${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '001',
         in1: '',
@@ -45,35 +56,45 @@ describe('Data Import', () => {
       },
       recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
-    const profile = {
-      createJobProfile: `autotest jobProfileForCreate.${getRandomPostfix()}`,
+    const jobProfile = {
+      profileName: `C2341 autotest jobProfileForCreate.${getRandomPostfix()}`,
     };
-
     const calloutMessage = `The match profile "${matchProfileToDelete.profileName}" was successfully deleted`;
 
     before('Create test data and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
+        NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
+          (mappingProfileResponse) => {
+            NewActionProfile.createActionProfileViaApi(
+              actionProfile,
+              mappingProfileResponse.body.id,
+            ).then((actionProfileResponse) => {
+              NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
+                matchProfileToCreate,
+              ).then((matchProfileResponse) => {
+                NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+                  jobProfile.profileName,
+                  matchProfileResponse.body.id,
+                  actionProfileResponse.body.id,
+                );
+              });
+            });
+          },
+        );
         NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
-          matchProfileToCreate,
-        ).then((matchProfileResponse) => {
-          NewJobProfile.createJobProfileWithLinkedMatchProfileViaApi(
-            profile.createJobProfile,
-            matchProfileResponse.body.id,
-          );
-        });
+          matchProfileToDelete,
+        );
         cy.login(user.username, user.password);
         cy.visit(SettingsMenu.matchProfilePath);
       });
-      MatchProfiles.createMatchProfile(matchProfileToDelete);
-      MatchProfileView.closeViewMode();
     });
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(profile.createJobProfile);
-        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.createMatchProfile);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfileToCreate.profileName);
         Users.deleteViaApi(user.userId);
       });
     });
