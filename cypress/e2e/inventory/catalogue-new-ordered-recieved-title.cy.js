@@ -184,7 +184,6 @@ describe('Inventory', () => {
         cy.wait(1500);
         InventoryInstances.selectInstance();
         InventoryInstances.verifyInstanceDetailsView();
-        InventoryInstance.openHoldings(effectiveLocation.name);
         InventoryInstance.checkHoldingsTable(
           effectiveLocation.name,
           0,
@@ -212,7 +211,6 @@ describe('Inventory', () => {
         cy.wait(1500);
         InventoryInstances.selectInstance();
         InventoryInstances.verifyInstanceDetailsView();
-        InventoryInstance.openHoldings(effectiveLocation.name);
         InventoryInstance.checkHoldingsTable(effectiveLocation.name, 0, '-', barcode, 'In transit');
         InventoryInstance.verifyLoan('Can circulate');
         InventoryInstance.openItemByBarcode(barcode);
