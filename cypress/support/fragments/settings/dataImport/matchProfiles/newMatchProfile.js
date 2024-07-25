@@ -497,6 +497,125 @@ export default {
       });
   },
 
+  createMatchProfileWithIncomingAndExistingOCLCMatchExpressionViaApi: ({
+    profileName,
+    incomingRecordFields,
+    existingRecordType,
+    recordType,
+  }) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/matchProfiles',
+        body: {
+          profile: {
+            name: profileName,
+            description: '',
+            incomingRecordType: recordType,
+            matchDetails: [
+              {
+                incomingRecordType: recordType,
+                incomingMatchExpression: {
+                  fields: [
+                    {
+                      label: 'field',
+                      value: incomingRecordFields.field,
+                    },
+                    {
+                      label: 'indicator1',
+                      value: incomingRecordFields.in1,
+                    },
+                    {
+                      label: 'indicator2',
+                      value: incomingRecordFields.in2,
+                    },
+                    {
+                      label: 'recordSubfield',
+                      value: incomingRecordFields.subfield,
+                    },
+                  ],
+                  staticValueDetails: null,
+                  dataValueType: 'VALUE_FROM_RECORD',
+                },
+                existingRecordType,
+                existingMatchExpression: {
+                  fields: [
+                    {
+                      label: 'field',
+                      value: 'instance.identifiers[].value',
+                    },
+                    { label: 'identifierTypeId', value: '439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef' },
+                  ],
+                  dataValueType: 'VALUE_FROM_RECORD',
+                },
+                matchCriterion: 'EXACTLY_MATCHES',
+              },
+            ],
+            existingRecordType,
+          },
+          addedRelations: [],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  createMatchProfileWithStaticValueAndExistingMatchExpressionViaApi: ({
+    profileName,
+    incomingStaticValue,
+    existingRecordType,
+    existingRecordOption,
+  }) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/matchProfiles',
+        body: {
+          profile: {
+            name: profileName,
+            description: '',
+            incomingRecordType: 'STATIC_VALUE',
+            matchDetails: [
+              {
+                incomingRecordType: 'STATIC_VALUE',
+                incomingMatchExpression: {
+                  staticValueDetails: {
+                    staticValueType: 'TEXT',
+                    text: incomingStaticValue,
+                    number: '',
+                    exactDate: '',
+                    fromDate: '',
+                    toDate: '',
+                  },
+                  dataValueType: 'STATIC_VALUE',
+                },
+                existingRecordType,
+                existingMatchExpression: {
+                  fields: [{ label: 'field', value: existingRecordOption }],
+                  dataValueType: 'VALUE_FROM_RECORD',
+                  qualifier: {
+                    qualifierType: null,
+                    qualifierValue: null,
+                  },
+                },
+                matchCriterion: 'EXACTLY_MATCHES',
+              },
+            ],
+            existingRecordType,
+          },
+          addedRelations: [],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
   checkCalloutMessage: (message) => {
     cy.expect(Callout({ textContent: including(message) }).exists());
   },
