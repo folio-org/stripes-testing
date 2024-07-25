@@ -1,24 +1,24 @@
 export default {
-  Consortia: 'cs01000001',
-  University: 'cs01000001m0001',
+  Consortia: 'cs101',
+  University: 'cs101m02',
   // School: 'cs00000int_0003',
-  College: 'cs01000001m0005',
+  College: 'cs101m01',
 };
 
 export const tenantNames = {
   central: 'Central Tenant',
-  college: 'Congressional',
-  university: 'General Collections',
-  professional: 'Miscellaneous',
+  college: 'member tenant 1',
+  university: 'member tenant 2',
+  // professional: 'Miscellaneous',
   // school: 'School',
   // special: 'Special,',
 };
 
 export const tenantCodes = {
-  central: 'dt0',
-  college: 'dt5',
-  university: 'dt1',
-  professional: 'dt6',
+  central: 'cs00',
+  college: 'MT1',
+  university: 'MT2',
+  // professional: 'dt6',
   // school: 'SCHO',
   // special: 'SPE,',
 };

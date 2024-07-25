@@ -233,6 +233,55 @@ Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = [
         });
       } else cy.updateRolesForUserApi(userId, [roleId]);
     });
+  } else if (Cypress.env('eureka')) {
+    let capabilitiesIds;
+    let capabilitySetsIds;
+    const permissionNames = [];
+    permissions.forEach((permission) => {
+      for (const permissionObject in permissionsList) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (permissionsList.hasOwnProperty(permissionObject)) {
+          const { gui, internal } = permissionsList[permissionObject];
+          if (gui.includes(permission)) {
+            permissionNames.push(internal);
+            break;
+          }
+        }
+      }
+    });
+
+    if (permissionNames.length) {
+      cy.okapiRequest({
+        path: 'capabilities',
+        searchParams: {
+          query: `(permission=="${permissionNames.join('")or(permission=="')}")`,
+        },
+        isDefaultSearchParamsRequired: false,
+      }).then((responseCapabs) => {
+        capabilitiesIds = responseCapabs.body.capabilities.map((el) => el.id);
+        cy.okapiRequest({
+          path: 'capability-sets',
+          searchParams: {
+            query: `(permission=="${permissionNames.join('")or(permission=="')}")`,
+          },
+          isDefaultSearchParamsRequired: false,
+        }).then((responseSets) => {
+          capabilitySetsIds = responseSets.body.capabilitySets.map((el) => el.id);
+
+          if (capabilitiesIds.length === 0) {
+            cy.log('Capabilities not found ');
+          } else {
+            cy.addCapabilitiesToNewUserApi(userId, capabilitiesIds);
+          }
+
+          if (capabilitySetsIds.length === 0) {
+            cy.log('Capability sets not found ');
+          } else {
+            cy.addCapabilitySetsToNewUserApi(userId, capabilitySetsIds);
+          }
+        });
+      });
+    }
   } else {
     const queryField = 'displayName';
     cy.getPermissionsApi({
