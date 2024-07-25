@@ -12,14 +12,14 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     const testData = {
       searchOption: ['Place of publication', 'All', 'Query search'],
-      searchValue: ['Petrozavodsk', 'Петрозаводск'],
+      searchValue: ['*WA.', 'Seattle*', '*ttle, W*'],
       searchResult:
-        '"Kalevala" v kontekste regionalʹnoĭ i mirovoĭ kulʹtury : materialy Mezhdunarodnoĭ nauchnoĭ konferent͡sii, posvi͡ashchennoĭ 160-letii͡u polnogo izdanii͡a "Kalevaly" / redakt͡sionnai͡a kollegii͡a, I. I͡U. Vinokurova ... [and six others].',
+        'C496180 The Rock cycle [videorecording] : understanding the processes and products of an ever-changing earth / Terra Productions : producer, Blair Robbins ; scientific advisor, Robert L. Burk.',
     };
 
     const marcFile = {
-      marc: 'marcBibFileForC494367.mrc',
-      fileName: `testMarcFileC494367.${getRandomPostfix()}.mrc`,
+      marc: 'marcBibFileForC496180.mrc',
+      fileName: `testMarcFileC496180.${getRandomPostfix()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       propertyName: 'instance',
     };
@@ -57,7 +57,7 @@ describe('Inventory', () => {
     });
 
     it(
-      'C494367 Search for Instance which has multiple records in "Place of publication" field (spitfire)',
+      'C496180 Search for Instance by "Place of publication" field using queries with asterisk (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
