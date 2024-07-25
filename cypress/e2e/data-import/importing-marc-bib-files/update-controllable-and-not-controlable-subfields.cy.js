@@ -158,7 +158,7 @@ describe('Data Import', () => {
 
     it(
       'C385671 Update controllable, non-controllable subfields in one of the not linked repeatable fields with "$0" (multiple repeatable fields with same indicators) (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
