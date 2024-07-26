@@ -35,16 +35,16 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let userId;
-    const filePathForCreateInstance = 'marcFileForMatchOnIdentifierForCreate.mrc';
-    const filePathForUpdateInstance = 'marcFileForMatchOnIdentifierForUpdate_2.mrc';
+    const filePathForCreateInstance = 'marcFileForC347829.mrc';
+    const filePathForUpdateInstance = 'marcFileForC347829_1.mrc';
     const fileNameForCreateInstance = `C347829 autotestFile${getRandomPostfix()}.mrc`;
     const fileNameForUpdateInstance = `C347829 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const instanceGeneralNote = 'IDENTIFIER UPDATE 2';
     const resourceIdentifiers = [
-      { type: 'UPC', value: 'ORD32671387-4' },
+      { type: 'UPC', value: 'ORD32671387-5' },
       { type: 'OCLC', value: '(OCoLC)84714376518561876438' },
-      { type: 'Invalid UPC', value: 'ORD32671387-4' },
+      { type: 'Invalid UPC', value: 'ORD32671387-5' },
       { type: 'System control number', value: '(AMB)84714376518561876438' },
     ];
     const matchProfile = {

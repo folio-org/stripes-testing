@@ -16,6 +16,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('ui-orders: Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -144,18 +145,21 @@ describe('ui-orders: Orders', () => {
       OrderLines.editPOLInOrder();
       OrderLines.editFundInPOL(secondFund, '70', '70');
       OrderLines.checkFundInPOL(secondFund);
-      cy.visit(TopMenu.fundPath);
+      TopMenuNavigation.navigateToApp('Finance');
       FinanceHelp.searchByName(secondFund.name);
       Funds.selectFund(secondFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.checkOrderInTransactionList(`${secondFund.code}`, '($70.00)');
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
       Invoices.selectInvoiceLine();
       Invoices.checkFundInInvoiceLine(firstFund);
-      cy.visit(TopMenu.fundPath);
+      TopMenuNavigation.navigateToApp('Finance');
+      Funds.closeMenu();
+      Funds.closeBudgetDetails();
+      Funds.closeFundDetails();
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);
       Funds.selectBudgetDetails();

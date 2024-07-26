@@ -155,6 +155,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
         MarcAuthorityBrowse.searchBy(linkValue.searchOption, linkValue.value);
         MarcAuthorities.chooseAuthoritySourceOption(linkValue.authoritySource);
         MarcAuthorities.selectTitle(linkValue.value);
+        MarcAuthorities.selectTitle(linkValue.value);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.checkCallout(testData.errorMessage);
         InventoryInstance.verifySelectMarcAuthorityModal();

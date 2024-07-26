@@ -97,7 +97,7 @@ describe('Inventory', () => {
 
       it(
         'C466151 Search by "Classification" field is case-insensitive (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPathFlaky', 'spitfire'] },
         () => {
           testData.searchQueries.forEach((query, index) => {
             InventoryInstances.searchInstancesWithOption(

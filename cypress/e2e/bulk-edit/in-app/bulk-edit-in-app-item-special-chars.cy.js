@@ -83,7 +83,9 @@ describe('bulk-edit', () => {
 
         const status = 'Intellectual item';
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Title');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+          'Instance (Title, Publisher, Publication date)',
+        );
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.replaceItemStatus(status);
         BulkEditActions.confirmChanges();

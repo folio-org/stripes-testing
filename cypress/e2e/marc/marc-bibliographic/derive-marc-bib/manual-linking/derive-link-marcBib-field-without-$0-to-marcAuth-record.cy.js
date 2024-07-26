@@ -50,7 +50,7 @@ describe('MARC', () => {
           marcAuthIcon: 'Linked to MARC authority',
         };
         const bib700AfterLinkingToAuth100 = [
-          75,
+          74,
           '700',
           '1',
           '\\',
@@ -147,8 +147,8 @@ describe('MARC', () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.deriveNewMarcBibRecord();
-            QuickMarcEditor.checkLinkButtonExistByRowIndex(75);
-            QuickMarcEditor.clickLinkIconInTagField(75);
+            QuickMarcEditor.checkLinkButtonExistByRowIndex(74);
+            QuickMarcEditor.clickLinkIconInTagField(74);
             MarcAuthorities.switchToBrowse();
             MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);
             MarcAuthorities.selectTitle(testData.marcValue);
@@ -156,7 +156,7 @@ describe('MARC', () => {
             MarcAuthority.contains(testData.tag010content);
             MarcAuthorities.checkRecordDetailPageMarkedValue(testData.marcValue);
             InventoryInstance.clickLinkButton();
-            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag700, 75);
+            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag700, 74);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib700AfterLinkingToAuth100);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();

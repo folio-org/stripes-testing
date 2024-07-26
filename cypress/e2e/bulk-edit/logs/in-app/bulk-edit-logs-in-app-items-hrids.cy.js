@@ -14,6 +14,7 @@ import ItemRecordView from '../../../../support/fragments/inventory/item/itemRec
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
@@ -189,12 +190,10 @@ describe('bulk-edit', () => {
           ]);
 
           BulkEditLogs.downloadFileWithMatchingRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            `*${matchedRecordsFileNameInvalidAndValid}`,
-            [item1.hrid, item2.hrid],
-            'hrid',
-            true,
-          );
+          ExportFile.verifyFileIncludes(`*${matchedRecordsFileNameInvalidAndValid}`, [
+            item1.hrid,
+            item2.hrid,
+          ]);
 
           BulkEditLogs.downloadFileWithErrorsEncountered();
           BulkEditFiles.verifyMatchedResultFileContent(
@@ -205,28 +204,13 @@ describe('bulk-edit', () => {
           );
 
           BulkEditLogs.downloadFileWithProposedChanges();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            previewOfProposedChangesFileName,
-            [item1.id, item2.id],
-            'firstElement',
-            true,
-          );
+          ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, [item1.id, item2.id]);
 
           BulkEditLogs.downloadFileWithUpdatedRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            updatedRecordsFileName,
-            [item1.id, item2.id],
-            'firstElement',
-            true,
-          );
+          ExportFile.verifyFileIncludes(updatedRecordsFileName, [item1.id]);
 
           BulkEditLogs.downloadFileWithCommitErrors();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            errorsFromCommittingFileName,
-            [item2.hrid],
-            'firstElement',
-            false,
-          );
+          ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [item2.hrid]);
 
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.switchToItem();

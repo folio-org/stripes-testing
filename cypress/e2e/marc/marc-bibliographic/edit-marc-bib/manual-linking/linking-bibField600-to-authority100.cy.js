@@ -40,7 +40,7 @@ describe('MARC', () => {
         const createdRecordIDs = [];
 
         const bib600FieldValues = [
-          46,
+          45,
           testData.tag600,
           '0',
           '0',
@@ -48,7 +48,7 @@ describe('MARC', () => {
         ];
 
         const bib600AfterLinkingToAuth100 = [
-          46,
+          45,
           testData.tag600,
           '0',
           '0',
@@ -59,6 +59,10 @@ describe('MARC', () => {
         ];
 
         before('Creating user and data', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C377026*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

@@ -150,7 +150,7 @@ describe('Data Import', () => {
 
     it(
       'C375174 Verify the importing of orders with pending status (folijet)',
-      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);

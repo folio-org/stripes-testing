@@ -801,12 +801,21 @@ export const ITEM_NOTES = {
 export const INSTANCE_NOTE_IDS = {
   ACTION_NOTE: '1c017b8d-c783-4f63-b620-079f7a5b9c07',
   REPRODUCTION_NOTE: 'd548fdff-b71c-4359-8055-f1c008c30f01',
+  DISSERTATION_NOTE: 'b73cc9c2-c9fa-49aa-964f-5ae1aa754ecd',
 };
 
 export const INSTANCE_STATUS_TERM_IDS = {
-  CATALOGED: '9634a5ab-9228-4703-baf2-4d12ebc77d56'
+  CATALOGED: '9634a5ab-9228-4703-baf2-4d12ebc77d56',
 };
 
 export const INSTANCE_RESOURCE_TYPE_IDS = {
-  TEXT: '6312d172-f0cf-40f6-b27d-9fa8feaf332f'
+  TEXT: '6312d172-f0cf-40f6-b27d-9fa8feaf332f',
+};
+
+export const LOAN_TYPE_IDS = {
+  SELECTED: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845',
+};
+
+export const MATERIAL_TYPE_IDS = {
+  DVD: '5ee11d91-f7e8-481d-b079-65d708582ccc',
 };

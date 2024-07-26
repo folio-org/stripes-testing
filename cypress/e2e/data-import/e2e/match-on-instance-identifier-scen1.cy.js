@@ -34,6 +34,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let userId;
+    const filePathForCreateInstance = 'marcFileForC347828.mrc';
+    const filePathForUpdateInstance = 'marcFileForC347828_1.mrc';
     const fileNameForCreateInstance = `C347828 autotestFile${getRandomPostfix()}.mrc`;
     const fileNameForUpdateInstance = `C347828 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
@@ -57,7 +59,7 @@ describe('Data Import', () => {
       instanceOption: 'Identifier: UPC',
     };
     const mappingProfile = {
-      name: `autotestMappingProf${getRandomPostfix()}`,
+      name: `C347828 autotestMappingProf${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       suppressFromDiscavery: 'Mark for all affected records',
       catalogedDate: '"2021-12-01"',
@@ -65,16 +67,25 @@ describe('Data Import', () => {
       instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
     };
     const actionProfile = {
-      name: `autotestActionProf${getRandomPostfix()}`,
+      name: `C347828 autotestActionProf${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const jobProfile = {
-      profileName: `autotestJobProf${getRandomPostfix()}`,
+      profileName: `C347828 autotestJobProf${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('Create test data and login', () => {
+      cy.getAdminToken();
+      InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
+        (instances) => {
+          instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
+        },
+      );
+
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.dataImportDeleteLogs.gui,
@@ -86,18 +97,11 @@ describe('Data Import', () => {
         Permissions.invoiceSettingsAll.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
+
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
-
-        InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
-          (instances) => {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          },
-        );
       });
     });
 
@@ -117,10 +121,7 @@ describe('Data Import', () => {
       { tags: ['criticalPath', 'folijet'] },
       () => {
         DataImport.verifyUploadState();
-        DataImport.uploadFile(
-          'marcFileForMatchOnIdentifierForCreate.mrc',
-          fileNameForCreateInstance,
-        );
+        DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
@@ -179,10 +180,7 @@ describe('Data Import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
-        DataImport.uploadFile(
-          'marcFileForMatchOnIdentifierForUpdate_1.mrc',
-          fileNameForUpdateInstance,
-        );
+        DataImport.uploadFile(filePathForUpdateInstance, fileNameForUpdateInstance);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();

@@ -26,17 +26,17 @@ describe('MARC', () => {
             'C388512Lesbian authors',
             'C388512Lesbian activists',
           ],
-          rowsToUnlink: [28, 31, 32],
-          rowsAbleToLink: [17, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 41, 42, 43, 44, 45],
+          rowsToUnlink: [27, 30, 31],
+          rowsAbleToLink: [16, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40, 41, 42, 43, 44],
           field100Values: [
-            17,
+            16,
             '100',
             '1',
             '\\',
             '$a Chin, Staceyann, $d 1972- $e author. $0 n2008052404',
           ],
           field600AfterManualLinking: [
-            28,
+            27,
             '600',
             '1',
             '0',
@@ -50,7 +50,7 @@ describe('MARC', () => {
 
         const linkedTags = [
           [
-            28,
+            27,
             '600',
             '1',
             '0',
@@ -60,7 +60,7 @@ describe('MARC', () => {
             '',
           ],
           [
-            30,
+            29,
             '650',
             '\\',
             '0',
@@ -70,7 +70,7 @@ describe('MARC', () => {
             '',
           ],
           [
-            31,
+            30,
             '650',
             '\\',
             '0',
@@ -80,7 +80,7 @@ describe('MARC', () => {
             '',
           ],
           [
-            32,
+            31,
             '650',
             '\\',
             '0',
@@ -233,22 +233,22 @@ describe('MARC', () => {
             });
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
 
-            QuickMarcEditor.clickLinkIconInTagField(28);
+            QuickMarcEditor.clickLinkIconInTagField(27);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResultsWithOption(testData.searchOption, testData.searchValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.field600AfterManualLinking);
 
-            QuickMarcEditor.updateExistingFieldContent(31, testData.new31RowValue);
-            QuickMarcEditor.updateExistingFieldContent(32, testData.new32RowValue);
+            QuickMarcEditor.updateExistingFieldContent(30, testData.new31RowValue);
+            QuickMarcEditor.updateExistingFieldContent(31, testData.new32RowValue);
 
             QuickMarcEditor.undoDelete();
             QuickMarcEditor.verifyTagFieldNotLinked(...testData.field100Values);
 
             QuickMarcEditor.clickSaveAndKeepEditing();
-            QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(28);
-            QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(30);
+            QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(27);
+            QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(29);
             testData.rowsAbleToLink.forEach((rowIndex) => {
               QuickMarcEditor.checkLinkButtonExistByRowIndex(rowIndex);
             });

@@ -18,14 +18,14 @@ describe('MARC', () => {
       const testData = {
         tag010: '010',
         tag100: '100',
-        tag100RowIndex: 16,
+        tag100RowIndex: 17,
         field100Value: '$a Erbil,',
         new010FieldValue: '$z n 2005070769',
         searchOption: 'Keyword',
         authorityTitle: 'Erbil, H. Yıldırım',
         instanceTitle: 'Surface chemistry of solid and liquid interfaces / H. Yıldırım Erbil.',
         linked100Field: [
-          16,
+          17,
           '100',
           '1',
           '\\',
@@ -144,6 +144,7 @@ describe('MARC', () => {
           MarcAuthority.edit();
 
           QuickMarcEditor.updateExistingField(testData.tag010, testData.new010FieldValue);
+          cy.wait(2000);
           QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
 
           QuickMarcEditor.pressSaveAndClose();

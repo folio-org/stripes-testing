@@ -130,11 +130,12 @@ export default {
         return body;
       });
   },
-  deleteViaApi: (id) => {
+  deleteViaApi: (id, ignoreErrors = false) => {
     cy.okapiRequest({
       method: 'DELETE',
       path: `field-protection-settings/marc/${id}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
     });
   },
   getListViaApi: (searchParams) => {

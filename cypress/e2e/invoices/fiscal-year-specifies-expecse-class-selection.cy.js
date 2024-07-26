@@ -262,16 +262,17 @@ describe('Invoices', () => {
 
       // Select "Fund #1" in "Fund ID" dropdown
       InvoiceLineEditForm.selectFundDistribution(testData.fund.name);
+      InvoiceLineEditForm.expandDropDown('Expense class');
+      InvoiceLineEditForm.checkDropDownOptionsListCount(1);
+
+      // Select Expense class #2
+      InvoiceLineEditForm.setDropDownValue(testData.expenseClasses[0].name);
       InvoiceLineEditForm.checkFieldsConditions([
         { label: 'Expense class', conditions: { singleValue: testData.expenseClasses[0].name } },
       ]);
       InvoiceLineEditForm.checkButtonsConditions([
         { label: 'Save & close', conditions: { disabled: false } },
       ]);
-
-      // Expand "Expense class*" dropdown
-      InvoiceLineEditForm.expandDropDown('Expense class');
-      InvoiceLineEditForm.checkDropDownOptionsListCount(1);
 
       // Click "Save & close" button
       InvoiceLineEditForm.clickSaveButton();

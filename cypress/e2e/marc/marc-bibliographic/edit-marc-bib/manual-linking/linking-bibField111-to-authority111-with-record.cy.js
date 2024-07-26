@@ -35,7 +35,8 @@ describe('MARC', () => {
             marc: 'marcAuthFileC374197.mrc',
             fileName: `testMarcFileC374197.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-            authorityHeading: 'Mediterranean Conference on Medical and Biological Engineering',
+            authorityHeading:
+              'C374197 Mediterranean Conference on Medical and Biological Engineering',
             authority111FieldValue: 'n85281584',
             propertyName: 'authority',
           },
@@ -43,31 +44,35 @@ describe('MARC', () => {
 
         const createdRecordIDs = [];
         const bib111InitialFieldValues = [
-          28,
+          27,
           testData.tag111,
           '2',
           '\\',
           '$a Mediterranean Conference on Medical and Biological Engineering and Computing $n (13th : $d 2013 : $c Seville, Spain)',
         ];
         const bib111UnlinkedFieldValues = [
-          28,
+          27,
           testData.tag111,
           '2',
           '\\',
-          '$a Mediterranean Conference on Medical and Biological Engineering $n (13th : $d 2013 : $0 http://id.loc.gov/authorities/names/n85281584',
+          '$a C374197 Mediterranean Conference on Medical and Biological Engineering $n (13th : $d 2013 : $0 http://id.loc.gov/authorities/names/n85281584',
         ];
         const bib111LinkedFieldValues = [
-          28,
+          27,
           testData.tag111,
           '2',
           '\\',
-          '$a Mediterranean Conference on Medical and Biological Engineering',
+          '$a C374197 Mediterranean Conference on Medical and Biological Engineering',
           '$n (13th : $d 2013 :',
           `$0 http://id.loc.gov/authorities/names/${marcFiles[1].authority111FieldValue}`,
           '',
         ];
 
         before('Creating user', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374197*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -76,7 +81,6 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -118,7 +122,6 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
-            InventoryInstance.selectRecord();
             MarcAuthorities.checkFieldAndContentExistence(
               testData.tag111,
               `$a ${marcFiles[1].authorityHeading}`,

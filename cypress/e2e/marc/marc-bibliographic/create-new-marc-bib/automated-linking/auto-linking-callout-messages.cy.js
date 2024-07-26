@@ -5,6 +5,7 @@ import InventoryInstance from '../../../../../support/fragments/inventory/invent
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
@@ -29,13 +30,13 @@ describe('MARC', () => {
           {
             rowIndex: 5,
             tag: '650',
-            content: '$a smth $0 n00000010',
+            content: '$a smth $0 n00000015',
             status: 'not linked',
           },
           {
             rowIndex: 6,
             tag: '800',
-            content: '$a smth $0 3052044',
+            content: '$a smth $0 3052045',
             status: 'not linked',
           },
         ];
@@ -68,6 +69,9 @@ describe('MARC', () => {
 
         before(() => {
           cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C389480*');
+
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -122,6 +126,7 @@ describe('MARC', () => {
             // #4 - #5 Add three linkable fields -> Replace "$a" in fourth boxes of added linkable fields with "$0"
             newFields.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
+              cy.wait(500);
             });
 
             // #6 Click on the "Link headings" button in the upper right corner of page

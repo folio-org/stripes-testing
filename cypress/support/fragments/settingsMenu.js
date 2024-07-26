@@ -121,4 +121,6 @@ export default {
   organizationCategoryPath: 'settings/organizations/category',
   // Tags
   tagsGeneralPath: 'settings/tags/general',
+  // Software versions
+  softwareVersionsPath: 'settings/about',
 };

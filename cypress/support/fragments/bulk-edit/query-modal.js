@@ -26,25 +26,26 @@ const trashButton = Button({ icon: 'trash' });
 const booleanValues = ['AND'];
 
 export const holdingsFieldValues = {
-  instanceUuid: 'Instance UUID',
+  instanceUuid: 'Holding — Instance UUID',
 };
 export const instanceFieldValues = {
-  instanceHrid: 'Instance HRID',
-  instanceResourceTitle: 'Instance - Title'
+  instanceHrid: 'Instance — Instance HRID',
+  instanceResourceTitle: 'Instance — Title',
 };
 export const itemFieldValues = {
-  instanceId: 'Instance ID',
-  itemStatus: 'Item status',
-  holdingsId: 'Holdings ID',
-  temporaryLocation: 'Item temporary location name',
+  instanceId: 'Instances — Instance UUID',
+  itemStatus: 'Items — Status',
+  holdingsId: 'Holdings — UUID',
+  temporaryLocation: 'Temporary location — Name',
 };
 export const usersFieldValues = {
-  expirationDate: 'User expiration date',
-  firstName: 'User first name',
-  lastName: 'User last name',
-  patronGroup: 'User patron group',
-  userActive: 'User active',
-  userBarcode: 'User barcode',
+  expirationDate: 'User — Expiration date',
+  firstName: 'User — First name',
+  lastName: 'User — Last name',
+  patronGroup: 'Group — Group',
+  preferredContactType: 'User — Preferred contact type',
+  userActive: 'User — Active',
+  userBarcode: 'User — Barcode',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -54,14 +55,6 @@ export const dateTimeOperators = [
   '<',
   '>=',
   '<=',
-  'is null/empty',
-];
-export const stringStoresUuidOperators = [
-  'Select operator',
-  'equals',
-  'not equal to',
-  'in',
-  'not in',
   'is null/empty',
 ];
 export const stringStoresUuidButMillionOperators = [
@@ -99,6 +92,15 @@ export const STRING_OPERATORS = {
   NOT_EQUAL: 'not equal to',
   CONTAINS: 'contains',
   START_WITH: 'starts with',
+  IS_NULL: 'is null/empty',
+};
+
+export const STRING_STORES_UUID_OPERATORS = {
+  PLACEHOLDER: 'Select operator',
+  EQUAL: 'equals',
+  NOT_EQUAL: 'not equal to',
+  IN: 'in',
+  NOT_IN: 'not in',
   IS_NULL: 'is null/empty',
 };
 
@@ -157,12 +159,12 @@ export default {
   },
 
   typeInAndSelectField(string, row = 0) {
+    cy.wait(1000);
     cy.do([
       RepeatableFieldItem({ index: row }).find(Selection()).open(),
-      RepeatableFieldItem({ index: row }).find(Selection()).filterOptions(string),
-      cy.wait(1000),
-      Keyboard.enter(),
+      RepeatableFieldItem({ index: row }).find(Selection()).filter(string),
     ]);
+    cy.do(RepeatableFieldItem({ index: row }).find(Selection()).chooseWithoutVerification(string));
   },
 
   verifySelectedField(selection, row = 0) {
@@ -190,7 +192,7 @@ export default {
     cy.get(`[data-testid="row-${row}"] [class^="col-sm-2"] [class^="selectControl"] option`).then(
       (options) => {
         const textArray = options.get().map((el) => el.label);
-        expect(textArray).to.eql(operators);
+        expect(textArray).to.eql(Object.values(operators));
       },
     );
   },
@@ -227,19 +229,24 @@ export default {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).fillIn(text)]);
     cy.wait(2000);
     cy.do([
-      RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle(),
       RepeatableFieldItem({ index: row })
         .find(MultiSelectOption(including(text)))
         .click(),
     ]);
+    for (let i = 0; i < text.length; i++) {
+      cy.do([Keyboard.backspace()]);
+    }
+    cy.do(buildQueryModal.click());
   },
 
   chooseFromValueMultiselect(text, row = 0) {
+    cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
+    cy.focused().type('{selectAll}{backspace}');
     cy.do([
-      RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle(),
       RepeatableFieldItem({ index: row })
         .find(MultiSelectOption(including(text)))
         .click(),
+      buildQueryModal.click(),
     ]);
   },
 
@@ -247,6 +254,7 @@ export default {
     cy.contains('[data-test-selection-option-segment="true"]', text)
       .parent()
       .siblings('[icon="times"]')
+      .focus()
       .click();
   },
 

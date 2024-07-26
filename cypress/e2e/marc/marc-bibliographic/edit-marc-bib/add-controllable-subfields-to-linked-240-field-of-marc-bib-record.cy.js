@@ -111,24 +111,24 @@ describe('MARC', () => {
           InventoryInstances.selectInstanceById(createdRecordIDs[0]);
           InventoryInstance.waitLoading();
           InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.updateLinkedFifthBox(18, '$n test');
+          QuickMarcEditor.updateLinkedFifthBox(17, '$n test');
           cy.wait(500); // need wait until changes appear
           QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-          QuickMarcEditor.updateLinkedFifthBox(18, '$f test');
+          QuickMarcEditor.updateLinkedFifthBox(17, '$f test');
           QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-          QuickMarcEditor.updateLinkedFifthBox(18, '$h test');
+          QuickMarcEditor.updateLinkedFifthBox(17, '$h test');
           QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-          QuickMarcEditor.updateLinkedFifthBox(18, '$k test');
+          QuickMarcEditor.updateLinkedFifthBox(17, '$k test');
           QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-          QuickMarcEditor.updateLinkedFifthBox(18, '$l test');
+          QuickMarcEditor.updateLinkedFifthBox(17, '$l test');
           QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-          QuickMarcEditor.updateLinkedFifthBox(18, '$p test');
+          QuickMarcEditor.updateLinkedFifthBox(17, '$p test');
           QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-          QuickMarcEditor.updateLinkedFifthBox(18, '$s test');
+          QuickMarcEditor.updateLinkedFifthBox(17, '$s test');
           QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-          QuickMarcEditor.updateLinkedFifthBox(18, '$g test');
+          QuickMarcEditor.updateLinkedFifthBox(17, '$g test');
           QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-          QuickMarcEditor.updateLinkedFifthBox(18, '$d test');
+          QuickMarcEditor.updateLinkedFifthBox(17, '$d test');
           QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
         },
       );

@@ -1,9 +1,11 @@
 import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
@@ -12,6 +14,7 @@ describe('Data Import', () => {
     const filePathToUpload = 'marcBibFileForC353624.mrc';
     const fileName = `C356324 autotestFile${getRandomPostfix()}.mrc`;
     let instanceId;
+    let user;
 
     before('Create test data and login', () => {
       cy.getAdminToken();
@@ -19,21 +22,26 @@ describe('Data Import', () => {
         instanceId = response[0].instance.id;
       });
 
-      cy.loginAsAdmin({
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        user = userProperties;
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
       });
     });
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
         InventoryInstance.deleteInstanceViaApi(instanceId);
       });
     });
 
     it(
       'C353624 Check the log summary table display (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'shiftLeft'] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const columnNumbers = {
           summary: '1',

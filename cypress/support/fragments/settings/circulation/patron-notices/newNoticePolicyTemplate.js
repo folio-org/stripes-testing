@@ -88,6 +88,21 @@ export default {
     return cy.do(Link(noticePolicyTemplate.name).click());
   },
 
+  verifyNoticePolicyTemplate(noticePolicyTemplate) {
+    this.verifyKeyValue('Patron notice template name', noticePolicyTemplate.name);
+    this.verifyKeyValue('Description', noticePolicyTemplate.description);
+    this.verifyKeyValue('Subject', noticePolicyTemplate.subject);
+    this.verifyKeyValue('Body', noticePolicyTemplate.body);
+  },
+
+  verifyRequestPolicyInNotInTheList(name) {
+    cy.contains(name).should('not.exist');
+  },
+
+  verifyKeyValue(verifyKey, verifyValue) {
+    cy.expect(KeyValue(verifyKey, { value: verifyValue }).exists());
+  },
+
   create(noticePolicyTemplate, autoSave = true) {
     // need to wait for validation to complete
     cy.wait(1000);
@@ -103,6 +118,7 @@ export default {
     cy.do(bodyField.fillIn(noticePolicyTemplate.body));
     cy.expect(bodyField.has({ value: noticePolicyTemplate.body }));
 
+    cy.wait(1000);
     if (autoSave) {
       cy.do(saveButton.click());
     }
@@ -277,5 +293,32 @@ export default {
     this.checkPreview(template.previewText);
     this.saveAndClose();
     cy.expect(patronNoticeForm.absent());
+  },
+
+  getNoticePolicyTemplatesByNameViaAPI() {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'templates',
+      })
+      .then((response) => {
+        return response.body.templates;
+      });
+  },
+
+  deleteNoticePolicyTemplateByNameViaAPI(name) {
+    this.getNoticePolicyTemplatesByNameViaAPI().then((policies) => {
+      const policy = policies.find((p) => p.name === name);
+      if (policy !== undefined) {
+        this.deleteViaAPI(policy.id);
+      }
+    });
+  },
+
+  deleteViaAPI(id) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `templates/${id}`,
+    });
   },
 };

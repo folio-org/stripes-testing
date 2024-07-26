@@ -33,20 +33,24 @@ describe('Inventory', () => {
 
             Locations.createViaApi(props).then((location) => {
               testData.locations.push(location);
+              InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+                (holdingSources) => {
+                  InventoryHoldings.createHoldingRecordViaApi({
+                    instanceId: testData.instance.instanceId,
+                    permanentLocationId: location.id,
+                    sourceId: holdingSources[0].id,
+                  }).then((holding) => {
+                    testData.holdings.push(holding);
 
-              InventoryHoldings.createHoldingRecordViaApi({
-                instanceId: testData.instance.instanceId,
-                permanentLocationId: location.id,
-              }).then((holding) => {
-                testData.holdings.push(holding);
-
-                InventoryItems.addItemToHoldingViaApi({
-                  barcode: `0${index + 1}.${randomFourDigitNumber()}`,
-                  holdingsRecordId: holding.id,
-                }).then((item) => {
-                  testData.items.push(item);
-                });
-              });
+                    InventoryItems.addItemToHoldingViaApi({
+                      barcode: `0${index + 1}.${randomFourDigitNumber()}`,
+                      holdingsRecordId: holding.id,
+                    }).then((item) => {
+                      testData.items.push(item);
+                    });
+                  });
+                },
+              );
             });
           });
         });

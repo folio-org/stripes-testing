@@ -615,26 +615,6 @@ export default {
       });
   },
 
-  createJobProfileWithoutLinkedProfilesViaApi: (nameProfile) => {
-    return cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'data-import-profiles/jobProfiles',
-        body: {
-          profile: {
-            name: nameProfile,
-            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
-          },
-          addedRelations: [],
-          deletedRelations: [],
-        },
-        isDefaultSearchParamsRequired: false,
-      })
-      .then((responce) => {
-        return responce.body.id;
-      });
-  },
-
   unlinkProfile: (number) => {
     cy.get('[id*="branch-ROOT-MATCH-MATCH-MATCH-editable"]')
       .eq(number)

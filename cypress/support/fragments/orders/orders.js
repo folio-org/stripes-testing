@@ -293,9 +293,9 @@ export default {
   },
 
   createOrderWithPONumberPreffixSuffix(poPreffix, poSuffix, poNumber, order, isManual = false) {
+    cy.do([actionsButton.click(), newButton.click()]);
+    cy.wait(3000);
     cy.do([
-      actionsButton.click(),
-      newButton.click(),
       TextField({ name: 'poNumber' }).fillIn(poNumber),
       Select({ name: 'poNumberPrefix' }).choose(poPreffix),
       Select({ name: 'poNumberSuffix' }).choose(poSuffix),

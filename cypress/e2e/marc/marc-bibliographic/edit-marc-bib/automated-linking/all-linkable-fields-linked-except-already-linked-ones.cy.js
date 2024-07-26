@@ -167,6 +167,10 @@ describe('MARC', () => {
         ];
 
         before('Creating user and data', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388534*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -175,7 +179,6 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -194,9 +197,6 @@ describe('MARC', () => {
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
 
-              linkableFields.forEach((tag) => {
-                QuickMarcEditor.setRulesForField(tag, true);
-              });
               linkingTagAndValues.forEach((linking) => {
                 QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
                 MarcAuthorities.switchToSearch();
@@ -253,6 +253,13 @@ describe('MARC', () => {
                 field.boxSeventh,
               );
             });
+
+            // move this step here from the precondition due to a concurrency issue in parallel runs
+            cy.getAdminToken();
+            linkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, true);
+            });
+            cy.wait(2000);
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout(
@@ -271,6 +278,7 @@ describe('MARC', () => {
                 field.boxSeventh,
               );
             });
+            cy.wait(1000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 

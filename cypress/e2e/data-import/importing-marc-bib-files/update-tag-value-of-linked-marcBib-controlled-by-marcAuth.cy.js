@@ -33,14 +33,14 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {
       updated110Field: [
-        20,
+        19,
         '110',
         '1',
         '\\',
         '$a C374189 Chin, Staceyann, $d 1972- $e author. $0 http://id.loc.gov/authorities/names/n2008052404',
       ],
       updated600Field: [
-        31,
+        30,
         '600',
         '1',
         '0',
@@ -121,12 +121,12 @@ describe('Data Import', () => {
     ];
     const linkingTagAndValues = [
       {
-        rowIndex: 17,
+        rowIndex: 16,
         value: 'C374189 Chin, Staceyann, 1972-',
         tag: 100,
       },
       {
-        rowIndex: 28,
+        rowIndex: 27,
         value: 'C374189 Chin, Staceyann, 1972-',
         tag: 600,
       },

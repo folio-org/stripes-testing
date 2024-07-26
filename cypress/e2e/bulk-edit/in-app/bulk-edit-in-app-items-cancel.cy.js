@@ -77,7 +77,7 @@ describe('bulk-edit', () => {
           'Permanent loan type',
           'Item permanent location',
           'Item temporary location',
-          'Item ID',
+          'Item UUID',
         );
         BulkEditSearchPane.verifyMatchedResults(item.itemId);
         BulkEditActions.downloadMatchedRecordsExists();

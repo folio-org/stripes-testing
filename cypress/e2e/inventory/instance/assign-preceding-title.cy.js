@@ -70,11 +70,11 @@ describe('Inventory', () => {
         InventoryInstance.editInstance();
         InstanceRecordEdit.addPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
         InstanceRecordEdit.saveAndClose();
-        InventoryInstance.checkPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
+        InventoryInstance.checkPrecedingTitle(precedingTitleValue, isbnValue, issnValue);
         InventoryInstance.editInstance();
         InstanceRecordEdit.addExistingPrecedingTitle(instanceTitle2);
         InstanceRecordEdit.saveAndClose();
-        InventoryInstance.checkPrecedingTitle(0, instanceTitle2, '-', '-');
+        InventoryInstance.checkPrecedingTitle(instanceTitle2, 'No value set-', 'No value set-');
       },
     );
   });
