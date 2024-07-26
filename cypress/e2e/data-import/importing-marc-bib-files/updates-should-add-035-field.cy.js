@@ -103,7 +103,7 @@ describe('Data Import', () => {
 
     it(
       'C358998 Data Import Updates should add 035 field from 001/003, if HRID already exists (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPathFlaky', 'folijet'] },
       () => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
@@ -219,7 +219,7 @@ describe('Data Import', () => {
 
     it(
       'C358998 Data Import Updates should add 035 field from 001/003, if it is not HRID (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPathFlaky', 'folijet'] },
       () => {
         const itemQuantity = '8';
         const arrayOf999Fields = [];
