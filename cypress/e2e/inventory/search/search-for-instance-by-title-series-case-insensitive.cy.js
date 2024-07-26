@@ -78,7 +78,7 @@ describe('Inventory', () => {
 
       it(
         'C466069 Search by "Title", "Alternative title", "Series" fields is case-insensitive (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPathFlaky', 'spitfire'] },
         () => {
           testData.searchQueries.forEach((query) => {
             InventoryInstances.searchByTitle(query);

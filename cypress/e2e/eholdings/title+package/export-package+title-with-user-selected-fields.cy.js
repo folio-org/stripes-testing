@@ -30,9 +30,9 @@ describe('eHoldings', () => {
     const dataToVerifyInCSVFile = [
       'Custom Coverage',
       'Agreements',
-      'Notes',
+      'Package Name',
       'Contributors',
-      'Custom label',
+      'Title name',
       'Description',
       'AAHE-ERIC/Higher Education Research Report',
       'Wiley Online Library',

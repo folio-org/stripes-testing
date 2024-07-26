@@ -11,23 +11,15 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     const testData = {
-      issnOption: 'ISSN',
-      defaultSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
-      issnPositiveSearchQueries: ['0040-782X', '0040-782x', '0040-782*', '*-782x'],
-      issnNegativeSearchQuery: '0040-782A',
-      searchResults: [
-        'C451457 (MSEARCH672 test ISSN upper case, record 1) Time.',
-        'C451457 (MSEARCH672 test ISSN lower case, record 2) Time.',
-        'C451457 (MSEARCH672 test invalid ISSN upper case, record 3) Time.',
-        'C451457 (MSEARCH672 test invalid ISSN lower case, record 4) Time.',
-        'C451457 (MSEARCH672 test linking ISSN upper case, record 5) Time.',
-        'C451457 (MSEARCH672 test linking ISSN lower case, record 6) Time.',
-      ],
+      searchOption: ['Place of publication', 'All', 'Query search'],
+      searchValue: ['Hünfelden', 'Hunfelden'],
+      searchResult:
+        'C496181 Aller Wort verschwiegenes Rot : Albrecht Goes zu Ehren / mit Beiträgen von Wolfram Aichele ... [et al.] ; herausgegen von Oliver Kohler.',
     };
 
     const marcFile = {
-      marc: 'marcBibFileForC451457.mrc',
-      fileName: `testMarcFileC451457.${getRandomPostfix()}.mrc`,
+      marc: 'marcBibFileForC496181.mrc',
+      fileName: `testMarcFileC496181.${getRandomPostfix()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       propertyName: 'instance',
     };
@@ -65,23 +57,23 @@ describe('Inventory', () => {
     });
 
     it(
-      'C451457 Search for "Instance" record by "ISSN" value with "X" at the end using "ISSN" search option (Instance tab) (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      'C496181 Search for Instance by "Place of publication" field which has value with diacritics (spitfire)',
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
-        InventorySearchAndFilter.selectSearchOptions(testData.issnOption, '');
 
-        testData.issnPositiveSearchQueries.forEach((query) => {
-          InventorySearchAndFilter.executeSearch(query);
-          testData.searchResults.forEach((expectedResult) => {
-            InventorySearchAndFilter.verifySearchResult(expectedResult);
+        testData.searchOption.forEach((option) => {
+          testData.searchValue.forEach((value) => {
+            InventorySearchAndFilter.selectSearchOption(option);
+            if (option === 'Query search') {
+              InventorySearchAndFilter.executeSearch(`publication.place=${value}`);
+            } else {
+              InventorySearchAndFilter.executeSearch(value);
+            }
+            InventorySearchAndFilter.verifySearchResult(testData.searchResult);
+            InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
           });
-          InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
-          InventoryInstances.verifySelectedSearchOption(testData.defaultSearchOption);
-          InventorySearchAndFilter.verifyResultPaneEmpty();
         });
-        InventorySearchAndFilter.executeSearch(testData.issnNegativeSearchQuery);
-        InventorySearchAndFilter.verifyNoRecordsFound();
       },
     );
   });

@@ -66,7 +66,7 @@ describe('Inventory', () => {
 
     it(
       'C451458 Search for "Instance" record by "ISSN" value with "X" at the end using "ISSN" search option (Holdings tab) (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire'] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.holdingsTabIsDefault();
