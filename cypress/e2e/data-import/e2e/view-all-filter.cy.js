@@ -70,69 +70,73 @@ describe('Data Import', () => {
       });
     });
 
-    it('C11113 Filter the "View all" log screen (folijet)', { tags: ['smoke', 'folijet'] }, () => {
-      cy.visit(TopMenu.dataImportPath);
-      Logs.openViewAllLogs();
-      LogsViewAll.checkByReverseChronologicalOrder();
+    it(
+      'C11113 Filter the "View all" log screen (folijet)',
+      { tags: ['smokeFlaky', 'folijet'] },
+      () => {
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openViewAllLogs();
+        LogsViewAll.checkByReverseChronologicalOrder();
 
-      // FILTER By "Errors in Import"
-      LogsViewAll.selectNofilterJobsByErrors();
-      LogsViewAll.checkByErrorsInImport(JOB_STATUS_NAMES.COMPLETED);
-      LogsViewAll.resetAllFilters();
-      LogsViewAll.selectYesfilterJobsByErrors();
-      LogsViewAll.checkByErrorsInImport(
-        JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS,
-        JOB_STATUS_NAMES.FAILED,
-      );
-      LogsViewAll.resetAllFilters();
-
-      // FILTER By "Date"
-      const startedDate = new Date();
-      const completedDate = startedDate;
-
-      // format date as YYYY-MM-DD
-      const formattedStart = DateTools.getFormattedDate({ date: startedDate });
-
-      // api endpoint expects completedDate increased by 1 day
-      completedDate.setDate(completedDate.getDate() + 1);
-
-      LogsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });
-      cy.wait(1800);
-      const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
-      LogsViewAll.checkByDate({ from: formattedStart, end: formattedEnd });
-      LogsViewAll.resetAllFilters();
-
-      // FILTER By "Job profile"
-      LogsViewAll.filterJobsByJobProfile(testData.jobProfileName);
-      LogsViewAll.checkByJobProfileName(testData.jobProfileName);
-      LogsViewAll.resetAllFilters();
-
-      // FILTER By "User"
-      LogsViewAll.openUserIdAccordion();
-      LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
-      LogsViewAll.checkByUserName(`${testData.user.firstName} ${testData.user.lastName}`);
-      LogsViewAll.resetAllFilters();
-
-      // FILTER By "Inventory single record imports"
-      LogsViewAll.openInventorysingleRecordImportsAccordion();
-      LogsViewAll.singleRecordImportsStatuses.forEach((filter) => {
-        // need some waiting until checkboxes become clickable after resetting filters
-        cy.wait(1000); // eslint-disable-line cypress/no-unnecessary-waiting
-        LogsViewAll.filterJobsByInventorySingleRecordImports(filter);
-        LogsViewAll.checkByInventorySingleRecord(filter);
+        // FILTER By "Errors in Import"
+        LogsViewAll.selectNofilterJobsByErrors();
+        LogsViewAll.checkByErrorsInImport(JOB_STATUS_NAMES.COMPLETED);
         LogsViewAll.resetAllFilters();
-      });
+        LogsViewAll.selectYesfilterJobsByErrors();
+        LogsViewAll.checkByErrorsInImport(
+          JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS,
+          JOB_STATUS_NAMES.FAILED,
+        );
+        LogsViewAll.resetAllFilters();
 
-      // FILTER By more than one filter
-      // in this case, filter by "User" and "Errors in Import"
-      LogsViewAll.selectNofilterJobsByErrors();
-      LogsViewAll.waitUIToBeFiltered();
-      LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
-      LogsViewAll.checkByErrorsInImportAndUser(
-        JOB_STATUS_NAMES.COMPLETED,
-        `${testData.user.firstName} ${testData.user.lastName}`,
-      );
-      LogsViewAll.resetAllFilters();
-    });
+        // FILTER By "Date"
+        const startedDate = new Date();
+        const completedDate = startedDate;
+
+        // format date as YYYY-MM-DD
+        const formattedStart = DateTools.getFormattedDate({ date: startedDate });
+
+        // api endpoint expects completedDate increased by 1 day
+        completedDate.setDate(completedDate.getDate() + 1);
+
+        LogsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });
+        cy.wait(1800);
+        const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
+        LogsViewAll.checkByDate({ from: formattedStart, end: formattedEnd });
+        LogsViewAll.resetAllFilters();
+
+        // FILTER By "Job profile"
+        LogsViewAll.filterJobsByJobProfile(testData.jobProfileName);
+        LogsViewAll.checkByJobProfileName(testData.jobProfileName);
+        LogsViewAll.resetAllFilters();
+
+        // FILTER By "User"
+        LogsViewAll.openUserIdAccordion();
+        LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
+        LogsViewAll.checkByUserName(`${testData.user.firstName} ${testData.user.lastName}`);
+        LogsViewAll.resetAllFilters();
+
+        // FILTER By "Inventory single record imports"
+        LogsViewAll.openInventorysingleRecordImportsAccordion();
+        LogsViewAll.singleRecordImportsStatuses.forEach((filter) => {
+          // need some waiting until checkboxes become clickable after resetting filters
+          cy.wait(1000); // eslint-disable-line cypress/no-unnecessary-waiting
+          LogsViewAll.filterJobsByInventorySingleRecordImports(filter);
+          LogsViewAll.checkByInventorySingleRecord(filter);
+          LogsViewAll.resetAllFilters();
+        });
+
+        // FILTER By more than one filter
+        // in this case, filter by "User" and "Errors in Import"
+        LogsViewAll.selectNofilterJobsByErrors();
+        LogsViewAll.waitUIToBeFiltered();
+        LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
+        LogsViewAll.checkByErrorsInImportAndUser(
+          JOB_STATUS_NAMES.COMPLETED,
+          `${testData.user.firstName} ${testData.user.lastName}`,
+        );
+        LogsViewAll.resetAllFilters();
+      },
+    );
   });
 });
