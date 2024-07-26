@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable import/named */
 import {
   DEFAULT_JOB_PROFILE_NAMES,
   DEFAULT_FOLIO_AUTHORITY_FILES,
@@ -21,7 +20,7 @@ describe('MARC', () => {
       searchOption: 'Keyword',
       tag010: '010',
       authorityHeadings: [
-        'Kerouac, Jack, 1922-1969 C432323Auto',
+        'Kerouac, Jack C432323Auto',
         'Apple & Honey Productions C432323Auto',
         "Association pour la promotion et la protection de la liberté d'expression au Burundi C432323Auto",
         'Apple Academic Press C432323Auto',
