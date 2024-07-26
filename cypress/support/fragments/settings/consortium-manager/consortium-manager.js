@@ -8,10 +8,11 @@ import {
   including,
   HTML,
   Dropdown,
-  or,
 } from '../../../../../interactors';
 
-const myProfileButton = Dropdown({ id: 'profileDropdown' }).find(Button());
+const myProfileButton = Dropdown({ id: 'profileDropdown' }).find(
+  Button({ className: including('navButton') }),
+);
 const switchActiveAffiliationButton = Button('Switch active affiliation');
 
 export default {
@@ -74,31 +75,21 @@ export default {
     ]);
   },
 
-  switchActiveAffiliation(currentTenantName, newTenantName, servicePointName = null) {
+  switchActiveAffiliation(currentTenantName, newTenantName) {
     cy.wait(8000);
+    cy.expect(myProfileButton.find(HTML({ text: including(currentTenantName) })).exists());
+    cy.do([myProfileButton.click(), switchActiveAffiliationButton.click()]);
+    cy.wait(2000);
     cy.do([
-      Dropdown({ id: 'profileDropdown' })
-        .find(Button({ ariaLabel: or(`${currentTenantName}  profile`, 'My profile') }))
-        .click(),
-      switchActiveAffiliationButton.click(),
       Modal('Select affiliation')
         .find(Button({ id: 'consortium-affiliations-select' }))
         .click(),
       SelectionOption(including(newTenantName)).click(),
-      Button({ id: 'save-active-affiliation' }).click(),
     ]);
+    cy.wait(2000);
+    cy.do(Button({ id: 'save-active-affiliation' }).click());
     cy.wait(8000);
-    cy.expect(
-      Button({
-        ariaLabel: or(
-          `${newTenantName}  profile`,
-          `${newTenantName} ${servicePointName} profile`,
-          'My profile',
-        ),
-      })
-        .find(HTML({ text: including(newTenantName) }))
-        .exists(),
-    );
+    cy.expect(myProfileButton.find(HTML({ text: including(newTenantName) })).exists());
   },
 
   switchActiveAffiliationIsAbsent() {
@@ -115,18 +106,9 @@ export default {
     cy.do(myProfileButton.click());
   },
 
-  checkCurrentTenantInTopMenu(tenantName, servicePointName = null) {
+  checkCurrentTenantInTopMenu(tenantName) {
     cy.expect(
       Dropdown({ id: 'profileDropdown' })
-        .find(
-          Button({
-            ariaLabel: or(
-              `${tenantName}  profile`,
-              `${tenantName} ${servicePointName} profile`,
-              'My profile',
-            ),
-          }),
-        )
         .find(HTML({ text: tenantName }))
         .exists(),
     );

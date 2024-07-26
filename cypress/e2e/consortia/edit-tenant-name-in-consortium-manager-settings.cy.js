@@ -41,36 +41,36 @@ describe('Consortia', () => {
       ConsortiumManager.selectMembership();
       ConsortiumManager.editTenant(tenantNames.professional);
       ConsortiumManager.editTenantInformation(
-        4,
+        2,
         `${tenantCodes.professional}E`,
         `${tenantNames.professional}-Edited`,
       );
-      ConsortiumManager.saveEditingTenantInformation(4);
+      ConsortiumManager.saveEditingTenantInformation(2);
       ConsortiumManager.checkEditedTenantInformation(
-        4,
+        2,
         `${tenantCodes.professional}E`,
         `${tenantNames.professional}-Edited`,
       );
       ConsortiumManager.editTenant(tenantNames.professional);
       ConsortiumManager.editTenantInformation(
-        4,
+        2,
         tenantCodes.professional,
         tenantNames.professional,
       );
-      ConsortiumManager.saveEditingTenantInformation(4);
+      ConsortiumManager.saveEditingTenantInformation(2);
       ConsortiumManager.checkEditedTenantInformation(
-        4,
+        2,
         tenantCodes.professional,
         tenantNames.professional,
       );
       ConsortiumManager.editTenant(tenantNames.professional);
-      ConsortiumManager.editTenantInformation(4, `${tenantCodes.professional}-E`, character151);
+      ConsortiumManager.editTenantInformation(2, `${tenantCodes.professional}-ED`, character151);
       ConsortiumManager.checkErrorsInEditedTenantInformation(
-        4,
+        2,
         tenantErrors.code,
         tenantErrors.name,
       );
-      ConsortiumManager.cancelEditingTenantInformation(4);
+      ConsortiumManager.cancelEditingTenantInformation(2);
     },
   );
 });

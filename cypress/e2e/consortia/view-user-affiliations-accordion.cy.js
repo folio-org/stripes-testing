@@ -11,7 +11,7 @@ describe('Consortia', () => {
 
   before(() => {
     cy.resetTenant();
-    cy.loginAsAdmin();
+    cy.getAdminToken();
 
     cy.createTempUser([]).then((userProperties) => {
       firstUser = userProperties;
@@ -32,7 +32,7 @@ describe('Consortia', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin();
+    cy.getAdminToken();
     Users.deleteViaApi(firstUser.userId);
     Users.deleteViaApi(secondUser.userId);
   });

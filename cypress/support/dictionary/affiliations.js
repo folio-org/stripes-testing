@@ -9,7 +9,7 @@ export const tenantNames = {
   central: 'Central Tenant',
   college: 'member tenant 1',
   university: 'member tenant 2',
-  // professional: 'Miscellaneous',
+  professional: 'member tenant 2', // evrk2 only has 2 member tenants, so re-using MT2 here
   // school: 'School',
   // special: 'Special,',
 };
@@ -18,7 +18,7 @@ export const tenantCodes = {
   central: 'cs00',
   college: 'MT1',
   university: 'MT2',
-  // professional: 'dt6',
+  professional: 'MT2', // evrk2 only has 2 member tenants, so re-using MT2 here
   // school: 'SCHO',
   // special: 'SPE,',
 };
