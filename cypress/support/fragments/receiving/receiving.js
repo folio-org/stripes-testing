@@ -131,12 +131,12 @@ export default {
     cy.do([
       Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
       addPieceButton.click(),
-      addPieceModal.find(TextField('Display summary')).fillIn(displaySummary),
-      addPieceModal.find(TextField('Copy number')).fillIn(copyNumber),
-      addPieceModal.find(TextField('Enumeration')).fillIn(enumeration),
-      addPieceModal.find(TextField('Chronology')).fillIn(chronology),
-      addPieceModal.find(Checkbox('Create item')).click(),
-      addPieceModal.find(Button('Save & close')).click(),
+      TextField('Display summary').fillIn(displaySummary),
+      TextField('Copy number').fillIn(copyNumber),
+      TextField('Enumeration').fillIn(enumeration),
+      TextField('Chronology').fillIn(chronology),
+      Checkbox('Create item').click(),
+      Button('Save & close').click(),
     ]);
     InteractorsTools.checkCalloutMessage('The piece was successfully saved');
   },
@@ -346,7 +346,7 @@ export default {
   },
 
   selectConnectedInEditPiece: () => {
-    cy.do(editPieceModal.find(Link('Connected')).click());
+    cy.do(Link('Connected').click());
   },
 
   receiveFromExpectedSection: () => {
@@ -378,7 +378,7 @@ export default {
   },
 
   openDropDownInEditPieceModal: () => {
-    cy.do(editPieceModal.find(Button({ dataTestID: 'dropdown-trigger-button' })).click());
+    cy.do(Button({ dataTestID: 'dropdown-trigger-button' }).click());
   },
 
   quickReceiveInEditPieceModal() {
