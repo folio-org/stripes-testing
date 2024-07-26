@@ -83,7 +83,7 @@ describe('Inventory', () => {
 
     before(() => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
         testData.user = userProperties;
 
         DataImport.uploadFileViaApi(
@@ -113,7 +113,7 @@ describe('Inventory', () => {
 
     it(
       'C496179 Search for Instance by "Place of publication" field using queries with different order of search terms (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
 

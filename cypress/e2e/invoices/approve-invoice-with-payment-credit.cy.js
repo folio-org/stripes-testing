@@ -153,7 +153,7 @@ describe('ui-invoices: Cancelling approved invoices', () => {
       FinanceHelp.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);
       Funds.selectBudgetDetails();
-      Funds.checkFinancialActivityAndOverages('$10.00', '$10.00', '$0.00', '$20.00');
+      Funds.checkFinancialActivityAndOverages('$10.00', '$10.00', '$0.00', '$0.00', '$20.00');
       Funds.viewTransactions();
       Funds.selectTransactionInList('Encumbrance');
       Funds.varifyDetailsInTransaction(
@@ -171,7 +171,7 @@ describe('ui-invoices: Cancelling approved invoices', () => {
       FinanceHelp.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);
       Funds.selectBudgetDetails();
-      Funds.checkFinancialActivityAndOverages('$10.00', '$0.00', '$10.00', '$20.00');
+      Funds.checkFinancialActivityAndOverages('$10.00', '$0.00', '$20.00', '$10.00', '$20.00');
       Funds.viewTransactions();
       Funds.selectTransactionInList('Credit');
       Funds.varifyDetailsInTransactionFundTo(

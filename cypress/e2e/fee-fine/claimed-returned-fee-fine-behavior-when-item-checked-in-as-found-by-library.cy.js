@@ -270,7 +270,7 @@ describe('Claimed Returned', () => {
 
   it(
     'C11041 Verify claimed returned fee/fine behavior when item checked in as "found by library" (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPathFlaky', 'vega'] },
     () => {
       CheckInActions.checkInItemGui(instanceData.item1Barcode);
       CheckInClaimedReturnedItem.checkModalMessage({

@@ -476,6 +476,7 @@ export default {
       Button({ id: 'adjustments[0].fundDistributions[0].fundId' }).click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
     ]);
+    cy.wait(3000);
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
@@ -626,6 +627,8 @@ export default {
       SelectionOption(`${fund.name} (${fund.code})`).click(),
       saveAndClose.click(),
     ]);
+    cy.wait(2000);
+    cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
   },
 
@@ -735,6 +738,8 @@ export default {
       SelectionList().select(fund.name.concat(' ', '(', fund.code, ')')),
       saveAndClose.click(),
     ]);
+    cy.wait(2000);
+    cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
   },
 

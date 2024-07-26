@@ -10,12 +10,12 @@ export default {
     claims: [],
     contributors: [
       {
-        contributor: `Autotest Contributor_${getRandomPostfix()}`,
+        contributor: `AC-${getRandomPostfix()}`,
         contributorNameTypeId: uuid(),
       },
     ],
-    requester: `Autotest requester_${getRandomPostfix()}`,
-    donor: `Autotest donor_${getRandomPostfix()}`,
+    requester: `AR-${getRandomPostfix()}`,
+    donor: `AD-${getRandomPostfix()}`,
     cost: {
       listUnitPrice: 1.0,
       currency: 'USD',
@@ -48,10 +48,10 @@ export default {
       createInventory: 'Instance, Holding, Item',
       materialType: '',
       materialSupplier: '',
-      volumes: ['test vol. 1'],
+      volumes: ['testvol1'],
     },
-    selector: `Autotest selector_${getRandomPostfix()}`,
-    publisher: `Autotest Publishing_${getRandomPostfix()}`,
+    selector: `AS-${getRandomPostfix()}`,
+    publisher: `AP-${getRandomPostfix()}`,
     eresource: {
       activated: false,
       createInventory: 'None',
@@ -64,7 +64,7 @@ export default {
     source: 'User',
     titleOrPackage: `autotest_line_${getRandomPostfix()}`,
     vendorDetail: {
-      instructions: `autotest instructions_${getRandomPostfix()}`,
+      instructions: `AI-${getRandomPostfix()}`,
       noteFromVendor: `autotest note_${getRandomPostfix()}`,
       referenceNumbers: [
         {

@@ -600,6 +600,7 @@ export default {
     amountEncumbered,
     amountAwaitingPayment,
     amountExpended,
+    amountCredited,
     amountUnavailable,
   ) => {
     cy.expect(budgetSummaryAcordion.exists());
@@ -628,6 +629,14 @@ export default {
       financialActivityAndOveragesMCList
         .find(MultiColumnListRow({ indexRow: 'row-2' }))
         .find(MultiColumnListCell({ content: amountExpended }))
+        .exists(),
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-3' }))
+        .find(MultiColumnListCell({ content: 'Credited' }))
+        .exists(),
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-3' }))
+        .find(MultiColumnListCell({ content: amountCredited }))
         .exists(),
       financialActivityAndOveragesMCList
         .find(MultiColumnListRow({ indexRow: 'row-4' }))

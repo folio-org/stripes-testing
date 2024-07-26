@@ -49,7 +49,7 @@ describe('Inventory', () => {
 
     it(
       'C360548 Verify that operator "=" is used when user search for "Instance" by "Contributor" search option. (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire'] },
       () => {
         const searchQueries = [
           'Henri Sauguet',
@@ -89,7 +89,7 @@ describe('Inventory', () => {
 
     it(
       'C360555 Verify that search for "Instance" records by "Keyword" option with "<ISBN with dashes>" query will only return the records with matched identifier value. (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire'] },
       () => {
         const searchQueries = ['978-92-8000-565-9', '978-92-8011-565-9'];
 

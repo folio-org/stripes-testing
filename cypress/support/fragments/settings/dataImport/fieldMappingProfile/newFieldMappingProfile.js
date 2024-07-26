@@ -884,7 +884,7 @@ export default {
       Button('Add nature of content term').click(),
     ]);
     cy.wait(1000);
-    cy.do(TextField('Nature of content term').fillIn(`"${value}"`));
+    cy.do(TextField('Nature of content term').fillIn(value));
   },
 
   fillPermanentLocation: (location) => cy.do(permanentLocationField.fillIn(location)),
@@ -1599,5 +1599,147 @@ export default {
 
   clickLinkProfileButton() {
     cy.do(linkProfileButton.click());
+  },
+
+  createInstanceMappingProfileForUpdateViaApi: (profile) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/mappingProfiles',
+        body: {
+          profile: {
+            name: profile.name,
+            incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+            existingRecordType: 'INSTANCE',
+            description: '',
+            mappingDetails: {
+              name: 'instance',
+              recordType: 'INSTANCE',
+              mappingFields: [
+                {
+                  name: 'discoverySuppress',
+                  enabled: true,
+                  path: 'instance.discoverySuppress',
+                  value: '',
+                  subfields: [],
+                },
+                {
+                  name: 'staffSuppress',
+                  enabled: true,
+                  path: 'instance.staffSuppress',
+                  value: '',
+                  subfields: [],
+                },
+                {
+                  name: 'previouslyHeld',
+                  enabled: true,
+                  path: 'instance.previouslyHeld',
+                  value: '',
+                  subfields: [],
+                },
+                { name: 'hrid', enabled: false, path: 'instance.hrid', value: '', subfields: [] },
+                {
+                  name: 'source',
+                  enabled: false,
+                  path: 'instance.source',
+                  value: '',
+                  subfields: [],
+                },
+                {
+                  name: 'catalogedDate',
+                  enabled: true,
+                  path: 'instance.catalogedDate',
+                  value: profile.catalogedDate,
+                  subfields: [],
+                },
+                {
+                  name: 'statusId',
+                  enabled: true,
+                  path: 'instance.statusId',
+                  value: `"${profile.statusTerm}"`,
+                  subfields: [],
+                  acceptedValues: { '52a2ff34-2a12-420d-8539-21aa8d3cf5d8': 'Batch Loaded' },
+                },
+                {
+                  name: 'administrativeNotes',
+                  enabled: true,
+                  path: 'instance.administrativeNotes[]',
+                  value: '',
+                  subfields: [
+                    {
+                      order: 0,
+                      path: 'instance.administrativeNotes[]',
+                      fields: [
+                        {
+                          name: 'administrativeNote',
+                          enabled: true,
+                          path: 'instance.administrativeNotes[]',
+                          value: `"${profile.administrativeNote}"`,
+                        },
+                      ],
+                    },
+                  ],
+                  repeatableFieldAction: 'EXTEND_EXISTING',
+                },
+              ],
+            },
+          },
+          addedRelations: [],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  createHoldingsMappingProfileForUpdateViaApi: (profile) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/mappingProfiles',
+        body: {
+          profile: {
+            name: profile.name,
+            incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+            existingRecordType: 'HOLDINGS',
+            description: '',
+            mappingDetails: {
+              name: 'holdings',
+              recordType: 'HOLDINGS',
+              mappingFields: [
+                {
+                  name: 'administrativeNotes',
+                  enabled: true,
+                  path: 'holdings.administrativeNotes[]',
+                  value: '',
+                  subfields: [
+                    {
+                      order: 0,
+                      path: 'holdings.administrativeNotes[]',
+                      fields: [
+                        {
+                          name: 'administrativeNote',
+                          enabled: true,
+                          path: 'holdings.administrativeNotes[]',
+                          value: `"${profile.adminNote}"`,
+                        },
+                      ],
+                    },
+                  ],
+                  repeatableFieldAction: 'EXTEND_EXISTING',
+                },
+              ],
+            },
+          },
+          addedRelations: [],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
   },
 };

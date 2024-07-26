@@ -40,9 +40,9 @@ export default {
       cy.do(financialReport.find(startDateTextfield).fillIn(startDate));
     } else {
       cy.do(financialReport.find(startDateTextfield).fillIn(firstDayOfMonth));
-      cy.expect(financialReport.find(feeFineOwnerSelect).exists());
-      cy.do(financialReport.find(feeFineOwnerSelect).choose(ownerName));
     }
+    cy.expect(financialReport.find(feeFineOwnerSelect).exists());
+    cy.do(financialReport.find(feeFineOwnerSelect).choose(ownerName));
   },
 
   fillInStartDate(startDate) {

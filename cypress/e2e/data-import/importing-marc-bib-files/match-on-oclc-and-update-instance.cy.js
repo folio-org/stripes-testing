@@ -123,6 +123,7 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
+        Permissions.enableStaffSuppressFacet.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -172,7 +173,7 @@ describe('Data Import', () => {
         NewFieldMappingProfile.fillCatalogedDate(itemsForCreateInstance.catalogedDate);
         NewFieldMappingProfile.fillInstanceStatusTerm(itemsForCreateInstance.statusTerm);
         NewFieldMappingProfile.addStatisticalCode(itemsForCreateInstance.statisticalCode, 8);
-        NewFieldMappingProfile.addNatureOfContentTerms('bibliography');
+        NewFieldMappingProfile.addNatureOfContentTerms('"bibliography"');
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
