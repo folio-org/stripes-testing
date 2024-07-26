@@ -11,7 +11,7 @@ import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe.skip('Data Import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     const startedDate = new Date();
     const completedDate = startedDate;
@@ -97,7 +97,7 @@ describe.skip('Data Import', () => {
 
     it(
       'C358136 A user can filter and delete import logs from the "View all" page (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smokeFlaky', 'folijet'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
