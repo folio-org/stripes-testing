@@ -43,21 +43,21 @@ describe('MARC', () => {
 
         const createdRecordIDs = [];
         const bib830InitialFieldValues = [
-          21,
+          22,
           testData.tag830,
           '\\',
           '0',
           '$a C375088 Cambridge tracts in mathematics $v no. 19. $t Mathematics $s #1',
         ];
         const bib830UnlinkedFieldValues = [
-          21,
+          22,
           testData.tag830,
           '\\',
           '0',
           '$a C375088 Cambridge tracts in mathematics and mathematical physics $l english $v no. 19. $0 http://id.loc.gov/authorities/names/n84801249',
         ];
         const bib830LinkedFieldValues = [
-          21,
+          22,
           testData.tag830,
           '\\',
           '0',

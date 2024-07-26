@@ -35,6 +35,8 @@ import {
 import { MARC_AUTHORITY_BROWSE_OPTIONS, MARC_AUTHORITY_SEARCH_OPTIONS } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
 import QuickMarcEditorWindow from '../quickMarcEditor';
+import parseMrkFile from '../../utils/parseMrkFile';
+import FileManager from '../../utils/fileManager';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -52,6 +54,7 @@ const findAuthorityModal = Modal({ id: 'find-authority-modal' });
 const detailsMarcViewPaneheader = PaneHeader({ id: 'paneHeadermarc-view-pane' });
 const authorityActionsDropDown = Dropdown('Actions');
 const checkboxSeletAuthorityRecord = Checkbox({ ariaLabel: 'Select Authority record' });
+const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
 
 // actions dropdown window
 const authorityActionsDropDownMenu = DropdownMenu();
@@ -549,6 +552,7 @@ export default {
       marcViewSection.absent(),
       SearchField({ id: 'textarea-authorities-search', value: searchValue }).absent(),
       selectField.has({ content: including('Keyword') }),
+      searchResults.find(HTML(including(emptyResultsMessage))).exists(),
     ]);
   },
 
@@ -891,6 +895,7 @@ export default {
 
   closeAuthoritySourceOption() {
     cy.do(sourceFileAccordion.find(Button({ icon: 'times' })).click());
+    cy.wait(1000);
   },
 
   checkResultList(records) {
@@ -1568,6 +1573,31 @@ export default {
         if (record.authRefType === authRefType) {
           this.deleteViaAPI(record.id, true);
         }
+      });
+    });
+  },
+
+  createMarcAuthorityRecordViaApiByReadingFromMrkFile(
+    mrkFileName,
+    field008Values = default008FieldValues,
+  ) {
+    return new Promise((resolve) => {
+      FileManager.readFile(`cypress/fixtures/${mrkFileName}`).then((fileContent) => {
+        const parsedFromMrkFileFields = parseMrkFile(fileContent);
+        const tag008 = {
+          // 008 field values
+          tag: '008',
+          content: field008Values,
+        };
+        // add to the array of fields 008 field values
+        parsedFromMrkFileFields.fields.unshift(tag008);
+
+        cy.createMarcAuthorityViaAPI(
+          parsedFromMrkFileFields.leader,
+          parsedFromMrkFileFields.fields,
+        ).then((createdMarcAuthorityId) => {
+          resolve(createdMarcAuthorityId);
+        });
       });
     });
   },

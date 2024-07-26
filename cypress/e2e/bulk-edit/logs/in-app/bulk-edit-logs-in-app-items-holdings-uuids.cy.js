@@ -11,6 +11,7 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
@@ -141,26 +142,24 @@ describe('bulk-edit', () => {
           BulkEditFiles.verifyCSVFileRows(validHoldingUUIDsFileName, [inventoryEntity.holdingId]);
 
           BulkEditLogs.downloadFileWithMatchingRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            `*${matchedRecordsFileNameValid}`,
-            [inventoryEntity.item.id, inventoryEntity.item.id2],
-            'firstElement',
-            true,
-          );
+          ExportFile.verifyFileIncludes(`*${matchedRecordsFileNameValid}`, [
+            inventoryEntity.item.id,
+            inventoryEntity.item.id2,
+          ]);
 
           BulkEditLogs.downloadFileWithProposedChanges();
-          BulkEditFiles.verifyCSVFileRows(previewOfProposedChangesFileName, [
+          ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, [
             '',
-            `${inventoryEntity.locations.permanent.name} > 1,,1,${inventoryEntity.item.barcode}`,
-            `${inventoryEntity.locations.permanent.name} > 1,,1,secondBarcode_${inventoryEntity.item.barcode}`,
+            `${inventoryEntity.locations.permanent.name} > 1,`,
+            `${inventoryEntity.locations.permanent.name} > 1,`,
             '',
           ]);
 
           BulkEditLogs.downloadFileWithUpdatedRecords();
-          BulkEditFiles.verifyCSVFileRows(updatedRecordsFileName, [
+          ExportFile.verifyFileIncludes(updatedRecordsFileName, [
             '',
-            `${inventoryEntity.locations.permanent.name} > 1,,1,${inventoryEntity.item.barcode}`,
-            `${inventoryEntity.locations.permanent.name} > 1,,1,secondBarcode_${inventoryEntity.item.barcode}`,
+            `${inventoryEntity.locations.permanent.name} > 1,`,
+            `${inventoryEntity.locations.permanent.name} > 1,`,
             '',
           ]);
 

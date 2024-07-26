@@ -37,7 +37,7 @@ describe('MARC', () => {
 
         const linkingTagAndValues = [
           {
-            rowIndex: 86,
+            rowIndex: 85,
             value: 'C388535 Lee, Stan, 1922-2018,',
             tag: 700,
             boxFourth: '$a C388535 Lee, Stan, $d 1922-2018',
@@ -46,7 +46,7 @@ describe('MARC', () => {
             boxSeventh: '',
           },
           {
-            rowIndex: 88,
+            rowIndex: 87,
             value: 'C388535 Robinson & Associates, Inc.',
             tag: 710,
             boxFourth: '$a C388535 Robinson & Associates, Inc.',
@@ -55,7 +55,7 @@ describe('MARC', () => {
             boxSeventh: '',
           },
           {
-            rowIndex: 89,
+            rowIndex: 88,
             value:
               'C388535 Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
             tag: 711,
@@ -66,7 +66,7 @@ describe('MARC', () => {
             boxSeventh: '',
           },
           {
-            rowIndex: 90,
+            rowIndex: 89,
             value: 'C388535 Gone with the wind (Motion picture : 1939)',
             tag: 730,
             boxFourth: '$a C388535 Gone with the wind $f 1939) $g (Motion picture :',
@@ -78,83 +78,83 @@ describe('MARC', () => {
 
         const fields = [
           {
-            rowIndex: 33,
+            rowIndex: 32,
             tag: '100',
             naturalId: 'n20080010849',
             newContent: '$a Coates, Ta-Nehisi, $eauthor. $0 n2008001084C388535',
           },
           {
-            rowIndex: 34,
+            rowIndex: 33,
             tag: '110',
             naturalId: 'no20061082779',
           },
           {
-            rowIndex: 35,
+            rowIndex: 34,
             tag: '111',
             naturalId: 'no20091764299',
           },
           {
-            rowIndex: 36,
+            rowIndex: 35,
             tag: '130',
             naturalId: 'n800269809',
           },
           {
-            rowIndex: 37,
+            rowIndex: 36,
             tag: '240',
             naturalId: 'no20200242309',
           },
           {
-            rowIndex: 65,
+            rowIndex: 64,
             tag: '600',
             naturalId: 'n20160040819',
           },
           {
-            rowIndex: 60,
+            rowIndex: 59,
             tag: '610',
             naturalId: 'nb20090244889',
           },
           {
-            rowIndex: 61,
+            rowIndex: 60,
             tag: '611',
             naturalId: 'n822167579',
           },
           {
-            rowIndex: 62,
+            rowIndex: 61,
             tag: '630',
             naturalId: 'no20230068899',
           },
           {
-            rowIndex: 67,
+            rowIndex: 66,
             tag: '650',
             naturalId: 'sh20091259899',
           },
           {
-            rowIndex: 71,
+            rowIndex: 70,
             tag: '651',
             naturalId: 'sh850015319',
           },
           {
-            rowIndex: 73,
+            rowIndex: 72,
             tag: '655',
             naturalId: 'gf20140262669',
           },
           {
-            rowIndex: 91,
+            rowIndex: 90,
             tag: '800',
             naturalId: 'n790238119',
           },
           {
-            rowIndex: 92,
+            rowIndex: 91,
             tag: '810',
             naturalId: 'n800955859',
           },
           {
-            rowIndex: 93,
+            rowIndex: 92,
             tag: '811',
             naturalId: 'no20181255879',
           },
           {
-            rowIndex: 94,
+            rowIndex: 93,
             tag: '830',
             naturalId: 'no20180187549',
           },
@@ -169,6 +169,9 @@ describe('MARC', () => {
 
         before('Creating user and data', () => {
           cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388535*');
+
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,

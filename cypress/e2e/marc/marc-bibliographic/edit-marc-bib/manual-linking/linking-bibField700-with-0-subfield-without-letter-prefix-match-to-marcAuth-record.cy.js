@@ -18,7 +18,7 @@ describe('MARC', () => {
         let userData = {};
         const testData = {
           tag700: '700',
-          rowIndex: 77,
+          rowIndex: 76,
           content: '$a C380750 Martin, Laura $c (Comic book artist), $e colorist. $0 2014052262',
           searchValue:
             'keyword exactPhrase C380750 Martin, Laura or identifiers.value exactPhrase 2014052262',

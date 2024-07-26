@@ -277,6 +277,9 @@ export default {
     if (type === 'M/D/YYYY') {
       return moment.utc(date).format('M/D/YYYY');
     }
+    if (type === 'YYYY/MM/DD') {
+      return moment.utc(date).format('YYYY/MM/DD');
+    }
     return `${date.getFullYear()}-${padWithZero(date.getMonth() + 1)}-${padWithZero(
       date.getDate(),
     )}`;
@@ -301,6 +304,12 @@ export default {
   getTomorrowDay() {
     const today = new Date();
     return new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+  },
+
+  addDays(days) {
+    const date = new Date();
+    date.setDate(date.getDate() + days);
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
   },
 
   getFutureWeekDateObj() {

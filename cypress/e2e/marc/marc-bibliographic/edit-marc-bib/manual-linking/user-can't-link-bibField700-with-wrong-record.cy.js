@@ -79,7 +79,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
   ];
 
   const bib700FieldValues = [
-    75,
+    74,
     testData.tag700,
     '1',
     '\\',
@@ -155,6 +155,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       linkValuesWithAuthoritySource.forEach((linkValue) => {
         MarcAuthorityBrowse.searchBy(linkValue.searchOption, linkValue.value);
         MarcAuthorities.chooseAuthoritySourceOption(linkValue.authoritySource);
+        MarcAuthorities.selectTitle(linkValue.value);
         MarcAuthorities.selectTitle(linkValue.value);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.checkCallout(testData.errorMessage);

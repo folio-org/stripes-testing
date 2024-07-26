@@ -50,7 +50,7 @@ describe('MARC', () => {
         },
       ];
       const linkingTagAndValues = {
-        rowIndex: 18,
+        rowIndex: 17,
         value:
           'C374138 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
         tag: '240',
@@ -60,6 +60,10 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Creating user and data', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374138*');
+
         cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(

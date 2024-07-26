@@ -97,6 +97,7 @@ export default {
   },
   changeExistingInstanceRecordField() {
     cy.do(Button({ id: 'criterion-value-type' }).click());
+    cy.wait(1500);
     cy.expect(criterionValueTypeSelectionList.exists());
     cy.do(
       criterionValueTypeSelectionList.find(SelectionOption('Admin data: Instance UUID')).click(),

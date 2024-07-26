@@ -47,10 +47,15 @@ const privateCheckbox = Checkbox({ id: 'clickable-filter-visibility-private' });
 export default {
   waitLoading: () => {
     cy.expect(HTML(including('Lists')).exists());
+    cy.wait(2000);
+  },
+
+  waitForSpinnerToDisappear() {
+    cy.get('[class^="spinner"]').should('not.exist');
   },
 
   queryBuilderActions() {
-    this.queryBuilderActionsWithParameters('User - Active', '==', 'True');
+    this.queryBuilderActionsWithParameters('User — Active', '==', 'True');
   },
 
   queryBuilderActionsWithParameters(parameter, operator, value) {
@@ -154,10 +159,14 @@ export default {
 
   selectVisibility(visibility) {
     cy.do(RadioButton(visibility).click());
+    this.waitForSpinnerToDisappear();
+    cy.wait(500);
   },
 
   selectStatus(status) {
     cy.do(RadioButton(status).click());
+    this.waitForSpinnerToDisappear();
+    cy.wait(500);
   },
 
   verifySuccessCalloutMessage(message) {
@@ -178,7 +187,7 @@ export default {
   },
 
   verifyListIsNotPresent(listName) {
-    return cy.get('*[class^="mclRowContainer"]').contains(listName).should('not.exist');
+    cy.get('#OverlayContainer').contains(listName).should('not.exist');
   },
 
   verifyListIsPresent(listName) {
@@ -283,21 +292,25 @@ export default {
 
   selectActiveLists() {
     cy.do(activeCheckbox.checkIfNotSelected());
+    this.waitForSpinnerToDisappear();
     cy.wait(500);
   },
 
   selectInactiveLists() {
     cy.do(inactiveCheckbox.checkIfNotSelected());
+    this.waitForSpinnerToDisappear();
     cy.wait(500);
   },
 
   selectSharedLists() {
     cy.do(sharedCheckbox.checkIfNotSelected());
+    this.waitForSpinnerToDisappear();
     cy.wait(500);
   },
 
   selectPrivateLists() {
     cy.do(privateCheckbox.checkIfNotSelected());
+    this.waitForSpinnerToDisappear();
     cy.wait(500);
   },
 

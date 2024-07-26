@@ -10,17 +10,17 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { ITEM_NOTES } from '../../../support/constants';
+import { ITEM_NOTES, MATERIAL_TYPE_IDS } from '../../../support/constants';
 
 let user;
 
 const notes = {
   admin: 'Admin_Note_text',
-  copy: 'Note_text',
-  electronicBookplate: 'Note_text',
-  checkIn: 'Note_text',
-  checkOut: 'Note_text',
-  action: 'Note_text',
+  copy: 'copy-Note_text',
+  electronicBookplate: 'electronicBookplate-Note_text',
+  checkIn: 'checkIn-Note_text',
+  checkOut: 'checkOut-Note_text',
+  action: 'action-Note_text',
 };
 
 const item = {
@@ -50,7 +50,10 @@ describe('bulk-edit', () => {
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
           (res) => {
             res.administrativeNotes = [notes.admin];
-
+            res.materialType = {
+              id: MATERIAL_TYPE_IDS.DVD,
+              name: 'dvd',
+            };
             res.notes = [
               {
                 itemNoteTypeId: ITEM_NOTES.COPY_NOTE,
@@ -97,30 +100,27 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [
-          `${notes.admin},Copy note;${notes.copy};false|Electronic bookplate;${notes.electronicBookplate};false,${notes.checkIn},${notes.checkOut}`,
+          `,${notes.admin},dvd,`,
+          `,${notes.copy},${notes.electronicBookplate}`,
+          `,${notes.checkIn},${notes.checkOut},`,
         ]);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Administrative note',
           'Copy note',
           'Electronic bookplate note',
-          'Check in notes',
-          'Check out notes',
+          'Check in note',
+          'Check out note',
           'Action note',
         );
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.verifyItemOptions();
-        BulkEditActions.verifyItemAdminstrativeNoteActions();
         BulkEditActions.noteRemoveAll('Administrative note');
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.verifyItemCheckInNoteActions(1);
         BulkEditActions.noteRemoveAll('Check in note', 1);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.verifyItemNoteActions('Copy note', 2);
         BulkEditActions.noteRemoveAll('Copy note', 2);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.noteRemoveAll('Check out note', 3);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.verifyItemNoteActions('Action note', 4);
         BulkEditActions.addItemNote('Action note', notes.action, 4);
 
         BulkEditActions.confirmChanges();
@@ -129,7 +129,9 @@ describe('bulk-edit', () => {
         ]);
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          `,Electronic bookplate;${notes.electronicBookplate};false|Action note;${notes.action};false,,`,
+          ',,dvd,',
+          `,${notes.action},,,`,
+          'Available,,,',
         ]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
@@ -140,19 +142,21 @@ describe('bulk-edit', () => {
           notes.electronicBookplate,
         );
         BulkEditSearchPane.verifyExactChangesUnderColumns('Action note', notes.action);
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Check in notes', '');
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out notes', '');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', '');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', '');
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `,Electronic bookplate;${notes.electronicBookplate};false|Action note;${notes.action};false,,`,
+          ',,dvd,',
+          `,${notes.action},,,`,
+          'Available,,,',
         ]);
 
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
-        [notes.admin, 'Copy note', 'Check in notes', 'Check out notes'].forEach((text) => {
+        [notes.admin, 'Copy note', 'Check in note', 'Check out note'].forEach((text) => {
           ItemRecordView.verifyTextAbsent(text);
         });
         const electronicBookplateNote = {

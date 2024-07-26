@@ -4,7 +4,6 @@ import Users from '../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import FileManager from '../../../support/utils/fileManager';
@@ -12,6 +11,7 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 
 let user;
 const instanceHRIDFileName = `instanceHRID_${getRandomPostfix()}.csv`;
@@ -48,6 +48,11 @@ describe('bulk-edit', () => {
             FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, item.instanceHRID);
           },
         );
+        cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
+          (holdings) => {
+            item.holdingsHRID = holdings[0].hrid;
+          },
+        );
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
@@ -80,12 +85,7 @@ describe('bulk-edit', () => {
 
         // Click "Actions" menu => "Download matched records (CSV)"
         BulkEditActions.downloadMatchedResults();
-        BulkEditFiles.verifyMatchedResultFileContent(
-          matchedRecordsFileName,
-          [item.instanceHRID],
-          'instanceHrid',
-          true,
-        );
+        ExportFile.verifyFileIncludes(matchedRecordsFileName, [item.holdingsHRID]);
 
         // Click on "Actions" menu => Check the "Suppress from discovery" checkbox (if not yet checked)
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
@@ -104,13 +104,7 @@ describe('bulk-edit', () => {
 
         // Click on "Download preview" button
         BulkEditActions.downloadPreview();
-        BulkEditFiles.verifyMatchedResultFileContent(
-          previewOfProposedChangesFileName,
-          [item.instanceHRID],
-          'instanceHrid',
-          true,
-        );
-
+        ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, [item.holdingsHRID]);
         // Click "Commit changes" button
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();

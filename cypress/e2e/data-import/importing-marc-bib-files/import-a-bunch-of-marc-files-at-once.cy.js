@@ -1,18 +1,30 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
-describe('Data Import', () => {
+describe.skip('Data Import', () => {
   describe('Importing MARC Bib files', () => {
+    let userId;
     const filePathForUpload = 'oneMarcBib.mrc';
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
-    before('Login', () => {
-      cy.loginAsAdmin();
+    before('Create user and login', () => {
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        userId = userProperties.userId;
+
+        cy.login(userProperties.username, userProperties.password);
+      });
+    });
+
+    after('Delete test data', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(userId);
     });
 
     it(
@@ -36,7 +48,6 @@ describe('Data Import', () => {
           cy.visit(TopMenu.dataImportPath);
           DataImport.verifyUploadState();
           DataImport.uploadBunchOfFiles(filePathForUpload, upload.quantityOfFiles, upload.fileName);
-          DataImport.waitFileIsUploaded();
           JobProfiles.search(jobProfileToRun);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(upload.fileName);

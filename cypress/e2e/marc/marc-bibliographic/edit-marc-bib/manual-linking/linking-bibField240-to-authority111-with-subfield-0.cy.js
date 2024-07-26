@@ -51,7 +51,7 @@ describe('MARC', () => {
           },
         ];
         const bib240AfterLinkingToAuth111 = [
-          12,
+          11,
           testData.tag240,
           '1',
           '\\',
@@ -61,7 +61,7 @@ describe('MARC', () => {
           '',
         ];
         const bib240AfterUninkingToAuth111 = [
-          12,
+          11,
           testData.tag240,
           '1',
           '\\',
@@ -69,17 +69,9 @@ describe('MARC', () => {
         ];
 
         before('Creating test data', () => {
-          // make sure there are no duplicate authority records in the system
           cy.getAdminToken();
-          MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C380746"' }).then(
-            (records) => {
-              records.forEach((record) => {
-                if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
-                }
-              });
-            },
-          );
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380746*');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -124,7 +116,7 @@ describe('MARC', () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
-            QuickMarcEditor.clickLinkIconInTagField(12);
+            QuickMarcEditor.clickLinkIconInTagField(11);
             InventoryInstance.verifySelectMarcAuthorityModal();
             MarcAuthoritiesSearch.verifyFiltersState(
               testData.filterStateTag111[0],
@@ -146,10 +138,10 @@ describe('MARC', () => {
             );
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkFieldsExist([testData.tag240]);
-            QuickMarcEditor.clickUnlinkIconInTagField(12);
+            QuickMarcEditor.clickUnlinkIconInTagField(11);
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib240AfterUninkingToAuth111);
-            QuickMarcEditor.verifyIconsAfterUnlinking(12);
+            QuickMarcEditor.verifyIconsAfterUnlinking(11);
             QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
             // need to wait until the instance will be updated
             cy.wait(1500);

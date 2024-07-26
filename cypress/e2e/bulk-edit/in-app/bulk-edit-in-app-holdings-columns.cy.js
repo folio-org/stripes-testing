@@ -58,13 +58,11 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         [
+          'Suppress from discovery',
           'Holdings HRID',
+          'Source',
           'Holdings type',
-          'Permanent location',
-          'Temporary location',
-          'Call number prefix',
-          'Call number',
-          'Call number suffix',
+          'Holdings permanent location',
         ].forEach((title) => {
           BulkEditSearchPane.verifyResultColumnTitles(title);
         });

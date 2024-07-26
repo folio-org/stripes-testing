@@ -47,9 +47,9 @@ const importBlockedModal = Modal('Import blocked');
 const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 
 const uploadFile = (filePathName, fileName) => {
-  cy.wait(2000);
+  cy.expect(sectionPaneJobsTitle.exists());
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
-  cy.wait(5000);
+  cy.wait(10000);
 };
 
 const uploadBunchOfDifferentFiles = (fileNames) => {
@@ -539,7 +539,7 @@ export default {
 
   uploadExportedFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
-    cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
+    cy.get('div[class^="progressInfo-"]', getLongDelay()).should('not.exist');
   },
 
   getLinkToAuthority: (title) => cy.then(() => Button(title).href()),
@@ -703,17 +703,19 @@ export default {
     // because this is possible by design
     // that's why we need waiting until previous file will be uploaded, reload page and delete uploaded file
     waitLoading();
+    cy.wait(10000);
     cy.reload();
+    cy.wait(5000);
+    cy.allure().startStep('Delete files before upload file');
     cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(
       (isDeleteFilesButtonExists) => {
-        cy.wait(5000);
         if (isDeleteFilesButtonExists) {
           cy.do(Button('Delete files').click());
           cy.expect(Button('or choose files').exists());
+          cy.allure().endStep();
         }
       },
     );
-    cy.expect(sectionPaneJobsTitle.find(Button('or choose files')).exists());
   },
 
   clickResumeButton: () => {

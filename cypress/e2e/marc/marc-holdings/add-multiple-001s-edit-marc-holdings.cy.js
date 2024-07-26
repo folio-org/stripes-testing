@@ -75,7 +75,7 @@ describe('MARC', () => {
     });
 
     afterEach('Deleting created user, data', () => {
-      cy.loginAsAdmin();
+      cy.getAdminToken();
       Users.deleteViaApi(testData.createdUserProperties.userId);
       cy.deleteHoldingRecordViaApi(recordIDs[1]);
       InventoryInstance.deleteInstanceViaApi(recordIDs[0]);
@@ -91,10 +91,6 @@ describe('MARC', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.openHoldingView();
         HoldingsRecordView.checkSource(INSTANCE_SOURCE_NAMES.MARC);
-        // "Edit in quickMARC" option might not be active immediately when opening MARC Holdings
-        // this option becomes active after reopening Holdings view window
-        HoldingsRecordView.close();
-        InventoryInstance.openHoldingView();
         HoldingsRecordView.editInQuickMarc();
         QuickMarcEditor.addEmptyFields(5);
         QuickMarcEditor.checkEmptyFieldAdded(6);
@@ -113,12 +109,9 @@ describe('MARC', () => {
         InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstances.searchByTitle(recordIDs[0]);
         InventoryInstances.selectInstance();
+        cy.wait(1000);
         InventoryInstance.openHoldingView();
         HoldingsRecordView.checkSource(INSTANCE_SOURCE_NAMES.MARC);
-        // "Edit in quickMARC" option might not be active immediately when opening MARC Holdings
-        // this option becomes active after reopening Holdings view window
-        HoldingsRecordView.close();
-        InventoryInstance.openHoldingView();
         HoldingsRecordView.editInQuickMarc();
         QuickMarcEditor.addEmptyFields(5);
         QuickMarcEditor.checkEmptyFieldAdded(6);

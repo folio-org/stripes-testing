@@ -44,6 +44,10 @@ describe('MARC', () => {
         const createdAuthorityIDs = [];
 
         before('Create user and data', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380726*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
@@ -53,7 +57,6 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -92,6 +95,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateLDR06And07Positions();
             MarcAuthority.addNewField(4, '100', '');
             MarcAuthority.addNewField(5, '600', 'test');
+            cy.wait(500);
             QuickMarcEditor.clickLinkIconInTagField(5);
             MarcAuthorities.searchByParameter(
               fieldsToUpdate.searchOptions.personalName,
@@ -135,6 +139,7 @@ describe('MARC', () => {
             );
 
             QuickMarcEditor.updateExistingFieldContent(6, '$9 test');
+            cy.wait(500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkCallout(
               '$9 is an invalid subfield for linkable bibliographic fields.',
@@ -143,15 +148,20 @@ describe('MARC', () => {
               6,
               '$9 3d2ecd70-e44c-484b-b372-677a4a070a4b',
             );
+            cy.wait(500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkCallout(
               '$9 is an invalid subfield for linkable bibliographic fields.',
             );
             QuickMarcEditor.updateExistingFieldContent(6, 'test');
+            cy.wait(500);
 
             MarcAuthority.addNewField(6, '035', '$a 123123 $9 test');
+            cy.wait(500);
             MarcAuthority.addNewField(7, '300', '$9 123123');
+            cy.wait(500);
             MarcAuthority.addNewField(8, '588', '$9 test $9 TEST');
+            cy.wait(500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {

@@ -51,6 +51,10 @@ describe('MARC', () => {
         const createdAuthorityIDs = [];
 
         before(() => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C417049*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
@@ -59,17 +63,15 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userData = createdUserProperties;
 
-            cy.loginAsAdmin().then(() => {
-              cy.visit(TopMenu.dataImportPath);
-              marcFiles.forEach((marcFile) => {
-                DataImport.uploadFileViaApi(
-                  marcFile.marc,
-                  marcFile.fileName,
-                  marcFile.jobProfileToRun,
-                ).then((response) => {
-                  response.forEach((record) => {
-                    createdAuthorityIDs.push(record[marcFile.propertyName].id);
-                  });
+            cy.visit(TopMenu.dataImportPath);
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdAuthorityIDs.push(record[marcFile.propertyName].id);
                 });
               });
             });

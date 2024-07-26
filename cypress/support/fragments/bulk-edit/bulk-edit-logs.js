@@ -11,11 +11,11 @@ import {
   including,
   MultiColumnListRow,
   TextField,
-  TextInput,
-  SelectionList,
   SelectionOption,
+  Selection,
 } from '../../../../interactors';
 import { ListRow } from '../../../../interactors/multi-column-list';
+import BulkEditSearchPane from './bulk-edit-search-pane';
 
 const bulkEditPane = Pane(including('Bulk edit'));
 const logsToggle = Button('Logs');
@@ -32,7 +32,7 @@ const resetAllButton = Button('Reset all');
 const logsStatusesAccordion = Accordion('Statuses');
 const logsUsersAccordion = Accordion('User');
 const clearAccordionButton = Button({ icon: 'times-circle-solid' });
-const usersSelectionList = SelectionList({ placeholder: 'Filter options list' });
+const usersSelectionList = Selection();
 const textFieldTo = TextField('To');
 const textFieldFrom = TextField('From');
 const triggerBtn = DropdownMenu().find(Button('File that was used to trigger the bulk edit'));
@@ -47,7 +47,9 @@ const updatedRecordBtn = DropdownMenu().find(Button('File with updated records')
 const errorsCommittingBtn = DropdownMenu().find(
   Button('File with errors encountered when committing the changes'),
 );
-const queryIdentifiersBtn = DropdownMenu().find(Button('File with identifiers of the records affected by bulk update'));
+const queryIdentifiersBtn = DropdownMenu().find(
+  Button('File with identifiers of the records affected by bulk update'),
+);
 const logsActionButton = Button({ icon: 'ellipsis' });
 const newCheckbox = Checkbox('New');
 const retrievingRecordsCheckbox = Checkbox('Retrieving records');
@@ -137,7 +139,8 @@ export default {
   },
 
   verifyCellsValues(column, status) {
-    this.getMultiColumnListCellsValues(column)
+    cy.wait(2000);
+    BulkEditSearchPane.getMultiColumnListCellsValues(column)
       .should('have.length.at.least', 1)
       .each((value) => {
         expect(value).to.eq(status);
@@ -145,7 +148,7 @@ export default {
   },
 
   verifyDateCellsValues(column, fromDate, toDate) {
-    this.getMultiColumnListCellsValues(column)
+    BulkEditSearchPane.getMultiColumnListCellsValues(column)
       .should('have.length.at.least', 1)
       .each((value) => {
         if (!value.includes('No value set')) {
@@ -185,7 +188,7 @@ export default {
   },
 
   verifyLogsRecordTypesAccordionCollapsed() {
-    this.recordTypesAccordionExpanded(false);
+    BulkEditSearchPane.recordTypesAccordionExpanded(false);
     cy.expect([usersCheckbox.absent(), holdingsCheckbox.absent(), itemsCheckbox.absent()]);
   },
 
@@ -204,7 +207,7 @@ export default {
   },
 
   verifyLogsRecordTypesAccordionExistsAndUnchecked() {
-    this.recordTypesAccordionExpanded(true);
+    BulkEditSearchPane.recordTypesAccordionExpanded(true);
     cy.expect([
       usersCheckbox.has({ checked: false }),
       holdingsCheckbox.has({ checked: false }),
@@ -276,20 +279,13 @@ export default {
   },
 
   selectUserFromDropdown(name) {
-    cy.do([usersSelectionList.select(including(name))]);
+    this.clickChooseUserUnderUserAccordion();
+    cy.do([usersSelectionList.choose(including(name))]);
   },
 
   fillUserFilterInput(userName) {
-    cy.do([usersSelectionList.find(TextInput()).fillIn(userName)]);
-  },
-
-  verifyDropdown(userName) {
-    cy.get('[id*="option-stripes-selection-"]').should('exist');
-    cy.then(() => usersSelectionList.optionList()).then((options) => {
-      cy.wrap(options).then(
-        (opts) => expect(opts.some((opt) => opt.includes(userName))).to.be.true,
-      );
-    });
+    this.clickChooseUserUnderUserAccordion();
+    cy.do([usersSelectionList.filterOptions(userName)]);
   },
 
   verifyUserIsNotInUserList(name) {
@@ -297,10 +293,7 @@ export default {
   },
 
   verifyEmptyUserDropdown() {
-    cy.expect([
-      usersSelectionList.find(HTML('-List is empty-')).exists(),
-      usersSelectionList.find(HTML('No matching options')).exists(),
-    ]);
+    cy.expect([HTML('-List is empty-').exists(), HTML('No matching options').exists()]);
   },
 
   verifyUserAccordionCollapsed() {
@@ -308,7 +301,9 @@ export default {
   },
 
   clickChooseUserUnderUserAccordion() {
+    cy.wait(2000);
     cy.do(logsUsersAccordion.find(Button(including('Select control'))).click());
+    cy.wait(2000);
   },
 
   verifyClearSelectedButtonExists(accordion, presence = true) {

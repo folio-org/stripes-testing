@@ -28,14 +28,9 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
       // import with Single record import
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
-      cy.wait(5000);
-      InventoryInstances.importWithOclc(testData.oclcNumber);
+      InventoryInstances.importWithOclcViaApi(testData.oclcNumber);
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         testData.user = userProperties;
@@ -102,7 +97,7 @@ describe('Data Import', () => {
       completedDate.setDate(completedDate.getDate() + 1);
 
       LogsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });
-
+      cy.wait(1800);
       const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
       LogsViewAll.checkByDate({ from: formattedStart, end: formattedEnd });
       LogsViewAll.resetAllFilters();
@@ -115,6 +110,7 @@ describe('Data Import', () => {
       // FILTER By "User"
       LogsViewAll.openUserIdAccordion();
       LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
+      LogsViewAll.checkByUserName(`${testData.user.firstName} ${testData.user.lastName}`);
       LogsViewAll.resetAllFilters();
 
       // FILTER By "Inventory single record imports"
@@ -130,6 +126,7 @@ describe('Data Import', () => {
       // FILTER By more than one filter
       // in this case, filter by "User" and "Errors in Import"
       LogsViewAll.selectNofilterJobsByErrors();
+      LogsViewAll.waitUIToBeFiltered();
       LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
       LogsViewAll.checkByErrorsInImportAndUser(
         JOB_STATUS_NAMES.COMPLETED,

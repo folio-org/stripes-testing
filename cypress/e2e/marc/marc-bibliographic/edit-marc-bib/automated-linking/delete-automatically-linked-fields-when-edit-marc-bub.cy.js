@@ -45,25 +45,14 @@ describe('MARC', () => {
           100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810,
           811, 830,
         ];
-        const linkedFieldIndexes = [33, 56, 78, 79, 80, 81, 82, 83, 84];
-        const linkedFieldIndexesAfterDeleting = [33, 56, 78, 79, 80, 81];
+        const linkedFieldIndexes = [32, 55, 77, 78, 79, 80, 81, 82, 83];
+        const linkedFieldIndexesAfterDeleting = [32, 55, 77, 78, 79, 80];
 
         before('Creating user and data', () => {
-          // make sure there are no duplicate authority records in the system
-          cy.getAdminToken().then(() => {
-            MarcAuthorities.getMarcAuthoritiesViaApi({
-              limit: 100,
-              query: 'keyword="C388518"',
-            }).then((records) => {
-              records.forEach((record) => {
-                if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
-                }
-              });
-            });
-          });
-
           cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388518*');
+
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -101,7 +90,7 @@ describe('MARC', () => {
           Users.deleteViaApi(testData.user.userId);
           InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
           testData.createdRecordIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
+            if (index) MarcAuthority.deleteViaAPI(id, true);
           });
         });
 
@@ -119,11 +108,11 @@ describe('MARC', () => {
               QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(index);
             });
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
-            QuickMarcEditor.deleteField(79);
+            QuickMarcEditor.deleteField(78);
             QuickMarcEditor.afterDeleteNotification(testData.tag700);
-            QuickMarcEditor.deleteField(81);
+            QuickMarcEditor.deleteField(80);
             QuickMarcEditor.afterDeleteNotification(testData.tag700);
-            QuickMarcEditor.deleteField(84);
+            QuickMarcEditor.deleteField(83);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.confirmDeletingFields();
             // need to wait until fields will be deleted

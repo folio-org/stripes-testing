@@ -187,6 +187,7 @@ export default {
   },
 
   checkSearchResults: (fiscalYear) => {
+    cy.wait(3000);
     cy.expect(
       MultiColumnList({ id: 'fiscal-years-list' }).find(MultiColumnListCell(fiscalYear)).exists(),
     );

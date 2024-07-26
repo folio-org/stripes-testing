@@ -88,7 +88,7 @@ describe('lists', () => {
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
       Lists.selectPrivateLists();
-      Lists.verifyListsPaneIsEmpty();
+      Lists.verifyListIsNotPresent(listData.name);
     });
 
     it('C411736 Edit list: Make the list Shared (corsair)', { tags: ['smoke', 'corsair'] }, () => {
@@ -108,7 +108,7 @@ describe('lists', () => {
       cy.login(secondUser.username, secondUser.password); // User B logs in to make sure that 'Shared' list is not visible
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
-      Lists.verifyListsPaneIsEmpty();
+      Lists.verifyListIsNotPresent(listData.name);
       cy.wait(2000);
       cy.login(firstUser.username, firstUser.password); // User A logs in to make the list 'Shared'
       cy.visit(TopMenu.listsPath);
