@@ -14,7 +14,7 @@ describe('MARC', () => {
       let userId;
       let instanceID;
       const elvlBoxNewValue = '';
-      let ldrCharacterLength = 'Record cannot be saved. The Leader must contain 24 characters, including null spaces.';
+      const ldrCharacterLength = 'Record cannot be saved. The Leader must contain 24 characters, including null spaces.';
       const marcFile = {
         marc: 'marcBibFileForC353612.mrc',
         fileName: `testMarcFileC353612${getRandomPostfix()}.mrc`,

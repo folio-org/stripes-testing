@@ -5,8 +5,6 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
-import InteractorsTools from '../../../../support/utils/interactorsTools';
-import { calloutTypes } from '../../../../../interactors';
 import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../../support/constants';
 
 describe('MARC', () => {
