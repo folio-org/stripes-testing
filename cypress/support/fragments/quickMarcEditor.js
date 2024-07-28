@@ -1991,17 +1991,6 @@ export default {
     );
   },
 
-  verifyCalloutControlledFields(tags) {
-    let tagsText = `MARC ${tags[0]}`;
-    if (tags.length === 2) tagsText += ` and MARC ${tags[1]}`;
-    else if (tags.length > 2) {
-      for (let i = 1; i <= tags.length - 2; i++) {
-        tagsText += `, MARC ${tags[i]}`;
-      }
-      tagsText += `, and MARC ${tags[tags.length - 1]}`;
-    }
-  },
-
   verifyAfterLinkingAuthorityByIndex(rowIndex, tag) {
     cy.expect([
       Callout(`Field ${tag} has been linked to a MARC authority record.`).exists(),
