@@ -97,7 +97,7 @@ describe('MARC', () => {
 
           // 6 Click on the "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
-          InteractorsTools.checkCalloutMessage(errorToastNotification, calloutTypes.error);
+          QuickMarcEditor.checkErrorMessage(4, errorToastNotification);
           QuickMarcEditor.checkPaneheaderContains(headerText);
         },
       );

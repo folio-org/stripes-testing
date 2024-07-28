@@ -58,7 +58,8 @@ describe('MARC', () => {
 
           // #5 Click "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
-          InteractorsTools.checkCalloutMessage(calloutMessage, 'error');
+          QuickMarcEditor.checkErrorMessage(5, calloutMessage);
+          QuickMarcEditor.checkErrorMessage(6, calloutMessage);
 
           // #6 Delete one of the created "010" fields.
           QuickMarcEditor.deleteField(6);

@@ -89,10 +89,11 @@ describe('MARC', () => {
 
           // #7 Click "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
-          InteractorsTools.checkCalloutMessage(calloutMessage, 'error');
+          QuickMarcEditor.checkErrorMessage(4, calloutMessage);
+          QuickMarcEditor.checkErrorMessage(6, calloutMessage);
 
           // #8 Change tag value of second "010" field to "011".
-          QuickMarcEditor.updateExistingTagValue(5, testData.tag011);
+          QuickMarcEditor.updateExistingTagValue(6, testData.tag011);
           // Only one field "010" is shown. For example:
           QuickMarcEditor.verifyNumOfFieldsWithTag(testData.tag010, 1);
 
@@ -127,12 +128,14 @@ describe('MARC', () => {
 
           // # 4 Click "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyAndDismissMultiple010TagCallout();
+          QuickMarcEditor.checkErrorMessage(4, calloutMessage);
+          QuickMarcEditor.checkErrorMessage(5, calloutMessage);
 
           // # 5 Click "Save & keep editng" button
           cy.wait(1000);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyAndDismissMultiple010TagCallout();
+          QuickMarcEditor.checkErrorMessage(4, calloutMessage);
+          QuickMarcEditor.checkErrorMessage(5, calloutMessage);
 
           // # 6 Delete one of the "010" fields.
           QuickMarcEditor.deleteField(5);
