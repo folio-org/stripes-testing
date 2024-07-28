@@ -99,7 +99,7 @@ describe('Data Import', () => {
 
     it(
       'C359189 Check that protected fields in incoming records are not deleted during import: Scenario 2 (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPathFlaky', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
