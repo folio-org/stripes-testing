@@ -20,6 +20,7 @@ describe('MARC', () => {
         tagLDR: 'LDR',
         errorMessage:
           'Record cannot be saved. The Leader must contain 24 characters, including null spaces.',
+        errorMarcTagWrongLength: 'Record cannot be saved. A MARC tag must contain three characters.',
       };
       const marcFile = {
         marc: 'marcBibFileForC375176.mrc',
@@ -77,15 +78,15 @@ describe('MARC', () => {
           );
           QuickMarcEditor.deleteTag(13);
           QuickMarcEditor.updateExistingField(testData.tag300, testData.tag300content);
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.errorMessage);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(0, testData.errorMessage);
           QuickMarcEditor.fillEmptyTextFieldOfField(
             0,
             'records[0].content.ELvl',
             '\\',
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(10, testData.errorMarcTagWrongLength);
           QuickMarcEditor.updateExistingTagName(testData.tag0, testData.tag040);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyConfirmModal();
