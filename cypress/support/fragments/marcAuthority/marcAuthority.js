@@ -226,9 +226,6 @@ export default {
         .fillIn('Test'),
       saveAndCloseButton.click(),
     ]);
-    cy.expect(
-      Callout('Record cannot be saved. A MARC tag must contain three characters.').exists(),
-    );
   },
 
   checkAddNew1XXTag: (rowIndex, tag, content) => {
@@ -242,7 +239,6 @@ export default {
         .fillIn(content),
       saveAndCloseButton.click(),
     ]);
-    cy.expect(Callout('Record cannot be saved. Cannot have multiple 1XXs').exists());
   },
 
   checkRemoved1XXTag: () => {

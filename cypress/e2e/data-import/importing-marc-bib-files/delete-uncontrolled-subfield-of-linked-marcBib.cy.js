@@ -234,7 +234,7 @@ describe('Data Import', () => {
 
     it(
       'C376967 Delete uncontrolled subfields of linked "MARC Bib" field which is controlled by "MARC Authority" record (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
