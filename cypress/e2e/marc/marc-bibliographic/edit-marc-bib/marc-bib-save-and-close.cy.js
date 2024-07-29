@@ -69,7 +69,7 @@ describe('MARC', () => {
 
       it(
         'C360097 Verify updates are saved after clicking "Save & keep editing" button in "MARC Bibliographic" edit mode (Spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPathFlaky', 'spitfire'] },
         () => {
           QuickMarcEditor.updateExistingFieldContent(
             testData.tag245rowIndex,

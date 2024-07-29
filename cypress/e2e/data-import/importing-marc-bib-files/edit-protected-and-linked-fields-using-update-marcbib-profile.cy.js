@@ -240,7 +240,7 @@ describe('Data Import', () => {
 
     it(
       'C380511 Edit protected and linked fields using update MARC Bib profile (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

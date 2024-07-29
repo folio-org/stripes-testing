@@ -107,7 +107,7 @@ describe('MARC', () => {
           // wait for the data will be filled in.
           cy.wait(1000);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessage);
+          QuickMarcEditor.checkErrorMessage(15, testData.errorMessage);
           QuickMarcEditor.fillEmptyTextAreaOfField(
             15,
             'records[15].subfieldGroups.uncontrolledAlpha',
@@ -119,7 +119,7 @@ describe('MARC', () => {
             '$c 123',
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessage);
+          QuickMarcEditor.checkErrorMessage(15, testData.errorMessage);
         },
       );
     });
