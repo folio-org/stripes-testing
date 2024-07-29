@@ -102,12 +102,11 @@ describe('MARC', () => {
         QuickMarcEditor.checkContent('$a test2', 7);
         QuickMarcEditor.deleteFieldAndCheck(6, '040');
         QuickMarcEditor.pressSaveAndClose();
-        InteractorsTools.closeCalloutMessage();
+        QuickMarcEditor.checkErrorMessage(6, calloutTagMessage);
         QuickMarcEditor.waitLoading();
         QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);
         QuickMarcEditor.pressSaveAndClose();
-        InteractorsTools.checkCalloutMessage(calloutTagMessage, calloutTypes.error);
-        InteractorsTools.closeCalloutMessage();
+        QuickMarcEditor.checkErrorMessage(6, calloutTagMessage);
         QuickMarcEditor.waitLoading();
         QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);
         QuickMarcEditor.updateExistingTagName('0', '041');

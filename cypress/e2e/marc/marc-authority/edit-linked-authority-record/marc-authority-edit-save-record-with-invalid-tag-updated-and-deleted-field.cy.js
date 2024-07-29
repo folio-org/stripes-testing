@@ -115,8 +115,8 @@ describe('MARC', () => {
           QuickMarcEditor.deleteField(testData.tag952RowIndex);
           QuickMarcEditor.afterDeleteNotification(testData.tag952);
 
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
-          QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(6, testData.calloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag040NewValue, testData.tag040);
           QuickMarcEditor.pressSaveAndClose();
