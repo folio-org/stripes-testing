@@ -18,11 +18,10 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       searchOption: 'Keyword',
-      tag010: '010',
       authorityHeadings: [
         'Kerouac, Jack C432323Auto',
         'Apple & Honey Productions C432323Auto',
-        "Association pour la promotion et la protection de la liberté d'expression au Burundi C432323Auto",
+        'Association pour la promotion et la protection de la liberté d expression au Burundi C432323Auto',
         'Apple Academic Press C432323Auto',
         'Western Region Research Conference in Agricultural Education C432323Auto',
       ],
@@ -56,9 +55,8 @@ describe('MARC', () => {
 
     const createdRecordIDs = [];
 
-    let firstDeleteTime;
+    let createTime;
     let batchDeleteStart;
-    let batchDeleteEnd;
 
     before('Creating user and data', () => {
       cy.getAdminToken();
@@ -71,6 +69,8 @@ describe('MARC', () => {
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
+        createTime = new Date().toISOString().slice(0, 19);
+
         DataImport.uploadFileViaApi(
           marcFile.marc,
           marcFile.fileName,
@@ -79,13 +79,6 @@ describe('MARC', () => {
           response.forEach((record) => {
             createdRecordIDs.push(record[marcFile.propertyName].id);
           });
-        });
-
-        // set tenant locale to default (with UTC time)
-        cy.getConfigForTenantByName(testData.localeConfigName).then((config) => {
-          const updatedConfig = { ...config };
-          updatedConfig.value = DEFAULT_LOCALE_STRING;
-          cy.updateConfigForTenantById(config.id, updatedConfig);
         });
 
         cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -108,82 +101,52 @@ describe('MARC', () => {
       'C432323 Retrieve UUIDs of deleted MARC authority records using filters combination via API (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        MarcAuthoritiesSearch.searchBy(testData.searchOption, firstRecordToDelete.heading);
-        MarcAuthorities.selectTitle(firstRecordToDelete.heading);
-        MarcAuthoritiesDelete.clickDeleteButton();
-        MarcAuthoritiesDelete.checkDeleteModal();
-        MarcAuthoritiesDelete.confirmDelete();
-        MarcAuthoritiesDelete.verifyDeleteComplete(firstRecordToDelete.heading);
-        firstDeleteTime = new Date().toISOString().slice(0, 19);
+        MarcAuthorities.getMarcAuthoritiesViaApi({
+          query: `(keyword == "${firstRecordToDelete.heading}" or keyword == "${testData.authorityHeadings[0]}")`,
+        }).then((records) => {
+          const unmatchedRecordIds = records.map((rec) => rec.id);
 
-        // wait at least 3 mins before deleting the rest of the records, as per test case
-        // cy.wait(3.1 * 60 * 1000);
+          MarcAuthoritiesSearch.searchBy(testData.searchOption, firstRecordToDelete.heading);
+          MarcAuthorities.selectTitle(firstRecordToDelete.heading);
+          MarcAuthoritiesDelete.clickDeleteButton();
+          MarcAuthoritiesDelete.checkDeleteModal();
+          MarcAuthoritiesDelete.confirmDelete();
+          MarcAuthoritiesDelete.verifyDeleteComplete(firstRecordToDelete.heading);
 
-        batchDeleteStart = new Date().toISOString().slice(0, 19);
-        testData.authorityHeadings
-          .filter((heading) => heading !== firstRecordToDelete.heading)
-          .forEach((heading) => {
-            MarcAuthoritiesSearch.searchBy(testData.searchOption, heading);
-            MarcAuthorities.selectTitle(heading);
-            MarcAuthoritiesDelete.clickDeleteButton();
-            MarcAuthoritiesDelete.checkDeleteModal();
-            MarcAuthoritiesDelete.confirmDelete();
-            MarcAuthoritiesDelete.verifyDeleteComplete(heading);
+          // wait at least 3 mins before deleting the rest of the records, as per test case
+          cy.wait(3.5 * 60 * 1000);
+
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
           });
-        batchDeleteEnd = new Date().toISOString().slice(0, 19);
+          batchDeleteStart = new Date().toISOString().slice(0, 19);
+          testData.authorityHeadings
+            .filter((heading) => heading !== firstRecordToDelete.heading)
+            .forEach((heading) => {
+              MarcAuthoritiesSearch.searchBy(testData.searchOption, heading);
+              MarcAuthorities.selectTitle(heading);
+              MarcAuthoritiesDelete.clickDeleteButton();
+              MarcAuthoritiesDelete.checkDeleteModal();
+              MarcAuthoritiesDelete.confirmDelete();
+              MarcAuthoritiesDelete.verifyDeleteComplete(heading);
+            });
 
-        // testData.sourceFileNames.forEach((sourceFileName, index) => {
-        //   MarcAuthority.getRecordsViaAPI(
-        //     true,
-        //     true,
-        //     'text/plain',
-        //     `authoritySourceFile.name="${sourceFileName}"`,
-        //   ).then((body) => {
-        //     const records = body.split('\n');
-        //     createdRecordIDs.forEach((id, idx) => {
-        //       if (idx === index) expect(records.filter((record) => record === id).length).to.equal(1);
-        //       else expect(records.filter((record) => record === id).length).to.equal(0);
-        //     });
-        //   });
-        // });
-
-        // MarcAuthority.getRecordsViaAPI(
-        //   true,
-        //   true,
-        //   null,
-        //   'cql.allRecords=1 NOT authoritySourceFile.name=""',
-        // ).then((body) => {
-        //   createdRecordIDs.forEach((id, index) => {
-        //     if (index === createdRecordIDs.length - 2) expect(body.authorities.filter((record) => record.id === id).length).to.equal(1);
-        //     else expect(body.authorities.filter((record) => record.id === id).length).to.equal(0);
-        //   });
-        // });
-
-        // MarcAuthority.getRecordsViaAPI(
-        //   true,
-        //   true,
-        //   'text/plain',
-        //   `authoritySourceFile.name="${testData.localSourceName}"`,
-        // ).then((body) => {
-        //   const records = body.split('\n');
-        //   createdRecordIDs.forEach((id, index) => {
-        //     if (index === createdRecordIDs.length - 1) expect(records.filter((record) => record === id).length).to.equal(1);
-        //     else expect(records.filter((record) => record === id).length).to.equal(0);
-        //   });
-        // });
-
-        // MarcAuthority.getRecordsViaAPI(
-        //   true,
-        //   true,
-        //   'text/plain',
-        //   `(authoritySourceFile.name="${testData.sourceFileNames[0]}") or (authoritySourceFile.name="${testData.sourceFileNames[1]}") or (authoritySourceFile.name="${testData.sourceFileNames[3]}")`,
-        // ).then((body) => {
-        //   const records = body.split('\n');
-        //   createdRecordIDs.forEach((id, index) => {
-        //     if (index === 0 || index === 1 || index === 3) expect(records.filter((record) => record === id).length).to.equal(1);
-        //     else expect(records.filter((record) => record === id).length).to.equal(0);
-        //   });
-        // });
+          cy.getAdminToken();
+          MarcAuthority.getRecordsViaAPI(
+            true,
+            true,
+            'text/plain',
+            `((createdDate >= ${createTime}) and (updatedDate >= ${batchDeleteStart})) and ((headingType=corporateName) or (headingType=meetingName)) and ((authoritySourceFile.name="${testData.correspondingSourceFileNames[2]}") or (authoritySourceFile.name="${testData.correspondingSourceFileNames[3]}"))`,
+          ).then((body) => {
+            cy.log(unmatchedRecordIds);
+            const deletedRecords = body.split('\n');
+            createdRecordIDs.forEach((id) => {
+              if (!unmatchedRecordIds.includes(id)) expect(deletedRecords.filter((record) => record === id).length).to.equal(1);
+              else expect(deletedRecords.filter((record) => record === id).length).to.equal(0);
+            });
+          });
+        });
       },
     );
   });
