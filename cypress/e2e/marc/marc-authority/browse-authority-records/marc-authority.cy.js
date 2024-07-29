@@ -201,6 +201,7 @@ describe('MARC', () => {
           );
           MarcAuthority.check008Field();
           MarcAuthority.checkRemovedTag(9);
+          QuickMarcEditor.checkErrorMessage(9, 'Record cannot be saved. A MARC tag must contain three characters.');
         },
       );
 

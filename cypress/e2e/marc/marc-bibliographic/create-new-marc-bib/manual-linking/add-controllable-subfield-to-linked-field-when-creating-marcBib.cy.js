@@ -159,7 +159,7 @@ describe('MARC', () => {
               '$b test',
             );
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkCallout(testData.errorMessage(newFields[0].tag));
+            QuickMarcEditor.checkErrorMessage(5, testData.errorMessage(newFields[0].tag));
 
             QuickMarcEditor.fillEmptyTextAreaOfField(5, testData.fieldName.fifthBox(5), '');
             QuickMarcEditor.fillEmptyTextAreaOfField(5, testData.fieldName.seventhBox(5), '');
@@ -170,7 +170,7 @@ describe('MARC', () => {
               '$f test',
             );
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkCallout(testData.errorMessage(newFields[1].tag));
+            QuickMarcEditor.checkErrorMessage(6, testData.errorMessage(newFields[1].tag));
           },
         );
       });

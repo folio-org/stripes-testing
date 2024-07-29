@@ -24,6 +24,7 @@ describe('MARC', () => {
         },
         editedTags: ['110', '111', '130', '150', '151', '155'],
         valuesFor010: ['n 94000330', 'n 94000331', 'n 94000339'],
+        errorMessage: 'Record cannot be saved with more than one 010 field',
       };
 
       const subfieldPrefix = '$a ';
@@ -117,7 +118,8 @@ describe('MARC', () => {
           QuickMarcEditor.addNewField('010', `${subfieldPrefix}${testData.valuesFor010[1]}`, 5);
           QuickMarcEditor.checkContent(`${subfieldPrefix}${testData.valuesFor010[1]}`, 6);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyAndDismissMultiple010TagCallout();
+          QuickMarcEditor.checkErrorMessage(6, testData.errorMessage);
+          QuickMarcEditor.checkErrorMessage(7, testData.errorMessage);
           QuickMarcEditor.deleteField(6);
           QuickMarcEditor.verifyNoFieldWithContent(`${subfieldPrefix}${testData.valuesFor010[1]}`);
           QuickMarcEditor.clickSaveAndKeepEditing();
@@ -126,7 +128,8 @@ describe('MARC', () => {
           QuickMarcEditor.addNewField('010', `${subfieldPrefix}${testData.valuesFor010[2]}`, 5);
           QuickMarcEditor.checkContent(`${subfieldPrefix}${testData.valuesFor010[2]}`, 6);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyAndDismissMultiple010TagCallout();
+          QuickMarcEditor.checkErrorMessage(6, testData.errorMessage);
+          QuickMarcEditor.checkErrorMessage(7, testData.errorMessage);
         },
       );
     });
