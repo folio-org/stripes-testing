@@ -1,8 +1,6 @@
-/* eslint-disable no-unused-vars */
 import {
   DEFAULT_JOB_PROFILE_NAMES,
   DEFAULT_FOLIO_AUTHORITY_FILES,
-  DEFAULT_LOCALE_STRING,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -114,13 +112,15 @@ describe('MARC', () => {
           MarcAuthoritiesDelete.verifyDeleteComplete(firstRecordToDelete.heading);
 
           // wait at least 3 mins before deleting the rest of the records, as per test case
-          cy.wait(3.5 * 60 * 1000);
+          cy.wait(3.1 * 60 * 1000);
 
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
           });
-          batchDeleteStart = new Date().toISOString().slice(0, 19);
+          batchDeleteStart = new Date();
+          batchDeleteStart.setMinutes(batchDeleteStart.getMinutes() + 2);
+          batchDeleteStart = batchDeleteStart.toISOString().slice(0, 19);
           testData.authorityHeadings
             .filter((heading) => heading !== firstRecordToDelete.heading)
             .forEach((heading) => {
