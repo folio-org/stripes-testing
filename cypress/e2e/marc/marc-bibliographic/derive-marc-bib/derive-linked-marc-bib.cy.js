@@ -21,6 +21,7 @@ describe('MARC', () => {
         tag240FifthBoxValue: '$m test',
         tag650FifthBoxValue: '$b 123',
         tag650SeventhBoxValue: '$b 123',
+        errorMessage: 'MARC 240 and MARC 650 has a subfield(s) that cannot be saved because the fields are controlled by authority records.',
       };
 
       const marcFiles = [
@@ -151,7 +152,9 @@ describe('MARC', () => {
           QuickMarcEditor.fillLinkedFieldBox(16, 5, testData.tag650FifthBoxValue);
           QuickMarcEditor.fillLinkedFieldBox(17, 7, testData.tag650SeventhBoxValue);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyCalloutControlledFields([testData.tag240, testData.tag650]);
+          QuickMarcEditor.checkErrorMessage(10, testData.errorMessage);
+          QuickMarcEditor.checkErrorMessage(16, testData.errorMessage);
+          QuickMarcEditor.checkErrorMessage(17, testData.errorMessage);
         },
       );
     });
