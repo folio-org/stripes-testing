@@ -1758,6 +1758,11 @@ export default {
     cy.expect(Callout(callout).exists());
   },
 
+  checkErrorMessage(rowIndex, errorMessage) {
+    cy.wait(1000);
+    cy.expect(QuickMarcEditorRow({ index: rowIndex, error: `Fail: ${errorMessage}` }).exists());
+  },
+
   checkNonEditableLdrCalloutBib() {
     cy.expect([calloutNonEditableLdrBib.exists(), calloutNonEditableLdrBib.has({ type: 'error' })]);
     cy.do(calloutNonEditableLdrBib.dismiss());
@@ -1983,23 +1988,6 @@ export default {
       QuickMarcEditorRow({ index: rowIndex })
         .find(boxes[boxNumber - 1])
         .has({ value }),
-    );
-  },
-
-  verifyCalloutControlledFields(tags) {
-    let tagsText = `MARC ${tags[0]}`;
-    if (tags.length === 2) tagsText += ` and MARC ${tags[1]}`;
-    else if (tags.length > 2) {
-      for (let i = 1; i <= tags.length - 2; i++) {
-        tagsText += `, MARC ${tags[i]}`;
-      }
-      tagsText += `, and MARC ${tags[tags.length - 1]}`;
-    }
-    cy.expect(
-      Callout(
-        tagsText +
-          ' has a subfield(s) that cannot be saved because the fields are controlled by authority records.',
-      ).exists(),
     );
   },
 
