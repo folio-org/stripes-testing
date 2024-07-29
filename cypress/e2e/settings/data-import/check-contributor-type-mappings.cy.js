@@ -19,9 +19,9 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Settings', () => {
-    const fieldMappingProfile = `autotest_mapping_profile_name_${getRandomPostfix()}`;
-    const actionProfile = `autotest_action_profile_name_${getRandomPostfix()}`;
-    const jobProfile = `autotest_job_profile_name_${getRandomPostfix()}`;
+    const fieldMappingProfile = `C376006 autotest_mapping_profile_name_${getRandomPostfix()}`;
+    const actionProfile = `C376006 autotest_action_profile_name_${getRandomPostfix()}`;
+    const jobProfile = `C376006 autotest_job_profile_name_${getRandomPostfix()}`;
     const orderLineTitle = '245$a';
 
     const testData = {
@@ -79,7 +79,7 @@ describe('Data Import', () => {
       },
       marcFile: {
         marc: 'marcFileForC376006.mrc',
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        fileName: `C376006 testMarcFile.${getRandomPostfix()}.mrc`,
       },
       user: {},
     };
