@@ -142,10 +142,9 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag010, testData.subfieldPrefix);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessage);
-          QuickMarcEditor.closeCallout();
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.errorMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(4, testData.errorMessage);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(4, testData.errorMessage);
           QuickMarcEditor.pressCancel();
           QuickMarcEditor.closeWithoutSavingInEditConformation();
           MarcAuthorities.checkDetailViewIncludesText(

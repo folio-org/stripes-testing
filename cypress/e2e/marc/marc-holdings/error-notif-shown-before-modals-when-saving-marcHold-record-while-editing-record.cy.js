@@ -140,7 +140,7 @@ describe('MARC', () => {
           MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN.I,
         );
         QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.checkCallout(testData.errors.tagCharacterLength);
+        QuickMarcEditor.checkErrorMessage(6, testData.errors.tagCharacterLength);
         QuickMarcEditor.updateExistingTagValue(testData.tag014.rowIndex, testData.tag014.tag);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.clickSaveAndCloseThenCheck(1);
