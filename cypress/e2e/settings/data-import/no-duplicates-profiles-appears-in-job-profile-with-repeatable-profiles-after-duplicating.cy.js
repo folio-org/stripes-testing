@@ -227,7 +227,6 @@ describe('Data Import', () => {
         JobProfileView.verifyCalloutMessage(calloutMessage);
         JobProfileView.verifyJobProfileOpened();
         JobProfileView.verifyJobProfileName(jobProfileNameForChanging);
-        cy.wait(3000);
         JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
       },
     );
