@@ -38,6 +38,7 @@ export default {
     cy.wait(2000);
     cy.do(viewPane.find(actionsButton).click());
     cy.do(Button('Duplicate').click());
+    cy.wait(1000);
   },
   delete: () => {
     cy.do([
