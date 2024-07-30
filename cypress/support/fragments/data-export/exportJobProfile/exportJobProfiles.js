@@ -80,6 +80,7 @@ export default {
     method: 'DELETE',
     path: `data-export/job-profiles/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   }),
 
   verifyDefaultProfiles() {
