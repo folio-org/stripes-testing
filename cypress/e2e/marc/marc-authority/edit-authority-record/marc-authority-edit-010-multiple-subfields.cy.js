@@ -17,6 +17,7 @@ describe('MARC', () => {
           searchOption: 'Keyword',
         },
         field010: { tag: '010', subfield1: '$a n90635366', subfield2: '$a n90635377' },
+        errorMultiple010Subfields: '010 can only have one $a.',
       };
       const authorityPostfix = '?authRefType=Authorized&heading';
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
@@ -82,7 +83,7 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyAndDismissMultiple010SubfieldsCallout();
+          QuickMarcEditor.checkErrorMessage(5, testData.errorMultiple010Subfields);
           MarcAuthority.changeField(testData.field010.tag, testData.field010.subfield1);
           QuickMarcEditor.checkContent(testData.field010.subfield1, 5);
           QuickMarcEditor.checkButtonsEnabled();
@@ -97,10 +98,10 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyAndDismissMultiple010SubfieldsCallout();
+          QuickMarcEditor.checkErrorMessage(5, testData.errorMultiple010Subfields);
 
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyAndDismissMultiple010SubfieldsCallout();
+          QuickMarcEditor.checkErrorMessage(5, testData.errorMultiple010Subfields);
         },
       );
     });

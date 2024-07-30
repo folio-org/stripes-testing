@@ -148,11 +148,10 @@ describe('MARC', () => {
           QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
 
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.colloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(4, testData.colloutMessage);
 
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.colloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(4, testData.colloutMessage);
 
           QuickMarcEditor.pressCancel();
           AreYouSureModal.clickCloseWithoutSavingButton();

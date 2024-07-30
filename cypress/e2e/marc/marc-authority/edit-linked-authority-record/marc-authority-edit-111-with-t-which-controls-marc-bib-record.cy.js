@@ -128,15 +128,14 @@ describe('MARC', () => {
           testData.newTagValuesSaveAndClose.forEach((newTagValue) => {
             QuickMarcEditor.updateExistingTagName(previousTagValue, newTagValue);
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkCallout(testData.cannotChangeCalloutMessage);
-            QuickMarcEditor.closeCallout();
+            QuickMarcEditor.checkErrorMessage(10, testData.cannotChangeCalloutMessage);
             previousTagValue = newTagValue;
           });
 
           testData.newTagValuesSaveAndKeepEditing.forEach((newTagValue) => {
             QuickMarcEditor.updateExistingTagName(previousTagValue, newTagValue);
-            QuickMarcEditor.pressSaveAndKeepEditing(testData.cannotChangeCalloutMessage);
-            QuickMarcEditor.closeCallout();
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            QuickMarcEditor.checkErrorMessage(10, testData.cannotChangeCalloutMessage);
             previousTagValue = newTagValue;
           });
 
@@ -151,8 +150,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag111, testData.newAuthority111FieldValue);
           QuickMarcEditor.checkButtonsEnabled();
 
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.cannotRemoveCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(10, testData.cannotRemoveCalloutMessage);
         },
       );
     });
