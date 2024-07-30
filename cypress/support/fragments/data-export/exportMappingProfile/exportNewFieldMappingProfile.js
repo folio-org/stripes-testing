@@ -93,6 +93,41 @@ export default {
       });
   },
 
+  createNewFieldMappingProfileWithTransformationsViaApi: (nameProfile) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-export/mapping-profiles',
+        body: {
+          name: nameProfile,
+          transformations: [
+            {
+              fieldId: 'holdings.hrid',
+              path: '$.holdings[*].hrid',
+              recordType: 'HOLDINGS',
+              transformation: '911  $h',
+              enabled: true,
+            },
+            {
+              fieldId: 'item.hrid',
+              path: '$.holdings[*].items[*].hrid',
+              recordType: 'ITEM',
+              transformation: '911  $i',
+              enabled: true,
+            },
+          ],
+          recordTypes: ['HOLDINGS', 'ITEM', 'SRS'],
+          outputFormat: 'MARC',
+          fieldsSuppression: '',
+          suppress999ff: false,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
   createNewFieldMappingProfile(name, recordTypes) {
     this.clickNewButton();
     fillInName(name);
