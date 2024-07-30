@@ -28,6 +28,7 @@ describe('MARC', () => {
           tag: '100',
           rowIndex: 14,
         },
+        errorMultiple1XX: 'Record cannot be saved. Cannot have multiple 1XXs',
       };
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const propertyName = 'authority';
@@ -100,6 +101,8 @@ describe('MARC', () => {
             testData.authority.tag,
             '$a C350901',
           );
+          QuickMarcEditor.checkErrorMessage(14, testData.errorMultiple1XX);
+          QuickMarcEditor.checkErrorMessage(15, testData.errorMultiple1XX);
           QuickMarcEditor.closeWithoutSavingAfterChange();
           MarcAuthorities.selectTitle(testData.authority.title);
           MarcAuthority.contains(testData.authority.title);
@@ -632,7 +635,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(errorInvalidLDR05and17and18);
+          QuickMarcEditor.checkErrorMessage(0, errorInvalidLDR05and17and18);
 
           Object.values(AUTHORITY_LDR_FIELD_STATUS_DROPDOWN).forEach((dropdownOption) => {
             QuickMarcEditor.verifyFieldsDropdownOption(
@@ -659,7 +662,7 @@ describe('MARC', () => {
           );
 
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(errorInvalidLDR17and18);
+          QuickMarcEditor.checkErrorMessage(0, errorInvalidLDR17and18);
 
           QuickMarcEditor.selectFieldsDropdownOption(
             LDR,

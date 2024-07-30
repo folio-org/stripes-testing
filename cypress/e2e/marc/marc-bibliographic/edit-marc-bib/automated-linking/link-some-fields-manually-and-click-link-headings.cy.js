@@ -37,7 +37,7 @@ describe('MARC', () => {
 
         const linkingTagAndValues = [
           {
-            rowIndex: 17,
+            rowIndex: 16,
             value: 'C388504 Chin, Staceyann, 1972-',
             tag: 100,
             defaultSearchOption: 'personalNameTitle',
@@ -54,7 +54,7 @@ describe('MARC', () => {
             },
           },
           {
-            rowIndex: 32,
+            rowIndex: 31,
             value: 'sh 99014708C388504',
             tag: 650,
             defaultSearchOption: 'advancedSearch',
@@ -74,7 +74,7 @@ describe('MARC', () => {
         ];
 
         const fieldToUpdate = [
-          30,
+          29,
           '650',
           '\\',
           '0',
@@ -82,7 +82,7 @@ describe('MARC', () => {
         ];
 
         const fieldAfterUpdate = [
-          30,
+          29,
           '650',
           '\\',
           '0',
@@ -101,6 +101,9 @@ describe('MARC', () => {
 
         before('Creating user and data', () => {
           cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388504*');
+
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,

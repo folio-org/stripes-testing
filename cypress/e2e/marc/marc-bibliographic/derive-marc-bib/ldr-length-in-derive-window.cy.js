@@ -14,6 +14,8 @@ describe('MARC', () => {
       let userId;
       let instanceID;
       const elvlBoxNewValue = '';
+      const ldrCharacterLength =
+        'Record cannot be saved. The Leader must contain 24 characters, including null spaces.';
       const marcFile = {
         marc: 'marcBibFileForC353612.mrc',
         fileName: `testMarcFileC353612${getRandomPostfix()}.mrc`,
@@ -66,7 +68,7 @@ describe('MARC', () => {
           QuickMarcEditor.fillInElvlBoxInLDRField(elvlBoxNewValue);
           QuickMarcEditor.verifyValueInElvlBoxInLDRField(elvlBoxNewValue);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyRecordCanNotBeSavedCalloutLDR();
+          QuickMarcEditor.checkErrorMessage(0, ldrCharacterLength);
         },
       );
     });

@@ -94,6 +94,10 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
   const createdRecordIDs = [];
 
   before('Creating user and data', () => {
+    cy.getAdminToken();
+    // make sure there are no duplicate records in the system
+    MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380452*');
+
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -156,6 +160,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       linkValuesWithAuthoritySource.forEach((linkValue) => {
         MarcAuthorityBrowse.searchBy(linkValue.searchOption, linkValue.value);
         MarcAuthorities.chooseAuthoritySourceOption(linkValue.authoritySource);
+        MarcAuthorities.selectTitle(linkValue.value);
         MarcAuthorities.selectTitle(linkValue.value);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.checkCallout(testData.errorMessage);

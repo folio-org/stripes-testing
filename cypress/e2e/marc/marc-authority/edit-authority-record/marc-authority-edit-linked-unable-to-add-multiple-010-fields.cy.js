@@ -21,6 +21,7 @@ describe('MARC', () => {
         searchOption: 'Keyword',
         searchValue: 'Beethoven, Ludwig van, 1770-1827. 14 variations sur un thème original',
         fieldForAdding: { tag: '010', content: '$a n 94000339' },
+        errorMultiple010MarcTags: 'Record cannot be saved with more than one 010 field',
       };
 
       const createdRecordIDs = [];
@@ -114,9 +115,11 @@ describe('MARC', () => {
             testData.fieldForAdding.content,
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyAndDismissMultiple010TagCallout();
+          QuickMarcEditor.checkErrorMessage(4, testData.errorMultiple010MarcTags);
+          QuickMarcEditor.checkErrorMessage(5, testData.errorMultiple010MarcTags);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyAndDismissMultiple010TagCallout();
+          QuickMarcEditor.checkErrorMessage(4, testData.errorMultiple010MarcTags);
+          QuickMarcEditor.checkErrorMessage(5, testData.errorMultiple010MarcTags);
         },
       );
     });

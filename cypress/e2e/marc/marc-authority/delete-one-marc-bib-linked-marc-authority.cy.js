@@ -39,7 +39,7 @@ describe('MARC', () => {
     const createdAuthorityIDs = [];
 
     const linkingTagAndValues = {
-      rowIndex: 18,
+      rowIndex: 17,
       value:
         'C350932 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
       tag: '240',
@@ -48,6 +48,10 @@ describe('MARC', () => {
     };
 
     before('Creating user and data', () => {
+      cy.getAdminToken();
+      // make sure there are no duplicate authority records in the system
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C350932*');
+
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

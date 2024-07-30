@@ -387,9 +387,13 @@ export default {
       userDetailsPane.find(actionsButton).click(),
       editButton.click(),
       customFieldsAccordion.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       customFieldsAccordion.find(MultiSelect({ label: data.fieldLabel })).choose(data.label1),
       customFieldsAccordion.find(MultiSelect({ label: data.fieldLabel })).choose(data.label2),
     ]);
+    cy.wait(2000);
     this.saveAndClose();
   },
 

@@ -1,16 +1,15 @@
 import { including } from '@interactors/html';
 import {
   Button,
-  TextField,
-  Pane,
-  Link,
+  Callout,
   KeyValue,
-  Selection,
-  SelectionList,
-  Select,
+  Link,
   MultiColumnListHeader,
   MultiColumnListRow,
-  Callout,
+  Pane,
+  Select,
+  Selection,
+  TextField,
 } from '../../../../../../interactors';
 
 const oclcWorldcatPane = Pane('✓ OCLC WorldCat');
@@ -44,18 +43,14 @@ function addJobProfileForCreate(profile = defaultCreateInstanceJobProfileName) {
   // wait until elements will be displayed on page
   cy.wait(2000);
   cy.do(Button('Add job profile for import/create').click());
-  cy.wait(2000);
-  cy.do([
-    Selection({ value: including('Select job profile for import/create') }).open(),
-    SelectionList().select(profile),
-  ]);
+  cy.wait(1000);
+  cy.do(Selection({ value: including('Select job profile for import/create') }).choose(profile));
 }
 function addJobProfileForUpdate(profile = defaultUpdateInstanceJobProfileName) {
   cy.wait(2000);
   cy.do([
     Button('Add job profile for overlay/update').click(),
-    Selection({ value: including('Select job profile for overlay/update') }).open(),
-    SelectionList().select(profile),
+    Selection({ value: including('Select job profile for overlay/update') }).choose(profile),
   ]);
 }
 
@@ -156,6 +151,25 @@ export default {
         externalIdentifierType: '439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
         enabled: true,
         authentication: value,
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+
+    cy.okapiRequest({
+      method: 'PUT',
+      path: 'copycat/profiles/8594713d-4525-4cc7-b138-a07db4692c37',
+      body: {
+        name: 'Library of Congress',
+        url: 'lx2.loc.gov:210/LCDB',
+        externalIdQueryMap: '@attr 1=9 $identifier',
+        internalIdEmbedPath: '999ff$i',
+        createJobProfileId: defaultCreateInstanceJobProfileId,
+        updateJobProfileId: defaultUpdateInstanceJobProfileId,
+        allowedCreateJobProfileIds: [defaultCreateInstanceJobProfileId],
+        allowedUpdateJobProfileIds: [defaultUpdateInstanceJobProfileId],
+        targetOptions: { preferredRecordSyntax: 'usmarc' },
+        externalIdentifierType: 'c858e4f2-2b6b-4385-842b-60732ee14abb',
+        enabled: false,
       },
       isDefaultSearchParamsRequired: false,
     });

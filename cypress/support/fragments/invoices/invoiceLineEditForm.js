@@ -66,9 +66,11 @@ export default {
     FinanceHelper.selectFromResultsList();
   },
   expandDropDown(label) {
+    cy.wait(2000);
     cy.do(Selection(including(label)).open());
   },
   checkDropDownOptionsListCount(count) {
+    cy.wait(2000);
     cy.get('ul[aria-labelledby="sl-label-fundDistributions[0].expenseClassId"] li').then(
       (listItems) => {
         cy.expect([...listItems].length).to.equal(count);
@@ -90,6 +92,7 @@ export default {
   },
   selectFundDistribution(fund) {
     this.selectDropDownValue('Fund ID', fund);
+    cy.wait(2000);
   },
   clickAddFundDistributionButton() {
     cy.do(Button('Add fund distribution').click());

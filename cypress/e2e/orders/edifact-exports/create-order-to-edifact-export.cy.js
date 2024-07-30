@@ -110,7 +110,7 @@ describe('orders: export', () => {
       Orders.createOrder(order, true, false).then((orderId) => {
         order.id = orderId;
         Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
         OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
           'Purchase',
           location.name,

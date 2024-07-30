@@ -1,9 +1,9 @@
 import { matching } from '@interactors/html';
 import {
+  ITEM_STATUS_NAMES,
   LOAN_TYPE_NAMES,
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
-  ITEM_STATUS_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { ItemRecordEdit } from '../../../support/fragments/inventory';
@@ -92,7 +92,6 @@ describe('Inventory', () => {
         ItemRecordNew.waitLoading(testData.instanceData.instanceTitle);
 
         ItemRecordNew.clickStatisticalCodeButton();
-
         ItemRecordNew.openStatisticalCodeDropdown();
         ItemRecordNew.verifyStatisticalCodeDropdown();
 

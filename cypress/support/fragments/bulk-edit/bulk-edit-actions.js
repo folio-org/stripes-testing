@@ -14,8 +14,6 @@ import {
   Select,
   TextArea,
   Selection,
-  Option,
-  OptionGroup,
   Keyboard,
   MultiColumnListRow,
 } from '../../../../interactors';
@@ -394,6 +392,7 @@ export default {
         .find(bulkPageSelections.valueType)
         .choose(`Temporary ${type} location`),
     );
+    cy.wait(1000);
     if (type === 'item') {
       cy.do(
         RepeatableFieldItem({ index: rowIndex })
@@ -401,8 +400,9 @@ export default {
           .choose('Replace with'),
       );
     }
+    cy.wait(1000);
     cy.do(Button('Select control\nSelect location').click());
-    cy.get('[class^=selectionFilter-]').type(location);
+    cy.get('[class^=selectionFilter-]').eq(1).type(location);
   },
 
   addNewBulkEditFilterString() {
@@ -500,9 +500,15 @@ export default {
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
         .choose('Temporary loan type'),
+    ]);
+    cy.wait(1000);
+    cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.action)
         .choose('Replace with'),
+    ]);
+    cy.wait(1000);
+    cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(Button({ id: 'loanType' }))
         .click(),
@@ -515,6 +521,9 @@ export default {
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
         .choose('Temporary loan type'),
+    ]);
+    cy.wait(1000);
+    cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.action)
         .choose('Clear field'),
@@ -531,6 +540,15 @@ export default {
         .choose(`Set ${value}`),
     ]);
     if (holdings) cy.expect(Checkbox('Apply to all items records').has({ checked: value }));
+  },
+
+  clickOptionsSelection(rowIndex = 0) {
+    cy.wait(1000);
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).focus(),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).open(),
+    ]);
+    cy.wait(1000);
   },
 
   verifyItemAdminstrativeNoteActions(rowIndex = 0) {
@@ -662,6 +680,9 @@ export default {
       'Change note type',
       'Duplicate to',
     ];
+    if (rowIndex === 0) {
+      cy.do([RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).open()]);
+    }
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
@@ -699,10 +720,15 @@ export default {
   removeMarkAsStaffOnly(type, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.action)
         .choose('Remove mark as staff only'),
     ]);
+    cy.wait(2000);
   },
 
   changeNoteType(type, newType, rowIndex = 0) {
@@ -725,6 +751,13 @@ export default {
     cy.expect(Checkbox({ label: 'Apply to all items records', checked }).exists());
   },
 
+  applyToHoldingsItemsRecordsCheckboxExists(checked) {
+    cy.expect([
+      Checkbox({ label: 'Apply to all items records', checked }).exists(),
+      Checkbox({ label: 'Apply to all holdings records', checked }).exists(),
+    ]);
+  },
+
   verifyNoMatchingOptionsForLocationFilter() {
     cy.expect(HTML('-List is empty-').exists());
   },
@@ -734,10 +767,14 @@ export default {
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
         .choose(`Check ${note} note`),
+    ]);
+    cy.wait(1000);
+    cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.action)
         .choose('Duplicate to'),
     ]);
+    cy.wait(1000);
     if (note === 'in') {
       cy.expect(
         RepeatableFieldItem({ index: rowIndex })
@@ -761,6 +798,7 @@ export default {
   },
 
   confirmChanges() {
+    cy.wait(2000);
     cy.do(confirmChangesButton.click());
     cy.expect(Modal().find(MultiColumnListCell()).exists());
   },
@@ -804,6 +842,7 @@ export default {
   },
 
   commitChanges() {
+    cy.wait(2000);
     cy.do([Modal().find(Button('Commit changes')).click()]);
   },
 
@@ -853,7 +892,7 @@ export default {
         .find(Checkbox({ name: 'Item effective location', checked: true, disabled: isDisabled }))
         .exists(),
       dropdownMenu
-        .find(Checkbox({ name: 'Call number', checked: false, disabled: isDisabled }))
+        .find(Checkbox({ name: 'Effective call number', checked: true, disabled: isDisabled }))
         .exists(),
       dropdownMenu
         .find(Checkbox({ name: 'Item HRID', checked: true, disabled: isDisabled }))
@@ -868,10 +907,10 @@ export default {
         .find(Checkbox({ name: 'Temporary loan type', checked: true, disabled: isDisabled }))
         .exists(),
       dropdownMenu
-        .find(Checkbox({ name: 'Item ID', checked: false, disabled: isDisabled }))
+        .find(Checkbox({ name: 'Item UUID', checked: false, disabled: isDisabled }))
         .exists(),
       dropdownMenu
-        .find(Checkbox({ name: 'Former identifiers', checked: false, disabled: isDisabled }))
+        .find(Checkbox({ name: 'Former identifier', checked: false, disabled: isDisabled }))
         .exists(),
       dropdownMenu
         .find(Checkbox({ name: 'Accession number', checked: false, disabled: isDisabled }))
@@ -945,57 +984,30 @@ export default {
   },
 
   verifyHoldingsOptions() {
+    this.clickOptionsSelection();
     cy.expect([
-      Option({ value: 'ADMINISTRATIVE_NOTE' }).exists(),
-      OptionGroup('Electronic access')
-        .find(Option({ value: 'ELECTRONIC_ACCESS_URI' }))
-        .exists(),
-      OptionGroup('Electronic access')
-        .find(Option({ value: 'ELECTRONIC_ACCESS_URL_RELATIONSHIP' }))
-        .exists(),
-      OptionGroup('Electronic access')
-        .find(Option({ value: 'ELECTRONIC_ACCESS_LINK_TEXT' }))
-        .exists(),
-      OptionGroup('Electronic access')
-        .find(Option({ value: 'ELECTRONIC_ACCESS_MATERIALS_SPECIFIED' }))
-        .exists(),
-      OptionGroup('Electronic access')
-        .find(Option({ value: 'ELECTRONIC_ACCESS_URL_PUBLIC_NOTE' }))
-        .exists(),
-      OptionGroup('Holdings location')
-        .find(Option({ value: 'PERMANENT_HOLDINGS_LOCATION' }))
-        .exists(),
-      OptionGroup('Holdings location')
-        .find(Option({ value: 'TEMPORARY_HOLDINGS_LOCATION' }))
-        .exists(),
-      OptionGroup('Holdings notes')
-        .find(Option({ text: 'Action note' }))
-        .exists(),
-      OptionGroup('Holdings notes')
-        .find(Option({ text: 'Binding' }))
-        .exists(),
-      OptionGroup('Holdings notes')
-        .find(Option({ text: 'Copy note' }))
-        .exists(),
-      OptionGroup('Holdings notes')
-        .find(Option({ text: 'Electronic bookplate' }))
-        .exists(),
-      OptionGroup('Holdings notes')
-        .find(Option({ text: 'Note' }))
-        .exists(),
-      OptionGroup('Holdings notes')
-        .find(Option({ text: 'Provenance' }))
-        .exists(),
-      OptionGroup('Holdings notes')
-        .find(Option({ text: 'Reproduction' }))
-        .exists(),
-      Option({ value: 'SUPPRESS_FROM_DISCOVERY' }).exists(),
+      SelectionOption('Administrative note').exists(),
+      SelectionOption('Link text').exists(),
+      SelectionOption('Materials specified').exists(),
+      SelectionOption('URI').exists(),
+      SelectionOption('URL public note').exists(),
+      SelectionOption('URL Relationship').exists(),
+      SelectionOption('Permanent holdings location').exists(),
+      SelectionOption('Temporary holdings location').exists(),
+      SelectionOption('Action note').exists(),
+      SelectionOption('Binding').exists(),
+      SelectionOption('Copy note').exists(),
+      SelectionOption('Electronic bookplate').exists(),
+      SelectionOption('Note').exists(),
+      SelectionOption('Provenance').exists(),
+      SelectionOption('Reproduction').exists(),
+      SelectionOption('Suppress from discovery').exists(),
     ]);
+    this.clickOptionsSelection();
   },
 
   fillLocation(location) {
     cy.do([
-      locationSelection.open(),
       locationSelection.filterOptions(location),
       // need to wait until value will be applied
       cy.wait(1000),
@@ -1004,46 +1016,26 @@ export default {
   },
 
   verifyItemOptions() {
+    this.clickOptionsSelection();
     cy.expect([
-      Option({ value: 'ADMINISTRATIVE_NOTE' }).exists(),
-      Option({ value: 'CHECK_IN_NOTE' }).exists(),
-      Option({ value: 'CHECK_OUT_NOTE' }).exists(),
-      OptionGroup('Item notes')
-        .find(Option({ text: 'Action note' }))
-        .exists(),
-      OptionGroup('Item notes')
-        .find(Option({ text: 'Binding' }))
-        .exists(),
-      OptionGroup('Item notes')
-        .find(Option({ text: 'Copy note' }))
-        .exists(),
-      OptionGroup('Item notes')
-        .find(Option({ text: 'Electronic bookplate' }))
-        .exists(),
-      OptionGroup('Item notes')
-        .find(Option({ text: 'Note' }))
-        .exists(),
-      OptionGroup('Item notes')
-        .find(Option({ text: 'Provenance' }))
-        .exists(),
-      OptionGroup('Item notes')
-        .find(Option({ text: 'Reproduction' }))
-        .exists(),
-      Option({ value: 'STATUS' }).exists(),
-      OptionGroup('Loan type')
-        .find(Option({ value: 'PERMANENT_LOAN_TYPE' }))
-        .exists(),
-      OptionGroup('Loan type')
-        .find(Option({ value: 'TEMPORARY_LOAN_TYPE' }))
-        .exists(),
-      OptionGroup('Location')
-        .find(Option({ value: 'TEMPORARY_LOCATION' }))
-        .exists(),
-      OptionGroup('Location')
-        .find(Option({ value: 'TEMPORARY_LOCATION' }))
-        .exists(),
-      Option({ value: 'SUPPRESS_FROM_DISCOVERY' }).exists(),
+      SelectionOption('Administrative note').exists(),
+      SelectionOption('Check in note').exists(),
+      SelectionOption('Check out note').exists(),
+      SelectionOption('Check out note').exists(),
+      SelectionOption('Binding').exists(),
+      SelectionOption('Copy note').exists(),
+      SelectionOption('Electronic bookplate').exists(),
+      SelectionOption('Note').exists(),
+      SelectionOption('Provenance').exists(),
+      SelectionOption('Reproduction').exists(),
+      SelectionOption('Item status').exists(),
+      SelectionOption('Permanent loan type').exists(),
+      SelectionOption('Temporary loan type').exists(),
+      SelectionOption('Permanent item location').exists(),
+      SelectionOption('Temporary item location').exists(),
+      SelectionOption('Suppress from discovery').exists(),
     ]);
+    this.clickOptionsSelection();
   },
 
   selectType(type, rowIndex = 1, whichSelect = 0) {

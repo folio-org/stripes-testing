@@ -223,10 +223,6 @@ describe('MARC', () => {
             });
           });
 
-          linkableFields.forEach((tag) => {
-            QuickMarcEditor.setRulesForField(tag, true);
-          });
-
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -248,7 +244,7 @@ describe('MARC', () => {
 
         it(
           'C422147 All linkable fields are linked after clicking on the "Link headings" button when create "MARC bib" (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPathFlaky', 'spitfire'] },
           () => {
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,
@@ -265,6 +261,13 @@ describe('MARC', () => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
               cy.wait(500);
             });
+
+            // move this step here from the precondition due to a concurrency issue in parallel runs
+            cy.getAdminToken();
+            linkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, true);
+            });
+
             // wait for fields to be filled in
             cy.wait(2000);
             QuickMarcEditor.clickLinkHeadingsButton();

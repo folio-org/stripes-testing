@@ -14,6 +14,7 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import { LOCATION_IDS } from '../../../../support/constants';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 const instanceHRIDFileName = `instanceHRIDFileName${getRandomPostfix()}.csv`;
@@ -118,28 +119,13 @@ describe('bulk-edit', () => {
           BulkEditFiles.verifyCSVFileRows(instanceHRIDFileName, [item.instanceHRID]);
 
           BulkEditLogs.downloadFileWithMatchingRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            `*${matchedRecordsFileName}`,
-            [item.instanceHRID],
-            'instanceHrid',
-            true,
-          );
+          ExportFile.verifyFileIncludes(`*${matchedRecordsFileName}`, [item.holdingsHRID]);
 
           BulkEditLogs.downloadFileWithProposedChanges();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            previewOfProposedChangesFileName,
-            [item.instanceHRID],
-            'instanceHrid',
-            true,
-          );
+          ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, [item.holdingsHRID]);
 
           BulkEditLogs.downloadFileWithUpdatedRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            updatedRecordsFileName,
-            [item.instanceHRID],
-            'instanceHrid',
-            true,
-          );
+          ExportFile.verifyFileIncludes(updatedRecordsFileName, [item.holdingsHRID]);
 
           TopMenuNavigation.navigateToApp('Inventory');
           InventorySearchAndFilter.switchToItem();

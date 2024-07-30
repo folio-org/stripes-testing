@@ -12,16 +12,64 @@ import {
 import ChangeInstanceModal from './changeInstanceModal';
 
 const selectInstanceModal = Modal('Select instance');
-
 const searchInput = selectInstanceModal.find(TextField({ name: 'query' }));
 const searchButton = selectInstanceModal.find(Button('Search'));
 const resetAllButton = selectInstanceModal.find(Button('Reset all'));
 const closeButton = selectInstanceModal.find(Button('Close'));
-
+const holdingsToggleButton = Button('Holdings');
+const itemToggleButton = Button('Item');
 const resultsList = selectInstanceModal.find(HTML({ id: 'list-plugin-find-records' }));
-
 const searchOptionSelect = Select('Search field index');
 const defaultSearchOption = 'Keyword (title, contributor, identifier, HRID, UUID)';
+const searchInstancesOptions = [
+  'Keyword (title, contributor, identifier, HRID, UUID)',
+  'Contributor',
+  'Title (all)',
+  'Identifier (all)',
+  'Classification, normalized',
+  'ISBN',
+  'ISSN',
+  'LCCN, normalized',
+  'OCLC number, normalized',
+  'Instance notes (all)',
+  'Instance administrative notes',
+  'Place of publication',
+  'Subject',
+  'Effective call number (item), shelving order',
+  'Instance HRID',
+  'Instance UUID',
+  'Authority UUID',
+  'All',
+  'Query search',
+];
+const searchHoldingsOptions = [
+  'Keyword (title, contributor, identifier, HRID, UUID)',
+  'ISBN',
+  'ISSN',
+  'Call number, not normalized',
+  'Call number, normalized',
+  'Holdings notes (all)',
+  'Holdings administrative notes',
+  'Holdings HRID',
+  'Holdings UUID',
+  'All',
+  'Query search',
+];
+const searchItemsOptions = [
+  'Keyword (title, contributor, identifier, HRID, UUID)',
+  'Barcode',
+  'ISBN',
+  'ISSN',
+  'Effective call number (item), not normalized',
+  'Effective call number (item), normalized',
+  'Item notes (all)',
+  'Item administrative notes',
+  'Circulation notes',
+  'Item HRID',
+  'Item UUID',
+  'All',
+  'Query search',
+];
 
 export default {
   waitLoading() {
@@ -104,4 +152,21 @@ export default {
   checkNoRecordsFound() {
     cy.expect(selectInstanceModal.find(HTML(including('No results found for'))).exists());
   },
+  verifyInstanceSearchOptionsInOrder() {
+    cy.wrap(searchOptionSelect.allOptionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(searchInstancesOptions));
+    });
+  },
+  verifyHoldingsSearchOptionsInOrder() {
+    cy.wrap(searchOptionSelect.allOptionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(searchHoldingsOptions));
+    });
+  },
+  verifyItemSearchOptionsInOrder() {
+    cy.wrap(searchOptionSelect.allOptionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(searchItemsOptions));
+    });
+  },
+  switchToHoldings: () => cy.do(holdingsToggleButton.click()),
+  switchToItem: () => cy.do(itemToggleButton.click()),
 };

@@ -564,6 +564,10 @@ export default {
     ]);
   },
 
+  selectSearchOption(searchOption) {
+    cy.do([inventorySearchAndFilterInput.choose(searchOption)]);
+  },
+
   executeSearch(text) {
     cy.do(inventorySearchAndFilter.fillIn(text));
     this.clickSearch();

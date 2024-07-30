@@ -24,6 +24,11 @@ describe('MARC', () => {
         instanceTitle: 'C360098 Narysy z historyi belaruskaha mastatstva / Mikola Shchakatsikhin.',
         instanceBibliographyNote: 'Includes bibliographical references and index',
       };
+      const calloutMarcTagWrongLength =
+        'Record cannot be saved. A MARC tag must contain three characters.';
+      const calloutMultiple001MarcTags = 'Record cannot be saved. Can only have one MARC 001.';
+      const calloutInvalidMarcTag = 'Invalid MARC tag. Please try again.';
+      const calloutMultiple245MarcTags = 'Record cannot be saved with more than one field 245.';
       const marcFile = {
         marc: 'marcBibFileC360098.mrc',
         fileName: `testMarcFileC360098.${getRandomPostfix()}.mrc`,
@@ -101,19 +106,19 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingTagValue(20, '');
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
+          QuickMarcEditor.checkErrorMessage(20, calloutMarcTagWrongLength);
           QuickMarcEditor.verifyTagValue(20, '');
           QuickMarcEditor.updateExistingTagValue(20, testData.tag504FirstUpdatedTag);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
+          QuickMarcEditor.checkErrorMessage(20, calloutMarcTagWrongLength);
           QuickMarcEditor.verifyTagValue(20, testData.tag504FirstUpdatedTag);
           QuickMarcEditor.updateExistingTagValue(20, testData.tag504SecondUpdatedTag);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyInvalidTagCallout();
+          QuickMarcEditor.checkErrorMessage(20, calloutInvalidMarcTag);
           QuickMarcEditor.verifyTagValue(20, testData.tag504SecondUpdatedTag);
           QuickMarcEditor.updateExistingTagValue(20, testData.tag245);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyMultiple245TagCallout();
+          QuickMarcEditor.checkErrorMessage(20, calloutMultiple245MarcTags);
           QuickMarcEditor.verifyTagValue(20, testData.tag245);
           QuickMarcEditor.updateExistingTagValue(20, testData.tag504);
           QuickMarcEditor.updateExistingTagValue(14, testData.tag555);
@@ -125,7 +130,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateTagNameToLockedTag(16, testData.tag001);
           QuickMarcEditor.checkFourthBoxEditable(16, false);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyMultiple001TagCallout();
+          QuickMarcEditor.checkErrorMessage(16, calloutMultiple001MarcTags);
           QuickMarcEditor.verifyTagValue(16, testData.tag001);
           QuickMarcEditor.checkFourthBoxEditable(16, false);
           QuickMarcEditor.closeWithoutSavingAfterChange();

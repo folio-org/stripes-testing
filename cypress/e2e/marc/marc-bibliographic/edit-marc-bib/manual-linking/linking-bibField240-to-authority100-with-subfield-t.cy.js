@@ -18,9 +18,9 @@ describe('MARC', () => {
           tag100: '100',
           tag010: '010',
           tag240: '240',
-          authorityMarkedValue: 'Beethoven, Ludwig van,',
+          authorityMarkedValue: 'C369092 Beethoven, Ludwig van,',
           authority100FieldValue:
-            'Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
+            'C369092 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
           authority010FieldValue: 'n  83130832',
           accordion: 'Title data',
         };
@@ -45,6 +45,10 @@ describe('MARC', () => {
         const createdAuthorityIDs = [];
 
         before('Creating user', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C369092*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -54,7 +58,6 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,

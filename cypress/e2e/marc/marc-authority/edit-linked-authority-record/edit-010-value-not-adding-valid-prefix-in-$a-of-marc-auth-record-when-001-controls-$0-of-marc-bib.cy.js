@@ -18,7 +18,7 @@ describe('MARC', () => {
 
       const marcBibRecordData = {
         tag100: 100,
-        rowIndex: 16,
+        rowIndex: 15,
         sectionId: 'list-contributors',
       };
 
@@ -64,6 +64,9 @@ describe('MARC', () => {
 
       before('Creating user and data', () => {
         cy.getAdminToken();
+        // make sure there are no duplicate records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422065*');
+
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,

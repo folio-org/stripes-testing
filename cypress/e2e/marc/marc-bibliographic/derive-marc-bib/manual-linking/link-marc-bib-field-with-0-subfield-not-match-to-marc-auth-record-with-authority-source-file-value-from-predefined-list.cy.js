@@ -15,7 +15,7 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
   let userData = {};
   const testData = {
     tag700: '700',
-    rowIndex: 80,
+    rowIndex: 79,
     content:
       '$a C365585 Kirby, Jack, $e creator. $0 http://id.loc.gov/authorities/names/n2019022493',
     createdRecordsIDs: [],
@@ -59,6 +59,10 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
   const bib700AfterLinking = [76, ...bib700AfterLinkingToAuth100.slice(1)];
 
   before('Creating user and test data', () => {
+    cy.getAdminToken();
+    // make sure there are no duplicate authority records in the system
+    MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C365585*');
+
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -68,16 +72,14 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
     ]).then((createdUserProperties) => {
       userData = createdUserProperties;
 
-      cy.loginAsAdmin().then(() => {
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.createdRecordsIDs.push(record[marcFile.propertyName].id);
-            });
+      marcFiles.forEach((marcFile) => {
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            testData.createdRecordsIDs.push(record[marcFile.propertyName].id);
           });
         });
       });
@@ -93,7 +95,7 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
     cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     InventoryInstance.deleteInstanceViaApi(testData.createdRecordsIDs[0]);
-    MarcAuthority.deleteViaAPI(testData.createdRecordsIDs[1]);
+    MarcAuthority.deleteViaAPI(testData.createdRecordsIDs[1], true);
   });
 
   it(

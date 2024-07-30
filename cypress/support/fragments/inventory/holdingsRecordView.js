@@ -292,4 +292,25 @@ export default {
         .exists(),
     );
   },
+  checkPublicDisplayCheckboxState(expectedState) {
+    const accordionSection = document.querySelector('#receiving-history-accordion');
+    if (!accordionSection) {
+      return false;
+    }
+
+    const checkboxElement = accordionSection.querySelector(
+      'div[data-test-checkbox="true"] input[type="checkbox"]',
+    );
+    if (!checkboxElement) {
+      return false;
+    }
+
+    return checkboxElement.checked === expectedState;
+  },
+
+  checkAbsentRecordInReceivingHistory(record) {
+    cy.expect(
+      Section({ id: 'receiving-history-accordion' }).find(MultiColumnListCell(record)).absent(),
+    );
+  },
 };

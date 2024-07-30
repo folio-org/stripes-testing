@@ -26,7 +26,6 @@ const testData = {
   sourceFileName: 'LC Name Authority file (LCNAF)',
 };
 
-const yesterday = DateTools.getPreviousDayDateForFiscalYear();
 const twoPreviousDay = DateTools.getTwoPreviousDaysDateForFiscalYear();
 
 const marcFiles = [
@@ -62,6 +61,10 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Reporting MARC authority', () => {
       before('Creating user and uploading files', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate authority records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380530*');
+
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -94,7 +97,7 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(testData.marcValue);
             InventoryInstance.clickLinkButton();
-            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag240, 18);
+            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag240, 17);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitLoading();
@@ -133,7 +136,7 @@ describe('MARC', () => {
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
 
-          MarcAuthorities.verifyNoHeadingsUpdatesDataViaAPI(twoPreviousDay, yesterday);
+          MarcAuthorities.verifyNoHeadingsUpdatesDataViaAPI(twoPreviousDay, twoPreviousDay);
         },
       );
     });

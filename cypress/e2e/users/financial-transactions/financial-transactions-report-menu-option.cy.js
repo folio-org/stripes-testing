@@ -33,6 +33,8 @@ describe('Financial Transactions Detail Report', () => {
   });
 
   after('UserOwner is removed', () => {
+    ServicePoints.deleteViaApi(servicePoint1.id);
+    ServicePoints.deleteViaApi(servicePoint2.id);
     UsersOwners.deleteViaApi(ownerData.id);
   });
 

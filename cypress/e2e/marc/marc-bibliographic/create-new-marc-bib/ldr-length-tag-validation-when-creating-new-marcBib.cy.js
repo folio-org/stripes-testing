@@ -92,7 +92,7 @@ describe('MARC', () => {
           );
 
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errors.ldrCharacterLength);
+          QuickMarcEditor.checkErrorMessage(0, testData.errors.ldrCharacterLength);
 
           QuickMarcEditor.fillInElvlBoxInLDRField(testData.fieldContents.tagLDRElvlBox);
           QuickMarcEditor.verifyValueInElvlBoxInLDRField(testData.fieldContents.tagLDRElvlBox);
@@ -108,15 +108,15 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingTagValue(5, '');
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errors.tagCharacterLength);
+          QuickMarcEditor.checkErrorMessage(5, testData.errors.tagCharacterLength);
 
           QuickMarcEditor.updateExistingTagValue(5, testData.tags.tag10);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errors.tagCharacterLength);
+          QuickMarcEditor.checkErrorMessage(5, testData.errors.tagCharacterLength);
 
           QuickMarcEditor.updateExistingTagValue(5, testData.tags.tagABC);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errors.invalidTag);
+          QuickMarcEditor.checkErrorMessage(5, testData.errors.invalidTag);
 
           QuickMarcEditor.updateExistingTagValue(5, testData.tags.tag100);
           QuickMarcEditor.pressSaveAndClose();

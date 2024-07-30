@@ -10,6 +10,7 @@ import {
   Dropdown,
   HTML,
   Link,
+  ListRow,
   Modal,
   MultiColumnList,
   MultiColumnListCell,
@@ -34,6 +35,8 @@ import {
 import { MARC_AUTHORITY_BROWSE_OPTIONS, MARC_AUTHORITY_SEARCH_OPTIONS } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
 import QuickMarcEditorWindow from '../quickMarcEditor';
+import parseMrkFile from '../../utils/parseMrkFile';
+import FileManager from '../../utils/fileManager';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -50,6 +53,8 @@ const typeOfHeadingSelect = MultiSelect({ label: 'Type of heading' });
 const findAuthorityModal = Modal({ id: 'find-authority-modal' });
 const detailsMarcViewPaneheader = PaneHeader({ id: 'paneHeadermarc-view-pane' });
 const authorityActionsDropDown = Dropdown('Actions');
+const checkboxSeletAuthorityRecord = Checkbox({ ariaLabel: 'Select Authority record' });
+const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
 
 // actions dropdown window
 const authorityActionsDropDownMenu = DropdownMenu();
@@ -382,6 +387,7 @@ export default {
     cy.do(searchInput.fillIn(value));
     cy.expect(searchInput.has({ value }));
     cy.do(browseSearchAndFilterInput.choose(searchOption));
+    cy.expect(browseSearchAndFilterInput.has({ checkedOptionText: searchOption }));
     cy.expect(searchButton.is({ disabled: false }));
     cy.do(searchButton.click());
   },
@@ -546,6 +552,7 @@ export default {
       marcViewSection.absent(),
       SearchField({ id: 'textarea-authorities-search', value: searchValue }).absent(),
       selectField.has({ content: including('Keyword') }),
+      searchResults.find(HTML(including(emptyResultsMessage))).exists(),
     ]);
   },
 
@@ -647,12 +654,24 @@ export default {
   },
 
   downloadSelectedRecordWithRowIdx(checkBoxNumber = 0) {
+    cy.do(MultiColumnListRow({ index: checkBoxNumber }).find(checkboxSeletAuthorityRecord).click());
+    cy.do([actionsButton.click(), exportSelectedRecords.click()]);
+  },
+
+  checkSelectAuthorityRecordCheckbox(recordTitle) {
     cy.do(
-      MultiColumnListRow({ index: checkBoxNumber })
-        .find(Checkbox({ ariaLabel: 'Select Authority record' }))
+      ListRow({ content: including(recordTitle) })
+        .find(checkboxSeletAuthorityRecord)
         .click(),
     );
-    cy.do([actionsButton.click(), exportSelectedRecords.click()]);
+  },
+
+  checkSelectAuthorityRecordCheckboxChecked(recordTitle, isChecked = true) {
+    cy.expect(
+      ListRow({ content: including(recordTitle) })
+        .find(checkboxSeletAuthorityRecord)
+        .has({ checked: isChecked }),
+    );
   },
 
   selectAllRecords() {
@@ -876,6 +895,7 @@ export default {
 
   closeAuthoritySourceOption() {
     cy.do(sourceFileAccordion.find(Button({ icon: 'times' })).click());
+    cy.wait(1000);
   },
 
   checkResultList(records) {
@@ -1005,6 +1025,14 @@ export default {
       PaneHeader('MARC authority')
         .find(HTML(including(text)))
         .exists(),
+    );
+  },
+
+  verifyTextOfPaneHeaderMarcAuthorityAbsent(text) {
+    cy.expect(
+      PaneHeader('MARC authority')
+        .find(HTML(including(text)))
+        .absent(),
     );
   },
 
@@ -1545,6 +1573,31 @@ export default {
         if (record.authRefType === authRefType) {
           this.deleteViaAPI(record.id, true);
         }
+      });
+    });
+  },
+
+  createMarcAuthorityRecordViaApiByReadingFromMrkFile(
+    mrkFileName,
+    field008Values = default008FieldValues,
+  ) {
+    return new Promise((resolve) => {
+      FileManager.readFile(`cypress/fixtures/${mrkFileName}`).then((fileContent) => {
+        const parsedFromMrkFileFields = parseMrkFile(fileContent);
+        const tag008 = {
+          // 008 field values
+          tag: '008',
+          content: field008Values,
+        };
+        // add to the array of fields 008 field values
+        parsedFromMrkFileFields.fields.unshift(tag008);
+
+        cy.createMarcAuthorityViaAPI(
+          parsedFromMrkFileFields.leader,
+          parsedFromMrkFileFields.fields,
+        ).then((createdMarcAuthorityId) => {
+          resolve(createdMarcAuthorityId);
+        });
       });
     });
   },

@@ -111,14 +111,14 @@ describe('MARC', () => {
           QuickMarcEditor.continueWithSaveAndCheckNewInstanceCreated();
           InventoryInstance.viewSource();
           // Verify The "245" MARC field is displayed above the "100 field.
-          InventoryViewSource.rowEquals(13, expectedSourceText.row245);
-          InventoryViewSource.rowEquals(11, expectedSourceText.row100);
+          InventoryViewSource.rowEquals(12, expectedSourceText.row245);
+          InventoryViewSource.rowEquals(10, expectedSourceText.row100);
           // Verify edited "6XX" fields are displayed with updates user made.
-          InventoryViewSource.rowEquals(23, expectedSourceText.row660);
-          InventoryViewSource.rowEquals(22, expectedSourceText.row655primary);
-          InventoryViewSource.rowEquals(24, expectedSourceText.row655secondary);
+          InventoryViewSource.rowEquals(22, expectedSourceText.row660);
+          InventoryViewSource.rowEquals(21, expectedSourceText.row655primary);
+          InventoryViewSource.rowEquals(23, expectedSourceText.row655secondary);
           // Verify the created "800" field is displayed.
-          InventoryViewSource.rowEquals(25, expectedSourceText.row800);
+          InventoryViewSource.rowEquals(24, expectedSourceText.row800);
           // Verify there are no displayed editable "9XX" fields.
           InventoryViewSource.notContains(tags.tag906);
           InventoryViewSource.notContains(tags.tag925);

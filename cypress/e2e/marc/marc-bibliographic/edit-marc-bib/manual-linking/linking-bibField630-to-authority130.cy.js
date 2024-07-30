@@ -42,21 +42,21 @@ describe('MARC', () => {
 
         const createdRecordIDs = [];
         const bib630InitialFieldValues = [
-          23,
+          22,
           testData.tag630,
           '0',
           '7',
           '$a C375069 Marvel comics. $2 fast $0 (OCoLC)fst01373594 $v Periodicals. $z United States $w 830',
         ];
         const bib630UnlinkedFieldValues = [
-          23,
+          22,
           testData.tag630,
           '0',
           '7',
           '$a C375069 Marvel comics $t ComiCon $v Periodicals. $z United States $w 830 $0 80026955 $2 fast',
         ];
         const bib630LinkedFieldValues = [
-          23,
+          22,
           testData.tag630,
           '0',
           '7',
@@ -67,6 +67,10 @@ describe('MARC', () => {
         ];
 
         before('Creating user', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375069*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

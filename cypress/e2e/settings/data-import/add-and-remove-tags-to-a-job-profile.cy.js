@@ -1,9 +1,14 @@
 import uuid from 'uuid';
-import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import { JobProfiles as SettingsJobProfiles } from '../../../support/fragments/settings/dataImport';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -13,30 +18,48 @@ describe('Data Import', () => {
     const tag = 'important';
     const newTag = uuid();
     const calloutMessage = 'New tag created';
+    const mappingProfile = {
+      name: `C2331 autotest mapping profile ${getRandomPostfix()}`,
+    };
+    const actionProfile = {
+      name: `C2331 autotest action profile ${getRandomPostfix()}`,
+      action: 'CREATE',
+      folioRecordType: 'INSTANCE',
+    };
     const jobProfile = {
-      ...NewJobProfile.defaultJobProfile,
-      profileName: `C2331 autotest job profile.${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+      profileName: `C2331 autotest job profile${getRandomPostfix()}`,
     };
 
     before('Create test data and login', () => {
+      cy.getAdminToken();
+      NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile).then(
+        (mappingProfileResponse) => {
+          NewActionProfile.createActionProfileViaApi(
+            actionProfile,
+            mappingProfileResponse.body.id,
+          ).then((actionProfileResponse) => {
+            NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
+              jobProfile.profileName,
+              actionProfileResponse.body.id,
+            );
+          });
+        },
+      );
       cy.loginAsAdmin();
-      // create Job profile
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfile(jobProfile);
-      NewJobProfile.saveAndClose();
-      JobProfiles.closeJobProfile(jobProfile.profileName);
     });
 
     after('Delete test data', () => {
       cy.getAdminToken();
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
     });
 
     it(
       'C2331 Add tags to a job profile, then remove tags from it (folijet)',
       { tags: ['extendedPath', 'folijet', 'eurekaPhase1'] },
       () => {
+        cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.search(jobProfile.profileName);
         JobProfileView.addExistingTag(tag);
         JobProfileView.verifyAssignedTags(tag);

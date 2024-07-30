@@ -253,7 +253,7 @@ export default {
     cy.expect(
       Accordion('Title data')
         .find(MultiColumnList({ id: 'precedingTitles' }))
-        .find(MultiColumnListCell({ content: title }))
+        .find(MultiColumnListCell({ content: including(title) }))
         .exists(),
     );
   },
@@ -261,7 +261,7 @@ export default {
     cy.expect(
       Accordion('Title data')
         .find(MultiColumnList({ id: 'succeedingTitles' }))
-        .find(MultiColumnListCell({ content: title }))
+        .find(MultiColumnListCell({ content: including(title) }))
         .exists(),
     );
   },

@@ -63,7 +63,7 @@ describe('ui-invoices: test POL search plugin', () => {
     Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
       createdOrderNumber = poNumber;
     });
-
+    console.log(orderLine);
     cy.visit(TopMenu.invoicesPath);
   });
 

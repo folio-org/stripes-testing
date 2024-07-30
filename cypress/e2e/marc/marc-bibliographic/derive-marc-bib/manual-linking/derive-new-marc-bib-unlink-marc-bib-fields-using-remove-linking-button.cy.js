@@ -16,14 +16,14 @@ describe('MARC', () => {
       const testData = {
         tag700: '700',
         firstTag700Values: [
-          76,
+          75,
           '700',
           '1',
           '\\',
           '$a C366115 Sprouse, Chris $e artist. $0 1357871',
         ],
         secondTag700Values: [
-          77,
+          76,
           '700',
           '1',
           '\\',
@@ -55,12 +55,12 @@ describe('MARC', () => {
       ];
       const linkingTagAndValues = [
         {
-          rowIndex: 76,
+          rowIndex: 75,
           value: 'C366115 Sprouse, Chris',
           tag: 700,
         },
         {
-          rowIndex: 77,
+          rowIndex: 76,
           value: 'C366115 Martin, Laura (Comic book artist)',
           tag: 700,
         },
@@ -68,6 +68,10 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before(() => {
+        cy.getAdminToken();
+        // make sure there are no duplicate authority records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366115*');
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -152,8 +156,8 @@ describe('MARC', () => {
 
           InventoryInstance.goToEditMARCBiblRecord();
           QuickMarcEditor.waitLoading();
-          QuickMarcEditor.verifyIconsAfterUnlinking(72);
-          QuickMarcEditor.verifyIconsAfterUnlinking(73);
+          QuickMarcEditor.verifyIconsAfterUnlinking(75);
+          QuickMarcEditor.verifyIconsAfterUnlinking(76);
         },
       );
     });

@@ -4,27 +4,33 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import QueryModal, {
   usersFieldValues,
-  stringStoresUuidOperators,
+  STRING_STORES_UUID_OPERATORS,
   booleanOperators,
-  QUERY_OPERATIONS,
 } from '../../../support/fragments/bulk-edit/query-modal';
-import { patronGroupNames, patronGroupUuids } from '../../../support/constants';
 
 let user;
+const preferredContactTypeEmail = 'Mail (Primary Address)';
+const preferredContactTypeTextMessage = 'Text Message';
 
 describe('bulk-edit', () => {
   describe('query', () => {
     before('create test data', () => {
       cy.getAdminToken();
-      cy.createTempUser(
-        [
-          permissions.bulkEditUpdateRecords.gui,
-          permissions.uiUsersView.gui,
-          permissions.bulkEditQueryView.gui,
-        ],
-        patronGroupNames.UNDERGRAD,
-      ).then((userProperties) => {
+      cy.createTempUser([
+        permissions.bulkEditUpdateRecords.gui,
+        permissions.uiUsersView.gui,
+        permissions.bulkEditQueryView.gui,
+      ]).then((userProperties) => {
         user = userProperties;
+        cy.getUsers({ limit: 1, query: `username=${user.username}` }).then((users) => {
+          cy.updateUser({
+            ...users[0],
+            personal: {
+              ...users[0].personal,
+              preferredContactTypeId: '001',
+            },
+          });
+        });
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
@@ -38,7 +44,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C436741 Query builder - Search users that belong to a specific patron group and have "Active" status ("String stores UUID" and "Boolean" property types) (firebird)',
+      'C436741 Query builder - Search users that has preferred contact type and have "Active" status ("String stores UUID" and "Boolean" property types) ("String stores UUID" and "Boolean" property types) (firebird)',
       { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
@@ -46,44 +52,48 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
         QueryModal.verifyFieldsSortedAlphabetically();
-        QueryModal.selectField(usersFieldValues.patronGroup);
-        QueryModal.verifySelectedField(usersFieldValues.patronGroup);
-        QueryModal.verifyQueryAreaContent('(user_patron_group  )');
+        QueryModal.selectField(usersFieldValues.preferredContactType);
+        QueryModal.verifySelectedField(usersFieldValues.preferredContactType);
+        QueryModal.verifyQueryAreaContent('(users.preferred_contact_type  )');
         QueryModal.verifyOperatorColumn();
-        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-        QueryModal.verifyOperatorsList(stringStoresUuidOperators);
-        QueryModal.verifyQueryAreaContent('(user_patron_group == )');
+        QueryModal.selectOperator(STRING_STORES_UUID_OPERATORS.EQUAL);
+        QueryModal.verifyOperatorsList(STRING_STORES_UUID_OPERATORS);
+        QueryModal.verifyQueryAreaContent('(users.preferred_contact_type == )');
         QueryModal.verifyValueColumn();
-        QueryModal.chooseValueSelect(patronGroupNames.STAFF);
+        QueryModal.chooseValueSelect(preferredContactTypeEmail);
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
-        QueryModal.verifyQueryAreaContent(`(user_patron_group == "${patronGroupUuids.STAFF}")`);
-        QueryModal.selectOperator(QUERY_OPERATIONS.NOT_EQUAL);
+        QueryModal.verifyQueryAreaContent(
+          `(users.preferred_contact_type == "${preferredContactTypeEmail}")`,
+        );
+        QueryModal.selectOperator(STRING_STORES_UUID_OPERATORS.NOT_EQUAL);
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
-        QueryModal.verifyQueryAreaContent('(user_patron_group != )');
+        QueryModal.verifyQueryAreaContent('(users.preferred_contact_type != )');
         QueryModal.verifyValueColumn();
-        QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-        QueryModal.verifyQueryAreaContent('(user_patron_group in (""))');
+        QueryModal.selectOperator(STRING_STORES_UUID_OPERATORS.IN);
+        QueryModal.verifyQueryAreaContent('(users.preferred_contact_type in (""))');
         QueryModal.verifyValueColumn();
-        QueryModal.fillInValueMultiselect(patronGroupNames.STAFF);
-        QueryModal.verifyQueryAreaContent(`(user_patron_group in ("${patronGroupUuids.STAFF}"))`);
-        QueryModal.testQueryDisabled(false);
-        QueryModal.runQueryDisabled();
-        QueryModal.chooseFromValueMultiselect(patronGroupNames.FACULTY);
+        QueryModal.chooseFromValueMultiselect(preferredContactTypeEmail);
         QueryModal.verifyQueryAreaContent(
-          `(user_patron_group in ("${patronGroupUuids.STAFF}","${patronGroupUuids.FACULTY}"))`,
+          `(users.preferred_contact_type in ("${preferredContactTypeEmail}"))`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
-        QueryModal.removeValueFromMultiselect(patronGroupNames.STAFF);
-        QueryModal.removeValueFromMultiselect(patronGroupNames.FACULTY);
-        QueryModal.verifyQueryAreaContent('(user_patron_group in ())');
+        QueryModal.fillInValueMultiselect(preferredContactTypeTextMessage);
+        QueryModal.verifyQueryAreaContent(
+          `(users.preferred_contact_type in ("${preferredContactTypeEmail}","${preferredContactTypeTextMessage}"))`,
+        );
+        QueryModal.testQueryDisabled(false);
+        QueryModal.runQueryDisabled();
+        QueryModal.removeValueFromMultiselect(preferredContactTypeEmail);
+        QueryModal.removeValueFromMultiselect(preferredContactTypeTextMessage);
+        QueryModal.verifyQueryAreaContent('(users.preferred_contact_type in ())');
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
-        QueryModal.chooseFromValueMultiselect(patronGroupNames.UNDERGRAD);
+        QueryModal.chooseFromValueMultiselect(preferredContactTypeEmail);
         QueryModal.verifyQueryAreaContent(
-          `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}"))`,
+          `(users.preferred_contact_type in ("${preferredContactTypeEmail}"))`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
@@ -95,16 +105,16 @@ describe('bulk-edit', () => {
         QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
         QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, true);
         QueryModal.verifyQueryAreaContent(
-          `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (  )`,
+          `(users.preferred_contact_type in ("${preferredContactTypeEmail}")) AND (  )`,
         );
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.selectField(usersFieldValues.userActive, 1);
         QueryModal.verifySelectedField(usersFieldValues.userActive, 1);
         QueryModal.verifyOperatorsList(booleanOperators, 1);
-        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+        QueryModal.selectOperator(STRING_STORES_UUID_OPERATORS.EQUAL, 1);
         QueryModal.verifyQueryAreaContent(
-          `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (user_active == )`,
+          `(users.preferred_contact_type in ("${preferredContactTypeEmail}")) AND (users.active == )`,
         );
         QueryModal.verifyValueColumn();
         QueryModal.testQueryDisabled();
@@ -113,7 +123,7 @@ describe('bulk-edit', () => {
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.verifyQueryAreaContent(
-          `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (user_active == "true")`,
+          `(users.preferred_contact_type in ("${preferredContactTypeEmail}")) AND (users.active == "true")`,
         );
         QueryModal.addNewRow(1);
         QueryModal.verifyBooleanColumn(2);
@@ -126,9 +136,9 @@ describe('bulk-edit', () => {
         QueryModal.selectField(usersFieldValues.userActive, 2);
         QueryModal.verifySelectedField(usersFieldValues.userActive, 2);
         QueryModal.verifyOperatorsList(booleanOperators, 2);
-        QueryModal.selectOperator(QUERY_OPERATIONS.NOT_EQUAL, 2);
+        QueryModal.selectOperator(STRING_STORES_UUID_OPERATORS.NOT_EQUAL, 2);
         QueryModal.verifyQueryAreaContent(
-          `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (user_active == "true") AND (user_active != )`,
+          `(users.preferred_contact_type in ("${preferredContactTypeEmail}")) AND (users.active == "true") AND (users.active != )`,
         );
         QueryModal.verifyValueColumn();
         QueryModal.testQueryDisabled();
@@ -137,11 +147,11 @@ describe('bulk-edit', () => {
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.verifyQueryAreaContent(
-          `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (user_active == "true") AND (user_active != "false")`,
+          `(users.preferred_contact_type in ("${preferredContactTypeEmail}")) AND (users.active == "true") AND (users.active != "false")`,
         );
         QueryModal.clickGarbage(2);
         QueryModal.verifyQueryAreaContent(
-          `(user_patron_group in ("${patronGroupUuids.UNDERGRAD}")) AND (user_active == "true")`,
+          `(users.preferred_contact_type in ("${preferredContactTypeEmail}")) AND (users.active == "true")`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();

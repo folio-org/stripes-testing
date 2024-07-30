@@ -131,14 +131,43 @@ export default {
     cy.do([
       Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
       addPieceButton.click(),
-      addPieceModal.find(TextField('Display summary')).fillIn(displaySummary),
-      addPieceModal.find(TextField('Copy number')).fillIn(copyNumber),
-      addPieceModal.find(TextField('Enumeration')).fillIn(enumeration),
-      addPieceModal.find(TextField('Chronology')).fillIn(chronology),
-      addPieceModal.find(Checkbox('Create item')).click(),
-      addPieceModal.find(Button('Save & close')).click(),
+      TextField('Display summary').fillIn(displaySummary),
+      TextField('Copy number').fillIn(copyNumber),
+      TextField('Enumeration').fillIn(enumeration),
+      TextField('Chronology').fillIn(chronology),
+      Checkbox('Create item').click(),
+      Button('Save & close').click(),
     ]);
     InteractorsTools.checkCalloutMessage('The piece was successfully saved');
+  },
+
+  receiveDisplayOnHoldingPiece(displaySummary) {
+    cy.do([
+      editPieceModal.find(TextField('Display summary')).fillIn(displaySummary),
+      editPieceModal.find(Checkbox('Display on holding')).click(),
+    ]);
+    cy.expect(editPieceModal.find(Checkbox('Display to public')).exists());
+    this.openDropDownInEditPieceModal();
+    cy.do(Button('Quick receive').click());
+    cy.wait(1000);
+    InteractorsTools.checkCalloutMessage('The piece  was successfully received');
+  },
+
+  editDisplayOnHoldingAndAddDisplayToPublicPiece() {
+    cy.do(editPieceModal.find(Checkbox('Display on holding')).click());
+    cy.expect(editPieceModal.find(Checkbox('Display to public')).exists());
+    cy.do(editPieceModal.find(Checkbox('Display to public')).click());
+    cy.do(Button('Save & close').click());
+    cy.wait(1000);
+    InteractorsTools.checkCalloutMessage('The piece was successfully saved');
+  },
+
+  receiveWithoutDisplayOnHoldingPiece(displaySummary) {
+    cy.do(editPieceModal.find(TextField('Display summary')).fillIn(displaySummary));
+    this.openDropDownInEditPieceModal();
+    cy.do(Button('Quick receive').click());
+    cy.wait(1000);
+    InteractorsTools.checkCalloutMessage('The piece  was successfully received');
   },
 
   addPieceProcess: (caption, enumeration) => {
@@ -317,7 +346,7 @@ export default {
   },
 
   selectConnectedInEditPiece: () => {
-    cy.do(editPieceModal.find(Link('Connected')).click());
+    cy.do(Link('Connected').click());
   },
 
   receiveFromExpectedSection: () => {
@@ -349,7 +378,7 @@ export default {
   },
 
   openDropDownInEditPieceModal: () => {
-    cy.do(editPieceModal.find(Button({ dataTestID: 'dropdown-trigger-button' })).click());
+    cy.do(Button({ dataTestID: 'dropdown-trigger-button' }).click());
   },
 
   quickReceiveInEditPieceModal() {

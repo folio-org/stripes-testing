@@ -61,7 +61,7 @@ const transactionList = MultiColumnList({ id: 'transactions-list' });
 const budgetSummaryAcordion = Accordion('Budget summary');
 const budgetInformationAcordion = Accordion('Budget information');
 const fundingInformationMCList = MultiColumnList({ ariaRowCount: '7' });
-const financialActivityAndOveragesMCList = MultiColumnList({ ariaRowCount: '5' });
+const financialActivityAndOveragesMCList = MultiColumnList({ ariaRowCount: '6' });
 const resetButton = Button({ id: 'reset-funds-filters' });
 const addTransferModal = Modal({ id: 'add-transfer-modal' });
 const closeWithoutSavingButton = Button('Close without saving');
@@ -600,6 +600,7 @@ export default {
     amountEncumbered,
     amountAwaitingPayment,
     amountExpended,
+    amountCredited,
     amountUnavailable,
   ) => {
     cy.expect(budgetSummaryAcordion.exists());
@@ -631,10 +632,18 @@ export default {
         .exists(),
       financialActivityAndOveragesMCList
         .find(MultiColumnListRow({ indexRow: 'row-3' }))
-        .find(MultiColumnListCell({ content: 'Unavailable' }))
+        .find(MultiColumnListCell({ content: 'Credited' }))
         .exists(),
       financialActivityAndOveragesMCList
         .find(MultiColumnListRow({ indexRow: 'row-3' }))
+        .find(MultiColumnListCell({ content: amountCredited }))
+        .exists(),
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-4' }))
+        .find(MultiColumnListCell({ content: 'Unavailable' }))
+        .exists(),
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-4' }))
         .find(MultiColumnListCell({ content: amountUnavailable }))
         .exists(),
     ]);

@@ -69,8 +69,8 @@ export default {
   },
   fillSummaryProfileFields({ name }) {
     if (name) {
-      cy.do([summarySectionFields.name.focus(), summarySectionFields.name.fillIn(`"${name}"`)]);
-      cy.expect(summarySectionFields.name.has({ value: `"${name}"` }));
+      cy.do([summarySectionFields.name.focus(), summarySectionFields.name.fillIn(name)]);
+      cy.expect(summarySectionFields.name.has({ value: name }));
     }
   },
   fillDetailsProfileFields({ action, recordType }) {

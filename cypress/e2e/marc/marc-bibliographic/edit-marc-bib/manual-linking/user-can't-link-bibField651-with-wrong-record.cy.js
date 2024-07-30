@@ -92,6 +92,10 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
   const createdRecordIDs = [];
 
   before('Creating user and data', () => {
+    cy.getAdminToken();
+    // make sure there are no duplicate records in the system
+    MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380459*');
+
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

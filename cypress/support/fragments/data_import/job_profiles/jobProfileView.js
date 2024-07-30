@@ -38,6 +38,7 @@ export default {
     cy.wait(2000);
     cy.do(viewPane.find(actionsButton).click());
     cy.do(Button('Duplicate').click());
+    cy.wait(1000);
   },
   delete: () => {
     cy.do([
@@ -57,6 +58,7 @@ export default {
     cy.do(Accordion({ id: 'tag-accordion' }).clickHeader());
     cy.wait('@getTags');
     cy.expect(tagSelect.exists());
+    cy.wait(1000);
     cy.do(tagSelect.choose(tag));
   },
 
@@ -158,11 +160,11 @@ export default {
     waitLoading();
     if (numberOfProfiles === 0) {
       cy.get('[id*="branch-ROOT-MATCH"]').should('not.exist');
-      cy.get('[id^="accordion-match-ROOT-static"]').each(($element) => {
+      cy.get('[id^="accordion-match-ROOT-editable"]').each(($element) => {
         cy.wrap($element)
           .invoke('text')
           .then((text) => {
-            const initialText = text.slice(11);
+            const initialText = text.slice(11, 41);
             expect(initialText).to.equal('This section contains no items');
           });
       });

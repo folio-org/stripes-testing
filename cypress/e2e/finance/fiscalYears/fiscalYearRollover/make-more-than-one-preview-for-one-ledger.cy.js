@@ -195,7 +195,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         '$0.00',
         '$1,000.00',
       );
-      Funds.checkFinancialActivityAndOverages('$10.00', '$0.00', '$0.00', '$10.00');
+      Funds.checkFinancialActivityAndOverages('$10.00', '$0.00', '$0.00', '$0.00', '$10.00');
     },
   );
 });

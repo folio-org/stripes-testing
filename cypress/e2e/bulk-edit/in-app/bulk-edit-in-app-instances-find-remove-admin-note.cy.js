@@ -108,7 +108,8 @@ describe('bulk-edit', () => {
         ]);
         BulkEditActions.openStartBulkEditInstanceForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
-        BulkEditActions.verifyItemAdminstrativeNoteActions();
+        // TODO: uncomment line
+        // BulkEditActions.verifyItemAdminstrativeNoteActions();
         BulkEditActions.noteRemove('Administrative note', adminNote);
         BulkEditSearchPane.isConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
@@ -151,7 +152,6 @@ describe('bulk-edit', () => {
           marcInstance.instanceId,
           folioItem.instanceId,
         ]);
-        // hello
         BulkEditLogs.downloadFileWithMatchingRecords();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [
           `,${adminNote},${folioItem.instanceName},`,

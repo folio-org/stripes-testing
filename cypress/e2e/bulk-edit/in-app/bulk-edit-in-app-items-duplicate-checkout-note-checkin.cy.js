@@ -74,7 +74,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Check out notes', 'Check in notes');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Check out note', 'Check in note');
         BulkEditActions.openInAppStartBulkEditFrom();
 
         BulkEditActions.verifyItemOptions();
@@ -89,8 +89,8 @@ describe('bulk-edit', () => {
           notes.checkOutNote,
         ];
         const checkOut = [`${notes.checkOutNote} (staff only)`, notes.checkOutNote];
-        BulkEditActions.verifyChangesInAreYouSureForm('Check out notes', checkOut);
-        BulkEditActions.verifyChangesInAreYouSureForm('Check in notes', checkIn);
+        BulkEditActions.verifyChangesInAreYouSureForm('Check out note', checkOut);
+        BulkEditActions.verifyChangesInAreYouSureForm('Check in note', checkIn);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyChangedResults(item.barcode);
@@ -99,10 +99,10 @@ describe('bulk-edit', () => {
         ExportFile.verifyFileIncludes(changedRecordsFileName, [...checkIn, ...checkOut]);
 
         checkOut.forEach((value) => {
-          BulkEditSearchPane.verifyChangesUnderColumns('Check out notes', value);
+          BulkEditSearchPane.verifyChangesUnderColumns('Check out note', value);
         });
         checkIn.forEach((value) => {
-          BulkEditSearchPane.verifyChangesUnderColumns('Check in notes', value);
+          BulkEditSearchPane.verifyChangesUnderColumns('Check in note', value);
         });
 
         TopMenuNavigation.navigateToApp('Inventory');

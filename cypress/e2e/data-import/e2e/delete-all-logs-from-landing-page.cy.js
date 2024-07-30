@@ -10,7 +10,7 @@ import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe.skip('Data Import', () => {
+describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let user = null;
     const instanceIds = [];
@@ -64,7 +64,7 @@ describe.skip('Data Import', () => {
 
     it(
       'C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smokeFlaky', 'folijet'] },
       () => {
         // need to open file for this we find it
         Logs.openViewAllLogs();

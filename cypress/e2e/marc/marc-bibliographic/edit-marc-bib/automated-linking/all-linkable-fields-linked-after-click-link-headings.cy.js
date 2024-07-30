@@ -4,6 +4,7 @@ import InventoryInstance from '../../../../../support/fragments/inventory/invent
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
@@ -199,6 +200,9 @@ describe('MARC', () => {
 
         before('Creating user and data', () => {
           cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C387538*');
+
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -226,7 +230,7 @@ describe('MARC', () => {
           InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[0]);
           InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[1]);
           for (let i = 2; i < 22; i++) {
-            MarcAuthority.deleteViaAPI(createdRecordsIDs[i]);
+            MarcAuthority.deleteViaAPI(createdRecordsIDs[i], true);
           }
         });
 

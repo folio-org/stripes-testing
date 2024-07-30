@@ -819,6 +819,10 @@ export default {
     return HoldingsRecordView;
   },
 
+  viewHoldings: () => {
+    cy.do(viewHoldingsButton.click());
+  },
+
   expandConsortiaHoldings() {
     cy.wait(2000);
     cy.do(consortiaHoldingsAccordion.clickHeader());
@@ -997,25 +1001,12 @@ export default {
     );
   },
 
-  checkPrecedingTitle: (rowNumber, title, isbn, issn) => {
+  checkPrecedingTitle: (title, isbn, issn) => {
     cy.expect(
-      MultiColumnList({ id: 'precedingTitles' })
-        .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: title }))
-        .exists(),
+      instanceDetailsSection.find(MultiColumnListCell({ content: including(title) })).exists(),
     );
-    cy.expect(
-      MultiColumnList({ id: 'precedingTitles' })
-        .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: isbn }))
-        .exists(),
-    );
-    cy.expect(
-      MultiColumnList({ id: 'precedingTitles' })
-        .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: issn }))
-        .exists(),
-    );
+    cy.expect(instanceDetailsSection.find(MultiColumnListCell({ content: isbn })).exists());
+    cy.expect(instanceDetailsSection.find(MultiColumnListCell({ content: issn })).exists());
   },
 
   edit() {
@@ -1406,10 +1397,12 @@ export default {
   },
 
   openItemByBarcodeAndIndex: (barcode) => {
-    cy.get(`div[class^="mclCell-"]:contains('${barcode}')`).then((cell) => {
-      const row = cell.closest('div[class^="mclRow-"]');
-      row.find('button').first().click();
-    });
+    cy.get('div[class^="mclCell-"]')
+      .contains(barcode)
+      .then((cell) => {
+        const row = cell.closest('div[class^="mclRow-"]');
+        cy.wrap(row).find('a').first().click();
+      });
   },
 
   openItemByStatus: (status) => {

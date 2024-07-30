@@ -14,11 +14,11 @@ describe('MARC', () => {
     describe('plug-in MARC authority | Search', () => {
       const testData = {
         forC359206: {
-          lcControlNumberA: 'n  00000911',
-          lcControlNumberB: 'n  79125030',
+          lcControlNumberA: 'n  00000913',
+          lcControlNumberB: 'n  79125031',
           searchOption: 'Identifier (all)',
-          valueA: 'Erbil, H. Yıldırım',
-          valueB: 'Twain, Mark,',
+          valueA: 'C359206 Erbil, H. Yıldırım',
+          valueB: 'C359206 Twain, Mark,',
         },
         forC359228: {
           searchOption: 'Corporate/Conference name',
@@ -26,13 +26,13 @@ describe('MARC', () => {
           typeOfHeadingA: 'Corporate Name',
           typeOfHeadingB: 'Conference Name',
           all: '*',
-          title: 'Apple Academic Press',
+          title: 'C380567 Apple Academic Press',
         },
         forC359229: {
           searchOptionA: 'Geographic name',
           searchOptionB: 'Keyword',
-          valueA: 'Gulf Stream',
-          valueB: 'North',
+          valueA: 'C380568 Gulf Stream',
+          valueB: 'C380568 North',
           type: 'Authorized',
         },
         forC359230: {
@@ -47,7 +47,7 @@ describe('MARC', () => {
         },
         forC359231: {
           searchOption: 'Uniform title',
-          value: 'Marvel comics',
+          value: 'C380570 Marvel comics',
         },
       };
 
@@ -130,6 +130,15 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Creating user', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate authority records in the system
+
+        ['C359206*', 'C380565*', 'C380567*', 'C380568', 'C380569*', 'C380566*', 'C380570*'].forEach(
+          (title) => {
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+          },
+        );
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -139,7 +148,6 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.getAdminToken();
           DataImport.uploadFileViaApi(
             marcFiles[0].marc,
             marcFiles[0].fileName,
@@ -157,7 +165,7 @@ describe('MARC', () => {
         Users.deleteViaApi(testData.userProperties.userId);
         InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
         createdAuthorityIDs.forEach((id, index) => {
-          if (index) MarcAuthority.deleteViaAPI(id);
+          if (index) MarcAuthority.deleteViaAPI(id, true);
         });
       });
 
@@ -187,12 +195,12 @@ describe('MARC', () => {
           InventoryInstance.verifySelectMarcAuthorityModal();
           InventoryInstance.verifySearchAndFilterDisplay();
           InventoryInstance.verifySearchOptions();
-          InventoryInstance.fillInAndSearchResults('Starr, Lisa');
+          InventoryInstance.fillInAndSearchResults('C380565 Starr, Lisa');
           InventoryInstance.checkResultsListPaneHeader();
           InventoryInstance.checkSearchResultsTable();
           InventoryInstance.selectRecord();
-          InventoryInstance.checkRecordDetailPage('Starr, Lisa');
-          MarcAuthorities.checkFieldAndContentExistence('100', '$a Starr, Lisa');
+          InventoryInstance.checkRecordDetailPage('C380565 Starr, Lisa');
+          MarcAuthorities.checkFieldAndContentExistence('100', '$a C380565 Starr, Lisa');
           InventoryInstance.closeDetailsView();
           InventoryInstance.closeFindAuthorityModal();
         },

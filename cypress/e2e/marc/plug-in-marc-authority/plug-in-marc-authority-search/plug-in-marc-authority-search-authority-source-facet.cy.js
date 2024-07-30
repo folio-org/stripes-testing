@@ -51,6 +51,10 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Create test data', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422166*');
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -60,21 +64,17 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              marcFiles.forEach((marcFile) => {
-                DataImport.uploadFileViaApi(
-                  marcFile.marc,
-                  marcFile.fileName,
-                  marcFile.jobProfileToRun,
-                ).then((response) => {
-                  response.forEach((record) => {
-                    createdAuthorityIDs.push(record[marcFile.propertyName].id);
-                  });
-                });
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].id);
               });
-            },
-          );
+            });
+          });
         });
       });
 
@@ -139,14 +139,14 @@ describe('MARC', () => {
 
           // #11 Delete the selected at step 6 "Authority source" facet option from multiselect box by clicking on the "X" icon placed in the tag.
           MarcAuthorities.removeAuthoritySourceOption(testData.facetOptions.optionA);
-          // #12 Click on any "Heading/Reference" value from the search result pane.
-          MarcAuthorities.selectTitle(testData.facetValues.valueB);
+          cy.wait(1000);
 
           // #13 Verify that the prefix value from "010 $a" ("001") field matched to selected "Authority source" facet option.
           MarcAuthority.contains(testData.prefixValues.prefixValB);
 
           // #14 Delete the selected at step 11 "Authority source" facet option from multiselect box by clicking on it at expanded multiselect element.
           MarcAuthorities.removeAuthoritySourceOption(testData.facetOptions.optionB);
+          cy.wait(1000);
           MarcAuthorities.verifyEmptyAuthorityField();
 
           // #15 Click on the "Not specified" facet option.

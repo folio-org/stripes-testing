@@ -285,6 +285,7 @@ export default {
   },
   clickSaveButton({ orderLineCreated = false, orderLineUpdated = true } = {}) {
     cy.expect(saveButton.has({ disabled: false }));
+    cy.wait(3000);
     cy.do(saveButton.click());
 
     if (orderLineCreated) {

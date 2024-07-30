@@ -86,7 +86,7 @@ describe('MARC', () => {
         ];
 
         const bib830FieldValues = [
-          22,
+          23,
           testData.tag830,
           '\\',
           '0',
@@ -96,6 +96,10 @@ describe('MARC', () => {
         const createdRecordIDs = [];
 
         before('Creating user and data', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380468*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -158,6 +162,7 @@ describe('MARC', () => {
             linkValuesWithAuthoritySource.forEach((linkValue) => {
               MarcAuthorityBrowse.searchBy(linkValue.searchOption, linkValue.value);
               MarcAuthorities.chooseAuthoritySourceOption(linkValue.authoritySource);
+              MarcAuthorities.selectTitle(linkValue.value);
               MarcAuthorities.selectTitle(linkValue.value);
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.checkCallout(testData.errorMessage);

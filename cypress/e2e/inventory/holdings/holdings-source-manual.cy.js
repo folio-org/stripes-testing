@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import { including } from '@interactors/html';
 import { Permissions } from '../../../support/dictionary';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
@@ -8,14 +9,13 @@ import InventoryNewHoldings from '../../../support/fragments/inventory/inventory
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import { INSTANCE_RESOURCE_TYPE_IDS } from '../../../support/constants';
 
 const testData = {
   user: {},
-  item: {
-    instanceName: `Inventory Instance ${randomFourDigitNumber()}`,
-    itemBarcode: randomFourDigitNumber(),
-  },
+  instanceId: uuid(),
+  instanceTitle: `Inventory Instance ${getRandomPostfix()}`,
   permanentLocation: 'Annex (KU/CC/DI/A)',
   calloutMessage: 'has been successfully saved.',
 };
@@ -28,10 +28,13 @@ describe('Inventory', () => {
         Permissions.uiInventoryViewCreateEditHoldings.gui,
       ]).then((createdUserProperties) => {
         testData.user = createdUserProperties;
-        testData.item.instanceId = InventoryInstances.createInstanceViaApi(
-          testData.item.instanceName,
-          testData.item.itemBarcode,
-        );
+        cy.createInstance({
+          instance: {
+            instanceId: testData.instanceId,
+            instanceTypeId: INSTANCE_RESOURCE_TYPE_IDS.TEXT,
+            title: testData.instanceTitle,
+          },
+        });
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
@@ -41,7 +44,13 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.itemBarcode);
+      cy.getHoldings({
+        limit: 1,
+        query: `"instanceId"="${testData.instanceId}"`,
+      }).then((holdings) => {
+        cy.deleteHoldingRecordViaApi(holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+      });
       Users.deleteViaApi(testData.user.userId);
     });
 
@@ -49,12 +58,12 @@ describe('Inventory', () => {
       'C367932 Verify holdings source added holdings manually (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird', 'eurekaPhase1'] },
       () => {
-        InventoryInstances.searchByTitle(testData.item.instanceName);
-        InventorySearchAndFilter.verifyInstanceDisplayed(testData.item.instanceName);
+        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
         InventorySearchAndFilter.checkRowsCount(1);
 
         InventoryInstances.selectInstance();
-        InventoryInstance.verifyInstanceTitle(testData.item.instanceName);
+        InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
 
         InventoryInstance.pressAddHoldingsButton();
         HoldingsRecordEdit.changePermanentLocation(testData.permanentLocation);

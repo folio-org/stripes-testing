@@ -225,9 +225,12 @@ describe('MARC', () => {
             QuickMarcEditor.checkPaneheaderContains('Create a new MARC bib record');
             QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
             QuickMarcEditor.updateLDR06And07Positions();
+            cy.wait(500);
             newFields.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
+              cy.wait(500);
             });
+            cy.wait(1000);
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout(testData.calloutMessage);
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();

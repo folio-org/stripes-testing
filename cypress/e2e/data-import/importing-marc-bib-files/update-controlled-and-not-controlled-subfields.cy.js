@@ -214,7 +214,7 @@ describe('Data Import', () => {
         DataImport.editMarcFile(
           nameForExportedMarcFile,
           nameForUpdatedMarcFile,
-          ['aC375098 Chin, Staceyann,', 'eauthor', 'aC375098 The other side of paradise :'],
+          ['aC375098 Chin, Staceyann,', 'eauthor.', 'aC375098 The other side of paradise :'],
           [
             'aC375098 Chin, S-nn',
             'eProducereNarratorctestutest4prf',
@@ -260,7 +260,7 @@ describe('Data Import', () => {
           '$a C375098 Chin, Staceyann, $d 1972-',
           '$e Producer $e Narrator $u test',
           '$0 http://id.loc.gov/authorities/names/n2008052404',
-          '$4 prf.',
+          '$4 prf',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
           19,

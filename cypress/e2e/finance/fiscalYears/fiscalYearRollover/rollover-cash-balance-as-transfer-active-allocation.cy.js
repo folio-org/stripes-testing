@@ -253,7 +253,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Ledgers.selectFundInLedger(defaultFund.name);
       Funds.selectPlannedBudgetDetails();
       Funds.checkFundingInformation('$100.00', '$0.00', '$0.00', '$100.00', '$60.00', '$160.00');
-      Funds.checkFinancialActivityAndOverages('$0.00', '$0.00', '$0.00', '$0.00');
+      Funds.checkFinancialActivityAndOverages('$0.00', '$0.00', '$0.00', '$0.00', '$0.00');
     },
   );
 });
