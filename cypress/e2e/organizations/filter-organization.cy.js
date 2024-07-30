@@ -1,6 +1,8 @@
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
+import { Permissions } from '../../support/dictionary';
+import Users from '../../support/fragments/users/users';
 
 describe('ui-organizations: Filtering organization', () => {
   const organization = {
@@ -8,17 +10,26 @@ describe('ui-organizations: Filtering organization', () => {
     status: 'Pending',
     isVendor: false,
   };
+  let user;
 
   before(() => {
     cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
     });
-    cy.visit(TopMenu.organizationsPath);
+    cy.createTempUser([Permissions.uiOrganizationsView.gui]).then((userProperties) => {
+      user = userProperties;
+
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.organizationsPath,
+        waiter: Organizations.waitLoading,
+      });
+    });
   });
 
   after(() => {
     cy.getAdminToken();
+    Users.deleteViaApi(user.id);
     Organizations.deleteOrganizationViaApi(organization.id);
   });
   [

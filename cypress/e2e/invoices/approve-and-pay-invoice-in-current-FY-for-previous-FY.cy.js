@@ -135,7 +135,7 @@ describe('Invoices', () => {
       OrderLines.backToEditingOrder();
       Orders.openOrder();
     });
-
+    cy.logout();
     cy.createTempUser([
       permissions.uiInvoicesApproveInvoices.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
