@@ -226,9 +226,12 @@ export default {
   verifyElectronicAccess: (uri) => {
     cy.expect(electronicAccessAccordion.find(HTML(uri)).exists());
   },
-  verifyElectronicAccessByElementIndex: (index, content) => {
+  verifyElectronicAccessByElementIndex: (index, content, electronicAccessIndex = 0) => {
     cy.expect(
-      electronicAccessAccordion.find(MultiColumnListCell({ columnIndex: index, content })).exists(),
+      electronicAccessAccordion
+        .find(MultiColumnListRow({ index: electronicAccessIndex }))
+        .find(MultiColumnListCell({ columnIndex: index, content }))
+        .exists(),
     );
   },
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),

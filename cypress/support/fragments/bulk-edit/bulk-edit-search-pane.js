@@ -805,12 +805,12 @@ export default {
     });
   },
 
-  verifyElectronicAccessElementByIndex(index, expectedText, miniRowCount = 1) {
+  verifyElectronicAccessElementByIndex(elementIndex, expectedText, miniRowCount = 1) {
     cy.get('[class^="ElectronicAccess"]')
       .find('tr')
       .eq(miniRowCount)
       .find('td')
-      .eq(index)
+      .eq(elementIndex)
       .should('have.text', expectedText);
   },
 
