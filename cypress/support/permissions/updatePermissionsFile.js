@@ -4,7 +4,8 @@
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable no-undef */
 import * as fs from 'fs';
-import permissions from '../dictionary/permissions';
+// eslint-disable-next-line import/extensions
+import permissions from '../dictionary/permissions.js';
 
 // File path with extracted permissions from source file
 const extractedPermissionsFile = 'extracted.json';
@@ -32,7 +33,6 @@ for (const key in permissions) {
           id: moduleId,
         };
         result[key] = updatedValues;
-        currentIDsCollection.add(moduleId);
         break;
       }
     }

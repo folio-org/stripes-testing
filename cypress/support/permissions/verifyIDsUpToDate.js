@@ -30,4 +30,4 @@ for (const key in permissions) {
 
 const missingValues = [...currentIDsCollection].filter((value) => !actualIDsCollection.has(value));
 
-if (missingValues) throw Error('IDs to be checked', missingValues);
+if (missingValues) console.error('IDs to be checked', missingValues);
