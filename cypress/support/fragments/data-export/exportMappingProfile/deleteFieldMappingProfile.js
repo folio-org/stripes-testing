@@ -3,5 +3,6 @@ export default {
     method: 'DELETE',
     path: `data-export/mapping-profiles/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   }),
 };

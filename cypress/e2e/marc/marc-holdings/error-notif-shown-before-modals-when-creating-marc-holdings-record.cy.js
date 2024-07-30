@@ -1,4 +1,3 @@
-import { calloutTypes } from '../../../../interactors';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -12,7 +11,6 @@ import NewLocation from '../../../support/fragments/settings/tenant/locations/ne
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('MARC', () => {
@@ -102,12 +100,11 @@ describe('MARC', () => {
         QuickMarcEditor.checkContent('$a test2', 7);
         QuickMarcEditor.deleteFieldAndCheck(6, '040');
         QuickMarcEditor.pressSaveAndClose();
-        InteractorsTools.closeCalloutMessage();
+        QuickMarcEditor.checkErrorMessage(6, calloutTagMessage);
         QuickMarcEditor.waitLoading();
         QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);
         QuickMarcEditor.pressSaveAndClose();
-        InteractorsTools.checkCalloutMessage(calloutTagMessage, calloutTypes.error);
-        InteractorsTools.closeCalloutMessage();
+        QuickMarcEditor.checkErrorMessage(6, calloutTagMessage);
         QuickMarcEditor.waitLoading();
         QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);
         QuickMarcEditor.updateExistingTagName('0', '041');

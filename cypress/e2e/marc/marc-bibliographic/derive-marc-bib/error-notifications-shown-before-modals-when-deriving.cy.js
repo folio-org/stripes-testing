@@ -6,7 +6,6 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import InteractorsTools from '../../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC', () => {
@@ -98,7 +97,7 @@ describe('MARC', () => {
 
           // #8 Click "Save & close" button.
           QuickMarcEditor.pressSaveAndClose();
-          InteractorsTools.checkCalloutMessage(calloutLDRMessage, 'error');
+          QuickMarcEditor.checkErrorMessage(0, calloutLDRMessage);
 
           // #9 Input deleted value in "LDR" field.
           QuickMarcEditor.fillEmptyTextFieldOfField(
@@ -109,7 +108,7 @@ describe('MARC', () => {
 
           // #10 Click "Save & close" button.
           QuickMarcEditor.pressSaveAndClose();
-          InteractorsTools.checkCalloutMessage(calloutTagMessage, 'error');
+          QuickMarcEditor.checkErrorMessage(6, calloutTagMessage);
 
           // #11 Input original tag value for field updated in Step 5.
           QuickMarcEditor.updateExistingTagName('0', testData.tag022);
