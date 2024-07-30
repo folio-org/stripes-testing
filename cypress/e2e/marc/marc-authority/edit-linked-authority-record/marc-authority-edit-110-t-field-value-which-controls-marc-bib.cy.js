@@ -29,7 +29,7 @@ describe('MARC', () => {
           'Cannot change the saved MARC authority field 110 because it controls a bibliographic field(s). To change this 1XX, you must unlink all controlled bibliographic fields.',
         errorMessageAfterSaving: 'Record cannot be saved without 1XX field.',
         errorMessageAfterDeletingSubfield:
-          'Cannot remove $t from the $110 field because it controls a bibliographic field(s)',
+          'Cannot remove $t from the $110 field because it controls a bibliographic field(s) that requires  this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that requires $t to be controlled.',
       };
       const marcFiles = [
         {
@@ -131,48 +131,42 @@ describe('MARC', () => {
             testData.tagsForChanging[0],
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(8, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[0],
             testData.tagsForChanging[2],
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(8, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[2],
             testData.tagsForChanging[4],
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(8, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[4],
             testData.tagsForChanging[5],
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(8, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[5],
             testData.tagsForChanging[6],
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(8, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[6],
             testData.tagsForChanging[7],
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(8, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[7],
@@ -190,7 +184,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag110, testData.tag110changedContent);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.errorMessageAfterDeletingSubfield);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(8, testData.errorMessageAfterDeletingSubfield);
         },
       );
     });

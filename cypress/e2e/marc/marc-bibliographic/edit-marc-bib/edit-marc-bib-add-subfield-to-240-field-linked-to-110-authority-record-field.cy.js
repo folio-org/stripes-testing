@@ -147,8 +147,8 @@ describe('MARC', () => {
             if (!index) cy.wait(500);
             testData.linked240FieldValues[5] = fifthBoxValue;
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked240FieldValues);
-            QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-            QuickMarcEditor.closeCallout();
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            QuickMarcEditor.checkErrorMessage(17, testData.errorCalloutMessage);
           });
         },
       );

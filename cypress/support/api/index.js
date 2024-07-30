@@ -29,3 +29,4 @@ import './organizations';
 import './receiving';
 import './settings';
 import './edge';
+import './tenant';
