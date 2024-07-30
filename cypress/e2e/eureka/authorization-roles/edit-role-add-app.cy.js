@@ -74,7 +74,7 @@ describe('Eureka', () => {
         expectedRowCounts: {
           capabilitySets: {
             Data: 1,
-            Settings: 1,
+            Settings: 2,
           },
           capabilities: {
             Data: 2,
