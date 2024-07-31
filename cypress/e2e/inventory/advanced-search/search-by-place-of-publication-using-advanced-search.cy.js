@@ -71,11 +71,11 @@ describe('Inventory', () => {
     ];
 
     const searchResults = [
-      `C496183 Search by Place of publication (advanced search) - Instance 1	`,
-      `C496183 Search by Place of publication (advanced search) - Instance 2	`,
-      `C496183 Search by Place of publication (advanced search) - Instance 3	`,
-      `C496183 Search by Place of publication (advanced search) - Instance 4	`,
-      `C496183 Search by Place of publication (advanced search) - Instance 5	`,
+      'C496183 Search by Place of publication (advanced search) - Instance 1',
+      'C496183 Search by Place of publication (advanced search) - Instance 2',
+      'C496183 Search by Place of publication (advanced search) - Instance 3',
+      'C496183 Search by Place of publication (advanced search) - Instance 4',
+      'C496183 Search by Place of publication (advanced search) - Instance 5',
     ];
 
     const search = (index) => {
@@ -128,21 +128,21 @@ describe('Inventory', () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.selectSearchOption(testData.placeOfPublication);
         search(0);
-        InventorySearchAndFilter.verifySearchResult(searchResults[3]);
+        InventorySearchAndFilter.verifySearchResultIncludingValue(searchResults[3]);
         search(1);
-        InventorySearchAndFilter.verifySearchResult(searchResults[0]);
-        InventorySearchAndFilter.verifySearchResult(searchResults[1]);
-        InventorySearchAndFilter.verifySearchResult(searchResults[2]);
+        InventorySearchAndFilter.verifySearchResultIncludingValue(searchResults[0]);
+        InventorySearchAndFilter.verifySearchResultIncludingValue(searchResults[1]);
+        InventorySearchAndFilter.verifySearchResultIncludingValue(searchResults[2]);
         search(2);
-        InventorySearchAndFilter.verifySearchResult(searchResults[0]);
-        InventorySearchAndFilter.verifySearchResult(searchResults[1]);
-        InventorySearchAndFilter.verifySearchResult(searchResults[3]);
+        InventorySearchAndFilter.verifySearchResultIncludingValue(searchResults[0]);
+        InventorySearchAndFilter.verifySearchResultIncludingValue(searchResults[1]);
+        InventorySearchAndFilter.verifySearchResultIncludingValue(searchResults[3]);
         search(3);
-        InventorySearchAndFilter.verifySearchResult(searchResults[0]);
-        InventorySearchAndFilter.verifySearchResult(searchResults[1]);
-        InventorySearchAndFilter.verifySearchResult(searchResults[2]);
-        InventorySearchAndFilter.verifySearchResult(searchResults[3]);
-        InventorySearchAndFilter.verifySearchResult(searchResults[4]);
+        InventorySearchAndFilter.verifySearchResultIncludingValue(searchResults[0]);
+        InventorySearchAndFilter.verifySearchResultIncludingValue(searchResults[1]);
+        InventorySearchAndFilter.verifySearchResultIncludingValue(searchResults[2]);
+        InventorySearchAndFilter.verifySearchResultIncludingValue(searchResults[3]);
+        InventorySearchAndFilter.verifySearchResultIncludingValue(searchResults[4]);
 
         InventoryInstances.clickAdvSearchButton();
         searchDataWithOperator.forEach((data) => {
@@ -155,9 +155,9 @@ describe('Inventory', () => {
           );
         });
         InventoryInstances.clickSearchBtnInAdvSearchModal();
-        InventorySearchAndFilter.verifySearchResult(searchResults[0]);
-        InventorySearchAndFilter.verifySearchResult(searchResults[3]);
-        InventorySearchAndFilter.verifySearchResult(searchResults[4]);
+        InventorySearchAndFilter.verifySearchResultIncludingValue(searchResults[0]);
+        InventorySearchAndFilter.verifySearchResultIncludingValue(searchResults[3]);
+        InventorySearchAndFilter.verifySearchResultIncludingValue(searchResults[4]);
       },
     );
   });
