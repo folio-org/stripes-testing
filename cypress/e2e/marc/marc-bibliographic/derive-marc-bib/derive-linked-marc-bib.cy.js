@@ -143,7 +143,7 @@ describe('MARC', () => {
 
       it(
         'C375994 Add controllable subfields to multiple linked fields in "MARC bib" record when deriving record (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPathFlaky', 'spitfire'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
