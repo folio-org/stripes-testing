@@ -134,7 +134,7 @@ describe('lists', () => {
 
     it(
       'C411834 Refresh list: Cancel Refresh - more than 500 records (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPathFlaky', 'corsair'] },
       () => {
         Lists.openNewListPane();
         Lists.setName(listData.name);
