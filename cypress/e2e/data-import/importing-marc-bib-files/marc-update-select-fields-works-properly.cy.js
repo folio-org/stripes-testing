@@ -103,7 +103,7 @@ describe.skip('Data Import', () => {
     // skip until FAT-5907 will be reviewed
     it(
       'C17019 Check that MARC Update select fields works properly (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPathBroken', 'folijet'] },
       () => {
         cy.getAdminToken();
         DataImport.uploadFileViaApi(

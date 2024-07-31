@@ -37,7 +37,7 @@ describe('eHoldings', () => {
             waiter: EHoldingsTitlesSearch.waitLoading,
           });
           EHoldingSearch.switchToPackages();
-          EHoldingsPackagesSearch.byName('Airiti eBooks');
+          EHoldingsPackagesSearch.byName('Examstutor');
           EHoldingsPackages.openPackage();
           cy.wait(3000);
           EHoldingsPackage.addToHoldings();
@@ -48,6 +48,7 @@ describe('eHoldings', () => {
           EHoldingsPackage.checkEmptyTitlesList();
           // reset test data
           EHoldingsPackage.removeFromHoldings();
+          cy.wait(3000);
         });
       },
     );

@@ -117,6 +117,7 @@ describe('Data Import', () => {
         NewJobProfile.linkMatchProfileForSubMatches(
           collectionOfMatchProfiles[3].matchProfile.profileName,
         );
+        NewJobProfile.linkActionProfileForMatches('Default - Create instance');
         NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[1].matchProfile.profileName, 1);
         NewJobProfile.waitLoading();
         NewJobProfile.linkMatchProfileForMatches(
@@ -127,6 +128,7 @@ describe('Data Import', () => {
         NewJobProfile.linkMatchProfileForSubMatches(
           collectionOfMatchProfiles[2].matchProfile.profileName,
         );
+        NewJobProfile.linkActionProfileForMatches('Default - Create instance');
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
         JobProfiles.checkCalloutMessage(calloutMessage);

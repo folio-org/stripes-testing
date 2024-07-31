@@ -8,7 +8,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe.skip('Data Import', () => {
+describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let userId;
     const filePathForUpload = 'oneMarcBib.mrc';
@@ -29,7 +29,7 @@ describe.skip('Data Import', () => {
 
     it(
       'C6707 Import a bunch of MARC files at once (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPathFlaky', 'folijet'] },
       () => {
         [
           {

@@ -111,7 +111,7 @@ describe('Inventory', () => {
 
     it(
       'C451637 Search by "Contributor" field using "All" search option. (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventoryInstances.searchInstancesWithOption(testData.allSearchOption, query);
@@ -184,7 +184,7 @@ describe('Inventory', () => {
 
     it(
       'C451638 Search by "Contributor" field using "All" search option in "Advanced search" modal (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire'] },
       () => {
         advSearchParameters.forEach((paramSet, index) => {
           InventoryInstances.clickAdvSearchButton();

@@ -278,6 +278,7 @@ export default {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `data-import-profiles/mappingProfiles/${profileId}`,
+      failOnStatusCode: false,
     });
   },
   deleteMappingProfileByNameViaApi(profileName) {
