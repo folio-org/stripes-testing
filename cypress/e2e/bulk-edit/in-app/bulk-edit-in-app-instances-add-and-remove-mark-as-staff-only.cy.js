@@ -296,8 +296,8 @@ describe('bulk-edit', () => {
         });
 
         cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByTitle(marcFields[245]);
-        InventoryInstances.selectInstance();
+        InventorySearchAndFilter.byKeywords(`${randomNumberForTitles} Test Instance notes`);
+        InventoryInstances.selectInstance(1);
         InventoryInstance.waitLoading();
         notesToCheck = [
           { rowIndex: 0, staffOnly: 'No', noteType: 'Action note', noteText: marcFields[583] },
