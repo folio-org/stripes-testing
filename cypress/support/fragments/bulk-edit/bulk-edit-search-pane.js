@@ -670,6 +670,7 @@ export default {
           cy.do(DropdownMenu().find(Checkbox(name)).click());
         }
       });
+      this.verifyResultColumnTitlesDoNotInclude(name);
     });
   },
 
