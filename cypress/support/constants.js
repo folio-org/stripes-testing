@@ -38,6 +38,7 @@ export const LOST_ITEM_FEES_POLICY_NAMES = {
 export const LOAN_TYPE_NAMES = {
   CAN_CIRCULATE: 'Can circulate',
   COURSE_RESERVES: 'Course reserves',
+  SELECTED: 'Selected',
 };
 
 export const MATERIAL_TYPE_NAMES = {
