@@ -1080,8 +1080,4 @@ export default {
         .click(),
     );
   },
-
-  verifyActionButtonDisabled(isDisabled = true) {
-    cy.expect(actionsBtn.has({ disabled: isDisabled }));
-  },
 };

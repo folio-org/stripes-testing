@@ -29,11 +29,6 @@ const instance = {
   itemHrids: [],
 };
 const callNumber = 'R11.A38\\';
-const columnName = 'Holdings (Location, Call number)';
-const identifier = 'Item UUIDs';
-const newPermanentLoanType = 'Reading room';
-const headersInCsvToCheck =
-  'Item UUID,"Instance (Title, Publisher, Publication date)","Holdings (Location, Call number)"';
 const itemUUIDsFileName = `itemUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${itemUUIDsFileName}`;
 const previewFileName = `*-Updates-Preview-${itemUUIDsFileName}`;
@@ -149,32 +144,45 @@ describe('bulk-edit', () => {
       'C446017 Verify "Holdings (Location, Call number)" column can be selected for item records (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
+        const identifier = 'Item UUIDs';
+
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(identifier);
         BulkEditSearchPane.verifyAfterChoosingIdentifier(identifier);
 
         BulkEditSearchPane.uploadFile(itemUUIDsFileName);
-        BulkEditSearchPane.checkForUploading(itemUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditSearchPane.verifyMatchedResults(...instance.itemHrids);
         BulkEditActions.openActions();
 
+        const columnName = 'Holdings (Location, Call number)';
+
         BulkEditSearchPane.changeShowColumnCheckbox(columnName);
         BulkEditActions.openActions();
         BulkEditSearchPane.verifyResultColumnTitles(columnName);
 
-        BulkEditSearchPane.verifyResultsUnderColumns(
-          columnName,
+        const holdingsLocationCallNumber = [
           `${instance.defaultLocation.name} > `,
-        );
-        BulkEditSearchPane.verifyResultsUnderColumns(
-          columnName,
           `${instance.defaultLocation.name} > ${callNumber}`,
-        );
+        ];
+
+        holdingsLocationCallNumber.forEach((holdingLocationCallNumber, rowIndex) => {
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreview(
+            columnName,
+            holdingLocationCallNumber,
+            rowIndex,
+          );
+        });
+
+        const headersInCsvToCheck =
+          'Item UUID,"Instance (Title, Publisher, Publication date)","Holdings (Location, Call number)"';
 
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [headersInCsvToCheck]);
+        BulkEditFiles.verifyCSVFileRowsValueIncludes(matchedRecordsFileName, instance.itemIds);
+
+        const newPermanentLoanType = 'Reading room';
 
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.fillPermanentLoanType(newPermanentLoanType);
@@ -188,12 +196,16 @@ describe('bulk-edit', () => {
           );
         });
 
-        BulkEditActions.verifyChangesInAreYouSureForm(columnName, [
-          `${instance.defaultLocation.name} > `,
-          `${instance.defaultLocation.name} > ${callNumber}`,
-        ]);
+        holdingsLocationCallNumber.forEach((holdingLocationCallNumber, rowIndex) => {
+          BulkEditActions.verifyChangesInAreYouSureFormByRow(
+            columnName,
+            [holdingLocationCallNumber],
+            rowIndex,
+          );
+        });
 
         BulkEditActions.downloadPreview();
+        BulkEditFiles.verifyCSVFileRowsValueIncludes(matchedRecordsFileName, instance.itemIds);
         BulkEditFiles.verifyCSVFileRowsValueIncludes(previewFileName, [
           newPermanentLoanType,
           newPermanentLoanType,
@@ -203,12 +215,14 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditActions.verifySuccessBanner(2);
         BulkEditSearchPane.verifyLocationChanges(2, newPermanentLoanType);
-        BulkEditActions.verifyActionButtonDisabled(false);
 
-        BulkEditSearchPane.verifyChangedResults(
-          `${instance.defaultLocation.name} > `,
-          `${instance.defaultLocation.name} > ${callNumber}`,
-        );
+        holdingsLocationCallNumber.forEach((holdingLocationCallNumber, rowIndex) => {
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreview(
+            columnName,
+            holdingLocationCallNumber,
+            rowIndex,
+          );
+        });
 
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
