@@ -126,31 +126,27 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingTagName(testData.tag151, testData.tag100);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.cannotChangeCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag100, testData.tag110);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.cannotChangeCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag110, testData.tag111);
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.cannotChangeCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag111, testData.tag130);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.cannotChangeCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag130, testData.tag150);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.cannotChangeCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag150, testData.tag155);
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.cannotChangeCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag155, testData.tag152);
           // Todo: the below two lines should be uncommented once https://issues.folio.org/browse/UIQM-526 is resolved.
@@ -166,8 +162,8 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkButtonsEnabled();
 
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.cannotAddCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(9, testData.cannotAddCalloutMessage);
         },
       );
     });

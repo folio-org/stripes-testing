@@ -1,21 +1,31 @@
-import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import { JobProfiles as SettingsJobProfiles } from '../../../support/fragments/settings/dataImport';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Settings', () => {
     let user;
+    const mappingProfile = {
+      name: `C2333 autotest mapping profile_${getRandomPostfix()}`,
+    };
+    const actionProfile = {
+      name: `C2333 instance action profile${getRandomPostfix()}`,
+      action: 'CREATE',
+      folioRecordType: 'INSTANCE',
+    };
     const jobProfile = {
-      ...NewJobProfile.defaultJobProfile,
-      profileName: `C2333 autotest job profile ${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+      profileName: `C2333 autotest job profile.${getRandomPostfix()}`,
     };
     const description = `Description for job profile.${getRandomPostfix()}`;
     const jobProfileName = `C2333 newJobProfileName.${getRandomPostfix()}`;
@@ -23,16 +33,26 @@ describe('Data Import', () => {
     const successCalloutMessage = `The job profile "${jobProfileName}" was successfully created`;
 
     before('Create test data and login', () => {
+      cy.getAdminToken();
+      NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile).then(
+        (mappingProfileResponse) => {
+          NewActionProfile.createActionProfileViaApi(
+            actionProfile,
+            mappingProfileResponse.body.id,
+          ).then((actionProfileResponse) => {
+            NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
+              jobProfile.profileName,
+              actionProfileResponse.body.id,
+            );
+          });
+        },
+      );
+
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
         cy.login(userProperties.username, userProperties.password);
-        // create Job profile
         cy.visit(SettingsMenu.jobProfilePath);
-        JobProfiles.createJobProfile(jobProfile);
-        NewJobProfile.saveAndClose();
-        InteractorsTools.closeCalloutMessage();
-        JobProfiles.closeJobProfile(jobProfile.profileName);
       });
     });
 
@@ -40,6 +60,8 @@ describe('Data Import', () => {
       cy.getAdminToken().then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         Users.deleteViaApi(user.userId);
       });
     });

@@ -820,3 +820,5 @@ export const LOAN_TYPE_IDS = {
 export const MATERIAL_TYPE_IDS = {
   DVD: '5ee11d91-f7e8-481d-b079-65d708582ccc',
 };
+
+export const DEFAULT_LOCALE_STRING = '{"locale":"en-US","timezone":"UTC","currency":"USD"}';

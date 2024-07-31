@@ -17,7 +17,7 @@ describe('MARC', () => {
       tag: '610',
       marcValueForBrowse: 'C375269Radio "Vaticana". Hrvatski program',
       marcValueForSearch: 'C375269Radio Vaticana. Hrvatski program',
-      rowIndex: 19,
+      rowIndex: 18,
       searchOption: 'Corporate/Conference name',
       instanceTitle:
         'Radio Vaticana e ordinamento italiano : atti del seminario di studi, Roma 26 aprile 2004 / a cura di Giuseppe Dalla Torre, Cesare Mirabelli.',
