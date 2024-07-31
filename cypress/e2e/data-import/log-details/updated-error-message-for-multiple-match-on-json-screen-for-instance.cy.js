@@ -123,6 +123,69 @@ describe('Data Import', () => {
         });
       });
 
+      cy.loginAsAdmin();
+      // craete match profile
+      cy.visit(SettingsMenu.matchProfilePath);
+      MatchProfiles.createMatchProfile(matchProfile);
+      MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
+
+      // create mapping profile
+      cy.visit(SettingsMenu.mappingProfilePath);
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillSummaryInMappingProfile(
+        collectionOfMappingAndActionProfiles[0].mappingProfile,
+      );
+      NewFieldMappingProfile.addFieldMappingsForMarc();
+      NewFieldMappingProfile.fillModificationSectionWithAdd(
+        collectionOfMappingAndActionProfiles[0].mappingProfile.modifications,
+      );
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(
+        collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+      );
+      FieldMappingProfiles.checkMappingProfilePresented(
+        collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+      );
+      FieldMappingProfileView.closeViewMode(
+        collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+      );
+
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillSummaryInMappingProfile(
+        collectionOfMappingAndActionProfiles[1].mappingProfile,
+      );
+      NewFieldMappingProfile.addAdministrativeNote(
+        collectionOfMappingAndActionProfiles[1].mappingProfile.adminNote,
+        9,
+      );
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(
+        collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+      );
+      FieldMappingProfiles.checkMappingProfilePresented(
+        collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+      );
+
+      // create action profiles
+      collectionOfMappingAndActionProfiles.forEach((profile) => {
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+        ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+      });
+
+      // create job profile
+      cy.visit(SettingsMenu.jobProfilePath);
+      JobProfiles.createJobProfile(jobProfile);
+      NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
+      NewJobProfile.linkMatchProfile(matchProfile.profileName);
+      NewJobProfile.linkActionProfileForMatches(
+        collectionOfMappingAndActionProfiles[1].actionProfile.name,
+      );
+      NewJobProfile.saveAndClose();
+      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+    });
+
+    beforeEach('Create user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -133,71 +196,11 @@ describe('Data Import', () => {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
-        // craete match profile
-        cy.visit(SettingsMenu.matchProfilePath);
-        MatchProfiles.createMatchProfile(matchProfile);
-        MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
-
-        // create mapping profile
-        cy.visit(SettingsMenu.mappingProfilePath);
-        FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(
-          collectionOfMappingAndActionProfiles[0].mappingProfile,
-        );
-        NewFieldMappingProfile.addFieldMappingsForMarc();
-        NewFieldMappingProfile.fillModificationSectionWithAdd(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.modifications,
-        );
-        NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewMode(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
-        );
-        FieldMappingProfiles.checkMappingProfilePresented(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
-        );
-        FieldMappingProfileView.closeViewMode(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
-        );
-
-        FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(
-          collectionOfMappingAndActionProfiles[1].mappingProfile,
-        );
-        NewFieldMappingProfile.addAdministrativeNote(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.adminNote,
-          9,
-        );
-        NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewMode(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
-        );
-        FieldMappingProfiles.checkMappingProfilePresented(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
-        );
-
-        // create action profiles
-        collectionOfMappingAndActionProfiles.forEach((profile) => {
-          cy.visit(SettingsMenu.actionProfilePath);
-          ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-        });
-
-        // create job profile
-        cy.visit(SettingsMenu.jobProfilePath);
-        JobProfiles.createJobProfile(jobProfile);
-        NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
-        NewJobProfile.linkMatchProfile(matchProfile.profileName);
-        NewJobProfile.linkActionProfileForMatches(
-          collectionOfMappingAndActionProfiles[1].actionProfile.name,
-        );
-        NewJobProfile.saveAndClose();
-        JobProfiles.checkJobProfilePresented(jobProfile.profileName);
       });
     });
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
-        Users.deleteViaApi(testData.user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
@@ -206,6 +209,12 @@ describe('Data Import', () => {
             profile.mappingProfile.name,
           );
         });
+      });
+    });
+
+    afterEach('Delete user', () => {
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(testData.user.userId);
         testData.instanceIds.forEach((id) => {
           InventoryInstance.deleteInstanceViaApi(id);
         });
