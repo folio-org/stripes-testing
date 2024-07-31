@@ -71,11 +71,11 @@ describe('Inventory', () => {
     ];
 
     const searchResults = [
-      'C496183 Search by Place of publication (advanced search) - Instance 1	',
-      'C496183 Search by Place of publication (advanced search) - Instance 2	',
-      'C496183 Search by Place of publication (advanced search) - Instance 3	',
-      'C496183 Search by Place of publication (advanced search) - Instance 4	',
-      'C496183 Search by Place of publication (advanced search) - Instance 5	',
+      `C496183 Search by Place of publication (advanced search) - Instance 1	`,
+      `C496183 Search by Place of publication (advanced search) - Instance 2	`,
+      `C496183 Search by Place of publication (advanced search) - Instance 3	`,
+      `C496183 Search by Place of publication (advanced search) - Instance 4	`,
+      `C496183 Search by Place of publication (advanced search) - Instance 5	`,
     ];
 
     const search = (index) => {
