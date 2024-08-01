@@ -221,8 +221,9 @@ describe('Data Import', () => {
         NewJobProfile.saveAndClose();
         cy.wait(2000);
         JobProfileView.duplicate();
-        NewJobProfile.unlinkProfile(1);
         NewJobProfile.fillProfileName(jobProfileNameForChanging);
+        NewJobProfile.unlinkProfile(1);
+        cy.wait(5000);
         NewJobProfile.saveAndClose();
         JobProfileView.verifyCalloutMessage(calloutMessage);
         JobProfileView.verifyJobProfileOpened();
