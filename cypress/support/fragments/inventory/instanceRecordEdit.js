@@ -275,6 +275,13 @@ export default {
     clickAddStatisticalCode();
     chooseStatisticalCode(code);
   },
+  clickAddNoteButton(noteType, note) {
+    cy.do([
+      Accordion('Instance notes').find(Button('Add note')).click(),
+      Select({ name: 'notes[0].instanceNoteTypeId' }).choose(noteType),
+      TextArea({ name: 'notes[0].note' }).fillIn(note),
+    ]);
+  },
   verifySuccessfulMessage: () => {
     InteractorsTools.checkCalloutMessage(
       matching(new RegExp(InstanceStates.instanceSavedSuccessfully)),
