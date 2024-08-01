@@ -13,8 +13,10 @@ import {
 } from '../../../../../../interactors';
 
 const oclcWorldcatPane = Pane('✓ OCLC WorldCat');
-const targetProfileName = Pane('Z39.50 target profiles');
+const targetProfilesListPane = Pane('Z39.50 target profiles');
 const newPane = Pane('New');
+const newButton = Button('+ New');
+const editButton = Button('Edit');
 
 const defaultCreateInstanceJobProfileName =
   'Inventory Single Record - Default Create Instance (d0ebb7b0-2f0f-11eb-adc1-0242ac120002)';
@@ -29,13 +31,13 @@ const defaultUpdateInstanceJobProfileId = '91f9b8d6-d80e-4727-9783-73fb53e3c786'
 const defaultCopyCatProfileId = 'f26df83c-aa25-40b6-876e-96852c3d4fd4';
 
 function edit(profileName) {
-  cy.do(Pane(profileName).find(Button('Edit')).click());
+  cy.do(Pane(profileName).find(editButton).click());
 }
 function save() {
   cy.do(Pane('OCLC WorldCat').find(Button('Save & close')).click());
 }
 function create() {
-  cy.do(targetProfileName.find(Button('+ New')).click());
+  cy.do(targetProfilesListPane.find(newButton).click());
   cy.expect(newPane.exists());
 }
 
@@ -178,7 +180,7 @@ export default {
   openTargetProfile: (id = defaultCopyCatProfileId) => {
     cy.wait(1500);
     cy.do(
-      targetProfileName
+      targetProfilesListPane
         .find(Link({ href: including(`/settings/inventory/targetProfiles/${id}`) }))
         .click(),
     );
@@ -197,7 +199,7 @@ export default {
 
   checkIsOclcWorldCatIsChanged: (auth) => cy.expect(oclcWorldcatPane.find(KeyValue({ value: auth }))),
 
-  verifyTargetProfileFormOpened: () => cy.expect(targetProfileName.exists()),
+  verifyTargetProfilesListDisplayed: () => cy.expect(targetProfilesListPane.exists()),
 
   verifyTargetProfileForm() {
     cy.expect([
@@ -269,6 +271,20 @@ export default {
       Pane(name).absent(),
       Pane(`✕ ${newName}`).exists(),
       Callout({ textContent: including('updated') }).exists(),
+    ]);
+  },
+
+  verifyNewButtonState: () => {
+    cy.expect([
+      targetProfilesListPane.find(newButton).exists(),
+      targetProfilesListPane.find(newButton).has({ disabled: false }),
+    ]);
+  },
+
+  verifyEditButtonState: (paneName) => {
+    cy.expect([
+      Pane(`✓ ${paneName}`).find(editButton).exists(),
+      Pane(`✓ ${paneName}`).find(editButton).has({ disabled: false }),
     ]);
   },
 

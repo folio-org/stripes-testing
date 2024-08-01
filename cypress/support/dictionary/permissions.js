@@ -307,7 +307,7 @@ export default {
   },
   uiTenantSettingsServicePointsCRUD: {
     internal: 'ui-tenant-settings.settings.servicepoints',
-    gui: 'Settings (tenant): Can create, edit and remove service points',
+    gui: 'Settings (tenant): Can create and edit service points',
   },
   // DataImport
   dataImportUploadAll: {

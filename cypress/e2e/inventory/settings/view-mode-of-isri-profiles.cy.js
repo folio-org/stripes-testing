@@ -228,7 +228,7 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.targetProfilesPath);
-        Z3950TargetProfiles.verifyTargetProfileFormOpened();
+        Z3950TargetProfiles.verifyTargetProfilesListDisplayed();
         Z3950TargetProfiles.openTargetProfile(profileId);
         Z3950TargetProfiles.verifyTargetProfileForm();
         Z3950TargetProfiles.verifyCreateInstanceJobProfileList(targetProfileName);

@@ -198,6 +198,7 @@ export default {
 
   waitFileIsImported: (fileName) => {
     const newFileName = fileName.replace(/\.mrc$/i, '');
+    cy.wait(5000);
     cy.expect(runningAccordion.find(HTML(including(newFileName))).absent(), getLongDelay(240000));
     cy.expect(
       MultiColumnList({ id: 'job-logs-list' })

@@ -35,10 +35,15 @@ describe('Data Import', () => {
       profileName: `402365 autotest match profile_${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '001',
+        in1: '',
+        in2: '',
+        subfield: '',
       },
       matchCriterion: 'Exactly matches',
+      recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
       existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       instanceOption: NewMatchProfile.optionsList.instanceHrid,
+      existingMatchExpressionValue: 'instance.hrid',
     };
     const jobProfile = {
       name: `402365 autotest job profile_${getRandomPostfix()}`,
