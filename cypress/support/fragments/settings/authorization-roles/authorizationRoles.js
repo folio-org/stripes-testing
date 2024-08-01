@@ -415,17 +415,16 @@ export default {
     const targetCheckbox = resultsPaneInAssignModal.find(
       MultiColumnListRow(including(username), { isContainer: false }).find(Checkbox()),
     );
-    cy.do([
-      searchInputInAssignModal.fillIn(username),
-      searchButtonInAssignModal.click(),
-      targetCheckbox.click(),
-    ]);
+    cy.do([searchInputInAssignModal.fillIn(username), searchButtonInAssignModal.click()]);
+    cy.wait(2000);
+    cy.do(targetCheckbox.click());
     cy.expect([
       targetCheckbox.has({ checked: isSelected }),
       resultsPaneInAssignModal
         .find(MultiColumnList({ columns: assignModalResultColumns }))
         .exists(),
     ]);
+    cy.wait(2000);
   },
 
   clickSaveInAssignModal: () => {
