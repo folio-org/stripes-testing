@@ -23,6 +23,7 @@ describe('Inventory', () => {
       StatisticalCodes.createViaApi().then((resp) => {
         testData.statisticalCode = `ARL (Collection stats):    ${resp.code} - ${resp.name}`;
         testData.statisticalCodeUI = resp.name;
+        testData.statisticalCodeId = resp.id;
       });
       InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
         testData.instance = instanceData;
@@ -47,6 +48,7 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+      StatisticalCodes.deleteViaApi(testData.statisticalCodeId);
     });
 
     it(

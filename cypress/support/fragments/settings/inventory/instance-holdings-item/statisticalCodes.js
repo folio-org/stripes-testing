@@ -46,6 +46,7 @@ export default {
       method: 'DELETE',
       path: `statistical-codes/${id}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
 
