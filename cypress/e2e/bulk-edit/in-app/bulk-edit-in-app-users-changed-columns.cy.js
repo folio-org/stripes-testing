@@ -3,7 +3,6 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import UsersCard from '../../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
@@ -12,8 +11,6 @@ import ExportFile from '../../../support/fragments/data-export/exportFile';
 
 let user;
 const futureDate = DateTools.getFutureWeekDateObj();
-const futureDatewithDashes = DateTools.getFormattedDate({ date: futureDate });
-const futureDatewithSlashes = DateTools.getFormattedDateWithSlashes({ date: futureDate });
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${userBarcodesFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${userBarcodesFileName}`;
@@ -52,7 +49,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C430212 Verify updated properties columns appear on "Are you sure?" form and on Confirmation screen - users (firebird)',
+      'C430212 Verify only changed properties columns appear on "Are you sure?" form and on Confirmation screen - users (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
@@ -70,30 +67,30 @@ describe('bulk-edit', () => {
         BulkEditActions.addNewBulkEditFilterString();
         const newPatronGroup = 'faculty';
         BulkEditActions.fillPatronGroup('faculty (Faculty Member)', 2);
+        BulkEditActions.deleteRow(1);
+        BulkEditActions.deleteRow(0);
         BulkEditActions.confirmChanges();
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Email', newEmail);
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Expiration date', futureDatewithSlashes);
+        BulkEditSearchPane.verifyAreYouSureColumnTitlesDoNotInclude('Email');
+        BulkEditSearchPane.verifyAreYouSureColumnTitlesDoNotInclude('Expiration date');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Patron group', newPatronGroup);
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,,${newEmail},,,,,002,,,${futureDatewithDashes}`,
+          `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,,test@folio.org,,,,,002,,,,`,
         ]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Email', newEmail);
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Expiration date', futureDatewithSlashes);
+        BulkEditSearchPane.verifyChangedColumnTitlesDoNotInclude('Email');
+        BulkEditSearchPane.verifyChangedColumnTitlesDoNotInclude('Expiration date');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Patron group', newPatronGroup);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,,${newEmail},,,,,002,,,${futureDatewithDashes}`,
+          `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,,test@folio.org,,,,,002,,,,`,
         ]);
+
         cy.visit(TopMenu.usersPath);
         UsersSearchPane.searchByUsername(user.username);
         Users.verifyPatronGroupOnUserDetailsPane(newPatronGroup);
-        UsersCard.verifyExpirationDate(futureDate);
-        UsersCard.openContactInfo();
-        UsersCard.verifyEmail(newEmail);
       },
     );
   });
