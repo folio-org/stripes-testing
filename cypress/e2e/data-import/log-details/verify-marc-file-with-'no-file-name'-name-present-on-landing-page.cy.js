@@ -43,7 +43,11 @@ describe('Data Import', () => {
           `${testData.userProperties.firstName} ${testData.userProperties.lastName}`,
           testData.marcFileName,
         );
-        Logs.checkJobStatus(testData.marcFileName, JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatusByUser(
+          testData.marcFileName,
+          `${testData.userProperties.firstName} ${testData.userProperties.lastName}`,
+          JOB_STATUS_NAMES.COMPLETED,
+        );
       },
     );
   });
