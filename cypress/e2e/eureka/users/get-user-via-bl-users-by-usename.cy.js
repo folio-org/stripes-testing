@@ -14,8 +14,8 @@ describe('Eureka', () => {
         },
       },
     };
-    const userWithoutKeycloak = JSON.parse(JSON.stringify(testData.userBody));
-    const userWithKeycloak = JSON.parse(JSON.stringify(testData.userBody));
+    const userWithoutKeycloak = { ...testData.userBody };
+    const userWithKeycloak = { ...testData.userBody };
     userWithoutKeycloak.username = `usernokc${getRandomPostfix()}`;
     userWithKeycloak.username = `userkc${getRandomPostfix()}`;
 

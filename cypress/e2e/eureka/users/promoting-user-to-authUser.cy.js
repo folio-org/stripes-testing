@@ -16,9 +16,9 @@ describe('Eureka', () => {
       },
       password: 'password',
     };
-    const userA = JSON.parse(JSON.stringify(testData.userBody));
-    const userB = JSON.parse(JSON.stringify(testData.userBody));
-    const userC = JSON.parse(JSON.stringify(testData.userBody));
+    const userA = { ...testData.userBody };
+    const userB = { ...testData.userBody };
+    const userC = { ...testData.userBody };
     userA.username = `userac451631${getRandomPostfix()}`;
     userC.username = `usercc451632${getRandomPostfix()}`;
 
