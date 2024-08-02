@@ -356,10 +356,10 @@ export default {
   },
 
   verifyLogStatus(runByUsername, content) {
-    cy.do(
+    cy.expect(
       ListRow({ text: including(runByUsername) })
         .find(MultiColumnListCell({ content }))
-        .click(),
+        .exists(),
     );
   },
 
@@ -434,6 +434,10 @@ export default {
 
   verifyLogsRowActionWhenCompletedWithErrorsWithoutModification() {
     cy.expect([triggerBtn.exists(), errorsEncounteredBtn.exists()]);
+  },
+
+  verifyLogsRowActionWhenRunQuery() {
+    cy.expect([queryIdentifiersBtn.exists(), matchingRecordsBtn.exists()]);
   },
 
   waitingFileDownload() {

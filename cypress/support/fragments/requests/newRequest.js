@@ -237,6 +237,11 @@ export default {
     cy.expect(requestInfoSection.find(HTML(patronGroupName)).exists());
   },
 
+  verifyRequesterInformationWithBarcode: (userName) => {
+    cy.expect(requestInfoSection.find(Link(including(userName))).exists());
+    cy.expect(requestInfoSection.find(HTML(including('-'))).exists());
+  },
+
   enterRequestAndPatron(patron) {
     cy.do([
       TextField({ id: 'requestExpirationDate' }).fillIn(dateTools.getCurrentDate()),
