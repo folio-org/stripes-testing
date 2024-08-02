@@ -69,17 +69,21 @@ Cypress.Commands.add('getCapabilitySetsApi', (limit = 1000) => {
   return cy.get('@capabSets');
 });
 
-Cypress.Commands.add('addCapabilitiesToNewUserApi', (userId, capabilityIds) => {
-  cy.okapiRequest({
-    method: 'POST',
-    path: 'users/capabilities',
-    body: {
-      userId,
-      capabilityIds: [...capabilityIds],
-    },
-    isDefaultSearchParamsRequired: false,
-  });
-});
+Cypress.Commands.add(
+  'addCapabilitiesToNewUserApi',
+  (userId, capabilityIds, ignoreErrors = false) => {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'users/capabilities',
+      body: {
+        userId,
+        capabilityIds: [...capabilityIds],
+      },
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
+    });
+  },
+);
 
 Cypress.Commands.add('addCapabilitySetsToNewUserApi', (userId, capabilitySetIds) => {
   cy.okapiRequest({
