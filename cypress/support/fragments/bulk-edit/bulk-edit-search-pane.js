@@ -826,4 +826,16 @@ export default {
   verifyRowHasEmptyElectronicAccess(index) {
     cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
   },
+
+  getNumberMatchedRecordsFromPaneHeader() {
+    return cy
+      .get('[class^=paneSub]')
+      .should('contain.text', 'records match')
+      .invoke('text')
+      .then((textContent) => {
+        const numberOfRecords = parseInt(textContent, 10);
+
+        return numberOfRecords;
+      });
+  },
 };
