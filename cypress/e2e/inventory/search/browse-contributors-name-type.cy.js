@@ -39,7 +39,7 @@ describe('Inventory', () => {
 
     it(
       'C353644 Apply "Name Type" filter to the browse result list (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathBroken', 'spitfire'] },
       () => {
         BrowseContributors.clickBrowseBtn();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
