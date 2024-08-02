@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -15,10 +16,13 @@ describe('Eureka', () => {
         },
       },
       password: 'password',
+      notFoundErrorMsg: 'Not Found',
+      noUsernameErrorMsg: 'User without username cannot be created in Keycloak',
+      randomUuid: uuid(),
     };
-    const userA = JSON.parse(JSON.stringify(testData.userBody));
-    const userB = JSON.parse(JSON.stringify(testData.userBody));
-    const userC = JSON.parse(JSON.stringify(testData.userBody));
+    const userA = { ...testData.userBody };
+    const userB = { ...testData.userBody };
+    const userC = { ...testData.userBody };
     userA.username = `userac451631${getRandomPostfix()}`;
     userC.username = `usercc451632${getRandomPostfix()}`;
 
@@ -63,17 +67,24 @@ describe('Eureka', () => {
       { tags: ['criticalPath', 'eureka'] },
       () => {
         cy.getAdminToken();
-        cy.checkIfUserHasKeycloakApi(testData.userAId).then((statusCode) => {
-          expect(statusCode).to.eq(404);
+        cy.checkIfUserHasKeycloakApi(testData.userAId).then(({ status, body }) => {
+          expect(status).to.eq(404);
+          expect(body.errors[0].message).to.eq(testData.notFoundErrorMsg);
         });
-        cy.checkIfUserHasKeycloakApi(testData.userBId).then((statusCode) => {
-          expect(statusCode).to.eq(404);
+        cy.checkIfUserHasKeycloakApi(testData.userBId).then(({ status, body }) => {
+          expect(status).to.eq(404);
+          expect(body.errors[0].message).to.eq(testData.notFoundErrorMsg);
         });
-        cy.promoteUserToKeycloakApi(testData.userBId, true).then((statusCode) => {
-          expect(statusCode).to.eq(400);
+        cy.promoteUserToKeycloakApi(testData.userBId, true).then(({ status, body }) => {
+          expect(status).to.eq(400);
+          expect(body.errors[0].message).to.eq(testData.noUsernameErrorMsg);
         });
-        cy.promoteUserToKeycloakApi(testData.userAId).then((statusCode) => {
-          expect(statusCode).to.eq(201);
+        cy.promoteUserToKeycloakApi(testData.randomUuid, true).then(({ status, body }) => {
+          expect(status).to.eq(404);
+          expect(body.errors[0].message).to.eq(testData.notFoundErrorMsg);
+        });
+        cy.promoteUserToKeycloakApi(testData.userAId).then(({ status }) => {
+          expect(status).to.eq(201);
           cy.addCapabilitiesToNewUserApi(testData.userAId, testData.capabIds);
           cy.setUserPassword({
             username: userA.username,
@@ -89,11 +100,11 @@ describe('Eureka', () => {
       { tags: ['criticalPath', 'eureka'] },
       () => {
         cy.getAdminToken();
-        cy.checkIfUserHasKeycloakApi(testData.userCId).then((statusCode) => {
-          expect(statusCode).to.eq(204);
+        cy.checkIfUserHasKeycloakApi(testData.userCId).then(({ status }) => {
+          expect(status).to.eq(204);
         });
-        cy.promoteUserToKeycloakApi(testData.userCId).then((statusCode) => {
-          expect(statusCode).to.eq(204);
+        cy.promoteUserToKeycloakApi(testData.userCId).then(({ status }) => {
+          expect(status).to.eq(204);
           cy.addCapabilitiesToNewUserApi(testData.userCId, testData.capabIds);
           cy.getCapabilitiesForUserApi(testData.userCId).then((response) => {
             expect(response.status).to.eq(200);

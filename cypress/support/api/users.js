@@ -389,8 +389,8 @@ Cypress.Commands.add('checkIfUserHasKeycloakApi', (userId, ignoreErrors = true) 
     path: `users-keycloak/auth-users/${userId}`,
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: !ignoreErrors,
-  }).then(({ status }) => {
-    return status;
+  }).then((response) => {
+    return response;
   });
 });
 
@@ -400,8 +400,8 @@ Cypress.Commands.add('promoteUserToKeycloakApi', (userId, ignoreErrors = false) 
     path: `users-keycloak/auth-users/${userId}`,
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: !ignoreErrors,
-  }).then(({ status }) => {
-    return status;
+  }).then((response) => {
+    return response;
   });
 });
 
