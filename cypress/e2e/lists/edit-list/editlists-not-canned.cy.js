@@ -130,6 +130,7 @@ describe('lists', () => {
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
       Lists.resetAllFilters();
+      Lists.selectInactiveLists();
       Lists.openNewListPane();
       Lists.setName(listData.name);
       Lists.setDescription(listData.name);
@@ -147,6 +148,9 @@ describe('lists', () => {
       Lists.saveList();
       cy.contains(`List ${listData.name} saved.`);
       cy.contains(`${listData.name} is active. Refresh ${listData.name} to see list contents`);
+      Lists.closeListDetailsPane();
+      cy.wait(2000);
+      cy.contains(listData.name).click();
     });
   });
 });

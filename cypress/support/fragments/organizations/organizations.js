@@ -206,6 +206,7 @@ export default {
   },
 
   selectPendingStatus: () => {
+    cy.wait(3000);
     cy.do(Checkbox('Pending').click());
   },
 
@@ -435,6 +436,7 @@ export default {
   },
 
   selectNoInIsVendor: () => {
+    cy.wait(3000);
     cy.do([Button({ id: 'accordion-toggle-button-isVendor' }).click(), Checkbox('No').click()]);
   },
 
@@ -453,6 +455,7 @@ export default {
     cy.do(PaneHeader({ id: 'paneHeaderintegration-view' }).find(timesButton).click());
   },
   selectCountryFilter: () => {
+    cy.wait(3000);
     cy.do([
       Button({ id: 'accordion-toggle-button-plugin-country-filter' }).click(),
       Button({ id: 'addresses-selection' }).click(),
@@ -461,6 +464,7 @@ export default {
   },
 
   selectLanguageFilter: () => {
+    cy.wait(3000);
     cy.do([
       Button({ id: 'accordion-toggle-button-plugin-language-filter' }).click(),
       Button({ id: 'language-selection' }).click(),
@@ -469,6 +473,7 @@ export default {
   },
 
   selectCashInPaymentMethod: () => {
+    cy.wait(3000);
     cy.do([
       Button({ id: 'accordion-toggle-button-paymentMethod' }).click(),
       Checkbox('Cash').click(),

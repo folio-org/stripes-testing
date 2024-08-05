@@ -34,7 +34,7 @@ describe('Organizations', () => {
 
   it(
     'C423632 A user without  privileged donor information permission cannot view privileged donor information when create organization record (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPathFlaky', 'thunderjet'] },
     () => {
       Organizations.newOrganization();
       Organizations.selectDonorCheckbox();

@@ -27,6 +27,7 @@ const addClassificationButton = classificationSection.find(Button('Add classific
 const actionsButton = Button('Actions');
 const identifierAccordion = Accordion('Identifier');
 const contributorAccordion = Accordion('Contributor');
+const subjectAccordion = Accordion('Subject');
 const contributorButton = Button('Add contributor');
 const deleteButton = Button({ icon: 'trash' });
 const supressFromDiscoveryCheckbox = Checkbox({ name: 'discoverySuppress' });
@@ -42,6 +43,7 @@ const childInstanceFieldSet = FieldSet({ id: 'clickable-add-child-instance' });
 const fieldSetRelationSelect = Select({ content: including('Select type') });
 const findInstanceButton = Button({ id: 'find-instance-trigger' });
 const deleteItemButton = Button({ ariaLabel: 'Delete this item' });
+const subjectField = TextField({ name: 'subjects[0].value' });
 
 const checkboxes = {
   'Suppress from discovery': supressFromDiscoveryCheckbox,
@@ -171,6 +173,16 @@ export default {
     InventoryInstanceModal.searchByTitle(precedingTitle);
     InventoryInstanceModal.selectInstance();
   },
+  addSubject: (subject) => {
+    cy.do([subjectAccordion.find(Button('Add subject')).click(), subjectField.fillIn(subject)]);
+  },
+  changeSubject: (subject) => {
+    cy.do(subjectField.fillIn(subject));
+  },
+  deleteSubject: () => {
+    cy.do(subjectAccordion.find(Button({ icon: 'trash' })).click());
+    cy.wait(1000);
+  },
   selectNatureOfContent(value) {
     cy.do(Select('Nature of content term').choose(value));
   },
@@ -262,6 +274,13 @@ export default {
   addStatisticalCode: (code) => {
     clickAddStatisticalCode();
     chooseStatisticalCode(code);
+  },
+  clickAddNoteButton(noteType, note) {
+    cy.do([
+      Accordion('Instance notes').find(Button('Add note')).click(),
+      Select({ name: 'notes[0].instanceNoteTypeId' }).choose(noteType),
+      TextArea({ name: 'notes[0].note' }).fillIn(note),
+    ]);
   },
   verifySuccessfulMessage: () => {
     InteractorsTools.checkCalloutMessage(

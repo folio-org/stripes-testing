@@ -28,9 +28,10 @@ const actionsButton = Button('Actions');
 const viewSourceButton = Button({ id: 'clickable-view-source' });
 const instanceAdministrativeNote = MultiColumnList({ id: 'administrative-note-list' });
 const instanceNote = MultiColumnList({ id: 'list-instance-notes-0' });
+const listClassifications = MultiColumnList({ id: 'list-classifications' });
 const electronicAccessAccordion = Accordion('Electronic access');
 const classificationAccordion = Accordion('Classification');
-const listClassifications = MultiColumnList({ id: 'list-classifications' });
+const subjectAccordion = Accordion('Subject');
 const descriptiveDataAccordion = Accordion('Descriptive data');
 const adminDataAccordion = Accordion('Administrative data');
 const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
@@ -274,6 +275,8 @@ export default {
     cy.do(Button('View holdings').click());
     cy.expect(actionsButton.exists());
   },
+
+  openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
 
   duplicate: () => {
     cy.do([rootSection.find(actionsButton).click(), Button({ id: 'copy-instance' }).click()]);
@@ -547,5 +550,19 @@ export default {
         cy.get('[role="gridcell"]').eq(1).should('contain', noteText);
       });
     });
+  },
+
+  verifyInstanceSubject: (indexRow, indexColumn, value) => {
+    cy.expect(
+      subjectAccordion
+        .find(MultiColumnList({ id: 'list-subject' }))
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(MultiColumnListCell({ columnIndex: indexColumn }))
+        .has({ content: value }),
+    );
+  },
+
+  verifyInstanceSubjectAbsent: () => {
+    cy.expect(subjectAccordion.find(HTML('The list contains no items')).exists());
   },
 };
