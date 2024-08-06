@@ -822,3 +822,13 @@ export const MATERIAL_TYPE_IDS = {
 };
 
 export const DEFAULT_LOCALE_STRING = '{"locale":"en-US","timezone":"UTC","currency":"USD"}';
+
+export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
+  INVENTORY_HOLDINGS: {
+    HOLDINGS_UUID: 'Holdings UUID',
+    ADMINISTRATIVE_NOTE: 'Administrative note',
+    ELECTRONIC_BOOKPLATE_NOTE: 'Electronic bookplate note',
+    NOTE: 'Note',
+    BINDING_NOTE: 'Binding note',
+  },
+};

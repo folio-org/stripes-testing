@@ -316,4 +316,12 @@ export default {
       Section({ id: 'receiving-history-accordion' }).find(MultiColumnListCell(record)).absent(),
     );
   },
+
+  checkNotesByType(row, header, value) {
+    cy.expect(
+      MultiColumnList({ id: `list-holdings-notes-${row}` })
+        .find(MultiColumnListCell().has({ column: header, content: value }))
+        .exists(),
+    );
+  },
 };
