@@ -11,7 +11,7 @@ describe('fse-my-profile - UI', () => {
   });
 
   it(
-    'TC195470 - verify that change password page is displayed',
+    `TC195470 - verify that change password page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['fse', 'ui', 'myProfile'] },
     () => {
       cy.visit(SettingsMenu.myProfilePath);
