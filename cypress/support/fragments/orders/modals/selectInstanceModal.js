@@ -149,8 +149,16 @@ export default {
   checkResultsListEmpty() {
     cy.expect(resultsList.absent());
   },
-  checkNoRecordsFound() {
-    cy.expect(selectInstanceModal.find(HTML(including('No results found for'))).exists());
+  checkNoRecordsFound(headingReference) {
+    cy.expect(
+      selectInstanceModal
+        .find(
+          HTML(
+            `No results found for "${headingReference}". Please check your spelling and filters.`,
+          ),
+        )
+        .exists(),
+    );
   },
   verifyInstanceSearchOptionsInOrder() {
     cy.wrap(searchOptionSelect.allOptionsText()).should((arrayOfOptions) => {

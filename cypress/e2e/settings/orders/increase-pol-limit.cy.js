@@ -80,6 +80,7 @@ describe('orders: Settings', () => {
       path: SettingsMenu.ordersPurchaseOrderLinesLimit,
       waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
     });
+    SettingsOrders.setPurchaseOrderLinesLimit(3);
     SettingsOrders.setPurchaseOrderLinesLimit(1);
     Orders.deleteOrderViaApi(order.id);
 
