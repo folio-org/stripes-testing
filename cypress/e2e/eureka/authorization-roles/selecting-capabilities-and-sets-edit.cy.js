@@ -1,4 +1,4 @@
-// import Users from '../../../support/fragments/users/users';
+import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
@@ -89,44 +89,41 @@ describe('Eureka', () => {
         (capab, index) => index > 2,
       );
 
-      // TO DO: uncomment code for running under test user when evrk2 is rebuilt
-      // const capabSetsForTestUser = [
-      //   { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-      //   { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-      //   { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
-      // ];
+      const capabSetsForTestUser = [
+        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
+        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
+        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+      ];
 
       before('Create user, data', () => {
-        // cy.createTempUser([]).then((createdUserProperties) => {
-        //   testData.user = createdUserProperties;
-        //   cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsForTestUser);
-        // if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
-        cy.getAdminToken();
-        cy.createAuthorizationRoleApi(testData.roleName, testData.roleDescription).then((role) => {
-          testData.roleId = role.id;
-          capabilitiesInSetSelected.forEach((capability) => {
-            capability.type = capability.table;
-            cy.getCapabilityIdViaApi(capability).then((capabId) => {
-              testData.capabIds.push(capabId);
-            });
-          });
-          testData.additionalCapabilities.forEach((capability) => {
-            capability.type = capability.table;
-            cy.getCapabilityIdViaApi(capability).then((capabId) => {
-              testData.capabIds.push(capabId);
-            });
-          });
+        cy.createTempUser([]).then((createdUserProperties) => {
+          testData.user = createdUserProperties;
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsForTestUser);
+          if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
+          cy.getAdminToken();
+          cy.createAuthorizationRoleApi(testData.roleName, testData.roleDescription).then(
+            (role) => {
+              testData.roleId = role.id;
+              capabilitiesInSetSelected.forEach((capability) => {
+                capability.type = capability.table;
+                cy.getCapabilityIdViaApi(capability).then((capabId) => {
+                  testData.capabIds.push(capabId);
+                });
+              });
+              testData.additionalCapabilities.forEach((capability) => {
+                capability.type = capability.table;
+                cy.getCapabilityIdViaApi(capability).then((capabId) => {
+                  testData.capabIds.push(capabId);
+                });
+              });
+            },
+          );
         });
       });
-      // });
 
       before('Assign capabilities, login', () => {
         cy.addCapabilitiesToNewRoleApi(testData.roleId, testData.capabIds);
-        // cy.login(testData.user.username, testData.user.password, {
-        //   path: TopMenu.settingsAuthorizationRoles,
-        //   waiter: AuthorizationRoles.waitContentLoading,
-        // });
-        cy.loginAsAdmin({
+        cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.settingsAuthorizationRoles,
           waiter: AuthorizationRoles.waitContentLoading,
         });
@@ -134,7 +131,7 @@ describe('Eureka', () => {
 
       after('Delete user, data', () => {
         cy.getAdminToken();
-        // Users.deleteViaApi(testData.user.userId);
+        Users.deleteViaApi(testData.user.userId);
         cy.deleteCapabilitiesFromRoleApi(testData.roleId);
         cy.deleteAuthorizationRoleApi(testData.roleId);
       });
@@ -145,11 +142,6 @@ describe('Eureka', () => {
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
-          AuthorizationRoles.openForEdit();
-
-          // TO DO: remove this workaround after https://folio-org.atlassian.net/browse/UIROLES-104 is fixed
-          AuthorizationRoles.closeRoleEditView();
-          AuthorizationRoles.verifyRoleViewPane(testData.roleName);
           AuthorizationRoles.openForEdit();
 
           AuthorizationRoles.fillRoleNameDescription(testData.updatedRoleName);
