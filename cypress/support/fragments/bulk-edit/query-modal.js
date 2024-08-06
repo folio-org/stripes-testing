@@ -35,6 +35,7 @@ export const instanceFieldValues = {
 export const itemFieldValues = {
   instanceId: 'Instances — Instance UUID',
   itemStatus: 'Items — Status',
+  itemUuid: 'Items — Item UUID',
   holdingsId: 'Holdings — UUID',
   temporaryLocation: 'Temporary location — Name',
 };

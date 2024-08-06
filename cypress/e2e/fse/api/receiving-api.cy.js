@@ -6,9 +6,13 @@ describe('fse-receiving', () => {
     cy.allure().logCommandSteps();
   });
 
-  it('TC - Get by order status', { tags: ['sanity', 'fse', 'api', 'receiving'] }, () => {
-    cy.getReceivingTitlesByOrderStatus('Pending').then((response) => {
-      cy.expect(response.status).to.eq(200);
-    });
-  });
+  it(
+    `TC - Get by order status for ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['sanity', 'fse', 'api', 'receiving'] },
+    () => {
+      cy.getReceivingTitlesByOrderStatus('Pending').then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
 });

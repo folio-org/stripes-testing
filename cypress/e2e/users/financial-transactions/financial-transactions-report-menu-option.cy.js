@@ -5,6 +5,7 @@ import FinancialTransactionDetailReportModal from '../../../support/fragments/us
 import UsersSearchResultsPane from '../../../support/fragments/users/usersSearchResultsPane';
 
 describe('Financial Transactions Detail Report', () => {
+  const ownerData1 = {};
   const ownerData = {};
   const servicePoint1 = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation();
@@ -14,6 +15,15 @@ describe('Financial Transactions Detail Report', () => {
     cy.getAdminToken().then(() => {
       ServicePoints.createViaApi(servicePoint1);
       ServicePoints.createViaApi(servicePoint2);
+
+      UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner())
+        .then(({ id, owner }) => {
+          ownerData1.name = owner;
+          ownerData1.id = id;
+        })
+        .then(() => {
+          UsersOwners.addServicePointsViaApi(ownerData1, [servicePoint1, servicePoint2]);
+        });
 
       UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner())
         .then(({ id, owner }) => {
@@ -35,12 +45,13 @@ describe('Financial Transactions Detail Report', () => {
   after('UserOwner is removed', () => {
     ServicePoints.deleteViaApi(servicePoint1.id);
     ServicePoints.deleteViaApi(servicePoint2.id);
+    UsersOwners.deleteViaApi(ownerData1.id);
     UsersOwners.deleteViaApi(ownerData.id);
   });
 
   it(
     'C343305 Check that the "Financial transactions detail report (CSV)" is displayed in "Actions" (vega)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.verifyOptionsInActionsMenu();
     },
@@ -48,7 +59,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343320 Check that the icon calendar is displayed in the Start date and End date on the "Financial transactions detail report" modal (vega)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.verifyStartDateFieldCalendarIcon();
@@ -58,7 +69,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343321 Check when user click on the icon calendar appears "datepicker" and user can select any date (vega)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.openStartDateFieldCalendar();
@@ -70,7 +81,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343306 Check that the "Financial transactions detail report" modal is display when selected "Financial transactions detail report (CSV)" (vega)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.verifyStartDateFieldIsEmpty();
@@ -84,7 +95,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343307 Check that the user returns to the "User search result" page when click in the "Cancel" button or "X" button on the "Financial transactions detail report" modal (vega)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.verifyFinancialReportModalIsShown();
@@ -99,7 +110,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343308 Check that the user can not close "Financial transactions detail report" modal when click on the outside the modal (vega)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       UsersSearchResultsPane.clickActionsButton();
@@ -109,7 +120,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343309 Check that the user can close "Financial transactions detail report" modal when click on the "Esc" button (vega)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.verifyFinancialReportModalIsShown();
@@ -120,7 +131,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343311 Check that the error message ""Start date" is required" is appears under Start date field (vega)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.focusStartDateField();
@@ -131,7 +142,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343312 Check that the error message ""Start date" is required if "End date" entered" is appears under Start date field and has red color when End date was selected (vega)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.focusStartDateField();
@@ -142,7 +153,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343313 Check that the "End date" must be greater than or equal to "Start date" error message is appears when End date is less than Start date (vega)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.fillInStartDate('01/20/2020');
@@ -153,7 +164,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343314 Check that the ""Fee/fine owner" is required" error message is appears when user is not selected "Fee/fine owner" (vega)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.fillInStartDate();
@@ -166,7 +177,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343316 Check that the "Save&close" button has become active after filling in all the required fields with valid data (vega)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.fillInRequiredFields({
@@ -179,7 +190,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343319 Check that the user can select more than one service points in the "Associated service points" field (vega)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.fillInRequiredFields({
@@ -198,7 +209,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343317 Check that the "Export in progress" success toast appear when the user click on the "Save&close" button (vega)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.fillInRequiredFields({
@@ -212,7 +223,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343318 Check that the "Something went wrong" error toast appears when the user click on the "Save&close" button (vega)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.fillInRequiredFields({
@@ -228,7 +239,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343322 Check that "No items found" error toast appears when user click on the "Save&close" button (vega)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.fillInRequiredFields({
@@ -243,7 +254,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343315 Check that the user can select service points in the "Associated service points" field (vega)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.fillInRequiredFields({

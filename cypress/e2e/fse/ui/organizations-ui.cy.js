@@ -10,7 +10,7 @@ describe('fse-organizations - UI', () => {
   });
 
   it(
-    'TC195376 - verify that organizations page is displayed',
+    `TC195376 - verify that organizations page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'organizations'] },
     () => {
       cy.visit(TopMenu.organizationsPath);

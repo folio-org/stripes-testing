@@ -183,4 +183,24 @@ export default {
       });
     });
   },
+
+  verifyCSVFileRecordsNumber(fileName, recordsNumber) {
+    FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
+      FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
+        const values = this.getValuesFromCSVFile(actualContent);
+
+        expect(values).to.have.length(recordsNumber);
+      });
+    });
+  },
+
+  verifyCSVFileRowsRecordsNumber(fileName, recordsNumber) {
+    FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
+      FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
+        const values = this.getValuesFromValidCSVFile(actualContent);
+
+        expect(values).to.have.length(recordsNumber);
+      });
+    });
+  },
 };

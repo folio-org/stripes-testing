@@ -109,13 +109,6 @@ describe('Data Import', () => {
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-      // upload a marc file for creating of the new instance
-      DataImport.uploadFileViaApi(filePath, marcFileName, jobProfile.profileName).then(
-        (response) => {
-          instanceId = response[0].instance.id;
-        },
-      );
-
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
@@ -123,6 +116,12 @@ describe('Data Import', () => {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(filePath, marcFileName);
+        JobProfiles.search(jobProfile.profileName);
+        JobProfiles.selectJobProfile();
+        JobProfiles.runImportFile();
       });
     });
 

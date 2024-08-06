@@ -173,6 +173,7 @@ describe('Data Import', () => {
         Logs.waitFileIsImported(marcFileName);
         Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
+        cy.reload();
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,

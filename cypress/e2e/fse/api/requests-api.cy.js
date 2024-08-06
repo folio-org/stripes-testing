@@ -6,11 +6,15 @@ describe('fse-requests', () => {
     cy.allure().logCommandSteps();
   });
 
-  it('TC195388 - Get request by status', { tags: ['sanity', 'fse', 'api', 'requests'] }, () => {
-    cy.getItemRequestsApi({
-      query: '(status=="Closed - Filled") sortby requestDate',
-    }).then((response) => {
-      cy.expect(response.status).to.eq(200);
-    });
-  });
+  it(
+    `TC195388 - Get request by status for ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['sanity', 'fse', 'api', 'requests'] },
+    () => {
+      cy.getItemRequestsApi({
+        query: '(status=="Closed - Filled") sortby requestDate',
+      }).then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
 });
