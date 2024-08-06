@@ -194,6 +194,7 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSaveInModal();
           cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
           cy.wait('@capabilitySets').its('response.statusCode').should('eq', 200);
+          cy.wait(2000);
           AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.newApplication]);
           AuthorizationRoles.selectCapabilitySetCheckbox(testData.newCapabilitySet);
           testData.newCapabilities.forEach((capability) => {
@@ -206,6 +207,7 @@ describe('Eureka', () => {
           testData.newCapabilities.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxChecked(capability);
           });
+          cy.wait(3000);
           AuthorizationRoles.clickSaveButton();
           AuthorizationRoles.checkAfterSaveEdit(testData.roleName, testData.roleDescription);
           AuthorizationRoles.clickOnCapabilitySetsAccordion();

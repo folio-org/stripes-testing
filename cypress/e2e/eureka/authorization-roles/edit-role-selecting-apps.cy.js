@@ -114,6 +114,7 @@ describe('Eureka', () => {
           cy.intercept('GET', capabilityCallRegExp).as('capabilities');
           AuthorizationRoles.clickSaveInModal();
           cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
+          cy.wait(3000);
           AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.newApplication]);
           AuthorizationRoles.clickSaveButton();
           AuthorizationRoles.checkAfterSaveEdit(
