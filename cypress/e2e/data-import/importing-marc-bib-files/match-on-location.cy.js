@@ -110,6 +110,7 @@ describe('Data Import', () => {
               enabled: 'true',
               path: 'item.permanentLocation.id',
               value: `"${permanentLocation}"`,
+              // TODO redesign without hardcode
               acceptedValues: {
                 'fcd64ce1-6995-48f0-840e-89ffa2288371': 'Main Library (KU/CC/DI/M)',
               },

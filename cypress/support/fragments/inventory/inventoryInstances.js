@@ -1475,6 +1475,10 @@ export default {
     );
   },
 
+  verifySearchResultIncludingValue: (value) => {
+    cy.expect(MultiColumnListCell({ content: including(value) }).exists());
+  },
+
   createMarcBibViaApi(body) {
     cy.okapiRequest({
       method: 'POST',
