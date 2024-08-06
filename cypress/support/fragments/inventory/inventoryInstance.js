@@ -497,7 +497,7 @@ export default {
   },
 
   editMarcBibliographicRecord: () => {
-    cy.wait(1000);
+    cy.wait(2000);
     cy.do(actionsButton.click());
     cy.wait(1000);
     cy.do(editMARCBibRecordButton.click());
