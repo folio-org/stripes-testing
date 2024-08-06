@@ -21,14 +21,18 @@ describe('fse-invoices - UI for non-live tenants', () => {
     cy.allure().logCommandSteps();
   });
 
-  it('TC195468 - create invoice', { tags: ['non-live', 'fse', 'ui', 'finance'] }, () => {
-    cy.visit(TopMenu.invoicesPath);
-    Invoices.waitLoading();
-    Invoices.createDefaultInvoiceWithoutAddress(invoice);
-    Invoices.checkCreatedInvoice(invoice);
-    Invoices.deleteInvoiceViaActions();
-    Invoices.confirmInvoiceDeletion();
-  });
+  it(
+    `TC195468 - create invoice for ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['non-live', 'fse', 'ui', 'finance'] },
+    () => {
+      cy.visit(TopMenu.invoicesPath);
+      Invoices.waitLoading();
+      Invoices.createDefaultInvoiceWithoutAddress(invoice);
+      Invoices.checkCreatedInvoice(invoice);
+      Invoices.deleteInvoiceViaActions();
+      Invoices.confirmInvoiceDeletion();
+    },
+  );
 });
 
 describe('fse-invoices - UI for live tenants', () => {
@@ -40,7 +44,7 @@ describe('fse-invoices - UI for live tenants', () => {
   });
 
   it(
-    'TC195320 - verify that invoices page is displayed',
+    `TC195320 - verify that invoices page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'invoices'] },
     () => {
       cy.visit(TopMenu.invoicesPath);

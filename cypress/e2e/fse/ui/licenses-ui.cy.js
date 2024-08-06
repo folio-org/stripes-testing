@@ -10,7 +10,7 @@ describe('fse-licenses - UI', () => {
   });
 
   it(
-    'TC195331 - verify that licenses page is displayed',
+    `TC195331 - verify that licenses page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'licenses'] },
     () => {
       cy.visit(TopMenu.licensesPath);

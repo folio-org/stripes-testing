@@ -16,7 +16,7 @@ describe('fse-data-export - UI for live tenants', () => {
   });
 
   it(
-    'TC195288 - verify that data-export module is displayed',
+    `TC195288 - verify that data-export module is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'data-export'] },
     () => {
       cy.visit(TopMenu.dataExportPath);
@@ -43,7 +43,7 @@ describe('fse-data-export - check data export job for non-live tenants', () => {
   });
 
   it(
-    'TC195471 - verify data-export job',
+    `TC195471 - verify data-export job for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['non-live', 'fse', 'ui', 'data-export'] },
     () => {
       cy.visit(TopMenu.dataExportPath);
