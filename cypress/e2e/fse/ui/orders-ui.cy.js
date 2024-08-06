@@ -10,7 +10,7 @@ describe('fse-orders - UI', () => {
   });
 
   it(
-    'TC195334 - verify that orders page is displayed',
+    `TC195334 - verify that orders page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'orders'] },
     () => {
       cy.visit(TopMenu.ordersPath);

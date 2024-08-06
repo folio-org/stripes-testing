@@ -10,7 +10,7 @@ describe('fse-receiving - UI', () => {
   });
 
   it(
-    'TC195378 - verify that receiving page is displayed',
+    `TC195378 - verify that receiving page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'receiving'] },
     () => {
       cy.visit(TopMenu.receivingPath);

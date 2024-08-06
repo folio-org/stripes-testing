@@ -6,9 +6,13 @@ describe('fse-licenses', () => {
     cy.allure().logCommandSteps();
   });
 
-  it('TC195325 - Get licenses by status', { tags: ['sanity', 'fse', 'api', 'licenses'] }, () => {
-    cy.getLicensesByStatus('active').then((response) => {
-      cy.expect(response.status).to.eq(200);
-    });
-  });
+  it(
+    `TC195325 - Get licenses by status for ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['sanity', 'fse', 'api', 'licenses'] },
+    () => {
+      cy.getLicensesByStatus('active').then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
 });

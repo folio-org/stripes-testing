@@ -7,7 +7,7 @@ describe('fse-organizations', () => {
   });
 
   it(
-    'TC195377 - Get organization by status',
+    `TC195377 - Get organization by status for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'api', 'organizations'] },
     () => {
       cy.getOrganizationsByStatus('Active').then((response) => {
