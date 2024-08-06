@@ -10,7 +10,7 @@ describe('fse-finance - UI', () => {
   });
 
   it(
-    'TC195278 - verify that finance-fiscal year is displayed',
+    `TC195278 - verify that finance-fiscal year is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'finance'] },
     () => {
       cy.visit(TopMenu.fiscalYearPath);
