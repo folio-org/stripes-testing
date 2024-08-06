@@ -10,7 +10,7 @@ describe('fse-dashboard - UI', () => {
   });
 
   it(
-    'TC195287 - verify that dashboard module is displayed',
+    `TC195287 - verify that dashboard module is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'dashboard'] },
     () => {
       cy.visit(TopMenu.dashboardPath);
