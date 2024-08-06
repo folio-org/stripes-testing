@@ -12,7 +12,7 @@ describe('fse-settings - UI', () => {
   });
 
   it(
-    'TC195382 - verify that settings page is displayed',
+    `TC195382 - verify that settings page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'settings'] },
     () => {
       cy.visit(TopMenu.settingsPath);
@@ -21,7 +21,7 @@ describe('fse-settings - UI', () => {
   );
 
   it(
-    'TC195469 - verify software versions page is displayed',
+    `TC195469 - verify software versions page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'settings'] },
     () => {
       cy.visit(SettingsMenu.softwareVersionsPath);

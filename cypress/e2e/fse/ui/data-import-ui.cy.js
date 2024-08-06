@@ -10,7 +10,7 @@ describe('fse-data-import - UI', () => {
   });
 
   it(
-    'TC195289 - verify that data-import module is displayed',
+    `TC195289 - verify that data-import module is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'data-import'] },
     () => {
       cy.visit(TopMenu.dataImportPath);
