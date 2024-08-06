@@ -540,6 +540,16 @@ export default {
       .should('have.text', header);
   },
 
+  verifySetRecordForDeletionOptionEnabled() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'quick-export-trigger' }).has({ disabled: false }));
+  },
+
+  verifySetRecordForDeletionOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'quick-export-trigger' }).absent());
+  },
+
   checkMultipleItemNotesWithStaffOnly: (rowIndex, staffOnly, noteType, noteText) => {
     cy.get('#instance-details-notes').within(() => {
       cy.get(`[id="list-instance-notes-${rowIndex}"]`).within(() => {
