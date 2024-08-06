@@ -58,7 +58,7 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(jobProfileToRun);
+        Logs.waitFileIsImported(fileName);
         Logs.openFileDetails(fileName);
         FileDetails.verifyLogDetailsPageIsOpened(fileName);
         FileDetails.openJsonScreen(title);

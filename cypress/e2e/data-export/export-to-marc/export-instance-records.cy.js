@@ -1,13 +1,13 @@
-import permissions from '../../support/dictionary/permissions';
-import DataExportResults from '../../support/fragments/data-export/dataExportResults';
-import ExportFileHelper from '../../support/fragments/data-export/exportFile';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import { getLongDelay } from '../../support/utils/cypressTools';
-import FileManager from '../../support/utils/fileManager';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import getRandomPostfix from '../../support/utils/stringTools';
+import permissions from '../../../support/dictionary/permissions';
+import DataExportResults from '../../../support/fragments/data-export/dataExportResults';
+import ExportFileHelper from '../../../support/fragments/data-export/exportFile';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import { getLongDelay } from '../../../support/utils/cypressTools';
+import FileManager from '../../../support/utils/fileManager';
+import generateItemBarcode from '../../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const item = {
@@ -16,24 +16,22 @@ const item = {
 };
 const fileName = `autoTestFile${getRandomPostfix()}.csv`;
 
-// TODO: identify how to stabilize flaky test
-
 describe('Data export', () => {
-  describe('Generating MARC records on the fly', () => {
+  describe('Export to MARC', () => {
     beforeEach('create test data', () => {
       cy.createTempUser([
         permissions.inventoryAll.gui,
-        permissions.dataExportEnableSettings.gui,
-        permissions.dataExportEnableApp.gui,
+        permissions.dataExportAll.gui,
+        permissions.dataExportEnableModule.gui,
       ]).then((userProperties) => {
         user = userProperties;
         const instanceID = InventoryInstances.createInstanceViaApi(
           item.instanceName,
           item.itemBarcode,
         );
+        FileManager.createFile(`cypress/fixtures/${fileName}`, instanceID);
         cy.login(user.username, user.password);
         cy.visit(TopMenu.dataExportPath);
-        FileManager.createFile(`cypress/fixtures/${fileName}`, instanceID);
       });
     });
 
@@ -45,12 +43,13 @@ describe('Data export', () => {
     });
 
     it(
-      'C350407 Verify that a user cannot trigger the DATA EXPORT using invalid job profile (firebird)',
-      { tags: ['criticalPathBroken', 'firebird'] },
+      'C9288 Export small number of instance records - default instance mapping profile (firebird)',
+      { tags: ['smokeBroken', 'firebird'] },
       () => {
         ExportFileHelper.uploadFile(fileName);
-        ExportFileHelper.exportWithDefaultJobProfile(fileName, 'holdings', 'Holdings');
+        ExportFileHelper.exportWithDefaultJobProfile(fileName);
 
+        // collect expected results and verify actual result
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
         cy.wait('@getInfo', getLongDelay()).then((interception) => {
           const job = interception.response.body.jobExecutions[0];
@@ -58,12 +57,11 @@ describe('Data export', () => {
           const recordsCount = job.progress.total;
           const jobId = job.hrId;
 
-          DataExportResults.verifyFailedExportResultCells(
+          DataExportResults.verifySuccessExportResultCells(
             resultFileName,
             recordsCount,
             jobId,
             user.username,
-            'holdings',
           );
         });
       },
