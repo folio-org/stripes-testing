@@ -118,7 +118,7 @@ describe('Inventory', () => {
         });
         SelectInstanceModal.chooseSearchOption(testData.issnOption);
         SelectInstanceModal.searchByName(testData.issnNegativeSearchQuery);
-        SelectInstanceModal.checkNoRecordsFound();
+        SelectInstanceModal.checkNoRecordsFound(testData.issnNegativeSearchQuery);
       },
     );
   });

@@ -1410,7 +1410,7 @@ export default {
       .find('div[class^="mclCell-"]')
       .contains(status)
       .then((elem) => {
-        elem.parent()[0].querySelector('button[type="button"]').click();
+        elem.parent()[0].querySelector('a[href]').click();
       });
   },
 

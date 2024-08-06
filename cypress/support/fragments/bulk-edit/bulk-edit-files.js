@@ -171,4 +171,36 @@ export default {
     const actualItemStatus = actualResult.split(',')[33];
     expect(actualItemStatus).to.eq(expectedResult);
   },
+
+  verifyCSVFileRowsValueIncludes(fileName, value) {
+    FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
+      FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
+        const values = this.getValuesFromValidCSVFile(actualContent);
+        // verify each row with values in csv file
+        values.forEach((elem, index) => {
+          expect(elem).to.include(value[index]);
+        });
+      });
+    });
+  },
+
+  verifyCSVFileRecordsNumber(fileName, recordsNumber) {
+    FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
+      FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
+        const values = this.getValuesFromCSVFile(actualContent);
+
+        expect(values).to.have.length(recordsNumber);
+      });
+    });
+  },
+
+  verifyCSVFileRowsRecordsNumber(fileName, recordsNumber) {
+    FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
+      FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
+        const values = this.getValuesFromValidCSVFile(actualContent);
+
+        expect(values).to.have.length(recordsNumber);
+      });
+    });
+  },
 };

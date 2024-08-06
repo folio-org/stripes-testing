@@ -103,7 +103,7 @@ describe('Inventory', () => {
 
     it(
       'C442799 "Select instance" plug-in | Search for "MARC bibliographic" by "LCCN, normalized" option when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

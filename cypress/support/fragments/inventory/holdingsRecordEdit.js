@@ -122,7 +122,7 @@ export default {
   },
   removeStatisticalCode(code) {
     cy.do(
-      RepeatableFieldItem({ value: including(code) })
+      RepeatableFieldItem({ singleValue: including(code) })
         .find(Button({ icon: 'trash' }))
         .click(),
     );

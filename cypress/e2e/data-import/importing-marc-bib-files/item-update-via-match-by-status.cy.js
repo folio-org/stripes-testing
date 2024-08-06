@@ -44,6 +44,7 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let statisticalCode;
+    let statisticalCodeId;
     const titlesItemsStatusChanged = [
       'Making the news popular : mobilizing U.S. news audiences / Anthony M. Nadler.',
       'Genius : the game / Leopoldo Gout.',
@@ -181,6 +182,7 @@ describe('Data Import', () => {
             profile.mappingProfile.name,
           );
         });
+        StatisticalCodes.deleteViaApi(statisticalCodeId);
       });
     });
 

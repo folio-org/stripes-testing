@@ -469,6 +469,14 @@ export default {
     );
   },
 
+  verifyExactChangesUnderColumnsByRowInPreview(columnName, value, row = 0) {
+    cy.expect(
+      MultiColumnListRow({ indexRow: `row-${row}` })
+        .find(MultiColumnListCell({ column: columnName, content: value }))
+        .exists(),
+    );
+  },
+
   verifyExactChangesUnderColumnsByIdentifier(identifier, columnName, value) {
     cy.then(() => areYouSureForm.find(MultiColumnListCell(identifier)).row()).then((index) => {
       cy.expect(
@@ -670,6 +678,7 @@ export default {
           cy.do(DropdownMenu().find(Checkbox(name)).click());
         }
       });
+      this.verifyResultColumnTitlesDoNotInclude(name);
     });
   },
 
@@ -805,16 +814,28 @@ export default {
     });
   },
 
-  verifyElectronicAccessElementByIndex(index, expectedText, miniRowCount = 1) {
+  verifyElectronicAccessElementByIndex(elementIndex, expectedText, miniRowCount = 1) {
     cy.get('[class^="ElectronicAccess"]')
       .find('tr')
       .eq(miniRowCount)
       .find('td')
-      .eq(index)
+      .eq(elementIndex)
       .should('have.text', expectedText);
   },
 
   verifyRowHasEmptyElectronicAccess(index) {
     cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
+  },
+
+  getNumberMatchedRecordsFromPaneHeader() {
+    return cy
+      .get('[class^=paneSub]')
+      .should('contain.text', 'records match')
+      .invoke('text')
+      .then((textContent) => {
+        const numberOfRecords = parseInt(textContent, 10);
+
+        return numberOfRecords;
+      });
   },
 };

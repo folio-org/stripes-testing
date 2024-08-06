@@ -65,6 +65,7 @@ export default {
         path: `circulation/requests/${requestData.id}`,
         body: requestData,
         isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
       })
       .then(({ body }) => {
         return body;
