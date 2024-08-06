@@ -489,6 +489,10 @@ export default {
     cy.do([rootSection.find(actionsButton).click(), Button('Export instance (MARC)').click()]);
   },
 
+  setRecordForDeletion: () => {
+    cy.do(Button({ id: 'quick-export-trigger' }).click());
+  },
+
   verifyEditInstanceButtonAbsent() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'edit-instance' }).absent());
@@ -532,6 +536,11 @@ export default {
   verifyMoveHoldingsItemsToAnotherInstanceOptionAbsent() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'move-instance' }).absent());
+  },
+
+  verifySetRecordForDeletionOptionEnabled() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'quick-export-trigger' }).has({ disabled: false }));
   },
 
   verifyInstanceHeader(header) {
