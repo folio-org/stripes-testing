@@ -1476,7 +1476,12 @@ export default {
   },
 
   verifySearchResultIncludingValue: (value) => {
-    cy.expect(MultiColumnListCell({ content: including(value) }).exists());
+    cy.expect([
+      inventoriesList.exists(),
+      inventoriesList.find(MultiColumnListRow({ index: 0 })).has({ text: including(value) }),
+
+      // cy.expect(MultiColumnListCell({ content: including(value) }).exists());
+    ]);
   },
 
   createMarcBibViaApi(body) {
