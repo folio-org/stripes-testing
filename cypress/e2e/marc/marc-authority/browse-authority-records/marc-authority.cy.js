@@ -138,7 +138,7 @@ describe('MARC', () => {
 
       it(
         'C350576 Update 008 of Authority record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
@@ -185,7 +185,7 @@ describe('MARC', () => {
 
       it(
         'C350902 MARC fields behavior when editing "MARC Authority" record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
