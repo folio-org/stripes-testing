@@ -679,7 +679,7 @@ export default {
     available,
   ) {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(3000); // wait for the file to load
+    cy.wait(6000); // wait for the file to load
     cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
       // Split the contents of a file into lines
       const fileRows = fileContent.split('\n');

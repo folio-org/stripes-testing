@@ -1377,11 +1377,13 @@ export default {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitle),
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PE_MIX),
-      acquisitionMethodButton.click(),
     ]);
     cy.wait(2000);
+    cy.do([acquisitionMethodButton.click()]);
+    cy.wait(2000);
+    cy.do([SelectionOption(AUMethod).click()]);
+    cy.wait(2000);
     cy.do([
-      SelectionOption(AUMethod).click(),
       receivingWorkflowSelect.choose(
         RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY,
       ),

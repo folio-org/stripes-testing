@@ -54,7 +54,7 @@ describe('MARC', () => {
 
       it(
         'C353610 Verify "LDR" validation rules with valid data for positions 06 and 07 when editing record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
         () => {
           const tagLDR = 'LDR';
           const field008BoxesAbsent = ['Type', 'Blvl'];

@@ -112,6 +112,7 @@ describe('Data Import', () => {
               value: `"${permanentLocation}"`,
               // TODO redesign without hardcode
               acceptedValues: {
+                // redesigne withouthardcode
                 'fcd64ce1-6995-48f0-840e-89ffa2288371': 'Main Library (KU/CC/DI/M)',
               },
             },
