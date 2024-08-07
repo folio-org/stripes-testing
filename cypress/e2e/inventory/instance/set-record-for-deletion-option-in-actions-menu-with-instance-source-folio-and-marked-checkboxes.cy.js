@@ -2,6 +2,7 @@ import { Permissions } from '../../../support/dictionary';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
@@ -14,25 +15,28 @@ describe('Inventory', () => {
       InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
         testData.instance = instanceData;
 
-        cy.getInstanceById(instanceData.instanceId).then((body) => {
+        cy.getInstanceById(testData.instance.instanceId).then((body) => {
           body.staffSuppress = true;
           body.discoverySuppress = true;
           cy.updateInstance(body);
         });
       });
 
-      cy.createTempUser([Permissions.uiInventorySetRecordsForDeletion.gui]).then(
-        (userProperties) => {
-          testData.user = userProperties;
+      cy.createTempUser([
+        Permissions.inventoryAll.gui,
+        Permissions.uiInventorySetRecordsForDeletion.gui,
+        Permissions.enableStaffSuppressFacet.gui,
+      ]).then((userProperties) => {
+        testData.user = userProperties;
 
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          InventoryInstances.searchByTitle(testData.instance.instanceId);
-          InventoryInstances.selectInstance();
-        },
-      );
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        InventorySearchAndFilter.selectYesfilterStaffSuppress();
+        InventoryInstances.searchByTitle(testData.instance.instanceTitle);
+        InventoryInstances.selectInstance();
+      });
     });
 
     after('Delete test data', () => {
