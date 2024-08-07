@@ -17,7 +17,7 @@ const validFile = `autoTestValidFile${getRandomPostfix()}.csv`;
 const invalidFile = `autoTestInvalidFile${getRandomPostfix()}.csv`;
 const partiallyValidFile = `autoTestInvalidFile${getRandomPostfix()}.csv`;
 
-describe('data-export', () => {
+describe('Data export', () => {
   before('Create test data', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,

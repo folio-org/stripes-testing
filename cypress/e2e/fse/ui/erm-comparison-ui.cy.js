@@ -10,7 +10,7 @@ describe('fse-erm-comparison - UI', () => {
   });
 
   it(
-    'TC195305 - verify that erm-comparison module is displayed',
+    `TC195305 - verify that erm-comparison module is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['fse', 'ui', 'erm-comparison'] },
     () => {
       cy.visit(TopMenu.ermComparisonPath);

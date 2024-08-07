@@ -10,7 +10,7 @@ describe('fse-checkout - UI', () => {
   });
 
   it(
-    'TC195283 - verify that checkout module is displayed',
+    `TC195283 - verify that checkout module is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'checkout'] },
     () => {
       cy.visit(TopMenu.checkOutPath);

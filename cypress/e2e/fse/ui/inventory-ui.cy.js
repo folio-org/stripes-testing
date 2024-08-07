@@ -10,7 +10,7 @@ describe('fse-inventory - UI', () => {
   });
 
   it(
-    'TC195318 - verify that inventory page is displayed',
+    `TC195318 - verify that inventory page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'inventory'] },
     () => {
       cy.visit(TopMenu.inventoryPath);
