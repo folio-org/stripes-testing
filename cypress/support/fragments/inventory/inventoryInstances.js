@@ -1479,8 +1479,6 @@ export default {
     cy.expect([
       inventoriesList.exists(),
       inventoriesList.find(MultiColumnListRow({ index: 0 })).has({ text: including(value) }),
-
-      // cy.expect(MultiColumnListCell({ content: including(value) }).exists());
     ]);
   },
 
