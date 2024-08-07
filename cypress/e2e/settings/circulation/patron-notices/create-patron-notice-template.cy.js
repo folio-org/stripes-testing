@@ -23,4 +23,18 @@ describe('Settings (Notices)', () => {
     NewNoticePolicyTemplate.checkTemplateActions(patronNoticeTemplate);
     NewNoticePolicyTemplate.delete();
   });
+
+  it(
+    'C356783, C357005 Notice template validations (volaris)',
+    { tags: ['extendedPath', 'volaris'] },
+    () => {
+      NewNoticePolicyTemplate.startAdding();
+      NewNoticePolicyTemplate.checkInitialState();
+      NewNoticePolicyTemplate.checkSubjectEmptyError();
+
+      NewNoticePolicyTemplate.startAdding();
+      NewNoticePolicyTemplate.checkInitialState();
+      NewNoticePolicyTemplate.checkRichTextEditor();
+    },
+  );
 });
