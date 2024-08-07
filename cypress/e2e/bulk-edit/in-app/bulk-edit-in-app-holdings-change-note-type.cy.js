@@ -22,6 +22,7 @@ const notes = {
   administrative: 'C422049 test administrative note',
   electronicBookplate: 'C422049 test electronic bookplate note',
 };
+const noteTypes = { binding: 'Binding', electronicBookplate: 'Electronic bookplate' };
 const instance = {
   instanceName: `C422049 instance-${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -125,17 +126,13 @@ describe('bulk-edit', () => {
       'C422049 Verify Bulk Edit actions for Holdings notes - change note type (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
-        // 1
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
 
-        // 2
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
 
-        // 3
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(instance.holdingHRID);
 
-        // 4
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckbox(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
@@ -156,7 +153,6 @@ describe('bulk-edit', () => {
           notes.electronicBookplate,
         );
 
-        // 5
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedResults();
         BulkEditFiles.verifyValueInRowByUUID(
@@ -174,36 +170,27 @@ describe('bulk-edit', () => {
           notes.electronicBookplate,
         );
 
-        // 6
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditSearchPane.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyCancelButtonDisabled(false);
-        BulkEditActions.verifyConfirmChangesButtonDisabled();
+        BulkEditSearchPane.isConfirmButtonDisabled(true);
 
-        // 7
         BulkEditActions.changeNoteType(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.NOTE,
         );
         cy.wait(1000);
         BulkEditActions.verifyTheActionOptions(administrativeNoteActionOptions);
-
-        // 10
         BulkEditActions.verifyTheOptionsForChangingNoteType(
           optionsForChangingNoteType.administrative,
         );
+        BulkEditSearchPane.isConfirmButtonDisabled(false);
 
-        // 11
-        BulkEditActions.verifyConfirmChangesButtonDisabled(false);
-
-        // 12
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow();
-
-        // 14
-        BulkEditActions.changeNoteType('Electronic bookplate', 'Binding', 1);
+        BulkEditActions.changeNoteType(noteTypes.electronicBookplate, noteTypes.binding, 1);
         cy.wait(1000);
         BulkEditActions.verifyTheActionOptions(electronicBookplateActionOptions, 1);
         BulkEditActions.verifyTheOptionsForChangingNoteType(
@@ -211,8 +198,7 @@ describe('bulk-edit', () => {
           1,
         );
 
-        // // 17
-        BulkEditActions.verifyConfirmChangesButtonDisabled(false);
+        BulkEditSearchPane.isConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
         BulkEditActions.verifyChangesInAreYouSureForm(
@@ -224,7 +210,6 @@ describe('bulk-edit', () => {
           [notes.electronicBookplate],
         );
 
-        // 19
         BulkEditActions.downloadPreview();
         BulkEditFiles.verifyValueInRowByUUID(
           previewFileName,
@@ -261,8 +246,6 @@ describe('bulk-edit', () => {
         );
 
         BulkEditActions.openActions();
-
-        // 21
         BulkEditActions.downloadChangedCSV();
         BulkEditFiles.verifyValueInRowByUUID(
           changedRecordsFileName,
@@ -279,20 +262,14 @@ describe('bulk-edit', () => {
           notes.administrative,
         );
 
-        // 22
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchHoldingsByHRID(instance.holdingHRID);
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.checkAdministrativeNote('-');
-
-        // проверить работает ли
-        // HoldingsRecordView.checkNotesByType(0, 'Binding', notes.electronicBookplate);
-        // HoldingsRecordView.checkNotesByType(1, 'Note', notes.administrative);
-
-        HoldingsRecordView.checkHoldingsNoteByRow([notes.administrative, 'No']);
-        HoldingsRecordView.checkHoldingsNoteByRow([notes.electronicBookplate, 'No'], 1);
-        ItemRecordView.verifyTextAbsent('Electronic bookplate');
+        HoldingsRecordView.checkNotesByType(0, noteTypes.binding, notes.electronicBookplate);
+        HoldingsRecordView.checkNotesByType(1, 'Note', notes.administrative);
+        ItemRecordView.verifyTextAbsent(noteTypes.electronicBookplate);
       },
     );
   });

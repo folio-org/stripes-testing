@@ -317,10 +317,10 @@ export default {
     );
   },
 
-  checkNotesByType(row, header, value) {
+  checkNotesByType(rowIndex, columnHeader, value) {
     cy.expect(
-      MultiColumnList({ id: `list-holdings-notes-${row}` })
-        .find(MultiColumnListCell().has({ column: header, content: value }))
+      MultiColumnList({ id: `list-holdings-notes-${rowIndex}` })
+        .find(MultiColumnListCell({ column: columnHeader, content: value }))
         .exists(),
     );
   },
