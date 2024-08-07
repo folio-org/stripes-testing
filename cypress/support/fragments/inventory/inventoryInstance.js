@@ -6,6 +6,7 @@ import {
   Callout,
   Checkbox,
   Dropdown,
+  DropdownMenu,
   Form,
   HTML,
   KeyValue,
@@ -901,8 +902,11 @@ export default {
         .find(Checkbox())
         .click(),
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
-        .find(Dropdown({ label: 'Move to' }))
-        .choose(including(toHolding)),
+        .find(Button('Move to'))
+        .click(),
+      DropdownMenu()
+        .find(Button(including(toHolding)))
+        .click(),
     ]);
 
     if (itemMoved) {
@@ -952,8 +956,11 @@ export default {
         .find(Checkbox())
         .click(),
       Accordion({ label: including(`Holdings: ${secondHoldingName}`) })
-        .find(Dropdown({ label: 'Move to' }))
-        .choose(including(firstHoldingName)),
+        .find(Button('Move to'))
+        .click(),
+      DropdownMenu()
+        .find(Button(including(firstHoldingName)))
+        .click(),
     ]);
   },
 
