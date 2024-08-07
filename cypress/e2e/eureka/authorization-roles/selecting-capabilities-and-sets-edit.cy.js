@@ -179,7 +179,7 @@ describe('Eureka', () => {
           });
           AuthorizationRoles.clickSaveButton();
 
-          AuthorizationRoles.checkAfterSaveEdit(testData.roleName);
+          AuthorizationRoles.checkAfterSaveEdit(testData.updatedRoleName);
           AuthorizationRoles.checkCapabilitySetsAccordionCounter('2');
           AuthorizationRoles.checkCapabilitiesAccordionCounter(
             capabilitiesInSetSelected.length +
