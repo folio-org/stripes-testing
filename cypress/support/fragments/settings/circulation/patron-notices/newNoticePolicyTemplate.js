@@ -269,6 +269,51 @@ export default {
     cy.do(subjectField.fillIn(noticePolicytemplateSubject));
   },
 
+  checkSubjectEmptyError() {
+    cy.do(nameField.fillIn('Test'));
+    cy.expect(nameField.has({ value: 'Test' }));
+
+    cy.do(descriptionField.fillIn('Test'));
+    cy.expect(descriptionField.has({ value: 'Test' }));
+
+    cy.do(subjectField.fillIn(''));
+    cy.wait(1000);
+    cy.do(bodyField.fillIn('Test'));
+    cy.wait(1000);
+    cy.get('*[id=icon-input-patron-notice-subject-validation-error]').should('exist');
+
+    cy.do([Button('Cancel').click(), Button('Close without saving').click()]);
+  },
+
+  checkRichTextEditor() {
+    cy.wait(1000);
+    cy.do(nameField.fillIn('Test'));
+    cy.expect(nameField.has({ value: 'Test' }));
+
+    cy.do(descriptionField.fillIn('Test'));
+    cy.expect(descriptionField.has({ value: 'Test' }));
+
+    cy.do(subjectField.fillIn('Test'));
+    cy.expect(subjectField.has({ value: 'Test' }));
+
+    cy.do(bodyField.fillIn('Preview Test'));
+    cy.get('button[aria-label="ordered list"]').click();
+
+    cy.do([
+      cy.get('button[aria-label="increase indent"]').click(),
+      cy.get('button[aria-label="increase indent"]').click(),
+    ]);
+
+    cy.get('li[style="text-indent: 2em;"]').should('exist');
+    cy.get('div[class^="preview"] button').click();
+    cy.expect([
+      previewModal.has({ header: 'Preview of patron notice template' }),
+      previewModal.has({ message: including('Preview Test') }),
+    ]);
+    cy.do(previewModal.find(Button('Close')).click());
+    cy.expect(previewModal.absent());
+  },
+
   createPatronNoticeTemplate(template, dublicate = false) {
     cy.intercept('GET', `/templates?query=(name==%22${template.name}%22)`, {
       statusCode: 201,
