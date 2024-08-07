@@ -1475,6 +1475,13 @@ export default {
     );
   },
 
+  verifySearchResultIncludingValue: (value) => {
+    cy.expect([
+      inventoriesList.exists(),
+      inventoriesList.find(MultiColumnListRow({ index: 0 })).has({ text: including(value) }),
+    ]);
+  },
+
   createMarcBibViaApi(body) {
     cy.okapiRequest({
       method: 'POST',
