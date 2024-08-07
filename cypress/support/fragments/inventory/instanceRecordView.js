@@ -12,6 +12,7 @@ import {
   Callout,
   Badge,
   MultiColumnListHeader,
+  Tooltip,
 } from '../../../../interactors';
 import InstanceRecordEdit from './instanceRecordEdit';
 import InventoryNewHoldings from './inventoryNewHoldings';
@@ -34,7 +35,9 @@ const classificationAccordion = Accordion('Classification');
 const subjectAccordion = Accordion('Subject');
 const descriptiveDataAccordion = Accordion('Descriptive data');
 const adminDataAccordion = Accordion('Administrative data');
+const titleDataAccordion = Accordion('Title data');
 const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
+const precedingTitles = titleDataAccordion.find(MultiColumnList({ id: 'precedingTitles' }));
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -251,20 +254,34 @@ export default {
 
   verifyInstanceHridValue: (hrid) => cy.expect(instanceHridKeyValue.has({ value: hrid })),
   verifyPrecedingTitle: (title) => {
+    cy.expect(precedingTitles.find(MultiColumnListCell({ content: including(title) })).exists());
+  },
+  verifyPrecedingTitleSearchIcon: (title) => {
     cy.expect(
-      Accordion('Title data')
-        .find(MultiColumnList({ id: 'precedingTitles' }))
+      precedingTitles
         .find(MultiColumnListCell({ content: including(title) }))
+        .find(Button({ ariaLabel: 'search' }))
         .exists(),
     );
+    cy.do(
+      precedingTitles
+        .find(MultiColumnListCell({ content: including(title) }))
+        .find(Button({ ariaLabel: 'search' }))
+        .hoverMouse(),
+    );
+    cy.expect(Tooltip().has({ text: `Search for ${title}` }));
   },
   verifySucceedingTitle: (title) => {
     cy.expect(
-      Accordion('Title data')
+      titleDataAccordion
         .find(MultiColumnList({ id: 'succeedingTitles' }))
         .find(MultiColumnListCell({ content: including(title) }))
         .exists(),
     );
+  },
+
+  precedingTitlesIconClick() {
+    cy.get('#precedingTitles').find('a').invoke('removeAttr', 'target').click();
   },
 
   clickNextPaginationButton() {
@@ -489,6 +506,10 @@ export default {
     cy.do([rootSection.find(actionsButton).click(), Button('Export instance (MARC)').click()]);
   },
 
+  setRecordForDeletion: () => {
+    cy.do(Button({ id: 'quick-export-trigger' }).click());
+  },
+
   verifyEditInstanceButtonAbsent() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'edit-instance' }).absent());
@@ -532,6 +553,11 @@ export default {
   verifyMoveHoldingsItemsToAnotherInstanceOptionAbsent() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'move-instance' }).absent());
+  },
+
+  verifySetRecordForDeletionOptionEnabled() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'quick-export-trigger' }).has({ disabled: false }));
   },
 
   verifyInstanceHeader(header) {
