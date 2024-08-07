@@ -555,11 +555,6 @@ export default {
     cy.expect(Button({ id: 'move-instance' }).absent());
   },
 
-  verifySetRecordForDeletionOptionEnabled() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'quick-export-trigger' }).has({ disabled: false }));
-  },
-
   verifyInstanceHeader(header) {
     cy.get('#paneHeaderpane-instancedetails')
       .find('[class*="paneTitleLabel-"]')
