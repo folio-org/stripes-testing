@@ -121,15 +121,15 @@ describe('Inventory', () => {
             testData.instanceTypeId = instanceTypes[0].id;
           })
           .then(() => {
-            testData.instances.forEach((instance) => {
+            testData.instances.forEach((instanceValues) => {
               InventoryInstances.createFolioInstanceViaApi({
                 instance: {
                   instanceTypeId: testData.instanceTypeId,
-                  title: instance.instanceTitle,
+                  title: instanceValues.instanceTitle,
                   classifications: [
                     {
                       classificationNumber: testData.classificationValue,
-                      classificationTypeId: instance.classificationType,
+                      classificationTypeId: instanceValues.classificationType,
                     },
                   ],
                 },
