@@ -11,7 +11,7 @@ let user;
 
 const validFile = `autoTestValidFile${GetRandomPostfix()}.cql`;
 
-describe('data-export', () => {
+describe('Data export', () => {
   before('Create test data', () => {
     cy.createTempUser([Permissions.dataExportEnableApp.gui]).then((userProperties) => {
       user = userProperties;
