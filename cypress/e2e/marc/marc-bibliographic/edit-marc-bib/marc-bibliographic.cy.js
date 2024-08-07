@@ -40,7 +40,7 @@ describe('MARC', () => {
 
       it(
         'C10950 Edit and save a MARC record in quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -74,7 +74,7 @@ describe('MARC', () => {
 
       it(
         'C10924 Add a field to a record using quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -108,7 +108,7 @@ describe('MARC', () => {
 
       it(
         'C10928 Delete a field(s) from a record in quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -156,7 +156,7 @@ describe('MARC', () => {
 
       it(
         'C10951 Add a 5XX field to a marc record in quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,

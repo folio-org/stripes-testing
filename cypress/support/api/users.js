@@ -74,62 +74,70 @@ Cypress.Commands.add('updateUser', (userData) => {
   });
 });
 
-Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userType = 'staff') => {
-  const userProperties = {
-    username: `cypressTestUser${getRandomPostfix()}`,
-    password: 'password',
-  };
-  if (!Cypress.env('ecsEnabled')) {
-    cy.getAdminToken();
-  }
+Cypress.Commands.add(
+  'createTempUser',
+  (permissions = [], patronGroupName, userType = 'staff', barcode = true) => {
+    const userProperties = {
+      username: `cypressTestUser${getRandomPostfix()}`,
+      password: 'password',
+    };
+    if (!Cypress.env('ecsEnabled')) {
+      cy.getAdminToken();
+    }
 
-  cy.getFirstUserGroupId({ limit: patronGroupName ? 100 : 1 }, patronGroupName).then(
-    (userGroupdId) => {
-      const queryField = 'displayName';
-      cy.getPermissionsApi({
-        query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
-      }).then((permissionsResponse) => {
-        // Can be used to collect pairs of ui and backend permission names
-        // cy.log('Initial permissions=' + permissions);
-        // cy.log('internalPermissions=' + [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]);
-        Users.createViaApi({
-          ...Users.defaultUser,
-          patronGroup: userGroupdId,
-          type: userType,
-          username: userProperties.username,
-          barcode: uuid(),
-          personal: { ...Users.defaultUser.personal, lastName: userProperties.username },
-        }).then((newUserProperties) => {
-          userProperties.userId = newUserProperties.id;
-          userProperties.barcode = newUserProperties.barcode;
-          userProperties.firstName = newUserProperties.firstName;
-          userProperties.lastName = newUserProperties.lastName;
-          cy.createRequestPreference({
-            defaultDeliveryAddressTypeId: null,
-            defaultServicePointId: null,
-            delivery: false,
-            fulfillment: FULFILMENT_PREFERENCES.HOLD_SHELF,
-            holdShelf: true,
-            id: uuid(),
-            userId: newUserProperties.id,
+    cy.getFirstUserGroupId({ limit: patronGroupName ? 100 : 1 }, patronGroupName).then(
+      (userGroupdId) => {
+        const queryField = 'displayName';
+        cy.getPermissionsApi({
+          query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
+        }).then((permissionsResponse) => {
+          // Can be used to collect pairs of ui and backend permission names
+          // cy.log('Initial permissions=' + permissions);
+          // cy.log('internalPermissions=' + [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]);
+          const userBody = {
+            ...Users.defaultUser,
+            patronGroup: userGroupdId,
+            type: userType,
+            username: userProperties.username,
+            personal: { ...Users.defaultUser.personal, lastName: userProperties.username },
+          };
+
+          if (barcode) {
+            userBody.barcode = uuid();
+          }
+
+          Users.createViaApi(userBody).then((newUserProperties) => {
+            userProperties.userId = newUserProperties.id;
+            userProperties.barcode = newUserProperties.barcode;
+            userProperties.firstName = newUserProperties.firstName;
+            userProperties.lastName = newUserProperties.lastName;
+            cy.createRequestPreference({
+              defaultDeliveryAddressTypeId: null,
+              defaultServicePointId: null,
+              delivery: false,
+              fulfillment: FULFILMENT_PREFERENCES.HOLD_SHELF,
+              holdShelf: true,
+              id: uuid(),
+              userId: newUserProperties.id,
+            });
+            cy.setUserPassword(userProperties);
+            cy.addPermissionsToNewUserApi({
+              userId: userProperties.userId,
+              permissions: [
+                ...permissionsResponse.body.permissions.map(
+                  (permission) => permission.permissionName,
+                ),
+              ],
+            });
+            cy.overrideLocalSettings(userProperties.userId);
+            cy.wrap(userProperties).as('userProperties');
           });
-          cy.setUserPassword(userProperties);
-          cy.addPermissionsToNewUserApi({
-            userId: userProperties.userId,
-            permissions: [
-              ...permissionsResponse.body.permissions.map(
-                (permission) => permission.permissionName,
-              ),
-            ],
-          });
-          cy.overrideLocalSettings(userProperties.userId);
-          cy.wrap(userProperties).as('userProperties');
         });
-      });
-    },
-  );
-  return cy.get('@userProperties');
-});
+      },
+    );
+    return cy.get('@userProperties');
+  },
+);
 
 Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = []) => {
   const queryField = 'displayName';

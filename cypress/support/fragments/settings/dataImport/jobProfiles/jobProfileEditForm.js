@@ -85,7 +85,7 @@ export default {
     cy.expect(
       overviewSection
         .find(HTML({ className: including('record-container-') }))
-        .has({ text: including(`Action profile: ""${profileName}""`) }),
+        .has({ text: including(`Action profile: "${profileName}"`) }),
     );
   },
   clickCloseButton({ closeWoSaving = true } = {}) {

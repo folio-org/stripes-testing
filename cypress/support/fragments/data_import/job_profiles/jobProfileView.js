@@ -216,9 +216,10 @@ export default {
   },
 
   verifyJobsUsingThisProfileSection(fileName) {
+    const newFileName = fileName.replace('.mrc', '');
     cy.do(
       Accordion('Jobs using this profile')
-        .find(MultiColumnListCell({ content: including(fileName) }))
+        .find(MultiColumnListCell({ content: including(newFileName) }))
         .perform((element) => {
           const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
 
@@ -234,9 +235,10 @@ export default {
   },
   // open the new tab in the current tab
   openLogDetailsPageView(fileName) {
+    const newFileName = fileName.replace('.mrc', '');
     cy.get('#view-job-profile-pane')
       .find('*[class^="mclCell"]')
-      .contains(fileName)
+      .contains(newFileName)
       .invoke('removeAttr', 'target')
       .click();
   },

@@ -98,6 +98,7 @@ describe('Inventory', () => {
         ItemRecordNew.filterStatisticalCodeByName('ARL');
         ItemRecordNew.verifyStatisticalCodeListOptionsFilteredBy('ARL');
 
+        ItemRecordNew.openStatisticalCodeDropdown();
         ItemRecordNew.chooseStatisticalCode(testData.statisticalCode);
         ItemRecordNew.checkErrorMessageForStatisticalCode(false);
 
@@ -118,7 +119,7 @@ describe('Inventory', () => {
 
         ItemRecordNew.filterStatisticalCodeByName('ARL');
         ItemRecordNew.verifyStatisticalCodeListOptionsFilteredBy('ARL');
-
+        ItemRecordNew.openStatisticalCodeDropdown();
         ItemRecordNew.chooseStatisticalCode(testData.statisticalCode);
         ItemRecordNew.checkErrorMessageForStatisticalCode(false);
       },

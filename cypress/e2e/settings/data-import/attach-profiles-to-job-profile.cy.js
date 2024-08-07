@@ -31,9 +31,9 @@ describe('Data Import', () => {
             in2: '',
             subfield: '',
           },
-          matchCriterion: 'Exactly matches',
+          recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
           existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
-          instanceOption: NewMatchProfile.optionsList.instanceHrid,
+          existingMatchExpressionValue: 'instance.hrid',
         },
       },
       {
@@ -45,9 +45,9 @@ describe('Data Import', () => {
             in2: '',
             subfield: '',
           },
-          matchCriterion: 'Exactly matches',
+          recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
           existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
-          instanceOption: NewMatchProfile.optionsList.instanceHrid,
+          existingMatchExpressionValue: 'instance.hrid',
         },
       },
     ];

@@ -80,6 +80,7 @@ describe('Circulation log', () => {
       });
 
       SearchPane.searchByItemBarcode(item.barcode);
+      cy.wait(3000);
       SearchPane.verifyResultCells();
       SearchPane.findResultRowIndexByContent(item.barcode).then((rowIndex) => {
         SearchPane.checkResultSearch(searchResultsData, rowIndex);
