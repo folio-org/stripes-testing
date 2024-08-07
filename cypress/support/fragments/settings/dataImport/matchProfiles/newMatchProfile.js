@@ -502,6 +502,7 @@ export default {
     incomingRecordFields,
     existingRecordType,
     recordType,
+    identifierTypeId = '439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
   }) => {
     return cy
       .okapiRequest({
@@ -544,7 +545,7 @@ export default {
                       label: 'field',
                       value: 'instance.identifiers[].value',
                     },
-                    { label: 'identifierTypeId', value: '439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef' },
+                    { label: 'identifierTypeId', value: identifierTypeId },
                   ],
                   dataValueType: 'VALUE_FROM_RECORD',
                 },

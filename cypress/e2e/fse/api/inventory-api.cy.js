@@ -6,9 +6,13 @@ describe('fse-inventory', () => {
     cy.allure().logCommandSteps();
   });
 
-  it('TC195317 - Get instances by status', { tags: ['sanity', 'fse', 'api', 'inventory'] }, () => {
-    cy.getInventoryInstanceByStatus('Available').then((response) => {
-      cy.expect(response.status).to.eq(200);
-    });
-  });
+  it(
+    `TC195317 - Get instances by status for ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['sanity', 'fse', 'api', 'inventory'] },
+    () => {
+      cy.getInventoryInstanceByStatus('Available').then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
 });

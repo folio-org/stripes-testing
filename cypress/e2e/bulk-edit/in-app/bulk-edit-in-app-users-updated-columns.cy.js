@@ -53,7 +53,7 @@ describe('bulk-edit', () => {
 
     it(
       'C430212 Verify updated properties columns appear on "Are you sure?" form and on Confirmation screen - users (firebird)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
@@ -85,8 +85,9 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumns('Patron group', newPatronGroup);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [futureDatewithDashes]);
-
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [
+          `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,,${newEmail},,,,,002,,,${futureDatewithDashes}`,
+        ]);
         cy.visit(TopMenu.usersPath);
         UsersSearchPane.searchByUsername(user.username);
         Users.verifyPatronGroupOnUserDetailsPane(newPatronGroup);

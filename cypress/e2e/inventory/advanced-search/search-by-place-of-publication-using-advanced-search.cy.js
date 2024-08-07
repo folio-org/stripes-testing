@@ -93,7 +93,7 @@ describe('Inventory', () => {
 
     before(() => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
         testData.user = userProperties;
 
         DataImport.uploadFileViaApi(

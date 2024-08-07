@@ -10,7 +10,7 @@ describe('fse-agreements - UI', () => {
   });
 
   it(
-    'TC195280 - verify that agreements module is displayed',
+    `TC195280 - verify that agreements module is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'agreements'] },
     () => {
       cy.visit(TopMenu.agreementsPath);

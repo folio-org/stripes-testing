@@ -7,7 +7,7 @@ describe('fse-circulation-log', () => {
   });
 
   it(
-    'TC195285 - Get log by loan status',
+    `TC195285 - Get log by loan status for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'api', 'circulation-log'] },
     () => {
       cy.getByLoan('Checked in').then((response) => {

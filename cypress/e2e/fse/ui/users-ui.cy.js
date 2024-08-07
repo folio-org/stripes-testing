@@ -10,7 +10,7 @@ describe('fse-users - UI', () => {
   });
 
   it(
-    'TC195391 - verify that users page is displayed',
+    `TC195391 - verify that users page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'users'] },
     () => {
       cy.visit(TopMenu.usersPath);
