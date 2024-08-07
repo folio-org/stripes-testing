@@ -14,7 +14,7 @@ describe('Inventory', () => {
     const testData = {
       filePath: 'marcBibFileForC496125.mrc',
       marcFileName: `C496125 createAutotestFile${getRandomPostfix()}.mrc`,
-      precedingTitle: "Justus Liebig's Annalen der Chemie und Pharmacie",
+      precedingTitle: 'Justus Liebigs Annalen der Chemie.',
     };
 
     before('Create test data and login', () => {
@@ -53,9 +53,11 @@ describe('Inventory', () => {
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.verifyPrecedingTitle(testData.precedingTitle);
         InstanceRecordView.verifyPrecedingTitleSearchIcon(testData.precedingTitle);
-        InstanceRecordView.precedingTitlesIconclick();
+        InstanceRecordView.precedingTitlesIconClick();
         InventorySearchAndFilter.waitLoading();
-        InventorySearchAndFilter.checkSearchQueryText(testData.precedingTitle);
+        InventorySearchAndFilter.checkSearchQueryText(
+          `title exactPhrase ${testData.precedingTitle}`,
+        );
         InventoryInstances.verifySearchResultIncludingValue(testData.precedingTitle);
         InventoryInstances.checkResultListSortedByColumn(1);
       },

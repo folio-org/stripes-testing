@@ -280,7 +280,7 @@ export default {
     );
   },
 
-  precedingTitlesIconclick() {
+  precedingTitlesIconClick() {
     cy.get('#precedingTitles').find('a').invoke('removeAttr', 'target').click();
   },
 
