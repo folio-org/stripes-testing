@@ -221,6 +221,10 @@ export default {
     internal: 'ui-inventory.settings.electronic-access-relationships',
     gui: 'Settings (Inventory): Create, edit, delete URL relationships',
   },
+  uiInventorySetRecordsForDeletion: {
+    internal: 'ui-inventory.instance.set-deletion-and-staff-suppress',
+    gui: 'Inventory: Set records for deletion',
+  },
   inventoryCRUDHoldings: {
     internal: 'ui-inventory.holdings.delete',
     gui: 'Inventory: View, create, edit, delete holdings',
