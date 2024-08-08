@@ -16,6 +16,7 @@ import {
   Selection,
   Keyboard,
   MultiColumnListRow,
+  MessageBanner,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -232,7 +233,11 @@ export default {
   },
 
   verifySuccessBanner(validRecordsCount) {
-    cy.expect(HTML(`${validRecordsCount} records have been successfully changed`).exists());
+    cy.expect(
+      MessageBanner().has({
+        textContent: `${validRecordsCount} records have been successfully changed`,
+      }),
+    );
   },
 
   verifyLabel(text) {
@@ -594,6 +599,34 @@ export default {
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).click(),
     ]);
     this.verifyPossibleActions(options);
+  },
+
+  verifyTheOptionsForChangingNoteType(expectedOptions, rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ id: 'noteHoldingsType' }))
+        .allOptionsText()
+        .then((actualOptions) => {
+          const actualEnabledOptions = actualOptions.filter(
+            (actualOption) => !actualOption.includes('disabled'),
+          );
+          expect(actualEnabledOptions).to.deep.equal(expectedOptions);
+        }),
+    );
+  },
+
+  verifyTheActionOptions(expectedOptions, rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select('Actions select'))
+        .allOptionsText()
+        .then((actualOptions) => {
+          const actualEnabledOptions = actualOptions.filter(
+            (actualOption) => !actualOption.includes('disabled'),
+          );
+          expect(actualEnabledOptions).to.deep.equal(expectedOptions);
+        }),
+    );
   },
 
   fillInFirstTextArea(oldItem, rowIndex = 0) {
@@ -1093,6 +1126,22 @@ export default {
       RepeatableFieldItem({ index: rowIndex })
         .find(Checkbox({ label: 'Staff only', checked: true }))
         .click(),
+    );
+  },
+
+  verifyCancelButtonDisabled(isDisabled = true) {
+    cy.expect(cancelButton.has({ disabled: isDisabled }));
+  },
+
+  verifyConfirmChangesButtonDisabled(isDisabled = true) {
+    cy.expect(confirmChangesButton.has({ disabled: isDisabled }));
+  },
+
+  verifyMessageBannerInAreYouSureForm(numberOfRecords) {
+    cy.expect(
+      areYouSureForm.find(MessageBanner()).has({
+        textContent: `${numberOfRecords} records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.`,
+      }),
     );
   },
 };

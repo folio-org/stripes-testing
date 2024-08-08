@@ -203,4 +203,35 @@ export default {
       });
     });
   },
+
+  verifyValueInRowByUUID(filePath, uuidHeader, uuidValue, targetHeader, expectedValue) {
+    return FileManager.findDownloadedFilesByMask(filePath).then((downloadedFilenames) => {
+      FileManager.readFile(downloadedFilenames[0]).then((fileContent) => {
+        // Regular expression to split on commas that are not inside quotes
+        const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
+        const rows = fileContent.split('\n').filter((row) => row.trim() !== '');
+        const headers = rows
+          .shift()
+          .split(regex)
+          .map((h) => h.replace(/^"|"$/g, ''));
+        const uuidHeaderIndex = headers.indexOf(uuidHeader);
+        const targetHeaderIndex = headers.indexOf(targetHeader);
+
+        // Find the target row by UUID
+        const targetRow = rows.find((row) => {
+          const cells = row.split(regex).map((cell) => cell.replace(/^"|"$/g, ''));
+          return cells[uuidHeaderIndex] === uuidValue;
+        });
+
+        // eslint-disable-next-line no-unused-expressions
+        expect(targetRow).to.exist;
+
+        // Check the value under the specified header in the found row
+        const cells = targetRow.split(regex).map((cell) => cell.replace(/^"|"$/g, ''));
+        const actualValue = cells[targetHeaderIndex];
+
+        expect(actualValue).to.equal(expectedValue);
+      });
+    });
+  },
 };
