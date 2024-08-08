@@ -23,7 +23,7 @@ describe('Inventory', () => {
       });
 
       cy.createTempUser([
-        Permissions.inventoryAll.gui,
+        Permissions.uiInventoryViewCreateEditInstances.gui,
         Permissions.uiInventorySetRecordsForDeletion.gui,
         Permissions.enableStaffSuppressFacet.gui,
       ]).then((userProperties) => {
