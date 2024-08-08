@@ -194,4 +194,31 @@ export default {
 
     cy.expect(targetRow.find(MultiSelect({ selected: option })).exists());
   },
+
+  clickSaveButtonInBrowseOption(browseOption) {
+    const targetRow = this.getTargetRowWithClassificationName(browseOption);
+    cy.do(targetRow.find(saveButton).click());
+  },
+
+  updateIdentifierTypesAPI(classificationBrowseId, shelvingAlgorithmId, identifierTypeIds) {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: `browse/config/instance-classification/${classificationBrowseId}`,
+      body: {
+        id: classificationBrowseId,
+        shelvingAlgorithm: shelvingAlgorithmId,
+        typeIds: identifierTypeIds,
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  getIdentifierTypesForCertainBrowseAPI(classificationBrowseId) {
+    cy.okapiRequest({
+      path: 'browse/config/instance-classification',
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      return body.configs.filter((config) => config.id === classificationBrowseId)[0].typeIds;
+    });
+  },
 };
