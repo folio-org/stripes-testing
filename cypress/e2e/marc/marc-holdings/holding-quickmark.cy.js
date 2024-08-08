@@ -100,7 +100,7 @@ describe('MARC', () => {
       },
     );
 
-    it('C345398 Edit MARC 008 (spitfire)', { tags: ['smoke', 'spitfire', 'shiftLeft'] }, () => {
+    it('C345398 Edit MARC 008 (spitfire)', { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] }, () => {
       // Wait until the page to be loaded fully.
       cy.wait(1000);
       QuickMarcEditor.checkNotExpectedByteLabelsInTag008Holdings();
@@ -128,7 +128,7 @@ describe('MARC', () => {
 
     it(
       'C345400 Attempt to save a record without a MARC 852 (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
       () => {
         QuickMarcEditor.getRegularTagContent('852').then((initialTagContent) => {
           QuickMarcEditor.deleteTag(5);
