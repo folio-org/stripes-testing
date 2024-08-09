@@ -31,27 +31,27 @@ describe('Inventory', () => {
           testData.classificationBrowseId,
         ).then((types) => {
           testData.originalTypes = types;
-          ClassificationBrowse.updateIdentifierTypesAPI(
-            testData.classificationBrowseId,
-            testData.classificationBrowseId,
-            [],
-          );
-          cy.createTempUser([
-            Permissions.uiInventorySettingsConfigureClassificationBrowse.gui,
-            Permissions.crudClassificationIdentifierTypes.gui,
-          ]).then((userProperties) => {
-            user = userProperties;
-            ClassificationIdentifierTypes.createViaApi(
-              testData.localClassificationIdentifierType,
-            ).then((response) => {
-              testData.classificationIdentifierTypeId = response.body.id;
-              cy.login(user.username, user.password);
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Inventory');
-              cy.intercept('browse/config/instance-classification*').as('instanceClassifications');
-              ClassificationBrowse.openClassificationBrowse();
-              cy.wait('@instanceClassifications');
-              ClassificationBrowse.checkClassificationBrowsePaneOpened();
-            });
+        });
+        ClassificationBrowse.updateIdentifierTypesAPI(
+          testData.classificationBrowseId,
+          testData.classificationBrowseId,
+          [],
+        );
+        cy.createTempUser([
+          Permissions.uiInventorySettingsConfigureClassificationBrowse.gui,
+          Permissions.crudClassificationIdentifierTypes.gui,
+        ]).then((userProperties) => {
+          user = userProperties;
+          ClassificationIdentifierTypes.createViaApi(
+            testData.localClassificationIdentifierType,
+          ).then((response) => {
+            testData.classificationIdentifierTypeId = response.body.id;
+            cy.login(user.username, user.password);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Inventory');
+            cy.intercept('browse/config/instance-classification*').as('instanceClassifications');
+            ClassificationBrowse.openClassificationBrowse();
+            cy.wait('@instanceClassifications');
+            ClassificationBrowse.checkClassificationBrowsePaneOpened();
           });
         });
       });

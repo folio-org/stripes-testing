@@ -218,7 +218,10 @@ export default {
       path: 'browse/config/instance-classification',
       isDefaultSearchParamsRequired: false,
     }).then(({ body }) => {
-      return body.configs.filter((config) => config.id === classificationBrowseId)[0].typeIds;
+      cy.wrap(body.configs.filter((config) => config.id === classificationBrowseId)[0].typeIds).as(
+        'types',
+      );
     });
+    return cy.get('@types');
   },
 };
