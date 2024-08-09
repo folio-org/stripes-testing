@@ -28,6 +28,11 @@ const defaultClassificationBrowseNames = [
   'Dewey Decimal classification',
   'Library of Congress classification',
 ];
+const defaultClassificationBrowseIdsAlgorithms = [
+  { id: 'all', algorithm: 'default' },
+  { id: 'dewey', algorithm: 'dewey' },
+  { id: 'lc', algorithm: 'lc' },
+];
 const classificationIdentifierTypesDropdownDefaultOptions = [
   'Additional Dewey',
   'Canadian Classification',
@@ -41,6 +46,12 @@ const classificationIdentifierTypesDropdownDefaultOptions = [
   'UDC',
 ];
 const tableHeaderTexts = ['Name', 'Classification identifier types', 'Actions'];
+
+export {
+  defaultClassificationBrowseNames,
+  classificationIdentifierTypesDropdownDefaultOptions,
+  defaultClassificationBrowseIdsAlgorithms,
+};
 
 export default {
   openClassificationBrowse() {

@@ -18,10 +18,9 @@ describe('Inventory', () => {
 
       const testData = {
         localClassificationIdentifierType: {
-          name: `C451643 Local type ${getRandomPostfix()}`,
+          name: `C451644 Local type ${getRandomPostfix()}`,
           source: 'local',
         },
-        optionToSelect: classificationIdentifierTypesDropdownDefaultOptions[0],
         classificationBrowseName: defaultClassificationBrowseNames[2],
         classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[2].id,
         classificationBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[2].algorithm,
@@ -74,7 +73,7 @@ describe('Inventory', () => {
       });
 
       it(
-        'C451643 Successful saving toast message is displayed after editing and saving "Classification browse" option (spitfire)',
+        'C451644 Select all available “Classification identifier types” when edit "Classification browse" option (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           ClassificationBrowse.checkClassificationBrowseInTable(
@@ -99,12 +98,18 @@ describe('Inventory', () => {
           ClassificationBrowse.checkClassificationIdentifierTypesDropdownOption(
             testData.localClassificationIdentifierType.name,
           );
+          classificationIdentifierTypesDropdownDefaultOptions.forEach((defaultType) => {
+            ClassificationBrowse.selectClassificationIdentifierTypesDropdownOption(defaultType);
+          });
           ClassificationBrowse.selectClassificationIdentifierTypesDropdownOption(
-            testData.optionToSelect,
+            testData.localClassificationIdentifierType.name,
           );
           ClassificationBrowse.checkOptionSelectedInClassificationIdentifierTypesDropdown(
             testData.classificationBrowseName,
-            [testData.optionToSelect],
+            [
+              ...classificationIdentifierTypesDropdownDefaultOptions,
+              testData.localClassificationIdentifierType.name,
+            ],
           );
           ClassificationBrowse.checkClassificationIdentifierTypesDropdownExpanded(
             testData.classificationBrowseName,
@@ -117,7 +122,10 @@ describe('Inventory', () => {
           InteractorsTools.checkCalloutMessage(saveCalloutText);
           ClassificationBrowse.checkClassificationBrowseInTable(
             testData.classificationBrowseName,
-            testData.optionToSelect,
+            [
+              ...classificationIdentifierTypesDropdownDefaultOptions,
+              testData.localClassificationIdentifierType.name,
+            ].join(''),
           );
         },
       );
