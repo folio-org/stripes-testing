@@ -61,8 +61,8 @@ describe('bulk-edit', () => {
         QueryModal.selectOperator('not in');
         QueryModal.verifyQueryAreaContent('(items.status_name not in (""))');
         QueryModal.verifyValueColumn();
-        QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.ON_ORDER);
-        QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.AGED_TO_LOST);
+        QueryModal.chooseFromValueMultiselect(ITEM_STATUS_NAMES.ON_ORDER);
+        QueryModal.chooseFromValueMultiselect(ITEM_STATUS_NAMES.AGED_TO_LOST);
         QueryModal.verifyQueryAreaContent(
           `(items.status_name not in ("${ITEM_STATUS_NAMES.ON_ORDER}","${ITEM_STATUS_NAMES.AGED_TO_LOST}"))`,
         );

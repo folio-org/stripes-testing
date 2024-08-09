@@ -6,6 +6,7 @@ import {
   Callout,
   Checkbox,
   Dropdown,
+  DropdownMenu,
   Form,
   HTML,
   KeyValue,
@@ -497,7 +498,7 @@ export default {
   },
 
   editMarcBibliographicRecord: () => {
-    cy.wait(1000);
+    cy.wait(2000);
     cy.do(actionsButton.click());
     cy.wait(1000);
     cy.do(editMARCBibRecordButton.click());
@@ -901,8 +902,11 @@ export default {
         .find(Checkbox())
         .click(),
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
-        .find(Dropdown({ label: 'Move to' }))
-        .choose(including(toHolding)),
+        .find(Button('Move to'))
+        .click(),
+      DropdownMenu()
+        .find(Button(including(toHolding)))
+        .click(),
     ]);
 
     if (itemMoved) {
@@ -952,8 +956,11 @@ export default {
         .find(Checkbox())
         .click(),
       Accordion({ label: including(`Holdings: ${secondHoldingName}`) })
-        .find(Dropdown({ label: 'Move to' }))
-        .choose(including(firstHoldingName)),
+        .find(Button('Move to'))
+        .click(),
+      DropdownMenu()
+        .find(Button(including(firstHoldingName)))
+        .click(),
     ]);
   },
 
