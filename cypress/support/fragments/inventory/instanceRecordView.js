@@ -555,15 +555,20 @@ export default {
     cy.expect(Button({ id: 'move-instance' }).absent());
   },
 
+  verifyInstanceHeader(header) {
+    cy.get('#paneHeaderpane-instancedetails')
+      .find('[class*="paneTitleLabel-"]')
+      .should('have.text', header);
+  },
+
   verifySetRecordForDeletionOptionEnabled() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'quick-export-trigger' }).has({ disabled: false }));
   },
 
-  verifyInstanceHeader(header) {
-    cy.get('#paneHeaderpane-instancedetails')
-      .find('[class*="paneTitleLabel-"]')
-      .should('have.text', header);
+  verifySetRecordForDeletionOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'quick-export-trigger' }).absent());
   },
 
   checkMultipleItemNotesWithStaffOnly: (rowIndex, staffOnly, noteType, noteText) => {
