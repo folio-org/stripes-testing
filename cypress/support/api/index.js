@@ -30,3 +30,4 @@ import './receiving';
 import './settings';
 import './edge';
 import './tenant';
+import './specifications';
