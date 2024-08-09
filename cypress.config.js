@@ -31,7 +31,7 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://okapi-missinglinks.int.aws.folio.org',
+    OKAPI_HOST: 'https://okapi-linked-data-quesnelia.int.aws.folio.org',
     OKAPI_TENANT: 'fs09000000',
     diku_login: 'admin',
     diku_password: 'bugfest09',
@@ -41,7 +41,7 @@ module.exports = defineConfig({
     allureReuseAfterSpec: true,
     grepFilterSpecs: true,
     grepOmitFiltered: true,
-    rtrAuth: false,
+    rtrAuth: true,
     ecsEnabled: false,
   },
   reporterOptions: reportportalOptions,
@@ -141,7 +141,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://missinglinks.int.aws.folio.org',
+    baseUrl: 'https://linked-data-quesnelia.int.aws.folio.org',
     testIsolation: false,
   },
 });

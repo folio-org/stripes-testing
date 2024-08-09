@@ -12,6 +12,18 @@ export default {
     cy.get('[data-testid="id-search-button"]').click();
   },
 
+  searchResourceByIsbn: (isbn) => {
+    cy.get('#id-search-select').select('ISBN');
+    cy.get('#id-search-input').type(isbn);
+    cy.get('[data-testid="id-search-button"]').click();
+  },
+
+  searchResourceByContributor: (contributor) => {
+    cy.get('#id-search-select').select('Contributor');
+    cy.get('#id-search-input').type(contributor);
+    cy.get('[data-testid="id-search-button"]').click();
+  },
+
   verifySearchResult(data) {
     cy.get('[class*="search-result-entry-container"]')
       .first()

@@ -37,12 +37,12 @@ const listsPath = '/lists';
 const coursesPath = '/cr/courses';
 const consortiumManagerPath = '/consortia-settings';
 const settingsAuthorityFilesPath = '/settings/marc-authorities/manage-authority-files';
-const marvaEditorPath = '/marva/search';
 const dashboardPath = '/dashboard';
 const ermComparisonPath = '/comparisons-erm';
 const ermUsagePath = '/eusage';
 const licensesPath = '/licenses';
 const localKbAdmin = '/local-kb-admin';
+const marvaEditorPath = '/linked-data-editor/search';
 
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
@@ -84,6 +84,12 @@ export default {
   consortiumManagerPath,
   coursesPath,
   settingsAuthorityFilesPath,
+  dashboardPath,
+  ermComparisonPath,
+  ermUsagePath,
+  licensesPath,
+  localKbAdmin,
+  marvaEditorPath,
 
   openCheckInApp: () => {
     cy.do(Link({ href: including('/checkin') }).click());
