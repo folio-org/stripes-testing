@@ -11,13 +11,23 @@ import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
+function addPatronBlock(description, user) {
+  return cy.createBlockApi({
+    desc: description,
+    borrowing: false,
+    renewals: true,
+    requests: false,
+    type: 'Manual',
+    userId: user.userId,
+  });
+}
+
 describe('ui-patrons: Verify that library staff can create/edit/delete a manual patron block (C476)', () => {
   const testData = {
     folioInstances1: InventoryInstances.generateFolioInstances(),
     folioInstances2: InventoryInstances.generateFolioInstances(),
     folioInstances3: InventoryInstances.generateFolioInstances(),
     servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-    requestsId: '',
   };
   const userData = {};
 
@@ -64,15 +74,7 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
           servicePointId: testData.servicePoint.id,
           userBarcode: userData.user1.barcode,
         });
-        cy.createBlockApi({
-          desc: renewalsBlock.description1,
-          borrowing: false,
-          renewals: true,
-          requests: false,
-          type: 'Manual',
-          userId: userData.user1.userId,
-        }).then((body) => {
-          cy.log(body);
+        addPatronBlock(renewalsBlock.description1, userData.user1).then((body) => {
           renewalsBlock.id11 = body.id;
         });
       });
@@ -95,26 +97,10 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
           servicePointId: testData.servicePoint.id,
           userBarcode: userData.user2.barcode,
         });
-        cy.createBlockApi({
-          desc: renewalsBlock.description1,
-          borrowing: false,
-          renewals: true,
-          requests: false,
-          type: 'Manual',
-          userId: userData.user2.userId,
-        }).then((body) => {
-          cy.log(body);
+        addPatronBlock(renewalsBlock.description1, userData.user2).then((body) => {
           renewalsBlock.id21 = body.id;
         });
-        cy.createBlockApi({
-          desc: renewalsBlock.description2,
-          borrowing: false,
-          renewals: true,
-          requests: false,
-          type: 'Manual',
-          userId: userData.user2.userId,
-        }).then((body) => {
-          cy.log(body);
+        addPatronBlock(renewalsBlock.description2, userData.user2).then((body) => {
           renewalsBlock.id22 = body.id;
         });
       });
