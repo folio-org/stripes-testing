@@ -9,7 +9,7 @@ Cypress.Commands.add('getToken', (username, password) => {
   if (Cypress.env('eureka')) {
     cy.okapiRequest({
       method: 'POST',
-      path: 'authn/login',
+      path: 'authn/login-with-expiry',
       body: { username, password },
       isDefaultSearchParamsRequired: false,
     }).then(() => {
@@ -74,7 +74,7 @@ Cypress.Commands.add('getUserToken', (username, password) => {
     pathToSet = 'bl-users/login';
   }
   if (Cypress.env('eureka')) {
-    pathToSet = 'authn/login';
+    pathToSet = 'authn/login-with-expiry';
   }
   cy.okapiRequest({
     method: 'POST',
