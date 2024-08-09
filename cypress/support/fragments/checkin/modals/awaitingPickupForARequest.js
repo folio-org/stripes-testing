@@ -1,6 +1,6 @@
 import { Button, Modal, Checkbox, including } from '../../../../../interactors';
 
-const modalTitle = 'Awaiting pickup for a request';
+const modalTitle = 'In trasnist';
 const modalCheckbox = Modal(modalTitle).find(Checkbox('Print slip'));
 
 export default {

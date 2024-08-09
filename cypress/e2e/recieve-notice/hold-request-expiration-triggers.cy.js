@@ -255,14 +255,28 @@ describe('Hold request expiration triggers', () => {
       CheckOutActions.endCheckOutSession();
       cy.wait(5000);
 
-      // cy.visit(TopMenu.requestsPath);
-      // NewRequest.createNewRequest({
-      //   itemBarcode: itemData.itemBarcode,
-      //   itemTitle: itemData.title,
-      //   requesterBarcode: testData.requestUser.barcode,
-      //   pickupServicePoint: testData.servicePoint.name,
-      //   requestType: REQUEST_TYPES.HOLD,
-      // });
+      cy.visit(TopMenu.requestsPath);
+      NewRequest.createNewRequest({
+        itemBarcode: itemData.barcode,
+        itemTitle: itemData.title,
+        requesterBarcode: testData.requestUser.barcode,
+        pickupServicePoint: testData.servicePoint.name,
+        requestType: REQUEST_TYPES.HOLD,
+      });
+      NewRequest.waitLoading();
+
+      cy.visit(TopMenu.checkInPath);
+      CheckInActions.checkInItemGui(itemData.barcode);
+      cy.do(console.log(' ****************  1'));
+      cy.wait(3000);
+      AwaitingPickupForARequest.unselectCheckboxPrintSlip();
+      cy.do(console.log(' ****************  2'));
+      cy.wait(3000);
+      AwaitingPickupForARequest.closeModal();
+      cy.do(console.log(' ****************  3'));
+      cy.wait(3000);
+      // CheckInActions.verifyLastCheckInItem(itemData.barcode);
+      // CheckInActions.endCheckInSession();
     },
   );
 });
