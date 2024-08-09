@@ -427,7 +427,7 @@ Cypress.Commands.add('deleteUserWithoutKeycloakInEurekaApi', (userId) => {
 
 Cypress.Commands.add('getUserWithBlUsersByUsername', (username) => {
   cy.okapiRequest({
-    path: `/bl-users/by-username/${username}`,
+    path: `bl-users/by-username/${username}`,
     isDefaultSearchParamsRequired: false,
   }).then((response) => {
     return response;

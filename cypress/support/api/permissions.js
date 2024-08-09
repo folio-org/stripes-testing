@@ -193,7 +193,7 @@ Cypress.Commands.add('deleteAuthorizationRoleApi', (roleId, ignoreErrors = false
 
 Cypress.Commands.add('getAuthorizationRolesForUserApi', (userId) => {
   cy.okapiRequest({
-    path: `/roles/users/${userId}`,
+    path: `roles/users/${userId}`,
     isDefaultSearchParamsRequired: false,
   }).then(({ status, body }) => {
     return {
@@ -287,7 +287,7 @@ Cypress.Commands.add('deleteRolesForUserApi', (userId) => {
 Cypress.Commands.add('updateCapabilitiesForUserApi', (userId, capabilityIds) => {
   cy.okapiRequest({
     method: 'PUT',
-    path: `/users/${userId}/capabilities`,
+    path: `users/${userId}/capabilities`,
     body: {
       capabilityIds,
     },
@@ -298,7 +298,7 @@ Cypress.Commands.add('updateCapabilitiesForUserApi', (userId, capabilityIds) => 
 Cypress.Commands.add('updateCapabilitySetsForUserApi', (userId, capabilitySetIds) => {
   cy.okapiRequest({
     method: 'PUT',
-    path: `/users/${userId}/capability-sets`,
+    path: `users/${userId}/capability-sets`,
     body: {
       capabilitySetIds,
     },
