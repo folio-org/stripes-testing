@@ -6,6 +6,7 @@ Cypress.Commands.add('createBlockApi', (block) => {
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
     Cypress.env('block', body);
+    return body;
   });
 });
 
