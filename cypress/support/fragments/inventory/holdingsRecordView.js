@@ -317,10 +317,33 @@ export default {
     );
   },
 
-  checkNotesByType(rowIndex, columnHeader, value) {
+  checkNotesByType(
+    noteTypeRowIndex,
+    columnHeader,
+    noteValue,
+    staffOnlyValue = 'No',
+    noteRecordRowIndexInNoteType = 0,
+  ) {
     cy.expect(
-      MultiColumnList({ id: `list-holdings-notes-${rowIndex}` })
-        .find(MultiColumnListCell({ column: columnHeader, content: value }))
+      MultiColumnList({ id: `list-holdings-notes-${noteTypeRowIndex}` })
+        .find(
+          MultiColumnListCell({
+            column: 'Staff only',
+            content: staffOnlyValue,
+            row: noteRecordRowIndexInNoteType,
+          }),
+        )
+        .exists(),
+    );
+    cy.expect(
+      MultiColumnList({ id: `list-holdings-notes-${noteTypeRowIndex}` })
+        .find(
+          MultiColumnListCell({
+            column: columnHeader,
+            content: noteValue,
+            row: noteRecordRowIndexInNoteType,
+          }),
+        )
         .exists(),
     );
   },
