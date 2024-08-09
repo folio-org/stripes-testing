@@ -339,6 +339,17 @@ export default {
     );
   },
 
+  // Indexation starts from 1 for a row
+  verifyPatronBlockDescription(row, description) {
+    cy.expect(
+      patronBlocksSection
+        .find(MultiColumnList({ id: 'patron-block-mcl' }))
+        .find(MultiColumnListRow({ index: row - 1 }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .has({ content: description }),
+    );
+  },
+
   submitNewBlockPageOpen() {
     cy.expect([
       TextArea({ id: 'patronBlockForm-desc' }).exists(),
