@@ -1,5 +1,7 @@
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import ConsortiumManager from '../../../support/fragments/consortium-manager/consortiumManagerApp';
+import ConsortiumManagerApp from '../../../support/fragments/consortium-manager/consortiumManagerApp';
+import ConsortiumMgr from '../../../support/fragments/settings/consortium-manager/consortium-manager';
+import { tenantNames } from '../../../support/dictionary/affiliations';
 
 describe('fse-consortia - UI', () => {
   beforeEach(() => {
@@ -10,12 +12,19 @@ describe('fse-consortia - UI', () => {
   });
 
   it(
-    `TCxxxxx - verify that consortium manager is displayed for the central tenant for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['consortia', 'fse', 'ui'] },
+    `TC195511 - verify that consortium manager and user affiliations ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['consortia-sanity', 'central', 'fse', 'ui'] },
     () => {
       TopMenuNavigation.navigateToApp('Consortium manager');
-      ConsortiumManager.verifyStatusOfConsortiumManager();
-      ConsortiumManager.verifyMembersSelected();
+      ConsortiumMgr.checkCurrentTenantInTopMenu(tenantNames.central);
+      cy.getUserAffiliationsCount().then((count) => {
+        ConsortiumManagerApp.verifyStatusOfConsortiumManager(count);
+        if (count > 1) {
+          ConsortiumMgr.switchActiveAffiliationExists();
+        } else {
+          ConsortiumMgr.switchActiveAffiliationIsAbsent();
+        }
+      });
     },
   );
 });

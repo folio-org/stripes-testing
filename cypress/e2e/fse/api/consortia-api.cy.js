@@ -6,9 +6,13 @@ describe('fse-consortia-api', () => {
     cy.allure().logCommandSteps();
   });
 
-  it('TCXXXX - Get consortia id', { tags: ['consortia', 'fse', 'api'] }, () => {
-    cy.getConsortiaId().then((consortiaId) => {
-      cy.expect(consortiaId).to.not.be.oneOf([null, '']);
-    });
-  });
+  it(
+    `TC195510 - Get consortia id for ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['consortia-sanity', 'fse', 'api'] },
+    () => {
+      cy.getConsortiaId().then((consortiaId) => {
+        cy.expect(consortiaId).to.not.be.oneOf([null, '']);
+      });
+    },
+  );
 });
