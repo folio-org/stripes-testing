@@ -73,6 +73,7 @@ const scrollParams = {
   direction: 'left',
   value: 600,
 };
+const renewalBlockMessage = 'Patron blocked from renewing';
 
 const checkLoansPage = () => {
   cy.expect(PaneHeader(including(headers.loansPage)).exists());
@@ -117,6 +118,7 @@ const checkModalTable = (modalTitle, itemData) => {
 const generateInitialLink = (userId, loanId) => `users/${userId}/loans/view/${loanId}`;
 
 export default {
+  renewalBlockMessage,
   checkLoansPage,
   renewWithoutOverrideAccess(loanId, userId, itemData) {
     cy.visit(generateInitialLink(userId, loanId));
@@ -220,5 +222,17 @@ export default {
       TextArea(fieldLabels.comment).fillIn(commentText),
       Button(buttonLabels.saveAndClose).click(),
     ]);
+  },
+
+  verifyModal(header, content) {
+    cy.expect(
+      Modal(including(header)).has({
+        message: including(content),
+      }),
+    );
+  },
+
+  viewBlockDetails() {
+    cy.do(Button({ id: 'patron-block-details-modal' }).click());
   },
 };

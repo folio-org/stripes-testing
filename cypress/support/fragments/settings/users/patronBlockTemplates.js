@@ -24,7 +24,7 @@ export default {
     isDefaultSearchParamsRequired: false,
   }),
 
-  newPatronTemlate() {
+  newPatronTemplate() {
     cy.do(Button({ id: 'clickable-create-entry' }).click());
   },
 
@@ -32,7 +32,7 @@ export default {
     cy.expect(Button({ id: 'clickable-create-entry' }).absent());
   },
 
-  fillInPatronTemlateInformation(name, description) {
+  fillInPatronTemplateInformation(name, description) {
     cy.do([
       TextField({ name: 'name' }).fillIn(name),
       Section({ id: 'blockInformation' })
@@ -43,7 +43,7 @@ export default {
     ]);
   },
 
-  findPatronTemlate(templateName) {
+  findPatronTemplate(templateName) {
     cy.do(NavListItem(templateName).click());
   },
 
