@@ -21,6 +21,7 @@ const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const resultsAccordion = Accordion('Preview of record matched');
 const changesAccordion = Accordion('Preview of record changed');
 const errorsAccordion = Accordion('Errors');
+const bulkEditsAccordion = Accordion('Bulk edits');
 const recordIdentifierDropdown = Select('Record identifier');
 const recordTypesAccordion = Accordion({ label: 'Record types' });
 const actions = Button('Actions');
@@ -837,5 +838,9 @@ export default {
 
         return numberOfRecords;
       });
+  },
+
+  verifyBulkEditsAccordionExists() {
+    cy.expect(bulkEditsAccordion.exists());
   },
 };

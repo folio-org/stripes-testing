@@ -36,6 +36,7 @@ const testData = {
     'C471495 Maoriauto poetry --21st centuryauto',
   ],
   searchQueriesC471494: ['C471494 Wærn, Hakonauto', 'C471494 Waern, Hakonauto'],
+  searchQueriesC466290: ['Worterautodia', 'Wörterautodia'],
   searchResultC473260:
     'C473260 Arbeitauto und Mühe : Untersuchungenauto zur Bedeutungsgeschichte altengl. Wörter / von Klaus R. Grinda.',
   searchResultC471498: "C471498 Aus Jacobi's Gartenauto : Furioso : aus Beethoven's Jugendauto",
@@ -45,13 +46,20 @@ const testData = {
   searchResultC471494:
     'C471494 Elpannanauto och dess ekonomiska förutsättningar / av Hakonauto Wærn',
 
-  marcFile: {
-    marc: 'marcBibFileDiacritics.mrc',
-    fileName: `testMarcBibFileDiacritics.${randomFourDigitNumber()}.mrc`,
-    jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-    numberOfRecords: 5,
-    propertyName: 'instance',
-  },
+  marcFiles: [
+    {
+      marc: 'marcBibC466290.mrc',
+      fileName: `testMarcBibFileC466290.${randomFourDigitNumber()}.mrc`,
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      propertyName: 'instance',
+    },
+    {
+      marc: 'marcBibFileDiacritics.mrc',
+      fileName: `testMarcBibFileDiacritics.${randomFourDigitNumber()}.mrc`,
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      propertyName: 'instance',
+    },
+  ],
 
   instanceTitlePrefixes: [
     'C473260 Arbeitauto',
@@ -59,6 +67,7 @@ const testData = {
     'C471497',
     'C471495 Kupuauto',
     'C471494 Elpannanauto',
+    'C466290 Autodia',
   ],
 };
 
@@ -80,13 +89,15 @@ describe('Inventory', () => {
       });
 
       cy.getAdminToken();
-      DataImport.uploadFileViaApi(
-        testData.marcFile.marc,
-        testData.marcFile.fileName,
-        testData.marcFile.jobProfileToRun,
-      ).then((response) => {
-        response.forEach((record) => {
-          testData.instanceIDs.push(record[testData.marcFile.propertyName].id);
+      testData.marcFiles.forEach((marcFile) => {
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            testData.instanceIDs.push(record[marcFile.propertyName].id);
+          });
         });
       });
 
@@ -95,7 +106,7 @@ describe('Inventory', () => {
       });
     });
 
-    beforeEach('Login', () => {
+    before('Login', () => {
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
@@ -188,6 +199,18 @@ describe('Inventory', () => {
             0,
           );
           InventorySearchAndFilter.checkRowsCount(1);
+          InventoryInstances.resetAllFilters();
+        });
+      },
+    );
+
+    it(
+      'C466290 Search for Instance using query with diacritics should return same results as query without diacritics (spitfire)',
+      { tags: ['criticalPath', 'spitfire'] },
+      () => {
+        testData.searchQueriesC466290.forEach((query) => {
+          InventoryInstances.searchInstancesWithOption(undefined, query);
+          InventorySearchAndFilter.checkRowsCount(8);
           InventoryInstances.resetAllFilters();
         });
       },
