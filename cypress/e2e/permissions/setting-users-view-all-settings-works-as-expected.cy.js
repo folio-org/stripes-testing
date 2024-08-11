@@ -233,7 +233,7 @@ describe('Permissions', () => {
       { tags: ['extendedPath', 'volaris'] },
       () => {
         cy.visit(SettingsMenu.patronBlockTemplates);
-        PatronBlockTemplates.findPatronTemlate(patronBlockTemplate.name);
+        PatronBlockTemplates.findPatronTemplate(patronBlockTemplate.name);
         PermissionSets.checkEditButtonNotAvailable();
       },
     );

@@ -355,7 +355,7 @@ export default {
       including(`Request has been successfully created for ${username}`),
     );
   },
-  checkItemInformationSecton(instanceTitle, location, itemStatus) {
+  checkItemInformationSection(instanceTitle, location, itemStatus) {
     cy.expect([
       KeyValue('Title').has({ value: instanceTitle }),
       KeyValue('Effective location').has({ value: location }),
