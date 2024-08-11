@@ -109,6 +109,8 @@ describe('MARC', () => {
               `$a ${testData.localSourceCode}432317`,
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
           });
 

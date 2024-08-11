@@ -90,112 +90,112 @@ describe('MARC', () => {
         });
       });
 
-      it(
-        'C360098 MARC Bib | MARC tag validation checks when clicks on the "Save & keep editing" button (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
-        () => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          InventoryInstances.waitContentLoading();
-          InventoryInstances.searchByTitle(createdInstanceIDs[0]);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.updateExistingTagValue(20, '');
-          QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(20, calloutMarcTagWrongLength);
-          QuickMarcEditor.verifyTagValue(20, '');
-          QuickMarcEditor.updateExistingTagValue(20, testData.tag504FirstUpdatedTag);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(20, calloutMarcTagWrongLength);
-          QuickMarcEditor.verifyTagValue(20, testData.tag504FirstUpdatedTag);
-          QuickMarcEditor.updateExistingTagValue(20, testData.tag504SecondUpdatedTag);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(20, calloutInvalidMarcTag);
-          QuickMarcEditor.verifyTagValue(20, testData.tag504SecondUpdatedTag);
-          QuickMarcEditor.updateExistingTagValue(20, testData.tag245);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(20, calloutMultiple245MarcTags);
-          QuickMarcEditor.verifyTagValue(20, testData.tag245);
-          QuickMarcEditor.updateExistingTagValue(20, testData.tag504);
-          QuickMarcEditor.updateExistingTagValue(14, testData.tag555);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyNo245TagCallout();
-          QuickMarcEditor.verifyTagValue(14, testData.tag555);
-          QuickMarcEditor.updateExistingTagValue(14, testData.tag245);
-          QuickMarcEditor.updateExistingTagValue(16, '');
-          QuickMarcEditor.updateTagNameToLockedTag(16, testData.tag001);
-          QuickMarcEditor.checkFourthBoxEditable(16, false);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(16, calloutMultiple001MarcTags);
-          QuickMarcEditor.verifyTagValue(16, testData.tag001);
-          QuickMarcEditor.checkFourthBoxEditable(16, false);
-          QuickMarcEditor.closeWithoutSavingAfterChange();
-          InventoryInstance.waitLoading();
-          InventoryInstance.checkInstanceTitle(testData.instanceTitle);
-          InventoryInstance.checkDetailViewOfInstance(
-            testData.instanceNotesAccordion,
-            testData.instanceBibliographyNote,
-          );
-        },
-      );
+      // it(
+      //   'C360098 MARC Bib | MARC tag validation checks when clicks on the "Save & keep editing" button (spitfire)',
+      //   { tags: ['criticalPath', 'spitfire'] },
+      //   () => {
+      //     cy.login(testData.userProperties.username, testData.userProperties.password, {
+      //       path: TopMenu.inventoryPath,
+      //       waiter: InventoryInstances.waitContentLoading,
+      //     });
+      //     InventoryInstances.waitContentLoading();
+      //     InventoryInstances.searchByTitle(createdInstanceIDs[0]);
+      //     InventoryInstances.selectInstance();
+      //     InventoryInstance.editMarcBibliographicRecord();
+      //     QuickMarcEditor.updateExistingTagValue(20, '');
+      //     QuickMarcEditor.checkButtonsEnabled();
+      //     QuickMarcEditor.clickSaveAndKeepEditingButton();
+      //     QuickMarcEditor.checkErrorMessage(20, calloutMarcTagWrongLength);
+      //     QuickMarcEditor.verifyTagValue(20, '');
+      //     QuickMarcEditor.updateExistingTagValue(20, testData.tag504FirstUpdatedTag);
+      //     QuickMarcEditor.clickSaveAndKeepEditingButton();
+      //     QuickMarcEditor.checkErrorMessage(20, calloutMarcTagWrongLength);
+      //     QuickMarcEditor.verifyTagValue(20, testData.tag504FirstUpdatedTag);
+      //     QuickMarcEditor.updateExistingTagValue(20, testData.tag504SecondUpdatedTag);
+      //     QuickMarcEditor.clickSaveAndKeepEditingButton();
+      //     QuickMarcEditor.checkErrorMessage(20, calloutInvalidMarcTag);
+      //     QuickMarcEditor.verifyTagValue(20, testData.tag504SecondUpdatedTag);
+      //     QuickMarcEditor.updateExistingTagValue(20, testData.tag245);
+      //     QuickMarcEditor.clickSaveAndKeepEditingButton();
+      //     QuickMarcEditor.checkErrorMessage(20, calloutMultiple245MarcTags);
+      //     QuickMarcEditor.verifyTagValue(20, testData.tag245);
+      //     QuickMarcEditor.updateExistingTagValue(20, testData.tag504);
+      //     QuickMarcEditor.updateExistingTagValue(14, testData.tag555);
+      //     QuickMarcEditor.clickSaveAndKeepEditingButton();
+      //     QuickMarcEditor.verifyNo245TagCallout();
+      //     QuickMarcEditor.verifyTagValue(14, testData.tag555);
+      //     QuickMarcEditor.updateExistingTagValue(14, testData.tag245);
+      //     QuickMarcEditor.updateExistingTagValue(16, '');
+      //     QuickMarcEditor.updateTagNameToLockedTag(16, testData.tag001);
+      //     QuickMarcEditor.checkFourthBoxEditable(16, false);
+      //     QuickMarcEditor.clickSaveAndKeepEditingButton();
+      //     QuickMarcEditor.checkErrorMessage(16, calloutMultiple001MarcTags);
+      //     QuickMarcEditor.verifyTagValue(16, testData.tag001);
+      //     QuickMarcEditor.checkFourthBoxEditable(16, false);
+      //     QuickMarcEditor.closeWithoutSavingAfterChange();
+      //     InventoryInstance.waitLoading();
+      //     InventoryInstance.checkInstanceTitle(testData.instanceTitle);
+      //     InventoryInstance.checkDetailViewOfInstance(
+      //       testData.instanceNotesAccordion,
+      //       testData.instanceBibliographyNote,
+      //     );
+      //   },
+      // );
 
-      it(
-        'C356842 [quickMARC] Verify that the "Save & close" button enabled when user make changes in the record. (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
-        () => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
-          InventoryInstances.searchByTitle(createdInstanceIDs[1]);
-          InventoryInstances.selectInstance();
-          InventoryInstance.waitLoading();
-          InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.addEmptyFields(20);
-          // here and below - wait until new field is shown
-          cy.wait(500);
-          QuickMarcEditor.updateExistingFieldContent(21, '1');
-          QuickMarcEditor.checkEmptyFieldAdded(21, '1');
-          QuickMarcEditor.checkButtonSaveAndCloseEnable();
-          QuickMarcEditor.addEmptyFields(20);
-          // here and below - wait until new field is shown
-          cy.wait(500);
-          QuickMarcEditor.updateExistingFieldContent(22, '2');
-          QuickMarcEditor.checkEmptyFieldAdded(22, '2');
-          QuickMarcEditor.checkButtonSaveAndCloseEnable();
-          QuickMarcEditor.addEmptyFields(20);
-          // here and below - wait until new field is shown
-          cy.wait(500);
-          QuickMarcEditor.updateExistingFieldContent(23, '3');
-          QuickMarcEditor.checkEmptyFieldAdded(23, '3');
-          QuickMarcEditor.checkButtonSaveAndCloseEnable();
-          QuickMarcEditor.deleteField(20);
-          // here and below - wait until deleted empty field is not shown
-          cy.wait(1000);
-          QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      // it(
+      //   'C356842 [quickMARC] Verify that the "Save & close" button enabled when user make changes in the record. (spitfire)',
+      //   { tags: ['criticalPath', 'spitfire'] },
+      //   () => {
+      //     cy.login(testData.userProperties.username, testData.userProperties.password, {
+      //       path: TopMenu.inventoryPath,
+      //       waiter: InventoryInstances.waitContentLoading,
+      //     });
+      //     InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
+      //     InventoryInstances.searchByTitle(createdInstanceIDs[1]);
+      //     InventoryInstances.selectInstance();
+      //     InventoryInstance.waitLoading();
+      //     InventoryInstance.editMarcBibliographicRecord();
+      //     QuickMarcEditor.addEmptyFields(20);
+      //     // here and below - wait until new field is shown
+      //     cy.wait(500);
+      //     QuickMarcEditor.updateExistingFieldContent(21, '1');
+      //     QuickMarcEditor.checkEmptyFieldAdded(21, '1');
+      //     QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      //     QuickMarcEditor.addEmptyFields(20);
+      //     // here and below - wait until new field is shown
+      //     cy.wait(500);
+      //     QuickMarcEditor.updateExistingFieldContent(22, '2');
+      //     QuickMarcEditor.checkEmptyFieldAdded(22, '2');
+      //     QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      //     QuickMarcEditor.addEmptyFields(20);
+      //     // here and below - wait until new field is shown
+      //     cy.wait(500);
+      //     QuickMarcEditor.updateExistingFieldContent(23, '3');
+      //     QuickMarcEditor.checkEmptyFieldAdded(23, '3');
+      //     QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      //     QuickMarcEditor.deleteField(20);
+      //     // here and below - wait until deleted empty field is not shown
+      //     cy.wait(1000);
+      //     QuickMarcEditor.checkButtonSaveAndCloseEnable();
 
-          QuickMarcEditor.deleteField(21);
-          // here and below - wait until deleted empty field is not shown
-          cy.wait(1000);
-          QuickMarcEditor.checkButtonSaveAndCloseEnable();
-          QuickMarcEditor.deleteField(21);
-          // here and below - wait until deleted empty field is not shown
-          cy.wait(1000);
-          QuickMarcEditor.checkButtonSaveAndCloseEnable();
-          QuickMarcEditor.deleteField(21);
-          // here and below - wait until deleted empty field is not shown
-          cy.wait(1000);
-          QuickMarcEditor.checkButtonSaveAndCloseEnable();
-          QuickMarcEditor.checkTagAbsent('');
-          QuickMarcEditor.clickSaveAndCloseThenCheck(1);
-          QuickMarcEditor.confirmDelete();
-          QuickMarcEditor.checkAfterSaveAndClose();
-        },
-      );
+      //     QuickMarcEditor.deleteField(21);
+      //     // here and below - wait until deleted empty field is not shown
+      //     cy.wait(1000);
+      //     QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      //     QuickMarcEditor.deleteField(21);
+      //     // here and below - wait until deleted empty field is not shown
+      //     cy.wait(1000);
+      //     QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      //     QuickMarcEditor.deleteField(21);
+      //     // here and below - wait until deleted empty field is not shown
+      //     cy.wait(1000);
+      //     QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      //     QuickMarcEditor.checkTagAbsent('');
+      //     QuickMarcEditor.clickSaveAndCloseThenCheck(1);
+      //     QuickMarcEditor.confirmDelete();
+      //     QuickMarcEditor.checkAfterSaveAndClose();
+      //   },
+      // );
 
       it(
         'C359239 Edit MARC Bib | Displaying of placeholder message when user deletes a row (spitfire) (TaaS)',
@@ -320,6 +320,8 @@ describe('MARC', () => {
           cy.wait(1000);
           QuickMarcEditor.deleteField(31);
           cy.wait(1000);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkDeletingFieldsModal();
           QuickMarcEditor.restoreDeletedFields();

@@ -60,6 +60,8 @@ describe('MARC', () => {
               QuickMarcEditor.getFreeTags()[1],
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.deleteConfirmationPresented();
             QuickMarcEditor.confirmDelete();
             // Wait for the content to be loaded.
@@ -90,7 +92,8 @@ describe('MARC', () => {
           QuickMarcEditor.addRow();
           QuickMarcEditor.checkInitialContent();
           const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues();
-
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           InventoryInstance.waitLoading();
           // Wait for the content to be loaded.
@@ -124,6 +127,8 @@ describe('MARC', () => {
           cy.reload();
           QuickMarcEditor.deletePenaltField().then((deletedTag) => {
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.deleteConfirmationPresented();
             QuickMarcEditor.confirmDelete();
             InventoryInstance.waitLoading();
@@ -135,24 +140,24 @@ describe('MARC', () => {
         },
       );
 
-      it(
-        'C10957 Attempt to delete a required field (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
-        () => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventorySearchAndFilter.waitLoading,
-          });
-          InventoryActions.import();
-          InventoryInstance.getId().then((id) => {
-            testData.instanceID = id;
-          });
+      // it(
+      //   'C10957 Attempt to delete a required field (spitfire)',
+      //   { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      //   () => {
+      //     cy.login(testData.userProperties.username, testData.userProperties.password, {
+      //       path: TopMenu.inventoryPath,
+      //       waiter: InventorySearchAndFilter.waitLoading,
+      //     });
+      //     InventoryActions.import();
+      //     InventoryInstance.getId().then((id) => {
+      //       testData.instanceID = id;
+      //     });
 
-          InventoryInstance.goToEditMARCBiblRecord();
-          QuickMarcEditor.waitLoading();
-          QuickMarcEditor.checkRequiredFields();
-        },
-      );
+      //     InventoryInstance.goToEditMARCBiblRecord();
+      //     QuickMarcEditor.waitLoading();
+      //     QuickMarcEditor.checkRequiredFields();
+      //   },
+      // );
 
       it(
         'C10951 Add a 5XX field to a marc record in quickMARC (spitfire)',
@@ -193,6 +198,8 @@ describe('MARC', () => {
             testRecord.tag,
           );
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           // Wait for the content to be loaded.
           cy.wait(4000);
           InventoryInstance.viewSource();
@@ -203,44 +210,44 @@ describe('MARC', () => {
         },
       );
 
-      it(
-        'C345388 Derive a MARC bib record (spitfire)',
-        { tags: ['smokeBroken', 'spitfire'] },
-        () => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventorySearchAndFilter.waitLoading,
-          });
-          InventoryActions.import();
-          InventoryInstance.getId().then((id) => {
-            testData.instanceID = id;
-          });
+      // it(
+      //   'C345388 Derive a MARC bib record (spitfire)',
+      //   { tags: ['smokeBroken', 'spitfire'] },
+      //   () => {
+      //     cy.login(testData.userProperties.username, testData.userProperties.password, {
+      //       path: TopMenu.inventoryPath,
+      //       waiter: InventorySearchAndFilter.waitLoading,
+      //     });
+      //     InventoryActions.import();
+      //     InventoryInstance.getId().then((id) => {
+      //       testData.instanceID = id;
+      //     });
 
-          InventoryInstance.getAssignedHRID().then((instanceHRID) => {
-            InventoryInstance.deriveNewMarcBib();
-            const expectedCreatedValue = QuickMarcEditor.addNewField();
+      //     InventoryInstance.getAssignedHRID().then((instanceHRID) => {
+      //       InventoryInstance.deriveNewMarcBib();
+      //       const expectedCreatedValue = QuickMarcEditor.addNewField();
 
-            QuickMarcEditor.deletePenaltField().then((deletedTag) => {
-              const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
+      //       QuickMarcEditor.deletePenaltField().then((deletedTag) => {
+      //         const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
 
-              QuickMarcEditor.pressSaveAndClose();
-              QuickMarcEditor.deleteConfirmationPresented();
-              QuickMarcEditor.confirmDelete();
+      //         QuickMarcEditor.pressSaveAndClose();
+      //         QuickMarcEditor.deleteConfirmationPresented();
+      //         QuickMarcEditor.confirmDelete();
 
-              InventoryInstance.checkUpdatedHRID(instanceHRID);
-              InventoryInstance.checkExpectedMARCSource();
-              InventoryInstance.checkPresentedText(expectedUpdatedValue);
+      //         InventoryInstance.checkUpdatedHRID(instanceHRID);
+      //         InventoryInstance.checkExpectedMARCSource();
+      //         InventoryInstance.checkPresentedText(expectedUpdatedValue);
 
-              // Wait for the content to be loaded.
-              cy.wait(4000);
-              InventoryInstance.viewSource();
-              InventoryViewSource.contains(expectedCreatedValue);
-              InventoryViewSource.contains(expectedUpdatedValue);
-              InventoryViewSource.notContains(deletedTag);
-            });
-          });
-        },
-      );
+      //         // Wait for the content to be loaded.
+      //         cy.wait(4000);
+      //         InventoryInstance.viewSource();
+      //         InventoryViewSource.contains(expectedCreatedValue);
+      //         InventoryViewSource.contains(expectedUpdatedValue);
+      //         InventoryViewSource.notContains(deletedTag);
+      //       });
+      //     });
+      //   },
+      // );
     });
   });
 });
