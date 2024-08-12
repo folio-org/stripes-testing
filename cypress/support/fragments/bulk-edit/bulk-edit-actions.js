@@ -746,7 +746,7 @@ export default {
       'Duplicate to',
     ];
     if (rowIndex === 0) {
-      cy.do([RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).open()]);
+      cy.do([RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).click()]);
     }
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
