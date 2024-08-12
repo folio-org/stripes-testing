@@ -141,6 +141,8 @@ describe('MARC', () => {
             QuickMarcEditor.afterDeleteNotification(fieldsToUpdate[1].tag);
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.clickRestoreDeletedField();
             QuickMarcEditor.checkNoDeletePlaceholder();
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
@@ -180,6 +182,8 @@ describe('MARC', () => {
               fieldsToUpdate[1].sixthBox,
               fieldsToUpdate[1].seventhBox,
             );
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(

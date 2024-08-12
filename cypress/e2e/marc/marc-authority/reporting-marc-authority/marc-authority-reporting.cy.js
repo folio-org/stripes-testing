@@ -118,6 +118,8 @@ describe('MARC', () => {
             InventoryInstance.searchResults(value.marcValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             InventoryInstance.waitLoading();
           });
 
@@ -131,6 +133,8 @@ describe('MARC', () => {
             '100',
             '$a C375231Beethoven, Ludwig Jr, $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
           );
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.saveAndCheck();
 
