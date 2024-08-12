@@ -115,6 +115,8 @@ describe('MARC', () => {
         MarcAuthority.edit();
         QuickMarcEditor.updateExistingFieldContent(7, testData.valueForUpdate);
         QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1500);
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkCallout(testData.calloutMessage);
         MarcAuthorities.checkDetailViewIncludesText(testData.valueAfterUpdate);
       },
@@ -132,6 +134,8 @@ describe('MARC', () => {
         MarcAuthorities.selectTitle(testData.valueAfterUpdate);
         MarcAuthority.edit();
         QuickMarcEditor.updateExistingFieldContent(7, `$a ${testData.marcValue}`);
+        QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1500);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkCallout(testData.calloutMessage);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.marcValue);
@@ -152,6 +156,8 @@ describe('MARC', () => {
         MarcAuthorities.selectTitle(testData.marcValue);
         MarcAuthority.edit();
         QuickMarcEditor.updateExistingFieldContent(7, testData.valueForUpdate);
+        QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1500);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkCallout(testData.calloutMessage);
         MarcAuthorities.checkDetailViewIncludesText(testData.valueAfterUpdate);

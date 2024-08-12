@@ -12,7 +12,9 @@ describe('fse-consortia - UI', () => {
   });
 
   it(
-    `TC195511 - verify that consortium manager and user affiliations ${Cypress.env('OKAPI_HOST')}`,
+    `TC195511 - verify that consortium manager is displayed correctly for ${Cypress.env(
+      'OKAPI_HOST',
+    )}`,
     { tags: ['consortia-sanity', 'central', 'fse', 'ui'] },
     () => {
       TopMenuNavigation.navigateToApp('Consortium manager');
@@ -23,6 +25,26 @@ describe('fse-consortia - UI', () => {
           ConsortiumMgr.switchActiveAffiliationExists();
         } else {
           ConsortiumMgr.switchActiveAffiliationIsAbsent();
+        }
+      });
+    },
+  );
+
+  it(
+    `TC195512 - switch active affiliation ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['consortia-sanity', 'central', 'fse', 'ui'] },
+    () => {
+      TopMenuNavigation.navigateToApp('Consortium manager');
+      cy.getUserAffiliationsCount().then((count) => {
+        if (count > 1) {
+          // switch affiliation and verify that it was switched
+          ConsortiumMgr.switchActiveAffiliation(tenantNames.college);
+        } else {
+          cy.log(
+            `Can't switch affiliation since there's only one assigned to the user ${Cypress.env(
+              'diku_login',
+            )}`,
+          );
         }
       });
     },
