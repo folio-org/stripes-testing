@@ -41,7 +41,7 @@ describe('Eureka', () => {
 
     it(
       'C451589 User details can be retrieved by API call to /bl-users/by-username (eureka)',
-      { tags: ['extendedPath', 'eureka'] },
+      { tags: ['smoke', 'eureka'] },
       () => {
         cy.getAdminToken();
         cy.getUserWithBlUsersByUsername(userWithoutKeycloak.username).then((response) => {

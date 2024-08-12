@@ -86,7 +86,7 @@ describe('Eureka', () => {
 
     it(
       'C476793 Roles rows are sorted when viewing/editing a user (eureka)',
-      { tags: ['criticalPath', 'eureka'] },
+      { tags: ['extendedPath', 'eureka'] },
       () => {
         UsersCard.verifyUserRolesCounter(originalRoleNamesRandomized.length + '');
         UsersCard.clickUserRolesAccordion();
