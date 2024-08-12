@@ -39,3 +39,15 @@ Cypress.Commands.add('getPublications', (publicationForTenants, publicationUrl) 
     });
   });
 });
+
+Cypress.Commands.add('getUserAffiliationsCount', () => {
+  cy.getConsortiaId().then((consortiaId) => {
+    cy.okapiRequest({
+      method: 'GET',
+      path: `consortia/${consortiaId}/_self`,
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      return body.totalRecords;
+    });
+  });
+});

@@ -3,6 +3,7 @@ export const APPLICATION_NAMES = {
   DATA_IMPORT: 'Data import',
   INVENTORY: 'Inventory',
   SETTINGS: 'Settings',
+  CIRCULATION_LOG: 'Circulation log',
 };
 
 export const REQUEST_METHOD = {

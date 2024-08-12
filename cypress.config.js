@@ -20,7 +20,7 @@ const reportportalOptions = {
 
 module.exports = defineConfig({
   retries: {
-    runMode: 0,
+    runMode: 1,
     openMode: 0,
   },
   numTestsKeptInMemory: 1,
