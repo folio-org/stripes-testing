@@ -133,6 +133,8 @@ describe('MARC', () => {
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tagValue, field.index);
             });
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
 
@@ -161,6 +163,8 @@ describe('MARC', () => {
 
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value1);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
 
@@ -171,6 +175,8 @@ describe('MARC', () => {
 
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value2);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
           MarcAuthority.delete();

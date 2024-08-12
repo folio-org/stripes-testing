@@ -89,6 +89,8 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag655);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1000);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
           cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -125,6 +127,8 @@ describe('MARC', () => {
             `$a ${testData.updated010FieldValue}`,
           );
           cy.wait(2000);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
           MarcAuthorities.searchBy('Keyword', testData.updated155FieldValue);
