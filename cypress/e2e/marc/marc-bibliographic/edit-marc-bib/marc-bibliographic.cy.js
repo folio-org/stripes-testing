@@ -60,6 +60,8 @@ describe('MARC', () => {
               QuickMarcEditor.getFreeTags()[1],
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.deleteConfirmationPresented();
             QuickMarcEditor.confirmDelete();
             // Wait for the content to be loaded.
@@ -90,7 +92,8 @@ describe('MARC', () => {
           QuickMarcEditor.addRow();
           QuickMarcEditor.checkInitialContent();
           const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues();
-
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           InventoryInstance.waitLoading();
           // Wait for the content to be loaded.
@@ -123,6 +126,8 @@ describe('MARC', () => {
           QuickMarcEditor.waitLoading();
           cy.reload();
           QuickMarcEditor.deletePenaltField().then((deletedTag) => {
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.deleteConfirmationPresented();
             QuickMarcEditor.confirmDelete();
@@ -192,6 +197,8 @@ describe('MARC', () => {
             testRecord.content,
             testRecord.tag,
           );
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           // Wait for the content to be loaded.
           cy.wait(4000);
