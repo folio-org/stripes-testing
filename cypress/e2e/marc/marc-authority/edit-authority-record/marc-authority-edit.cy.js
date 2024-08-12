@@ -88,6 +88,8 @@ describe('MARC', () => {
           MarcAuthority.edit();
           MarcAuthority.changeTag(testData.authority.rowIndex, '');
           MarcAuthority.deleteTag(testData.authority.rowIndex);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           MarcAuthority.clicksaveAndCloseButton();
           MarcAuthority.checkRemoved1XXTag();
           QuickMarcEditor.undoDelete();
@@ -187,11 +189,15 @@ describe('MARC', () => {
 
           tagsC375120.forEach((tag) => {
             MarcAuthority.changeTag(rowIndexTag1XX, tag);
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(1500);
             QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.checkDeleteButtonNotExist(rowIndexTag1XX);
           });
 
           MarcAuthority.changeTag(rowIndexTag1XX, '110');
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.edit();
 
@@ -375,6 +381,8 @@ describe('MARC', () => {
             MarcAuthority.addNewField(10, field[0], field[3], field[1], field[2]);
           });
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           cy.getAdminToken();
           protectedMARCFields.forEach((marcFieldProtectionRule) => {
             MarcFieldProtection.createViaApi({
@@ -523,7 +531,8 @@ describe('MARC', () => {
                 LDRDropdownOptionSet.options[i % LDRDropdownOptionSet.options.length],
               );
             });
-
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
 
             MarcAuthorities.verifyLDRFieldSavedSuccessfully(
@@ -633,7 +642,8 @@ describe('MARC', () => {
             testData.authority.field100NewValue,
           );
           QuickMarcEditor.checkButtonsEnabled();
-
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(0, errorInvalidLDR05and17and18);
 
@@ -660,7 +670,8 @@ describe('MARC', () => {
             AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
             AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.A,
           );
-
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(0, errorInvalidLDR17and18);
 
@@ -678,7 +689,8 @@ describe('MARC', () => {
           QuickMarcEditor.verifyDropdownValueOfLDRIsValid(
             AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT,
           );
-
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.verifyDropdownValueOfLDRIsValid(AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL);
           QuickMarcEditor.verifyDropdownValueOfLDRIsValid(
@@ -778,6 +790,8 @@ describe('MARC', () => {
           MarcAuthority.deleteTag(8);
           MarcAuthority.deleteTag(8);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.confirmDelete();
           MarcAuthorities.waitLoading();
         },
@@ -859,14 +873,20 @@ describe('MARC', () => {
           MarcAuthorities.check010FieldAbsence();
           MarcAuthority.addNewField(4, '010', '$a 123123');
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.updateExistingField('010', '$a n90635366');
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           // wait until all the saved and updated values will be loaded.
           cy.wait(3000);
           QuickMarcEditor.deleteFieldAndCheck(5, '010');
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndCloseThenCheck(1);
           QuickMarcEditor.constinueWithSaveAndCheck();
         },
@@ -985,13 +1005,19 @@ describe('MARC', () => {
           QuickMarcEditor.deleteField(11);
           QuickMarcEditor.afterDeleteNotification('');
           QuickMarcEditor.afterDeleteNotification('400');
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndCloseThenCheck(2);
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.deleteField(8);
           QuickMarcEditor.deleteField(10);
           QuickMarcEditor.afterDeleteNotification('382');
           QuickMarcEditor.afterDeleteNotification('');
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndCloseThenCheck(2);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.constinueWithSaveAndCheck();
           QuickMarcEditor.checkFieldAbsense('382');
         },
@@ -1074,6 +1100,8 @@ describe('MARC', () => {
           cy.wait(2000);
           MarcAuthority.deleteTag(5);
           MarcAuthority.changeTag(6, '100');
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.changeTag(6, '040');
           QuickMarcEditor.pressSaveAndClose();
