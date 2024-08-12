@@ -38,9 +38,9 @@ describe('Data Import', () => {
         orderLineInformation: {
           title: orderLineTitle,
           contributors: [
-            { name: 'Lewis, Meriwether', type: 'Personal name' },
-            { name: 'American Philosophical Society', type: 'Corporate name' },
-            { name: 'Lewis and Clark Expedition', type: 'Meeting name' },
+            { name: '100$a', type: 'Personal name' },
+            { name: '710$a', type: 'Corporate name' },
+            { name: '711$a', type: 'Meeting name' },
           ],
           productIds: [{ id: '020$a', type: 'ISBN' }],
           poLineDetails: {
