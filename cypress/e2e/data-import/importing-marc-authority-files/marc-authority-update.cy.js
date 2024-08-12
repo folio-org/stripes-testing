@@ -182,6 +182,8 @@ describe('Data Import', () => {
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority('700');
         QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1500);
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
         cy.visit(TopMenu.marcAuthorities);
