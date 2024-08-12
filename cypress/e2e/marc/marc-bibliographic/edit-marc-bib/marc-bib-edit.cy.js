@@ -24,7 +24,8 @@ describe('MARC', () => {
         instanceTitle: 'C360098 Narysy z historyi belaruskaha mastatstva / Mikola Shchakatsikhin.',
         instanceBibliographyNote: 'Includes bibliographical references and index',
       };
-      const calloutMarcTagWrongLength = 'Record cannot be saved. A MARC tag must contain three characters.';
+      const calloutMarcTagWrongLength =
+        'Record cannot be saved. A MARC tag must contain three characters.';
       const calloutMultiple001MarcTags = 'Record cannot be saved. Can only have one MARC 001.';
       const calloutInvalidMarcTag = 'Invalid MARC tag. Please try again.';
       const calloutMultiple245MarcTags = 'Record cannot be saved with more than one field 245.';
