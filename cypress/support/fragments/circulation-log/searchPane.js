@@ -19,6 +19,7 @@ import LoansPage from '../loans/loansPage';
 import Users from '../users/users';
 import ItemRecordView from '../inventory/item/itemRecordView';
 import TopMenuNavigation from '../topMenuNavigation';
+import { APPLICATION_NAMES } from '../../constants';
 
 const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' })
   .find(Dropdown())
@@ -240,11 +241,11 @@ export default {
   checkActionButtonAfterFiltering(name, barcode) {
     SearchResults.chooseActionByRow(0, 'Loan details');
     LoansPage.waitLoading();
-    TopMenuNavigation.navigateToApp('Circulation log');
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
 
     SearchResults.chooseActionByRow(0, 'User details');
     Users.verifyFirstNameOnUserDetailsPane(name);
-    TopMenuNavigation.navigateToApp('Circulation log');
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
 
     SearchResults.clickOnCell(barcode, 0);
     ItemRecordView.waitLoading();
