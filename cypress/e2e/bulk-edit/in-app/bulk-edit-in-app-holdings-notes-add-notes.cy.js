@@ -49,12 +49,12 @@ const noteActionOptions = [
   'Remove all',
   'Remove mark as staff only',
 ];
-const initialHeaderValueSets = [
+const initialValueSets = [
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE, ''],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.NOTE, ''],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.BINDING_NOTE, ''],
 ];
-const modifiedHeaderValueSets = [
+const modifiedValueSets = [
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE, notes.administrative],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.NOTE, notes.note],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.BINDING_NOTE, notes.binding],
@@ -138,13 +138,13 @@ describe('bulk-edit', () => {
           instance.holdingHRID,
         );
 
-        initialHeaderValueSets.forEach((initialHeaderValueSet) => {
+        initialValueSets.forEach((initialHeaderValueSet) => {
           BulkEditSearchPane.verifyResultsUnderColumns(...initialHeaderValueSet);
         });
 
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedResults();
-        verifyFileContent(matchedRecordsFileName, initialHeaderValueSets);
+        verifyFileContent(matchedRecordsFileName, initialValueSets);
 
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditSearchPane.verifyBulkEditsAccordionExists();
@@ -181,10 +181,8 @@ describe('bulk-edit', () => {
           [instance.holdingHRID],
         );
 
-        modifiedHeaderValueSets.forEach((modifiedHeaderValueSet) => {
-          BulkEditActions.verifyChangesInAreYouSureForm(modifiedHeaderValueSet[0], [
-            modifiedHeaderValueSet[1],
-          ]);
+        modifiedValueSets.forEach((modifiedValueSet) => {
+          BulkEditActions.verifyChangesInAreYouSureForm(modifiedValueSet[0], [modifiedValueSet[1]]);
         });
 
         BulkEditActions.verifyKeepEditingButtonDisabled(false);
@@ -192,7 +190,7 @@ describe('bulk-edit', () => {
         BulkEditActions.isCommitButtonDisabled(false);
         BulkEditActions.verifyCloseAreYouSureModalButtonDisabled(false);
         BulkEditActions.downloadPreview();
-        verifyFileContent(previewFileName, modifiedHeaderValueSets);
+        verifyFileContent(previewFileName, modifiedValueSets);
 
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
@@ -202,13 +200,13 @@ describe('bulk-edit', () => {
           instance.holdingHRID,
         );
 
-        modifiedHeaderValueSets.forEach((modifiedHeaderValueSet) => {
-          BulkEditSearchPane.verifyExactChangesUnderColumns(...modifiedHeaderValueSet);
+        modifiedValueSets.forEach((modifiedValueSet) => {
+          BulkEditSearchPane.verifyExactChangesUnderColumns(...modifiedValueSet);
         });
 
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        verifyFileContent(changedRecordsFileName, modifiedHeaderValueSets);
+        verifyFileContent(changedRecordsFileName, modifiedValueSets);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
