@@ -19,9 +19,9 @@ const instance = {
   holdingsUUID: null,
 };
 const notes = {
-  administrative: 'C422033 test administrative note',
-  note: 'C422033 test note',
-  binding: "C422033 test binding note:~,!,@,#,$,%,^,&,*,(,),~,', {.[,]<},>,ø, Æ, §,;",
+  administrative: 'C422041 test administrative note',
+  note: 'C422041 test note',
+  binding: "C422041 test binding note:~,!,@,#,$,%,^,&,*,(,),~,', {.[,]<},>,ø, Æ, §,;",
 };
 const noteTypes = {
   action: 'Action note',
