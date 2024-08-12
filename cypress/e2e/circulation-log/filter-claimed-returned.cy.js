@@ -5,6 +5,7 @@ import InventoryItems from '../../support/fragments/inventory/item/inventoryItem
 import LoansPage from '../../support/fragments/loans/loansPage';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -12,6 +13,7 @@ import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import getRandomPostfix from '../../support/utils/stringTools';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 let user;
 let servicePointId;
@@ -69,7 +71,7 @@ describe('Circulation log', () => {
         'C16997 Filter circulation log by Claimed returned',
       );
 
-      cy.visit(TopMenu.circulationLogPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
 
       SearchPane.searchByClaimedReturned();
       SearchPane.verifyResultCells();
