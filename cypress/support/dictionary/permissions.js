@@ -1074,6 +1074,10 @@ export default {
     gui: 'Settings (Circ): Can create, edit and remove loan policies [LEGACY]',
   },
   // Consortia
+  settingsConsortiaCanViewNetworkOrdering: {
+    internal: 'ui-consortia-settings.settings.networkOrdering.view',
+    gui: 'Settings (Consortia): Can view network ordering',
+  },
   consortiaSettingsConsortiaAffiliationsEdit: {
     internal: 'ui-consortia-settings.consortia.affiliations.edit',
     gui: 'Consortia: Assign and unassign affiliations',
