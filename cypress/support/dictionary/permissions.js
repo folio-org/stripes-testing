@@ -221,6 +221,10 @@ export default {
     internal: 'ui-inventory.settings.electronic-access-relationships',
     gui: 'Settings (Inventory): Create, edit, delete URL relationships',
   },
+  uiInventorySetRecordsForDeletion: {
+    internal: 'ui-inventory.instance.set-deletion-and-staff-suppress',
+    gui: 'Inventory: Set records for deletion',
+  },
   inventoryCRUDHoldings: {
     internal: 'ui-inventory.holdings.delete',
     gui: 'Inventory: View, create, edit, delete holdings',
@@ -1070,6 +1074,10 @@ export default {
     gui: 'Settings (Circ): Can create, edit and remove loan policies [LEGACY]',
   },
   // Consortia
+  settingsConsortiaCanViewNetworkOrdering: {
+    internal: 'ui-consortia-settings.settings.networkOrdering.view',
+    gui: 'Settings (Consortia): Can view network ordering',
+  },
   consortiaSettingsConsortiaAffiliationsEdit: {
     internal: 'ui-consortia-settings.consortia.affiliations.edit',
     gui: 'Consortia: Assign and unassign affiliations',

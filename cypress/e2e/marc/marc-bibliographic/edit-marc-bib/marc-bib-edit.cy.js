@@ -24,7 +24,8 @@ describe('MARC', () => {
         instanceTitle: 'C360098 Narysy z historyi belaruskaha mastatstva / Mikola Shchakatsikhin.',
         instanceBibliographyNote: 'Includes bibliographical references and index',
       };
-      const calloutMarcTagWrongLength = 'Record cannot be saved. A MARC tag must contain three characters.';
+      const calloutMarcTagWrongLength =
+        'Record cannot be saved. A MARC tag must contain three characters.';
       const calloutMultiple001MarcTags = 'Record cannot be saved. Can only have one MARC 001.';
       const calloutInvalidMarcTag = 'Invalid MARC tag. Please try again.';
       const calloutMultiple245MarcTags = 'Record cannot be saved with more than one field 245.';
@@ -320,6 +321,8 @@ describe('MARC', () => {
           cy.wait(1000);
           QuickMarcEditor.deleteField(31);
           cy.wait(1000);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkDeletingFieldsModal();
           QuickMarcEditor.restoreDeletedFields();
