@@ -173,7 +173,6 @@ describe('Data Import', () => {
 
         // Click on the "Actions" button,  Select "Run", Click on the "Run" button
         DataImportJobProfiles.runImportFile();
-        DataImportJobProfiles.waitFileIsImported(testData.marcFile.fileName);
         Logs.checkJobStatus(testData.marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
 
         // Go to the "Orders" app, Click "Order lines"

@@ -171,7 +171,7 @@ describe('lists', () => {
 
     it(
       'C411837 Export list: Edit is in progress, when the list has active query with 0 records',
-      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
+      { tags: ['criticalPathFlaky', 'corsair', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);

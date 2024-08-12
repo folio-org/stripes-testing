@@ -619,8 +619,10 @@ export default {
   },
 
   verifyHeader: (fileName, recordsNumber) => {
+    const newFileName = fileName.replace(/\.mrc$/i, '');
+
     cy.expect([
-      paneHeader.find(HTML(including(fileName))).exists(),
+      paneHeader.find(HTML(including(newFileName))).exists(),
       paneHeader.find(HTML(including(`${recordsNumber} records found`))).exists(),
     ]);
   },

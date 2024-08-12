@@ -2,6 +2,8 @@ import { including } from 'bigtest';
 import {
   Button,
   Checkbox,
+  Heading,
+  KeyValue,
   MetaSection,
   Modal,
   NavListItem,
@@ -23,6 +25,10 @@ const saveButton = Button('Save & close');
 export default {
   defaultUiEditStaffClips: {
     description: 'Created by autotest team',
+  },
+  waitLoading() {
+    cy.expect(Heading('Staff slips').exists());
+    cy.wait(1000);
   },
   findPane() {
     return cy.get('#root').then(($ele) => {
@@ -162,5 +168,8 @@ export default {
         cy.expect(pane.find(Button(accordion)).has({ ariaExpanded: 'true' }));
       });
     });
+  },
+  verifyKeyValue(verifyKey, verifyValue) {
+    cy.expect(KeyValue(verifyKey, { value: verifyValue }).exists());
   },
 };

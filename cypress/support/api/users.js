@@ -205,9 +205,9 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
           cy.wrap(userProperties).as('userProperties');
         });
       });
+      return cy.get('@userProperties');
     },
   );
-  return cy.get('@userProperties');
 });
 
 Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = []) => {

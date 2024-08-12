@@ -101,35 +101,39 @@ describe('MARC', () => {
       },
     );
 
-    it('C345398 Edit MARC 008 (spitfire)', { tags: ['smoke', 'spitfire', 'shiftLeft'] }, () => {
-      // Wait until the page to be loaded fully.
-      cy.wait(1000);
-      QuickMarcEditor.checkNotExpectedByteLabelsInTag008Holdings();
+    it(
+      'C345398 Edit MARC 008 (spitfire)',
+      { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
+      () => {
+        // Wait until the page to be loaded fully.
+        cy.wait(1000);
+        QuickMarcEditor.checkNotExpectedByteLabelsInTag008Holdings();
 
-      const changed008TagValue = QuickMarcEditor.updateAllDefaultValuesIn008TagInHoldings();
-      HoldingsRecordView.waitLoading();
-      // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
-      HoldingsRecordView.close();
-      InventoryInstance.openHoldingView();
-      HoldingsRecordView.viewSource();
-      InventoryViewSource.contains(changed008TagValue);
-      InventoryViewSource.close();
-      HoldingsRecordView.editInQuickMarc();
-      QuickMarcEditor.waitLoading();
+        const changed008TagValue = QuickMarcEditor.updateAllDefaultValuesIn008TagInHoldings();
+        HoldingsRecordView.waitLoading();
+        // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
+        HoldingsRecordView.close();
+        InventoryInstance.openHoldingView();
+        HoldingsRecordView.viewSource();
+        InventoryViewSource.contains(changed008TagValue);
+        InventoryViewSource.close();
+        HoldingsRecordView.editInQuickMarc();
+        QuickMarcEditor.waitLoading();
 
-      const cleared008TagValue = QuickMarcEditor.clearTag008Holdings();
-      HoldingsRecordView.waitLoading();
-      HoldingsRecordView.viewSource();
-      InventoryViewSource.contains(cleared008TagValue);
-      InventoryViewSource.close();
-      HoldingsRecordView.editInQuickMarc();
-      QuickMarcEditor.waitLoading();
-      QuickMarcEditor.checkReplacedVoidValuesInTag008Holdings();
-    });
+        const cleared008TagValue = QuickMarcEditor.clearTag008Holdings();
+        HoldingsRecordView.waitLoading();
+        HoldingsRecordView.viewSource();
+        InventoryViewSource.contains(cleared008TagValue);
+        InventoryViewSource.close();
+        HoldingsRecordView.editInQuickMarc();
+        QuickMarcEditor.waitLoading();
+        QuickMarcEditor.checkReplacedVoidValuesInTag008Holdings();
+      },
+    );
 
     it(
       'C345400 Attempt to save a record without a MARC 852 (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
       () => {
         QuickMarcEditor.getRegularTagContent('852').then((initialTagContent) => {
           QuickMarcEditor.deleteTag(5);

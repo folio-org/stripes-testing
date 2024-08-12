@@ -94,7 +94,10 @@ describe('Data Import', () => {
         });
 
         // Click "Save as profile & Close" button
-        FieldMappingProfileEditForm.clickSaveAndCloseButton();
+        FieldMappingProfileEditForm.clickSaveAndCloseButton({
+          profileCreated: false,
+          profileUpdated: true,
+        });
 
         // Check "Vendor", "Material Supplier" and "Access provider" fields
         FieldMappingProfileView.checkOrderFieldsConditions([

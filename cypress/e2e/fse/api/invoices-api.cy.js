@@ -6,9 +6,13 @@ describe('fse-invoices', () => {
     cy.allure().logCommandSteps();
   });
 
-  it('TC195319 - Get invoice by status', { tags: ['sanity', 'fse', 'api', 'invoices'] }, () => {
-    cy.getInvoiceByStatus('Paid').then((response) => {
-      cy.expect(response.status).to.eq(200);
-    });
-  });
+  it(
+    `TC195319 - Get invoice by status for ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['sanity', 'fse', 'api', 'invoices'] },
+    () => {
+      cy.getInvoiceByStatus('Paid').then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
 });

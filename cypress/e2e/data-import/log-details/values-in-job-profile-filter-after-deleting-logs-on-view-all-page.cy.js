@@ -1,17 +1,16 @@
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
@@ -30,7 +29,7 @@ describe('Data Import', () => {
     const actionProfile = {
       name: `C358534 instance action profile ${getRandomPostfix()}`,
       action: 'CREATE',
-      folioRecordType: FOLIO_RECORD_TYPE.INSTANCE,
+      folioRecordType: 'INSTANCE',
     };
     const jobProfile = {
       name: `C358534 job profile ${getRandomPostfix()}`,
@@ -45,7 +44,7 @@ describe('Data Import', () => {
             mappingProfileResponse.body.id,
           ).then((actionProfileResponse) => {
             NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
-              jobProfile,
+              jobProfile.name,
               actionProfileResponse.body.id,
             );
           });

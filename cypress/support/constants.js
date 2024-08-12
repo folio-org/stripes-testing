@@ -3,6 +3,7 @@ export const APPLICATION_NAMES = {
   DATA_IMPORT: 'Data import',
   INVENTORY: 'Inventory',
   SETTINGS: 'Settings',
+  CIRCULATION_LOG: 'Circulation log',
 };
 
 export const REQUEST_METHOD = {
@@ -38,6 +39,7 @@ export const LOST_ITEM_FEES_POLICY_NAMES = {
 export const LOAN_TYPE_NAMES = {
   CAN_CIRCULATE: 'Can circulate',
   COURSE_RESERVES: 'Course reserves',
+  SELECTED: 'Selected',
 };
 
 export const MATERIAL_TYPE_NAMES = {
@@ -804,8 +806,6 @@ export const ITEM_NOTES = {
   ELECTRONIC_BOOKPLATE_NOTE: 'f3ae3823-d096-4c65-8734-0c1efd2ffea8',
 };
 
-export const DEFAULT_LOCALE_STRING = '{"locale":"en-US","timezone":"UTC","currency":"USD"}';
-
 export const INSTANCE_NOTE_IDS = {
   ACTION_NOTE: '1c017b8d-c783-4f63-b620-079f7a5b9c07',
   REPRODUCTION_NOTE: 'd548fdff-b71c-4359-8055-f1c008c30f01',
@@ -826,4 +826,31 @@ export const LOAN_TYPE_IDS = {
 
 export const MATERIAL_TYPE_IDS = {
   DVD: '5ee11d91-f7e8-481d-b079-65d708582ccc',
+};
+
+export const CLASSIFICATION_IDENTIFIER_TYPES = {
+  ADDITIONAL_DEWEY: '74c08086-81a4-4466-93d8-d117ce8646db',
+  CANADIAN_CLASSIFICATION: 'ad615f6e-e28c-4343-b4a0-457397c5be3e',
+  DEWEY: '42471af9-7d25-4f3a-bf78-60d29dcf463b',
+  GDC: 'fb12264c-ff3b-47e0-8e09-b0aa074361f1',
+  LC: 'ce176ace-a53e-4b4d-aa89-725ed7b2edac',
+  LC_LOCAL: 'a83699eb-cc23-4307-8043-5a38a8dce335',
+  NATIONAL_AGRICULTURAL_LIBRARY: '9a60012a-0fcf-4da9-a1d1-148e818c27ad',
+  NLM: 'a7f4d03f-b0d8-496c-aebf-4e9cdb678200',
+  SUDOC: '9075b5f8-7d97-49e1-a431-73fdd468d476',
+  UDC: 'e8662436-75a8-4984-bebc-531e38c774a0',
+};
+
+export const DEFAULT_LOCALE_STRING = '{"locale":"en-US","timezone":"UTC","currency":"USD"}';
+
+export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
+  INVENTORY_HOLDINGS: {
+    HOLDINGS_UUID: 'Holdings UUID',
+    HOLDINGS_HRID: 'Holdings HRID',
+    ADMINISTRATIVE_NOTE: 'Administrative note',
+    ELECTRONIC_BOOKPLATE_NOTE: 'Electronic bookplate note',
+    NOTE: 'Note',
+    BINDING_NOTE: 'Binding note',
+    ACTION_NOTE: 'Action note',
+  },
 };

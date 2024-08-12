@@ -84,12 +84,12 @@ describe('Inventory', () => {
 
         HoldingsRecordEdit.openStatisticalCodeDropdown();
         HoldingsRecordEdit.verifyStatisticalCodeCount(1, false);
-        HoldingsRecordEdit.closeStatisticalCodeDropdown();
 
         HoldingsRecordEdit.openStatisticalCodeDropdown();
         HoldingsRecordEdit.filterStatisticalCodeByName(testData.statisticalCode);
         HoldingsRecordEdit.verifyStatisticalCodeCount(1);
 
+        HoldingsRecordEdit.openStatisticalCodeDropdown();
         HoldingsRecordEdit.chooseStatisticalCode(testData.statisticalCode);
         HoldingsRecordEdit.checkErrorMessageForStatisticalCode(false);
 
@@ -105,10 +105,10 @@ describe('Inventory', () => {
 
         HoldingsRecordEdit.openStatisticalCodeDropdown();
         HoldingsRecordEdit.verifyStatisticalCodeCount(1, false);
-        HoldingsRecordEdit.closeStatisticalCodeDropdown();
         HoldingsRecordEdit.openStatisticalCodeDropdown();
         HoldingsRecordEdit.filterStatisticalCodeByName(testData.secondStatisticalCode);
         HoldingsRecordEdit.verifyStatisticalCodeCount(1);
+        HoldingsRecordEdit.openStatisticalCodeDropdown();
         HoldingsRecordEdit.chooseStatisticalCode(testData.secondStatisticalCode);
         HoldingsRecordEdit.checkErrorMessageForStatisticalCode(false);
       },

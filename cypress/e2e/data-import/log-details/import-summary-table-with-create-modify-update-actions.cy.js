@@ -26,8 +26,6 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -40,11 +38,12 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { getLongDelay } from '../../../support/utils/cypressTools';
 import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -182,39 +181,48 @@ describe('Data Import', () => {
     const collectionOfMatchProfiles = [
       {
         matchProfile: {
-          profileName: `C430257 MARC-to-MARC 001 to 001 match profile ${getRandomPostfix()}`,
+          profileName: `C430257 MARC-to-MARC 001 to 001.${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '001',
+            in1: '',
+            in2: '',
+            subfield: '',
           },
           existingRecordFields: {
             field: '001',
+            in1: '',
+            in2: '',
+            subfield: '',
           },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+          recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
         },
       },
       {
         matchProfile: {
-          profileName: `C430257 MARC-to-Holdings 901h to Holdings HRID match profile ${getRandomPostfix()}`,
+          profileName: `C430257 MARC-to-Holdings 901h to Holdings HRID.${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '901',
+            in1: '',
+            in2: '',
             subfield: 'h',
           },
-          matchCriterion: 'Exactly matches',
+          recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
           existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
-          holdingsOption: NewMatchProfile.optionsList.holdingsHrid,
+          existingMatchExpressionValue: 'holdingsrecord.hrid',
         },
       },
       {
         matchProfile: {
-          profileName: `C430257 MARC-to-Item 902i to Item HRID match profile ${getRandomPostfix()}`,
+          profileName: `C430257 MARC-to-Item 902i to Item HRID.${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '902',
+            in1: '',
+            in2: '',
             subfield: 'i',
           },
-          matchCriterion: 'Exactly matches',
+          recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
           existingRecordType: EXISTING_RECORD_NAMES.ITEM,
-          itemOption: NewMatchProfile.optionsList.itemHrid,
+          existingMatchExpressionValue: 'item.hrid',
         },
       },
     ];
@@ -349,21 +357,17 @@ describe('Data Import', () => {
 
         cy.visit(SettingsMenu.exportMappingProfilePath);
         ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
-
+        cy.wait(10000);
         cy.visit(SettingsMenu.exportJobProfilePath);
         ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
 
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter('Subject', uniqueSubject);
+        cy.wait(2000);
         InventorySearchAndFilter.saveUUIDs();
-        // need to create a new file with instance UUID because tests are runing in multiple threads
-        cy.intercept('/search/instances/ids**').as('getIds');
-        cy.wait('@getIds', getLongDelay()).then((req) => {
-          const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
-
-          FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID[0]);
-        });
+        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);
@@ -400,11 +404,15 @@ describe('Data Import', () => {
 
         // create match profiles
         cy.visit(SettingsMenu.matchProfilePath);
-        collectionOfMatchProfiles.forEach((profile) => {
-          NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(
-            profile.matchProfile,
-          );
-        });
+        NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
+          collectionOfMatchProfiles[0].matchProfile,
+        );
+        NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(
+          collectionOfMatchProfiles[1].matchProfile,
+        );
+        NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(
+          collectionOfMatchProfiles[2].matchProfile,
+        );
 
         // create job profile
         cy.visit(SettingsMenu.jobProfilePath);

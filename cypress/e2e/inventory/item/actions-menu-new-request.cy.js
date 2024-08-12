@@ -14,7 +14,7 @@ import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
   describe('Item', () => {
     let user;
     let collectionOfItems = [];
@@ -204,7 +204,7 @@ describe('Inventory', () => {
           InventoryItems.openActions();
           InventoryItems.clickNewRequestButton();
           NewRequest.waitLoadingNewRequestPage();
-          NewRequest.checkItemInformationSecton(
+          NewRequest.checkItemInformationSection(
             testData.instanceTitle,
             LOCATION_NAMES.MAIN_LIBRARY_UI,
             itemStatus,

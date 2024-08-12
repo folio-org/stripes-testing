@@ -111,7 +111,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileName);
         Logs.checkImportFile(jobProfile.profileName);
-        LogsViewAll.verifyJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED);
+        LogsViewAll.verifyJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         LogsViewAll.openFileDetails(fileName);
         FileDetails.openJsonScreen(title);
         JsonScreenView.verifyJsonScreenIsOpened();

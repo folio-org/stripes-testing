@@ -1,7 +1,6 @@
 import {
   Button,
   HTML,
-  Keyboard,
   Modal,
   MultiColumnList,
   MultiSelect,
@@ -35,6 +34,7 @@ export const instanceFieldValues = {
 export const itemFieldValues = {
   instanceId: 'Instances — Instance UUID',
   itemStatus: 'Items — Status',
+  itemUuid: 'Items — Item UUID',
   holdingsId: 'Holdings — UUID',
   temporaryLocation: 'Temporary location — Name',
 };
@@ -233,15 +233,12 @@ export default {
         .find(MultiSelectOption(including(text)))
         .click(),
     ]);
-    for (let i = 0; i < text.length; i++) {
-      cy.do([Keyboard.backspace()]);
-    }
+    cy.focused().type('{selectAll}{backspace}');
     cy.do(buildQueryModal.click());
   },
 
   chooseFromValueMultiselect(text, row = 0) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
-    cy.focused().type('{selectAll}{backspace}');
     cy.do([
       RepeatableFieldItem({ index: row })
         .find(MultiSelectOption(including(text)))

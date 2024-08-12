@@ -237,6 +237,11 @@ export default {
     cy.expect(requestInfoSection.find(HTML(patronGroupName)).exists());
   },
 
+  verifyRequesterInformationWithBarcode: (userName) => {
+    cy.expect(requestInfoSection.find(Link(including(userName))).exists());
+    cy.expect(requestInfoSection.find(HTML(including('-'))).exists());
+  },
+
   enterRequestAndPatron(patron) {
     cy.do([
       TextField({ id: 'requestExpirationDate' }).fillIn(dateTools.getCurrentDate()),
@@ -350,7 +355,7 @@ export default {
       including(`Request has been successfully created for ${username}`),
     );
   },
-  checkItemInformationSecton(instanceTitle, location, itemStatus) {
+  checkItemInformationSection(instanceTitle, location, itemStatus) {
     cy.expect([
       KeyValue('Title').has({ value: instanceTitle }),
       KeyValue('Effective location').has({ value: location }),

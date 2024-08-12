@@ -31,15 +31,15 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
       userProperties.expirationDate = expirationUserDate;
       cy.login(userProperties.username, userProperties.password);
       cy.visit(SettingsMenu.patronBlockTemplates);
-      PatronBlockTemplates.newPatronTemlate();
-      PatronBlockTemplates.fillInPatronTemlateInformation(templateName, testDescription);
+      PatronBlockTemplates.newPatronTemplate();
+      PatronBlockTemplates.fillInPatronTemplateInformation(templateName, testDescription);
     });
     cy.visit(TopMenu.usersPath);
   });
 
   afterEach(() => {
     cy.visit(SettingsMenu.patronBlockTemplates);
-    PatronBlockTemplates.findPatronTemlate(templateName);
+    PatronBlockTemplates.findPatronTemplate(templateName);
     PatronBlockTemplates.editPatronTemplate();
     PatronBlockTemplates.deletePatronTemplate();
     cy.getAdminToken();

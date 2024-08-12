@@ -322,6 +322,8 @@ describe('MARC', () => {
           QuickMarcEditor.deleteField(31);
           cy.wait(1000);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkDeletingFieldsModal();
           QuickMarcEditor.restoreDeletedFields();
           QuickMarcEditor.verifyTagValue(4, fieldData.field010.tag);

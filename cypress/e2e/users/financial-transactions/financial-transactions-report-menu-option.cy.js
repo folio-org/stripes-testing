@@ -5,6 +5,7 @@ import FinancialTransactionDetailReportModal from '../../../support/fragments/us
 import UsersSearchResultsPane from '../../../support/fragments/users/usersSearchResultsPane';
 
 describe('Financial Transactions Detail Report', () => {
+  const ownerData1 = {};
   const ownerData = {};
   const servicePoint1 = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation();
@@ -14,6 +15,15 @@ describe('Financial Transactions Detail Report', () => {
     cy.getAdminToken().then(() => {
       ServicePoints.createViaApi(servicePoint1);
       ServicePoints.createViaApi(servicePoint2);
+
+      UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner())
+        .then(({ id, owner }) => {
+          ownerData1.name = owner;
+          ownerData1.id = id;
+        })
+        .then(() => {
+          UsersOwners.addServicePointsViaApi(ownerData1, [servicePoint1, servicePoint2]);
+        });
 
       UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner())
         .then(({ id, owner }) => {
@@ -35,6 +45,7 @@ describe('Financial Transactions Detail Report', () => {
   after('UserOwner is removed', () => {
     ServicePoints.deleteViaApi(servicePoint1.id);
     ServicePoints.deleteViaApi(servicePoint2.id);
+    UsersOwners.deleteViaApi(ownerData1.id);
     UsersOwners.deleteViaApi(ownerData.id);
   });
 

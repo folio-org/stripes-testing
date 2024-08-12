@@ -12,6 +12,7 @@ import {
   Callout,
   Badge,
   MultiColumnListHeader,
+  Tooltip,
 } from '../../../../interactors';
 import InstanceRecordEdit from './instanceRecordEdit';
 import InventoryNewHoldings from './inventoryNewHoldings';
@@ -28,12 +29,15 @@ const actionsButton = Button('Actions');
 const viewSourceButton = Button({ id: 'clickable-view-source' });
 const instanceAdministrativeNote = MultiColumnList({ id: 'administrative-note-list' });
 const instanceNote = MultiColumnList({ id: 'list-instance-notes-0' });
+const listClassifications = MultiColumnList({ id: 'list-classifications' });
 const electronicAccessAccordion = Accordion('Electronic access');
 const classificationAccordion = Accordion('Classification');
-const listClassifications = MultiColumnList({ id: 'list-classifications' });
+const subjectAccordion = Accordion('Subject');
 const descriptiveDataAccordion = Accordion('Descriptive data');
 const adminDataAccordion = Accordion('Administrative data');
+const titleDataAccordion = Accordion('Title data');
 const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
+const precedingTitles = titleDataAccordion.find(MultiColumnList({ id: 'precedingTitles' }));
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -250,20 +254,34 @@ export default {
 
   verifyInstanceHridValue: (hrid) => cy.expect(instanceHridKeyValue.has({ value: hrid })),
   verifyPrecedingTitle: (title) => {
+    cy.expect(precedingTitles.find(MultiColumnListCell({ content: including(title) })).exists());
+  },
+  verifyPrecedingTitleSearchIcon: (title) => {
     cy.expect(
-      Accordion('Title data')
-        .find(MultiColumnList({ id: 'precedingTitles' }))
+      precedingTitles
         .find(MultiColumnListCell({ content: including(title) }))
+        .find(Button({ ariaLabel: 'search' }))
         .exists(),
     );
+    cy.do(
+      precedingTitles
+        .find(MultiColumnListCell({ content: including(title) }))
+        .find(Button({ ariaLabel: 'search' }))
+        .hoverMouse(),
+    );
+    cy.expect(Tooltip().has({ text: `Search for ${title}` }));
   },
   verifySucceedingTitle: (title) => {
     cy.expect(
-      Accordion('Title data')
+      titleDataAccordion
         .find(MultiColumnList({ id: 'succeedingTitles' }))
         .find(MultiColumnListCell({ content: including(title) }))
         .exists(),
     );
+  },
+
+  precedingTitlesIconClick() {
+    cy.get('#precedingTitles').find('a').invoke('removeAttr', 'target').click();
   },
 
   clickNextPaginationButton() {
@@ -274,6 +292,8 @@ export default {
     cy.do(Button('View holdings').click());
     cy.expect(actionsButton.exists());
   },
+
+  openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
 
   duplicate: () => {
     cy.do([rootSection.find(actionsButton).click(), Button({ id: 'copy-instance' }).click()]);
@@ -486,6 +506,10 @@ export default {
     cy.do([rootSection.find(actionsButton).click(), Button('Export instance (MARC)').click()]);
   },
 
+  setRecordForDeletion: () => {
+    cy.do(Button({ id: 'quick-export-trigger' }).click());
+  },
+
   verifyEditInstanceButtonAbsent() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'edit-instance' }).absent());
@@ -537,6 +561,16 @@ export default {
       .should('have.text', header);
   },
 
+  verifySetRecordForDeletionOptionEnabled() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'quick-export-trigger' }).has({ disabled: false }));
+  },
+
+  verifySetRecordForDeletionOptionAbsent() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'quick-export-trigger' }).absent());
+  },
+
   checkMultipleItemNotesWithStaffOnly: (rowIndex, staffOnly, noteType, noteText) => {
     cy.get('#instance-details-notes').within(() => {
       cy.get(`[id="list-instance-notes-${rowIndex}"]`).within(() => {
@@ -547,5 +581,19 @@ export default {
         cy.get('[role="gridcell"]').eq(1).should('contain', noteText);
       });
     });
+  },
+
+  verifyInstanceSubject: (indexRow, indexColumn, value) => {
+    cy.expect(
+      subjectAccordion
+        .find(MultiColumnList({ id: 'list-subject' }))
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(MultiColumnListCell({ columnIndex: indexColumn }))
+        .has({ content: value }),
+    );
+  },
+
+  verifyInstanceSubjectAbsent: () => {
+    cy.expect(subjectAccordion.find(HTML('The list contains no items')).exists());
   },
 };

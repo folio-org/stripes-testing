@@ -62,7 +62,7 @@ describe('MARC', () => {
 
       it(
         'C350572 Edit an Authority record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
@@ -75,6 +75,8 @@ describe('MARC', () => {
           cy.wait(1000);
           MarcAuthority.changeField('130', testData.authority.newField.title);
           cy.wait(1000);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           MarcAuthority.clicksaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
 

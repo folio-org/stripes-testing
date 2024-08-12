@@ -40,7 +40,7 @@ describe('MARC', () => {
 
       it(
         'C10950 Edit and save a MARC record in quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -60,6 +60,8 @@ describe('MARC', () => {
               QuickMarcEditor.getFreeTags()[1],
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.deleteConfirmationPresented();
             QuickMarcEditor.confirmDelete();
             // Wait for the content to be loaded.
@@ -74,7 +76,7 @@ describe('MARC', () => {
 
       it(
         'C10924 Add a field to a record using quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -90,7 +92,8 @@ describe('MARC', () => {
           QuickMarcEditor.addRow();
           QuickMarcEditor.checkInitialContent();
           const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues();
-
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           InventoryInstance.waitLoading();
           // Wait for the content to be loaded.
@@ -108,7 +111,7 @@ describe('MARC', () => {
 
       it(
         'C10928 Delete a field(s) from a record in quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -123,6 +126,8 @@ describe('MARC', () => {
           QuickMarcEditor.waitLoading();
           cy.reload();
           QuickMarcEditor.deletePenaltField().then((deletedTag) => {
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.deleteConfirmationPresented();
             QuickMarcEditor.confirmDelete();
@@ -156,7 +161,7 @@ describe('MARC', () => {
 
       it(
         'C10951 Add a 5XX field to a marc record in quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -192,6 +197,8 @@ describe('MARC', () => {
             testRecord.content,
             testRecord.tag,
           );
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           // Wait for the content to be loaded.
           cy.wait(4000);

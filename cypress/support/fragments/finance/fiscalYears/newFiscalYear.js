@@ -3,7 +3,7 @@ import DateTools from '../../../utils/dateTools';
 
 export default class NewFiscalYear {
   static #defaultFiscalYear = {
-    name: `autotest_year_${getRandomPostfix()}`,
+    name: `1_autotest_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCode(1000, 9999),
     acquisitionUnits: '',
     periodBeginDate: DateTools.getPreviousDayDate(),

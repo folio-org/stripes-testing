@@ -7,7 +7,7 @@ describe('fse-data-export', () => {
   });
 
   it(
-    'TC195290 - Get data export job by status',
+    `TC195290 - Get data export job by status for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'api', 'data-export'] },
     () => {
       cy.dataExportGetJobByStatus('COMMITTED').then((response) => {

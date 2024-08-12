@@ -226,9 +226,12 @@ export default {
   verifyElectronicAccess: (uri) => {
     cy.expect(electronicAccessAccordion.find(HTML(uri)).exists());
   },
-  verifyElectronicAccessByElementIndex: (index, content) => {
+  verifyElectronicAccessByElementIndex: (index, content, electronicAccessIndex = 0) => {
     cy.expect(
-      electronicAccessAccordion.find(MultiColumnListCell({ columnIndex: index, content })).exists(),
+      electronicAccessAccordion
+        .find(MultiColumnListRow({ index: electronicAccessIndex }))
+        .find(MultiColumnListCell({ columnIndex: index, content }))
+        .exists(),
     );
   },
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
@@ -311,6 +314,37 @@ export default {
   checkAbsentRecordInReceivingHistory(record) {
     cy.expect(
       Section({ id: 'receiving-history-accordion' }).find(MultiColumnListCell(record)).absent(),
+    );
+  },
+
+  checkNotesByType(
+    noteTypeRowIndex,
+    columnHeader,
+    noteValue,
+    staffOnlyValue = 'No',
+    noteRecordRowIndexInNoteType = 0,
+  ) {
+    cy.expect(
+      MultiColumnList({ id: `list-holdings-notes-${noteTypeRowIndex}` })
+        .find(
+          MultiColumnListCell({
+            column: 'Staff only',
+            content: staffOnlyValue,
+            row: noteRecordRowIndexInNoteType,
+          }),
+        )
+        .exists(),
+    );
+    cy.expect(
+      MultiColumnList({ id: `list-holdings-notes-${noteTypeRowIndex}` })
+        .find(
+          MultiColumnListCell({
+            column: columnHeader,
+            content: noteValue,
+            row: noteRecordRowIndexInNoteType,
+          }),
+        )
+        .exists(),
     );
   },
 };
