@@ -89,6 +89,8 @@ describe('MARC', () => {
 
           // 4 Click on the "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(paneHeader);
           InventoryInstance.waitInstanceRecordViewOpened(instanceTitle);
           InstanceRecordView.verifyResourceTitle(instanceTitle);
