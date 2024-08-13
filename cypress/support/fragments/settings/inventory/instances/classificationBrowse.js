@@ -235,4 +235,10 @@ export default {
     });
     return cy.get('@types');
   },
+
+  selectClassificationIdentifierType(type, isSelected = true) {
+    cy.do(MultiSelect().select(type));
+    if (isSelected) cy.expect(MultiSelect().has({ selected: including(type) }));
+    else cy.expect(MultiSelect({ selected: including(type) }).absent());
+  },
 };
