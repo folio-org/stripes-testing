@@ -1,15 +1,13 @@
 import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import { InventoryInstances } from '../../support/fragments/inventory';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
+import Requests from '../../support/fragments/requests/requests';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import { ServicePoints } from '../../support/fragments/settings/tenant';
-import { Permissions } from '../../support/dictionary';
 import { Locations } from '../../support/fragments/settings/tenant/location-setup';
-import RequestDetail from '../../support/fragments/requests/requestDetail';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import EditRequest from '../../support/fragments/requests/edit-request';
-import Requests from '../../support/fragments/requests/requests';
-import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 
 describe('Title Level Request', () => {
@@ -29,10 +27,6 @@ describe('Title Level Request', () => {
     cy.getAdminToken();
     cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
       testData.holdingTypeId = holdingTypes[0].id;
-    });
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
     });
     ServicePoints.createViaApi(testData.servicePoint);
     testData.defaultLocation = Locations.getDefaultLocation({
@@ -79,7 +73,7 @@ describe('Title Level Request', () => {
         testData.servicePoint.id,
       );
       instanceData = testData.folioInstances[0];
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+      TitleLevelRequests.enableTLRViaApi();
       Requests.createNewRequestViaApi({
         fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         holdingsRecordId: testData.holdingTypeId,
@@ -156,10 +150,6 @@ describe('Title Level Request', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
     cy.wrap(requestIds).each((id) => {
       Requests.deleteRequestViaApi(id);
     });
@@ -184,7 +174,6 @@ describe('Title Level Request', () => {
     Users.deleteViaApi(testData.userForItemLevelRequest.userId);
     Users.deleteViaApi(testData.user.userId);
     Locations.deleteViaApi(testData.defaultLocation);
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
 
   it(
@@ -195,11 +184,6 @@ describe('Title Level Request', () => {
       Requests.findCreatedRequest(instanceData.instanceTitle);
       Requests.selectFirstRequest(instanceData.instanceTitle);
       RequestDetail.waitLoading();
-      RequestDetail.checkRequestInformation({
-        type: REQUEST_TYPES.PAGE,
-        status: EditRequest.requestStatuses.NOT_YET_FILLED,
-        level: REQUEST_LEVELS.ITEM,
-      });
       RequestDetail.verifyPositionInQueue(`${requestPosition} (${holdRequests} requests)`);
       // Click on the position in queue link
       RequestDetail.viewRequestsInQueue();

@@ -98,7 +98,7 @@ export default {
   },
 
   disableTLRViaApi() {
-    this.updateTLRSettingViaApi({ titleLevelRequestsFeatureEnabled: true });
+    this.updateTLRSettingViaApi({ titleLevelRequestsFeatureEnabled: false });
   },
 
   updateTLRSettingViaApi(newSettings) {
