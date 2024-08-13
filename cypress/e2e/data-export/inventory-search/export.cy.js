@@ -21,28 +21,29 @@ const item = {
 describe('Data export', () => {
   describe('Search in Inventory', () => {
     before('navigates to Inventory', () => {
-      cy.createTempUser([permissions.inventoryAll.gui, permissions.dataExportEnableApp.gui]).then(
-        (userProperties) => {
-          user = userProperties;
-          item.instanceId = inventoryInstances.createInstanceViaApi(
-            item.instanceName,
-            item.itemBarcode,
-          );
-          cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
-            (holdings) => {
-              cy.updateHoldingRecord(holdings[0].id, {
-                ...holdings[0],
-                permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
-              });
-            },
-          );
-          cy.getInstanceById(item.instanceId).then((body) => {
-            body.languages = ['eng'];
-            cy.updateInstance(body);
-          });
-          cy.login(user.username, user.password);
-        },
-      );
+      cy.createTempUser([
+        permissions.inventoryAll.gui,
+        permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        item.instanceId = inventoryInstances.createInstanceViaApi(
+          item.instanceName,
+          item.itemBarcode,
+        );
+        cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
+          (holdings) => {
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
+            });
+          },
+        );
+        cy.getInstanceById(item.instanceId).then((body) => {
+          body.languages = ['eng'];
+          cy.updateInstance(body);
+        });
+        cy.login(user.username, user.password);
+      });
     });
 
     beforeEach('navigate to inventory', () => {
