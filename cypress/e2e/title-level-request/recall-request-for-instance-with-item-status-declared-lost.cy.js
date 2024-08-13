@@ -45,11 +45,7 @@ describe('Title level request for declared lost item', () => {
         userData.userId,
         testData.servicePoint.id,
       );
-      cy.loginAsAdmin({
-        path: SettingsMenu.circulationTitleLevelRequestsPath,
-        waiter: TitleLevelRequests.waitLoading,
-      });
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+      TitleLevelRequests.enableTLRViaApi();
       cy.login(userData.username, userData.password, {
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,

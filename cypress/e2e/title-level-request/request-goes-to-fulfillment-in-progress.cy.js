@@ -1,15 +1,14 @@
 import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import RequestDetail from '../../support/fragments/requests/requestDetail';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import Permissions from '../../support/dictionary/permissions';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
-import UserEdit from '../../support/fragments/users/userEdit';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 
 describe('Check in and Request handling', () => {
@@ -23,10 +22,6 @@ describe('Check in and Request handling', () => {
     cy.getAdminToken();
     cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
       testData.holdingTypeId = holdingTypes[0].id;
-    });
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
     });
     ServicePoints.createViaApi(testData.servicePoint);
     testData.defaultLocation = Locations.getDefaultLocation({
@@ -49,7 +44,7 @@ describe('Check in and Request handling', () => {
         testData.servicePoint.id,
       );
       instanceData = testData.folioInstances[0];
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+      TitleLevelRequests.enableTLRViaApi();
       Requests.createNewRequestViaApi({
         fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         holdingsRecordId: testData.holdingTypeId,
@@ -77,10 +72,7 @@ describe('Check in and Request handling', () => {
   });
 
   after('Delete test data', () => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
+    cy.getAdminToken();
     Requests.deleteRequestViaApi(testData.requestId);
     UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
@@ -91,7 +83,6 @@ describe('Check in and Request handling', () => {
     });
     Users.deleteViaApi(testData.user.userId);
     Locations.deleteViaApi(testData.defaultLocation);
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
 
   it(
