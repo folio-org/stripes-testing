@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import uuid from 'uuid';
 import { Permissions } from '../../support/dictionary';
 import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
@@ -9,7 +8,6 @@ import NewNoticePolicyTemplate, {
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import Checkout from '../../support/fragments/checkout/checkout';
-import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
@@ -191,12 +189,12 @@ describe('Hold request expiration triggers', () => {
 
   after('Deleting created entities', () => {
     cy.getAdminToken();
-    // CirculationRules.deleteRuleViaApi(testData.addedRule);
-    // Requests.getRequestApi({ query: `(item.barcode=="${testData.itemBarcode}")` }).then(
-    //   (requestResponse) => {
-    //     Requests.deleteRequestViaApi(requestResponse[0].id);
-    //   },
-    // );
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
+    Requests.getRequestApi({ query: `(item.barcode=="${itemData.barcode}")` }).then(
+      (requestResponse) => {
+        Requests.deleteRequestViaApi(requestResponse[0].id);
+      },
+    );
     NoticePolicyApi.deleteViaApi(testData.noticePolicyId);
     UserEdit.changeServicePointPreferenceViaApi(testData.checkOutUser.userId, [
       testData.servicePoint.id,
@@ -208,18 +206,12 @@ describe('Hold request expiration triggers', () => {
     Users.deleteViaApi(testData.checkOutUser.userId);
     Users.deleteViaApi(testData.requestUser.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    // RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    // Location.deleteInstitutionCampusLibraryLocationViaApi(
-    //   testData.defaultLocation.institutionId,
-    //   testData.defaultLocation.campusId,
-    //   testData.defaultLocation.libraryId,
-    //   testData.defaultLocation.id,
-    // );
-    // noticeTemplates.forEach((template) => {
-    //   NoticePolicyTemplateApi.getViaApi({ query: `name=${template.name}` }).then((templateId) => {
-    //     NoticePolicyTemplateApi.deleteViaApi(templateId);
-    //   });
-    // });
+    RequestPolicy.deleteViaApi(requestPolicyBody.id);
+    noticeTemplates.forEach((template) => {
+      NoticePolicyTemplateApi.getViaApi({ query: `name=${template.name}` }).then((templateId) => {
+        NoticePolicyTemplateApi.deleteViaApi(templateId);
+      });
+    });
   });
 
   it(
@@ -248,7 +240,6 @@ describe('Hold request expiration triggers', () => {
         });
       });
       cy.visit(TopMenu.checkOutPath);
-      // CheckOutActions.checkOutUserByBarcode({ ...testData.checkOutUser, patronGroup });
       CheckOutActions.checkOutUser(testData.checkOutUser.barcode);
       CheckOutActions.checkOutItem(itemData.barcode);
       Checkout.verifyResultsInTheRow([itemData.barcode]);
@@ -266,17 +257,11 @@ describe('Hold request expiration triggers', () => {
       NewRequest.waitLoading();
 
       cy.visit(TopMenu.checkInPath);
-      CheckInActions.checkInItemGui(itemData.barcode);
-      cy.do(console.log(' ****************  1'));
-      cy.wait(3000);
-      AwaitingPickupForARequest.unselectCheckboxPrintSlip();
-      cy.do(console.log(' ****************  2'));
-      cy.wait(3000);
-      AwaitingPickupForARequest.closeModal();
-      cy.do(console.log(' ****************  3'));
-      cy.wait(3000);
-      // CheckInActions.verifyLastCheckInItem(itemData.barcode);
-      // CheckInActions.endCheckInSession();
+      CheckInActions.checkInItemModified(itemData.barcode);
+      AwaitingPickupForARequest.unselectCheckboxPrintSlipModified();
+      AwaitingPickupForARequest.closeModalModified();
+      CheckInActions.verifyLastCheckInItem(itemData.barcode);
+      CheckInActions.endCheckInSession();
     },
   );
 });
