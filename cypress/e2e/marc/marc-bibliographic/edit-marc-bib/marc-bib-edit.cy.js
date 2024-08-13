@@ -24,7 +24,8 @@ describe('MARC', () => {
         instanceTitle: 'C360098 Narysy z historyi belaruskaha mastatstva / Mikola Shchakatsikhin.',
         instanceBibliographyNote: 'Includes bibliographical references and index',
       };
-      const calloutMarcTagWrongLength = 'Record cannot be saved. A MARC tag must contain three characters.';
+      const calloutMarcTagWrongLength =
+        'Record cannot be saved. A MARC tag must contain three characters.';
       const calloutMultiple001MarcTags = 'Record cannot be saved. Can only have one MARC 001.';
       const calloutInvalidMarcTag = 'Invalid MARC tag. Please try again.';
       const calloutMultiple245MarcTags = 'Record cannot be saved with more than one field 245.';
@@ -105,22 +106,32 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingTagValue(20, '');
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(20, calloutMarcTagWrongLength);
           QuickMarcEditor.verifyTagValue(20, '');
           QuickMarcEditor.updateExistingTagValue(20, testData.tag504FirstUpdatedTag);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(20, calloutMarcTagWrongLength);
           QuickMarcEditor.verifyTagValue(20, testData.tag504FirstUpdatedTag);
           QuickMarcEditor.updateExistingTagValue(20, testData.tag504SecondUpdatedTag);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(20, calloutInvalidMarcTag);
           QuickMarcEditor.verifyTagValue(20, testData.tag504SecondUpdatedTag);
           QuickMarcEditor.updateExistingTagValue(20, testData.tag245);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(20, calloutMultiple245MarcTags);
           QuickMarcEditor.verifyTagValue(20, testData.tag245);
           QuickMarcEditor.updateExistingTagValue(20, testData.tag504);
           QuickMarcEditor.updateExistingTagValue(14, testData.tag555);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.verifyNo245TagCallout();
           QuickMarcEditor.verifyTagValue(14, testData.tag555);
@@ -128,6 +139,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingTagValue(16, '');
           QuickMarcEditor.updateTagNameToLockedTag(16, testData.tag001);
           QuickMarcEditor.checkFourthBoxEditable(16, false);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(16, calloutMultiple001MarcTags);
           QuickMarcEditor.verifyTagValue(16, testData.tag001);
@@ -191,6 +204,8 @@ describe('MARC', () => {
           cy.wait(1000);
           QuickMarcEditor.checkButtonSaveAndCloseEnable();
           QuickMarcEditor.checkTagAbsent('');
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndCloseThenCheck(1);
           QuickMarcEditor.confirmDelete();
           QuickMarcEditor.checkAfterSaveAndClose();
@@ -320,6 +335,8 @@ describe('MARC', () => {
           cy.wait(1000);
           QuickMarcEditor.deleteField(31);
           cy.wait(1000);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkDeletingFieldsModal();
           QuickMarcEditor.restoreDeletedFields();

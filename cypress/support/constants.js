@@ -3,6 +3,7 @@ export const APPLICATION_NAMES = {
   DATA_IMPORT: 'Data import',
   INVENTORY: 'Inventory',
   SETTINGS: 'Settings',
+  CIRCULATION_LOG: 'Circulation log',
 };
 
 export const REQUEST_METHOD = {
@@ -193,7 +194,7 @@ export const ORDER_PAYMENT_STATUS = {
 };
 
 export const ORDER_LINE_PAYMENT_STATUS = {
-  AWAITING_PAYMENT: 'Awaiting payment',
+  AWAITING_PAYMENT: 'Awaiting Payment',
   CANCELLED: 'Cancelled',
   FULLY_PAID: 'Fully paid',
   PARTIALLY_PAID: 'Partially paid',
@@ -221,6 +222,7 @@ export const RECEIPT_STATUS_SELECTED = {
 export const RECEIPT_STATUS_VIEW = {
   PENDING: 'Pending',
   RECEIPT_NOT_REQUIRED: 'Receipt Not Required',
+  CANCELLED: 'Cancelled',
 };
 
 export const RECEIVING_WORKFLOW_NAMES = {
@@ -835,3 +837,15 @@ export const CLASSIFICATION_IDENTIFIER_TYPES = {
 };
 
 export const DEFAULT_LOCALE_STRING = '{"locale":"en-US","timezone":"UTC","currency":"USD"}';
+
+export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
+  INVENTORY_HOLDINGS: {
+    HOLDINGS_UUID: 'Holdings UUID',
+    HOLDINGS_HRID: 'Holdings HRID',
+    ADMINISTRATIVE_NOTE: 'Administrative note',
+    ELECTRONIC_BOOKPLATE_NOTE: 'Electronic bookplate note',
+    NOTE: 'Note',
+    BINDING_NOTE: 'Binding note',
+    ACTION_NOTE: 'Action note',
+  },
+};
