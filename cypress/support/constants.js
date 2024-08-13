@@ -847,5 +847,6 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     NOTE: 'Note',
     BINDING_NOTE: 'Binding note',
     ACTION_NOTE: 'Action note',
+    COPY_NOTE: 'Copy note',
   },
 };
