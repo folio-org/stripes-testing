@@ -82,7 +82,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
     password: 'password',
   };
 
-  if (!Cypress.env('ecsEnabled')) {
+  if (!Cypress.env('ecsEnabled') || Cypress.env('eureka')) {
     cy.getAdminToken();
   }
 
