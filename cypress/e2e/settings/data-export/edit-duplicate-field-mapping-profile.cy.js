@@ -27,10 +27,7 @@ const duplicatedFieldMappingProfileCalloutMessage = `The field mapping profile $
 
 describe('settings: data-export', () => {
   before('create test data', () => {
-    cy.createTempUser([
-      permissions.dataExportEnableSettings.gui,
-      permissions.dataExportEnableApp.gui,
-    ]).then((userProperties) => {
+    cy.createTempUser([permissions.dataExportViewAddUpdateProfiles.gui]).then((userProperties) => {
       user = userProperties;
       profileNames.forEach((name) => {
         ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(name);

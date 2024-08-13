@@ -563,6 +563,14 @@ export default {
     internal: 'ui-data-export.app.enabled',
     gui: 'UI: Data export module is enabled',
   },
+  dataExportViewAddUpdateProfiles: {
+    internal: 'ui-data-export.settings.edit',
+    gui: 'Settings (Data export): Can view, add, update profiles',
+  },
+  dataExportViewOnly: {
+    internal: 'ui-data-export.settings.view',
+    gui: 'Settings (Data export): Can view only',
+  },
   // Loans
   loansAll: {
     internal: 'ui-users.loans.all',
