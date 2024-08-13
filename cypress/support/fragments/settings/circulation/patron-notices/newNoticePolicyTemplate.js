@@ -95,6 +95,13 @@ export default {
     this.verifyKeyValue('Body', noticePolicyTemplate.body);
   },
 
+  updateBodyText(text) {
+    cy.wait(1000);
+    cy.do(bodyField.fillIn(text));
+    cy.expect(bodyField.has({ value: text }));
+    cy.do(this.saveAndClose());
+  },
+
   verifyRequestPolicyInNotInTheList(name) {
     cy.contains(name).should('not.exist');
   },
