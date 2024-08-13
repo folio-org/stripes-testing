@@ -206,6 +206,11 @@ export default {
     ]);
   },
 
+  createNewRequest() {
+    cy.do(createRequestButton.click());
+    cy.wait(1000);
+  },
+
   verifySponsorsAlphabeticalOrder() {
     cy.do(Accordion({ id: 'proxySection' }).clickHeader());
     cy.get('#proxySection h3 a').then(($elements) => {
@@ -437,10 +442,6 @@ export default {
 
   startRequest: () => {
     cy.do(actionsButton.click());
-    cy.do(createRequestButton.click());
-  },
-
-  createNewRequest: () => {
     cy.do(createRequestButton.click());
   },
 
