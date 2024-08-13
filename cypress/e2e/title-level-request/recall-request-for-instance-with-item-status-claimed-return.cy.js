@@ -8,9 +8,8 @@ import TitleLevelRequests from '../../support/fragments/settings/circulation/tit
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 
 describe('Title level request for claimed return item', () => {
   const testData = {
@@ -45,11 +44,7 @@ describe('Title level request for claimed return item', () => {
         userData.userId,
         testData.servicePoint.id,
       );
-      cy.loginAsAdmin({
-        path: SettingsMenu.circulationTitleLevelRequestsPath,
-        waiter: TitleLevelRequests.waitLoading,
-      });
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+      TitleLevelRequests.enableTLRViaApi();
       cy.login(userData.username, userData.password, {
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,
