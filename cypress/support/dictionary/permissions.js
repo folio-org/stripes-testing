@@ -567,7 +567,7 @@ export default {
     internal: 'ui-data-export.settings.edit',
     gui: 'Settings (Data export): Can view, add, update profiles',
   },
-  dataExportSettingsViewOnly: {
+  dataExportViewOnly: {
     internal: 'ui-data-export.settings.view',
     gui: 'Settings (Data export): Can view only',
   },
