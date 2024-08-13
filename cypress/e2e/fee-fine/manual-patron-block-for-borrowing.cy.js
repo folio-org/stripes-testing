@@ -1,18 +1,18 @@
 import { Permissions } from '../../support/dictionary';
-import NewRequest from '../../support/fragments/requests/newRequest';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 
 function addPatronBlock(description, user) {
   return cy.createBlockApi({
     desc: description,
-    borrowing: false,
+    borrowing: true,
     renewals: false,
-    requests: true,
+    requests: false,
     type: 'Manual',
     userId: user.userId,
   });
@@ -25,9 +25,9 @@ describe('Fees & Fines : Manual Patron Blocks', () => {
   const userData = {};
 
   const renewalsBlock = {
-    title: 'Patron blocked from requesting',
-    description1: 'manual patron block for Requests 1',
-    description2: 'manual patron block for Requests 2',
+    title: 'Patron blocked from borrowing',
+    description1: 'manual patron block for Borrowing 1',
+    description2: 'manual patron block for Borrowing 2',
   };
 
   before('Create test data', () => {
@@ -40,8 +40,6 @@ describe('Fees & Fines : Manual Patron Blocks', () => {
       Permissions.checkoutAll.gui,
       Permissions.uiUsersPatronBlocks.gui,
       Permissions.uiUsersView.gui,
-      Permissions.usersViewRequests.gui,
-      Permissions.uiRequestsAll.gui,
     ])
       .then((userProperties) => {
         userData.user1 = userProperties;
@@ -58,8 +56,6 @@ describe('Fees & Fines : Manual Patron Blocks', () => {
       Permissions.checkoutAll.gui,
       Permissions.uiUsersPatronBlocks.gui,
       Permissions.uiUsersView.gui,
-      Permissions.usersViewRequests.gui,
-      Permissions.uiRequestsAll.gui,
     ])
       .then((userProperties) => {
         userData.user2 = userProperties;
@@ -105,35 +101,32 @@ describe('Fees & Fines : Manual Patron Blocks', () => {
   });
 
   it(
-    'C481: Verify that manual patron block for "Requests" blocks requests by patron (vega)',
+    'C478: Verify that manual patron block for "Borrowing" blocks checkouts by patron (vega)',
     { tags: ['extendedPath', 'vega'] },
     () => {
       cy.login(userData.user1.username, userData.user1.password);
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.searchByKeywords(userData.user1.username);
-      UsersCard.expandRequestSection();
-      UsersCard.createNewRequest();
-      NewRequest.verifyModal(renewalsBlock.title, renewalsBlock.description1);
-      NewRequest.viewBlockDetails();
+      cy.visit(TopMenu.checkOutPath);
+      Checkout.waitLoading();
+      CheckOutActions.checkOutUser(userData.user1.barcode);
+      Checkout.verifyModal(renewalsBlock.title, renewalsBlock.description1);
+      Checkout.viewBlockDetails();
       UsersCard.verifyPatronBlockDescription(1, renewalsBlock.description1);
 
       cy.login(userData.user2.username, userData.user2.password);
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.searchByKeywords(userData.user2.username);
-      UsersCard.expandRequestSection();
-      UsersCard.createNewRequest();
-      NewRequest.verifyModal(renewalsBlock.title, renewalsBlock.description1);
-      NewRequest.verifyModal(renewalsBlock.title, renewalsBlock.description2);
-      NewRequest.viewBlockDetails();
+      cy.visit(TopMenu.checkOutPath);
+      Checkout.waitLoading();
+      CheckOutActions.checkOutUser(userData.user2.barcode);
+      Checkout.verifyModal(renewalsBlock.title, renewalsBlock.description1);
+      Checkout.verifyModal(renewalsBlock.title, renewalsBlock.description2);
+      Checkout.viewBlockDetails();
       UsersCard.verifyPatronBlockDescription(1, renewalsBlock.description2);
       UsersCard.verifyPatronBlockDescription(2, renewalsBlock.description1);
 
       cy.login(userData.user3.username, userData.user3.password);
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.searchByKeywords(userData.user3.username);
-      UsersCard.expandRequestSection();
-      UsersCard.createNewRequest();
-      NewRequest.verifyModalAbsent(renewalsBlock.title);
+      cy.visit(TopMenu.checkOutPath);
+      Checkout.waitLoading();
+      CheckOutActions.checkOutUser(userData.user3.barcode);
+      Checkout.verifyModalAbsent(renewalsBlock.title);
     },
   );
 });

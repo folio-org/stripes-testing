@@ -356,6 +356,7 @@ export default {
     );
   },
   verifyModal(header, content) {
+    cy.wait(1000);
     cy.expect(
       Modal(including(header)).has({
         message: including(content),
