@@ -20,10 +20,7 @@ const newJobProfileDescription = `Decription${getRandomPostfix()}`;
 
 describe('settings: data-export', () => {
   before('create user, job and navigate to page', () => {
-    cy.createTempUser([
-      permissions.dataExportEnableSettings.gui,
-      permissions.dataExportEnableApp.gui,
-    ]).then((userProperties) => {
+    cy.createTempUser([permissions.dataExportViewAddUpdateProfiles.gui]).then((userProperties) => {
       user = userProperties;
       ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(fieldMappingProfileName).then(
         (response) => {
