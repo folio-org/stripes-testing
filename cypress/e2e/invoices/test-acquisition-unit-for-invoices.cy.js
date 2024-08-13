@@ -71,18 +71,21 @@ describe('ui-invoices: create', () => {
       // Need to wait,while data is load
       cy.wait(2000);
       AcquisitionUnits.assignUser(user.username);
+      cy.logout();
 
       cy.login(user.username, user.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
       });
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
+      cy.logout();
 
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
       });
       AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
+      cy.logout();
 
       cy.login(user.username, user.password, {
         path: TopMenu.invoicesPath,
@@ -90,6 +93,7 @@ describe('ui-invoices: create', () => {
       });
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.checkZeroSearchResultsHeader();
+      cy.logout();
 
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
@@ -97,6 +101,7 @@ describe('ui-invoices: create', () => {
       });
       AcquisitionUnits.edit(defaultAcquisitionUnit.name);
       AcquisitionUnits.selectViewCheckbox();
+      cy.logout();
 
       cy.login(user.username, user.password, {
         path: TopMenu.invoicesPath,

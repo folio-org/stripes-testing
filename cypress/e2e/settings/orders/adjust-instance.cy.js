@@ -79,7 +79,7 @@ describe('orders: Settings', () => {
         });
       });
     });
-
+    cy.logout();
     cy.createTempUser([
       permissions.uiOrdersReopenPurchaseOrders.gui,
       permissions.uiOrdersView.gui,
@@ -95,6 +95,8 @@ describe('orders: Settings', () => {
   });
 
   after(() => {
+    cy.logout();
+
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
