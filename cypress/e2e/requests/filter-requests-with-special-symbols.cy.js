@@ -136,7 +136,7 @@ describe('Requests -> Filter Requests with Special Symbols', () => {
       InteractorsTools.checkCalloutMessage('New tag created');
 
       Requests.closePane('Tags');
-      Requests.closePane('Request detail');
+      Requests.closePane('Request details');
       Requests.resetAllFilters();
       Requests.filterRequestsByTag(tag);
       Requests.selectFirstRequest(itemData.instanceTitle);
@@ -144,7 +144,7 @@ describe('Requests -> Filter Requests with Special Symbols', () => {
       Requests.verifyAssignedTags(tag);
 
       Requests.closePane('Tags');
-      Requests.closePane('Request detail');
+      Requests.closePane('Request details');
       Requests.clearSelectedTags();
       Requests.verifyNoResultMessage('Choose a filter or enter a search query to show results.');
 
