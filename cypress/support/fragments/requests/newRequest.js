@@ -355,6 +355,20 @@ export default {
       including(`Request has been successfully created for ${username}`),
     );
   },
+  verifyModal(header, content) {
+    cy.expect(
+      Modal(including(header)).has({
+        message: including(content),
+      }),
+    );
+  },
+  verifyModalAbsent(header) {
+    cy.wait(3000);
+    cy.expect(Modal(including(header)).absent());
+  },
+  viewBlockDetails() {
+    cy.do(Button('View block details').click());
+  },
   checkItemInformationSection(instanceTitle, location, itemStatus) {
     cy.expect([
       KeyValue('Title').has({ value: instanceTitle }),
