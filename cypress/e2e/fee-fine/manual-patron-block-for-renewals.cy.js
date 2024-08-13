@@ -169,7 +169,7 @@ describe('Fees & Fines : Manual Patron Blocks', () => {
   });
 
   it(
-    'C480: Verify that manual patron block for "Renewals" blocks renewals by patron',
+    'C480: Verify that manual patron block for "Renewals" blocks renewals by patron (vega)',
     { tags: ['extendedPath', 'vega'] },
     () => {
       cy.login(userData.user1.username, userData.user1.password);
