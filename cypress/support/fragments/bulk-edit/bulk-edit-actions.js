@@ -261,7 +261,7 @@ export default {
     cy.expect([downloadChnagedRecordsButton.exists(), Button('Download errors (CSV)').exists()]);
   },
 
-  verifySuccessBanner(validRecordsCount) {
+  verifySuccessBanner(validRecordsCount = 1) {
     cy.expect(
       MessageBanner().has({
         textContent: `${validRecordsCount} records have been successfully changed`,
