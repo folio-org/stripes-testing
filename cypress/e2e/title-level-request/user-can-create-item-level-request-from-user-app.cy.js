@@ -1,18 +1,17 @@
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
-import RequestDetail from '../../support/fragments/requests/requestDetail';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import permissions from '../../support/dictionary/permissions';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import NewRequest from '../../support/fragments/requests/newRequest';
-import UsersCard from '../../support/fragments/users/usersCard';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
-import UserEdit from '../../support/fragments/users/userEdit';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 
 describe('Title Level Request', () => {
   describe('Create Item or Title level request', () => {
@@ -25,11 +24,7 @@ describe('Title Level Request', () => {
 
     before('Preconditions:', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: SettingsMenu.circulationTitleLevelRequestsPath,
-        waiter: TitleLevelRequests.waitLoading,
-      });
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+      TitleLevelRequests.enableTLRViaApi();
       ServicePoints.createViaApi(testData.userServicePoint);
       testData.defaultLocation = Locations.getDefaultLocation({
         servicePointId: testData.userServicePoint.id,
