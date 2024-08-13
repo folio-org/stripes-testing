@@ -49,6 +49,7 @@ describe('Tenant', () => {
       { tags: ['extendedPath', 'firebird'] },
       () => {
         // Verify opened page title format: HTML page title is "Settings - FOLIO"
+        cy.wait(500);
         TenantPane.verifyPageTitle('Settings - FOLIO');
         // Click "Tenant" in "Settings" pane
         cy.reload();

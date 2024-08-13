@@ -89,10 +89,10 @@ describe('bulk-edit', () => {
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.replaceItemStatus(status);
         BulkEditActions.confirmChanges();
-        BulkEditActions.verifyAreYouSureForm(1, secondItem.instanceName);
+        BulkEditActions.verifyAreYouSureForm(1, `${secondItem.instanceName}. MIT`);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyChangedResults(secondItem.instanceName);
+        BulkEditSearchPane.verifyChangedResults(`${secondItem.instanceName}. MIT`);
       },
     );
   });
