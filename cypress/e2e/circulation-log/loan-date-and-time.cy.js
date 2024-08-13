@@ -97,6 +97,7 @@ describe('Circulation log', () => {
     { tags: ['extendedPath', 'firebird'] },
     () => {
       navigateToCircLogAndSearchItem(ITEM_BARCODE);
+      cy.wait(1000);
       SearchPane.verifyResultCells(true);
       cy.wrap(MultiColumnListCell({ row: 0, columnIndex: 4 }).text()).as('date');
       // Click to "Item barcode" on the row with Circ Action "Checked out" => View "Checked Out" date and time displayed on Items view page
