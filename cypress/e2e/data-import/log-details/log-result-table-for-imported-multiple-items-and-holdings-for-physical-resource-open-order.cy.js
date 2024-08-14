@@ -144,7 +144,7 @@ describe('Data Import', () => {
 
     it(
       'C388570 Check the log result table for imported multiple items and holdings for Physical resource open order (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPathBroken', 'folijet'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.createOrderMappingProfile(

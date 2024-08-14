@@ -85,6 +85,8 @@ describe('MARC', () => {
           );
 
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(testData.calloutMessage);
           MarcAuthority.contains(
             `${testData.editedField.contentBefore} ${testData.editedField.editedContent}`,

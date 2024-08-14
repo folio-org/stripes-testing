@@ -115,6 +115,7 @@ describe('Data Import', () => {
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         users.userAProperties = userProperties;
       });
