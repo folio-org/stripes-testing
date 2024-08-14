@@ -15,10 +15,7 @@ const fieldMappingProfileName = `fieldMappingProfile${getRandomPostfix()}`;
 
 describe('settings: data-export', () => {
   before('create test data', () => {
-    cy.createTempUser([
-      permissions.dataExportEnableSettings.gui,
-      permissions.dataExportEnableApp.gui,
-    ]).then((userProperties) => {
+    cy.createTempUser([permissions.dataExportSettingsViewOnly.gui]).then((userProperties) => {
       user = userProperties;
       ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(fieldMappingProfileName).then(
         (response) => {

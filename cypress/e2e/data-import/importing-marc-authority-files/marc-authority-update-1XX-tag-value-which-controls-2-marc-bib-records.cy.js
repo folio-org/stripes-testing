@@ -200,6 +200,7 @@ describe('Data Import', () => {
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
 
