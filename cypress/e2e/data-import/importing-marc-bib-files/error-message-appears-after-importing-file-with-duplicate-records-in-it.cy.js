@@ -169,6 +169,8 @@ describe('Data Import', () => {
         InstanceRecordView.editMarcBibliographicRecord();
         InventoryEditMarcRecord.deleteField(18);
         InventoryEditMarcRecord.saveAndClose();
+        cy.wait(1500);
+        InventoryEditMarcRecord.saveAndClose();
         InventoryEditMarcRecord.confirmDeletingField();
 
         cy.visit(TopMenu.dataImportPath);
