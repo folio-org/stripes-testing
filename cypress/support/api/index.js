@@ -32,3 +32,4 @@ import './settings';
 import './edge';
 import './tenant';
 import './specifications';
+import './serials';
