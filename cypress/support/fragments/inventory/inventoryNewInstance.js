@@ -11,6 +11,7 @@ import {
   TextField,
   SelectionList,
   FieldSet,
+  Selection,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -138,7 +139,7 @@ export default {
     }
     cy.do([descriptiveDataSection.find(Select({ name: 'languages[0]' })).choose(language)]);
   },
-  clickAddStatisticalCode() {
+  clickAddStatisticalCodeButton() {
     cy.do(Button('Add statistical code').click());
     cy.expect(selectStatisticalCodeButton.exists());
   },
@@ -157,5 +158,12 @@ export default {
     InteractorsTools.checkCalloutMessage(
       matching(new RegExp(InstanceStates.instanceSavedSuccessfully)),
     );
+  },
+  clickSaveCloseButton() {
+    cy.do(saveAndCloseButton.click());
+  },
+  deleteStatisticalCode(statisticalCode) {
+    cy.do(rootSection.find(Button({ ariaLabel: 'Delete this item' })).click());
+    cy.expect(Selection({ value: including(statisticalCode) }).absent());
   },
 };

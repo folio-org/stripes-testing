@@ -1,22 +1,22 @@
-// import uuid from 'uuid';
 import { Permissions } from '../../../support/dictionary';
-// import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-// import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
-// import Users from '../../../support/fragments/users/users';
+import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
     const testData = {
       instanceTitle: `C396395 instance${getRandomPostfix()}`,
-      statisticalCode: 'Book, print (books)',
-      // secondStatisticalCode: 'Books, electronic (ebooks)',
+      statisticalCode: 'ARL (Collection stats):    books - Book, print (books)',
+      editStatisticalCode: 'ARL (Collection stats):    ebooks - Books, electronic (ebooks)',
       errorMessage: 'Please select to continue',
     };
 
-    before('Create test data and login', () => {
+    before('Create test user and login', () => {
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
         (userProperties) => {
           testData.user = userProperties;
@@ -29,24 +29,49 @@ describe('Inventory', () => {
       );
     });
 
-    // after('Delete test data', () => {
-    //   cy.getAdminToken().then(() => {
-    //     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
-    //     Users.deleteViaApi(testData.user.userId);
-    //   });
-    // });
+    after('Delete test data', () => {
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(testData.user.userId);
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"title"=="${testData.instanceTitle}"`,
+        }).then((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+      });
+    });
 
     it(
       'C396395 Verify the inability to save empty statistical code field on Instance create/edit page (folijet)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
-        InventoryNewInstance.clickAddStatisticalCode();
+        InventoryNewInstance.clickAddStatisticalCodeButton();
         InventoryNewInstance.fillInstanceFields({ title: testData.instanceTitle });
-        InventoryNewInstance.clickSaveAndCloseButton();
+        InventoryNewInstance.clickSaveCloseButton();
         InventoryNewInstance.checkErrorMessageForStatisticalCode(true);
         InventoryNewInstance.chooseStatisticalCode(testData.statisticalCode);
         InventoryNewInstance.checkErrorMessageForStatisticalCode();
+        InventoryNewInstance.deleteStatisticalCode(testData.statisticalCode);
+        InventoryNewInstance.clickAddStatisticalCodeButton();
+        InventoryNewInstance.clickSaveCloseButton();
+        InventoryNewInstance.checkErrorMessageForStatisticalCode(true);
+        InventoryNewInstance.chooseStatisticalCode(testData.statisticalCode);
+        InventoryNewInstance.checkErrorMessageForStatisticalCode();
+        InventoryNewInstance.clickSaveAndCloseButton();
+        InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitle);
+
+        InstanceRecordView.edit();
+        InstanceRecordEdit.waitLoading();
+        InstanceRecordEdit.deleteStatisticalCode(testData.statisticalCode);
+        InstanceRecordEdit.clickAddStatisticalCodeButton();
+        InstanceRecordEdit.clickSaveAndCloseButton();
+        InstanceRecordEdit.verifyErrorMessageForStatisticalCode(true);
+        InstanceRecordEdit.chooseStatisticalCode(testData.editStatisticalCode);
+        InstanceRecordEdit.saveAndClose();
+        InstanceRecordView.verifySuccsessCalloutMessage();
+        InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitle);
       },
     );
   });
