@@ -305,3 +305,39 @@ Cypress.Commands.add('updateCapabilitySetsForUserApi', (userId, capabilitySetIds
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('updateCapabilitiesForRoleApi', (roleId, capabilityIds) => {
+  cy.okapiRequest({
+    method: 'PUT',
+    path: `roles/${roleId}/capabilities`,
+    body: {
+      capabilityIds,
+    },
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('updateCapabilitySetsForRoleApi', (roleId, capabilitySetIds) => {
+  cy.okapiRequest({
+    method: 'PUT',
+    path: `roles/${roleId}/capability-sets`,
+    body: {
+      capabilitySetIds,
+    },
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('getCapabilitiesForRoleApi', (roleId) => {
+  cy.okapiRequest({
+    path: `roles/${roleId}/capabilities`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('getCapabilitySetsForRoleApi', (roleId) => {
+  cy.okapiRequest({
+    path: `roles/${roleId}/capability-sets`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
