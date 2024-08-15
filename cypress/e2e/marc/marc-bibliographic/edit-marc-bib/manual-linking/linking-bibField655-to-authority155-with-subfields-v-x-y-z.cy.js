@@ -113,6 +113,8 @@ describe('MARC', () => {
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(bib655AfterLinkingToAuth155[0]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib655AfterLinkingToAuth155);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyInstanceSubject(
               11,

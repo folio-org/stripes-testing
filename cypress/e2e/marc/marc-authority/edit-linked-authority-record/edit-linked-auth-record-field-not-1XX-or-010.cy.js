@@ -106,6 +106,8 @@ describe('MARC', () => {
               linkingTagAndValues.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
 
@@ -134,10 +136,14 @@ describe('MARC', () => {
           MarcAuthority.edit();
           QuickMarcEditor.updateExistingFieldContent(11, testData.update400Field);
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
           QuickMarcEditor.updateExistingField(testData.tag035, testData.update035Field);
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
           MarcAuthorities.verifyMarcViewPaneIsOpened();

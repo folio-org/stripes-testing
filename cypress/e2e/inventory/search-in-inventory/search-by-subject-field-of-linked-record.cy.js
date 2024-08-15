@@ -124,6 +124,8 @@ describe('Inventory', () => {
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
         QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1500);
+        QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[i]));
         InventoryInstances.resetAllFilters();
       }

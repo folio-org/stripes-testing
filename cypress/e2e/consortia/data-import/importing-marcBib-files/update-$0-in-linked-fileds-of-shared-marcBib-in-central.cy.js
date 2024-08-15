@@ -152,6 +152,7 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ])
         .then((userProperties) => {
           testData.userProperties = userProperties;
@@ -165,6 +166,7 @@ describe('Data Import', () => {
             Permissions.moduleDataImportEnabled.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             Permissions.dataExportEnableApp.gui,
+            Permissions.dataExportViewAddUpdateProfiles.gui,
           ]);
         })
         .then(() => {
@@ -174,6 +176,7 @@ describe('Data Import', () => {
             Permissions.moduleDataImportEnabled.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             Permissions.dataExportEnableApp.gui,
+            Permissions.dataExportViewAddUpdateProfiles.gui,
           ]);
         })
         .then(() => {

@@ -20,7 +20,7 @@ describe('MARC', () => {
         authority100FieldValue: 'Erbil, H. Yıldırım',
         searchOption: 'Keyword',
         linked100Field: [
-          17,
+          16,
           '100',
           '1',
           '\\',
@@ -30,7 +30,7 @@ describe('MARC', () => {
           '',
         ],
         updated100Field: [
-          17,
+          16,
           '100',
           '1',
           '\\',
@@ -96,6 +96,8 @@ describe('MARC', () => {
           QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
           QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100Field);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -132,7 +134,8 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingField(testData.tag010, testData.tag010NewValue);
           QuickMarcEditor.checkButtonsEnabled();
-
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.verifyAreYouSureModal(testData.areYouSureModalMessage);
           QuickMarcEditor.confirmUpdateLinkedBibs(1);

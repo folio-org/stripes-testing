@@ -19,7 +19,7 @@ describe('Inventory', () => {
         InventoryInstances.createInstanceViaApi(testData.instanceTitle, testData.barcode);
       });
 
-      cy.createTempUser([Permissions.inventoryAll.gui, Permissions.uiRequestsAll.gui]).then(
+      cy.createTempUser([Permissions.inventoryAll.gui, Permissions.uiRequestsCreate.gui]).then(
         (userProperties) => {
           testData.user = userProperties;
 
