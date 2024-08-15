@@ -133,6 +133,8 @@ describe('MARC', () => {
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(testData.tag240rowindex);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib240AfterLinkingToAuth100);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             cy.wait(2000);
             InventoryInstance.editMarcBibliographicRecord();
@@ -140,6 +142,8 @@ describe('MARC', () => {
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib110UnlinkedFieldValues);
             QuickMarcEditor.checkLinkButtonExist(testData.tag240);
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndKeepEditing(testData.changesSavedCallout);
             QuickMarcEditor.checkContent(
               bib110UnlinkedFieldValues[4],

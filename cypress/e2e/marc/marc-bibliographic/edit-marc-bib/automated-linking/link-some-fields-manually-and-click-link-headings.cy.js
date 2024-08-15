@@ -187,6 +187,8 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...fieldAfterUpdate);
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               'Contributor',
