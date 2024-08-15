@@ -61,6 +61,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateValueOf008BoxByBoxName('Geo Subd', 'b');
           QuickMarcEditor.updateExistingFieldContent(9, testData.new100fieldRecordForFirstFile);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           TopMenu.openDataImportApp();
           Logs.verifyInstanceStatus(0, 2);
@@ -70,6 +72,8 @@ describe('MARC', () => {
           QuickMarcEditor.check008BoxesCount(19);
           QuickMarcEditor.updateValueOf008BoxByBoxName('Geo Subd', 'a');
           QuickMarcEditor.updateExistingFieldContent(9, testData.new100fieldRecordForSecondFile);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
         },

@@ -369,6 +369,8 @@ describe('MARC', () => {
             });
             // wait for all changes complete in LDR field.
             cy.wait(1000);
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndKeepEditing(changesSavedCallout);
             QuickMarcEditor.check008FieldLabels(setOfValues.fields008Labels);
             cy.wait(1000);
@@ -400,6 +402,8 @@ describe('MARC', () => {
             );
             cy.wait(500);
           });
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           cy.intercept(`records-editor/records?externalId=${instanceID[0]}`).as('recordUpdated');

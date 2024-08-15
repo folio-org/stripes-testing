@@ -248,6 +248,8 @@ describe('MARC', () => {
             QuickMarcEditor.verifyRowLinked(manuallyUnlinkedFields[2].rowIndex, true);
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             // #9 Click on the "Save & keep editing" button.
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(1500);
             QuickMarcEditor.clickSaveAndKeepEditing();
             autoLinkedFields.forEach((field, index) => {
               if (index !== notLinkedFieldRow) {

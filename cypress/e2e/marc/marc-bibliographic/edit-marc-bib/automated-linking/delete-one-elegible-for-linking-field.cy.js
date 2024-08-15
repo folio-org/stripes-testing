@@ -245,7 +245,8 @@ describe('MARC', () => {
 
             QuickMarcEditor.undoDelete();
             QuickMarcEditor.verifyTagFieldNotLinked(...testData.field100Values);
-
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(1500);
             QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(27);
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(29);

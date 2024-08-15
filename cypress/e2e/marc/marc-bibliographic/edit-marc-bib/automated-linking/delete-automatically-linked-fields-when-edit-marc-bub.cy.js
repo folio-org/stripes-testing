@@ -114,6 +114,8 @@ describe('MARC', () => {
             QuickMarcEditor.afterDeleteNotification(testData.tag700);
             QuickMarcEditor.deleteField(83);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(1500);
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.confirmDeletingFields();
             // need to wait until fields will be deleted
             cy.wait(1500);
