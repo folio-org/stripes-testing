@@ -433,3 +433,21 @@ Cypress.Commands.add('getUserWithBlUsersByUsername', (username) => {
     return response;
   });
 });
+
+Cypress.Commands.add('getKeycloakUsersInfo', () => {
+  cy.okapiRequest({
+    path: 'users-keycloak/_self?expandPermissions=true&fullPermissions=true',
+    isDefaultSearchParamsRequired: false,
+  }).then((response) => {
+    return response;
+  });
+});
+
+Cypress.Commands.add('getUserMigrations', () => {
+  cy.okapiRequest({
+    path: 'users-keycloak/migrations',
+    isDefaultSearchParamsRequired: false,
+  }).then((response) => {
+    return response;
+  });
+});
