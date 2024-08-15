@@ -31,6 +31,7 @@ export default {
   },
 
   searchPolicy: (policyName) => {
+    cy.expect(Spinner().absent());
     cy.do([policiesSearchInputField.fillIn(policyName), policiesSearchButton.click()]);
   },
 

@@ -763,6 +763,12 @@ export const AUTHORIZATION_POLICY_TYPES = {
   TIME: 'time',
 };
 
+export const AUTHORIZATION_POLICY_SOURCES = {
+  USER: 'USER',
+  SYSTEM: 'SYSTEM',
+  CONSORTIUM: 'CONSORTIUM',
+};
+
 export const patronGroupNames = {
   STAFF: 'staff',
   FACULTY: 'faculty',
