@@ -126,7 +126,8 @@ describe('MARC', () => {
           QuickMarcEditor.verifyAfterLinkingAuthority(authorityField.linkingBibFieldTag);
           QuickMarcEditor.closeCallout();
         });
-
+        QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1500);
         QuickMarcEditor.pressSaveAndClose();
 
         cy.createTempUser([

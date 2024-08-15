@@ -20,11 +20,7 @@ const secondNewJobProfileCalloutMessage = `Job profile ${jobProfileNewName} has 
 
 describe('settings: data-export', () => {
   before('create test data', () => {
-    cy.createTempUser([
-      permissions.dataExportEnableSettings.gui,
-      permissions.dataExportEnableApp.gui,
-      permissions.inventoryAll.gui,
-    ]).then((userProperties) => {
+    cy.createTempUser([permissions.dataExportViewAddUpdateProfiles.gui]).then((userProperties) => {
       user = userProperties;
 
       ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(mappingProfileName).then(

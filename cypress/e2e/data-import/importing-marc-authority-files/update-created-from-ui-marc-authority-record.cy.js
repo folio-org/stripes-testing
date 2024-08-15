@@ -147,6 +147,7 @@ describe('Data Import', () => {
         Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
         Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
         Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         user = userProperties;
 

@@ -18,14 +18,14 @@ describe('MARC', () => {
       const testData = {
         tag010: '010',
         tag100: '100',
-        tag100RowIndex: 17,
+        tag100RowIndex: 16,
         field100Value: '$a Erbil,',
         new010FieldValue: '$z n 2005070769',
         searchOption: 'Keyword',
         authorityTitle: 'Erbil, H. Yıldırım',
         instanceTitle: 'Surface chemistry of solid and liquid interfaces / H. Yıldırım Erbil.',
         linked100Field: [
-          17,
+          16,
           '100',
           '1',
           '\\',
@@ -113,6 +113,8 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100Field);
             QuickMarcEditor.closeCallout();
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1000);
 
