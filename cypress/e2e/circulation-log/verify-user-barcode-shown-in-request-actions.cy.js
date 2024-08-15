@@ -10,7 +10,6 @@ import RequestsSearchResultsPane from '../../support/fragments/requests/requests
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -26,10 +25,6 @@ describe('Circulation log', () => {
 
   before('Preconditions:', () => {
     cy.getAdminToken();
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
     ServicePoints.createViaApi(testData.servicePoint);
     testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
     Location.createViaApi(testData.defaultLocation).then((location) => {
@@ -38,7 +33,7 @@ describe('Circulation log', () => {
         location,
       });
     });
-    TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+    TitleLevelRequests.enableTLRViaApi();
     cy.createTempUser([
       Permissions.uiRequestsCreate.gui,
       Permissions.uiRequestsView.gui,
@@ -62,10 +57,6 @@ describe('Circulation log', () => {
 
   after('Deleting created entities', () => {
     cy.getAdminToken();
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
     CheckInActions.checkinItemViaApi({
       itemBarcode,
       servicePointId: testData.servicePoint.id,
@@ -84,7 +75,6 @@ describe('Circulation log', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
 
   it(

@@ -1,13 +1,14 @@
-import uuid from 'uuid';
 import moment from 'moment';
+import uuid from 'uuid';
 import {
-  TextField,
   Button,
-  Pane,
-  MultiColumnListRow,
-  MultiColumnListCell,
-  including,
   HTML,
+  Modal,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Pane,
+  TextField,
+  including,
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 
@@ -103,5 +104,23 @@ export default {
         .find(MultiColumnListCell({ content: including(contentToCheck) }))
         .exists(),
     ));
+  },
+
+  verifyModal(header, content) {
+    cy.wait(1000);
+    cy.expect(
+      Modal(including(header)).has({
+        message: including(content),
+      }),
+    );
+  },
+
+  verifyModalAbsent(header) {
+    cy.wait(3000);
+    cy.expect(Modal(including(header)).absent());
+  },
+
+  viewBlockDetails() {
+    cy.do(Button('View block details').click());
   },
 };

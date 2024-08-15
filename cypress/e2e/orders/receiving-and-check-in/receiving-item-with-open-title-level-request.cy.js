@@ -14,7 +14,6 @@ import Requests from '../../../support/fragments/requests/requests';
 import TitleLevelRequests from '../../../support/fragments/settings/circulation/titleLevelRequests';
 import { ServicePoints } from '../../../support/fragments/settings/tenant';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
@@ -82,11 +81,7 @@ describe('Orders: Receiving and Check-in', () => {
             });
         },
       );
-      cy.loginAsAdmin({
-        path: SettingsMenu.circulationTitleLevelRequestsPath,
-        waiter: TitleLevelRequests.waitLoading,
-      });
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+      TitleLevelRequests.enableTLRViaApi();
     });
 
     cy.createTempUser([

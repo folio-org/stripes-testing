@@ -23,17 +23,18 @@ const emptyFile = `autoTestEmptyFile${getRandomPostfix()}.cql`;
 
 describe('Data export', () => {
   before('Create test data', () => {
-    cy.createTempUser([permissions.inventoryAll.gui, permissions.dataExportEnableApp.gui]).then(
-      (userProperties) => {
-        user = userProperties;
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-        cy.login(user.username, user.password, {
-          path: TopMenu.dataExportPath,
-          waiter: DataExportLogs.waitLoading,
-        });
-        FileManager.createFile(`cypress/fixtures/${emptyFile}`, ' ');
-      },
-    );
+    cy.createTempUser([
+      permissions.inventoryAll.gui,
+      permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+      InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+      cy.login(user.username, user.password, {
+        path: TopMenu.dataExportPath,
+        waiter: DataExportLogs.waitLoading,
+      });
+      FileManager.createFile(`cypress/fixtures/${emptyFile}`, ' ');
+    });
   });
 
   after('Delete test data', () => {

@@ -98,6 +98,8 @@ describe('Data Import', () => {
         InventoryInstance.editMarcBibliographicRecord();
         InventoryEditMarcRecord.deleteField(29);
         InventoryEditMarcRecord.saveAndClose();
+        cy.wait(1500);
+        InventoryEditMarcRecord.saveAndClose();
         InventoryEditMarcRecord.confirmDeletingField();
         InventoryInstance.checkElectronicAccess();
         InventoryInstance.startOverlaySourceBibRecord();

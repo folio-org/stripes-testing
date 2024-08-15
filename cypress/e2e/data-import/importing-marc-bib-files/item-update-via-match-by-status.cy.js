@@ -152,6 +152,7 @@ describe('Data Import', () => {
         Permissions.uiInventoryMarkItemsWithdrawn.gui,
         Permissions.dataExportEnableApp.gui,
         Permissions.settingsDataImportEnabled.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
