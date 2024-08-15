@@ -189,6 +189,8 @@ describe('Data Import', () => {
           linkingTagAndValue.rowIndex,
         );
         QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1500);
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
         cy.login(testData.user.username, testData.user.password, {

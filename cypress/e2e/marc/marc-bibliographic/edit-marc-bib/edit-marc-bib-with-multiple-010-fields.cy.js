@@ -32,7 +32,7 @@ describe('MARC', () => {
         },
       ];
       const instanceIds = [];
-      const calloutMessage = 'Record cannot be saved with more than one 010 field';
+      const calloutMessage = 'Field is non-repeatable.';
 
       before('Create test data', () => {
         cy.createTempUser([
@@ -88,15 +88,16 @@ describe('MARC', () => {
 
           // #7 Click "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(4, calloutMessage);
-          QuickMarcEditor.checkErrorMessage(6, calloutMessage);
+          QuickMarcEditor.checkErrorMessage(5, calloutMessage);
 
           // #8 Change tag value of second "010" field to "011".
-          QuickMarcEditor.updateExistingTagValue(6, testData.tag011);
+          QuickMarcEditor.updateExistingTagValue(5, testData.tag011);
           // Only one field "010" is shown. For example:
           QuickMarcEditor.verifyNumOfFieldsWithTag(testData.tag010, 1);
 
           // #9 Click "Save & close" button
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           // #10 Click on the "Actions" >> "View source".
@@ -127,13 +128,11 @@ describe('MARC', () => {
 
           // # 4 Click "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(4, calloutMessage);
           QuickMarcEditor.checkErrorMessage(5, calloutMessage);
 
           // # 5 Click "Save & keep editng" button
           cy.wait(1000);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(4, calloutMessage);
           QuickMarcEditor.checkErrorMessage(5, calloutMessage);
 
           // # 6 Delete one of the "010" fields.
@@ -141,6 +140,8 @@ describe('MARC', () => {
           QuickMarcEditor.verifyNumOfFieldsWithTag(testData.tag010, 1);
 
           // # 7 Click "Save & keep editing" button
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.verifyNumOfFieldsWithTag(testData.tag010, 1);
         },

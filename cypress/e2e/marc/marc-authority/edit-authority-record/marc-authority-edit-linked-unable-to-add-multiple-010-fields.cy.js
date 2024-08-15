@@ -21,7 +21,7 @@ describe('MARC', () => {
         searchOption: 'Keyword',
         searchValue: 'Beethoven, Ludwig van, 1770-1827. 14 variations sur un thème original',
         fieldForAdding: { tag: '010', content: '$a n 94000339' },
-        errorMultiple010MarcTags: 'Record cannot be saved with more than one 010 field',
+        errorMultiple010MarcTags: 'Field is non-repeatable.',
       };
 
       const createdRecordIDs = [];
@@ -79,6 +79,8 @@ describe('MARC', () => {
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
 
           cy.createTempUser([
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -115,10 +117,8 @@ describe('MARC', () => {
             testData.fieldForAdding.content,
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(4, testData.errorMultiple010MarcTags);
           QuickMarcEditor.checkErrorMessage(5, testData.errorMultiple010MarcTags);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(4, testData.errorMultiple010MarcTags);
           QuickMarcEditor.checkErrorMessage(5, testData.errorMultiple010MarcTags);
         },
       );
