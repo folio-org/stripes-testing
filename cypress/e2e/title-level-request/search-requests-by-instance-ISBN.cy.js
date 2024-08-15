@@ -28,8 +28,8 @@ describe('Requests', () => {
   let cancellationReason;
 
   const random4Numbers = randomFourDigitNumber();
-  const ISBN = `1234567890${random4Numbers}`;
-  const ISBN_HYPHENS = `123-456-789-0${random4Numbers}`;
+  const ISBN = `1234567${random4Numbers}`;
+  const ISBN_HYPHENS = `123-456-7-${random4Numbers}`;
 
   const requestData = {
     id: uuid(),
@@ -122,7 +122,7 @@ describe('Requests', () => {
       });
   });
 
-  after('Delete New Service point, Item and User', () => {
+  after('Delete test data', () => {
     cy.getAdminToken();
     EditRequest.updateRequestApi({
       ...requestData,
