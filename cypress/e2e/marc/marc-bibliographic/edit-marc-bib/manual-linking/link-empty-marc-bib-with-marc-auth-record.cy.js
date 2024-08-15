@@ -110,7 +110,8 @@ describe('MARC', () => {
               '$0 http://id.loc.gov/authorities/names/n83169267',
               '',
             );
-
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Contributor');
