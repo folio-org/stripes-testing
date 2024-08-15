@@ -242,7 +242,7 @@ describe('MARC', () => {
             `${subfieldPrefix} ${testData.editedFieldC360093.content}`,
           );
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500); 
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkContent(
             `${subfieldPrefix} ${testData.editedFieldC360093.content}`,
@@ -263,7 +263,7 @@ describe('MARC', () => {
             `${subfieldPrefix}${testData.editedFieldC360093.secondContent}`,
           );
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500); 
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkContent(
             `${subfieldPrefix} ${testData.editedFieldC360093.secondContent}`,

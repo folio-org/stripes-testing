@@ -150,7 +150,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       QuickMarcEditor.checkLinkButtonExist(testData.tag100);
       QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
       QuickMarcEditor.clickSaveAndKeepEditingButton();
-      cy.wait(1500); 
+      cy.wait(1500);
       QuickMarcEditor.clickSaveAndKeepEditing();
       QuickMarcEditor.closeCallout();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib100AfterUnlinking);
