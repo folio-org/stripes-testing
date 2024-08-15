@@ -85,6 +85,8 @@ describe('MARC', () => {
           MarcAuthorities.select(createdAuthorityID[0]);
           MarcAuthority.edit();
           MarcAuthority.change008Field('x', 'x', 'x');
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           MarcAuthority.clicksaveAndCloseButton();
           MarcAuthority.contains('xxx');
         },
@@ -105,6 +107,8 @@ describe('MARC', () => {
             QuickMarcEditor.deleteFieldByTagAndCheck(testData.deletedFieldTags[index]);
             QuickMarcEditor.verifySaveAndCloseButtonEnabled();
             MarcAuthority.changeField('130', testData.editedFieldValues[index]);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             MarcAuthority.clicksaveAndCloseButton();
             MarcAuthority.continueWithSaveAndCheck();
           });

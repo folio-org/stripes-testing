@@ -98,6 +98,8 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
           linkingTagAndValue.rowIndex,
         );
         QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1500);
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
       });
 
@@ -134,6 +136,8 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
       QuickMarcEditor.deleteField(32);
       QuickMarcEditor.afterDeleteNotification(testData.tag100);
       QuickMarcEditor.checkButtonsEnabled();
+      QuickMarcEditor.clickSaveAndKeepEditingButton();
+      cy.wait(1500);
       QuickMarcEditor.clickSaveAndKeepEditingButton();
       QuickMarcEditor.checkDeleteModal(1);
       QuickMarcEditor.clickRestoreDeletedField();

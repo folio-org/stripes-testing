@@ -256,6 +256,8 @@ describe('MARC', () => {
               field700.thirdBox,
             );
             // #10 Click on the "Save & keep editing" button
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(1500);
             QuickMarcEditor.clickSaveAndKeepEditing();
             newFields.forEach((field) => {
               QuickMarcEditor.verifyRowLinked(field.rowIndex, field.isLinked);
