@@ -24,7 +24,7 @@ describe('MARC', () => {
         tag952RowIndex: 18,
         tag600RowIndex: 25,
         searchOption: 'Keyword',
-        calloutMessage: 'Record cannot be saved. A MARC tag must contain three characters.',
+        calloutMessage: 'Tag must contain three characters and can only accept numbers 0-9.',
       };
 
       const marcFiles = [
@@ -76,6 +76,8 @@ describe('MARC', () => {
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag600, testData.tag600RowIndex);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
 
           cy.createTempUser([
             Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -119,6 +121,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkErrorMessage(6, testData.calloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag040NewValue, testData.tag040);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyConfirmModal();
 

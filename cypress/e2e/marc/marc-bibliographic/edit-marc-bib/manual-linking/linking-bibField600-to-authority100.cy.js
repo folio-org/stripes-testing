@@ -116,6 +116,8 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag600);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib600AfterLinkingToAuth100);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitInventoryLoading();
             InventoryInstance.verifyInstanceSubject(

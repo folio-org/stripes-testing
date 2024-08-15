@@ -122,6 +122,8 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag710);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib710AfterLinkingToAuth110);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               testData.accordion,
@@ -149,6 +151,8 @@ describe('MARC', () => {
             QuickMarcEditor.checkUnlinkModal(testData.tag710);
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib710AfterUnlinking);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyContributor(2, 1, testData.contributor);

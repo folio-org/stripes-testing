@@ -101,6 +101,8 @@ describe('MARC', () => {
               linkingTagAndValue.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             cy.login(testData.user.username, testData.user.password, {
@@ -131,6 +133,8 @@ describe('MARC', () => {
               linkingTagAndValue.tag,
             );
             QuickMarcEditor.checkButtonsEnabled();
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.clickSaveAndCloseThenCheck(1);
             QuickMarcEditor.constinueWithSaveAndCheckInstanceRecord();
             InventoryInstance.verifyContributorAbsent(testData.contributor);
