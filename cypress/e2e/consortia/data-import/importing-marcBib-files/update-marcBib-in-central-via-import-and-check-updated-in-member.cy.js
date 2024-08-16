@@ -129,6 +129,18 @@ describe('Data Import', () => {
             });
           },
         );
+
+        InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+          (holdingSources) => {
+            InventoryHoldings.createHoldingRecordViaApi({
+              instanceId: testData.sharedInstanceId,
+              permanentLocationId: testData.collegeLocation.id,
+              sourceId: holdingSources[0].id,
+            }).then((holding) => {
+              testData.holding = holding;
+            });
+          },
+        );
       });
       cy.resetTenant();
 

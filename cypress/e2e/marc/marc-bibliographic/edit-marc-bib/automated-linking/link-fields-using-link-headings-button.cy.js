@@ -353,7 +353,8 @@ describe('MARC', () => {
               );
             });
             QuickMarcEditor.checkLinkHeadingsButton();
-
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(1500);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.verifyTagFieldAfterLinking(
               81,

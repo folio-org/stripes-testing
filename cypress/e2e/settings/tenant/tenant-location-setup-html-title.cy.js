@@ -77,14 +77,17 @@ describe('Settings: Tenant', () => {
         name: testData.location.institutionName,
         id: testData.location.institutionId,
       });
+      cy.wait(500);
       Locations.selectOption('Campus', {
         name: testData.location.campusName,
         id: testData.location.campusId,
       });
+      cy.wait(500);
       Locations.selectOption('Library', {
         name: testData.location.libraryName,
         id: testData.location.libraryId,
       });
+      cy.wait(500);
       Locations.openLocationDetails(testData.location.name);
       TenantPane.verifyPageTitle(`Tenant settings - ${testData.location.name} - FOLIO`);
       Locations.duplicate();

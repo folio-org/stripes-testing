@@ -140,6 +140,8 @@ describe('Inventory', () => {
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
         QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1500);
+        QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.verifySeriesStatement(0, including(testData.seriesStatement[i]));
         InventoryInstances.resetAllFilters();
       }
