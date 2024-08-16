@@ -5,7 +5,6 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import AreYouSureModal from '../../../../support/fragments/orders/modals/areYouSureModal';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
