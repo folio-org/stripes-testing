@@ -16,11 +16,7 @@ const newFieldMappingProfileCalloutMessage = `The field mapping profile ${fieldM
 
 describe('settings: data-export', () => {
   before('creating user and navigating to settings', () => {
-    cy.createTempUser([
-      permissions.inventoryAll.gui,
-      permissions.dataExportEnableSettings.gui,
-      permissions.dataExportEnableApp.gui,
-    ]).then((userProperties) => {
+    cy.createTempUser([permissions.dataExportViewAddUpdateProfiles.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
         path: TopMenu.settingsPath,

@@ -118,6 +118,8 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
               QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
 
@@ -157,12 +159,16 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagValue(11, testData.tag100);
             QuickMarcEditor.deleteField(11);
             QuickMarcEditor.afterDeleteNotification(testData.tag100);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.clickSaveAndCloseThenCheck(1);
             QuickMarcEditor.checkDeletingFieldsModal();
             QuickMarcEditor.clickRestoreDeletedField();
             QuickMarcEditor.checkDeleteModalClosed();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib100AfterUnlinking);
             QuickMarcEditor.verifyTagValue(11, testData.tag100);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();
             InventoryInstance.verifyContributor(0, 1, marcFiles[0].contributorName);
