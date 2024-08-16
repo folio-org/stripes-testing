@@ -468,6 +468,30 @@ export default {
       .click();
   },
 
+  selectTransactionWithAmountInList: (transactionType, amount) => {
+    cy.get('div[class*=mclRow-]').each(($row) => {
+      const transactionTypeCell = $row.find(`div[class*=mclCell-]:contains("${transactionType}")`);
+      const amountCell = $row.find(`div[class*=mclCell-]:contains("${amount}")`);
+      if (transactionTypeCell.length > 0 && amountCell.length > 0) {
+        cy.wrap(transactionTypeCell).find('a').click();
+      }
+    });
+  },
+
+  doesTransactionWithAmountExist: (transactionType, amount) => {
+    let transactionExists = false;
+    cy.get('div[class*=mclRow-]').each(($row) => {
+      const transactionTypeCell = $row.find(`div[class*=mclCell-]:contains("${transactionType}")`);
+
+      const amountCell = $row.find(`div[class*=mclCell-]:contains("${amount}")`);
+
+      if (transactionTypeCell.length > 0 && amountCell.length > 0) {
+        transactionExists = true;
+      }
+    });
+    return transactionExists;
+  },
+
   checkNoTransactionOfType: (transactionType) => {
     cy.expect(MultiColumnListCell(transactionType).absent());
   },

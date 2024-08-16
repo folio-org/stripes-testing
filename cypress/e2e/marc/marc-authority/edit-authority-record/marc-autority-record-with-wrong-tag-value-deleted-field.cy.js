@@ -17,7 +17,8 @@ describe('MARC', () => {
           title: 'Beethoven, Ludwig van (no 010)',
         },
         field010: { tag: '010', subfield1: '$a n90635366', subfield2: '$a n90635377' },
-        errorThreeCharacterMarcTag: 'Tag must contain three characters and can only accept numbers 0-9.',
+        errorThreeCharacterMarcTag:
+          'Tag must contain three characters and can only accept numbers 0-9.',
       };
       const authorityPostfix = '?authRefType=Authorized';
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
