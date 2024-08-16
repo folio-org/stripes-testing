@@ -19,10 +19,7 @@ const callout = `The field mapping profile ${mappingProfile.name} has been succe
 
 describe('settings: data-export', () => {
   before('create test data', () => {
-    cy.createTempUser([
-      permissions.dataExportEnableSettings.gui,
-      permissions.dataExportEnableApp.gui,
-    ]).then((userProperties) => {
+    cy.createTempUser([permissions.dataExportViewAddUpdateProfiles.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password);
     });

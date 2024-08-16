@@ -34,14 +34,21 @@ describe('remote-storage-configuration', () => {
       Locations.selectCampus();
       Locations.selectLibrary();
       Locations.createNewLocation();
+      cy.wait(1000);
 
       // creating location
       CreateLocations.fillFolioName(locationName);
+      cy.wait(1000);
       CreateLocations.fillCode();
+      cy.wait(1000);
       CreateLocations.fillDiscoveryDisplayName();
+      cy.wait(1000);
       CreateLocations.selectRemoteStorage();
+      cy.wait(1000);
       CreateLocations.selectServicePoint();
+      cy.wait(1000);
       CreateLocations.saveAndClose();
+      cy.wait(1000);
 
       Locations.verifyRemoteStorageValue();
       Locations.deleteLocation(locationName);

@@ -183,11 +183,11 @@ describe('Data Import', () => {
               })
               .then(() => {
                 // create Field mapping profile
-                NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
-                  (mappingProfileResponse) => {
-                    mappingProfile.id = mappingProfileResponse.body.id;
-                  },
-                );
+                NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(
+                  mappingProfile,
+                ).then((mappingProfileResponse) => {
+                  mappingProfile.id = mappingProfileResponse.body.id;
+                });
                 // create Field mapping profile
                 cy.visit(SettingsMenu.mappingProfilePath);
                 FieldMappingProfiles.selectMappingProfileFromList(mappingProfile.name);

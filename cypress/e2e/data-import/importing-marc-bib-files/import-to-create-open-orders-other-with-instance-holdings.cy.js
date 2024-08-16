@@ -190,7 +190,7 @@ describe('Data Import', () => {
 
           OrderLines.checkCreatedInventoryInOtherRecourceDetails('Instance, Holding');
           OrderLines.openLinkedInstance();
-          InstanceRecordView.verifyIsInstanceOpened(instanceTitle);
+          InstanceRecordView.verifyInstanceIsOpened(instanceTitle);
           InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
             instanceHrid = initialInstanceHrId;
           });

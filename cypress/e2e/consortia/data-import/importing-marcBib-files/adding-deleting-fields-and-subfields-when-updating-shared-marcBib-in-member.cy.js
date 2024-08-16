@@ -109,7 +109,7 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ])
         .then((userProperties) => {
           testData.user = userProperties;
@@ -121,7 +121,7 @@ describe('Data Import', () => {
             Permissions.moduleDataImportEnabled.gui,
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-            Permissions.dataExportEnableApp.gui,
+            Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
           ]);
 
           cy.resetTenant();
@@ -131,7 +131,7 @@ describe('Data Import', () => {
             Permissions.moduleDataImportEnabled.gui,
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-            Permissions.dataExportEnableApp.gui,
+            Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
           ]);
           cy.resetTenant();
         })
