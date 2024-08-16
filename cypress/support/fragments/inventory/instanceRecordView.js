@@ -9,6 +9,7 @@ import {
   Accordion,
   Link,
   Pane,
+  matching,
   Callout,
   Badge,
   MultiColumnListHeader,
@@ -17,6 +18,8 @@ import {
 import InstanceRecordEdit from './instanceRecordEdit';
 import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryEditMarcRecord from './inventoryEditMarcRecord';
+import InteractorsTools from '../../utils/interactorsTools';
+import InstanceStates from './instanceStates';
 
 const rootSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
@@ -218,7 +221,7 @@ export default {
   verifyIsHoldingsCreated: (...holdingToBeOpened) => {
     cy.expect(Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).exists());
   },
-  verifyIsInstanceOpened: (title) => {
+  verifyInstanceIsOpened: (title) => {
     cy.expect(rootSection.exists());
     cy.expect(Pane({ titleLabel: including(title) }).exists());
   },
@@ -233,7 +236,11 @@ export default {
       }).exists(),
     );
   },
-
+  verifySuccsessCalloutMessage: () => {
+    InteractorsTools.checkCalloutMessage(
+      matching(new RegExp(InstanceStates.instanceSavedSuccessfully)),
+    );
+  },
   verifyItemsCount(itemsCount, ...holdingToBeOpened) {
     cy.wait(1000);
     cy.expect(

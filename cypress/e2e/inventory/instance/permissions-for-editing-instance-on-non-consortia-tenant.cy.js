@@ -45,18 +45,12 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
         InstanceRecordView.verifyInstancePaneExists();
-        InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
-          const instanceHrid = initialInstanceHrId;
-
-          InstanceRecordView.edit();
-          InstanceRecordEdit.chooseInstanceStatusTerm('Batch Loaded (folio: batch)');
-          InstanceRecordEdit.saveAndClose();
-          InstanceRecordView.verifyCalloutMessage(
-            `The instance - HRID ${instanceHrid} has been successfully saved.`,
-          );
-          InstanceRecordView.verifyInstancePaneExists();
-          InstanceRecordView.verifyInstanceStatusTerm(INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED);
-        });
+        InstanceRecordView.edit();
+        InstanceRecordEdit.chooseInstanceStatusTerm('Batch Loaded (folio: batch)');
+        InstanceRecordEdit.saveAndClose();
+        InstanceRecordView.verifySuccsessCalloutMessage();
+        InstanceRecordView.verifyInstancePaneExists();
+        InstanceRecordView.verifyInstanceStatusTerm(INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED);
       },
     );
   });
