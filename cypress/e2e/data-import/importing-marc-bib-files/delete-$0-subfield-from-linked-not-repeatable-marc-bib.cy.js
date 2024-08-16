@@ -183,6 +183,8 @@ describe('Data Import', () => {
               linkingTagAndValues.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           })
           .then(() => {
@@ -193,11 +195,11 @@ describe('Data Import', () => {
               })
               .then(() => {
                 // create Field mapping profile
-                NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
-                  (mappingProfileResponse) => {
-                    mappingProfile.id = mappingProfileResponse.body.id;
-                  },
-                );
+                NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(
+                  mappingProfile,
+                ).then((mappingProfileResponse) => {
+                  mappingProfile.id = mappingProfileResponse.body.id;
+                });
                 // create Field mapping profile
                 cy.visit(SettingsMenu.mappingProfilePath);
                 FieldMappingProfiles.selectMappingProfileFromList(mappingProfile.name);

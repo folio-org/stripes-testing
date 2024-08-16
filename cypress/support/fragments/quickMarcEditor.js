@@ -1760,7 +1760,9 @@ export default {
 
   checkErrorMessage(rowIndex, errorMessage) {
     cy.wait(1000);
-    cy.expect(QuickMarcEditorRow({ index: rowIndex, error: `Fail: ${errorMessage}` }).exists());
+    cy.expect(
+      QuickMarcEditorRow({ index: rowIndex, error: including(`Fail: ${errorMessage}`) }).exists(),
+    );
   },
 
   checkNonEditableLdrCalloutBib() {

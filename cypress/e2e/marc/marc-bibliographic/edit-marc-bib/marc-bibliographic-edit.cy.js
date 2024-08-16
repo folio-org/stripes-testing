@@ -170,6 +170,8 @@ describe('MARC', () => {
           MarcAuthority.addNewField(10, testData.tags.tag755, '$b Different row', '1', '/');
           cy.wait(2000);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           cy.visit(SettingsMenu.marcFieldProtectionPath);
           MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
@@ -192,6 +194,8 @@ describe('MARC', () => {
           MarcAuthority.updateDataByRowIndex(7, 'Updated protected row content');
           MarcAuthority.updateDataByRowIndex(8, 'Updated protected row content');
           MarcAuthority.updateDataByRowIndex(30, 'Updated protected row content');
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           InventoryInstance.viewSource();
           InventoryViewSource.verifyFieldInMARCBibSource('245\t', 'Updated protected row content');

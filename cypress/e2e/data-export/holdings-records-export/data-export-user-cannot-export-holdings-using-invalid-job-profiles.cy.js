@@ -19,7 +19,7 @@ describe('Data Export', () => {
   describe('Holdings records export', () => {
     before('create test data', () => {
       cy.createTempUser([
-        permissions.dataExportEnableModule.gui,
+        permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;

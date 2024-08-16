@@ -157,6 +157,8 @@ describe('MARC', () => {
           QuickMarcEditor.check008FieldContent();
           QuickMarcEditor.deleteValuesIn008Boxes();
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           cy.intercept(`/inventory/instances/${testData.createdRecordIDs[0]}`).as('recordUpdated');
           QuickMarcEditor.checkAfterSaveAndClose();
           cy.wait('@recordUpdated').then(() => {

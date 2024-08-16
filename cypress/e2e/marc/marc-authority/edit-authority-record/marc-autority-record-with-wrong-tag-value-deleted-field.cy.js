@@ -17,7 +17,8 @@ describe('MARC', () => {
           title: 'Beethoven, Ludwig van (no 010)',
         },
         field010: { tag: '010', subfield1: '$a n90635366', subfield2: '$a n90635377' },
-        errorThreeCharacterMarcTag: 'Record cannot be saved. A MARC tag must contain three characters.',
+        errorThreeCharacterMarcTag:
+          'Tag must contain three characters and can only accept numbers 0-9.',
       };
       const authorityPostfix = '?authRefType=Authorized';
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
@@ -77,9 +78,13 @@ describe('MARC', () => {
 
           MarcAuthority.deleteTag(7);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(5, testData.errorThreeCharacterMarcTag);
 
           MarcAuthority.changeTag(5, '040');
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyConfirmModal();
         },

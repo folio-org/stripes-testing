@@ -17,7 +17,7 @@ describe('MARC', () => {
         marcBibFileName: `testMarcFileC380646.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
-        errorMessage: 'Record cannot be saved with more than one 010 field',
+        errorMessage: 'Field is non-repeatable.',
       };
       let createdRecordIDs;
 
@@ -64,7 +64,6 @@ describe('MARC', () => {
           QuickMarcEditor.addNewField('010', '$a   766384', 6);
           QuickMarcEditor.addNewField('010', '$a   5689434', 7);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(7, testData.errorMessage);
           QuickMarcEditor.checkErrorMessage(8, testData.errorMessage);
           QuickMarcEditor.deleteTag(8);
           QuickMarcEditor.pressSaveAndClose();

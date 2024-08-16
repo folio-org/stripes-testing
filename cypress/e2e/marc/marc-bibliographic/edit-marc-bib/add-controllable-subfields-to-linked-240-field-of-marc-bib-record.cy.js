@@ -80,6 +80,8 @@ describe('MARC', () => {
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tagForLinking);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             cy.wait(1000); // need to wait until save is done
           });
           cy.login(testData.userProperties.username, testData.userProperties.password, {
