@@ -41,6 +41,7 @@ const adminDataAccordion = Accordion('Administrative data');
 const titleDataAccordion = Accordion('Title data');
 const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
 const precedingTitles = titleDataAccordion.find(MultiColumnList({ id: 'precedingTitles' }));
+const succeedingTitles = titleDataAccordion.find(MultiColumnList({ id: 'succeedingTitles' }));
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -278,6 +279,21 @@ export default {
     );
     cy.expect(Tooltip().has({ text: `Search for ${title}` }));
   },
+  verifySucceedingTitleSearchIcon: (title) => {
+    cy.expect(
+      succeedingTitles
+        .find(MultiColumnListCell({ content: including(title) }))
+        .find(Button({ ariaLabel: 'search' }))
+        .exists(),
+    );
+    cy.do(
+      succeedingTitles
+        .find(MultiColumnListCell({ content: including(title) }))
+        .find(Button({ ariaLabel: 'search' }))
+        .hoverMouse(),
+    );
+    cy.expect(Tooltip().has({ text: `Search for ${title}` }));
+  },
   verifySucceedingTitle: (title) => {
     cy.expect(
       titleDataAccordion
@@ -289,6 +305,9 @@ export default {
 
   precedingTitlesIconClick() {
     cy.get('#precedingTitles').find('a').invoke('removeAttr', 'target').click();
+  },
+  succeedingTitlesIconClick() {
+    cy.get('#succeedingTitles').find('a').invoke('removeAttr', 'target').click();
   },
 
   clickNextPaginationButton() {
