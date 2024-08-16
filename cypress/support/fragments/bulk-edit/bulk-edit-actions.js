@@ -661,11 +661,35 @@ export default {
     });
   },
 
+  verifyTheSecondActionOptions(expectedOptions, rowIndex = 0) {
+    cy.then(() => {
+      cy.do(
+        RepeatableFieldItem({ index: rowIndex })
+          .find(Select({ dataTestID: 'select-actions-1' }))
+          .allOptionsText()
+          .then((actualOptions) => {
+            const actualEnabledOptions = actualOptions.filter(
+              (actualOption) => !actualOption.includes('disabled'),
+            );
+            expect(actualEnabledOptions).to.deep.equal(expectedOptions);
+          }),
+      );
+    });
+  },
+
   fillInFirstTextArea(oldItem, rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
         .find(TextArea({ dataTestID: 'input-textarea-0' }))
         .fillIn(oldItem),
+    );
+  },
+
+  verifyValueInFirstTextArea(value, rowIndex = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(TextArea({ dataTestID: 'input-textarea-0' }))
+        .has({ value }),
     );
   },
 

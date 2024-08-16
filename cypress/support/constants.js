@@ -848,5 +848,16 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     BINDING_NOTE: 'Binding note',
     ACTION_NOTE: 'Action note',
     COPY_NOTE: 'Copy note',
+    REPRODUCTION: 'Reproduction note',
   },
+};
+
+export const HOLDING_NOTE_TYPES = {
+  ACTION_NOTE: 'Action note',
+  ADMINISTRATIVE_NOTE: 'Administrative note',
+  COPY_NOTE: 'Copy note',
+  ELECTRONIC_BOOKPLATE: 'Electronic bookplate',
+  REPRODUCTION: 'Reproduction',
+  NOTE: 'Note',
+  BINDING: 'Binding',
 };
