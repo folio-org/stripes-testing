@@ -29,12 +29,6 @@ describe('Eureka', () => {
           {
             application: 'app-platform-complete',
             table: 'Data',
-            resource: 'Licenses Agreements LinkedLicenses',
-            action: 'View',
-          },
-          {
-            application: 'app-platform-complete',
-            table: 'Data',
             resource: 'Licenses Licenses Collection',
             action: 'View',
           },
@@ -73,12 +67,6 @@ describe('Eureka', () => {
             table: 'Settings',
             resource: 'Settings Notes Enabled',
             action: 'View',
-          },
-          {
-            application: 'app-platform-complete',
-            table: 'Procedural',
-            resource: 'Licenses Compare Terms',
-            action: 'Execute',
           },
         ],
         originalCapabilities: [
