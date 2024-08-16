@@ -32,10 +32,10 @@ module.exports = defineConfig({
   downloadsFolder: 'cypress/downloads',
   env: {
     OKAPI_HOST: 'https://kong-evrk2.int.aws.folio.org',
-    OKAPI_TENANT: 'diku2',
+    OKAPI_TENANT: 'diku3',
     diku_login: 'folio',
     diku_password: 'folio',
-    EDGE_HOST: 'https://edge-diku2.int.aws.folio.org',
+    EDGE_HOST: 'https://edge-diku3.int.aws.folio.org',
     EDGE_API_KEY: '',
     is_kiwi_release: false,
     downloadTimeout: 2000,
@@ -146,7 +146,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://diku2.int.aws.folio.org',
+    baseUrl: 'https://diku3.int.aws.folio.org',
     testIsolation: false,
   },
 });
