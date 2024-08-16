@@ -347,4 +347,17 @@ export default {
         .exists(),
     );
   },
+
+  checkHoldingNoteTypeAbsent(columnHeader, noteValue) {
+    cy.expect(
+      Section({ label: 'Holdings notes' })
+        .find(
+          MultiColumnListCell({
+            column: columnHeader,
+            content: noteValue,
+          }),
+        )
+        .absent(),
+    );
+  },
 };

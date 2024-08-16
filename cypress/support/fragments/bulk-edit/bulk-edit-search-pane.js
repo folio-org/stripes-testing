@@ -221,6 +221,7 @@ export default {
     this.selectRecordIdentifier(identifier);
     const modifiedIdentifier = identifier === 'Item barcodes' ? 'item barcode' : identifier;
     this.verifyAfterChoosingIdentifier(modifiedIdentifier);
+    cy.wait(1000);
   },
 
   openIdentifierSearch() {
