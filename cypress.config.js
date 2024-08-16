@@ -25,7 +25,7 @@ module.exports = defineConfig({
     OKAPI_HOST: 'https://kong-crs-sandbox2.int.aws.folio.org',
     OKAPI_TENANT: 'fs01000002',
     diku_login: 'folio',
-    diku_password: 'folio',
+    diku_password: 'folio-password',
     is_kiwi_release: false,
     downloadTimeout: 2000,
     allure: true,
