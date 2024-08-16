@@ -82,7 +82,7 @@ Cypress.Commands.add('updateUser', (userData) => {
 Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userType = 'staff') => {
   const userProperties = {
     username: `cypresstestuser${getRandomPostfix()}`,
-    password: 'password',
+    password: 'complicated-password1',
   };
 
   if (!Cypress.env('ecsEnabled')) {
