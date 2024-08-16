@@ -148,15 +148,16 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag010, testData.new010FieldValue);
           cy.wait(2000);
           QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
-
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(4, testData.colloutMessage);
-
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(4, testData.colloutMessage);
 
           QuickMarcEditor.pressCancel();
-          AreYouSureModal.clickCloseWithoutSavingButton();
           MarcAuthorities.verifyMarcViewPaneIsOpened();
           cy.get('@viewAuthorityPaneContent').then((viewAuthorityPaneContent) => {
             MarcAuthorities.verifyViewPaneContent(viewAuthorityPaneContent);
