@@ -41,7 +41,7 @@ describe('Inventory', () => {
           cy.assignPermissionsToExistingUser(testData.user.userId, [
             Permissions.inventoryAll.gui,
             Permissions.dataExportEnableSettings.gui,
-            Permissions.dataExportEnableApp.gui,
+            Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
           ]);
 
           cy.login(testData.user.username, testData.user.password, {

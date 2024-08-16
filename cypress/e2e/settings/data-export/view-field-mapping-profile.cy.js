@@ -18,11 +18,7 @@ const profileDetails = {
 
 describe('settings: data-export', () => {
   before('create test data', () => {
-    cy.createTempUser([
-      permissions.dataExportEnableSettings.gui,
-      permissions.dataExportEnableApp.gui,
-      permissions.uiUsersView.gui,
-    ]).then((userProperties) => {
+    cy.createTempUser([permissions.dataExportSettingsViewOnly.gui]).then((userProperties) => {
       user = userProperties;
       cy.getAdminSourceRecord().then((adminSourceRecord) => {
         profileDetails.source = adminSourceRecord;
