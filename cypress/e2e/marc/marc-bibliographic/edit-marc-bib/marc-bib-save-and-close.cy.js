@@ -76,6 +76,8 @@ describe('MARC', () => {
             testData.tag245value1,
           );
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
           QuickMarcEditor.checkContent(testData.tag245value1, testData.tag245rowIndex);
           QuickMarcEditor.closeUsingCrossButton();
@@ -90,6 +92,8 @@ describe('MARC', () => {
             testData.tag245rowIndex,
             testData.tag245value2,
           );
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
           QuickMarcEditor.checkContent(testData.tag245value2, testData.tag245rowIndex);
           cy.go('back');

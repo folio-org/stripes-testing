@@ -8,7 +8,11 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+  HOLDING_NOTE_TYPES,
+} from '../../../support/constants';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 
@@ -22,13 +26,6 @@ const notes = {
   administrative: 'C422041 test administrative note',
   note: 'C422041 test note',
   binding: "C422041 test binding note:~,!,@,#,$,%,^,&,*,(,),~,', {.[,]<},>,ø, Æ, §,;",
-};
-const noteTypes = {
-  action: 'Action note',
-  administrative: 'Administrative note',
-  binding: 'Binding',
-  electronicBookplate: 'Electronic bookplate',
-  note: 'Note',
 };
 const actionsToSelect = {
   addNote: 'Add note',
@@ -151,7 +148,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyHoldingsOptions();
-        BulkEditActions.selectOption(noteTypes.administrative, 0);
+        BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE, 0);
         cy.wait(500);
         BulkEditActions.verifyTheActionOptions(administrativeNoteActionOptions);
         BulkEditActions.selectSecondAction(actionsToSelect.addNote);
@@ -161,7 +158,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.isConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
-        BulkEditActions.selectOption(noteTypes.note, 1);
+        BulkEditActions.selectOption(HOLDING_NOTE_TYPES.NOTE, 1);
         cy.wait(500);
         BulkEditActions.verifyTheActionOptions(noteActionOptions, 1);
         BulkEditActions.selectSecondAction(actionsToSelect.addNote, 1);
@@ -169,7 +166,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.isConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(2);
-        BulkEditActions.selectOption(noteTypes.binding, 2);
+        BulkEditActions.selectOption(HOLDING_NOTE_TYPES.BINDING, 2);
         BulkEditActions.verifyTheActionOptions(noteActionOptions, 2);
         BulkEditActions.selectSecondAction(actionsToSelect.addNote, 2);
         BulkEditActions.fillInSecondTextArea(notes.binding, 2);
@@ -213,8 +210,8 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.searchHoldingsByHRID(instance.holdingHRID);
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.checkAdministrativeNote(notes.administrative);
-        HoldingsRecordView.checkNotesByType(0, noteTypes.binding, notes.binding);
-        HoldingsRecordView.checkNotesByType(1, noteTypes.note, notes.note);
+        HoldingsRecordView.checkNotesByType(0, HOLDING_NOTE_TYPES.BINDING, notes.binding);
+        HoldingsRecordView.checkNotesByType(1, HOLDING_NOTE_TYPES.NOTE, notes.note);
       },
     );
   });

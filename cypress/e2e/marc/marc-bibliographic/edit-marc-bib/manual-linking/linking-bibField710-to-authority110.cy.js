@@ -22,7 +22,7 @@ describe('MARC', () => {
           linkedIconText: 'Linked to MARC authority',
           accordion: 'Contributor',
           bib710AfterUnlinking: [
-            27,
+            26,
             '710',
             '2',
             '0',
@@ -47,14 +47,14 @@ describe('MARC', () => {
         const createdRecordIDs = [];
 
         const bib710FieldValues = [
-          27,
+          26,
           testData.tag710,
           '2',
           '0',
           '$a C375081 University. $b School of Social Work $e term. $t test',
         ];
         const bib710AfterLinkingToAuth110 = [
-          27,
+          26,
           testData.tag710,
           '2',
           '0',
@@ -122,8 +122,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag710);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib710AfterLinkingToAuth110);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               testData.accordion,
@@ -147,12 +145,10 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkFieldsExist([testData.tag710]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib710AfterLinkingToAuth110);
-            QuickMarcEditor.clickUnlinkIconInTagField(27);
+            QuickMarcEditor.clickUnlinkIconInTagField(26);
             QuickMarcEditor.checkUnlinkModal(testData.tag710);
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib710AfterUnlinking);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyContributor(2, 1, testData.contributor);
