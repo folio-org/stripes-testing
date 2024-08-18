@@ -15,7 +15,7 @@ describe('Inventory', () => {
       filePath: 'marcBibFileForC496126.mrc',
       marcFileName: `C496126 createAutotestFile${getRandomPostfix()}.mrc`,
       instanceTitle: 'C496126 Liebigs Annalen der Chemie',
-      succeedingTitle: 'C496125 Liebigs Annalen der Chemie',
+      succeedingTitle: 'C496126 Liebigs Annalen der Chemie',
     };
 
     before('Create test data and login', () => {
@@ -49,7 +49,7 @@ describe('Inventory', () => {
       'C496126 Check new search icon for Succeeding title (folijet)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InstanceRecordView.waitLoading();
         InstanceRecordView.verifyInstanceRecordViewOpened();

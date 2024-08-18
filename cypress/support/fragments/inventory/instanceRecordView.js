@@ -295,12 +295,7 @@ export default {
     cy.expect(Tooltip().has({ text: `Search for ${title}` }));
   },
   verifySucceedingTitle: (title) => {
-    cy.expect(
-      titleDataAccordion
-        .find(MultiColumnList({ id: 'succeedingTitles' }))
-        .find(MultiColumnListCell({ content: including(title) }))
-        .exists(),
-    );
+    cy.expect(succeedingTitles.find(MultiColumnListCell({ content: including(title) })).exists());
   },
 
   precedingTitlesIconClick() {
