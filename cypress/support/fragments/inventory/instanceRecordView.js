@@ -30,6 +30,7 @@ const instanceStatusTermKeyValue = KeyValue('Instance status term');
 const instanceHridKeyValue = KeyValue('Instance HRID');
 const actionsButton = Button('Actions');
 const viewSourceButton = Button({ id: 'clickable-view-source' });
+const searchButton = Button({ ariaLabel: 'search' });
 const instanceAdministrativeNote = MultiColumnList({ id: 'administrative-note-list' });
 const instanceNote = MultiColumnList({ id: 'list-instance-notes-0' });
 const listClassifications = MultiColumnList({ id: 'list-classifications' });
@@ -261,22 +262,28 @@ export default {
 
   verifyInstanceHridValue: (hrid) => cy.expect(instanceHridKeyValue.has({ value: hrid })),
   verifyPrecedingTitle: (title) => {
-    cy.expect(precedingTitles.find(MultiColumnListCell({ content: including(title) })).exists());
+    cy.get('#precedingTitles [class*="mclCell-"]:nth-child(1)').eq(0).should('include.text', title);
   },
   verifyPrecedingTitleSearchIcon: (title) => {
     cy.expect(
       precedingTitles
         .find(MultiColumnListCell({ content: including(title) }))
-        .find(Button({ ariaLabel: 'search' }))
+        .find(searchButton)
         .exists(),
     );
     cy.do(
       precedingTitles
         .find(MultiColumnListCell({ content: including(title) }))
-        .find(Button({ ariaLabel: 'search' }))
+        .find(searchButton)
         .hoverMouse(),
     );
     cy.expect(Tooltip().has({ text: `Search for ${title}` }));
+  },
+  verifyPrecedingTitleSearchIconAbsent() {
+    cy.get('#precedingTitles [class*="mclCell-"]:nth-child(1)')
+      .eq(0)
+      .find('button[ariaLabel="search"]')
+      .should('not.exist');
   },
   verifySucceedingTitle: (title) => {
     cy.expect(
