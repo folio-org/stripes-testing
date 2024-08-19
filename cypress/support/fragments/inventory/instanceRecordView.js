@@ -30,6 +30,7 @@ const instanceStatusTermKeyValue = KeyValue('Instance status term');
 const instanceHridKeyValue = KeyValue('Instance HRID');
 const actionsButton = Button('Actions');
 const viewSourceButton = Button({ id: 'clickable-view-source' });
+const searchButton = Button({ ariaLabel: 'search' });
 const instanceAdministrativeNote = MultiColumnList({ id: 'administrative-note-list' });
 const instanceNote = MultiColumnList({ id: 'list-instance-notes-0' });
 const listClassifications = MultiColumnList({ id: 'list-classifications' });
@@ -41,6 +42,7 @@ const adminDataAccordion = Accordion('Administrative data');
 const titleDataAccordion = Accordion('Title data');
 const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
 const precedingTitles = titleDataAccordion.find(MultiColumnList({ id: 'precedingTitles' }));
+const succeedingTitles = titleDataAccordion.find(MultiColumnList({ id: 'succeedingTitles' }));
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -261,17 +263,38 @@ export default {
 
   verifyInstanceHridValue: (hrid) => cy.expect(instanceHridKeyValue.has({ value: hrid })),
   verifyPrecedingTitle: (title) => {
-    cy.expect(precedingTitles.find(MultiColumnListCell({ content: including(title) })).exists());
+    cy.get('#precedingTitles [class*="mclCell-"]:nth-child(1)').eq(0).should('include.text', title);
   },
   verifyPrecedingTitleSearchIcon: (title) => {
     cy.expect(
       precedingTitles
         .find(MultiColumnListCell({ content: including(title) }))
-        .find(Button({ ariaLabel: 'search' }))
+        .find(searchButton)
         .exists(),
     );
     cy.do(
       precedingTitles
+        .find(MultiColumnListCell({ content: including(title) }))
+        .find(searchButton)
+        .hoverMouse(),
+    );
+    cy.expect(Tooltip().has({ text: `Search for ${title}` }));
+  },
+  verifyPrecedingTitleSearchIconAbsent() {
+    cy.get('#precedingTitles [class*="mclCell-"]:nth-child(1)')
+      .eq(0)
+      .find('button[ariaLabel="search"]')
+      .should('not.exist');
+  },
+  verifySucceedingTitleSearchIcon: (title) => {
+    cy.expect(
+      succeedingTitles
+        .find(MultiColumnListCell({ content: including(title) }))
+        .find(Button({ ariaLabel: 'search' }))
+        .exists(),
+    );
+    cy.do(
+      succeedingTitles
         .find(MultiColumnListCell({ content: including(title) }))
         .find(Button({ ariaLabel: 'search' }))
         .hoverMouse(),
@@ -279,16 +302,14 @@ export default {
     cy.expect(Tooltip().has({ text: `Search for ${title}` }));
   },
   verifySucceedingTitle: (title) => {
-    cy.expect(
-      titleDataAccordion
-        .find(MultiColumnList({ id: 'succeedingTitles' }))
-        .find(MultiColumnListCell({ content: including(title) }))
-        .exists(),
-    );
+    cy.expect(succeedingTitles.find(MultiColumnListCell({ content: including(title) })).exists());
   },
 
   precedingTitlesIconClick() {
     cy.get('#precedingTitles').find('a').invoke('removeAttr', 'target').click();
+  },
+  succeedingTitlesIconClick() {
+    cy.get('#succeedingTitles').find('a').invoke('removeAttr', 'target').click();
   },
 
   clickNextPaginationButton() {
