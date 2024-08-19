@@ -21,7 +21,7 @@ const item = {
 
 const emptyFile = `autoTestEmptyFile${getRandomPostfix()}.cql`;
 
-describe('Data export', () => {
+describe('Data Export', () => {
   before('Create test data', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
