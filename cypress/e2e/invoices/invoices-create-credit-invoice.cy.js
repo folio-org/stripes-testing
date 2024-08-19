@@ -11,7 +11,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
 import { Approvals } from '../../support/fragments/settings/invoices';
 
-describe('ui-invoices: Credit Invoice creation', () => {
+describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
