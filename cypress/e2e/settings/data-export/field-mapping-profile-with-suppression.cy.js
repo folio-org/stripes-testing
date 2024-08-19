@@ -75,13 +75,14 @@ describe('Data Export', () => {
         ExportNewFieldMappingProfile.verifyFieldsSuppressionTextareaError(undefined);
         ExportFieldMappingProfiles.saveMappingProfile();
         InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
+        cy.wait(1000);
         ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
 
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(fieldMappingProfileName);
         SingleFieldMappingProfilePane.verifyElements();
 
         const profileDetails = {
-          source: 'Unknown user',
+          source: user.username,
           name: fieldMappingProfileName,
           recordType: 'Source record storage (entire record)',
           outputFormat: 'MARC',
