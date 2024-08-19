@@ -13,7 +13,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import { Approvals } from '../../support/fragments/settings/invoices';
 
-describe('ui-invoices: Approve invoice', () => {
+describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
