@@ -123,7 +123,7 @@ describe('orders: Unopen order', () => {
                             ],
                             acquisitionMethod: params.body.acquisitionMethods[0].id,
                             physical: {
-                              createInventory: 'Instance, Holding, Item',
+                              createInventory: 'Instance, Holding',
                               materialType: mtypes.body.id,
                               materialSupplier: responseOrganizations,
                               volumes: [],
@@ -205,6 +205,7 @@ describe('orders: Unopen order', () => {
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
+      cy.pause();
       Orders.unOpenOrder();
       OrderLines.selectPOLInOrder(0);
       cy.wait(5000);
