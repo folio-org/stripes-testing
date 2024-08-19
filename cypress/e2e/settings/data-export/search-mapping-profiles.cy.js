@@ -11,10 +11,7 @@ describe('settings: data-export', () => {
   const searchWithoutResults = '00000000';
 
   before('Create test data', () => {
-    cy.createTempUser([
-      Permissions.dataExportEnableSettings.gui,
-      Permissions.dataExportEnableApp.gui,
-    ]).then((userProperties) => {
+    cy.createTempUser([Permissions.dataExportViewAddUpdateProfiles.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
         path: TopMenu.settingsPath,

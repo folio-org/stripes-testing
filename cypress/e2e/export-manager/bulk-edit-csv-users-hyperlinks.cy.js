@@ -47,6 +47,7 @@ describe('Export Manager', () => {
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
+      cy.wait(1000);
 
       BulkEditActions.downloadMatchedResults();
       const newName = `testName_${getRandomPostfix()}`;

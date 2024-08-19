@@ -94,7 +94,7 @@ describe('Inventory', () => {
         // https://issues.folio.org/browse/MODCPCT-73
         cy.wait(7000);
         InteractorsTools.checkCalloutMessage(successCalloutMessage);
-        InstanceRecordView.verifyIsInstanceOpened(instanceTitle);
+        InstanceRecordView.verifyInstanceIsOpened(instanceTitle);
       },
     );
   });

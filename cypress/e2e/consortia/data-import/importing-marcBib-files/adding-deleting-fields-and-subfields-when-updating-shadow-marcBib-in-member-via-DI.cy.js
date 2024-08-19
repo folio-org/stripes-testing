@@ -111,7 +111,7 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -121,7 +121,7 @@ describe('Data Import', () => {
           Permissions.moduleDataImportEnabled.gui,
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          Permissions.dataExportEnableApp.gui,
+          Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         ]);
         NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
           (mappingProfileResponse) => {
@@ -162,7 +162,7 @@ describe('Data Import', () => {
           Permissions.moduleDataImportEnabled.gui,
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          Permissions.dataExportEnableApp.gui,
+          Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         ]);
         cy.resetTenant();
 
