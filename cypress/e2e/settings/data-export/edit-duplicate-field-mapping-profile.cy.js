@@ -59,7 +59,7 @@ describe('settings: data-export', () => {
 
   it(
     'C15826 Editing the existing mapping profile (firebird)',
-    { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileNames[0]);
       SingleFieldMappingProfilePane.verifyActionOptions();
@@ -85,7 +85,7 @@ describe('settings: data-export', () => {
 
   it(
     'C15827 Duplicate the existing mapping profile (firebird)',
-    { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileNames[1]);
       SingleFieldMappingProfilePane.verifyActionOptions();
