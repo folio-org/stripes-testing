@@ -22,6 +22,8 @@ const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 describe('bulk-edit', () => {
   describe('csv approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
+
       cy.createTempUser([
         permissions.bulkEditLogsView.gui,
         permissions.bulkEditCsvEdit.gui,
@@ -84,10 +86,12 @@ describe('bulk-edit', () => {
           'Mobile phone',
           'Addresses',
           'Preferred contact type id',
+          'Link to the profile picture',
           'Enrollment date',
           'Expiration date',
           'Tags',
           'Custom fields',
+          'Preferred email communications',
         ];
         ExportFile.verifyFileIncludes(matchedRecordsFileName, ['Date of birth', userColumns]);
         ExportFile.verifyFileIncludes(
