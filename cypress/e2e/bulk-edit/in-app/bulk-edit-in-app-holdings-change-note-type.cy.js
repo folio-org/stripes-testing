@@ -13,6 +13,7 @@ import {
   APPLICATION_NAMES,
   HOLDING_NOTES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
+  HOLDING_NOTE_TYPES,
 } from '../../../support/constants';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
@@ -22,7 +23,6 @@ const notes = {
   administrative: 'C422049 test administrative note',
   electronicBookplate: 'C422049 test electronic bookplate note',
 };
-const noteTypes = { binding: 'Binding', electronicBookplate: 'Electronic bookplate' };
 const instance = {
   instanceName: `C422049 instance-${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -190,7 +190,11 @@ describe('bulk-edit', () => {
 
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow();
-        BulkEditActions.changeNoteType(noteTypes.electronicBookplate, noteTypes.binding, 1);
+        BulkEditActions.changeNoteType(
+          HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE,
+          HOLDING_NOTE_TYPES.BINDING,
+          1,
+        );
         cy.wait(1000);
         BulkEditActions.verifyTheActionOptions(electronicBookplateActionOptions, 1);
         BulkEditActions.verifyTheOptionsForChangingNoteType(
@@ -267,9 +271,13 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.searchHoldingsByHRID(instance.holdingHRID);
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.checkAdministrativeNote('-');
-        HoldingsRecordView.checkNotesByType(0, noteTypes.binding, notes.electronicBookplate);
-        HoldingsRecordView.checkNotesByType(1, 'Note', notes.administrative);
-        ItemRecordView.verifyTextAbsent(noteTypes.electronicBookplate);
+        HoldingsRecordView.checkNotesByType(
+          0,
+          HOLDING_NOTE_TYPES.BINDING,
+          notes.electronicBookplate,
+        );
+        HoldingsRecordView.checkNotesByType(1, HOLDING_NOTE_TYPES.NOTE, notes.administrative);
+        ItemRecordView.verifyTextAbsent(HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE);
       },
     );
   });

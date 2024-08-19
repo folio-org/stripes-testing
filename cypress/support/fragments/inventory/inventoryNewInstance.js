@@ -9,6 +9,9 @@ import {
   matching,
   Accordion,
   TextField,
+  SelectionList,
+  FieldSet,
+  Selection,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -22,6 +25,7 @@ const descriptiveDataSection = rootSection.find(Accordion('Descriptive data'));
 
 const cancelButton = rootSection.find(Button('Cancel'));
 const saveAndCloseButton = rootSection.find(Button('Save & close'));
+const selectStatisticalCodeButton = Button({ name: 'statisticalCodeIds[0]' });
 
 const deafultResouceType = 'text';
 
@@ -37,6 +41,18 @@ export default {
   fillResourceType,
   checkExpectedOCLCPresence(OCLCNumber) {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
+  },
+  checkErrorMessageForStatisticalCode: (isPresented = true) => {
+    if (isPresented) {
+      cy.expect(FieldSet('Statistical code').has({ error: 'Please select to continue' }));
+    } else {
+      cy.expect(
+        FieldSet({
+          buttonIds: [including('stripes-selection')],
+          error: 'Please select to continue',
+        }).absent(),
+      );
+    }
   },
   waitLoading() {
     cy.expect(rootSection.exists());
@@ -123,6 +139,14 @@ export default {
     }
     cy.do([descriptiveDataSection.find(Select({ name: 'languages[0]' })).choose(language)]);
   },
+  clickAddStatisticalCodeButton() {
+    cy.do(Button('Add statistical code').click());
+    cy.expect(selectStatisticalCodeButton.exists());
+  },
+  chooseStatisticalCode(code) {
+    cy.do(selectStatisticalCodeButton.click());
+    cy.do(SelectionList().select(code));
+  },
   clickCancelButton() {
     cy.do(cancelButton.click());
     cy.expect(rootSection.absent());
@@ -134,5 +158,12 @@ export default {
     InteractorsTools.checkCalloutMessage(
       matching(new RegExp(InstanceStates.instanceSavedSuccessfully)),
     );
+  },
+  clickSaveCloseButton() {
+    cy.do(saveAndCloseButton.click());
+  },
+  deleteStatisticalCode(statisticalCode) {
+    cy.do(rootSection.find(Button({ ariaLabel: 'Delete this item' })).click());
+    cy.expect(Selection({ value: including(statisticalCode) }).absent());
   },
 };
