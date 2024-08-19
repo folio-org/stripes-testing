@@ -47,7 +47,7 @@ describe('bulk-edit', () => {
 
     it(
       'C347872 Populating preview of matched records (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft'] },
       () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
