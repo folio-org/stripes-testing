@@ -20,13 +20,12 @@ const callout = `The field mapping profile ${mappingProfile.name} has been succe
 describe('Data Export', () => {
   describe('Mapping profile - setup', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.dataExportEnableSettings.gui,
-        permissions.dataExportEnableApp.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password);
-      });
+      cy.createTempUser([permissions.dataExportViewAddUpdateProfiles.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password);
+        },
+      );
     });
 
     after('delete test data', () => {

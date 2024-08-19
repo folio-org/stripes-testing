@@ -12,16 +12,15 @@ describe('Data Export', () => {
     const searchWithoutResults = '00000000';
 
     before('Create test data', () => {
-      cy.createTempUser([
-        Permissions.dataExportEnableSettings.gui,
-        Permissions.dataExportEnableApp.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.settingsPath,
-          waiter: SettingsPane.waitLoading,
-        });
-      });
+      cy.createTempUser([Permissions.dataExportViewAddUpdateProfiles.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.settingsPath,
+            waiter: SettingsPane.waitLoading,
+          });
+        },
+      );
     });
 
     after('Delete test data', () => {

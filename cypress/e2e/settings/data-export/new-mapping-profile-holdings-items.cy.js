@@ -17,16 +17,15 @@ const newFieldMappingProfileCalloutMessage = `The field mapping profile ${fieldM
 describe('Data Export', () => {
   describe('Mapping profile - setup', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.dataExportEnableSettings.gui,
-        permissions.dataExportEnableApp.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.settingsPath,
-          waiter: SettingsPane.waitLoading,
-        });
-      });
+      cy.createTempUser([permissions.dataExportViewAddUpdateProfiles.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.settingsPath,
+            waiter: SettingsPane.waitLoading,
+          });
+        },
+      );
     });
 
     after('delete test data', () => {
