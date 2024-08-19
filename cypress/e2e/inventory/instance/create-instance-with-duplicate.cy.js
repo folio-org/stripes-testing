@@ -60,7 +60,7 @@ describe('Inventory', () => {
         InstanceRecordView.duplicate();
         InventoryNewInstance.fillRequiredValues(instance.title, instance.resourceType);
         InventoryNewInstance.clickSaveAndCloseButton();
-        InstanceRecordView.verifyIsInstanceOpened(instance.title);
+        InstanceRecordView.verifyInstanceIsOpened(instance.title);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           testData.instanceHrid = initialInstanceHrId;
         });

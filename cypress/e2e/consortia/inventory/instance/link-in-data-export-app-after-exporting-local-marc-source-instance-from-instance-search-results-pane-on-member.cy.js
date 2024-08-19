@@ -26,7 +26,7 @@ describe('Inventory', () => {
           cy.assignPermissionsToExistingUser(testData.user.userId, [
             Permissions.inventoryAll.gui,
             Permissions.dataExportEnableSettings.gui,
-            Permissions.dataExportEnableApp.gui,
+            Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
           ]);
           InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
             testData.instance = instanceData;

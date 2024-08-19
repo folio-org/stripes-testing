@@ -51,12 +51,12 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-        InstanceRecordView.verifyIsInstanceOpened(title);
+        InstanceRecordView.verifyInstanceIsOpened(title);
         InstanceRecordView.waitLoading();
         InstanceRecordView.viewSource();
         InstanceRecordView.verifySrsMarcRecord();
         InventoryViewSource.close();
-        InstanceRecordView.verifyIsInstanceOpened(title);
+        InstanceRecordView.verifyInstanceIsOpened(title);
       },
     );
   });

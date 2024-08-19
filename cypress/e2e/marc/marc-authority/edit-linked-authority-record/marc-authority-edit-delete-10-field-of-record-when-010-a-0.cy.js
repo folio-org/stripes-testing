@@ -161,11 +161,13 @@ describe('MARC', () => {
           QuickMarcEditor.deleteField(testData.tag010RowIndex);
           QuickMarcEditor.afterDeleteNotification(testData.new010tagValue);
           QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
-
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(testData.calloutMessageError);
           QuickMarcEditor.closeCallout();
-
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessageError);
           QuickMarcEditor.closeCallout();
 
@@ -198,7 +200,8 @@ describe('MARC', () => {
             `${testData.linked700Field[4]} ${testData.linked700Field[5]} ${testData.linked700Field[6]}`,
           );
           QuickMarcEditor.checkFourthBoxEditable(testData.tag700RowIndex, true);
-
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(testData.calloutMessageSuccessfulSaving);
           InventoryInstance.waitInventoryLoading();
@@ -217,7 +220,8 @@ describe('MARC', () => {
           QuickMarcEditor.afterDeleteNotification(testData.tag010);
           QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
           QuickMarcEditor.verifySaveAndCloseButtonEnabled();
-
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.constinueWithSaveAndCheck();
           MarcAuthorities.waitLoading();

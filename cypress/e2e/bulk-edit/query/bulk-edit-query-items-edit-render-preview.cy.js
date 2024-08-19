@@ -64,9 +64,7 @@ describe('bulk-edit', () => {
         QueryModal.verifyQueryAreaContent('(temporary_location.name == )');
         QueryModal.verifyValueColumn();
         QueryModal.chooseValueSelect(LOCATION_NAMES.ONLINE_UI);
-        QueryModal.verifyQueryAreaContent(
-          `(temporary_location.name == "${LOCATION_NAMES.ONLINE_UI}")`,
-        );
+        QueryModal.verifyQueryAreaContent(`(temporary_location.name == "${LOCATION_IDS.ONLINE}")`);
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.clickTestQuery();
