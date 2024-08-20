@@ -46,7 +46,6 @@ describe('Data Import', () => {
         FieldMappingProfileView.verifyMappingProfileTitleName(mappingProfile.name);
         FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
-        FieldMappingProfileView.closeViewMode(mappingProfile.name);
       },
     );
   });
