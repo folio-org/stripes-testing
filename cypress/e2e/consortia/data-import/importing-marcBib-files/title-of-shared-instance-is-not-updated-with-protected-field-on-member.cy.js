@@ -210,8 +210,8 @@ describe('Data Import', () => {
         });
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InventoryInstance.waitLoading();
-        InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogingDate);
-        InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
+        InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogingDateUI);
+        InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.statusTerm);
         InstanceRecordView.verifyInstanceAdministrativeNote(mappingProfile.adminNotes);
         InventoryInstance.verifyInstanceTitle(testData.existing245field);
 
@@ -219,8 +219,8 @@ describe('Data Import', () => {
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
-        InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogingDate);
-        InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
+        InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogingDateUI);
+        InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.statusTerm);
         InstanceRecordView.verifyInstanceAdministrativeNote(mappingProfile.adminNotes);
         InventoryInstance.verifyInstanceTitle(testData.existing245field);
       },
