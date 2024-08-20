@@ -25,74 +25,78 @@ const updatedFieldMappingProfileCalloutMessage = `The field mapping profile ${up
 const duplicatedFieldMappingProfileName = `Copy of ${profileNames[1]}`;
 const duplicatedFieldMappingProfileCalloutMessage = `The field mapping profile ${duplicatedFieldMappingProfileName} has been successfully created`;
 
-describe('settings: data-export', () => {
-  before('create test data', () => {
-    cy.createTempUser([permissions.dataExportViewAddUpdateProfiles.gui]).then((userProperties) => {
-      user = userProperties;
-      profileNames.forEach((name) => {
-        ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(name);
-      });
-      cy.login(user.username, user.password, {
-        path: TopMenu.settingsPath,
-        waiter: SettingsPane.waitLoading,
-      });
+describe('Data Export', () => {
+  describe('Mapping profile - setup', () => {
+    before('create test data', () => {
+      cy.createTempUser([permissions.dataExportViewAddUpdateProfiles.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          profileNames.forEach((name) => {
+            ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(name);
+          });
+          cy.login(user.username, user.password, {
+            path: TopMenu.settingsPath,
+            waiter: SettingsPane.waitLoading,
+          });
+        },
+      );
     });
-  });
 
-  beforeEach('go to page', () => {
-    cy.visit(SettingsMenu.exportMappingProfilePath);
-  });
+    beforeEach('go to page', () => {
+      cy.visit(SettingsMenu.exportMappingProfilePath);
+    });
 
-  after('delete test data', () => {
-    cy.getAdminToken();
-    [updatedFieldMappingProfileName, profileNames[1], duplicatedFieldMappingProfileName].forEach(
-      (name) => {
-        ExportFieldMappingProfiles.getFieldMappingProfile({ query: `"name"=="${name}"` }).then(
-          (response) => {
-            DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(response.id);
-          },
+    after('delete test data', () => {
+      cy.getAdminToken();
+      [updatedFieldMappingProfileName, profileNames[1], duplicatedFieldMappingProfileName].forEach(
+        (name) => {
+          ExportFieldMappingProfiles.getFieldMappingProfile({ query: `"name"=="${name}"` }).then(
+            (response) => {
+              DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(response.id);
+            },
+          );
+        },
+      );
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C15826 Editing the existing mapping profile (firebird)',
+      { tags: ['criticalPath', 'firebird'] },
+      () => {
+        SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileNames[0]);
+        SingleFieldMappingProfilePane.verifyActionOptions();
+        SingleFieldMappingProfilePane.editFieldMappingProfile(
+          updatedFieldMappingProfileName,
+          updatedDescription,
         );
+        SingleFieldMappingProfilePane.checkRecordType('Item');
+        SingleFieldMappingProfilePane.clickEditTransformations();
+        ModalSelectTransformations.searchItemTransformationsByName('Item - ID');
+        ModalSelectTransformations.clickNthCheckbox();
+        ModalSelectTransformations.fillInTransformationsTextfields('458', '1', '2', '$a');
+
+        ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
+        InteractorsTools.checkCalloutMessage(updatedTransformationCalloutMessage);
+
+        ExportFieldMappingProfiles.saveMappingProfile();
+        InteractorsTools.checkCalloutMessage(updatedFieldMappingProfileCalloutMessage);
+
+        ExportFieldMappingProfiles.verifyProfileNameOnTheList(updatedFieldMappingProfileName);
       },
     );
-    Users.deleteViaApi(user.userId);
+
+    it(
+      'C15827 Duplicate the existing mapping profile (firebird)',
+      { tags: ['criticalPath', 'firebird'] },
+      () => {
+        SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileNames[1]);
+        SingleFieldMappingProfilePane.verifyActionOptions();
+        SingleFieldMappingProfilePane.duplicateFieldMappingProfile();
+
+        InteractorsTools.checkCalloutMessage(duplicatedFieldMappingProfileCalloutMessage);
+        ExportFieldMappingProfiles.verifyProfileNameOnTheList(updatedFieldMappingProfileName);
+      },
+    );
   });
-
-  it(
-    'C15826 Editing the existing mapping profile (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
-    () => {
-      SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileNames[0]);
-      SingleFieldMappingProfilePane.verifyActionOptions();
-      SingleFieldMappingProfilePane.editFieldMappingProfile(
-        updatedFieldMappingProfileName,
-        updatedDescription,
-      );
-      SingleFieldMappingProfilePane.checkRecordType('Item');
-      SingleFieldMappingProfilePane.clickEditTransformations();
-      ModalSelectTransformations.searchItemTransformationsByName('Item - ID');
-      ModalSelectTransformations.clickNthCheckbox();
-      ModalSelectTransformations.fillInTransformationsTextfields('458', '1', '2', '$a');
-
-      ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
-      InteractorsTools.checkCalloutMessage(updatedTransformationCalloutMessage);
-
-      ExportFieldMappingProfiles.saveMappingProfile();
-      InteractorsTools.checkCalloutMessage(updatedFieldMappingProfileCalloutMessage);
-
-      ExportFieldMappingProfiles.verifyProfileNameOnTheList(updatedFieldMappingProfileName);
-    },
-  );
-
-  it(
-    'C15827 Duplicate the existing mapping profile (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
-    () => {
-      SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileNames[1]);
-      SingleFieldMappingProfilePane.verifyActionOptions();
-      SingleFieldMappingProfilePane.duplicateFieldMappingProfile();
-
-      InteractorsTools.checkCalloutMessage(duplicatedFieldMappingProfileCalloutMessage);
-      ExportFieldMappingProfiles.verifyProfileNameOnTheList(updatedFieldMappingProfileName);
-    },
-  );
 });
