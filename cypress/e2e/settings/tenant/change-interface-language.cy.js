@@ -42,7 +42,7 @@ describe('Settings: Tenant', () => {
     });
   });
 
-  // Marked as broken because it changes global Tenant settings and causes failures in other tests during parallel runs.
+  // Marked as flaky because it changes global Tenant settings and causes failures in other tests during parallel runs.
 
   it(
     'C377044 Verify that the interface language is changed if user choose Numbering system has a value (firebird) (TaaS)',
