@@ -5,7 +5,7 @@ import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe.skip('Data Import', () => {
+describe('Data Import', () => {
   describe('Log details', () => {
     let user;
 
@@ -30,7 +30,7 @@ describe.skip('Data Import', () => {
 
     it(
       'C357009 Check the log sort on the Data Import View all page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPathBroken', 'folijet'] },
       () => {
         const descending = true;
         const columnHeaders = [
