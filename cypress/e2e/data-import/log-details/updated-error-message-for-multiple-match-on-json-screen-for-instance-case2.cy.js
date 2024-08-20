@@ -36,6 +36,7 @@ describe('Data Import', () => {
     const testData = {
       instanceIds: [],
       marcFilePath: 'marcBibFileForC389589.mrc',
+      fileName: `C389590 marcFileName${getRandomPostfix()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
 
       title: "101 things I wish I'd known when I started using hypnosis / Dabney Ewin.",
@@ -43,12 +44,6 @@ describe('Data Import', () => {
         'org.folio.processing.exceptions.MatchingException: Found multiple records matching specified conditions. CQL query: [identifiers =/@value/@identifierTypeId="439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
     };
     const marcFileNames = [
-      {
-        fileName: `C389589 testMarcFile${getRandomPostfix()}.mrc`,
-      },
-      {
-        fileName: `C389589 testMarcFile${getRandomPostfix()}.mrc`,
-      },
       {
         fileName: `C389590 testMarcFile${getRandomPostfix()}.mrc`,
       },
@@ -60,7 +55,7 @@ describe('Data Import', () => {
       },
     ];
     const matchProfile = {
-      profileName: `C389589/C389590 Updating SRS by 035 to OCLC number${getRandomPostfix()}`,
+      profileName: `C389590 Updating SRS by 035 to OCLC number${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '035',
         in1: '*',
@@ -74,7 +69,7 @@ describe('Data Import', () => {
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: {
-          name: `C389589/C389590 Modifying 500 record${getRandomPostfix()}`,
+          name: `C389590 Modifying 500 record${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
           modifications: {
             action: 'Add',
@@ -86,20 +81,20 @@ describe('Data Import', () => {
           },
         },
         actionProfile: {
-          name: `C389589/C389590 Modifying 500 record${getRandomPostfix()}`,
+          name: `C389590 Modifying 500 record${getRandomPostfix()}`,
           action: ACTION_NAMES_IN_ACTION_PROFILE.MODIFY,
           typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
         },
       },
       {
         mappingProfile: {
-          name: `C389589/C389590 Updating Instance with ADM note${getRandomPostfix()}`,
+          name: `C389590 Updating Instance with ADM note${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
           adminNotes: 'Add this to existing',
           adminNote: `Test${getRandomPostfix()}`,
         },
         actionProfile: {
-          name: `C389589/C389590 Updating Instance with ADM note${getRandomPostfix()}`,
+          name: `C389590 Updating Instance with ADM note${getRandomPostfix()}`,
           action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
@@ -107,7 +102,7 @@ describe('Data Import', () => {
     ];
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `C389589/C389590 Updating Instance by 035 OCLC record${getRandomPostfix()}`,
+      profileName: `C389590 Updating Instance by 035 OCLC record${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
@@ -146,9 +141,6 @@ describe('Data Import', () => {
       FieldMappingProfiles.checkMappingProfilePresented(
         collectionOfMappingAndActionProfiles[0].mappingProfile.name,
       );
-      FieldMappingProfileView.closeViewMode(
-        collectionOfMappingAndActionProfiles[0].mappingProfile.name,
-      );
 
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(
@@ -183,9 +175,7 @@ describe('Data Import', () => {
       );
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-    });
 
-    beforeEach('Create user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -201,6 +191,10 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
+        Users.deleteViaApi(testData.user.userId);
+        testData.instanceIds.forEach((id) => {
+          InventoryInstance.deleteInstanceViaApi(id);
+        });
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
@@ -212,52 +206,19 @@ describe('Data Import', () => {
       });
     });
 
-    afterEach('Delete user', () => {
-      cy.getAdminToken().then(() => {
-        Users.deleteViaApi(testData.user.userId);
-        testData.instanceIds.forEach((id) => {
-          InventoryInstance.deleteInstanceViaApi(id);
-        });
-      });
-    });
-
-    it(
-      'C389589  Verify the updated error message for multiple match on JSON screen for Instance: Case 1 (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
-      () => {
-        const fileName = `C389589 marcFileName${getRandomPostfix()}.mrc`;
-
-        cy.visit(TopMenu.dataImportPath);
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(testData.marcFilePath, fileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(jobProfile.profileName);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(fileName);
-        Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
-        Logs.openFileDetails(fileName);
-        FileDetails.openJsonScreen(testData.title);
-        JsonScreenView.verifyJsonScreenIsOpened();
-        JsonScreenView.openInstanceTab();
-        JsonScreenView.verifyContentInTab(testData.errorMessage);
-      },
-    );
-
     it(
       'C389590 Verify the updated error message for multiple match on JSON screen for Instance: Case 2 (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const fileName = `C389590 marcFileName${getRandomPostfix()}.mrc`;
-
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
-        DataImport.uploadFile(testData.marcFilePath, fileName);
+        DataImport.uploadFile(testData.marcFilePath, testData.fileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(fileName);
-        Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
-        Logs.openFileDetails(fileName);
+        Logs.waitFileIsImported(testData.fileName);
+        Logs.checkJobStatus(testData.fileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.openFileDetails(testData.fileName);
         FileDetails.openJsonScreen(testData.title);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.openInstanceTab();

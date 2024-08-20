@@ -60,7 +60,6 @@ describe('Data Import', () => {
         FieldMappingProfileView.checkCalloutMessage(calloutMessage);
         FieldMappingProfileView.closeViewMode(duplicatedMappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(duplicatedMappingProfile.name);
-        FieldMappingProfileView.closeViewMode(duplicatedMappingProfile.name);
       },
     );
   });
