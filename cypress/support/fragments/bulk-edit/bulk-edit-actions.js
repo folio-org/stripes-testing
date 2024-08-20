@@ -918,6 +918,7 @@ export default {
 
   downloadMatchedResults() {
     cy.do(actionsBtn.click());
+    cy.wait(500);
     cy.get('[class^="ActionMenuGroup-"] button', { timeout: 15000 }).first().click();
     BulkEditSearchPane.waitingFileDownload();
   },

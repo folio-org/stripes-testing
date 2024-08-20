@@ -11,7 +11,7 @@ const item = {
 };
 let user;
 
-describe('Data export', () => {
+describe('Data Export', () => {
   describe('Inventory Search', () => {
     before('login and create test data', () => {
       cy.createTempUser([

@@ -15,7 +15,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('invoices: add adjustment', () => {
+describe('Invoices', () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder, approved: true, reEncumber: true };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
