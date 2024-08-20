@@ -11,22 +11,23 @@ import getRandomPostfix from '../../support/utils/stringTools';
 let user;
 const editedFileName = `invalid-query-${getRandomPostfix()}.cql`;
 
-describe('Data export', () => {
+describe('Data Export', () => {
   beforeEach('create test data', () => {
-    cy.createTempUser([permissions.inventoryAll.gui, permissions.dataExportEnableModule.gui]).then(
-      (userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.dataExportPath,
-          waiter: DataExportLogs.waitLoading,
-        });
-        // Create file with invalid cql query
-        FileManager.createFile(
-          `cypress/fixtures/${editedFileName}`,
-          '(languages=="eng" and hello=="123") sortby title',
-        );
-      },
-    );
+    cy.createTempUser([
+      permissions.inventoryAll.gui,
+      permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.dataExportPath,
+        waiter: DataExportLogs.waitLoading,
+      });
+      // Create file with invalid cql query
+      FileManager.createFile(
+        `cypress/fixtures/${editedFileName}`,
+        '(languages=="eng" and hello=="123") sortby title',
+      );
+    });
   });
 
   after('delete test data', () => {

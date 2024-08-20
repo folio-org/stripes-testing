@@ -221,6 +221,7 @@ export default {
     this.selectRecordIdentifier(identifier);
     const modifiedIdentifier = identifier === 'Item barcodes' ? 'item barcode' : identifier;
     this.verifyAfterChoosingIdentifier(modifiedIdentifier);
+    cy.wait(1000);
   },
 
   openIdentifierSearch() {
@@ -583,10 +584,12 @@ export default {
       DropdownMenu().find(Checkbox('Birth date')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Addresses')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Preferred contact type id')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Link to the profile picture')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Date enrolled')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Expiration date')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Tags')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Custom fields')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Preferred email communications')).has({ checked: false }),
     ]);
   },
 
@@ -641,6 +644,13 @@ export default {
       DropdownMenu().find(Checkbox('Administrative note')).has({ checked: false }),
       DropdownMenu().find(Checkbox('ILL policy')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Retention policy')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Action note')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Binding note')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Copy note')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Electronic bookplate note')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Provenance note')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Reproduction note')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Order format')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Digitization policy')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Holdings statement')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Holdings statement for indexes')).has({ checked: false }),

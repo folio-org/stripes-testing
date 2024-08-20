@@ -22,7 +22,7 @@ function addPatronBlock(description, user) {
   });
 }
 
-describe('ui-patrons: Verify that library staff can create/edit/delete a manual patron block (C476)', () => {
+describe('Fees & Fines : Manual Patron Blocks', () => {
   const testData = {
     folioInstances1: InventoryInstances.generateFolioInstances(),
     folioInstances2: InventoryInstances.generateFolioInstances(),
@@ -32,6 +32,7 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
   const userData = {};
 
   const renewalsBlock = {
+    title: 'Patron blocked from renewing',
     description1: 'manual patron block for Renewals 1',
     description2: 'manual patron block for Renewals 2',
   };
@@ -168,7 +169,7 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
   });
 
   it(
-    'C480: Verify that manual patron block for "Renewals" blocks renewals by patron',
+    'C480: Verify that manual patron block for "Renewals" blocks renewals by patron (vega)',
     { tags: ['extendedPath', 'vega'] },
     () => {
       cy.login(userData.user1.username, userData.user1.password);
@@ -176,7 +177,7 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
       UsersSearchPane.searchByKeywords(userData.user1.username);
       UsersCard.viewCurrentLoans(1, 0);
       RenewalActions.renewAllLoans();
-      RenewalActions.verifyModal(RenewalActions.renewalBlockMessage, renewalsBlock.description1);
+      RenewalActions.verifyModal(renewalsBlock.title, renewalsBlock.description1);
       RenewalActions.viewBlockDetails();
       UsersCard.verifyPatronBlockDescription(1, renewalsBlock.description1);
 
@@ -185,8 +186,8 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
       UsersSearchPane.searchByKeywords(userData.user2.username);
       UsersCard.viewCurrentLoans(1, 0);
       RenewalActions.renewAllLoans();
-      RenewalActions.verifyModal(RenewalActions.renewalBlockMessage, renewalsBlock.description1);
-      RenewalActions.verifyModal(RenewalActions.renewalBlockMessage, renewalsBlock.description2);
+      RenewalActions.verifyModal(renewalsBlock.title, renewalsBlock.description1);
+      RenewalActions.verifyModal(renewalsBlock.title, renewalsBlock.description2);
       RenewalActions.viewBlockDetails();
       UsersCard.verifyPatronBlockDescription(1, renewalsBlock.description2);
       UsersCard.verifyPatronBlockDescription(2, renewalsBlock.description1);

@@ -47,6 +47,7 @@ const actionsButtonInResultsPane = requestsResultsSection.find(Button('Actions')
 const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' });
 const tagsAccordion = Accordion('Tags');
 const tagsSelect = MultiSelect({ ariaLabelledby: including('tags') });
+const resetAllButton = Button('Reset all');
 
 const waitContentLoading = () => {
   cy.expect(Pane({ id: 'pane-filter' }).exists());
@@ -645,9 +646,26 @@ export default {
     cy.do(requestsResultsSection.find(MultiColumnListRow({ index: 0 })).click());
   },
 
+  verifyRequestIsPresent(itemData) {
+    cy.expect(
+      requestsResultsSection.find(MultiColumnListRow({ content: including(itemData) })).exists(),
+    );
+  },
+
   verifyRequestIsAbsent(barcode) {
     cy.expect(
       requestsResultsSection.find(MultiColumnListRow({ content: including(barcode) })).absent(),
+    );
+  },
+
+  clickResetAllButton() {
+    cy.expect(resetAllButton.has({ disabled: false }));
+    cy.do(resetAllButton.click());
+    cy.wait(2000);
+    cy.expect(
+      HTML({ className: including('noResultsMessage-') }).has({
+        text: 'Choose a filter or enter a search query to show results.',
+      }),
     );
   },
 

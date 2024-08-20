@@ -1,18 +1,17 @@
 import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import getRandomPostfix from '../../support/utils/stringTools';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import RequestDetail from '../../support/fragments/requests/requestDetail';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import Permissions from '../../support/dictionary/permissions';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import MoveRequest from '../../support/fragments/requests/move-request';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
-import UserEdit from '../../support/fragments/users/userEdit';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Title Level Request', () => {
   describe('Move request. TLR', () => {
@@ -32,10 +31,6 @@ describe('Title Level Request', () => {
       cy.getAdminToken();
       cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
         testData.holdingTypeId = holdingTypes[0].id;
-      });
-      cy.loginAsAdmin({
-        path: SettingsMenu.circulationTitleLevelRequestsPath,
-        waiter: TitleLevelRequests.waitLoading,
       });
       ServicePoints.createViaApi(testData.servicePoint);
       testData.defaultLocation = Locations.getDefaultLocation({
@@ -74,7 +69,7 @@ describe('Title Level Request', () => {
             testData.user.userId,
             testData.servicePoint.id,
           );
-          TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+          TitleLevelRequests.enableTLRViaApi();
           Requests.createNewRequestViaApi({
             fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
             holdingsRecordId: testData.holdingTypeId,

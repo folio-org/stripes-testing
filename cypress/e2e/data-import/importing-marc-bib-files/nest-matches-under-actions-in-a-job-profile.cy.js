@@ -170,9 +170,10 @@ describe('Data Import', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
-        Permissions.dataExportEnableSettings.gui,
         Permissions.settingsDataImportEnabled.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
+        Permissions.dataExportEnableSettings.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((userProperties) => {
         user = userProperties;
 

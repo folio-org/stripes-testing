@@ -8,43 +8,44 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 
-describe('settings: data-export', () => {
-  before('create user and go to page', () => {
-    cy.createTempUser([
-      permissions.dataExportEnableSettings.gui,
-      permissions.dataExportEnableApp.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.settingsPath,
-        waiter: SettingsPane.waitLoading,
-      });
+describe('Data Export', () => {
+  describe('Mapping profile - setup', () => {
+    before('create user and go to page', () => {
+      cy.createTempUser([permissions.dataExportViewAddUpdateProfiles.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.settingsPath,
+            waiter: SettingsPane.waitLoading,
+          });
+        },
+      );
     });
+
+    after('delete user', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C15828 Delete the existing mapping profile (firebird)',
+      { tags: ['criticalPath', 'firebird'] },
+      () => {
+        ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
+        ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
+
+        const testProfile = {
+          name: `autoTestMappingProf.${getRandomPostfix()}`,
+          holdingsTransformation: EXPORT_TRANSFORMATION_NAMES.HOLDINGS_HRID,
+          holdingsMarcField: '901',
+          subfieldForHoldings: '$a',
+          itemTransformation: EXPORT_TRANSFORMATION_NAMES.ITEM_HRID,
+          itemMarcField: '902',
+          subfieldForItem: '$a',
+        };
+        ExportFieldMappingProfiles.createMappingProfile(testProfile);
+        ExportFieldMappingProfiles.deleteMappingProfile(testProfile.name);
+      },
+    );
   });
-
-  after('delete user', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
-  });
-
-  it(
-    'C15828 Delete the existing mapping profile (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
-    () => {
-      ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
-      ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
-
-      const testProfile = {
-        name: `autoTestMappingProf.${getRandomPostfix()}`,
-        holdingsTransformation: EXPORT_TRANSFORMATION_NAMES.HOLDINGS_HRID,
-        holdingsMarcField: '901',
-        subfieldForHoldings: '$a',
-        itemTransformation: EXPORT_TRANSFORMATION_NAMES.ITEM_HRID,
-        itemMarcField: '902',
-        subfieldForItem: '$a',
-      };
-      ExportFieldMappingProfiles.createMappingProfile(testProfile);
-      ExportFieldMappingProfiles.deleteMappingProfile(testProfile.name);
-    },
-  );
 });

@@ -76,14 +76,14 @@ describe('ui-requests: Filter requests by tags', () => {
       Requests.openTagsPane();
       Requests.addTag(tags[index].label);
       Requests.closePane('Tags');
-      Requests.closePane('Request detail');
+      Requests.closePane('Request details');
       Requests.resetAllFilters();
       Requests.filterRequestsByTag(tags[index].label);
       Requests.selectFirstRequest(instance.instanceTitle);
       Requests.openTagsPane();
       Requests.verifyAssignedTags(tags[index].label);
       Requests.closePane('Tags');
-      Requests.closePane('Request detail');
+      Requests.closePane('Request details');
       Requests.resetAllFilters();
     });
   });

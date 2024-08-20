@@ -3,16 +3,27 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import permissions from '../../../support/dictionary/permissions';
 
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
-describe('Data export', () => {
+let user;
+
+describe('Data Export', () => {
   describe('Inventory Search', () => {
     before('login and create test data', () => {
-      cy.loginAsAdmin();
-      InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+      cy.createTempUser([
+        permissions.inventoryAll.gui,
+        permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+
+        cy.login(user.username, user.password);
+      });
     });
 
     beforeEach('navigates to inventory', () => {

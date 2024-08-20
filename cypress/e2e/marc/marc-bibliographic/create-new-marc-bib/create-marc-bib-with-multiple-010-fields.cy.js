@@ -17,7 +17,7 @@ describe('MARC', () => {
         tag008: '008',
         tag010Values: ['58020553', '766384'],
       };
-      const calloutMessage = 'Record cannot be saved with more than one 010 field';
+      const calloutMessage = 'Field is non-repeatable.';
 
       let instanceId;
       before('Create test data', () => {
@@ -57,7 +57,8 @@ describe('MARC', () => {
 
           // #5 Click "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(5, calloutMessage);
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(6, calloutMessage);
 
           // #6 Delete one of the created "010" fields.

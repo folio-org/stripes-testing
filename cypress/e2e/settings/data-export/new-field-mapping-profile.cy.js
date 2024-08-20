@@ -14,34 +14,31 @@ const fieldMappingProfileName = getTestEntityValue('fieldMappingProfile');
 const newTransformationCalloutMessage = '1 transformation has been successfully added';
 const newFieldMappingProfileCalloutMessage = `The field mapping profile ${fieldMappingProfileName} has been successfully created`;
 
-describe('settings: data-export', () => {
-  before('create test data', () => {
-    cy.createTempUser([
-      permissions.dataExportEnableSettings.gui,
-      permissions.dataExportEnableApp.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.settingsPath,
-        waiter: SettingsPane.waitLoading,
+describe('Data Export', () => {
+  describe('Mapping profile - setup', () => {
+    before('create test data', () => {
+      cy.createTempUser([permissions.dataExportViewAddUpdateProfiles.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.settingsPath,
+            waiter: SettingsPane.waitLoading,
+          });
+        },
+      );
+    });
+
+    after('delete test data', () => {
+      cy.getAdminToken();
+      ExportFieldMappingProfiles.getFieldMappingProfile({
+        query: `"name"=="${fieldMappingProfileName}"`,
+      }).then((response) => {
+        DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(response.id);
       });
+      Users.deleteViaApi(user.userId);
     });
-  });
 
-  after('delete test data', () => {
-    cy.getAdminToken();
-    ExportFieldMappingProfiles.getFieldMappingProfile({
-      query: `"name"=="${fieldMappingProfileName}"`,
-    }).then((response) => {
-      DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(response.id);
-    });
-    Users.deleteViaApi(user.userId);
-  });
-
-  it(
-    'C10984 New mapping profile form (firebird)',
-    { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
-    () => {
+    it('C10984 New mapping profile form (firebird)', { tags: ['criticalPath', 'firebird'] }, () => {
       ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
       ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, ['Item']);
       ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
@@ -56,6 +53,6 @@ describe('settings: data-export', () => {
       InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
 
       ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
-    },
-  );
+    });
+  });
 });

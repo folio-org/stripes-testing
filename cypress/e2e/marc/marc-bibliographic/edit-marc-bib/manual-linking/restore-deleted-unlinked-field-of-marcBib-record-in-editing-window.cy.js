@@ -115,6 +115,8 @@ describe('MARC', () => {
                 linkingTagAndValue.rowIndex,
               );
               QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
 
@@ -149,11 +151,15 @@ describe('MARC', () => {
             QuickMarcEditor.deleteField(testData.tag100.rowIndex);
             QuickMarcEditor.afterDeleteNotification(testData.tag100.tag);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(1500);
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.checkDeleteModal(1);
             QuickMarcEditor.clickRestoreDeletedField();
             QuickMarcEditor.checkDeleteModalClosed();
             QuickMarcEditor.verifyTagValue(testData.tag100.rowIndex, testData.tag100.tag);
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib700AfterUnlinking);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InstanceRecordView.verifyInstancePaneExists();

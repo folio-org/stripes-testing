@@ -94,7 +94,7 @@ describe('Data Import', () => {
         Permissions.uiInventorySingleRecordImport.gui,
         Permissions.uiInventoryViewCreateEditInstances.gui,
         Permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
