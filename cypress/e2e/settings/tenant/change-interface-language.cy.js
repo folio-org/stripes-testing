@@ -46,7 +46,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C377044 Verify that the interface language is changed if user choose Numbering system has a value (firebird) (TaaS)',
-    { tags: ['extendedPathBroken', 'firebird'] },
+    { tags: ['extendedPathFlaky', 'firebird'] },
     () => {
       // Select "Language and localization" option
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
