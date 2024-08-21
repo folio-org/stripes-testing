@@ -929,6 +929,9 @@ export default {
       addFundDistributionButton.click(),
       Button({ id: 'fundDistribution[1].fundId' }).click(),
       SelectionOption(`${secondFund.name} (${secondFund.code})`).click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
       TextField({ name: 'fundDistribution[1].value' }).fillIn(secondFundValueInPercentage),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
@@ -954,6 +957,9 @@ export default {
       addFundDistributionButton.click(),
       Button({ id: 'fundDistribution[1].fundId' }).click(),
       SelectionOption(`${secondFund.name} (${secondFund.code})`).click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
       TextField({ name: 'fundDistribution[1].value' }).fillIn(secondFundValueInPercentage),
       saveAndCloseButton.click(),
     ]);
