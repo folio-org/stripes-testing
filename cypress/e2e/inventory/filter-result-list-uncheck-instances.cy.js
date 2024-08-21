@@ -29,15 +29,16 @@ describe('Inventory', () => {
         testData.instanceId = instance.instanceId;
       });
 
-    cy.createTempUser([Permissions.inventoryAll.gui, Permissions.dataExportEnableApp.gui]).then(
-      (userProperties) => {
-        userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-      },
-    );
+    cy.createTempUser([
+      Permissions.inventoryAll.gui,
+      Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+    ]).then((userProperties) => {
+      userId = userProperties.userId;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
+    });
   });
 
   afterEach('delete test data', () => {
