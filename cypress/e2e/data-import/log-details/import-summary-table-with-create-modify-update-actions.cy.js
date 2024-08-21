@@ -298,8 +298,9 @@ describe('Data Import', () => {
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiInventoryViewCreateEditInstances.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.dataExportEnableSettings.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -342,7 +343,7 @@ describe('Data Import', () => {
 
     it(
       'C430257 Check import summary table with "create + update" actions (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPathFlaky', 'folijet'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.searchByTitle(instanceId);

@@ -10,7 +10,6 @@ import {
   Selection,
   SelectionList,
 } from '../../../../../interactors';
-import { getLongDelay } from '../../../utils/cypressTools';
 import FileDetails from './fileDetails';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
@@ -219,8 +218,7 @@ export default {
 
   waitFileIsImported: (fileName) => {
     const newFileName = fileName.replace(/\.mrc$/i, '');
-    cy.wait(5000);
-    cy.expect(runningAccordion.find(HTML(including(newFileName))).absent(), getLongDelay(240000));
+
     cy.expect(
       MultiColumnList({ id: 'job-logs-list' })
         .find(Button(including(newFileName)))

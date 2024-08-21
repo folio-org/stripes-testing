@@ -282,8 +282,9 @@ describe('Data Import', () => {
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.dataExportEnableSettings.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.enableStaffSuppressFacet.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -365,6 +366,7 @@ describe('Data Import', () => {
 
         cy.visit(SettingsMenu.exportMappingProfilePath);
         ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
+        cy.wait(10000);
 
         cy.visit(SettingsMenu.exportJobProfilePath);
         ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);

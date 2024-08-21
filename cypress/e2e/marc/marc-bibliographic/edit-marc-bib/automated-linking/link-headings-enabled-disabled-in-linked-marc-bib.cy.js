@@ -114,6 +114,8 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
               QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
 
@@ -195,6 +197,8 @@ describe('MARC', () => {
             QuickMarcEditor.afterDeleteNotification('700');
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkDeletingFieldsModal();
             QuickMarcEditor.restoreDeletedFields();
             QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -208,6 +212,8 @@ describe('MARC', () => {
               fieldsToUpdate[2].seventhBox,
             );
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.viewSource();

@@ -133,6 +133,8 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
       MarcAuthorities.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag700, testData.rowIndex);
       QuickMarcEditor.pressSaveAndClose();
+      cy.wait(1500);
+      QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.verifyAfterDerivedMarcBibSave();
       cy.wait(3000);
       InventoryInstance.editMarcBibliographicRecord();

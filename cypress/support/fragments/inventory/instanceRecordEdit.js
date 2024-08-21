@@ -55,7 +55,7 @@ function addNatureOfContent() {
   cy.do(addNatureOfContentButton.click());
 }
 
-function clickAddStatisticalCode() {
+function clickAddStatisticalCodeButton() {
   cy.do(Button('Add statistical code').click());
 }
 
@@ -66,7 +66,7 @@ function chooseStatisticalCode(code) {
 
 export default {
   addNatureOfContent,
-  clickAddStatisticalCode,
+  clickAddStatisticalCodeButton,
   chooseStatisticalCode,
   close: () => cy.do(closeButton.click()),
   waitLoading: () => {
@@ -197,7 +197,7 @@ export default {
   chooseInstanceStatusTerm(statusTerm) {
     cy.do(Select('Instance status term').choose(statusTerm));
   },
-  saveAndClose: () => {
+  saveAndClose() {
     cy.wait(1500);
     cy.do(saveAndCloseButton.click());
     cy.expect([
@@ -208,7 +208,9 @@ export default {
       ),
     ]);
   },
-
+  clickSaveAndCloseButton() {
+    cy.do(saveAndCloseButton.click());
+  },
   clickAddContributor() {
     cy.expect(contributorAccordion.exists());
     cy.do(contributorButton.click());
@@ -272,7 +274,7 @@ export default {
     cy.expect(TextArea({ name: 'title' }).has({ value: newTitle }));
   },
   addStatisticalCode: (code) => {
-    clickAddStatisticalCode();
+    clickAddStatisticalCodeButton();
     chooseStatisticalCode(code);
   },
   clickAddNoteButton(noteType, note) {
@@ -389,5 +391,21 @@ export default {
     return cy.then(() => classificationSection
       .find(Select({ name: 'classifications[0].classificationTypeId' }))
       .optionsText());
+  },
+  deleteStatisticalCode(statisticalCode) {
+    cy.do(rootSection.find(Button({ ariaLabel: 'Delete this item' })).click());
+    cy.expect(Selection({ value: including(statisticalCode) }).absent());
+  },
+  verifyErrorMessageForStatisticalCode: (isPresented = true) => {
+    if (isPresented) {
+      cy.expect(FieldSet('Statistical code').has({ error: 'Please select to continue' }));
+    } else {
+      cy.expect(
+        FieldSet({
+          buttonIds: [including('stripes-selection')],
+          error: 'Please select to continue',
+        }).absent(),
+      );
+    }
   },
 };

@@ -6,7 +6,7 @@ import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 
 let user;
 
-describe('Data export', () => {
+describe('Data Export', () => {
   before('Create test data', () => {
     cy.createTempUser([Permissions.uiUsersView.gui, Permissions.uiUsersPermissions.gui]).then(
       (userProperties) => {

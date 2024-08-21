@@ -118,7 +118,7 @@ describe('Data Import', () => {
     ];
 
     const linkingTagAndValues = {
-      rowIndex: 22,
+      rowIndex: 21,
       value:
         'C377005 Cambridge tracts in mathematics and mathematical physics no. 19. english England',
       tag: '830',
@@ -138,6 +138,7 @@ describe('Data Import', () => {
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
         cy.loginAsAdmin()
@@ -170,6 +171,8 @@ describe('Data Import', () => {
               linkingTagAndValues.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           })
           .then(() => {
@@ -180,11 +183,11 @@ describe('Data Import', () => {
               })
               .then(() => {
                 // create Field mapping profile
-                NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
-                  (mappingProfileResponse) => {
-                    mappingProfile.id = mappingProfileResponse.body.id;
-                  },
-                );
+                NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(
+                  mappingProfile,
+                ).then((mappingProfileResponse) => {
+                  mappingProfile.id = mappingProfileResponse.body.id;
+                });
                 // create Field mapping profile
                 cy.visit(SettingsMenu.mappingProfilePath);
                 FieldMappingProfiles.selectMappingProfileFromList(mappingProfile.name);

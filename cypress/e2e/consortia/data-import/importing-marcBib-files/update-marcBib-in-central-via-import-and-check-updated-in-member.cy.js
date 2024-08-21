@@ -117,12 +117,30 @@ describe('Data Import', () => {
       }).location;
       Locations.createViaApi(collegeLocationData).then((location) => {
         testData.collegeLocation = location;
-        InventoryHoldings.createHoldingRecordViaApi({
-          instanceId: testData.sharedInstanceId,
-          permanentLocationId: testData.collegeLocation.id,
-        }).then((holding) => {
-          testData.holding = holding;
-        });
+
+        InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+          (holdingSources) => {
+            InventoryHoldings.createHoldingRecordViaApi({
+              instanceId: testData.sharedInstanceId,
+              permanentLocationId: testData.collegeLocation.id,
+              sourceId: holdingSources[0].id,
+            }).then((holding) => {
+              testData.holding = holding;
+            });
+          },
+        );
+
+        InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+          (holdingSources) => {
+            InventoryHoldings.createHoldingRecordViaApi({
+              instanceId: testData.sharedInstanceId,
+              permanentLocationId: testData.collegeLocation.id,
+              sourceId: holdingSources[0].id,
+            }).then((holding) => {
+              testData.holding = holding;
+            });
+          },
+        );
       });
       cy.resetTenant();
 
@@ -131,7 +149,8 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         users.userAProperties = userProperties;
       });

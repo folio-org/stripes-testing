@@ -350,7 +350,7 @@ export default {
 
   checkHoldingNoteTypeAbsent(columnHeader, noteValue) {
     cy.expect(
-      Section({ label: 'Holdings notes' })
+      Accordion({ label: 'Holdings notes' })
         .find(
           MultiColumnListCell({
             column: columnHeader,

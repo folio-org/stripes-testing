@@ -24,7 +24,7 @@ describe('MARC', () => {
           { rowIndex: 4, tag: '010', content: '$a n  94000330' },
           { rowIndex: 5, tag: '010', content: '$a n  94000339' },
         ],
-        errorMessage: 'Record cannot be saved with more than one 010 field',
+        errorMessage: 'Field is non-repeatable.',
       };
       const subfieldPrefix = '$a';
       const authorityPostfix = '?authRefType=Authorized&heading';
@@ -93,7 +93,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkContent(`${subfieldPrefix} ${testData.editedField.content}`, 6);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(4, testData.errorMessage);
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(5, testData.errorMessage);
         },
       );

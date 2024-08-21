@@ -156,7 +156,7 @@ describe('Data Import', () => {
         InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;
         });
-        InstanceRecordView.verifyIsInstanceOpened('Herpetological conservation and biology.');
+        InstanceRecordView.verifyInstanceIsOpened('Herpetological conservation and biology.');
         InstanceRecordView.verifyInstanceAdministrativeNote(instanceMappingProfile.adminNotes);
         InstanceRecordView.verifyInstanceNote(mappingProfileFieldsForModify.modifications.data);
       },

@@ -22,7 +22,6 @@ describe('MARC', () => {
         authority100FieldValue: 'C375139 Beethoven, Ludwig van (no 010)',
         searchOption: 'Keyword',
         fieldForEditing: { tag: '380', newValue: '$a Variations TEST $2 lcsh' },
-        calloutMessage: 'Record cannot be saved with more than one 010 field',
       };
 
       const createdRecordIDs = [];
@@ -97,6 +96,8 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -130,7 +131,8 @@ describe('MARC', () => {
             testData.fieldForEditing.newValue,
           );
           QuickMarcEditor.checkContent(testData.fieldForEditing.newValue, 7);
-
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthorities.checkFieldAndContentExistence(

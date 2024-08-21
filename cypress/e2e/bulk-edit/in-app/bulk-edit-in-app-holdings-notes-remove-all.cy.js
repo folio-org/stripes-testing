@@ -9,7 +9,11 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+  HOLDING_NOTE_TYPES,
+} from '../../../support/constants';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 
@@ -22,10 +26,6 @@ const instance = {
 const notes = {
   administrative: 'C422044 test administrative note',
   copyNote: 'C422044 test copy note',
-};
-const noteTypes = {
-  copyNote: 'Copy note',
-  administrative: 'Administrative note',
 };
 const actionsToSelect = {
   removeAll: 'Remove all',
@@ -156,7 +156,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
-        BulkEditActions.selectOption(noteTypes.administrative, 0);
+        BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE, 0);
         cy.wait(500);
         BulkEditActions.verifyTheActionOptions(administrativeNoteActionOptions);
         BulkEditActions.selectSecondAction(actionsToSelect.removeAll);
@@ -165,7 +165,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.isConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
-        BulkEditActions.selectOption(noteTypes.copyNote, 1);
+        BulkEditActions.selectOption(HOLDING_NOTE_TYPES.COPY_NOTE, 1);
         cy.wait(500);
         BulkEditActions.verifyTheActionOptions(copyNoteActionOptions, 1);
         BulkEditActions.selectSecondAction(actionsToSelect.removeAll, 1);

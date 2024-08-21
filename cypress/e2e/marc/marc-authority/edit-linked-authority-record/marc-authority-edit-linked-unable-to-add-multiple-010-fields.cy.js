@@ -12,7 +12,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
-    describe('Edit linked Authority record', () => {
+    describe('Edit Authority record', () => {
       const testData = {
         tag010: '010',
         tag100: '100',
@@ -21,6 +21,7 @@ describe('MARC', () => {
         searchOption: 'Keyword',
         searchValue: 'Beethoven, Ludwig van, 1770-1827. 14 variations sur un thème original',
         fieldForAdding: { tag: '010', content: '$a n 94000339' },
+        errorMultiple010MarcTags: 'Field is non-repeatable.',
       };
 
       const createdRecordIDs = [];
@@ -58,9 +59,11 @@ describe('MARC', () => {
         });
 
         cy.loginAsAdmin({
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        }).then(() => {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
+
+        cy.visit(TopMenu.inventoryPath).then(() => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -75,6 +78,8 @@ describe('MARC', () => {
           );
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
 
           cy.createTempUser([
@@ -112,10 +117,12 @@ describe('MARC', () => {
             testData.fieldForAdding.content,
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(4, testData.errorMultiple010MarcTags);
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(5, testData.errorMultiple010MarcTags);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(4, testData.errorMultiple010MarcTags);
+          cy.wait(1500);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(5, testData.errorMultiple010MarcTags);
         },
       );

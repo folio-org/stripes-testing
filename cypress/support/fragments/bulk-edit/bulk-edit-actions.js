@@ -181,6 +181,17 @@ export default {
     });
   },
 
+  verifyChangesInAreYouSureFormByRowExactMatch(column, changes, row = 0) {
+    changes.forEach((value) => {
+      cy.expect(
+        areYouSureForm
+          .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+          .find(MultiColumnListCell({ column, content: value }))
+          .exists(),
+      );
+    });
+  },
+
   verifyItemStatusOptions(rowIndex = 0) {
     const options = [
       'Available',
@@ -701,6 +712,14 @@ export default {
     );
   },
 
+  verifyValueInSecondTextArea(value, rowIndex = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(TextArea({ dataTestID: 'input-textarea-1' }))
+        .has({ value }),
+    );
+  },
+
   selectFromUnchangedSelect(selection, rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -899,6 +918,7 @@ export default {
 
   downloadMatchedResults() {
     cy.do(actionsBtn.click());
+    cy.wait(500);
     cy.get('[class^="ActionMenuGroup-"] button', { timeout: 15000 }).first().click();
     BulkEditSearchPane.waitingFileDownload();
   },

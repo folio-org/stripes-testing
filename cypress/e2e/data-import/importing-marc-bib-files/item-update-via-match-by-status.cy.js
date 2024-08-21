@@ -150,18 +150,17 @@ describe('Data Import', () => {
         Permissions.uiInventoryMarcItemUnavailable.gui,
         Permissions.uiInventoryMarcItemUnknow.gui,
         Permissions.uiInventoryMarkItemsWithdrawn.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.settingsDataImportEnabled.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
         StatisticalCodes.createViaApi().then((resp) => {
           statisticalCode = `ARL (Collection stats): ${resp.code} - ${resp.name}`;
         });
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
-        });
+        cy.login(user.username, user.password);
+        cy.visit(SettingsMenu.mappingProfilePath);
       });
     });
 
