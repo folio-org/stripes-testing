@@ -27,16 +27,16 @@ export default {
   },
 
   selectTransformations: (marcField, subfield) => {
-    const cellInteractor = ModalTransformation.find(MultiColumnListRow()).find(
-      MultiColumnListCell({ columnIndex: 2 }),
-    );
-
-    cy.do(Checkbox({ ariaLabel: 'Select field' }).click());
-    cy.then(() => cellInteractor.inputTextFieldNames()).then((inputFieldNames) => {
-      cy.do(cellInteractor.find(TextField({ name: inputFieldNames[0] })).fillIn(marcField));
-      cy.do(cellInteractor.find(TextField({ name: inputFieldNames[3] })).fillIn(subfield));
-      cy.do(ModalTransformation.find(Button('Save & close')).click());
-    });
+    cy.do([
+      Checkbox({ ariaLabel: 'Select field' }).click(),
+      ModalTransformation.find(MultiColumnListRow())
+        .find(TextField({ name: including('marcField') }))
+        .fillIn(marcField),
+      ModalTransformation.find(MultiColumnListRow())
+        .find(TextField({ name: including('subfield') }))
+        .fillIn(subfield),
+      ModalTransformation.find(Button('Save & close')).click(),
+    ]);
   },
 
   getSearchResult: (row = 0, col = 0) => MultiColumnListCell({ row, columnIndex: col }),
