@@ -147,12 +147,17 @@ describe('Data Import', () => {
         }).location;
         Locations.createViaApi(collegeLocationData).then((location) => {
           testData.collegeLocation = location;
-          InventoryHoldings.createHoldingRecordViaApi({
-            instanceId: testData.sharedInstanceId,
-            permanentLocationId: testData.collegeLocation.id,
-          }).then((holding) => {
-            testData.holding = holding;
-          });
+          InventoryHoldings.getHoldingSources({ query: '(name=="MARK")' }).then(
+            (holdingSources) => {
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: testData.sharedInstanceId,
+                permanentLocationId: testData.collegeLocation.id,
+                sourceId: holdingSources[0].id,
+              }).then((holding) => {
+                testData.holding = holding;
+              });
+            },
+          );
         });
         cy.resetTenant();
 
