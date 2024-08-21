@@ -112,17 +112,17 @@ describe('Data Export', () => {
         ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
         ModalSelectTransformations.uncheckItemRecordTypeChechbox();
         ModalSelectTransformations.clickNthCheckbox();
-        ModalSelectTransformations.fillInTransformationsTextfields('456', '1', '2', '$a');
+        ModalSelectTransformations.fillInTransformationsTextfields('456', '1', '2', 'a');
 
         ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
         ModalSelectTransformations.checkHoldingsRecordTypeChechbox();
         ModalSelectTransformations.clickNthCheckbox();
-        ModalSelectTransformations.fillInTransformationsTextfields('456', '1', '2', '$a');
+        ModalSelectTransformations.fillInTransformationsTextfields('456', '1', '2', 'a');
 
         ModalSelectTransformations.checkItemRecordTypeChechbox();
         ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
         ModalSelectTransformations.clickNthCheckbox();
-        ModalSelectTransformations.fillInTransformationsTextfields('456', '1', '2', '$a');
+        ModalSelectTransformations.fillInTransformationsTextfields('456', '1', '2', 'a');
 
         ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
         ExportNewFieldMappingProfile.checkCheckbox(
