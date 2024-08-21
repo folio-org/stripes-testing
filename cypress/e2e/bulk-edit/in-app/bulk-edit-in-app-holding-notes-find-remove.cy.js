@@ -8,7 +8,11 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+  HOLDING_NOTE_TYPES,
+} from '../../../support/constants';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 
@@ -17,11 +21,6 @@ let copyNoteTypeId;
 let reproductionNoteTypeId;
 const noteText = 'Te;st: [sample] no*te';
 const nonExistentNoteText = 'Test: sample note';
-const noteTypes = {
-  administrative: 'Administrative note',
-  reproduction: 'Reproduction',
-  copyNote: 'Copy note',
-};
 const instance = {
   instanceName: `C422058 instance-${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -46,7 +45,6 @@ const reproductionNoteActionOptions = [
   'Remove mark as staff only',
 ];
 const initialValueSets = [
-  [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE, noteText],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.REPRODUCTION, noteText],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE, noteText],
 ];
@@ -104,14 +102,16 @@ describe('bulk-edit', () => {
               );
             });
 
-            cy.getHoldingNoteTypeIdViaAPI(noteTypes.copyNote)
+            cy.getHoldingNoteTypeIdViaAPI(HOLDING_NOTE_TYPES.COPY_NOTE)
               .then((holdingNoteTypeId) => {
                 copyNoteTypeId = holdingNoteTypeId;
               })
               .then(() => {
-                cy.getHoldingNoteTypeIdViaAPI(noteTypes.reproduction).then((holdingNoteTypeId) => {
-                  reproductionNoteTypeId = holdingNoteTypeId;
-                });
+                cy.getHoldingNoteTypeIdViaAPI(HOLDING_NOTE_TYPES.REPRODUCTION).then(
+                  (holdingNoteTypeId) => {
+                    reproductionNoteTypeId = holdingNoteTypeId;
+                  },
+                );
               })
               .then(() => {
                 cy.updateHoldingRecord(holdings[0].id, {
@@ -172,6 +172,10 @@ describe('bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
           instance.holdingHRID,
         );
+        BulkEditSearchPane.verifyResultsUnderColumns(
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
+          noteText,
+        );
 
         initialValueSets.forEach((initialValueSet) => {
           BulkEditSearchPane.verifyResultsUnderColumns(...initialValueSet);
@@ -186,8 +190,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
 
-        BulkEditActions.selectOption(noteTypes.administrative, 0);
-        cy.wait(1000);
+        BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE, 0);
         BulkEditActions.verifyTheActionOptions(administrativeNoteActionOptions);
         BulkEditActions.selectSecondAction(actionsToSelect.find);
         BulkEditActions.verifyActionSelected(actionsToSelect.find);
@@ -201,7 +204,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.isConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
-        BulkEditActions.selectOption(noteTypes.reproduction, 1);
+        BulkEditActions.selectOption(HOLDING_NOTE_TYPES.REPRODUCTION, 1);
         BulkEditActions.verifyTheActionOptions(reproductionNoteActionOptions, 1);
         BulkEditActions.selectSecondAction(actionsToSelect.find, 1);
         BulkEditActions.verifyActionSelected(actionsToSelect.find, 1);
@@ -215,7 +218,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.isConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(2);
-        BulkEditActions.selectOption(noteTypes.copyNote, 2);
+        BulkEditActions.selectOption(HOLDING_NOTE_TYPES.COPY_NOTE, 2);
         BulkEditActions.selectSecondAction(actionsToSelect.find, 2);
         BulkEditActions.verifyActionSelected(actionsToSelect.find, 2);
         BulkEditActions.fillInFirstTextArea(nonExistentNoteText, 2);
@@ -258,8 +261,8 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.waitLoading();
         HoldingsRecordView.checkAdministrativeNote('-');
-        HoldingsRecordView.checkNotesByType(0, noteTypes.copyNote, noteText);
-        HoldingsRecordView.checkHoldingNoteTypeAbsent(noteTypes.reproduction, noteText);
+        HoldingsRecordView.checkNotesByType(0, HOLDING_NOTE_TYPES.COPY_NOTE, noteText);
+        HoldingsRecordView.checkHoldingNoteTypeAbsent(HOLDING_NOTE_TYPES.REPRODUCTION, noteText);
       },
     );
   });
