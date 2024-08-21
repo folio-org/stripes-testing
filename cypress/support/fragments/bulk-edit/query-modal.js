@@ -233,7 +233,6 @@ export default {
         .find(MultiSelectOption(including(text)))
         .click(),
     ]);
-    cy.focused().type('{selectAll}{backspace}');
     cy.do(buildQueryModal.click());
   },
 
