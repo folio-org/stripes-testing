@@ -851,6 +851,19 @@ export default {
     ]);
   },
 
+  selectNoteTypeWhenChangingIt(newType, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ id: 'noteHoldingsType' }))
+        .choose(newType),
+    ]);
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ id: 'noteHoldingsType' }))
+        .has({ checkedOptionText: newType }),
+    );
+  },
+
   checkApplyToItemsRecordsCheckbox() {
     cy.do(Checkbox('Apply to all items records').click());
   },
