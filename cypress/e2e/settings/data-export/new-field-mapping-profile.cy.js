@@ -44,7 +44,7 @@ describe('Data Export', () => {
       ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
       ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
       ModalSelectTransformations.clickNthCheckbox();
-      ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', '$a');
+      ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', 'a');
 
       ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
       InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
