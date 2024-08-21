@@ -83,6 +83,7 @@ export default {
         .find(bulkPageSelections.valueType)
         .choose(optionName),
     );
+    cy.wait(1000);
   },
   selectAction(actionName, rowIndex = 0) {
     cy.do(

@@ -17,10 +17,7 @@ import {
 } from '../../../support/constants';
 
 let user;
-let bindingNoteTypeId;
-let noteTypeId;
-let copyNoteTypeId;
-let electronicBookplateNoteTypeId;
+const holdingNoteTypeIds = [];
 const notesText = {
   binding: 'Binding note text',
   note: 'Note text',
@@ -64,6 +61,12 @@ const editedValueSets = [
   ],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_BOOKPLATE_NOTE, notesText.newNote],
 ];
+const holdingNoteTypeNamesSet = [
+  HOLDING_NOTE_TYPES.NOTE,
+  HOLDING_NOTE_TYPES.BINDING,
+  HOLDING_NOTE_TYPES.COPY_NOTE,
+  HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE,
+];
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
 const previewFileName = `*-Updates-Preview-${holdingUUIDsFileName}`;
@@ -103,35 +106,23 @@ describe('bulk-edit', () => {
             FileManager.createFile(
               `cypress/fixtures/${holdingUUIDsFileName}`,
               `${instance.holdingsUUID}`,
-            );
+            )
+              .then(() => {
+                holdingNoteTypeNamesSet.forEach((holdingNoteTypeName) => {
+                  cy.getHoldingNoteTypeIdViaAPI(holdingNoteTypeName).then((holdingNoteTypeId) => {
+                    holdingNoteTypeIds.push(holdingNoteTypeId);
+                  });
+                });
+              })
+              .then(() => {
+                const [
+                  noteTypeId,
+                  bindingNoteTypeId,
+                  copyNoteTypeId,
+                  electronicBookplateNoteTypeId,
+                ] = holdingNoteTypeIds;
 
-            cy.getHoldingNoteTypeIdViaAPI(HOLDING_NOTE_TYPES.NOTE)
-              .then((holdingNoteTypeId) => {
-                noteTypeId = holdingNoteTypeId;
-              })
-              .then(() => {
-                cy.getHoldingNoteTypeIdViaAPI(HOLDING_NOTE_TYPES.BINDING).then(
-                  (holdingNoteBindingTypeId) => {
-                    bindingNoteTypeId = holdingNoteBindingTypeId;
-                  },
-                );
-              })
-              .then(() => {
-                cy.getHoldingNoteTypeIdViaAPI(HOLDING_NOTE_TYPES.COPY_NOTE).then(
-                  (holdingCopyNoteTypeId) => {
-                    copyNoteTypeId = holdingCopyNoteTypeId;
-                  },
-                );
-              })
-              .then(() => {
-                cy.getHoldingNoteTypeIdViaAPI(HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE).then(
-                  (holdingElectronicBookplateNoteTypeId) => {
-                    electronicBookplateNoteTypeId = holdingElectronicBookplateNoteTypeId;
-                  },
-                );
-              })
-              .then(() => {
-                cy.updateHoldingRecord(holdings[0].id, {
+                cy.updateHoldingRecord(instance.holdingsUUID, {
                   ...holdings[0],
                   notes: [
                     {
@@ -212,7 +203,6 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.BINDING);
-        cy.wait(1000);
         BulkEditActions.selectSecondAction(actionsToSelect.removeMarkAsStaffOnly);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.removeMarkAsStaffOnly);
         BulkEditSearchPane.isConfirmButtonDisabled(false);
