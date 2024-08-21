@@ -18,7 +18,7 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 
-describe('Data export', () => {
+describe('Data Export', () => {
   describe('Search in Inventory', () => {
     before('navigates to Inventory', () => {
       cy.createTempUser([

@@ -212,6 +212,8 @@ describe('Hold request expiration triggers', () => {
         NoticePolicyTemplateApi.deleteViaApi(templateId);
       });
     });
+    InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(itemData.instanceId);
+    Locations.deleteViaApi(testData.defaultLocation);
   });
 
   it(

@@ -95,6 +95,7 @@ describe('bulk-edit', () => {
           instance: marcInstances[1],
           servicePoint: userServicePoint,
         });
+        Locations.deleteViaApi(testData.defaultLocation);
         FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
         FileManager.deleteFileFromDownloadsByMask(
           matchedRecordsFileName,

@@ -1,8 +1,7 @@
 import Invoices from '../../support/fragments/invoices/invoices';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
-import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
-import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import NewOrderLine from '../../support/fragments/orders/enchancedOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
@@ -10,12 +9,11 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 
-describe('ui-invoices: Invoice Line creation - based on POL', () => {
+describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
-  const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
   const order = { ...NewOrder.defaultOneTimeOrder };
-  const orderLine = { ...basicOrderLine.defaultOrderLine };
+  const orderLine = { ...NewOrderLine.defaultOrderLine };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
     addresses: [
@@ -32,8 +30,7 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
       },
     ],
   };
-  const euroCurrency = 'Euro (EUR)';
-  const euroSign = '€';
+  let createdOrderNumber;
 
   before(() => {
     cy.getAdminToken();
@@ -58,37 +55,38 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
     cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
       orderLine.physical.materialType = materialType.id;
     });
+    cy.getProductIdTypes({ query: 'name=="ISBN"' }).then((productIdType) => {
+      orderLine.details.productIds[0].productIdType = productIdType.id;
+    });
     cy.loginAsAdmin();
-    // set up invoice Line object
-    invoiceLine.description = orderLine.titleOrPackage;
-    invoiceLine.quantity = orderLine.cost.quantityPhysical;
-    invoiceLine.subTotal = orderLine.cost.quantityPhysical * orderLine.cost.listUnitPrice;
+
+    Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
+      createdOrderNumber = poNumber;
+    });
+    cy.visit(TopMenu.invoicesPath);
   });
 
-  after(() => {
+  afterEach(() => {
     cy.getAdminToken();
+    Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
   it(
-    'C2327 Create invoice line based on purchase order line (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+    'C350389 Test purchase order line plugin search (thunderjet)',
+    { tags: ['smoke', 'thunderjet'] },
     () => {
-      Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
-        cy.visit(TopMenu.invoicesPath);
-        Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);
-        Invoices.checkInvoiceCurrency(orderLine.cost.currency);
-        Invoices.createInvoiceLineFromPol(poNumber);
-        Invoices.checkInvoiceLine(invoiceLine);
-        // check different currency case
-        Invoices.updateCurrency(euroCurrency);
-        Invoices.createInvoiceLineFromPol(poNumber);
-        Invoices.checkConfirmationalPopup();
-        Invoices.applyConfirmationalPopup();
-        Invoices.checkInvoiceLine(invoiceLine, euroSign);
-        Invoices.deleteInvoiceViaActions();
-        Invoices.confirmInvoiceDeletion();
-      });
+      Invoices.getSearchParamsMap(createdOrderNumber, orderLine);
+      Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);
+      Invoices.checkCreatedInvoice(invoice, vendorPrimaryAddress);
+      Invoices.openPolSearchPlugin();
+      Invoices.checkSearchPolPlugin(
+        Invoices.getSearchParamsMap(createdOrderNumber, orderLine),
+        orderLine.titleOrPackage,
+      );
+      Invoices.closeSearchPlugin();
+      Invoices.deleteInvoiceViaActions();
+      Invoices.confirmInvoiceDeletion();
     },
   );
 });

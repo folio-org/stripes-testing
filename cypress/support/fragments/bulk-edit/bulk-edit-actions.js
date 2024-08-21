@@ -181,6 +181,17 @@ export default {
     });
   },
 
+  verifyChangesInAreYouSureFormByRowExactMatch(column, changes, row = 0) {
+    changes.forEach((value) => {
+      cy.expect(
+        areYouSureForm
+          .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+          .find(MultiColumnListCell({ column, content: value }))
+          .exists(),
+      );
+    });
+  },
+
   verifyItemStatusOptions(rowIndex = 0) {
     const options = [
       'Available',
@@ -698,6 +709,14 @@ export default {
       RepeatableFieldItem({ index: rowIndex })
         .find(TextArea({ dataTestID: 'input-textarea-1' }))
         .fillIn(newItem),
+    );
+  },
+
+  verifyValueInSecondTextArea(value, rowIndex = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(TextArea({ dataTestID: 'input-textarea-1' }))
+        .has({ value }),
     );
   },
 

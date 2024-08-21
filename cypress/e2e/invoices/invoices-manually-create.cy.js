@@ -1,14 +1,12 @@
 import Invoices from '../../support/fragments/invoices/invoices';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
-import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 
-describe('ui-invoices: Invoice Line creation', () => {
+describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
-  const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
 
   before(() => {
     cy.getAdminToken();
@@ -29,12 +27,11 @@ describe('ui-invoices: Invoice Line creation', () => {
   });
 
   it(
-    'C2326 Manually create invoice line (thunderjet)',
+    'C2299 Manually Create Invoice (thunderjet)',
     { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
     () => {
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
-      Invoices.createInvoiceLine(invoiceLine);
-      Invoices.checkInvoiceLine(invoiceLine);
+      Invoices.checkCreatedInvoice(invoice, vendorPrimaryAddress);
       Invoices.deleteInvoiceViaActions();
       Invoices.confirmInvoiceDeletion();
     },
