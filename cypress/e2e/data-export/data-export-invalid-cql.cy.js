@@ -11,7 +11,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 let user;
 const editedFileName = `invalid-query-${getRandomPostfix()}.cql`;
 
-describe('Data export', () => {
+describe('Data Export', () => {
   beforeEach('create test data', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,

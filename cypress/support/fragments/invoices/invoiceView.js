@@ -41,6 +41,7 @@ const vendorDetailsSection = invoiceDetailsPane.find(Section({ id: 'vendorDetail
 
 export default {
   expandActionsDropdown() {
+    cy.wait(4000);
     cy.do(invoiceDetailsPaneHeader.find(actionsButton).click());
   },
   selectFirstInvoice() {
@@ -223,6 +224,12 @@ export default {
 
     ApproveInvoiceModal.verifyModalView({ isApprovePayEnabled });
     ApproveInvoiceModal.clickSubmitButton({ isApprovePayEnabled });
+  },
+  clickApproveAndPayInvoice({ isApprovePayEnabled = false } = {}) {
+    cy.do([
+      invoiceDetailsPaneHeader.find(actionsButton).click(),
+      Button(isApprovePayEnabled ? 'Approve & pay' : 'Approve').click(),
+    ]);
   },
   payInvoice() {
     cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), Button('Pay').click()]);

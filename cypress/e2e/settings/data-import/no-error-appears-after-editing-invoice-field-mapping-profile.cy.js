@@ -54,6 +54,7 @@ describe('Data Import', () => {
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.createInvoiceMappingProfile(mappingProfile, profileForDuplicate);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+        FieldMappingProfiles.searchByName(mappingProfile.name);
 
         const FieldMappingProfileEditForm = FieldMappingProfileView.clickEditButton();
         FieldMappingProfileEditForm.fillMappingProfileFields({
