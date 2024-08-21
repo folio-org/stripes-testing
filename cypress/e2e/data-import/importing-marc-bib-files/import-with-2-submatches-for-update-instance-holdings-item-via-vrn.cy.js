@@ -70,7 +70,8 @@ describe('Data Import', () => {
           physicalUnitPrice: '"20"',
           quantityPhysical: '"1"',
           currency: 'USD',
-          locationName: '"Main Library (KU/CC/DI/M)"',
+          materialType: MATERIAL_TYPE_NAMES.BOOK,
+          locationName: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
           locationQuantityPhysical: '"1"',
         },
         actionProfile: {
@@ -82,7 +83,7 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C451467 Create simple holdings ${getRandomPostfix()}`,
-          permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
+          permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -93,7 +94,7 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C451467 Create simple item${getRandomPostfix()}`,
-          materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
+          materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           status: ITEM_STATUS_NAMES.AVAILABLE,
         },
@@ -248,13 +249,13 @@ describe('Data Import', () => {
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
 
-      DataImport.uploadFileViaApi(
-        testData.editedMarcFileName,
-        testData.marcFileNameForCreate,
-        jobProfileForCreate.profileName,
-      ).then((response) => {
-        instanceId = response[0].instance.id;
-      });
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.verifyUploadState();
+      DataImport.checkIsLandingPageOpened();
+      DataImport.uploadFile(testData.filePath, testData.marcFileNameForCreate);
+      JobProfiles.waitFileIsUploaded();
+      JobProfiles.search(jobProfileForCreate.profileName);
+      JobProfiles.runImportFile();
 
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,

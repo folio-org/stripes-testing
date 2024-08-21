@@ -10,6 +10,7 @@ import {
   ORDER_STATUSES,
   RECORD_STATUSES,
   VENDOR_NAMES,
+  MATERIAL_TYPE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -40,7 +41,7 @@ describe('Data Import', () => {
     let user;
     let orderNumber;
     let instanceHRID;
-    const filePathForCreate = 'marcFileForC388571.mrc';
+    const filePathForCreate = 'marcBibFileForC388571.mrc';
     const marcFileName = `C388571 autotestFileName${getRandomPostfix()}.mrc`;
     const arrayOfHoldingsStatuses = ['Created (E)', 'Created (KU/CC/DI/M)', 'Created (KU/CC/DI/A)'];
     const quantityOfCreatedHoldings = 3;
@@ -65,7 +66,8 @@ describe('Data Import', () => {
           currency: 'USD',
           electronicUnitPrice: '"25"',
           quantityElectronic: '"1"',
-          locationName: `"${LOCATION_NAMES.ANNEX}"`,
+          materialTypeElectronic: MATERIAL_TYPE_NAMES.BOOK,
+          locationName: '945$h',
           locationQuantityElectronic: '"1"',
         },
         actionProfile: {
@@ -88,7 +90,7 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C388571 Test multiple items.${getRandomPostfix()}`,
-          materialType: '945$a',
+          materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           status: ITEM_STATUS_NAMES.ON_ORDER,
         },
@@ -144,7 +146,7 @@ describe('Data Import', () => {
 
     it(
       'C388571 Check the log result table for imported multiple items and holdings for Electronic resource open order (folijet)',
-      { tags: ['criticalPathBroken', 'folijet'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.createOrderMappingProfile(

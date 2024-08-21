@@ -60,6 +60,8 @@ describe('Data Import', () => {
           currency: 'USD',
           electronicUnitPrice: '"25"',
           quantityElectronic: '"1"',
+          materialType: MATERIAL_TYPE_NAMES.BOOK,
+          materialTypeElectronic: MATERIAL_TYPE_NAMES.BOOK,
           locationName: `"${LOCATION_NAMES.ANNEX}"`,
           locationQuantityPhysical: '"1"',
           locationQuantityElectronic: '"1"',
@@ -73,8 +75,8 @@ describe('Data Import', () => {
         mappingProfile: {
           name: `C380446 Create simple holdings for open order ${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
-          permanentLocationUI: LOCATION_NAMES.MAIN_LIBRARY_UI,
+          permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
+          permanentLocationUI: LOCATION_NAMES.ANNEX_UI,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -144,12 +146,6 @@ describe('Data Import', () => {
         // create mapping profiles
         FieldMappingProfiles.createOrderMappingProfile(
           collectionOfMappingAndActionProfiles[0].mappingProfile,
-        );
-        FieldMappingProfiles.checkMappingProfilePresented(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
-        );
-        FieldMappingProfileView.closeViewMode(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
 
         FieldMappingProfiles.openNewMappingProfileForm();
