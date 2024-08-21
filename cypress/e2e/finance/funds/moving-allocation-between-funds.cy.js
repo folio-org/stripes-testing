@@ -9,11 +9,18 @@ import {
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Finance: Funds', () => {
-  const toFund = Funds.getDefaultFund();
+  const toFund = {
+    name: `autotest_fund_${getRandomPostfix()}`,
+    code: getRandomPostfix(),
+    externalAccountNo: getRandomPostfix(),
+    fundStatus: 'Active',
+    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
+  };
   const fromFund = {
-    ...Funds.getDefaultFund(),
+    ...Funds.defaultUiFund,
     allocatedToIds: [toFund.id],
   };
   const toBudget = Budgets.getDefaultBudget();
