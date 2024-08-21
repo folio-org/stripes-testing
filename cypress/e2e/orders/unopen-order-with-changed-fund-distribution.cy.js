@@ -205,7 +205,6 @@ describe('orders: Unopen order', () => {
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
-      cy.pause();
       Orders.unOpenOrder();
       OrderLines.selectPOLInOrder(0);
       cy.wait(5000);

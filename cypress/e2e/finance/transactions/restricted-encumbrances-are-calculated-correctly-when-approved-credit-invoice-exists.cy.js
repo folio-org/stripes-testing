@@ -23,15 +23,14 @@ import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import BudgetDetails from '../../../support/fragments/finance/budgets/budgetDetails';
-import InvoiceLineDetails from '../../../support/fragments/invoices/invoiceLineDetails';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Finance: Transactions', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const firstLedger = {
     ...Ledgers.defaultUiLedger,
-    restrictEncumbrance: false,
-    restrictExpenditures: true,
+    restrictEncumbrance: true,
+    restrictExpenditures: false,
   };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
@@ -70,10 +69,10 @@ describe('Finance: Transactions', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   let firstInvoice;
   let secondInvoice;
-  let thirdInvoice;
   let user;
   let servicePointId;
   let location;
+  let secondOrderNumber;
 
   before(() => {
     cy.getAdminToken();
@@ -149,7 +148,30 @@ describe('Finance: Transactions', () => {
                               volumes: [],
                             },
                           };
-
+                          const secondOrderLine = {
+                            ...BasicOrderLine.defaultOrderLine,
+                            id: uuid(),
+                            cost: {
+                              listUnitPrice: 105.0,
+                              currency: 'USD',
+                              discountType: 'percentage',
+                              quantityPhysical: 1,
+                              poLineEstimatedPrice: 105.0,
+                            },
+                            fundDistribution: [
+                              { code: secondFund.code, fundId: secondFund.id, value: 100 },
+                            ],
+                            locations: [
+                              { locationId: location.id, quantity: 1, quantityPhysical: 1 },
+                            ],
+                            acquisitionMethod: params.body.acquisitionMethods[0].id,
+                            physical: {
+                              createInventory: 'Instance, Holding, Item',
+                              materialType: mtypes.body.id,
+                              materialSupplier: responseOrganizations,
+                              volumes: [],
+                            },
+                          };
                           Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
                             firstOrder.id = firstOrderResponse.id;
                             firstOrderLine.purchaseOrderId = firstOrderResponse.id;
@@ -166,7 +188,7 @@ describe('Finance: Transactions', () => {
                             fundDistributions: firstOrderLine.fundDistribution,
                             accountingCode: organization.erpCode,
                             releaseEncumbrance: true,
-                            subTotal: 15,
+                            subTotal: -15,
                           }).then((invoiceResponse) => {
                             firstInvoice = invoiceResponse;
 
@@ -182,7 +204,7 @@ describe('Finance: Transactions', () => {
                             fundDistributions: firstOrderLine.fundDistribution,
                             accountingCode: organization.erpCode,
                             releaseEncumbrance: true,
-                            subTotal: -20,
+                            subTotal: 20,
                           }).then((secondInvoiceResponse) => {
                             secondInvoice = secondInvoiceResponse;
 
@@ -191,15 +213,12 @@ describe('Finance: Transactions', () => {
                               status: INVOICE_STATUSES.PAID,
                             });
                           });
-                          Invoices.createInvoiceWithInvoiceLineViaApi({
-                            vendorId: organization.id,
-                            fiscalYearId: defaultFiscalYear.id,
-                            fundDistributions: firstOrderLine.fundDistribution,
-                            accountingCode: organization.erpCode,
-                            releaseEncumbrance: true,
-                            subTotal: 126,
-                          }).then((thirdInvoiceResponse) => {
-                            thirdInvoice = thirdInvoiceResponse;
+                          Orders.createOrderViaApi(secondOrder).then((secondOrderResponse) => {
+                            secondOrder.id = secondOrderResponse.id;
+                            secondOrderLine.purchaseOrderId = secondOrderResponse.id;
+                            secondOrderNumber = secondOrderResponse.poNumber;
+
+                            OrderLines.createOrderLineViaApi(secondOrderLine);
                           });
                         },
                       );
@@ -215,14 +234,12 @@ describe('Finance: Transactions', () => {
 
     cy.createTempUser([
       permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiInvoicesApproveInvoices.gui,
-      permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
-      permissions.uiInvoicesPayInvoices.gui,
+      permissions.uiOrdersEdit.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
     });
   });
@@ -236,14 +253,20 @@ describe('Finance: Transactions', () => {
     'C496164 Restricted encumbrances are calculated correctly when approved credit invoice exists (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
-      Invoices.searchByNumber(thirdInvoice.vendorInvoiceNo);
-      Invoices.selectInvoice(thirdInvoice.vendorInvoiceNo);
-      Invoices.approveInvoice();
-      Invoices.selectInvoiceLine();
-      InvoiceLineDetails.openFundDetailsPane(secondFund.name);
-      Funds.selectBudgetDetails();
-      Funds.viewTransactions();
-      Funds.doesTransactionWithAmountExist('Pending payment', '$126.00');
+      Orders.searchByParameter('PO number', secondOrderNumber);
+      Orders.selectFromResultsList(secondOrderNumber);
+      Orders.openOrder();
+      OrderLines.selectPOLInOrder();
+      OrderLines.openPageCurrentEncumbrance('$105.00');
+      Funds.varifyDetailsInTransaction(
+        defaultFiscalYear.code,
+        '$105.00',
+        `${secondOrderNumber}-1`,
+        'Encumbrance',
+        `${secondFund.name} (${secondFund.code})`,
+      );
+      Funds.checkStatusInTransactionDetails('Unreleased');
+      Funds.closeTransactionDetails();
       Funds.closeMenu();
       BudgetDetails.checkBudgetDetails({
         summary: [
@@ -253,15 +276,15 @@ describe('Finance: Transactions', () => {
           { key: 'Total allocated', value: '$100.00' },
           { key: 'Net transfers', value: '$10.00' },
           { key: 'Total funding', value: '$110.00' },
-          { key: 'Encumbered', value: '$10.00' },
-          { key: 'Awaiting payment', value: '$141.00' },
-          { key: 'Expended', value: '$0.00' },
-          { key: 'Credited', value: '$20.00' },
-          { key: 'Unavailable', value: '$131.00' },
+          { key: 'Encumbered', value: '$115.00' },
+          { key: 'Awaiting payment', value: '-$15.00' },
+          { key: 'Expended', value: '$20.00' },
+          { key: 'Credited', value: '$0.00' },
+          { key: 'Unavailable', value: '$120.00' },
           { key: 'Over encumbrance', value: '$10.00' },
-          { key: 'Over expended', value: '$11.00' },
+          { key: 'Over expended', value: '$0.00' },
         ],
-        balance: { cash: '$130.00', available: '-$21.00' },
+        balance: { cash: '$90.00', available: '-$10.00' },
       });
     },
   );
