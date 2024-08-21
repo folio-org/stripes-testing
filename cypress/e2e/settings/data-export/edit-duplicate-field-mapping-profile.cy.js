@@ -74,7 +74,7 @@ describe('Data Export', () => {
         SingleFieldMappingProfilePane.clickEditTransformations();
         ModalSelectTransformations.searchItemTransformationsByName('Item - ID');
         ModalSelectTransformations.clickNthCheckbox();
-        ModalSelectTransformations.fillInTransformationsTextfields('458', '1', '2', '$a');
+        ModalSelectTransformations.fillInTransformationsTextfields('458', '1', '2', 'a');
 
         ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
         InteractorsTools.checkCalloutMessage(updatedTransformationCalloutMessage);
