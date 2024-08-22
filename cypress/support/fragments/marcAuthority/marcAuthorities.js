@@ -240,6 +240,8 @@ export default {
 
   selectTitle: (title) => cy.do(Button(title).click()),
 
+  selectIncludingTitle: (title) => cy.do(Button(including(title)).click()),
+
   selectItem: (item, partName = true) => {
     cy.expect(MultiColumnListCell({ content: item }).exists());
     if (partName) {
@@ -552,6 +554,16 @@ export default {
       marcViewSection.absent(),
       SearchField({ id: 'textarea-authorities-search', value: searchValue }).absent(),
       selectField.has({ content: including('Keyword') }),
+      searchResults.find(HTML(including(emptyResultsMessage))).exists(),
+    ]);
+  },
+
+  clickResetAndCheckBrowse: (searchValue) => {
+    cy.do(filtersSection.find(resetButton).click());
+    cy.expect([
+      marcViewSection.absent(),
+      SearchField({ id: 'textarea-authorities-search', value: searchValue }).absent(),
+      selectField.has({ content: including('Select a browse option') }),
       searchResults.find(HTML(including(emptyResultsMessage))).exists(),
     ]);
   },
