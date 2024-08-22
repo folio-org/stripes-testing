@@ -19,7 +19,8 @@ describe('Patron Notices', () => {
   const automatedFeeFineTemplate = NoticePolicyTemplate.getDefaultTemplate({
     category: NOTICE_CATEGORIES.AutomatedFeeFineCharge,
   });
-  const automatedFeeFineTempText = 'additional information for the patron regarding the fee/fine';
+  const automatedFeeFineTempText =
+    'This is a text field intended to provide additional information for the patron regarding the fee/fine';
 
   before('Preconditions', () => {
     cy.getAdminToken().then(() => {
@@ -61,7 +62,7 @@ describe('Patron Notices', () => {
   });
 
   it(
-    'C411712 Verify that token "feeCharge.additionalInfo" is selectable in Patron notice template settings (volaris)',
+    'C411712 C385655 Verify that token "feeCharge.additionalInfo" is selectable in Patron notice template settings (volaris)',
     { tags: ['extendedPath', 'volaris'] },
     () => {
       NewNoticePolicyTemplate.editTemplate(testData.feeFineTemplateBody.name);
