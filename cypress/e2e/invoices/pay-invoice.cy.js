@@ -24,7 +24,11 @@ describe('Invoices', () => {
   const allocatedQuantity = '100';
   const isApprovePayEnabled = false;
   let user;
-
+  const setApprovePayValue = (isEnabled = false) => {
+    cy.getAdminToken().then(() => {
+      Approvals.setApprovePayValue(isEnabled);
+    });
+  };
   before(() => {
     cy.getAdminToken();
 
@@ -73,6 +77,7 @@ describe('Invoices', () => {
             path: TopMenu.invoicesPath,
             waiter: Invoices.waitLoading,
           });
+          setApprovePayValue(isApprovePayEnabled);
         });
       },
     );
