@@ -83,6 +83,7 @@ export default {
         .find(bulkPageSelections.valueType)
         .choose(optionName),
     );
+    cy.wait(1000);
   },
   selectAction(actionName, rowIndex = 0) {
     cy.do(
@@ -849,6 +850,19 @@ export default {
         .find(Select({ value: '' }))
         .choose(newType),
     ]);
+  },
+
+  selectNoteTypeWhenChangingIt(newType, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ id: 'noteHoldingsType' }))
+        .choose(newType),
+    ]);
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ id: 'noteHoldingsType' }))
+        .has({ checkedOptionText: newType }),
+    );
   },
 
   checkApplyToItemsRecordsCheckbox() {
