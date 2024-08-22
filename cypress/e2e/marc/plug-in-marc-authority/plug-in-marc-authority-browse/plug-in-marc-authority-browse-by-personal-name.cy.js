@@ -105,6 +105,7 @@ describe('MARC', () => {
           testData.validSearchResults.forEach((result) => {
             MarcAuthorities.checkRowByContent(result);
           });
+          // eslint-disable-next-line no-irregular-whitespace
           InventorySearchAndFilter.verifySearchResult(`${testData.value} would be here`);
           testData.validSearchResults.forEach((result) => {
             MarcAuthorities.searchByParameter(testData.searchOption, result);
@@ -112,6 +113,7 @@ describe('MARC', () => {
           });
           testData.unvalidSearchResults.forEach((result) => {
             MarcAuthorities.searchByParameter(testData.searchOption, result);
+            // eslint-disable-next-line no-irregular-whitespace
             InventorySearchAndFilter.verifySearchResult(`${result} would be here`);
           });
           MarcAuthorities.selectTitle(testData.valueFullText);
