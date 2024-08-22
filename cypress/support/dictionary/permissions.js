@@ -920,6 +920,10 @@ export default {
     internal: 'ui-acquisition-units.settings.all',
     gui: 'Settings (acquisition units): Can view, edit, create and delete acquisition units',
   },
+  uiSettingsAcquisitionUnitsManageAcqUnitUserAssignments: {
+    internal: 'ui-acquisition-units.settings.userAssignments',
+    gui: 'Settings (acquisition units): Manage acquisition unit user assignments',
+  },
   uiInventorySettingsFastAdd: {
     internal: 'ui-inventory.settings.fast-add',
     gui: 'Settings (Inventory): Edit fast add settings',

@@ -179,4 +179,14 @@ export default {
       path: `acquisitions-units/units/${acqUnitId}`,
     });
   },
+  assignedAcquisitionUnitUsersViaApi() {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'acquisitions-units/units',
+      body: {
+        userId: 'a23eac4b-955e-451c-b4ff-6ec2f5e63e23',
+        acquisitionsUnitId: '0ebb1f7d-983f-3026-8a4c-5318e0ebc041',
+      },
+    });
+  },
 };
