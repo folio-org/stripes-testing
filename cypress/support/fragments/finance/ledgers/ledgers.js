@@ -1138,7 +1138,7 @@ export default {
       const fileRows = fileContent.split('\n');
 
       expect(fileRows[0].trim()).to.equal(
-        '"Name (Fund)","Code (Fund)","Status (Fund)","Type","Group (Code)","Acquisition unit","Transfer from","Transfer to","External account number","Description","Name (Budget)","Status (Budget)","Allowable encumbrance","Allowable expenditure","Date created (Budget)","Initial allocation","Increase","Decrease","Total allocation","Transfers","Total Funding","Encumbered (Budget)","Awaiting payment (Budget)","Expended (Budget)","Unavailable","Over encumbered","Over expended","Cash balance","Available","Name (Exp Class)","Code (Exp Class)","Status (Exp Class)","Encumbered (Exp Class)","Awaiting payment (Exp Class)","Expended (Exp Class)","Percentage of total expended"',
+        '"Name (Fund)","Code (Fund)","Status (Fund)","Type","Group (Code)","Acquisition unit","Transfer from","Transfer to","External account number","Description","Name (Budget)","Status (Budget)","Allowable encumbrance","Allowable expenditure","Date created (Budget)","Initial allocation","Increase","Decrease","Total allocation","Transfers","Total Funding","Encumbered (Budget)","Awaiting payment (Budget)","Expended (Budget)","Credited (Budget)","Unavailable","Over encumbered","Over expended","Cash balance","Available","Name (Exp Class)","Code (Exp Class)","Status (Exp Class)","Encumbered (Exp Class)","Awaiting payment (Exp Class)","Expended (Exp Class)","Credited (Exp Class)","Percentage of total expended"',
       );
     });
   },
@@ -1245,17 +1245,17 @@ export default {
       expect(actualData[22]).to.equal(encumberedBudget);
       expect(actualData[23]).to.equal(awaitingPaymentBudget);
       expect(actualData[24]).to.equal(expendedBudget);
-      expect(actualData[25]).to.equal(unavailable);
-      expect(actualData[26]).to.equal(overEncumbered);
-      expect(actualData[27]).to.equal(overExpended);
-      expect(actualData[28]).to.equal(cashBalance);
-      expect(actualData[29]).to.equal(available);
-      expect(actualData[30]).to.equal(`"${expClassName}"`);
-      expect(actualData[31]).to.equal(`"${expClassCode}"`);
-      expect(actualData[32]).to.equal(`"${expClassStatus}"`);
-      expect(actualData[33]).to.equal(expClassEncumbered);
-      expect(actualData[34]).to.equal(expClassAwaitingPayment);
-      expect(actualData[35]).to.equal(expClassExpended);
+      expect(actualData[26]).to.equal(unavailable);
+      expect(actualData[27]).to.equal(overEncumbered);
+      expect(actualData[28]).to.equal(overExpended);
+      expect(actualData[29]).to.equal(cashBalance);
+      expect(actualData[30]).to.equal(available);
+      expect(actualData[31]).to.equal(`"${expClassName}"`);
+      expect(actualData[32]).to.equal(`"${expClassCode}"`);
+      expect(actualData[33]).to.equal(`"${expClassStatus}"`);
+      expect(actualData[34]).to.equal(expClassEncumbered);
+      expect(actualData[35]).to.equal(expClassAwaitingPayment);
+      expect(actualData[36]).to.equal(expClassExpended);
     });
   },
 

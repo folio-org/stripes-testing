@@ -211,6 +211,7 @@ export default {
   },
 
   cancelCreatingFundWithTransfers(defaultFund, defaultLedger, firstFund, secondFund) {
+    cy.wait(4000);
     cy.do([
       newButton.click(),
       nameField.fillIn(defaultFund.name),
