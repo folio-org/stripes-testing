@@ -96,7 +96,6 @@ describe('Data Import', () => {
         );
         FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[0].name);
         FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingProfiles[0].name);
-        FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[0].name);
 
         // create mapping profile for holdings
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -115,7 +114,6 @@ describe('Data Import', () => {
         );
         FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[1].name);
         FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingProfiles[1].name);
-        FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[1].name);
 
         // create mapping profile for item
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -134,7 +132,6 @@ describe('Data Import', () => {
         );
         FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[2].name);
         FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingProfiles[2].name);
-        FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[2].name);
       },
     );
   });

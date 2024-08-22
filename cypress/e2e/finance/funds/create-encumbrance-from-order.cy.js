@@ -88,7 +88,14 @@ describe('ui-finance: Transactions', () => {
       Funds.selectFund(defaultFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.checkOrderInTransactionList(defaultFund.code, '($20.00)');
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransaction(
+        defaultFiscalYear.code,
+        '$20.00',
+        `${orderNumber}-1`,
+        'Encumbrance',
+        `${defaultFund.name} (${defaultFund.code})`,
+      );
     },
   );
 });
