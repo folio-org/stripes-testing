@@ -212,12 +212,14 @@ export default {
 
   selectIsDonorFilter: (isDonor) => {
     if (isDonor === 'Yes') {
+      cy.wait(3000);
       cy.do([
         toggleButtonIsDonor.click(),
         donorSection.find(Checkbox('Yes')).click(),
         toggleButtonIsDonor.click(),
       ]);
     } else if (isDonor === 'No') {
+      cy.wait(3000);
       cy.do([
         toggleButtonIsDonor.click(),
         donorSection.find(Checkbox('No')).click(),
@@ -406,6 +408,7 @@ export default {
   },
 
   checkOrganizationInfo: (organization) => {
+    cy.wait(3000);
     OrganizationDetails.waitLoading();
     cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
     cy.expect(summarySection.find(KeyValue({ value: organization.code })).exists());
@@ -421,9 +424,10 @@ export default {
   },
 
   resetFilters: () => {
+    cy.wait(3000);
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true })); // Actual : true
-    cy.wait(2000);
+    cy.wait(3000);
   },
 
   checkSearchResults: (organization) => {
@@ -829,7 +833,7 @@ export default {
   selectOrganization: (organizationName) => {
     cy.wait(4000);
     cy.do(Pane({ id: 'organizations-results-pane' }).find(Link(organizationName)).click());
-
+    cy.wait(3000);
     OrganizationDetails.waitLoading();
 
     return OrganizationDetails;
