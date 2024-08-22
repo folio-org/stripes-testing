@@ -152,14 +152,6 @@ describe('Data Import', () => {
           list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
         }
       });
-      // need to delete 245 from protected fields before updating
-      MarcFieldProtection.getListViaApi({
-        query: `"field"=="${testData.field245.tag}"`,
-      }).then((list) => {
-        if (list) {
-          list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
-        }
-      });
       cy.resetTenant();
 
       // create user A
@@ -206,7 +198,6 @@ describe('Data Import', () => {
       cy.setTenant(Affiliations.College);
       InventoryHoldings.deleteHoldingRecordViaApi(testData.holding.id);
       InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
-      // Locations.deleteViaApi(testData.collegeLocation);
       // Locations.deleteViaApi(testData.collegeLocation);
       cy.resetTenant();
       InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
