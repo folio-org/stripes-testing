@@ -13,7 +13,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import { Approvals } from '../../support/fragments/settings/invoices';
 
-describe('ui-invoices: Approve invoice', () => {
+describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
@@ -24,7 +24,11 @@ describe('ui-invoices: Approve invoice', () => {
   const allocatedQuantity = '100';
   const isApprovePayEnabled = false;
   let user;
-
+  const setApprovePayValue = (isEnabled = false) => {
+    cy.getAdminToken().then(() => {
+      Approvals.setApprovePayValue(isEnabled);
+    });
+  };
   before(() => {
     cy.getAdminToken();
 
@@ -73,6 +77,7 @@ describe('ui-invoices: Approve invoice', () => {
             path: TopMenu.invoicesPath,
             waiter: Invoices.waitLoading,
           });
+          setApprovePayValue(isApprovePayEnabled);
         });
       },
     );

@@ -451,7 +451,7 @@ Cypress.Commands.add('getHoldingNoteTypeIdViaAPI', (holdingNoteTypeName) => {
   return cy
     .okapiRequest({
       method: 'GET',
-      path: `holdings-note-types?query=(name="${holdingNoteTypeName}")`,
+      path: `holdings-note-types?query=(name=="${holdingNoteTypeName}")`,
       isDefaultSearchParamsRequired: false,
     })
     .then(({ body }) => body.holdingsNoteTypes[0].id);

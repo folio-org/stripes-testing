@@ -79,7 +79,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
   ];
 
   const bib710FieldValues = [
-    27,
+    26,
     testData.tag710,
     '2',
     '0',

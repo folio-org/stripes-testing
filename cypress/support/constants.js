@@ -849,6 +849,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ACTION_NOTE: 'Action note',
     COPY_NOTE: 'Copy note',
     REPRODUCTION: 'Reproduction note',
+    PROVENANCE_NOTE: 'Provenance note',
   },
 };
 
@@ -860,4 +861,5 @@ export const HOLDING_NOTE_TYPES = {
   REPRODUCTION: 'Reproduction',
   NOTE: 'Note',
   BINDING: 'Binding',
+  PROVENANCE: 'Provenance',
 };

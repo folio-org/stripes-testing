@@ -5,7 +5,7 @@ import DataExportLogs from '../../../support/fragments/data-export/dataExportLog
 
 let user;
 
-describe('Data export', () => {
+describe('Data Export', () => {
   describe('Export to MARC', () => {
     beforeEach('create test data', () => {
       cy.createTempUser([permissions.dataExportUploadExportDownloadFileViewLogs.gui]).then(

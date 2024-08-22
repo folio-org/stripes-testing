@@ -8,6 +8,7 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import MarcAuthoritiesDelete from '../../../../support/fragments/marcAuthority/marcAuthoritiesDelete';
 
 describe('MARC', () => {
   describe('plug-in MARC authority', () => {
@@ -48,6 +49,12 @@ describe('MARC', () => {
         forC359231: {
           searchOption: 'Uniform title',
           value: 'C380570 Marvel comics',
+        },
+        forC380566: {
+          searchOption: 'Personal name',
+        },
+        forC380567: {
+          searchOption: 'Corporate/Conference name',
         },
       };
 
@@ -256,6 +263,22 @@ describe('MARC', () => {
         'C380567 MARC Authority plug-in | Search using "Corporate/Conference name" option (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
+          const validSearchResults = [
+            'UXPROD-4394C380567 Corporate name 110',
+            'UXPROD-4394C380567 Corporate name 410',
+            'UXPROD-4394C380567 Corporate name 510',
+            'UXPROD-4394C380567 Conference Name 111',
+            'UXPROD-4394C380567 Conference Name 411',
+            'UXPROD-4394C380567 Conference Name 511',
+          ];
+          const unvalidSearchResults = [
+            'UXPROD-4394C380567 Corporate name 110 Apple & Honey Productions subb subc subd subg subn subk subv subx suby subz',
+            'UXPROD-4394C380567 Corporate name 410 Apple and Honey Productions subb subc subd subg subn subk subv subx suby subz',
+            'UXPROD-4394C380567 Corporate name 510 Apple & Honey Film Corp. subb subc subd subg subn subk subv subx suby subz',
+            'UXPROD-4394C380567 Conference Name 111 Western Region Agricultural Education Research Meeting subc subd subn subq subg subk subv subx suby subz',
+            'UXPROD-4394C380567 Conference Name 411 Western Regional Agricultural Education Research Meeting subc subd subn subq subg subk subv subx suby subz',
+            'UXPROD-4394C380567 Conference Name 511 Western Region Agricultural Education Research Seminar (1983- ) subc subd subn subq subk subv subx suby subz subg',
+          ];
           cy.getAdminToken();
           DataImport.uploadFileViaApi(
             marcFiles[3].marc,
@@ -276,24 +299,28 @@ describe('MARC', () => {
           InventoryInstance.verifyAndClickLinkIcon('700');
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySearchOptions();
-          MarcAuthorities.searchByParameter(
-            testData.forC359228.searchOption,
-            testData.forC359228.all,
-          );
+          MarcAuthorities.searchByParameter(testData.forC380567.searchOption, 'UXPROD-4394C380567');
           // wait for the results to be loaded.
           cy.wait(1000);
+          validSearchResults.forEach((result) => {
+            MarcAuthorities.checkRowByContent(result);
+          });
           MarcAuthorities.checkAfterSearchHeadingType(
             testData.forC359228.type,
             testData.forC359228.typeOfHeadingA,
             testData.forC359228.typeOfHeadingB,
           );
-          MarcAuthorities.selectTitle(testData.forC359228.title);
-          MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359228.title);
-          MarcAuthorities.chooseTypeOfHeadingAndCheck(
-            testData.forC359228.typeOfHeadingB,
-            testData.forC359228.typeOfHeadingA,
-            testData.forC359228.typeOfHeadingB,
-          );
+          MarcAuthorities.selectIncludingTitle(validSearchResults[0]);
+          MarcAuthorities.checkRecordDetailPageMarkedValue('UXPROD-4394C380567 Corporate name 110 Apple & Honey Productions');
+          MarcAuthorities.closeMarcViewPane();
+          validSearchResults.forEach((result) => {
+            MarcAuthorities.searchByParameter(testData.forC380567.searchOption, result);
+            MarcAuthorities.verifyViewPaneContent(result);
+          });
+          unvalidSearchResults.forEach((result) => {
+            MarcAuthorities.searchByParameter(testData.forC380567.searchOption, result);
+            MarcAuthoritiesDelete.checkEmptySearchResults(result);
+          });
         },
       );
 
@@ -378,6 +405,16 @@ describe('MARC', () => {
         'C380566 MARC Authority plug-in | Search using "Personal name" option (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
+          const validSearchResults = [
+            'UXPROD-4394C380566 Personal name 100 Elizabeth',
+            'UXPROD-4394C380566 Personal name 400 Elizabeth,',
+            'UXPROD-4394C380566 Personal name 500 Windsor',
+          ];
+          const unvalidSearchResults = [
+            'UXPROD-4394C380566 Personal name 100 Elizabeth II, Queen of Great Britain, 1926- subg subq subk Musical settings Literary style Stage history 1950- England',
+            'UXPROD-4394C380566 Personal name 400 Elizabeth, II Princess, Duchess of Edinburgh, 1926- subg subq subk subv subx suby subz',
+            'Family UXPROD-4394C380566 Personal name 500 Windsor (Royal house : 1917- : Great Britain) II subg subq subv subx suby subz',
+          ];
           cy.getAdminToken();
           DataImport.uploadFileViaApi(
             marcFiles[6].marc,
@@ -398,8 +435,21 @@ describe('MARC', () => {
           InventoryInstance.verifyAndClickLinkIcon('700');
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySearchOptions();
-          MarcAuthorities.searchByParameter('Personal name', 'C380566 Stone, Robert B.');
-          MarcAuthorities.checkRecordDetailPageMarkedValue('C380566 Stone, Robert B.');
+          MarcAuthorities.searchByParameter(testData.forC380566.searchOption, 'UXPROD-4394C380566');
+          validSearchResults.forEach((result) => {
+            MarcAuthorities.checkRowByContent(result);
+          });
+          MarcAuthorities.selectIncludingTitle(validSearchResults[0]);
+          MarcAuthorities.checkRecordDetailPageMarkedValue('UXPROD-4394C380566 Personal name 100 Elizabeth');
+          MarcAuthorities.closeMarcViewPane();
+          validSearchResults.forEach((result) => {
+            MarcAuthorities.searchByParameter(testData.forC380566.searchOption, result);
+            MarcAuthorities.verifyViewPaneContent(result);
+          });
+          unvalidSearchResults.forEach((result) => {
+            MarcAuthorities.searchByParameter(testData.forC380566.searchOption, result);
+            MarcAuthoritiesDelete.checkEmptySearchResults(result);
+          });
         },
       );
 

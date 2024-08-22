@@ -1,6 +1,7 @@
 import permissions from '../../support/dictionary/permissions';
 import NewNoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import NoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import { NOTICE_CATEGORIES } from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import SettingsMenu from '../../support/fragments/settingsMenu';
@@ -15,11 +16,19 @@ describe('Patron Notices', () => {
   const patronGroup = {
     name: getTestEntityValue('groupNoticePolicy'),
   };
+  const automatedFeeFineTemplate = NoticePolicyTemplate.getDefaultTemplate({
+    category: NOTICE_CATEGORIES.AutomatedFeeFineCharge,
+  });
+  const automatedFeeFineTempText =
+    'This is a text field intended to provide additional information for the patron regarding the fee/fine';
 
   before('Preconditions', () => {
     cy.getAdminToken().then(() => {
       ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
         servicePointId = servicePoints[0].id;
+      });
+      NoticePolicyTemplate.createViaApi(automatedFeeFineTemplate).then((noticeTemplateResp) => {
+        testData.feeFineTemplateBody = noticeTemplateResp;
       });
       NoticePolicyTemplate.createViaApi().then((noticeTemplateResp) => {
         testData.noticeTemplateBody = noticeTemplateResp;
@@ -49,7 +58,21 @@ describe('Patron Notices', () => {
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     NoticePolicyTemplate.deleteViaApi(testData.noticeTemplateBody.id);
+    NoticePolicyTemplate.deleteViaApi(testData.feeFineTemplateBody.id);
   });
+
+  it(
+    'C411712 C385655 Verify that token "feeCharge.additionalInfo" is selectable in Patron notice template settings (volaris)',
+    { tags: ['extendedPath', 'volaris'] },
+    () => {
+      NewNoticePolicyTemplate.editTemplate(testData.feeFineTemplateBody.name);
+      NewNoticePolicyTemplate.clearBody();
+      NewNoticePolicyTemplate.addToken('feeCharge.additionalInfo');
+      NewNoticePolicyTemplate.saveAndClose();
+      NewNoticePolicyTemplate.waitLoading();
+      NoticePolicyTemplate.checkPreview(automatedFeeFineTempText);
+    },
+  );
 
   it(
     'C375248 Add "user.preferredFirstName" as staff slip token in Settings (volaris)',

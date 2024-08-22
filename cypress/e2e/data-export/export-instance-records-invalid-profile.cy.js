@@ -18,7 +18,7 @@ const fileName = `autoTestFile${getRandomPostfix()}.csv`;
 
 // TODO: identify how to stabilize flaky test
 
-describe('Data export', () => {
+describe('Data Export', () => {
   describe('Generating MARC records on the fly', () => {
     beforeEach('create test data', () => {
       cy.createTempUser([

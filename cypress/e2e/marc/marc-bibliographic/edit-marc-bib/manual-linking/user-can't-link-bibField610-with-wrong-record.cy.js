@@ -84,7 +84,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
     },
   ];
 
-  const bib610FieldValues = [19, testData.tag610, '2', '0', '$a Radio Vaticana $v Congresses.'];
+  const bib610FieldValues = [18, testData.tag610, '2', '0', '$a Radio Vaticana $v Congresses.'];
 
   const createdRecordIDs = [];
 

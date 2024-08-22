@@ -17,63 +17,67 @@ const jobProfile = {
 };
 const callout = `Job profile ${jobProfile.name} has been successfully created`;
 
-describe('settings: data-export', () => {
-  before('create test data', () => {
-    cy.createTempUser([permissions.dataExportViewAddUpdateProfiles.gui]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password);
-    });
-  });
-
-  after('delete test data', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
-  });
-
-  it(
-    'C410765 Verify "Data export -> Job profiles" settings HTML page title format (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
-    () => {
-      TopMenuNavigation.navigateToApp('Settings');
-      SettingsDataExport.verifyPageTitle('Settings - FOLIO');
-      SettingsDataExport.goToSettingsDataExport();
-      SettingsDataExport.verifyPageTitle('Data export settings - FOLIO');
-      ExportJobProfiles.verifyJobProfilesElements();
-      SelectJobProfile.verifyExistingJobProfiles();
-      SelectJobProfile.verifySearchBox();
-      SelectJobProfile.verifySearchButton(true);
-      SettingsDataExport.verifyPageTitle('Data export settings - Job profiles - FOLIO');
-      ExportJobProfiles.clickProfileNameFromTheList('Default instances export job profile');
-      SingleJobProfile.waitLoading();
-      SingleJobProfile.verifyElements();
-      SettingsDataExport.verifyPageTitle(
-        'Data export settings - Default instances export job profile - FOLIO',
+describe('Data Export', () => {
+  describe('Job profile - setup', () => {
+    before('create test data', () => {
+      cy.createTempUser([permissions.dataExportViewAddUpdateProfiles.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password);
+        },
       );
-      SingleJobProfile.openActions();
-      SingleJobProfile.clickDuplicateButton();
-      SettingsDataExport.verifyPageTitle('Data export settings - New job profile - FOLIO');
-      SingleJobProfile.clickCancelButton();
-      SingleJobProfile.waitLoading();
-      ExportJobProfiles.openNewJobProfileForm();
-      ExportNewJobProfile.verifyNewJobProfileForm();
-      SettingsDataExport.verifyPageTitle('Data export settings - New job profile - FOLIO');
-      ExportNewJobProfile.fillJobProfile(jobProfile.name, jobProfile.mappingProfile);
-      ExportNewJobProfile.saveJobProfile();
-      InteractorsTools.checkCalloutMessage(callout);
-      ExportJobProfiles.verifyJobProfileInTheTable(jobProfile.name);
-      SettingsDataExport.verifyPageTitle('Data export settings - Job profiles - FOLIO');
-      ExportJobProfiles.clickProfileNameFromTheList(jobProfile.name);
-      SettingsDataExport.verifyPageTitle(`Data export settings - ${jobProfile.name} - FOLIO`);
-      SingleJobProfile.openActions();
-      SingleJobProfile.clickEditButton();
-      SettingsDataExport.verifyPageTitle(`Data export settings - ${jobProfile.name} - FOLIO`);
-      SingleJobProfile.editJobProfile(jobProfile.newName);
-      ExportNewJobProfile.saveJobProfile();
-      ExportJobProfiles.verifyJobProfileInTheTable(jobProfile.newName);
-      ExportJobProfiles.clickProfileNameFromTheList(jobProfile.newName);
-      SettingsDataExport.verifyPageTitle(`Data export settings - ${jobProfile.newName} - FOLIO`);
-      SingleJobProfile.deleteMappingProfile(jobProfile.newName);
-      SettingsDataExport.verifyPageTitle('Data export settings - Job profiles - FOLIO');
-    },
-  );
+    });
+
+    after('delete test data', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C410765 Verify "Data export -> Job profiles" settings HTML page title format (firebird) (TaaS)',
+      { tags: ['extendedPath', 'firebird'] },
+      () => {
+        TopMenuNavigation.navigateToApp('Settings');
+        SettingsDataExport.verifyPageTitle('Settings - FOLIO');
+        SettingsDataExport.goToSettingsDataExport();
+        SettingsDataExport.verifyPageTitle('Data export settings - FOLIO');
+        ExportJobProfiles.verifyJobProfilesElements();
+        SelectJobProfile.verifyExistingJobProfiles();
+        SelectJobProfile.verifySearchBox();
+        SelectJobProfile.verifySearchButton(true);
+        SettingsDataExport.verifyPageTitle('Data export settings - Job profiles - FOLIO');
+        ExportJobProfiles.clickProfileNameFromTheList('Default instances export job profile');
+        SingleJobProfile.waitLoading();
+        SingleJobProfile.verifyElements();
+        SettingsDataExport.verifyPageTitle(
+          'Data export settings - Default instances export job profile - FOLIO',
+        );
+        SingleJobProfile.openActions();
+        SingleJobProfile.clickDuplicateButton();
+        SettingsDataExport.verifyPageTitle('Data export settings - New job profile - FOLIO');
+        SingleJobProfile.clickCancelButton();
+        SingleJobProfile.waitLoading();
+        ExportJobProfiles.openNewJobProfileForm();
+        ExportNewJobProfile.verifyNewJobProfileForm();
+        SettingsDataExport.verifyPageTitle('Data export settings - New job profile - FOLIO');
+        ExportNewJobProfile.fillJobProfile(jobProfile.name, jobProfile.mappingProfile);
+        ExportNewJobProfile.saveJobProfile();
+        InteractorsTools.checkCalloutMessage(callout);
+        ExportJobProfiles.verifyJobProfileInTheTable(jobProfile.name);
+        SettingsDataExport.verifyPageTitle('Data export settings - Job profiles - FOLIO');
+        ExportJobProfiles.clickProfileNameFromTheList(jobProfile.name);
+        SettingsDataExport.verifyPageTitle(`Data export settings - ${jobProfile.name} - FOLIO`);
+        SingleJobProfile.openActions();
+        SingleJobProfile.clickEditButton();
+        SettingsDataExport.verifyPageTitle(`Data export settings - ${jobProfile.name} - FOLIO`);
+        SingleJobProfile.editJobProfile(jobProfile.newName);
+        ExportNewJobProfile.saveJobProfile();
+        ExportJobProfiles.verifyJobProfileInTheTable(jobProfile.newName);
+        ExportJobProfiles.clickProfileNameFromTheList(jobProfile.newName);
+        SettingsDataExport.verifyPageTitle(`Data export settings - ${jobProfile.newName} - FOLIO`);
+        SingleJobProfile.deleteMappingProfile(jobProfile.newName);
+        SettingsDataExport.verifyPageTitle('Data export settings - Job profiles - FOLIO');
+      },
+    );
+  });
 });

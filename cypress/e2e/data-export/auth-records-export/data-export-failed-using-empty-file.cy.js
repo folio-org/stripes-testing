@@ -9,7 +9,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 let user;
 const emptyFile = `emptyFile${getRandomPostfix()}.csv`;
 
-describe('Data export', () => {
+describe('Data Export', () => {
   describe('Authority records export', () => {
     beforeEach('create test data', () => {
       cy.createTempUser([

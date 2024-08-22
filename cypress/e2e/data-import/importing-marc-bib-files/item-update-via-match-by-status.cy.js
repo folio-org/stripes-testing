@@ -159,10 +159,8 @@ describe('Data Import', () => {
         StatisticalCodes.createViaApi().then((resp) => {
           statisticalCode = `ARL (Collection stats): ${resp.code} - ${resp.name}`;
         });
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
-        });
+        cy.login(user.username, user.password);
+        cy.visit(SettingsMenu.mappingProfilePath);
       });
     });
 
