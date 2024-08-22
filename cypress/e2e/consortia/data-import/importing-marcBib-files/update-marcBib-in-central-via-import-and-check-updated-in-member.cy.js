@@ -45,6 +45,7 @@ describe('Data Import', () => {
         fileName: `C411795 testMarcFile${getRandomPostfix()}.mrc`,
         exportedFileName: `C411795 exportedTestMarcFile${getRandomPostfix()}.mrc`,
         modifiedMarcFile: `C411795 modifiedTestMarcFile${getRandomPostfix()}.mrc`,
+        editedMarcFile: `C411795 editedTestMarcFile${getRandomPostfix()}.mrc`,
       },
       instanceTitle: 'C411795 Instance Shared Central',
       updatedInstanceTitle: 'C411795 Instance Shared Central Updated',
@@ -241,10 +242,11 @@ describe('Data Import', () => {
         // upload the exported and edited marc file
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
+        DataImport.uploadFile(testData.marcFile.modifiedMarcFile, testData.marcFile.editedMarcFile);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
+        JobProfiles.waitFileIsImportedForConsortia(testData.marcFile.editedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
         cy.visit(TopMenu.inventoryPath);
