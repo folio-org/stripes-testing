@@ -61,7 +61,7 @@ export default {
     cy.wait(2000);
   },
 
-  fillMappingProfileForItemHrid: (profileName, itemMarcField = '902', subfield = '$a') => {
+  fillMappingProfileForItemHrid: (profileName, itemMarcField = '902', subfield = 'a') => {
     fillInName(profileName);
     cy.do([
       outputFormatSelect.choose(outputFormat),
