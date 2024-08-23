@@ -5,6 +5,8 @@ import {
   Checkbox,
   Modal,
   Accordion,
+  MultiColumnList,
+  MultiColumnListCell,
   Option,
   TextArea,
   HTML,
@@ -20,6 +22,7 @@ const outputFormatSelect = Select({ name: 'outputFormat' });
 const newButton = Button('New');
 const fieldsSuppressionTextArea = TextArea('Fields suppression');
 const saveAndCloseButton = Button('Save & close');
+const transformationsAccordion = Accordion('Transformations');
 
 export const CHECKBOX_NAMES = {
   SRS: 'Source record storage (entire record)',
@@ -169,7 +172,7 @@ export default {
       Checkbox('Item').has({ checked: false }),
       TextArea('Description').exists(),
       Checkbox('Suppress 999 ff').has({ checked: false }),
-      Accordion('Transformations').find(Button('Add transformations')).has({ disabled: false }),
+      transformationsAccordion.find(Button('Add transformations')).has({ disabled: false }),
       HTML('No transformations found').exists(),
     ]);
     this.verifyFieldsSuppressionTextareaDisabled(true);
@@ -219,5 +222,67 @@ export default {
     } else {
       cy.get('[class^="folioRecordTypeContainer"]').find('[class^="error"]').should('not.exist');
     }
+  },
+
+  verifyAddedTransformationTable(
+    fieldNameValue,
+    fieldValue,
+    ind1Value,
+    ind2Value,
+    subfieldValue,
+    rowIndex = 0,
+  ) {
+    cy.expect([
+      transformationsAccordion
+        .find(MultiColumnList())
+        .find(
+          MultiColumnListCell({
+            column: 'Field name',
+            content: fieldNameValue,
+            row: rowIndex,
+          }),
+        )
+        .exists(),
+      transformationsAccordion
+        .find(MultiColumnList())
+        .find(
+          MultiColumnListCell({
+            column: 'Field',
+            content: fieldValue,
+            row: rowIndex,
+          }),
+        )
+        .exists(),
+      transformationsAccordion
+        .find(MultiColumnList())
+        .find(
+          MultiColumnListCell({
+            column: 'In.1',
+            content: ind1Value,
+            row: rowIndex,
+          }),
+        )
+        .exists(),
+      transformationsAccordion
+        .find(MultiColumnList())
+        .find(
+          MultiColumnListCell({
+            column: 'In.2',
+            content: ind2Value,
+            row: rowIndex,
+          }),
+        )
+        .exists(),
+      transformationsAccordion
+        .find(MultiColumnList())
+        .find(
+          MultiColumnListCell({
+            column: 'Subfield',
+            content: subfieldValue,
+            row: rowIndex,
+          }),
+        )
+        .exists(),
+    ]);
   },
 };

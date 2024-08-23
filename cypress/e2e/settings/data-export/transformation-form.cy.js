@@ -78,14 +78,21 @@ describe('Data Export', () => {
       ModalSelectTransformations.clickNthCheckbox();
 
       ModalSelectTransformations.fillInTransformationsTextfieldsByFieldName(
+        'Item - Barcode',
         '456',
         '1',
-        '2',
+        '',
         'a',
-        'Item - Barcode',
       );
       ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
       InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
+      ExportNewFieldMappingProfile.verifyAddedTransformationTable(
+        'Item - Barcode',
+        '456',
+        '1',
+        '\\',
+        'a',
+      );
 
       ExportFieldMappingProfiles.saveMappingProfile();
       InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);

@@ -26,6 +26,10 @@ export default {
     cy.get('div[class^=modal-] input[name=searchValue]').clear().type(`${name}{enter}`);
   },
 
+  verifyValueInSearchField(searchValue) {
+    cy.expect(TextField({ name: 'searchValue' }).has({ value: searchValue }));
+  },
+
   selectTransformations: (marcField, subfield) => {
     cy.do([
       Checkbox({ ariaLabel: 'Select field' }).click(),
@@ -153,7 +157,7 @@ export default {
       `//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "subfield")]`,
     ).type(textfield4);
   },
-  fillInTransformationsTextfieldsByFieldName(marcField, ind1, ind2, subfield, fieldName) {
+  fillInTransformationsTextfieldsByFieldName(fieldName, marcField, ind1, ind2, subfield) {
     cy.do([
       ModalTransformation.find(MultiColumnListRow({ innerHTML: including(fieldName) }))
         .find(TextField({ name: including('marcField') }))

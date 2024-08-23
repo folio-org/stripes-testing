@@ -52,21 +52,44 @@ describe('Data Export', () => {
         ModalSelectTransformations.uncheckItemRecordTypeChechbox();
         ModalSelectTransformations.searchItemTransformationsByName('Instance - ID');
         ModalSelectTransformations.clickNthCheckbox();
-        ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', '$a');
+        ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', 'a');
 
         ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
         ModalSelectTransformations.checkHoldingsRecordTypeChechbox();
         ModalSelectTransformations.clickNthCheckbox();
-        ModalSelectTransformations.fillInTransformationsTextfields('245', '3', '4', '$a');
+        ModalSelectTransformations.fillInTransformationsTextfields('245', '3', '4', 'a');
 
         ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
         ModalSelectTransformations.checkItemRecordTypeChechbox();
         ModalSelectTransformations.searchItemTransformationsByName('Item - ID');
         ModalSelectTransformations.clickNthCheckbox();
-        ModalSelectTransformations.fillInTransformationsTextfields('356', '5', '6', '$a');
+        ModalSelectTransformations.fillInTransformationsTextfields('356', '5', '6', 'a');
 
         ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
         InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
+        ExportNewFieldMappingProfile.verifyAddedTransformationTable(
+          'Holdings - Instance - ID',
+          '245',
+          '3',
+          '4',
+          'a',
+        );
+        ExportNewFieldMappingProfile.verifyAddedTransformationTable(
+          'Instance - ID',
+          '123',
+          '1',
+          '2',
+          'a',
+          1,
+        );
+        ExportNewFieldMappingProfile.verifyAddedTransformationTable(
+          'Item - ID',
+          '356',
+          '5',
+          '6',
+          'a',
+          2,
+        );
 
         ExportFieldMappingProfiles.saveMappingProfile();
         InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
