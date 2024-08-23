@@ -77,7 +77,13 @@ describe('Data Export', () => {
       ModalSelectTransformations.verifySearchResultDoesNotInclude(['Holdings', 'Instance']);
       ModalSelectTransformations.clickNthCheckbox();
 
-      ModalSelectTransformations.fillInTransformationsTextfields('456', '1', '2', '$a');
+      ModalSelectTransformations.fillInTransformationsTextfieldsByFieldName(
+        '456',
+        '1',
+        '2',
+        'a',
+        'Item - Barcode',
+      );
       ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
       InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
 
