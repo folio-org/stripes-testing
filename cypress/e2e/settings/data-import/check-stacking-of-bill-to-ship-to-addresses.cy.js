@@ -122,7 +122,10 @@ describe('Data Import', () => {
         });
 
         // Press the "Save as profile & Close" button
-        FieldMappingProfileEditForm.clickSaveAndCloseButton();
+        FieldMappingProfileEditForm.clickSaveAndCloseButton({
+          profileCreated: false,
+          profileUpdated: true,
+        });
 
         // Review the "Bill to address" and "Ship to address" details on the View screen
         FieldMappingProfileView.checkOrderFieldsConditions([

@@ -53,7 +53,7 @@ const columnName = {
 function waitUIToBeFiltered() {
   // Need some waiting when jobs list is long, UI takes longer to be filtered
   // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.wait(1800);
+  cy.wait(4000);
 }
 
 function checkByErrorsInImport(...status) {
