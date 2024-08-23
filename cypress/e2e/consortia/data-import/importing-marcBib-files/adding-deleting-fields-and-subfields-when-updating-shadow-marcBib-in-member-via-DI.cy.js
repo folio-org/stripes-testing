@@ -147,12 +147,17 @@ describe('Data Import', () => {
         }).location;
         Locations.createViaApi(collegeLocationData).then((location) => {
           testData.collegeLocation = location;
-          InventoryHoldings.createHoldingRecordViaApi({
-            instanceId: testData.sharedInstanceId,
-            permanentLocationId: testData.collegeLocation.id,
-          }).then((holding) => {
-            testData.holding = holding;
-          });
+          InventoryHoldings.getHoldingSources({ query: '(name=="MARK")' }).then(
+            (holdingSources) => {
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: testData.sharedInstanceId,
+                permanentLocationId: testData.collegeLocation.id,
+                sourceId: holdingSources[0].id,
+              }).then((holding) => {
+                testData.holding = holding;
+              });
+            },
+          );
         });
         cy.resetTenant();
 
@@ -231,7 +236,7 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
+        JobProfiles.waitFileIsImportedForConsortia(testData.marcFile.modifiedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
