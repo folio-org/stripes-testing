@@ -118,10 +118,10 @@ describe('Data Import', () => {
       name: `C430253 mapping profile ${getRandomPostfix()}`,
       holdingsTransformation: EXPORT_TRANSFORMATION_NAMES.HOLDINGS_HRID,
       holdingsMarcField: '901',
-      subfieldForHoldings: '$h',
+      subfieldForHoldings: 'h',
       itemTransformation: EXPORT_TRANSFORMATION_NAMES.ITEM_HRID,
       itemMarcField: '902',
-      subfieldForItem: '$i',
+      subfieldForItem: 'i',
     };
     const jobProfileNameForExport = `C430253 job profile.${getRandomPostfix()}`;
     // profiles for updating instance, holdings, item

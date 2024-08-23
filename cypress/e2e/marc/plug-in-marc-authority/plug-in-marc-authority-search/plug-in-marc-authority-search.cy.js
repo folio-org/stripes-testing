@@ -311,7 +311,9 @@ describe('MARC', () => {
             testData.forC359228.typeOfHeadingB,
           );
           MarcAuthorities.selectIncludingTitle(validSearchResults[0]);
-          MarcAuthorities.checkRecordDetailPageMarkedValue('UXPROD-4394C380567 Corporate name 110 Apple & Honey Productions');
+          MarcAuthorities.checkRecordDetailPageMarkedValue(
+            'UXPROD-4394C380567 Corporate name 110 Apple & Honey Productions',
+          );
           MarcAuthorities.closeMarcViewPane();
           validSearchResults.forEach((result) => {
             MarcAuthorities.searchByParameter(testData.forC380567.searchOption, result);
@@ -440,7 +442,9 @@ describe('MARC', () => {
             MarcAuthorities.checkRowByContent(result);
           });
           MarcAuthorities.selectIncludingTitle(validSearchResults[0]);
-          MarcAuthorities.checkRecordDetailPageMarkedValue('UXPROD-4394C380566 Personal name 100 Elizabeth');
+          MarcAuthorities.checkRecordDetailPageMarkedValue(
+            'UXPROD-4394C380566 Personal name 100 Elizabeth',
+          );
           MarcAuthorities.closeMarcViewPane();
           validSearchResults.forEach((result) => {
             MarcAuthorities.searchByParameter(testData.forC380566.searchOption, result);
