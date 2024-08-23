@@ -141,7 +141,6 @@ describe('Data Import', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
-        Permissions.dataExportEnableSettings.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiInventoryMarcItemInProcess.gui,
         Permissions.uiInventoryMarcItemIntellectual.gui,
