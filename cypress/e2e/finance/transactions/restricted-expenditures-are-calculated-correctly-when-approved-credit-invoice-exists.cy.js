@@ -25,6 +25,7 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import BudgetDetails from '../../../support/fragments/finance/budgets/budgetDetails';
 import InvoiceLineDetails from '../../../support/fragments/invoices/invoiceLineDetails';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import Approvals from '../../../support/fragments/settings/invoices/approvals';
 
 describe('Finance: Transactions', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -76,12 +77,18 @@ describe('Finance: Transactions', () => {
     allowableExpenditure: 100,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
+  const isApprovePayEnabled = false;
   let firstInvoice;
   let secondInvoice;
   let thirdInvoice;
   let user;
   let servicePointId;
   let location;
+  const setApprovePayValue = (isEnabled = false) => {
+    cy.getAdminToken().then(() => {
+      Approvals.setApprovePayValue(isEnabled);
+    });
+  };
 
   before(() => {
     cy.getAdminToken();
@@ -236,6 +243,7 @@ describe('Finance: Transactions', () => {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
       });
+      setApprovePayValue(isApprovePayEnabled);
     });
   });
 
