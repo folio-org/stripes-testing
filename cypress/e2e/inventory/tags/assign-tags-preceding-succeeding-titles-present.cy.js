@@ -61,7 +61,7 @@ describe('Inventory', () => {
     });
 
     it(
-      'C358144 Assign tags to an Instance record when unlinked preceding/succeeding titles present 1: Import (volaris)',
+      'C358962 Assign tags to an Instance record when unlinked preceding/succeeding titles present 2: Source = FOLIO (volaris)',
       { tags: ['extendedPath', 'volaris'] },
       () => {
         cy.login(userData.username, userData.password, {
