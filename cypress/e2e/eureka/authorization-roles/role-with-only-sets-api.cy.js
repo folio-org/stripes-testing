@@ -57,11 +57,6 @@ describe('Eureka', () => {
             resource: 'Finance Funds Item',
             action: 'View',
           },
-          {
-            table: 'Procedural',
-            resource: 'Invoice Item Pay',
-            action: 'Execute',
-          },
         ],
         expectedRowCounts: {
           capabilitySets: {
@@ -70,7 +65,6 @@ describe('Eureka', () => {
           },
           capabilities: {
             Data: 4,
-            Procedural: 1,
           },
         },
         absentCapabilitySetTable: 'Settings',

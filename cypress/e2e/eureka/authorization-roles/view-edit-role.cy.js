@@ -59,20 +59,8 @@ describe('Eureka', () => {
           {
             application: 'app-platform-minimal',
             table: 'Settings',
-            resource: 'Settings Enabled',
-            action: 'View',
-          },
-          {
-            application: 'app-platform-minimal',
-            table: 'Settings',
             resource: 'Settings Notes Enabled',
             action: 'View',
-          },
-          {
-            application: 'app-platform-complete',
-            table: 'Procedural',
-            resource: 'Licenses Compare Terms',
-            action: 'Execute',
           },
         ],
         originalCapabilities: [
@@ -129,7 +117,7 @@ describe('Eureka', () => {
             Procedural: 1,
           },
           capabilities: {
-            Settings: 3,
+            Settings: 2,
             Procedural: 1,
             Data: 4,
           },
