@@ -18,6 +18,11 @@ describe('Eureka', () => {
       { type: 'Data', resource: 'UI-Users', action: 'View' },
       { type: 'Data', resource: 'UI-Users', action: 'Edit' },
       { type: 'Procedural', resource: 'UI-Users Reset Password', action: 'Execute' },
+      {
+        type: 'Procedural',
+        resource: 'Users-keycloak Password-Reset-Link Generate',
+        action: 'Execute',
+      },
     ];
 
     before('Create users', () => {

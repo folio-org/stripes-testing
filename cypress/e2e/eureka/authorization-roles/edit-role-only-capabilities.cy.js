@@ -72,12 +72,6 @@ describe('Eureka', () => {
           {
             application: 'app-platform-minimal',
             table: 'Data',
-            resource: 'Notes Collection By Status',
-            action: 'View',
-          },
-          {
-            application: 'app-platform-minimal',
-            table: 'Data',
             resource: 'Notes Domain',
             action: 'Manage',
           },
@@ -255,7 +249,7 @@ describe('Eureka', () => {
             expect(call.request.body.capabilitySetIds).to.have.lengthOf(2);
           });
           AuthorizationRoles.checkCapabilitySetsAccordionCounter('2');
-          AuthorizationRoles.checkCapabilitiesAccordionCounter('14');
+          AuthorizationRoles.checkCapabilitiesAccordionCounter('13');
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.originalCapabilitySets[1]);
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.newCapabilitySet);

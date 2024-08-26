@@ -83,20 +83,10 @@ describe('Eureka', () => {
           expect(status).to.eq(404);
           expect(body.errors[0].message).to.eq(testData.notFoundErrorMsg);
         });
-        cy.addCapabilitiesToNewUserApi(testData.userAId, testData.capabIds, true).then(
-          ({ status }) => {
-            expect(status).to.eq(404);
-          },
-        );
-        cy.addCapabilitiesToNewUserApi(testData.userBId, testData.capabIds, true).then(
-          ({ status }) => {
-            expect(status).to.eq(404);
-          },
-        );
         cy.promoteUserToKeycloakApi(testData.userAId).then(({ status }) => {
           expect(status).to.eq(201);
-          cy.addCapabilitiesToNewUserApi(testData.userAId, testData.capabIds).then((response) => {
-            expect(response.status).to.eq(201);
+          cy.checkIfUserHasKeycloakApi(testData.userAId).then((response) => {
+            expect(response.status).to.eq(204);
           });
           cy.setUserPassword({
             username: userA.username,

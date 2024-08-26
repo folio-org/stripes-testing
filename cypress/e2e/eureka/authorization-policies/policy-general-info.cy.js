@@ -3,7 +3,11 @@ import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationPolicies from '../../../support/fragments/settings/authorization-policies/authorizationPolicies';
 import DateTools from '../../../support/utils/dateTools';
-import { AUTHORIZATION_POLICY_TYPES, DEFAULT_LOCALE_STRING } from '../../../support/constants';
+import {
+  AUTHORIZATION_POLICY_TYPES,
+  AUTHORIZATION_POLICY_SOURCES,
+  DEFAULT_LOCALE_STRING,
+} from '../../../support/constants';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -32,6 +36,7 @@ describe('Eureka', () => {
           minuteStart: 0,
           minuteEnd: 30,
         },
+        source: AUTHORIZATION_POLICY_SOURCES.USER,
       };
       const updatedPolicyBody = { ...policyBody };
       updatedPolicyBody.name = testData.updatedPolicyName;
