@@ -14,12 +14,13 @@ Cypress.Commands.add('getAuthorizationPoliciesForEntityApi', (policyType, entity
   });
 });
 
-Cypress.Commands.add('createAuthorizationPolicyApi', (requestBody) => {
+Cypress.Commands.add('createAuthorizationPolicyApi', (requestBody, ignoreErrors = true) => {
   cy.okapiRequest({
     method: 'POST',
     path: 'policies',
     body: requestBody,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   }).then(({ status, body }) => {
     return {
       status,
@@ -45,6 +46,13 @@ Cypress.Commands.add('updateAuthorizationPolicyApi', (policyId, requestBody) => 
 Cypress.Commands.add('deleteAuthorizationPolicyApi', (policyId) => {
   return cy.okapiRequest({
     method: 'DELETE',
+    path: `policies/${policyId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('getAuthorizationPolicyByIdApi', (policyId) => {
+  return cy.okapiRequest({
     path: `policies/${policyId}`,
     isDefaultSearchParamsRequired: false,
   });
