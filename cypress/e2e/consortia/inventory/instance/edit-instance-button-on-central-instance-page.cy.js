@@ -3,7 +3,6 @@ import Permissions from '../../../../support/dictionary/permissions';
 import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import StatisticalCodes from '../../../../support/fragments/settings/inventory/instance-holdings-item/statisticalCodes';
@@ -32,15 +31,11 @@ describe('Inventory', () => {
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
-      });
-    });
 
-    beforeEach('Login', () => {
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
+        cy.login(testData.user.username, testData.user.password);
+        cy.visit(TopMenu.inventoryPath);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
       });
-      ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
     });
 
     after('Delete test data', () => {

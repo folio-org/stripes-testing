@@ -206,7 +206,7 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
+        JobProfiles.waitFileIsImportedForConsortia(testData.marcFile.modifiedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(testData.marcFile.modifiedMarcFile);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);

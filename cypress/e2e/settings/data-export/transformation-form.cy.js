@@ -77,9 +77,22 @@ describe('Data Export', () => {
       ModalSelectTransformations.verifySearchResultDoesNotInclude(['Holdings', 'Instance']);
       ModalSelectTransformations.clickNthCheckbox();
 
-      ModalSelectTransformations.fillInTransformationsTextfields('456', '1', '2', '$a');
+      ModalSelectTransformations.fillInTransformationsTextfieldsByFieldName(
+        'Item - Barcode',
+        '456',
+        '1',
+        '',
+        'a',
+      );
       ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
       InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
+      ExportNewFieldMappingProfile.verifyAddedTransformationTable(
+        'Item - Barcode',
+        '456',
+        '1',
+        '\\',
+        'a',
+      );
 
       ExportFieldMappingProfiles.saveMappingProfile();
       InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);

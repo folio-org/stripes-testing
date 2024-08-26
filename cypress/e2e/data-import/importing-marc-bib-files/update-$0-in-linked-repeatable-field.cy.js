@@ -98,7 +98,7 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
