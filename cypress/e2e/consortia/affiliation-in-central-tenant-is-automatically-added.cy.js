@@ -52,7 +52,7 @@ describe('Consortia', () => {
           path: TopMenu.usersPath,
           waiter: Users.waitLoading,
         });
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
       });
   });
 
@@ -70,12 +70,11 @@ describe('Consortia', () => {
       Users.createViaUi(testUser).then((id) => {
         testUser.id = id;
       });
-      ConsortiumManager.switchActiveAffiliation(tenantNames.central);
       UsersSearchPane.searchByUsername(testUser.username);
       Users.verifyUserDetailsPane();
       UsersCard.verifyAffiliationsQuantity('2');
       UsersCard.expandAffiliationsAccordion();
-      UsersCard.verifyAffiliationsDetails('College', 2, 'Central Office');
+      UsersCard.verifyAffiliationsDetails(tenantNames.college, 2, tenantNames.central);
     },
   );
 });
