@@ -13,6 +13,7 @@ describe('Eureka', () => {
         expiresDateTime: `${new Date().getFullYear() + 1}-12-01T00:00:00Z`,
         policyAName: `Policy A C514991 ${getRandomPostfix()}`,
         policyBName: `Policy B C514991 ${getRandomPostfix()}`,
+        policyBNewName: `Policy B C514991 New ${getRandomPostfix()}`,
         noSourceErrorText: 'null value in column "source"',
       };
       const policyBody = {
@@ -71,7 +72,8 @@ describe('Eureka', () => {
             testData.policyAId = response1.body.id;
             cy.createAuthorizationPolicyApi(policyBBody, true).then((response2) => {
               expect(response2.status).to.eq(400);
-              // expect(response2.body.errors.message).to.include(testData.noSourceErrorText);
+              expect(response2.body.errors[0].message).to.include(testData.noSourceErrorText);
+              policyBBody.name = testData.policyBNewName;
               policyBBody.source = AUTHORIZATION_POLICY_SOURCES.USER;
               cy.createAuthorizationPolicyApi(policyBBody).then((response3) => {
                 expect(response3.status).to.eq(201);
