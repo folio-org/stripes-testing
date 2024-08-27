@@ -33,3 +33,4 @@ import './edge';
 import './tenant';
 import './specifications';
 import './serials';
+import './lists';

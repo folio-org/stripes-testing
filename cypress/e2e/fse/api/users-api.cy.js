@@ -8,7 +8,7 @@ describe('fse-users', () => {
 
   it(
     `TC195392 - Get by username for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'users'] },
+    { tags: ['sanity', 'fse', 'api', 'users', 'loc'] },
     () => {
       cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then(
         (users) => {
@@ -20,7 +20,7 @@ describe('fse-users', () => {
 
   it(
     `TC195518 - check users-keycloak API for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'users'] },
+    { tags: ['sanity', 'fse', 'api', 'users', 'loc'] },
     () => {
       cy.getKeycloakUsersInfo().then((response) => {
         cy.expect(response.status).to.eq(200);
@@ -31,7 +31,7 @@ describe('fse-users', () => {
 
   it(
     `TC195517 - get user capabilities for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'users', 'capabilities'] },
+    { tags: ['sanity', 'fse', 'api', 'users', 'capabilities', 'loc'] },
     () => {
       cy.getKeycloakUsersInfo().then((response) => {
         cy.getCapabilitiesForUserApi(response.body.user.id).then((capabilitiesResponse) => {
@@ -44,7 +44,7 @@ describe('fse-users', () => {
 
   it(
     `TC195521 - get user policies for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'users', 'policies'] },
+    { tags: ['sanity', 'fse', 'api', 'users', 'policies', 'loc'] },
     () => {
       cy.getKeycloakUsersInfo().then((response) => {
         cy.getAuthorizationPoliciesForEntityApi('user', response.body.user.id).then(
@@ -59,7 +59,7 @@ describe('fse-users', () => {
 
   it(
     `TC195522 - get user migrations for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'users', 'migrations'] },
+    { tags: ['sanity', 'fse', 'api', 'users', 'migrations', 'loc'] },
     () => {
       cy.getUserMigrations().then((migrationsResponse) => {
         cy.expect(migrationsResponse.status).to.eq(200);

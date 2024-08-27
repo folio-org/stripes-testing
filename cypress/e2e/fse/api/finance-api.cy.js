@@ -8,7 +8,7 @@ describe('fse-finance', () => {
 
   it(
     `TC195067 - Get fiscal year for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'finance'] },
+    { tags: ['sanity', 'fse', 'api', 'finance', 'loc'] },
     () => {
       cy.getFiscalYearsApi({ limit: 1 }).then((response) => {
         cy.expect(response.status).to.eq(200);
