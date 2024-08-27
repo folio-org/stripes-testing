@@ -199,7 +199,7 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(testData.marcFile.editedMarcFile);
+        Logs.waitFileIsImportedForConsortia(testData.marcFile.editedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(testData.marcFile.editedMarcFile);
         [
