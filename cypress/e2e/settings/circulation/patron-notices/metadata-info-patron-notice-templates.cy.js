@@ -9,6 +9,7 @@ import Users from '../../../../support/fragments/users/users';
 
 describe('Patron Notices', () => {
   let userData;
+  const newBodytext = 'New text';
   const noticeTemplate = NoticeTemplates.getDefaultTemplate();
   let adminNames;
 
@@ -45,8 +46,8 @@ describe('Patron Notices', () => {
   });
 
   it(
-    'C387439 Add metadata info to view of Patron Notice Templates scenario 1,4,5 (volaris)',
-    { tags: ['smoke', 'volaris'] },
+    'C387439 C367968 Add metadata info to view of Patron Notice Templates scenario 1,4,5 (volaris)',
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       NewNoticePolicyTemplate.openToSide({ name: noticeTemplate.name });
       NewNoticePolicyTemplate.checkAfterSaving({
@@ -55,6 +56,16 @@ describe('Patron Notices', () => {
         category: NOTICE_CATEGORIES.loan,
         subject: 'Email subject: Loan',
         body: 'Email body {{item.title}}',
+      });
+      NewNoticePolicyTemplate.editTemplate(noticeTemplate.name);
+      NewNoticePolicyTemplate.updateBodyText(newBodytext);
+      NewNoticePolicyTemplate.openToSide({ name: noticeTemplate.name });
+      NewNoticePolicyTemplate.checkAfterSaving({
+        name: noticeTemplate.name,
+        description: noticeTemplate.description,
+        category: NOTICE_CATEGORIES.loan,
+        subject: 'Email subject: Loan',
+        body: newBodytext,
       });
       cy.wait(2000);
       NoticeTemplates.collapseAll();

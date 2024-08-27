@@ -8,6 +8,10 @@ import {
 } from '../../../support/fragments/finance';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import FundDetails from '../../../support/fragments/finance/funds/fundDetails';
+import AddTransferModal from '../../../support/fragments/finance/modals/addTransferModal';
+import BudgetDetails from '../../../support/fragments/finance/budgets/budgetDetails';
+import LedgerDetails from '../../../support/fragments/finance/ledgers/ledgerDetails';
 
 describe('Finance', () => {
   describe('Transactions', () => {
@@ -108,13 +112,13 @@ describe('Finance', () => {
       () => {
         // Click on **"Fund B"** name on "Fund" pane
         FinanceHelper.searchByName(funds.b.name);
-        const FundDetails = FinanceHelper.selectFirstFundRecord(funds.b.name);
+        FinanceHelper.selectFirstFundRecord(funds.b.name);
 
         // Click on the active budget for current fiscal year in "Current budget" accordion
-        const BudgetDetails = FundDetails.openCurrentBudgetDetails();
+        FundDetails.openCurrentBudgetDetails();
 
         // Click "Actions" button, Select "Move allocation" option
-        const AddTransferModal = BudgetDetails.clickMoveAllocationButton();
+        BudgetDetails.clickMoveAllocationButton();
 
         // Fill the following fields: "From", "To", "Amount"
         AddTransferModal.fillTransferDetails({
@@ -163,7 +167,7 @@ describe('Finance', () => {
 
         // Search for the ledger from Preconditions item #2 and click on it
         FinanceHelper.searchByName(ledger.name);
-        const LedgerDetails = FinanceHelper.selectFirstLedger(ledger.name);
+        FinanceHelper.selectFirstLedger(ledger.name);
 
         // Both "Increase in allocation" and "Decrease in allocation" fields in "Financial summary" accordion are specified with 0.00 value
         LedgerDetails.checkLedgerDetails({

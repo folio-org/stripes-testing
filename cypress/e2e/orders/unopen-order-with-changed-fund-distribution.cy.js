@@ -123,7 +123,7 @@ describe('orders: Unopen order', () => {
                             ],
                             acquisitionMethod: params.body.acquisitionMethods[0].id,
                             physical: {
-                              createInventory: 'Instance, Holding, Item',
+                              createInventory: 'Instance, Holding',
                               materialType: mtypes.body.id,
                               materialSupplier: responseOrganizations,
                               volumes: [],

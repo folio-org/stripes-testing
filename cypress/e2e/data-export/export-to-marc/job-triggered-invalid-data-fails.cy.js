@@ -15,12 +15,12 @@ const uuidsInInvalidFormat = `invalid-uuids${getRandomPostfix()}.csv`;
 const notFoundUUIDsInValidFormat = `not-found-uuids${getRandomPostfix()}.csv`;
 const validUserUUID = uuid();
 
-describe('Data export', () => {
+describe('Data Export', () => {
   describe('Export to MARC', () => {
     before('create test data', () => {
       cy.createTempUser([
-        permissions.dataExportAll.gui,
-        permissions.dataExportEnableModule.gui,
+        permissions.inventoryAll.gui,
+        permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {

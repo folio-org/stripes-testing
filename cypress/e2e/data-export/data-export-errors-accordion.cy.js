@@ -17,12 +17,11 @@ const validFile = `autoTestValidFile${getRandomPostfix()}.csv`;
 const invalidFile = `autoTestInvalidFile${getRandomPostfix()}.csv`;
 const partiallyValidFile = `autoTestInvalidFile${getRandomPostfix()}.csv`;
 
-describe('Data export', () => {
+describe('Data Export', () => {
   before('Create test data', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
-      permissions.dataExportAll.gui,
-      permissions.dataExportEnableModule.gui,
+      permissions.dataExportUploadExportDownloadFileViewLogs.gui,
     ]).then((userProperties) => {
       user = userProperties;
       const instanceID = InventoryInstances.createInstanceViaApi(

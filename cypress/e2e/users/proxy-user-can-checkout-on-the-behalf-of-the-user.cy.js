@@ -75,6 +75,8 @@ describe('Users', () => {
     cy.deleteProxyApi(proxyBody.id);
     Users.deleteViaApi(usersData.userSponsor.userId);
     Users.deleteViaApi(usersData.userProxy.userId);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
+    Locations.deleteViaApi(testData.defaultLocation);
   });
 
   it(

@@ -219,6 +219,8 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
               QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
           });
@@ -312,7 +314,8 @@ describe('MARC', () => {
                 `records[${matchs.rowIndex}].content`,
               );
             });
-
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(1500);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.clickRestoreDeletedField();
             QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -350,7 +353,8 @@ describe('MARC', () => {
               );
             });
             QuickMarcEditor.checkLinkHeadingsButton();
-
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(1500);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.verifyTagFieldAfterLinking(
               81,

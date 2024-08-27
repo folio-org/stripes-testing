@@ -68,6 +68,8 @@ describe('MARC', () => {
           QuickMarcEditor.fillInElvlBoxInLDRField(elvlBoxNewValue);
           QuickMarcEditor.verifyValueInElvlBoxInLDRField(elvlBoxNewValue);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(0, ldrCharacterLength);
         },
       );

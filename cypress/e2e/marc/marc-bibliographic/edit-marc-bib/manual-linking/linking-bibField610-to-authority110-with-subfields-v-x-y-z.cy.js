@@ -39,7 +39,7 @@ describe('MARC', () => {
         const createdRecordIDs = [];
 
         const bib610FieldValues = [
-          19,
+          18,
           testData.tag610,
           '2',
           '0',
@@ -47,7 +47,7 @@ describe('MARC', () => {
         ];
 
         const bib610AfterLinkingToAuth110 = [
-          19,
+          18,
           testData.tag610,
           '2',
           '0',
@@ -113,6 +113,8 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag610);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib610AfterLinkingToAuth110);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitInventoryLoading();

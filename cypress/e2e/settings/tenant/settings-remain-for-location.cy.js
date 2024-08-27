@@ -1,5 +1,6 @@
 import uuid from 'uuid';
 import { Permissions } from '../../../support/dictionary';
+import { APPLICATION_NAMES } from '../../../support/constants';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import Campuses from '../../../support/fragments/settings/tenant/location-setup/campuses';
@@ -7,7 +8,7 @@ import Institutions from '../../../support/fragments/settings/tenant/location-se
 import Libraries from '../../../support/fragments/settings/tenant/location-setup/libraries';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -157,11 +158,11 @@ describe('Settings: Tenant', () => {
       Locations.checkEmptyTableContent(true);
 
       // #10 Navigated to the "Inventory" app
-      cy.visit(TopMenu.inventoryPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.waitContentLoading();
 
       // #11 Navigate back to the "Settings" app -> "Tenant" -> "Locations"
-      cy.visit(SettingsMenu.tenantLocationsPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
       Locations.checkOptionSelected('Institution', testData.institutions[1]);
       Locations.checkOptionSelected('Campus', testData.campuses[1]);
       Locations.checkOptionSelected('Library', testData.libraries[1]);

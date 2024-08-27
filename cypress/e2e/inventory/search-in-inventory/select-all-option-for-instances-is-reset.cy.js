@@ -18,15 +18,16 @@ describe('Inventory', () => {
         InventoryInstances.createInstanceViaApi(testData.instanceTitle, testData.barcode);
       });
 
-      cy.createTempUser([Permissions.inventoryAll.gui, Permissions.dataExportEnableApp.gui]).then(
-        (userProperties) => {
-          testData.user = userProperties;
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-        },
-      );
+      cy.createTempUser([
+        Permissions.inventoryAll.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+      ]).then((userProperties) => {
+        testData.user = userProperties;
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+      });
     });
 
     after('Delete test data', () => {

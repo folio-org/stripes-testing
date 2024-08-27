@@ -14,7 +14,8 @@ describe('Inventory', () => {
     const testData = {
       filePath: 'marcBibFileForC496125.mrc',
       marcFileName: `C496125 createAutotestFile${getRandomPostfix()}.mrc`,
-      precedingTitle: 'Justus Liebigs Annalen der Chemie.',
+      instanceTitle: 'C496125 Justus Liebigs Annalen der Chemie.',
+      precedingTitle: 'C496125 Justus Liebigs Annalen der Chemie.',
     };
 
     before('Create test data and login', () => {
@@ -49,6 +50,7 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'folijet'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceId);
+        InventoryInstances.selectInstance();
         InstanceRecordView.waitLoading();
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.verifyPrecedingTitle(testData.precedingTitle);

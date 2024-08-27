@@ -14,7 +14,7 @@ import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe.skip('Inventory', () => {
+describe('Inventory', () => {
   describe('Item', () => {
     let user;
     let collectionOfItems = [];

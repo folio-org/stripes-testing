@@ -124,6 +124,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
+        cy.wait(500);
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.fillExpirationDate(today);
         BulkEditActions.confirmChanges();
@@ -132,12 +133,13 @@ describe('bulk-edit', () => {
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         ]);
         BulkEditActions.commitChanges();
+        BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Custom fields');
         BulkEditSearchPane.verifyChangesUnderColumns(
           'Custom fields',
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         );
-        BulkEditActions.openActions();
+        cy.wait(500);
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,

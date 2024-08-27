@@ -547,18 +547,21 @@ export default {
     gui: 'Settings (Calendar): Can edit and reassign existing calendars',
   },
   // Data Export
-  dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
-  dataExportEnableModule: {
-    internal: 'module.data-export.enabled',
-    gui: 'Data export: all permissions',
+  dataExportViewAddUpdateProfiles: {
+    internal: 'ui-data-export.settings.edit',
+    gui: 'Settings (Data export): Can view, add, update profiles',
   },
-  dataExportEnableSettings: {
-    internal: 'ui-data-export.settings.enabled',
-    gui: 'Settings (Data export): display list of settings pages',
+  dataExportSettingsViewOnly: {
+    internal: 'ui-data-export.settings.view',
+    gui: 'Settings (Data export): Can view only',
   },
-  dataExportEnableApp: {
-    internal: 'ui-data-export.app.enabled',
-    gui: 'UI: Data export module is enabled',
+  dataExportViewOnly: {
+    internal: 'ui-data-export.view',
+    gui: 'Data export: Can view only',
+  },
+  dataExportUploadExportDownloadFileViewLogs: {
+    internal: 'ui-data-export.edit',
+    gui: 'Data export: Can upload files, export, download files and view logs',
   },
   // Loans
   loansAll: {

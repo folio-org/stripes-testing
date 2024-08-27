@@ -109,7 +109,7 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ])
         .then((userProperties) => {
           testData.user = userProperties;
@@ -121,7 +121,7 @@ describe('Data Import', () => {
             Permissions.moduleDataImportEnabled.gui,
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-            Permissions.dataExportEnableApp.gui,
+            Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
           ]);
 
           cy.resetTenant();
@@ -131,7 +131,7 @@ describe('Data Import', () => {
             Permissions.moduleDataImportEnabled.gui,
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-            Permissions.dataExportEnableApp.gui,
+            Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
           ]);
           cy.resetTenant();
         })
@@ -215,7 +215,7 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
+        JobProfiles.waitFileIsImportedForConsortia(testData.marcFile.modifiedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);

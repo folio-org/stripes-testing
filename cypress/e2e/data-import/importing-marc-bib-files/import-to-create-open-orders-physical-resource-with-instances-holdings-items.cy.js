@@ -231,7 +231,7 @@ describe('Data Import', () => {
 
           OrderLines.checkCreatedInventoryInPhysicalRecourceDetails('Instance, Holding, Item');
           OrderLines.openLinkedInstance();
-          InstanceRecordView.verifyIsInstanceOpened(instanceTitle);
+          InstanceRecordView.verifyInstanceIsOpened(instanceTitle);
           InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
             instanceHrid = initialInstanceHrId;
           });

@@ -63,5 +63,25 @@ describe('Inventory', () => {
         InventoryInstance.deleteTag(tag.label);
       },
     );
+
+    it(
+      'C358144 Assign tags to an Instance record when unlinked preceding/succeeding titles present 1: Import (volaris)',
+      { tags: ['extendedPath', 'volaris'] },
+      () => {
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
+        InventoryInstances.selectInstance();
+        InventoryInstance.addTag(tag.label);
+        InventoryInstances.resetAllFilters();
+        InventoryInstances.searchByTag(tag.label);
+        InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
+        InventoryInstance.checkAddedTag(tag.label, instanceTitle);
+        InventoryInstance.deleteTag(tag.label);
+        InventorySearchAndFilter.verifyTagCount();
+        InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+        cy.reload();
+        InventorySearchAndFilter.verifyTagIsAbsent(tag.label);
+      },
+    );
   });
 });

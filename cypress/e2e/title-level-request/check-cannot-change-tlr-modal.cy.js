@@ -19,10 +19,6 @@ describe('Title Level Request', () => {
 
   before('Preconditions:', () => {
     cy.getAdminToken();
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
     ServicePoints.createViaApi(testData.servicePoint);
     testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
     Location.createViaApi(testData.defaultLocation).then((location) => {
@@ -31,7 +27,7 @@ describe('Title Level Request', () => {
         location,
       });
     });
-    TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+    TitleLevelRequests.enableTLRViaApi();
     cy.createTempUser([
       Permissions.uiRequestsCreate.gui,
       Permissions.uiRequestsView.gui,
@@ -65,10 +61,6 @@ describe('Title Level Request', () => {
 
   after('Deleting created entities', () => {
     cy.getAdminToken();
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
     Requests.deleteRequestViaApi(requestId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
@@ -82,7 +74,6 @@ describe('Title Level Request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
 
   it(

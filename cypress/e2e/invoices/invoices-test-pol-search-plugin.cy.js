@@ -9,7 +9,7 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 
-describe('ui-invoices: test POL search plugin', () => {
+describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const order = { ...NewOrder.defaultOneTimeOrder };

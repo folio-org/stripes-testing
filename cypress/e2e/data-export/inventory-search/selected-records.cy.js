@@ -2,7 +2,7 @@ import InventoryModals from '../../../support/fragments/inventory/inventoryModal
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 
-describe('Data export', () => {
+describe('Data Export', () => {
   describe('Search in Inventory', () => {
     beforeEach('navigates to Inventory', () => {
       cy.loginAsAdmin();

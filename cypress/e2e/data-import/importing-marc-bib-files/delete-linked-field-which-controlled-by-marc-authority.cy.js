@@ -118,7 +118,7 @@ describe('Data Import', () => {
     ];
 
     const linkingTagAndValues = {
-      rowIndex: 22,
+      rowIndex: 21,
       value:
         'C377005 Cambridge tracts in mathematics and mathematical physics no. 19. english England',
       tag: '830',
@@ -137,7 +137,8 @@ describe('Data Import', () => {
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
         cy.loginAsAdmin()
@@ -169,6 +170,8 @@ describe('Data Import', () => {
               linkingTagAndValues.tag,
               linkingTagAndValues.rowIndex,
             );
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           })

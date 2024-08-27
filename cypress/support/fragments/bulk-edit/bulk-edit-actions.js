@@ -83,6 +83,7 @@ export default {
         .find(bulkPageSelections.valueType)
         .choose(optionName),
     );
+    cy.wait(1000);
   },
   selectAction(actionName, rowIndex = 0) {
     cy.do(
@@ -181,6 +182,17 @@ export default {
     });
   },
 
+  verifyChangesInAreYouSureFormByRowExactMatch(column, changes, row = 0) {
+    changes.forEach((value) => {
+      cy.expect(
+        areYouSureForm
+          .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+          .find(MultiColumnListCell({ column, content: value }))
+          .exists(),
+      );
+    });
+  },
+
   verifyItemStatusOptions(rowIndex = 0) {
     const options = [
       'Available',
@@ -261,7 +273,7 @@ export default {
     cy.expect([downloadChnagedRecordsButton.exists(), Button('Download errors (CSV)').exists()]);
   },
 
-  verifySuccessBanner(validRecordsCount) {
+  verifySuccessBanner(validRecordsCount = 1) {
     cy.expect(
       MessageBanner().has({
         textContent: `${validRecordsCount} records have been successfully changed`,
@@ -661,6 +673,22 @@ export default {
     });
   },
 
+  verifyTheSecondActionOptions(expectedOptions, rowIndex = 0) {
+    cy.then(() => {
+      cy.do(
+        RepeatableFieldItem({ index: rowIndex })
+          .find(Select({ dataTestID: 'select-actions-1' }))
+          .allOptionsText()
+          .then((actualOptions) => {
+            const actualEnabledOptions = actualOptions.filter(
+              (actualOption) => !actualOption.includes('disabled'),
+            );
+            expect(actualEnabledOptions).to.deep.equal(expectedOptions);
+          }),
+      );
+    });
+  },
+
   fillInFirstTextArea(oldItem, rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -669,11 +697,27 @@ export default {
     );
   },
 
+  verifyValueInFirstTextArea(value, rowIndex = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(TextArea({ dataTestID: 'input-textarea-0' }))
+        .has({ value }),
+    );
+  },
+
   fillInSecondTextArea(newItem, rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
         .find(TextArea({ dataTestID: 'input-textarea-1' }))
         .fillIn(newItem),
+    );
+  },
+
+  verifyValueInSecondTextArea(value, rowIndex = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(TextArea({ dataTestID: 'input-textarea-1' }))
+        .has({ value }),
     );
   },
 
@@ -808,6 +852,19 @@ export default {
     ]);
   },
 
+  selectNoteTypeWhenChangingIt(newType, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ id: 'noteHoldingsType' }))
+        .choose(newType),
+    ]);
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ id: 'noteHoldingsType' }))
+        .has({ checkedOptionText: newType }),
+    );
+  },
+
   checkApplyToItemsRecordsCheckbox() {
     cy.do(Checkbox('Apply to all items records').click());
   },
@@ -875,6 +932,7 @@ export default {
 
   downloadMatchedResults() {
     cy.do(actionsBtn.click());
+    cy.wait(500);
     cy.get('[class^="ActionMenuGroup-"] button', { timeout: 15000 }).first().click();
     BulkEditSearchPane.waitingFileDownload();
   },

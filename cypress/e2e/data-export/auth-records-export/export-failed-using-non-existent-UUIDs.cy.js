@@ -10,7 +10,7 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
-describe('Data export', () => {
+describe('Data Export', () => {
   describe('Authority records export', () => {
     const user = {};
     const downloadedFile = 'C_353209.csv';
@@ -28,7 +28,7 @@ describe('Data export', () => {
       cy.createTempUser([
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
-        Permissions.dataExportEnableModule.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((createdUserProperties) => {
         user.userProperties = createdUserProperties;
 

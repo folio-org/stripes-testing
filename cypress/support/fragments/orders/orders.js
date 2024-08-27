@@ -98,6 +98,7 @@ export default {
         method: 'POST',
         path: 'orders/composite-orders',
         body: order,
+        isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => body);
   },

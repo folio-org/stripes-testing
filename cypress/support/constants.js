@@ -194,7 +194,7 @@ export const ORDER_PAYMENT_STATUS = {
 };
 
 export const ORDER_LINE_PAYMENT_STATUS = {
-  AWAITING_PAYMENT: 'Awaiting payment',
+  AWAITING_PAYMENT: 'Awaiting Payment',
   CANCELLED: 'Cancelled',
   FULLY_PAID: 'Fully paid',
   PARTIALLY_PAID: 'Partially paid',
@@ -222,6 +222,7 @@ export const RECEIPT_STATUS_SELECTED = {
 export const RECEIPT_STATUS_VIEW = {
   PENDING: 'Pending',
   RECEIPT_NOT_REQUIRED: 'Receipt Not Required',
+  CANCELLED: 'Cancelled',
 };
 
 export const RECEIVING_WORKFLOW_NAMES = {
@@ -858,5 +859,19 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     NOTE: 'Note',
     BINDING_NOTE: 'Binding note',
     ACTION_NOTE: 'Action note',
+    COPY_NOTE: 'Copy note',
+    REPRODUCTION: 'Reproduction note',
+    PROVENANCE_NOTE: 'Provenance note',
   },
+};
+
+export const HOLDING_NOTE_TYPES = {
+  ACTION_NOTE: 'Action note',
+  ADMINISTRATIVE_NOTE: 'Administrative note',
+  COPY_NOTE: 'Copy note',
+  ELECTRONIC_BOOKPLATE: 'Electronic bookplate',
+  REPRODUCTION: 'Reproduction',
+  NOTE: 'Note',
+  BINDING: 'Binding',
+  PROVENANCE: 'Provenance',
 };

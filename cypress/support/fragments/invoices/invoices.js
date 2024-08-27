@@ -974,9 +974,14 @@ export default {
     this.searchByNumber(invoiceNumber);
     this.selectInvoice(invoiceNumber);
   },
-  selectInvoice: (invoiceNumber) => {
+  selectInvoice: (invoiceNumber, rowIndex = 0) => {
     cy.wait(4000);
-    cy.do(invoiceResultsPane.find(Link(invoiceNumber)).click());
+    cy.do(
+      invoiceResultsPane
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(Link(invoiceNumber))
+        .click(),
+    );
   },
 
   checkVendorCodeInInvoicePane: (vendorCode) => {
