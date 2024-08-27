@@ -10,6 +10,7 @@ import {
   Option,
   TextArea,
   HTML,
+  Pane,
 } from '../../../../../interactors';
 import modalSelectTransformations from './modalSelectTransformations';
 import { EXPORT_TRANSFORMATION_NAMES } from '../../../constants';
@@ -284,5 +285,9 @@ export default {
         )
         .exists(),
     ]);
+  },
+
+  verifyNewFieldMappingProfileFormIsOpened() {
+    cy.expect(Pane('New field mapping profile').exists());
   },
 };
