@@ -132,7 +132,7 @@ describe('Inventory', () => {
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFiles[2].jobProfileToRun);
               JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFiles[2].fileNameImported);
+              JobProfiles.waitFileIsImportedForConsortia(marcFiles[2].fileNameImported);
               Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
               Logs.openFileDetails(marcFiles[2].fileNameImported);
               for (let i = 0; i < marcFiles[2].numberOftitles; i++) {
