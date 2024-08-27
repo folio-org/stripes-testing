@@ -20,6 +20,7 @@ describe('Finance', () => {
       ...Ledgers.getDefaultLedger(),
       fiscalYearOneId: fiscalYear.id,
       restrictExpenditures: false,
+      restrictEncumbrance: false,
     };
     const funds = {
       first: {
@@ -63,7 +64,6 @@ describe('Finance', () => {
         Object.values(budgets).forEach((budget) => {
           Budgets.createViaApi(budget);
         });
-
         Organizations.createOrganizationViaApi(testData.organization).then(() => {
           testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
           testData.orderLine = BasicOrderLine.getDefaultOrderLine({
