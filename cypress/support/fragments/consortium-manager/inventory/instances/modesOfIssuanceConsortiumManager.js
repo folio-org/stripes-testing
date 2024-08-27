@@ -58,7 +58,7 @@ export default {
     });
   },
 
-  deleteIssuanceModeByNameAndTenant(name, tenantId) {
+  deleteIssuanceModeByNameAndTenantViaApi(name, tenantId) {
     this.getIssuanceModeByNameAndTenant(name, tenantId).then((format) => {
       cy.setTenant(tenantId);
       cy.okapiRequest({

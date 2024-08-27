@@ -16,7 +16,7 @@ describe('Cancel item level request', () => {
   before('Prepare test data', () => {
     cy.getAdminToken()
       .then(() => {
-        cy.addCancellationReasonApi(cancellationReason);
+        cy.addCancellationReasonViaApi(cancellationReason);
       })
       .then(() => {
         cy.createTempUser([Permissions.settingsCircView.gui])

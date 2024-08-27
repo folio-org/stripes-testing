@@ -28,11 +28,7 @@ const testData = {
       name: getTestEntityValue('centralSharedMaterialTypes_name'),
     },
   },
-  collegeLocalItemNoteTypes: {
-    id: uuid(),
-    name: getTestEntityValue('collegeLocalItemNoteTypes_name'),
-    source: 'local',
-  },
+  collegeLocalItemNoteType: getTestEntityValue('collegeLocalItemNoteTypes_name'),
   collegeLocalLoanTypes: {
     id: uuid(),
     name: getTestEntityValue('collegeLocalLoanTypes_name'),
@@ -76,7 +72,7 @@ describe('Consortium manager', () => {
             permissions.inventoryCRUDItemNoteTypes.gui,
             permissions.uiCreateEditDeleteLoanTypes.gui,
           ]);
-          ItemNoteTypes.createNoteTypeViaApi(testData.collegeLocalItemNoteTypes);
+          ItemNoteTypes.createItemNoteTypeViaApi(testData.collegeLocalItemNoteType);
           LoanTypes.createLoanTypesViaApi(testData.collegeLocalLoanTypes);
           cy.resetTenant();
           cy.getAdminToken();
@@ -110,29 +106,24 @@ describe('Consortium manager', () => {
           ItemNoteTypes.verifyConsortiumItemNoteTypesInTheList({
             name: testData.centralSharedItemNoteTypes.payload.name,
           });
-
           ItemNoteTypes.verifyLocalItemNoteTypesInTheList({
-            name: testData.collegeLocalItemNoteTypes.name,
+            name: testData.collegeLocalItemNoteType,
             actions: ['edit', 'trash'],
           });
-
-          ItemNoteTypes.clickTrashButtonForItemNoteTypes(testData.collegeLocalItemNoteTypes.name);
-
+          ItemNoteTypes.clickTrashButtonForItemNoteTypes(testData.collegeLocalItemNoteType);
           ItemNoteTypes.verifyItemNoteTypesAbsentInTheList({
-            name: testData.collegeLocalItemNoteTypes.name,
+            name: testData.collegeLocalItemNoteType,
           });
+
           cy.visit(SettingsMenu.loanTypesPath);
           LoanTypes.verifyLoanTypesInTheList({
             name: testData.centralSharedLoanTypes.payload.name,
           });
-
           LoanTypes.verifyLoanTypesInTheList({
             name: testData.collegeLocalLoanTypes.name,
             actions: ['edit', 'trash'],
           });
-
           LoanTypes.clickTrashButtonForLoanTypes(testData.collegeLocalLoanTypes.name);
-
           LoanTypes.verifyLoanTypesAbsentInTheList({
             name: testData.collegeLocalLoanTypes.name,
           });
@@ -142,14 +133,11 @@ describe('Consortium manager', () => {
           MaterialTypes.verifyConsortiumMaterialTypesInTheList({
             name: testData.centralSharedMaterialTypes.payload.name,
           });
-
           MaterialTypes.verifyLocalMaterialTypesInTheList({
             name: testData.universityMaterialTypes.name,
             actions: ['edit', 'trash'],
           });
-
           MaterialTypes.clickTrashButtonForMaterialTypes(testData.universityMaterialTypes.name);
-
           MaterialTypes.verifyMaterialTypesAbsentInTheList({
             name: testData.universityMaterialTypes.name,
           });

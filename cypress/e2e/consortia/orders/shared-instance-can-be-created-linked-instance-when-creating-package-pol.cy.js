@@ -116,9 +116,7 @@ describe('Orders', () => {
       Orders.updateOrderViaApi({ ...testData.order, workflowStatus: 'Pending' });
       Orders.deleteOrderViaApi(testData.order.id);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
-      cy.resetTenant();
       InventoryInstance.deleteInstanceViaApi(testData.firstSharedInstance.id);
-
       InventoryInstance.deleteInstanceViaApi(testData.secondSharedInstance.id);
     });
 
@@ -130,7 +128,7 @@ describe('Orders', () => {
         Orders.selectFromResultsList(testData.order.poNumber);
         OrderLines.addPOLine();
         OrderLines.preparePOLToPackage(packageNameForPol);
-        OrderLines.POLineInfoWithReceiptNotRequiredStatuswithSelectLocation(location.institutionId);
+        OrderLines.POLineInfoWithReceiptNotRequiredStatuswithSelectLocation(location.name);
         OrderLines.expandPackageTitles();
         OrderLines.addPackageTitle();
         OrderLines.selectInstanceInSelectInstanceModal(testData.firstSharedInstance.title, 0);

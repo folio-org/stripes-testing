@@ -186,7 +186,7 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.clickCancel();
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
-          cy.visit(SettingsMenu.patronGroups);
+          cy.visit(SettingsMenu.formats);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.newFormat.name, testData.newFormat.code, 'local', ''],
             [actionIcons.edit, actionIcons.trash],

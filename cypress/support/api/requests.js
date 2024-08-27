@@ -29,7 +29,7 @@ Cypress.Commands.add('getCancellationReasonsApi', (searchParams) => {
   });
 });
 
-Cypress.Commands.add('addCancellationReasonApi', (data) => {
+Cypress.Commands.add('addCancellationReasonViaApi', (data) => {
   cy.okapiRequest({
     method: 'POST',
     path: 'cancellation-reason-storage/cancellation-reasons',
