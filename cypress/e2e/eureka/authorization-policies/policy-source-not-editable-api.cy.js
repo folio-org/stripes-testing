@@ -85,7 +85,6 @@ describe('Eureka', () => {
                     expect(response.status).to.eq(204);
                   },
                 );
-                cy.wait(1000);
                 policyBBody.source = AUTHORIZATION_POLICY_SOURCES.SYSTEM;
                 cy.updateAuthorizationPolicyApi(testData.policyBId, policyBBody).then(
                   (response) => {
