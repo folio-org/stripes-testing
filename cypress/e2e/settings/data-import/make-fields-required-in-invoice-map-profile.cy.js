@@ -111,6 +111,7 @@ describe('Data Import', () => {
         FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
+        FieldMappingProfiles.searchByName(mappingProfile.name);
         FieldMappingProfileView.delete(mappingProfile.name);
       },
     );

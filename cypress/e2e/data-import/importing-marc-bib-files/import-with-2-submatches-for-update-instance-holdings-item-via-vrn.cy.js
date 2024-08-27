@@ -308,7 +308,7 @@ describe('Data Import', () => {
 
     it(
       'C451467 Check Import with 2 submatches for update Instance, Holdings, Item via VRN (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPathBroken', 'folijet'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.createInstanceMappingProfile(

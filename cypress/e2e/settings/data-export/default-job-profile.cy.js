@@ -7,9 +7,9 @@ import Users from '../../../support/fragments/users/users';
 
 let user;
 
-describe('settings: data-export', () => {
+describe('Data Export', () => {
   before('create test data', () => {
-    cy.createTempUser([permissions.dataExportViewOnly.gui]).then((userProperties) => {
+    cy.createTempUser([permissions.dataExportSettingsViewOnly.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
         path: TopMenu.settingsPath,

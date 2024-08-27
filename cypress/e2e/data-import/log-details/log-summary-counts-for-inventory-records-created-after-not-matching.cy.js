@@ -243,7 +243,7 @@ describe('Data Import', () => {
         FileDetails.checkItemsQuantityInSummaryTable(3, '0');
 
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InstanceRecordView.verifyIsInstanceOpened(firstInstanceTitle);
+        InstanceRecordView.verifyInstanceIsOpened(firstInstanceTitle);
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(marcFileName);
         FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);

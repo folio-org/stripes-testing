@@ -116,6 +116,13 @@ export default {
           }).click(),
         );
       }
+      if (patronNoticePolicy.action.includes('Lost item fee(s)')) {
+        const option = Math.random() < 0.5 ? 'longTermRadioButton' : 'shortTermRadioButton';
+        cy.get(`input[data-testid="${option}"] + span + label`).then((elements) => {
+          elements[index].click();
+          cy.wait(1000);
+        });
+      }
     }
   },
 

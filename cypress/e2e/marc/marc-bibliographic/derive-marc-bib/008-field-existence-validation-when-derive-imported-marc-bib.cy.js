@@ -150,6 +150,8 @@ describe('MARC', () => {
             cy.wait(500);
           });
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.checkContentByTag('245', `$a ${testData.tag245Value}`);

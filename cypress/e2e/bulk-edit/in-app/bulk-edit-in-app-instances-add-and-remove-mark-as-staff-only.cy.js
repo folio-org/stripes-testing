@@ -246,7 +246,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifySuccessBanner(1);
         BulkEditSearchPane.verifyChangedResults(folioItem.instanceId);
         BulkEditSearchPane.verifyReasonForError(
-          'Instance is controlled by MARC record, these fields are blocked and can not be updated:',
+          'Bulk edit of instance notes is not supported for MARC Instances.',
         );
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();

@@ -111,6 +111,8 @@ describe('MARC', () => {
               linkingTagAndValue.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
 
@@ -142,11 +144,14 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag010, testData.subfieldPrefix);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(4, testData.errorMessage);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(4, testData.errorMessage);
           QuickMarcEditor.pressCancel();
-          QuickMarcEditor.closeWithoutSavingInEditConformation();
           MarcAuthorities.checkDetailViewIncludesText(
             `${testData.subfieldPrefix} ${testData.tag010content}`,
           );

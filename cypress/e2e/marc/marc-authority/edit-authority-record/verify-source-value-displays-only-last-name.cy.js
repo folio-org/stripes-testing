@@ -61,7 +61,7 @@ describe('MARC', () => {
             JobProfiles.waitLoadingList();
             JobProfiles.search(testData.marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(testData.marcFile.fileName);
+            Logs.waitFileIsImported(testData.marcFile.fileName);
             Logs.checkStatusOfJobProfile('Completed');
             Logs.openFileDetails(testData.marcFile.fileName);
             Logs.getCreatedItemsID(0).then((link) => {
@@ -118,6 +118,8 @@ describe('MARC', () => {
         QuickMarcEditor.updateExistingField('100', '$a New Content');
 
         // Step 7: Click on the "Save & close" button
+        QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1500);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkCallout(testData.calloutMessage);
         MarcAuthority.waitLoading();

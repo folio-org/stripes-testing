@@ -100,7 +100,7 @@ describe('Data Import', () => {
         Permissions.uiInventorySingleRecordImport.gui,
         Permissions.uiInventoryViewCreateEditInstances.gui,
         Permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
@@ -186,6 +186,8 @@ describe('Data Import', () => {
         InventoryEditMarcRecord.editField('$a Louisiana $2 fast', '$a Louisiana $2 fast $5 amb');
         InventoryEditMarcRecord.addField('920', 'This should be a protected field', 28);
         InventoryEditMarcRecord.saveAndClose();
+        cy.wait(1500);
+        InventoryEditMarcRecord.saveAndClose();
         InventoryEditMarcRecord.confirmDeletingField();
         InventoryInstance.waitInstanceRecordViewOpened(instanceTitle);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
@@ -207,7 +209,6 @@ describe('Data Import', () => {
               [uuid[0], uuid[1], instanceHrid],
             );
           });
-          InventoryViewSource.close();
 
           // export instance
           cy.visit(TopMenu.inventoryPath);

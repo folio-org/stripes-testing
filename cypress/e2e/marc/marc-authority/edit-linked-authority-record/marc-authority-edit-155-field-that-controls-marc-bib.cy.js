@@ -91,6 +91,8 @@ describe('MARC', () => {
             testData.tag655,
           );
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
 
           cy.createTempUser([
             Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,

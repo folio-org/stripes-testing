@@ -9,18 +9,17 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 let user;
 const emptyFile = `emptyFile${getRandomPostfix()}.csv`;
 
-describe('Data export', () => {
+describe('Data Export', () => {
   describe('Authority records export', () => {
     beforeEach('create test data', () => {
-      cy.createTempUser([
-        permissions.dataExportAll.gui,
-        permissions.dataExportEnableModule.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password);
-        cy.visit(TopMenu.dataExportPath);
-        FileManager.createFile(`cypress/fixtures/${emptyFile}`);
-      });
+      cy.createTempUser([permissions.dataExportUploadExportDownloadFileViewLogs.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password);
+          cy.visit(TopMenu.dataExportPath);
+          FileManager.createFile(`cypress/fixtures/${emptyFile}`);
+        },
+      );
     });
 
     after('delete test data', () => {

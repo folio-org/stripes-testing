@@ -42,21 +42,21 @@ describe('MARC', () => {
 
         const createdRecordIDs = [];
         const bib610InitialFieldValues = [
-          19,
+          18,
           testData.tag610,
           '2',
           '0',
           '$a C374706 Radio Vaticana $v Congresses. $t "Vatican" $u test',
         ];
         const bib610UnlinkedFieldValues = [
-          19,
+          18,
           testData.tag610,
           '2',
           '0',
           '$a C374706 Radio "Vaticana". $b Hrvatski program $v Congresses. $u test $0 http://id.loc.gov/authorities/names/n93094742',
         ];
         const bib610LinkedFieldValues = [
-          19,
+          18,
           testData.tag610,
           '2',
           '0',
@@ -124,6 +124,8 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag610);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib610LinkedFieldValues);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyInstanceSubject(
               0,
@@ -156,6 +158,8 @@ describe('MARC', () => {
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib610UnlinkedFieldValues);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib610UnlinkedFieldValues[0]);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);

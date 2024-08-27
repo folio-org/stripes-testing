@@ -33,28 +33,29 @@ describe('Data Import', () => {
     const calloutMessage = `The action profile "${actionProfile.name}" was successfully updated`;
 
     before('create user', () => {
+      cy.getAdminToken();
+      NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile).then(
+        (mappingProfileResponse) => {
+          NewActionProfile.createActionProfileViaApi(
+            actionProfile,
+            mappingProfileResponse.body.id,
+          ).then((actionProfileResponse) => {
+            actionProfile.id = actionProfileResponse.body.id;
+
+            NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
+              jobProfile.profileName,
+              actionProfileResponse.body.id,
+            );
+          });
+        },
+      );
+
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,
         });
-
-        NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile).then(
-          (mappingProfileResponse) => {
-            NewActionProfile.createActionProfileViaApi(
-              actionProfile,
-              mappingProfileResponse.body.id,
-            ).then((actionProfileResponse) => {
-              actionProfile.id = actionProfileResponse.body.id;
-
-              NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
-                jobProfile.profileName,
-                actionProfileResponse.body.id,
-              );
-            });
-          },
-        );
       });
     });
 
