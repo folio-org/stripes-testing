@@ -209,7 +209,6 @@ describe('Data Import', () => {
               [uuid[0], uuid[1], instanceHrid],
             );
           });
-          InventoryViewSource.close();
 
           // export instance
           cy.visit(TopMenu.inventoryPath);

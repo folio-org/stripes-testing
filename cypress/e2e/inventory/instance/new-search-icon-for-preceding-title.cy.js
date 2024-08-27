@@ -49,7 +49,7 @@ describe('Inventory', () => {
       'C496125 Check new search icon for Preceding title (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InstanceRecordView.waitLoading();
         InstanceRecordView.verifyInstanceRecordViewOpened();

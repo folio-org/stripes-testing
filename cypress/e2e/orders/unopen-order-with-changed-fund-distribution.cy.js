@@ -123,7 +123,7 @@ describe('orders: Unopen order', () => {
                             ],
                             acquisitionMethod: params.body.acquisitionMethods[0].id,
                             physical: {
-                              createInventory: 'Instance, Holding, Item',
+                              createInventory: 'Instance, Holding',
                               materialType: mtypes.body.id,
                               materialSupplier: responseOrganizations,
                               volumes: [],
@@ -201,7 +201,7 @@ describe('orders: Unopen order', () => {
 
   it(
     'C375106 Unopen order with changed Fund distribution when related paid invoice exists (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeftBroken'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
