@@ -1,7 +1,7 @@
 import Tenant from '../tenant';
 import { adminUsernames } from '../dictionary/affiliations';
 
-Cypress.Commands.add('getToken', (username, password) => {
+Cypress.Commands.add('getToken', (username, password, isCentral = false) => {
   let pathToSet = 'bl-users/login-with-expiry';
   if (!Cypress.env('rtrAuth')) {
     pathToSet = 'bl-users/login';
@@ -12,6 +12,7 @@ Cypress.Commands.add('getToken', (username, password) => {
       path: 'authn/login',
       body: { username, password },
       isDefaultSearchParamsRequired: false,
+      isCentral,
     }).then(() => {
       //   // cy.wait(5000);
       //   // cy.okapiRequest({
@@ -57,7 +58,8 @@ Cypress.Commands.add('setUserPassword', (userCredentials) => {
 });
 
 Cypress.Commands.add('getAdminToken', () => {
-  cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+  if (Cypress.env('ecsEnabled') && Cypress.env('eureka')) cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'), true);
+  else cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 });
 
 Cypress.Commands.add('getCollegeAdminToken', () => {
