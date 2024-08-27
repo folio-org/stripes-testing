@@ -33,7 +33,6 @@ describe('Consortium manager', () => {
     describe('Manage local Departments', () => {
       before('Create test data', () => {
         cy.getAdminToken();
-        cy.resetTenant();
         cy.createTempUser([
           Permissions.consortiaSettingsConsortiumManagerEdit.gui,
           Permissions.departmentsAll.gui,
@@ -81,7 +80,6 @@ describe('Consortium manager', () => {
           );
           SelectMembers.saveAndClose();
           SelectMembers.selectAllMembers();
-
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
           ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.newDepartment);
           ConsortiaControlledVocabularyPaneset.clickSave();

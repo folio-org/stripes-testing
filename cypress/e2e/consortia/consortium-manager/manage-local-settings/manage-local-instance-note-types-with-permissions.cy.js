@@ -18,13 +18,13 @@ import { getTestEntityValue } from '../../../../support/utils/stringTools';
 
 const testData = {
   newInstanceNoteType: {
-    name: getTestEntityValue('C410862_new'),
+    name: getTestEntityValue('C410916_new'),
   },
   editInstanceNoteType: {
-    name: getTestEntityValue('C410862_edit'),
+    name: getTestEntityValue('C410916_edit'),
   },
   tempInstanceNoteType: {
-    name: getTestEntityValue('C410862'),
+    name: getTestEntityValue('C410916'),
   },
 };
 
