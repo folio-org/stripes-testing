@@ -97,7 +97,7 @@ Cypress.Commands.add('addCapabilitySetsToNewUserApi', (userId, capabilitySetIds)
   });
 });
 
-Cypress.Commands.add('addRolesToNewUserApi', (userId, roleIds) => {
+Cypress.Commands.add('addRolesToNewUserApi', (userId, roleIds, ignoreErrors = false) => {
   cy.okapiRequest({
     method: 'POST',
     path: 'roles/users',
@@ -106,6 +106,7 @@ Cypress.Commands.add('addRolesToNewUserApi', (userId, roleIds) => {
       roleIds: [...roleIds],
     },
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   });
 });
 
