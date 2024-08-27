@@ -188,7 +188,6 @@ describe('Data Import', () => {
         Permissions.inventoryAll.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-        Permissions.dataExportEnableSettings.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         user = userProperties;

@@ -125,10 +125,10 @@ describe('Data Import', () => {
       name: `C356791 autotest mapping profile.${getRandomPostfix()}`,
       holdingsTransformation: EXPORT_TRANSFORMATION_NAMES.HOLDINGS_HRID,
       holdingsMarcField: '901',
-      subfieldForHoldings: '$h',
+      subfieldForHoldings: 'h',
       itemTransformation: EXPORT_TRANSFORMATION_NAMES.ITEM_HRID,
       itemMarcField: '902',
-      subfieldForItem: '$i',
+      subfieldForItem: 'i',
     };
     const collectionOfProfilesForUpdate = [
       {
@@ -244,7 +244,6 @@ describe('Data Import', () => {
         Permissions.uiInventoryViewCreateEditInstances.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
         Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-        Permissions.dataExportEnableSettings.gui,
       ]).then((userProperties) => {
         user = userProperties;
 

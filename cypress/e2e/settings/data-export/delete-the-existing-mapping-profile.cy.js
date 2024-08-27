@@ -38,10 +38,10 @@ describe('Data Export', () => {
           name: `autoTestMappingProf.${getRandomPostfix()}`,
           holdingsTransformation: EXPORT_TRANSFORMATION_NAMES.HOLDINGS_HRID,
           holdingsMarcField: '901',
-          subfieldForHoldings: '$a',
+          subfieldForHoldings: 'a',
           itemTransformation: EXPORT_TRANSFORMATION_NAMES.ITEM_HRID,
           itemMarcField: '902',
-          subfieldForItem: '$a',
+          subfieldForItem: 'a',
         };
         ExportFieldMappingProfiles.createMappingProfile(testProfile);
         ExportFieldMappingProfiles.deleteMappingProfile(testProfile.name);

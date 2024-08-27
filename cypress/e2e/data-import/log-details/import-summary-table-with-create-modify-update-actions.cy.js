@@ -299,7 +299,6 @@ describe('Data Import', () => {
         Permissions.inventoryAll.gui,
         Permissions.uiInventoryViewCreateEditInstances.gui,
         Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-        Permissions.dataExportEnableSettings.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         user = userProperties;
