@@ -199,7 +199,7 @@ export default {
   },
 
   renewAllLoans() {
-    cy.get('#clickable-list-column- input[type=checkbox]').click();
+    cy.get('input[name=check-all]').click();
     cy.do(Button(buttonLabels.renew).click());
   },
   confirmRenewalsSuccess() {
