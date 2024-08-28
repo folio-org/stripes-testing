@@ -141,7 +141,7 @@ describe('MARC', () => {
             'Record cannot be saved. An 852 is required.',
             calloutTypes.error,
           );
-          QuickMarcEditor.closeWithoutSavingAfterChange();
+          QuickMarcEditor.pressCancel();
           HoldingsRecordView.viewSource();
           InventoryViewSource.contains(QuickMarcEditor.getSourceContent(initialTagContent));
         });
