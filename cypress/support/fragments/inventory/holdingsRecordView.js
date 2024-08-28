@@ -153,6 +153,11 @@ export default {
       .find(HTML(including(note)))
       .exists(),
   ),
+  checkExactContentInAdministrativeNote: (note) => cy.expect(
+    MultiColumnList({ id: 'administrative-note-list' })
+      .find(MultiColumnListCell({ content: note }))
+      .exists(),
+  ),
   checkHoldingsStatement: (statement) => cy.expect(
     MultiColumnList({ id: 'list-holdingsStatement' })
       .find(HTML(including(statement)))
