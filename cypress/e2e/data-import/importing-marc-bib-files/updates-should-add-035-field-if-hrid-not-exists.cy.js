@@ -39,12 +39,21 @@ describe('Data Import', () => {
     let user = null;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     // unique file names
-    const firstMarcFileNameForCreate = `C358998 firstCreateAutotestFile${getRandomPostfix()}.mrc`;
-    const firstMarcFileNameForUpdate = `C358998 firstUpdateAutotestFile${getRandomPostfix()}.mrc`;
-    const firstFileNameAfterUpload = `C358998 firstFileNameAfterUpload${getRandomPostfix()}.mrc`;
-    const secondMarcFileNameForCreate = `C358998 secondCreateAutotestFile${getRandomPostfix()}.mrc`;
-    const secondMarcFileNameForUpdate = `C358998 secondUpdateAutotestFile${getRandomPostfix()}.mrc`;
-    const secondFileNameAfterUpload = `C358998 secondFileNameAfterUpload${getRandomPostfix()}.mrc`;
+    const marcFileNameForCreate = `C358998 createAutotestFile${getRandomPostfix()}.mrc`;
+    const marcFileNameForUpdate = `C358998 updateAutotestFile${getRandomPostfix()}.mrc`;
+    const fileNameAfterUpload = `C358998 fileNameAfterUpload${getRandomPostfix()}.mrc`;
+    const itemQuantity = '8';
+    const arrayOf999Fields = [];
+    const fieldsContent = [
+      { rowNumber: 0, content: '(LTSCA)303845' },
+      { rowNumber: 1, content: '(LTSCA)2300089' },
+      { rowNumber: 2, content: '(NhCcYBP)yb1104243' },
+      { rowNumber: 3, content: '289717' },
+      { rowNumber: 4, content: '(OCoLC)1144093654' },
+      { rowNumber: 5, content: '(OCoLC)1201684651' },
+      { rowNumber: 6, content: '(OCoLC)1195818788' },
+      { rowNumber: 7, content: '(OCoLC)991553174' },
+    ];
 
     const mappingProfile = {
       name: `C358998 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`,
@@ -88,161 +97,36 @@ describe('Data Import', () => {
         Permissions.remoteStorageView.gui,
       ]).then((userProperties) => {
         user = userProperties;
-      });
-    });
 
-    beforeEach('Login', () => {
-      cy.login(user.username, user.password);
+        cy.login(user.username, user.password);
+      });
     });
 
     after('Delete user', () => {
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${marcFileNameForUpdate}`);
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
       });
     });
 
     it(
-      'C358998 Data Import Updates should add 035 field from 001/003, if HRID already exists (folijet)',
-      { tags: ['criticalPathFlaky', 'folijet'] },
+      "C543840 Data Import Updates should add 035 field from 001/003, if it's not HRID (folijet)",
+      { tags: ['criticalPath', 'folijet'] },
       () => {
-        cy.visit(TopMenu.dataImportPath);
-        DataImport.verifyUploadState();
-        // upload the first .mrc file
-        DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(jobProfileToRun);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(firstMarcFileNameForCreate);
-        Logs.checkJobStatus(firstMarcFileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(firstMarcFileNameForCreate);
-        [
-          FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.instance,
-        ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
-        });
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-        FileDetails.checkInstanceQuantityInSummaryTable('1');
-
-        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          const instanceHrId = initialInstanceHrId;
-
-          InstanceRecordView.viewSource();
-          // changing the first file
-          InventoryViewSource.extructDataFrom999Field().then((uuid) => {
-            // change file using uuid for 999 field
-            DataImport.editMarcFile(
-              'marcFileForC358998ForUpdate_1.mrc',
-              firstMarcFileNameForUpdate,
-              ['instanceUuid', 'srsUuid', '303845'],
-              [uuid[0], uuid[1], instanceHrId],
-            );
-          });
-          // create mapping profile
-          cy.visit(SettingsMenu.mappingProfilePath);
-          FieldMappingProfiles.openNewMappingProfileForm();
-          NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-          NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.instanceStatusTerm);
-          NewFieldMappingProfile.addStatisticalCode(mappingProfile.statisticalCode, 8);
-          NewFieldMappingProfile.save();
-          FieldMappingProfileView.closeViewMode(mappingProfile.name);
-          FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
-
-          // create action profile
-          cy.visit(SettingsMenu.actionProfilePath);
-          ActionProfiles.create(actionProfile, mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(actionProfile.name);
-
-          // create match profile
-          cy.visit(SettingsMenu.matchProfilePath);
-          MatchProfiles.createMatchProfileWithExistingPart(matchProfile);
-          MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
-
-          // create job profile for update
-          cy.visit(SettingsMenu.jobProfilePath);
-          JobProfiles.createJobProfileWithLinkingProfiles(
-            jobProfile,
-            actionProfile.name,
-            matchProfile.profileName,
-          );
-          JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-
-          // upload a marc file for updating already created first instance
-          cy.visit(TopMenu.dataImportPath);
-          DataImport.verifyUploadState();
-          DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
-          JobProfiles.waitFileIsUploaded();
-          JobProfiles.search(jobProfile.profileName);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(firstFileNameAfterUpload);
-          Logs.checkJobStatus(firstFileNameAfterUpload, JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(firstFileNameAfterUpload);
-          FileDetails.checkStatusInColumn(
-            RECORD_STATUSES.UPDATED,
-            FileDetails.columnNameInResultList.srsMarc,
-          );
-          FileDetails.checkStatusInColumn(
-            RECORD_STATUSES.UPDATED,
-            FileDetails.columnNameInResultList.instance,
-          );
-          FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
-          FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
-          // open the first Instance in the Inventory and check 001, 003, 035 fields
-          FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
-          InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatusTerm);
-          InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
-          InstanceRecordView.viewSource();
-          InventoryViewSource.contains('001\t');
-          InventoryViewSource.contains(instanceHrId);
-          InventoryViewSource.notContains('003\t');
-          InventoryViewSource.contains('035\t');
-          InventoryViewSource.contains('(LTSCA)303845');
-
-          cy.getAdminToken().then(() => {
-            SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
-            SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
-            SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
-            SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-            cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrId}"` }).then(
-              (instance) => {
-                InventoryInstance.deleteInstanceViaApi(instance.id);
-              },
-            );
-          });
-          // delete created files in fixtures
-          FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
-          FileManager.deleteFile(`cypress/fixtures/${secondMarcFileNameForUpdate}`);
-        });
-      },
-    );
-
-    it(
-      'C358998 Data Import Updates should add 035 field from 001/003, if it is not HRID (folijet)',
-      { tags: ['criticalPathFlaky', 'folijet'] },
-      () => {
-        const itemQuantity = '8';
-        const arrayOf999Fields = [];
-        const fieldsContent = [
-          { rowNumber: 0, content: '(LTSCA)303845' },
-          { rowNumber: 1, content: '(LTSCA)2300089' },
-          { rowNumber: 2, content: '(NhCcYBP)yb1104243' },
-          { rowNumber: 3, content: '289717' },
-          { rowNumber: 4, content: '(OCoLC)1144093654' },
-          { rowNumber: 5, content: '(OCoLC)1201684651' },
-          { rowNumber: 6, content: '(OCoLC)1195818788' },
-          { rowNumber: 7, content: '(OCoLC)991553174' },
-        ];
-
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
-        DataImport.uploadFile('marcFileForC358998ForCreate_2.mrc', secondMarcFileNameForCreate);
+        DataImport.uploadFile('marcBibFileForC543840_1.mrc', marcFileNameForCreate);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(secondMarcFileNameForCreate);
-        Logs.checkJobStatus(secondMarcFileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(secondMarcFileNameForCreate);
+        Logs.waitFileIsImported(marcFileNameForCreate);
+        Logs.checkJobStatus(marcFileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(marcFileNameForCreate);
         cy.wrap(fieldsContent).each((row) => {
           cy.wait(1000);
           FileDetails.checkStatusInColumn(
@@ -264,7 +148,7 @@ describe('Data Import', () => {
             cy.wait(8000);
             cy.visit(TopMenu.dataImportPath);
             DataImport.waitLoading();
-            Logs.openFileDetails(secondMarcFileNameForCreate);
+            Logs.openFileDetails(marcFileNameForCreate);
             FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, row.rowNumber);
             cy.wait(8000);
             InventoryInstance.viewSource();
@@ -276,8 +160,8 @@ describe('Data Import', () => {
           .then(() => {
             // change file using uuid for 999 field
             DataImport.editMarcFile(
-              'marcFileForC358998ForUpdate_2.mrc',
-              secondMarcFileNameForUpdate,
+              'marcBibFileForC543840_2.mrc',
+              marcFileNameForUpdate,
               [
                 'firstInstanceUuid',
                 'firstSrsUuid',
@@ -332,13 +216,13 @@ describe('Data Import', () => {
         // upload a marc file for updating already created instances
         cy.visit(TopMenu.dataImportPath);
         DataImport.waitLoading();
-        DataImport.uploadFile(secondMarcFileNameForUpdate, secondFileNameAfterUpload);
+        DataImport.uploadFile(marcFileNameForUpdate, fileNameAfterUpload);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(secondFileNameAfterUpload);
-        Logs.checkJobStatus(secondFileNameAfterUpload, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(secondFileNameAfterUpload);
+        Logs.waitFileIsImported(fileNameAfterUpload);
+        Logs.checkJobStatus(fileNameAfterUpload, JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(fileNameAfterUpload);
         cy.wrap(fieldsContent).each((row) => {
           cy.wait(1000);
           FileDetails.checkStatusInColumn(
@@ -360,7 +244,7 @@ describe('Data Import', () => {
           // need to wait until page will be opened in loop
           cy.wait(8000);
           cy.visit(TopMenu.dataImportPath);
-          Logs.openFileDetails(secondFileNameAfterUpload);
+          Logs.openFileDetails(fileNameAfterUpload);
           FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED, element.rowNumber);
           cy.wait(8000);
           InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatusTerm);
@@ -376,16 +260,6 @@ describe('Data Import', () => {
             InventoryViewSource.contains(element.content);
           });
         });
-
-        cy.getAdminToken().then(() => {
-          SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
-          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
-          SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
-          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-        });
-        // delete created files in fixtures
-        FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
-        FileManager.deleteFile(`cypress/fixtures/${secondMarcFileNameForUpdate}`);
       },
     );
   });
