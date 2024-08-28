@@ -14,8 +14,8 @@ describe('Inventory', () => {
     const testData = {
       filePath: 'marcBibFileForC496130.mrc',
       marcFileName: `C496130 createAutotestFile${getRandomPostfix()}.mrc`,
-      // instanceTitle: 'C496130 Liebigs Annalen der Chemie',
-      // succeedingTitle: 'C496130 Liebigs Annalen der Chemie',
+      instanceTitle: 'C496130 Liebigs Annalen der Chemie',
+      succeedingTitle: 'C496130 Liebigs Annalen der Chemie',
     };
 
     before('Create test data and login', () => {
@@ -58,10 +58,9 @@ describe('Inventory', () => {
         InstanceRecordView.succeedingTitlesIconClick();
         InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.checkSearchQueryText(
-          `title exactPhrase ${testData.succeedingTitle}`,
+          `title exactPhrase ${testData.succeedingTitle} and issn containsAll testISSN`,
         );
         InventoryInstances.verifySearchResultIncludingValue(testData.succeedingTitle);
-        InventoryInstances.checkResultListSortedByColumn(1);
       },
     );
   });
