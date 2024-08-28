@@ -76,7 +76,7 @@ export default {
   },
 
   switchActiveAffiliation(currentTenantName, newTenantName) {
-    cy.wait(8000);
+    cy.wait(10000);
     cy.expect(myProfileButton.find(HTML({ text: including(currentTenantName) })).exists());
     cy.do([myProfileButton.click(), switchActiveAffiliationButton.click()]);
     cy.wait(2000);
