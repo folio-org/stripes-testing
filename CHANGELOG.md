@@ -4,6 +4,7 @@
 
 - Updated Call Number search option labels. Refs FAT-13489.
 - Update `<MultiSelection>` interactor. Refs STCOM-1304.
+- Change the labels of the Classification and Call number sections in Inventory browse options. Refs FAT-16040.
 
 ## [4.7.0](https://github.com/folio-org/stripes-testing/tree/v4.7.0) (2024-03-12)
 
