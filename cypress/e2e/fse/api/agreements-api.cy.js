@@ -8,7 +8,7 @@ describe('fse-agreements', () => {
 
   it(
     `TC195097 - Get agreement with active status for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'agreements'] },
+    { tags: ['sanity', 'fse', 'api', 'agreements', 'loc'] },
     () => {
       cy.getAgreementsByStatus('active').then((response) => {
         cy.expect(response.status).to.eq(200);

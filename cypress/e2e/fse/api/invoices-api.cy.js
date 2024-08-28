@@ -8,7 +8,7 @@ describe('fse-invoices', () => {
 
   it(
     `TC195319 - Get invoice by status for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'invoices'] },
+    { tags: ['sanity', 'fse', 'api', 'invoices', 'loc'] },
     () => {
       cy.getInvoiceByStatus('Paid').then((response) => {
         cy.expect(response.status).to.eq(200);
