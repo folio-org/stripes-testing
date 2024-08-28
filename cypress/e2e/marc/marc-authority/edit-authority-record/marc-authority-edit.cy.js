@@ -1107,7 +1107,7 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(6, testData.errorMultiple1XX);
           QuickMarcEditor.checkErrorMessage(14, testData.errorMultiple1XX);
-          //QuickMarcEditor.checkErrorMessage(14, testData.errorFieldNonRepitable);
+          // QuickMarcEditor.checkErrorMessage(14, testData.errorFieldNonRepitable);
           MarcAuthority.changeTag(6, '025');
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
