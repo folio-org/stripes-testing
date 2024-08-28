@@ -70,7 +70,9 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(0, ldrCharacterLength);
+          QuickMarcEditor.verifyAfterDerivedMarcBibSave();
+          InventoryInstance.editMarcBibliographicRecord();
+          QuickMarcEditor.verifyLDRPositionsDefaultValues('records[0].content.ELvl', 'u', false);
         },
       );
     });

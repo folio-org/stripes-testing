@@ -28,7 +28,7 @@ describe('MARC', () => {
           tag: '100',
           rowIndex: 14,
         },
-        errorMultiple1XX: 'Record cannot be saved. Cannot have multiple 1XXs',
+        errorMultiple1XX: 'Field 1XX is non-repeatable and required.',
       };
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const propertyName = 'authority';
@@ -91,7 +91,7 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           MarcAuthority.clicksaveAndCloseButton();
-          MarcAuthority.checkRemoved1XXTag();
+          QuickMarcEditor.checkCallout('Field 1XX is non-repeatable and required.');
           QuickMarcEditor.undoDelete();
           MarcAuthority.changeTag(testData.authority.rowIndex, testData.authority.tag);
           QuickMarcEditor.checkContentByTag(
@@ -105,7 +105,7 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkErrorMessage(14, testData.errorMultiple1XX);
           QuickMarcEditor.checkErrorMessage(15, testData.errorMultiple1XX);
-          QuickMarcEditor.closeWithoutSavingAfterChange();
+          QuickMarcEditor.pressCancel();
           MarcAuthorities.selectTitle(testData.authority.title);
           MarcAuthority.contains(testData.authority.title);
         },
@@ -1036,6 +1036,8 @@ describe('MARC', () => {
           tag: '100',
           rowIndex: 14,
         },
+        errorMultiple1XX: 'Field 1XX is non-repeatable and required.',
+        errorFieldNonRepitable: 'Field is non-repeatable.',
       };
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const propertyName = 'authority';
@@ -1103,10 +1105,17 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
-          MarcAuthority.changeTag(6, '040');
+          QuickMarcEditor.checkErrorMessage(6, testData.errorMultiple1XX);
+          QuickMarcEditor.checkErrorMessage(14, testData.errorMultiple1XX);
+          //QuickMarcEditor.checkErrorMessage(14, testData.errorFieldNonRepitable);
+          MarcAuthority.changeTag(6, '025');
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyConfirmModal();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.clickRestoreDeletedField();
+          QuickMarcEditor.checkDeleteModalClosed();
+          QuickMarcEditor.checkContent('$a Q215410 $2 wikidata $1 http://www.wikidata.org/entity/Q215410', 5);
           QuickMarcEditor.checkButtonsEnabled();
         },
       );
