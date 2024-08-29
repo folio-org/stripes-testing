@@ -66,6 +66,11 @@ describe('bulk-edit', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
 
+      cy.getAdminToken();
+      InventoryInstances.createHoldingsNoteTypeViaApi(newNoteType).then((noteId) => {
+        newNoteTypeId = noteId;
+      });
+
       cy.createTempUser([permissions.bulkEditEdit.gui, permissions.inventoryAll.gui]).then(
         (userProperties) => {
           user = userProperties;
@@ -102,10 +107,6 @@ describe('bulk-edit', () => {
                   ],
                 });
               });
-
-            InventoryInstances.createHoldingsNoteTypeViaApi(newNoteType).then((noteId) => {
-              newNoteTypeId = noteId;
-            });
 
             cy.login(user.username, user.password, {
               path: TopMenu.bulkEditPath,

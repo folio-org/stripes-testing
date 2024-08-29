@@ -104,7 +104,6 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
-        Permissions.enableStaffSuppressFacet.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
 
@@ -231,7 +230,6 @@ describe('Data Import', () => {
         Logs.checkJobStatus(nameForUpdateCreateMarcFile, JOB_STATUS_NAMES.COMPLETED);
 
         cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.selectYesfilterStaffSuppress();
         InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.openHoldingView();
