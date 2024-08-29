@@ -95,10 +95,12 @@ export default {
 
   enableTLRViaApi() {
     this.updateTLRSettingViaApi({ titleLevelRequestsFeatureEnabled: true });
+    cy.wait(3000);
   },
 
   disableTLRViaApi() {
     this.updateTLRSettingViaApi({ titleLevelRequestsFeatureEnabled: false });
+    cy.wait(3000);
   },
 
   updateTLRSettingViaApi(newSettings) {
