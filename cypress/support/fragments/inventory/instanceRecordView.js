@@ -263,6 +263,7 @@ export default {
 
   verifyInstanceHridValue: (hrid) => cy.expect(instanceHridKeyValue.has({ value: hrid })),
   verifyPrecedingTitle: (title) => {
+    cy.wait(1500);
     cy.get('#precedingTitles [class*="mclCell-"]:nth-child(1)').eq(0).should('include.text', title);
   },
   verifyPrecedingTitleSearchIcon: (title) => {

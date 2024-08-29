@@ -24,6 +24,7 @@ export const MultiColumnListRow = HTML.extend('multi column list row')
     indexRow: (el) => el.parentElement.getAttribute('data-row-index'),
     ariaRowIndex: (el) => +el.getAttribute('aria-rowindex'),
     innerHTML: (el) => el.innerHTML,
+    ariaLabel: (el) => el.getAttribute('aria-label'),
   });
 
 export const ListRow = HTML.extend('list row')
