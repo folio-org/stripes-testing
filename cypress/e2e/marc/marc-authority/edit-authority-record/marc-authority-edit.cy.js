@@ -1115,7 +1115,10 @@ describe('MARC', () => {
           QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkDeleteModalClosed();
-          QuickMarcEditor.checkContent('$a Q215410 $2 wikidata $1 http://www.wikidata.org/entity/Q215410', 5);
+          QuickMarcEditor.checkContent(
+            '$a Q215410 $2 wikidata $1 http://www.wikidata.org/entity/Q215410',
+            5,
+          );
           QuickMarcEditor.checkButtonsEnabled();
         },
       );
