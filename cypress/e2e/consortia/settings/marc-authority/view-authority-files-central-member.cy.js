@@ -8,23 +8,23 @@ import getRandomPostfix, {
 } from '../../../../support/utils/stringTools';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import ConsortiumManagerApp from '../../../../support/fragments/consortium-manager/consortiumManagerApp';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Settings', () => {
-      const testData = {
-        name: `Local source C430207 ${getRandomPostfix()}`,
-        prefix: getRandomLetters(7),
-        startsWith: `1${randomFourDigitNumber()}`,
-        isActive: true,
-        baseURL: '',
-      };
+      describe('Consortia', () => {
+        const testData = {
+          name: `Local source C430207 ${getRandomPostfix()}`,
+          prefix: getRandomLetters(7),
+          startsWith: `1${randomFourDigitNumber()}`,
+          isActive: true,
+          baseURL: '',
+        };
 
-      beforeEach('Create user, login', () => {
-        cy.getAdminToken();
-        cy.createTempUser([Permissions.uiSettingsViewAuthorityFiles.gui]).then((userProperties) => {
-          testData.user = userProperties;
-          cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+        before('Create users, login', () => {
+          cy.resetTenant();
+          cy.getAdminToken();
 
           cy.createAuthoritySourceFileUsingAPI(
             testData.prefix,
@@ -35,47 +35,88 @@ describe('MARC', () => {
             testData.sourceFileId = sourceId;
           });
 
-          cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(testData.user.userId, [
-            Permissions.uiSettingsViewAuthorityFiles.gui,
-          ]);
-
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.settingsAuthorityFilesPath,
-            waiter: ManageAuthorityFiles.waitContentLoading,
-          }).then(() => {
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-          });
+          cy.createTempUser([Permissions.uiSettingsViewAuthorityFiles.gui]).then(
+            (userPropertiesA) => {
+              testData.userA = userPropertiesA;
+              cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui]).then(
+                (userPropertiesB) => {
+                  testData.userB = userPropertiesB;
+                  cy.assignAffiliationToUser(Affiliations.College, testData.userA.userId);
+                  cy.assignAffiliationToUser(Affiliations.College, testData.userB.userId);
+                  cy.setTenant(Affiliations.College);
+                  cy.assignPermissionsToExistingUser(testData.userA.userId, [
+                    Permissions.uiSettingsViewAuthorityFiles.gui,
+                  ]);
+                  cy.assignPermissionsToExistingUser(testData.userB.userId, [
+                    Permissions.uiSettingsViewAuthorityFiles.gui,
+                    Permissions.uiSettingsManageAuthorityFiles.gui,
+                  ]);
+                },
+              );
+            },
+          );
         });
+
+        after('Delete data, users', () => {
+          cy.resetTenant();
+          cy.getAdminToken();
+          Users.deleteViaApi(testData.userA.userId);
+          Users.deleteViaApi(testData.userB.userId);
+          cy.deleteAuthoritySourceFileViaAPI(testData.sourceFileId);
+        });
+
+        it(
+          'C430207 View "Manage authority files" pane in "Settings >> MARC authority" with view permissions in Central and Member tenants (spitfire)',
+          { tags: ['criticalPathECS', 'spitfire'] },
+          () => {
+            cy.login(testData.userA.username, testData.userA.password, {
+              path: TopMenu.settingsAuthorityFilesPath,
+              waiter: ManageAuthorityFiles.waitContentLoading,
+            }).then(() => {
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+              ManageAuthorityFiles.checkAuthorityFilesTableExists();
+              ManageAuthorityFiles.verifyTableHeaders();
+              ManageAuthorityFiles.checkActiveTooltipButtonShown();
+              ManageAuthorityFiles.checkNewButtonEnabled(false);
+              ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
+              ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
+
+              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+              cy.visit(TopMenu.settingsAuthorityFilesPath);
+              ManageAuthorityFiles.waitContentLoading();
+              ManageAuthorityFiles.checkAuthorityFilesTableExists();
+              ManageAuthorityFiles.verifyTableHeaders();
+              ManageAuthorityFiles.checkActiveTooltipButtonShown();
+              ManageAuthorityFiles.checkNewButtonEnabled(false);
+              ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
+              ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
+            });
+          },
+        );
+
+        it(
+          'C430209 View "Manage authority files" pane in "Settings >> MARC authority" with CRUD permissions in Member tenant and no permissions in Central tenant (spitfire)',
+          { tags: ['criticalPathECS', 'spitfire'] },
+          () => {
+            cy.login(testData.userB.username, testData.userB.password).then(() => {
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+
+              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+              cy.visit(TopMenu.settingsAuthorityFilesPath);
+              ManageAuthorityFiles.waitContentLoading();
+              ManageAuthorityFiles.checkAuthorityFilesTableExists();
+              ManageAuthorityFiles.verifyTableHeaders();
+              ManageAuthorityFiles.checkActiveTooltipButtonShown();
+              ManageAuthorityFiles.checkNewButtonEnabled(false);
+              ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
+              ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
+
+              ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+              ConsortiumManagerApp.verifyChooseSettingsIsDisplayed();
+            });
+          },
+        );
       });
-
-      afterEach('Delete data, user', () => {
-        cy.resetTenant();
-        cy.getAdminToken();
-        Users.deleteViaApi(testData.user.userId);
-        cy.deleteAuthoritySourceFileViaAPI(testData.sourceFileId);
-      });
-
-      it(
-        'C430207 View "Manage authority files" pane in "Settings >> MARC authority" with view permissions in Central and Member tenants (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire'] },
-        () => {
-          ManageAuthorityFiles.checkAuthorityFilesTableExists();
-          ManageAuthorityFiles.verifyTableHeaders();
-          ManageAuthorityFiles.checkNewButtonEnabled(false);
-          ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
-          ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
-
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(TopMenu.settingsAuthorityFilesPath);
-          ManageAuthorityFiles.waitContentLoading();
-          ManageAuthorityFiles.checkAuthorityFilesTableExists();
-          ManageAuthorityFiles.verifyTableHeaders();
-          ManageAuthorityFiles.checkNewButtonEnabled(false);
-          ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
-          ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
-        },
-      );
     });
   });
 });
