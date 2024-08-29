@@ -8,6 +8,7 @@ import {
   Modal,
   MultiColumnListCell,
   MultiColumnListRow,
+  MultiSelect,
   Pane,
   RadioButton,
   TextArea,
@@ -318,6 +319,11 @@ export default {
     cy.do(filterPane.find(Checkbox(name)).click());
   },
 
+  selectRecordTypeFilter(type) {
+    cy.do(MultiSelect().choose(type));
+    cy.wait(1000);
+  },
+
   verifyCheckboxChecked(name) {
     cy.expect(filterPane.find(Checkbox(name)).has({ checked: true }));
   },
@@ -410,20 +416,16 @@ export default {
       });
   },
 
-  verifyListsFilteredByRecordType: (filters) => {
+  verifyListsFilteredByRecordType: (filter) => {
     cy.wait(500);
-    const cells = [];
     cy.get('div[class^="mclRowContainer--"]')
       .find('[data-row-index]')
       .each(($row) => {
         cy.get('[class*="mclCell-"]:nth-child(2)', { withinSubject: $row })
           .invoke('text')
           .then((cellValue) => {
-            cells.push(cellValue);
+            cy.expect(cellValue).to.equal(filter);
           });
-      })
-      .then(() => {
-        cy.expect(ArrayUtils.compareArrays(cells, filters)).to.equal(true);
       });
   },
 
