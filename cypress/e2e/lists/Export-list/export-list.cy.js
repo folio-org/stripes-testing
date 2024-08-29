@@ -74,7 +74,7 @@ describe('lists', () => {
       Lists.buildQuery();
       Lists.queryBuilderActions();
       Lists.actionButton();
-      cy.contains('Export list (CSV)').should('be.disabled');
+      cy.contains('Export all columns (CSV)').should('be.disabled');
     });
 
     it('C411812 Export list: Refresh is in progress', { tags: ['smoke', 'corsair'] }, () => {
@@ -90,7 +90,7 @@ describe('lists', () => {
       Lists.queryBuilderActions();
       cy.wait(1000);
       Lists.actionButton();
-      cy.contains('Export list (CSV)').should('be.disabled');
+      cy.contains('Export all columns (CSV)').should('be.disabled');
       cy.wait(3000);
       cy.contains('View updated list').click();
     });
@@ -134,7 +134,7 @@ describe('lists', () => {
         Lists.actionButton();
         cy.contains('Edit list').click();
         Lists.actionButton();
-        cy.contains('Export list (CSV)').should('be.disabled');
+        cy.contains('Export all columns (CSV)').should('be.disabled');
       },
     );
 
@@ -152,7 +152,7 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.saveList();
         Lists.actionButton();
-        cy.contains('Export list (CSV)').should('be.disabled');
+        cy.contains('Export all columns (CSV)').should('be.disabled');
         cy.wait(3000);
       },
     );
@@ -171,7 +171,7 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.buildQuery();
         cy.get('#field-option-0').click();
-        cy.contains('User - First name').click();
+        cy.contains('User — Last name, first name').click();
         cy.get('[data-testid="operator-option-0"]').select('==');
         cy.get('[data-testid="input-value-0"]').type('ABCD');
         cy.get('button:contains("Test query")').click();
@@ -182,7 +182,7 @@ describe('lists', () => {
         Lists.actionButton();
         cy.contains('Edit list').click();
         Lists.actionButton();
-        cy.contains('Export list (CSV)').should('be.visible');
+        cy.contains('Export all columns (CSV)').should('be.visible');
         cy.wait(3000);
       },
     );
