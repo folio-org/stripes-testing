@@ -21,3 +21,12 @@ Cypress.Commands.add('updateConfigForTenantById', (configId, body) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('getApplicationIdsForTenantApi', (tenantName) => {
+  cy.okapiRequest({
+    path: `entitlements/${tenantName}/applications`,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body.applicationDescriptors.map((descriptor) => descriptor.id);
+  });
+});
