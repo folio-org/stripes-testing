@@ -521,9 +521,9 @@ export default {
     else cy.expect(MultiColumnListCell({ content: cellContent }).absent());
   },
 
-  verifySearchResultIncludingValue: ((value) => {
+  verifySearchResultIncludingValue: (value) => {
     cy.expect(MultiColumnListCell({ content: including(value) }).exists());
-  }),
+  },
 
   verifyContentNotExistInSearchResult: (cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).absent()),
 

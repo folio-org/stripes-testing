@@ -205,7 +205,10 @@ describe('MARC', () => {
           MarcAuthority.checkRemovedTag(9);
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(9, 'Tag must contain three characters and can only accept numbers 0-9.');
+          QuickMarcEditor.checkErrorMessage(
+            9,
+            'Tag must contain three characters and can only accept numbers 0-9.',
+          );
         },
       );
 
