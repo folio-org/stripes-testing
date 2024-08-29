@@ -287,6 +287,12 @@ export default {
       .find('button[ariaLabel="search"]')
       .should('not.exist');
   },
+  verifySucceedingTitleSearchIconAbsent() {
+    cy.get('#succeedingTitles [class*="mclCell-"]:nth-child(1)')
+      .eq(0)
+      .find('button[ariaLabel="search"]')
+      .should('not.exist');
+  },
   verifySucceedingTitleSearchIcon: (title) => {
     cy.expect(
       succeedingTitles
