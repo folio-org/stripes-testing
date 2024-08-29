@@ -1,25 +1,26 @@
 import {
-  MultiColumnListCell,
-  MultiColumnListRow,
-  Section,
+  Accordion,
+  Button,
+  HTML,
   including,
   KeyValue,
-  PaneHeader,
-  Pane,
-  HTML,
-  MultiColumnList,
   Link,
-  Button,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Pane,
+  PaneHeader,
+  Section,
 } from '../../../../interactors';
-import InvoiceEditForm from './invoiceEditForm';
-import InvoiceLineEditForm from './invoiceLineEditForm';
-import InvoiceLineDetails from './invoiceLineDetails';
-import ApproveInvoiceModal from './modal/approveInvoiceModal';
-import PayInvoiceModal from './modal/payInvoiceModal';
-import CancelInvoiceModal from './modal/cancelInvoiceModal';
-import SelectOrderLinesModal from './modal/selectOrderLinesModal';
-import InvoiceStates from './invoiceStates';
 import interactorsTools from '../../utils/interactorsTools';
+import InvoiceEditForm from './invoiceEditForm';
+import InvoiceLineDetails from './invoiceLineDetails';
+import InvoiceLineEditForm from './invoiceLineEditForm';
+import InvoiceStates from './invoiceStates';
+import ApproveInvoiceModal from './modal/approveInvoiceModal';
+import CancelInvoiceModal from './modal/cancelInvoiceModal';
+import PayInvoiceModal from './modal/payInvoiceModal';
+import SelectOrderLinesModal from './modal/selectOrderLinesModal';
 
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 
@@ -334,5 +335,10 @@ export default {
   },
   verifyWarningMessage(message) {
     cy.expect(HTML(including(message)).exists());
+  },
+
+  verifyCurrency(currency) {
+    cy.do(Accordion({ id: 'extendedInformation' }).clickHeader());
+    cy.expect(KeyValue('Currency').has({ value: currency }));
   },
 };
