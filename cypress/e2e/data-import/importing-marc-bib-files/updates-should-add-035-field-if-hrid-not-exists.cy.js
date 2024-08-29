@@ -39,9 +39,9 @@ describe('Data Import', () => {
     let user = null;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     // unique file names
-    const marcFileNameForCreate = `C358998 createAutotestFile${getRandomPostfix()}.mrc`;
-    const marcFileNameForUpdate = `C358998 updateAutotestFile${getRandomPostfix()}.mrc`;
-    const fileNameAfterUpload = `C358998 fileNameAfterUpload${getRandomPostfix()}.mrc`;
+    const marcFileNameForCreate = `C543840 createAutotestFile${getRandomPostfix()}.mrc`;
+    const marcFileNameForUpdate = `C543840 updateAutotestFile${getRandomPostfix()}.mrc`;
+    const fileNameAfterUpload = `C543840 fileNameAfterUpload${getRandomPostfix()}.mrc`;
     const itemQuantity = '8';
     const arrayOf999Fields = [];
     const fieldsContent = [
@@ -56,7 +56,7 @@ describe('Data Import', () => {
     ];
 
     const mappingProfile = {
-      name: `C358998 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`,
+      name: `C543840 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
       statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
@@ -65,12 +65,12 @@ describe('Data Import', () => {
 
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-      name: `C358998 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`,
+      name: `C543840 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`,
       action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
 
     const matchProfile = {
-      profileName: `C358998 Match 999$i to Instance UUID ${getRandomPostfix()}`,
+      profileName: `C543840 Match 999$i to Instance UUID ${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '999',
         in1: 'f',
@@ -83,7 +83,7 @@ describe('Data Import', () => {
     };
 
     const jobProfile = {
-      profileName: `C358998 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`,
+      profileName: `C543840 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 

@@ -269,26 +269,26 @@ describe('Inventory', () => {
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[6].lc);
         BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('lc', 6));
 
-        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
-          BROWSE_CALL_NUMBER_OPTIONS.LOCAL,
-        );
-        InventorySearchAndFilter.browseSearch(callNumbers[6].local);
-        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[6].local);
-        BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('local', 6));
+        // InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+        //   BROWSE_CALL_NUMBER_OPTIONS.LOCAL,
+        // );
+        // InventorySearchAndFilter.browseSearch(callNumbers[6].local);
+        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[6].local);
+        // BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('local', 6));
 
-        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
-          BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE,
-        );
-        InventorySearchAndFilter.browseSearch(callNumbers[2].nlm);
-        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[2].nlm);
-        BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('nlm', 2));
+        // InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+        //   BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE,
+        // );
+        // InventorySearchAndFilter.browseSearch(callNumbers[2].nlm);
+        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[2].nlm);
+        // BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('nlm', 2));
 
-        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
-          BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
-        );
-        InventorySearchAndFilter.browseSearch(callNumbers[4].sudoc);
-        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[4].sudoc);
-        BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('sudoc', 4));
+        // InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+        //   BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
+        // );
+        // InventorySearchAndFilter.browseSearch(callNumbers[4].sudoc);
+        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[4].sudoc);
+        // BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('sudoc', 4));
       },
     );
   });

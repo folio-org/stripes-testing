@@ -22,7 +22,7 @@ import InstanceStates from './instanceStates';
 const closeButton = Button({ icon: 'times' });
 const saveAndCloseButton = Button('Save & close');
 const rootSection = Section({ id: 'instance-form' });
-const classificationSection = Section({ label: 'Classification' });
+const classificationSection = Section({ label: 'Classification (instance)' });
 const addClassificationButton = classificationSection.find(Button('Add classification'));
 const actionsButton = Button('Actions');
 const identifierAccordion = Accordion('Identifier');
