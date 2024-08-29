@@ -328,24 +328,24 @@ describe('Request notice triggers', () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.itemRecaled);
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.itemRecaled);
 
-      const dublicate = true;
+      const duplicate = true;
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.recallRequest);
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.recallRequest);
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.awaitingPickUp, dublicate);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.awaitingPickUp, duplicate);
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.awaitingPickUp);
       NewNoticePolicyTemplate.createPatronNoticeTemplate(
         noticeTemplates.holdShelfBeforeOnce,
-        dublicate,
+        duplicate,
       );
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfBeforeOnce);
       NewNoticePolicyTemplate.createPatronNoticeTemplate(
         noticeTemplates.holdShelfBeforeRecurring,
-        dublicate,
+        duplicate,
       );
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfBeforeRecurring);
       NewNoticePolicyTemplate.createPatronNoticeTemplate(
         noticeTemplates.holdShelfUponAt,
-        dublicate,
+        duplicate,
       );
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfUponAt);
 
