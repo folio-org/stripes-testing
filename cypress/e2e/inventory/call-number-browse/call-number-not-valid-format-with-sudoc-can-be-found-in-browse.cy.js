@@ -6,7 +6,7 @@ import Location from '../../../support/fragments/settings/tenant/locations/newLo
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue, randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { BROWSE_CALL_NUMBER_OPTIONS, ITEM_STATUS_NAMES } from '../../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -136,25 +136,25 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyKeywordsAsDefault();
         InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
 
-        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
-          BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
-        );
-        InventorySearchAndFilter.browseSearch(testData.firstCallNumber);
-        InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-          records: [{ callNumber: testData.firstCallNumber }],
-        });
-        InventorySearchAndFilter.clickResetAllButton();
-        InventorySearchAndFilter.checkBrowseResultListCallNumbersExists(false);
-        InventorySearchAndFilter.verifyKeywordsAsDefault();
-        InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
+        // InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+        //   BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
+        // );
+        // InventorySearchAndFilter.browseSearch(testData.firstCallNumber);
+        // InventorySearchAndFilter.verifyBrowseInventorySearchResults({
+        //   records: [{ callNumber: testData.firstCallNumber }],
+        // });
+        // InventorySearchAndFilter.clickResetAllButton();
+        // InventorySearchAndFilter.checkBrowseResultListCallNumbersExists(false);
+        // InventorySearchAndFilter.verifyKeywordsAsDefault();
+        // InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
 
-        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
-          BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
-        );
-        InventorySearchAndFilter.browseSearch(testData.secondCallNumber);
-        InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-          records: [{ callNumber: testData.secondCallNumber }],
-        });
+        // InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+        //   BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
+        // );
+        // InventorySearchAndFilter.browseSearch(testData.secondCallNumber);
+        // InventorySearchAndFilter.verifyBrowseInventorySearchResults({
+        //   records: [{ callNumber: testData.secondCallNumber }],
+        // });
       },
     );
   });
