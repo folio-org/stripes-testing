@@ -66,6 +66,7 @@ describe('bulk-edit', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
 
+      cy.getAdminToken();
       InventoryInstances.createHoldingsNoteTypeViaApi(newNoteType).then((noteId) => {
         newNoteTypeId = noteId;
       });
