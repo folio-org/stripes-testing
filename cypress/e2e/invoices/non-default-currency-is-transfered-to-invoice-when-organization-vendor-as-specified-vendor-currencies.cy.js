@@ -21,6 +21,7 @@ describe('Invoices', () => {
       paymentMethod: 'Cash',
       exchangeRate: '1',
     },
+    vendorCurrencieUI: 'Algerian Dinar',
   };
 
   before('Create test data and login', () => {
@@ -49,7 +50,7 @@ describe('Invoices', () => {
   });
 
   it(
-    'C446069 Pay invoice related to order with acquisition unit (user is not included into such unit) (thunderjet)',
+    'C451451 Non-default currency is transferred to Invoice when Organization-vendor has specified "Vendor currencies" (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       const InvoiceEditForm = Invoices.openInvoiceEditForm({ createNew: true });
@@ -64,7 +65,7 @@ describe('Invoices', () => {
       InvoiceEditForm.checkCurrency('Algerian Dinar (DZD)');
       cy.wait(1000);
       InvoiceEditForm.clickSaveButton({ invoiceCreated: true, invoiceLineCreated: false });
-      InvoiceView.verifyCurrency('Algerian Dinar');
+      InvoiceView.verifyCurrency(testData.vendorCurrencieUI);
     },
   );
 });
