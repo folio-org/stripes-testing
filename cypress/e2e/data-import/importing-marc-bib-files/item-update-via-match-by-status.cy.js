@@ -137,7 +137,7 @@ describe('Data Import', () => {
       name: `C357552 Item HRID ${getRandomPostfix()}`,
     };
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
