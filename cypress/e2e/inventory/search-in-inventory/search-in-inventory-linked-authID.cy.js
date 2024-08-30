@@ -82,6 +82,8 @@ describe('Inventory', () => {
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(22, testData.tag700);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
@@ -97,6 +99,8 @@ describe('Inventory', () => {
           );
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(65, testData.tag700);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
