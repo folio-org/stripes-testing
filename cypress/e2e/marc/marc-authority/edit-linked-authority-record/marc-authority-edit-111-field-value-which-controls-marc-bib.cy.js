@@ -162,8 +162,7 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingTagName(testData.tag155, testData.tag109);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterSaving);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(8, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(testData.tag109, testData.tag111);
           QuickMarcEditor.checkButtonsDisabled();

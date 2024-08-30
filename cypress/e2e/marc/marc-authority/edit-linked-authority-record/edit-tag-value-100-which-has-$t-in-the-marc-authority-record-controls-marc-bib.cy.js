@@ -152,8 +152,8 @@ describe('MARC', () => {
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(7, testData.calloutMessage);
           QuickMarcEditor.updateExistingTagName(testData.tag155, testData.tag119);
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessageAfterDeleting1XXField);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(7, testData.calloutMessage);
           QuickMarcEditor.updateExistingTagName(testData.tag119, testData.tag100);
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.updateExistingField(testData.tag100, testData.tag100content);
