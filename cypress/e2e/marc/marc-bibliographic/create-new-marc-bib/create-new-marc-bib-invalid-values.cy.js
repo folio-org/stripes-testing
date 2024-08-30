@@ -27,7 +27,7 @@ describe('MARC', () => {
         },
         error06and07Filed: 'Record cannot be saved. Please enter a valid Leader 06 and Leader 07. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html',
         error07Filed: 'Record cannot be saved. Please enter a valid Leader 07. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html',
-        errorMultiple245MarcTags: 'Record cannot be saved with more than one field 245.',
+        errorMultipleTags: 'Field is non-repeatable.',
       };
       const field008DropdownsOptionsSets = [
         { name: INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST, option: 'm - Multiple dates' },
@@ -101,7 +101,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingTagName(testData.tags.tag245, testData.tags.tag246);
 
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyNo245TagCallout();
+          QuickMarcEditor.checkCallout('Field 245 is required.');
 
           QuickMarcEditor.updateExistingTagName(testData.tags.tag246, testData.tags.tag245);
           QuickMarcEditor.updateExistingField(
@@ -116,8 +116,7 @@ describe('MARC', () => {
           );
 
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(4, testData.errorMultiple245MarcTags);
-          QuickMarcEditor.checkErrorMessage(5, testData.errorMultiple245MarcTags);
+          QuickMarcEditor.checkErrorMessage(5, testData.errorMultipleTags);
           InventoryInstance.verifyNewQuickMarcEditorPaneExists();
         },
       );
