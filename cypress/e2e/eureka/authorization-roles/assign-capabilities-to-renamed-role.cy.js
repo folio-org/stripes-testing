@@ -76,7 +76,6 @@ describe('Eureka', () => {
       afterEach(() => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
-        cy.deleteCapabilitiesFromRoleApi(testData.roleId);
         cy.deleteAuthorizationRoleApi(testData.roleId);
       });
 
@@ -84,7 +83,6 @@ describe('Eureka', () => {
         'C431152 Assigning capabilities after role name edited (eureka)',
         { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
         () => {
-          cy.reload();
           AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
