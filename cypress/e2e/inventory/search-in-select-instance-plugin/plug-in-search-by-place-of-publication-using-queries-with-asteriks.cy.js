@@ -17,14 +17,14 @@ describe('Inventory', () => {
   describe('Search in "Select instance" plugin', () => {
     const testData = {
       searchOption: ['Place of publication', 'All', 'Query search'],
-      searchValue: ['Petrozavodsk', 'Петрозаводск'],
+      searchValue: ['*WA.', 'Seattle*', '*ttle, W*'],
       searchResult:
-        'C496184 "Kalevala" v kontekste regionalʹnoĭ i mirovoĭ kulʹtury : materialy Mezhdunarodnoĭ nauchnoĭ konferent͡sii, posvi͡ashchennoĭ 160-letii͡u polnogo izdanii͡a "Kalevaly" / redakt͡sionnai͡a kollegii͡a, I. I͡U. Vinokurova ... [and six others].',
+        'C496186 The Rock cycle [videorecording] : understanding the processes and products of an ever-changing earth / Terra Productions : producer, Blair Robbins ; scientific advisor, Robert L. Burk.',
     };
 
     const marcFile = {
-      marc: 'marcBibFileForC496184.mrc',
-      fileName: `testMarcFileC496184.${getRandomPostfix()}.mrc`,
+      marc: 'marcBibFileForC496186.mrc',
+      fileName: `testMarcFileC496186.${getRandomPostfix()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       propertyName: 'instance',
     };
@@ -93,7 +93,7 @@ describe('Inventory', () => {
     });
 
     it(
-      'C496184 Select Instance plugin | Search for Instance which has multiple records in "Place of publication" field (spitfire)',
+      'C496186 Select Instance plugin | Search for Instance by "Place of publication" field using queries with asterisk (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
