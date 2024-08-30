@@ -164,7 +164,7 @@ describe('MARC', () => {
             testData.tagsForChanging[1],
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(20,testData.errorMessageAfterChangingTag);
+          QuickMarcEditor.checkErrorMessage(20, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[1],
