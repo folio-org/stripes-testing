@@ -18,9 +18,7 @@ describe('MARC', () => {
         tag300Value: '$av.$b25 cm.',
       };
 
-      const calloutLDRMessage =
-        'Record cannot be saved. The Leader must contain 24 characters, including null spaces.';
-      const calloutTagMessage = 'Record cannot be saved. A MARC tag must contain three characters.';
+      const calloutTagMessage = 'Tag must contain three characters and can only accept numbers 0-9.';
 
       const marcFile = {
         marc: 'marcBibForC375177.mrc',
@@ -97,7 +95,7 @@ describe('MARC', () => {
 
           // #8 Click "Save & close" button.
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(0, calloutLDRMessage);
+          QuickMarcEditor.checkErrorMessage(5, calloutTagMessage);
 
           // #9 Input deleted value in "LDR" field.
           QuickMarcEditor.fillEmptyTextFieldOfField(
@@ -108,12 +106,14 @@ describe('MARC', () => {
 
           // #10 Click "Save & close" button.
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(6, calloutTagMessage);
+          QuickMarcEditor.checkErrorMessage(5, calloutTagMessage);
 
           // #11 Input original tag value for field updated in Step 5.
           QuickMarcEditor.updateExistingTagName('0', testData.tag022);
 
           // #12 Click "Save & close" button.
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkDeleteModal(1);
 
