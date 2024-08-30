@@ -68,6 +68,9 @@ export default {
   checkFiscalYearIsAbsent() {
     cy.do(infoFields.fiscalYear.absent());
   },
+  checkCurrency(currency) {
+    cy.expect(Button({ id: 'currency' }).has({ singleValue: currency }));
+  },
   selectVendorOnUi(vendorName) {
     cy.do([
       Button('Organization look-up').click(),
