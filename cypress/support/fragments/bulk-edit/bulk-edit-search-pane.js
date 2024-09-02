@@ -681,6 +681,10 @@ export default {
     });
   },
 
+  verifyCheckboxInActionsDropdownMenuChecked(name, isChecked = true) {
+    cy.expect(DropdownMenu().find(Checkbox(name)).has({ checked: isChecked }));
+  },
+
   uncheckShowColumnCheckbox(...names) {
     names.forEach((name) => {
       cy.get(`[name='${name}']`).then((element) => {
