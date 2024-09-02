@@ -863,3 +863,8 @@ export const HOLDING_NOTE_TYPES = {
   BINDING: 'Binding',
   PROVENANCE: 'Provenance',
 };
+
+export const AUTHORITY_FILE_SOURCES = {
+  LOCAL: 'Local',
+  FOLIO: 'FOLIO',
+};
