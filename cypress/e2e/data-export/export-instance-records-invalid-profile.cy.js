@@ -23,8 +23,7 @@ describe('Data Export', () => {
     beforeEach('create test data', () => {
       cy.createTempUser([
         permissions.inventoryAll.gui,
-        permissions.dataExportEnableSettings.gui,
-        permissions.dataExportEnableApp.gui,
+        permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((userProperties) => {
         user = userProperties;
         const instanceID = InventoryInstances.createInstanceViaApi(

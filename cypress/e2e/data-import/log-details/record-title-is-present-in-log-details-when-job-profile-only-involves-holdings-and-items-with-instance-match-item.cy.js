@@ -194,7 +194,6 @@ describe('Data Import', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
-        Permissions.dataExportEnableSettings.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((userProperties) => {
@@ -311,6 +310,7 @@ describe('Data Import', () => {
         InventorySearchAndFilter.searchInstanceByHRID(testData.instanceHrid);
         InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.selectResultCheckboxes(1);
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         InventorySearchAndFilter.saveUUIDs();
         // need to create a new file with instance UUID because tests are runing in multiple threads
         cy.intercept('/search/instances/ids**').as('getIds');

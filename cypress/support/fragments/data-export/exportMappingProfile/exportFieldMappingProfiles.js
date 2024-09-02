@@ -114,7 +114,7 @@ export default {
       searchButton.has({ disabled: true }),
     ]);
     cy.do(cy.get('[class^=mclEndOfListContainer--]').should('have.text', 'End of list'));
-    cy.wait(2000);
+    cy.wait(3000);
     this.verifyFieldMappingProfilesCount();
     this.verifyColumnTitles();
   },

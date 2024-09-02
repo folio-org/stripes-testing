@@ -172,7 +172,6 @@ describe('Data Import', () => {
         Permissions.inventoryAll.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
-        Permissions.dataExportEnableSettings.gui,
         Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((userProperties) => {
         user = userProperties;
@@ -222,6 +221,7 @@ describe('Data Import', () => {
         InventorySearchAndFilter.filterHoldingsByPermanentLocation(holdingsPermanentLocation);
         InventorySearchAndFilter.searchHoldingsByHRID(holdingsHrId);
         InventorySearchAndFilter.selectResultCheckboxes(1);
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         InventorySearchAndFilter.exportInstanceAsMarc();
         cy.intercept('/data-export/quick-export').as('getHrid');
         cy.wait('@getHrid', getLongDelay()).then((req) => {

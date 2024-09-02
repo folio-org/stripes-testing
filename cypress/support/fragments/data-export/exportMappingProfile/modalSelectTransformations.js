@@ -26,6 +26,10 @@ export default {
     cy.get('div[class^=modal-] input[name=searchValue]').clear().type(`${name}{enter}`);
   },
 
+  verifyValueInSearchField(searchValue) {
+    cy.expect(TextField({ name: 'searchValue' }).has({ value: searchValue }));
+  },
+
   selectTransformations: (marcField, subfield) => {
     cy.do([
       Checkbox({ ariaLabel: 'Select field' }).click(),
@@ -71,7 +75,10 @@ export default {
     cy.expect([
       Checkbox({ id: 'select-all-checkbox', checked: false }).exists(),
       MultiColumnListHeader('Field name').exists(),
-      MultiColumnListHeader('Transformation').exists(),
+      MultiColumnListHeader('Field').exists(),
+      MultiColumnListHeader('In.1').exists(),
+      MultiColumnListHeader('In.2').exists(),
+      MultiColumnListHeader('Subfield').exists(),
     ]);
   },
   verifySearchAndFilterPane() {
@@ -150,11 +157,34 @@ export default {
       `//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "subfield")]`,
     ).type(textfield4);
   },
-  fillInTransformationsFirstRowMarcTextField(textfield1, rowIndex = 0) {
+  fillInTransformationsTextfieldsByFieldName(fieldName, marcField, ind1, ind2, subfield) {
+    cy.do([
+      ModalTransformation.find(MultiColumnListRow({ innerHTML: including(fieldName) }))
+        .find(TextField({ name: including('marcField') }))
+        .fillIn(marcField),
+      ModalTransformation.find(MultiColumnListRow({ innerHTML: including(fieldName) }))
+        .find(TextField({ name: including('indicator1') }))
+        .fillIn(ind1),
+      ModalTransformation.find(MultiColumnListRow({ innerHTML: including(fieldName) }))
+        .find(TextField({ name: including('indicator2') }))
+        .fillIn(ind2),
+      ModalTransformation.find(MultiColumnListRow({ innerHTML: including(fieldName) }))
+        .find(TextField({ name: including('subfield') }))
+        .fillIn(subfield),
+    ]);
+  },
+  typeInTransformationsMarcTextField(textfield1, rowIndex = 0) {
+    cy.xpath(
+      `//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "marcField")]`,
+    ).type(textfield1);
+  },
+  removeValueFromTransformationsMarcTextField(rowIndex = 0) {
     cy.do(
       ModalTransformation.find(
         TextField({ name: `transformations[${rowIndex}].rawTransformation.marcField` }),
-      ).fillIn(textfield1),
+      )
+        .find(Button({ ariaLabel: 'Clear this field' }))
+        .click(),
     );
   },
   clickTransformationsSaveAndCloseButton() {
@@ -202,5 +232,16 @@ export default {
         TextField({ name: 'transformations[0].rawTransformation.subfield' }),
       ).has({ value: textfield4 }),
     ]);
+  },
+  verifyModalTransformationExists(isExist = true) {
+    if (isExist) cy.expect(ModalTransformation.exists());
+    cy.expect(ModalTransformation.absent());
+  },
+  verifyFieldSelectedForTransformationByName(fieldName, rowIndex = 0) {
+    cy.expect(
+      ModalTransformation.find(MultiColumnListRow({ ariaLabel: fieldName }))
+        .find(Checkbox({ name: `transformations[${rowIndex}].isSelected` }))
+        .has({ checked: true }),
+    );
   },
 };
