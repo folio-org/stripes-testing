@@ -40,7 +40,7 @@ describe('MARC', () => {
         rowIndex: 9,
       },
       errors: {
-        tagCharacterLength: 'Record cannot be saved. A MARC tag must contain three characters.',
+        tagCharacterLength: 'Tag must contain three characters and can only accept numbers 0-9.',
       },
     };
     const marcFile = {

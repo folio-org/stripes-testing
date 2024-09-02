@@ -79,7 +79,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField('', testData.tag001Content);
           QuickMarcEditor.updateTagNameToLockedTag(5, testData.tag001);
           QuickMarcEditor.checkFourthBoxEditable(5, false);
-
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.waitLoading();

@@ -11,6 +11,7 @@ import {
   TextField,
   including,
   matching,
+  or,
 } from '../../../../../interactors';
 import { DEFAULT_FOLIO_AUTHORITY_FILES, AUTHORITY_FILE_TEXT_FIELD_NAMES } from '../../../constants';
 
@@ -39,6 +40,7 @@ const tableHeaderTexts = [
 ];
 const editButton = Button({ icon: 'edit' });
 const deleteButton = Button({ icon: 'trash' });
+const tooltipButton = Button({ icon: 'info' });
 const successSaveCalloutText = (authorityFileName) => {
   return `The authority file ${authorityFileName} has been successfully created.`;
 };
@@ -512,5 +514,22 @@ export default {
         cy.deleteAuthoritySourceFileViaAPI(body.id, true);
       }
     });
+  },
+
+  checkAuthorityFilesTableNotEditable() {
+    cy.wait(2000);
+    cy.expect([
+      Form(including('Authority files')).find(editButton).absent(),
+      Form(including('Authority files')).find(deleteButton).absent(),
+    ]);
+  },
+
+  waitContentLoading() {
+    cy.expect([firstRow.exists(), newButton.has({ disabled: or(true, false) })]);
+    cy.wait(3000);
+  },
+
+  checkActiveTooltipButtonShown() {
+    cy.expect(MultiColumnListHeader(tableHeaderTexts[4]).find(tooltipButton).exists());
   },
 };

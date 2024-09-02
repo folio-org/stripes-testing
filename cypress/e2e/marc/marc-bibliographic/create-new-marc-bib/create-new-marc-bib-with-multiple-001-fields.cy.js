@@ -64,8 +64,6 @@ describe('MARC', () => {
           QuickMarcEditor.updateTagNameToLockedTag(5, testData.tags.tag001);
           QuickMarcEditor.checkFourthBoxEditable(5, false);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.getId().then((id) => {
             instanceId = id;

@@ -11,7 +11,7 @@ describe('fse-erm-usage - UI', () => {
 
   it(
     `TC195310 - verify that erm-usage module is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'erm-usage'] },
+    { tags: ['fse', 'ui', 'erm'] },
     () => {
       cy.visit(TopMenu.ermUsagePath);
       ErmUsage.waitLoading();
