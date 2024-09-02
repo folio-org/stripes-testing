@@ -47,6 +47,10 @@ export default {
     cy.expect(selectInstanceModal.find(MultiColumnList()).has({ rowCount: 1 }));
   },
 
+  selectTheFirstInstance() {
+    cy.do(selectInstanceModal.find(MultiColumnListRow({ index: 0 })).click());
+  },
+
   fillInSearchField(title) {
     cy.do([selectInstanceModal.find(searchField).fillIn(title)]);
   },
