@@ -288,7 +288,7 @@ describe('Finance: Transactions', () => {
           { key: 'Over encumbrance', value: '$11.00' },
           { key: 'Over expended', value: '$0.00' },
         ],
-        balance: { cash: '$130.00', available: '-$11.00' },
+        balance: { cash: '$130.00', available: '($11.00)' },
       });
       Funds.closeBudgetDetails();
       FinanceHelp.clickFiscalYearButton();
