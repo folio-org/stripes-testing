@@ -126,13 +126,13 @@ describe('Finance', () => {
           transferCreated: true,
         });
         BudgetDetails.checkBudgetDetails({
-          balance: { available: '-$40.00' },
+          balance: { available: '($40.00)' },
         });
 
         // Close Budget details by clicking "X" button
         BudgetDetails.closeBudgetDetails();
         FundDetails.checkFundDetails({
-          currentBudget: { name: budgets.second.name, allocated: '$100.00', available: '-$40.00' },
+          currentBudget: { name: budgets.second.name, allocated: '$100.00', available: '($40.00)' },
         });
       },
     );
@@ -163,13 +163,13 @@ describe('Finance', () => {
         FinanceHelper.searchByName(funds.second.name);
         Funds.selectFund(funds.second.name);
         FundDetails.checkFundDetails({
-          currentBudget: { name: budgets.second.name, allocated: '$100.00', available: '-$10.00' },
+          currentBudget: { name: budgets.second.name, allocated: '$100.00', available: '($10.00)' },
         });
 
         // Click on the record in "Current budget" accordion
         const BudgetDetails = FundDetails.openCurrentBudgetDetails();
         BudgetDetails.checkBudgetDetails({
-          balance: { available: '-$10.00' },
+          balance: { available: '($10.00)' },
         });
 
         // Click "Actions" button, Select "Transfer" option
@@ -185,13 +185,13 @@ describe('Finance', () => {
         // Click "Confirm" button
         AddTransferModal.clickConfirmButton({ confirmNegative: { confirm: true } });
         BudgetDetails.checkBudgetDetails({
-          balance: { available: '-$30.00' },
+          balance: { available: '($30.00)' },
         });
 
         // Close Budget details by clicking "X" button
         BudgetDetails.closeBudgetDetails();
         FundDetails.checkFundDetails({
-          currentBudget: { name: budgets.second.name, allocated: '$100.00', available: '-$30.00' },
+          currentBudget: { name: budgets.second.name, allocated: '$100.00', available: '($30.00)' },
         });
       },
     );
@@ -303,13 +303,13 @@ describe('Finance', () => {
         // Click "Confirm" button
         AddTransferModal.clickConfirmButton({ confirmNegative: { confirm: true } });
         BudgetDetails.checkBudgetDetails({
-          balance: { available: '-$40.00' },
+          balance: { available: '($40.00)' },
         });
 
         // Close Budget details by clicking "X" button
         BudgetDetails.closeBudgetDetails();
         FundDetails.checkFundDetails({
-          currentBudget: { name: budgets.second.name, allocated: '$0.00', available: '-$40.00' },
+          currentBudget: { name: budgets.second.name, allocated: '$0.00', available: '($40.00)' },
         });
       },
     );
