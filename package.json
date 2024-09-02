@@ -44,7 +44,7 @@
     "debug": "^4.0.1",
     "element-is-visible": "^1.0.0",
     "find-test-names": "^1.28.28",
-    "glob": "^11.0.0",
+    "glob": "^10.4.5",
     "moment": "^2.29.3"
   },
   "devDependencies": {
