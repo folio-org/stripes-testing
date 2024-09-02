@@ -36,12 +36,15 @@
     "@interactors/html": "^1.0.0-rc1.4",
     "@interactors/keyboard": "^1.0.0-rc1.5",
     "axe-core": "4.3.3",
+    "axios": "^1.7.7",
     "cypress": "12.0.0",
     "cypress-cloud": "^1.9.6",
     "cypress-testrail-simple": "^3.1.0",
     "date-fns": "^2.16.1",
     "debug": "^4.0.1",
     "element-is-visible": "^1.0.0",
+    "find-test-names": "^1.28.28",
+    "glob": "^11.0.0",
     "moment": "^2.29.3"
   },
   "devDependencies": {
