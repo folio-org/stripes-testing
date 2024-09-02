@@ -59,8 +59,8 @@ describe('orders: export', () => {
       },
     ],
   };
-  const integrationNameForFirstOrganization = `FirstIntegrationName${getRandomPostfix()}`;
-  const integrationNameForSecondOrganization = `SecondIntegrationName${getRandomPostfix()}`;
+  const integrationNameForFirstOrganization = `1_FirstIntegrationName${getRandomPostfix()}`;
+  const integrationNameForSecondOrganization = `1_SecondIntegrationName${getRandomPostfix()}`;
   const integartionDescription1 = 'Test Integation descripton1';
   const integartionDescription2 = 'Test Integation descripton2';
   const vendorEDICodeFor1Integration = getRandomPostfix();
