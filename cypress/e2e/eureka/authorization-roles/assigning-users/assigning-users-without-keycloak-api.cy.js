@@ -17,6 +17,7 @@ describe('Eureka', () => {
             },
           },
           roleName: `Role C451622 ${getRandomPostfix()}`,
+          noUsernameErrorMessage: 'User without username cannot be created in Keycloak',
         };
         const userA = { ...testData.userBody };
         const userB = { ...testData.userBody };
@@ -84,7 +85,7 @@ describe('Eureka', () => {
             });
             cy.addRolesToNewUserApi(testData.userBId, [testData.roleId], true).then((response) => {
               expect(response.status).to.eq(500);
-              expect(response.body.errors[0]).to.have.property('message');
+              expect(response.body.errors[0].message).to.include(testData.noUsernameErrorMessage);
             });
             cy.addRolesToNewUserApi(testData.userCId, [testData.roleId]).then((response) => {
               expect(response.status).to.eq(201);
