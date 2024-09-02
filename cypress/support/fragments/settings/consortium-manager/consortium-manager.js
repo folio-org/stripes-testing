@@ -1,13 +1,13 @@
 import {
   Button,
+  Dropdown,
+  HTML,
   Modal,
   NavListItem,
   Section,
   SelectionOption,
   TextField,
   including,
-  HTML,
-  Dropdown,
   or,
 } from '../../../../../interactors';
 
@@ -22,13 +22,13 @@ export default {
     cy.expect(Section({ id: 'app-settings-nav-pane' }).exists());
   },
 
-  varifyConsortiumManagerOnPage() {
+  verifyConsortiumManagerOnPage() {
     cy.expect(
       Section({ id: 'settings-nav-pane' }).find(NavListItem('Consortium manager')).exists(),
     );
   },
 
-  varifyConsortiumManagerIsAbsent() {
+  verifyConsortiumManagerIsAbsent() {
     cy.expect(
       Section({ id: 'settings-nav-pane' }).find(NavListItem('Consortium manager')).absent(),
     );
@@ -36,6 +36,20 @@ export default {
 
   selectMembership() {
     cy.do(NavListItem('Membership').click());
+  },
+
+  getIndexForTenantRow(tenantName) {
+    return cy
+      .get('div[class*=mclCell-]')
+      .contains(tenantName)
+      .then((element) => {
+        const rowNumberAttr = element[0]
+          .closest('div[data-row-index]')
+          .getAttribute('data-row-index');
+        const rowNumber = rowNumberAttr ? rowNumberAttr.split('-').pop() : null;
+
+        return cy.wrap(rowNumber);
+      });
   },
 
   editTenant(name) {
@@ -108,7 +122,9 @@ export default {
     cy.wait(8000);
     cy.do(myProfileButton.click());
     cy.expect(switchActiveAffiliationButton.exists());
+    cy.wait(1000);
     cy.do(myProfileButton.click());
+    cy.wait(1000);
   },
 
   checkCurrentTenantInTopMenu(tenantName, servicePointName = null) {

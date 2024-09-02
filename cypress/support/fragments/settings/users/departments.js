@@ -42,7 +42,7 @@ export default {
     });
   },
 
-  verifyDepartmentsInTheList({ name, code = '', actions = [] }) {
+  verifyDepartmentsExistInTheList({ name, code = '', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.expect([

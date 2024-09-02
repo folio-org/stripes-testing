@@ -97,14 +97,20 @@ describe('Orders', () => {
       Orders.updateOrderViaApi({ ...testData.order, workflowStatus: 'Pending' });
       Orders.deleteOrderViaApi(testData.order.id);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"id"=="${testData.sharedInstance.id}"`,
+      }).then((instance) => {
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
       NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
         location.institutionId,
         location.campusId,
         location.libraryId,
         location.id,
       );
-      cy.resetTenant();
-      InventoryInstance.deleteInstanceViaApi(testData.sharedInstance.id);
     });
 
     it(
@@ -115,7 +121,7 @@ describe('Orders', () => {
         Orders.selectFromResultsList(testData.order.poNumber);
         OrderLines.addPOLine();
         OrderLines.selectRandomInstanceInTitleLookUP(testData.sharedInstance.title, 0);
-        OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+        OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
         OrderLines.backToEditingOrder();
         Orders.openOrder();
         OrderLines.selectPOLInOrder();

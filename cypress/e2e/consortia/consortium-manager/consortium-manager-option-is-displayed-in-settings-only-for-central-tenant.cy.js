@@ -46,11 +46,11 @@ describe('Consortia', () => {
       'C386869 "Consortium manager" option is displayed in "Settings" only for Central Tenant (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet'] },
       () => {
-        ConsortiumManager.varifyConsortiumManagerOnPage();
+        ConsortiumManager.verifyConsortiumManagerOnPage();
         ConsortiumManager.switchActiveAffiliationExists();
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-        ConsortiumManager.varifyConsortiumManagerIsAbsent();
+        ConsortiumManager.verifyConsortiumManagerIsAbsent();
       },
     );
   });

@@ -126,12 +126,12 @@ describe('Consortium manager', () => {
           });
           cy.visit(SettingsMenu.departments);
 
-          Departments.verifyDepartmentsInTheList({
+          Departments.verifyDepartmentsExistInTheList({
             name: testData.centralSharedDepartment.payload.name,
             code: testData.centralSharedDepartment.payload.code,
           });
 
-          Departments.verifyDepartmentsInTheList({
+          Departments.verifyDepartmentsExistInTheList({
             name: testData.collegeLocalDepartment.name,
             code: testData.collegeLocalDepartment.code,
             actions: ['edit', 'trash'],
@@ -169,12 +169,12 @@ describe('Consortium manager', () => {
 
           cy.visit(SettingsMenu.departments);
 
-          Departments.verifyDepartmentsInTheList({
+          Departments.verifyDepartmentsExistInTheList({
             name: testData.centralSharedDepartment.payload.name,
             code: testData.centralSharedDepartment.payload.code,
           });
 
-          Departments.verifyDepartmentsInTheList({
+          Departments.verifyDepartmentsExistInTheList({
             name: testData.universityLocalDepartment.name,
             code: testData.universityLocalDepartment.code,
             actions: ['edit', 'trash'],

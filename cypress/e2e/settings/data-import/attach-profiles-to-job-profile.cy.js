@@ -101,6 +101,7 @@ describe('Data Import', () => {
         NewJobProfile.linkActionProfileForMatches(collectionOfActionProfiles[1].name, 2);
         NewJobProfile.linkActionProfileForNonMatches(collectionOfActionProfiles[2].name, 3);
         NewJobProfile.saveAndClose();
+        cy.wait(3000);
         JobProfileView.verifyLinkedProfiles(
           [
             collectionOfMatchProfiles[0].profileName,
