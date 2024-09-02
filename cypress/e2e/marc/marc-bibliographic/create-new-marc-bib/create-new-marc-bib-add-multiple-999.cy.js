@@ -55,8 +55,6 @@ describe('MARC', () => {
 
           // Click "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.getId().then((id) => {
             instanceId = id;
