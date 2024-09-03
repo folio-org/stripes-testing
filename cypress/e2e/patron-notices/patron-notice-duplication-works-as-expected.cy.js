@@ -9,7 +9,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 
-describe('Patron Notices', () => {
+describe('Patron notices', () => {
   let userData;
   let servicePointId;
   const testData = {};

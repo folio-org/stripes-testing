@@ -7,7 +7,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 
-describe('Patron Notices', () => {
+describe('Patron notices', () => {
   let userData;
   const newBodytext = 'New text';
   const noticeTemplate = NoticeTemplates.getDefaultTemplate();

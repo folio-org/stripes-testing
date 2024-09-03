@@ -4,30 +4,28 @@ import {
   NOTICE_POLICY_NAMES,
   OVERDUE_FINE_POLICY_NAMES,
   REQUEST_POLICY_NAMES,
-} from '../../../../support/constants';
-import { Permissions } from '../../../../support/dictionary';
-import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
-import LoanPolicy, {
-  defaultLoanPolicy,
-} from '../../../../support/fragments/circulation/loan-policy';
+} from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import LoanPolicy, { defaultLoanPolicy } from '../../support/fragments/circulation/loan-policy';
 import LostItemFeePolicy, {
   defaultLostItemFeePolicy,
-} from '../../../../support/fragments/circulation/lost-item-fee-policy';
+} from '../../support/fragments/circulation/lost-item-fee-policy';
 import OverdueFinePolicy, {
   defaultOverdueFinePolicy,
-} from '../../../../support/fragments/circulation/overdue-fine-policy';
+} from '../../support/fragments/circulation/overdue-fine-policy';
 import RequestPolicy, {
   defaultRequestPolicy,
-} from '../../../../support/fragments/circulation/request-policy';
+} from '../../support/fragments/circulation/request-policy';
 import NoticePolicy, {
   defaultNoticePolicy,
-} from '../../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
-import MaterialTypes from '../../../../support/fragments/settings/inventory/materialTypes';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import Users from '../../../../support/fragments/users/users';
+} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import Users from '../../support/fragments/users/users';
 
-describe('Circulation', () => {
-  describe('Rules', () => {
+describe('Patron notices', () => {
+  describe('Settings (Patron notices)', () => {
     const defaultMaterialType = MaterialTypes.getDefaultMaterialType();
 
     let addedCirculationRule;
@@ -157,7 +155,7 @@ describe('Circulation', () => {
     );
 
     it(
-      'C654: Test behavior for incomplete vs complete circulation rules (i.e., all policy types must be present; else error)',
+      'C654: Test behavior for incomplete vs complete circulation rules (i.e., all policy types must be present; else error) (vega)',
       { tags: ['extendedPath', 'vega'] },
       () => {
         CirculationRules.clearCirculationRules();

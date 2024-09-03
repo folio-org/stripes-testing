@@ -19,7 +19,7 @@ import {
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
-describe('Check In - Actions', () => {
+describe('Check in', () => {
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances({ itemsCount: 3 }),
     itemServicePoint1: ServicePoints.getDefaultServicePointWithPickUpLocation(),
