@@ -81,7 +81,7 @@ describe('Data Import', () => {
       profileName: `C375989 Test Order ${getRandomPostfix()}`,
     };
 
-    before('Login', () => {
+    before('Create user and login', () => {
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,

@@ -17,20 +17,19 @@ describe('Data Import', () => {
     const fileName = `C492 marcFileName${getRandomPostfix()}.mrc`;
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(
-        'oneMarcBib.mrc',
-        fileName,
-        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-      ).then((response) => {
-        instanceId = response[0].instance.id;
-      });
-
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        DataImport.uploadFileViaApi(
+          'oneMarcBib.mrc',
+          fileName,
+          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        ).then((response) => {
+          instanceId = response[0].instance.id;
+        });
 
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
