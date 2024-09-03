@@ -1,20 +1,26 @@
-import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
+import {
+  FULFILMENT_PREFERENCES,
+  ITEM_STATUS_NAMES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
+} from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import EditRequest from '../../support/fragments/requests/edit-request';
 import NewRequest from '../../support/fragments/requests/newRequest';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
+import SelectInstanceModal from '../../support/fragments/requests/selectInstanceModal';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 
-describe('Create Item or Title level request', () => {
+describe('Title Level Request', () => {
   let userData = {};
   const instanceData = {
     title: getTestEntityValue('Instance'),
@@ -73,8 +79,11 @@ describe('Create Item or Title level request', () => {
       permissions.uiRequestsAll.gui,
       permissions.uiRequestsEdit.gui,
       permissions.uiUsersView.gui,
+      permissions.inventoryAll.gui,
     ]).then((userProperties) => {
       userData = userProperties;
+      userData.patronGroup = userProperties.userGroup.group;
+      userData.fullName = `${userData.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
         userData.userId,
@@ -90,8 +99,8 @@ describe('Create Item or Title level request', () => {
       });
       TitleLevelRequests.enableTLRViaApi();
       cy.login(userData.username, userData.password, {
-        path: TopMenu.usersPath,
-        waiter: UsersSearchPane.waitLoading,
+        path: TopMenu.requestsPath,
+        waiter: Requests.waitLoading,
       });
     });
   });
@@ -117,22 +126,38 @@ describe('Create Item or Title level request', () => {
     );
   });
   it(
-    'C347888 Check that user can create Title level request from User app (use Actions) (vega) (Taas)',
+    'C353599 C353600 Place title level request from title look-up (vega)',
     { tags: ['extendedPath', 'vega'] },
     () => {
-      UsersSearchPane.searchByKeywords(userData.username);
-      UsersSearchPane.selectUserFromList(userData.username);
-      UsersCard.waitLoading();
-      UsersCard.startRequest();
-      NewRequest.waitLoadingNewRequestPage(true);
-      cy.wait(3000);
-      NewRequest.enterHridInfo(instanceData.instanceHRID);
+      NewRequest.openNewRequestPane();
+      NewRequest.waitLoadingNewRequestPage();
+      NewRequest.enableTitleLevelRequest();
+      NewRequest.openTitleLookUp();
+      SelectInstanceModal.waitLoading();
+      SelectInstanceModal.searchByTitle(instanceData.title);
+      SelectInstanceModal.selectTheFirstInstance();
+      NewRequest.enterRequesterBarcode(userData.barcode);
       NewRequest.verifyRequesterInformation(userData.username, userData.barcode);
       NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
-      NewRequest.verifyRequestInformation(REQUEST_TYPES.PAGE);
       NewRequest.choosePickupServicePoint(testData.userServicePoint.name);
       NewRequest.saveRequestAndClose();
       NewRequest.verifyRequestSuccessfullyCreated(userData.username);
+      RequestDetail.checkTitleInformation({
+        TLRs: '1',
+        title: instanceData.title,
+      });
+      RequestDetail.checkRequestInformation({
+        type: REQUEST_TYPES.PAGE,
+        status: EditRequest.requestStatuses.NOT_YET_FILLED,
+        level: REQUEST_LEVELS.TITLE,
+      });
+      RequestDetail.checkRequesterInformation({
+        lastName: userData.fullName,
+        barcode: userData.barcode,
+        group: userData.patronGroup,
+        preference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+        pickupSP: testData.userServicePoint.name,
+      });
     },
   );
 });
