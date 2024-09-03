@@ -269,9 +269,7 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
-        Permissions.enableStaffSuppressFacet.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
-        Permissions.dataExportEnableSettings.gui,
         Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
@@ -385,8 +383,6 @@ describe('Data Import', () => {
 
           // download .csv file
           cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.selectYesfilterStaffSuppress();
-          cy.wait(1500);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           InventorySearchAndFilter.saveUUIDs();
           // need to create a new file with instance UUID because tests are runing in multiple threads

@@ -28,7 +28,7 @@ describe('Data Export', () => {
       cy.createTempUser([
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
-        Permissions.dataExportEnableModule.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((createdUserProperties) => {
         user.userProperties = createdUserProperties;
 

@@ -281,7 +281,7 @@ describe('Finance: Transactions', () => {
           { key: 'Over encumbrance', value: '$10.00' },
           { key: 'Over expended', value: '$10.00' },
         ],
-        balance: { cash: '$90.00', available: '-$20.00' },
+        balance: { cash: '$90.00', available: '($20.00)' },
       });
     },
   );

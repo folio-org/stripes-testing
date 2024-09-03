@@ -550,19 +550,6 @@ export default {
     gui: 'Settings (Calendar): Can edit and reassign existing calendars',
   },
   // Data Export
-  dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
-  dataExportEnableModule: {
-    internal: 'module.data-export.enabled',
-    gui: 'Data export: all permissions',
-  },
-  dataExportEnableSettings: {
-    internal: 'ui-data-export.settings.enabled',
-    gui: 'Settings (Data export): display list of settings pages',
-  },
-  dataExportEnableApp: {
-    internal: 'ui-data-export.app.enabled',
-    gui: 'UI: Data export module is enabled',
-  },
   dataExportViewAddUpdateProfiles: {
     internal: 'ui-data-export.settings.edit',
     gui: 'Settings (Data export): Can view, add, update profiles',
@@ -1011,6 +998,10 @@ export default {
   uiSettingsModesOfIssuanceCreateEditDelete: {
     internal: 'ui-inventory.settings.modes-of-issuance',
     gui: 'Settings (Inventory): Create, edit, delete locally defined modes of issuance',
+  },
+  uiSettingsViewAuthorityFiles: {
+    internal: 'ui-marc-authorities.settings.authority-files.view',
+    gui: 'Settings (MARC authority): View authority files',
   },
   // Added the below permissions for custom label creation
 

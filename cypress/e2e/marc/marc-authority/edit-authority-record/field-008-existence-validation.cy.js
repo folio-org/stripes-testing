@@ -66,7 +66,7 @@ describe('MARC', () => {
         tag110Value: '$a DC Talk (Musical group).$t Jesus freaks.$l Afrikaans test',
         calloutMessage:
           'This record has successfully saved and is in process. Changes may not appear immediately.',
-        errorCalloutMessage: 'Record cannot be saved without 008 field',
+        errorCalloutMessage: 'Field 008 is required.',
         initial008EnteredValue: DateTools.getCurrentDateYYMMDD(),
       };
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;

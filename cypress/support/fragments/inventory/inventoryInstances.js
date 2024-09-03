@@ -1490,4 +1490,33 @@ export default {
       isDefaultSearchParamsRequired: false,
     });
   },
+
+  verifyRecordsMatchingViaApi() {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'source-storage/records/matching',
+      body: {
+        logicalOperator: 'AND',
+        filters: [
+          {
+            values: ['64758', '(OCoLC)64758'],
+            field: '035',
+            indicator1: '',
+            indicator2: '',
+            subfield: 'a',
+            matchType: 'EXACTLY_MATCHES',
+            qualifier: 'ENDS_WITH',
+            qualifierValue: '758',
+          },
+        ],
+        recordType: 'MARC_BIB',
+        limit: 1000,
+        offset: 0,
+        returnTotalRecordsCount: true,
+      },
+      isDefaultSearchParamsRequired: false,
+    })
+      .its('status')
+      .should('equal', 200);
+  },
 };
