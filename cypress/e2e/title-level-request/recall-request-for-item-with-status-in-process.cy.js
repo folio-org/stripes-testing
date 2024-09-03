@@ -75,7 +75,6 @@ describe('Title level request', () => {
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(userData.userId);
-    TitleLevelRequests.disableTLRViaApi();
   });
 
   it(
