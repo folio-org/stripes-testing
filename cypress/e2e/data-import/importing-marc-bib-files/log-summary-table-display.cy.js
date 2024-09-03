@@ -17,13 +17,14 @@ describe('Data Import', () => {
     let user;
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(filePathToUpload, fileName, jobProfileToRun).then((response) => {
-        instanceId = response[0].instance.id;
-      });
-
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
+        DataImport.uploadFileViaApi(filePathToUpload, fileName, jobProfileToRun).then(
+          (response) => {
+            instanceId = response[0].instance.id;
+          },
+        );
 
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
