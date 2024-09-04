@@ -65,17 +65,17 @@ describe('Data Import', () => {
       NewJobProfile.linkActionProfile(actionProfile);
       NewJobProfile.saveAndClose();
 
-      // upload a marc file for creating of the new instance, holding
-      DataImport.uploadFileViaApi(filePath, fileName, jobProfile.profileName).then((response) => {
-        instanceHrid = response[0].instance.hrid;
-      });
-
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        // upload a marc file for creating of the new instance, holding
+        DataImport.uploadFileViaApi(filePath, fileName, jobProfile.profileName).then((response) => {
+          instanceHrid = response[0].instance.hrid;
+        });
 
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,

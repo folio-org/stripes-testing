@@ -20,7 +20,7 @@ import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDe
 import UsersCard from '../../support/fragments/users/usersCard';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
-describe('Check In - Actions', () => {
+describe('Check in', () => {
   const userData = {};
   const patronGroup = {
     name: `groupCheckIn ${getRandomPostfix()}`,

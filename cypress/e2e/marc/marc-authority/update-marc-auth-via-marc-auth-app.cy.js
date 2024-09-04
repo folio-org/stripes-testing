@@ -27,12 +27,8 @@ describe('MARC', () => {
     };
 
     before('Create test data and login', () => {
-      cy.createTempUser([
-        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-        Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-      ]).then((createdUserProperties) => {
-        testData.userProperties = createdUserProperties;
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        testData.preconditionUserId = userProperties.userId;
 
         MarcAuthorities.getMarcAuthoritiesViaApi({
           limit: 100,
@@ -44,7 +40,6 @@ describe('MARC', () => {
             });
           }
         });
-        cy.getAdminToken();
         DataImport.uploadFileViaApi(
           testData.marcFile.marc,
           testData.marcFile.fileName,
@@ -52,6 +47,14 @@ describe('MARC', () => {
         ).then((response) => {
           testData.recordId = response[0].authority.id;
         });
+      });
+
+      cy.createTempUser([
+        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+        Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+        Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+      ]).then((createdUserProperties) => {
+        testData.userProperties = createdUserProperties;
 
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.marcAuthorities,
@@ -63,6 +66,7 @@ describe('MARC', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
+      Users.deleteViaApi(testData.preconditionUserId);
       MarcAuthority.deleteViaAPI(testData.recordId);
     });
 

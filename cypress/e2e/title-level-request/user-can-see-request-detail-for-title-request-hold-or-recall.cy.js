@@ -216,7 +216,6 @@ describe('Request Detail. TLR', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.disableTLRViaApi();
   });
 
   it(

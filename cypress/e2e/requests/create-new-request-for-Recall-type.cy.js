@@ -12,7 +12,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 
-describe('Request', () => {
+describe('Requests', () => {
   let userData = {};
   let requestId;
   let itemBarcode;

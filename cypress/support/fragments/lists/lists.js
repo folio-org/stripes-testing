@@ -242,7 +242,7 @@ export default {
 
   createViaApi(newList) {
     this.getTypesViaApi().then((response) => {
-      newList.entityTypeId = response.body.find(
+      newList.entityTypeId = response.body.entityTypes.find(
         (entityType) => entityType.label === newList.recordType,
       ).id;
       delete newList.recordType;
