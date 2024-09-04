@@ -16,17 +16,16 @@ describe('Data Import', () => {
     const fileName = `C423386 Default_file${getRandomPostfix()}.mrc`;
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(
-        filePathToUpload,
-        fileName,
-        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-      ).then((response) => {
-        instanceId = response[0].instance.id;
-      });
-
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
+        DataImport.uploadFileViaApi(
+          filePathToUpload,
+          fileName,
+          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        ).then((response) => {
+          instanceId = response[0].instance.id;
+        });
 
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,

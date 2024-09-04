@@ -653,11 +653,15 @@ export default {
       Button('Add line from POL').click(),
     ]);
     cy.expect(Modal('Select order lines').exists());
+    cy.wait(4000);
     cy.do([
       Modal('Select order lines')
         .find(SearchField({ id: searchInputId }))
         .fillIn(orderNumber),
       Modal('Select order lines').find(searchButton).click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
       Checkbox({ ariaLabel: `record ${rowNumber} checkbox` }).clickInput(),
       Button('Save').click(),
     ]);
@@ -974,14 +978,9 @@ export default {
     this.searchByNumber(invoiceNumber);
     this.selectInvoice(invoiceNumber);
   },
-  selectInvoice: (invoiceNumber, rowIndex = 0) => {
+  selectInvoice: (invoiceNumber) => {
     cy.wait(4000);
-    cy.do(
-      invoiceResultsPane
-        .find(MultiColumnListRow({ index: rowIndex }))
-        .find(Link(invoiceNumber))
-        .click(),
-    );
+    cy.do(invoiceResultsPane.find(Link(invoiceNumber)).click());
   },
 
   checkVendorCodeInInvoicePane: (vendorCode) => {
@@ -1112,7 +1111,11 @@ export default {
         .fillIn(organization.name),
       searchButton.click(),
     ]);
-    FinanceHelper.selectFromResultsList();
+    cy.do(
+      Modal('Select Organization')
+        .find(MultiColumnListRow({ index: 0 }))
+        .click(),
+    );
   },
 
   selectApprovalDateFilter: (dateFrom, dateTo) => {

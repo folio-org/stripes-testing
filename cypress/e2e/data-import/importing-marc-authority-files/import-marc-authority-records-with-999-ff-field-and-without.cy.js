@@ -38,6 +38,8 @@ describe('Data Import', () => {
       Users.deleteViaApi(user.userId);
     });
 
+    // Test is failing because of an Issue:
+    // https://issues.folio.org/browse/MODSOURMAN-1219
     it(
       'C359207 Checking the import to Create MARC Authority records, when incoming records do and do not have 999 ff field (folijet)',
       { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
