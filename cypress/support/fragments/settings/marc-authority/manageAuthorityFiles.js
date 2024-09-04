@@ -167,7 +167,7 @@ const getTargetRowWithFile = (authorityFileName) => {
 const defaultFolioAuthorityFiles = [
   {
     name: DEFAULT_FOLIO_AUTHORITY_FILES.ART_AND_ARCHITECTURE_THESAURUS,
-    prefix: 'aatg,aat',
+    prefix: or('aatg,aat', 'aat,aatg'),
     startsWith: '',
     baseUrl: 'http://vocab.getty.edu/aat/',
   },
