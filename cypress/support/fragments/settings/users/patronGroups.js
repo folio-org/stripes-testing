@@ -128,8 +128,8 @@ export default {
         searchParams,
         isDefaultSearchParamsRequired: false,
       })
-      .then((usergroups) => {
-        return usergroups[0].id;
+      .then((response) => {
+        return response.body.usergroups[0].id;
       });
   },
 
