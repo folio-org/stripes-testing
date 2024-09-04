@@ -1,7 +1,7 @@
-import UsersSettingsGeneral from '../../../support/fragments/settings/users/usersSettingsGeneral';
-import WaiveReasons from '../../../support/fragments/settings/users/waiveReasons';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import UsersSettingsGeneral from '../../../../support/fragments/settings/users/usersSettingsGeneral';
+import WaiveReasons from '../../../../support/fragments/settings/users/waiveReasons';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Fees&Fines', () => {
   describe('Settings Users (Fee/fine)', () => {
