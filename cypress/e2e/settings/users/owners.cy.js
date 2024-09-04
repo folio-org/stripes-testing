@@ -8,8 +8,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
 
-describe('ui-users-settings: Owners', () => {
-  describe('Owner creation', () => {
+describe('Fees&Fines', () => {
+  describe('Settings Users (Fee/fine)', () => {
     const servicePoints = [];
     const ownerNames = [];
 

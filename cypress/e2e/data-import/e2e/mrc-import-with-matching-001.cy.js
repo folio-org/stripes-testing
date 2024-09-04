@@ -100,7 +100,7 @@ describe('Data Import', () => {
     });
 
     it(
-      'C17044: MARC-MARC matching for 001 field (folijet)',
+      'C17044 MARC-MARC matching for 001 field (folijet)',
       { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
         DataImport.verifyUploadState();
