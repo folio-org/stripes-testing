@@ -53,6 +53,7 @@ describe('Invoices', () => {
       Invoices.approveInvoice();
       // check transactions after approve
       TopMenuNavigation.openAppFromDropdown('Finance');
+      Helper.selectFundsNavigation();
       Helper.searchByName(fund.name);
       Funds.selectFund(fund.name);
       Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
@@ -70,10 +71,6 @@ describe('Invoices', () => {
       Invoices.payInvoice();
       // check transactions after payment
       TopMenuNavigation.openAppFromDropdown('Finance');
-      Helper.searchByName(fund.name);
-      Funds.selectFund(fund.name);
-      Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
-      Funds.openTransactions();
       Funds.checkTransaction(
         1,
         transactionFactory.create('credit', valueInTransactionTable, fund.code, '', 'Invoice', ''),
