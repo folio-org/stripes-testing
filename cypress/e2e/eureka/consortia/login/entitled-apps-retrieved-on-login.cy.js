@@ -21,7 +21,7 @@ describe('Eureka', () => {
       before('Create users, data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        cy.getApplicationIdsForTenantApi(Affiliations.Consortia).then((appIds) => {
+        cy.getApplicationsForTenantApi(Affiliations.Consortia).then((appIds) => {
           testData.centralAppIds = appIds;
         });
         cy.createTempUser([]).then((createdUserProperties) => {
@@ -32,7 +32,7 @@ describe('Eureka', () => {
           // need to wait for user policy creation to finish
           cy.wait(10000);
           cy.setTenant(Affiliations.College);
-          cy.getApplicationIdsForTenantApi(Affiliations.Consortia).then((appIds) => {
+          cy.getApplicationsForTenantApi(Affiliations.Consortia).then((appIds) => {
             testData.collegeAppIds = appIds;
           });
           cy.assignCapabilitiesToExistingUser(testData.tempUser.userId, capabsToAssign, []);
