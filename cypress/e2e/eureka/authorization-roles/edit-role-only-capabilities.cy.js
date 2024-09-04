@@ -237,6 +237,7 @@ describe('Eureka', () => {
           cy.wait(2000);
           cy.intercept('PUT', `/roles/${testData.roleId}`).as('roleCall');
           cy.intercept('PUT', `/roles/${testData.roleId}/capability-sets`).as('capabilitySetsCall');
+          cy.intercept('PUT', `/roles/${testData.roleId}/capabilities`).as('capabilitiesCall');
           AuthorizationRoles.clickSaveButton();
 
           cy.wait('@roleCall').then((call) => {
@@ -247,6 +248,9 @@ describe('Eureka', () => {
           cy.wait('@capabilitySetsCall').then((call) => {
             expect(call.response.statusCode).to.eq(204);
             expect(call.request.body.capabilitySetIds).to.have.lengthOf(2);
+          });
+          cy.get('@capabilitiesCall.all').then((calls) => {
+            expect(calls).to.have.length(0);
           });
           AuthorizationRoles.checkCapabilitySetsAccordionCounter('2');
           AuthorizationRoles.checkCapabilitiesAccordionCounter('13');
