@@ -80,7 +80,7 @@ describe('Inventory', () => {
             });
           });
         });
-        
+
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
             cy.getAdminToken();

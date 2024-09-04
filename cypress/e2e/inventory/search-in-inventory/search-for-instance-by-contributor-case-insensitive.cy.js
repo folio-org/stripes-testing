@@ -90,7 +90,7 @@ describe('Inventory', () => {
               testData.instanceIDs.push(record[testData.marcFile.propertyName].id);
             });
           });
-          
+
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,

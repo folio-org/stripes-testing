@@ -26,8 +26,6 @@ describe('MARC', () => {
       };
       const calloutMarcTagWrongLength =
         'Tag must contain three characters and can only accept numbers 0-9.';
-      const calloutMultiple001MarcTags = 'Record cannot be saved. Can only have one MARC 001.';
-      const calloutInvalidMarcTag = 'Invalid MARC tag. Please try again.';
       const calloutMultiple245MarcTags = 'Field is non-repeatable.';
       const marcFile = {
         marc: 'marcBibFileC360098.mrc',
