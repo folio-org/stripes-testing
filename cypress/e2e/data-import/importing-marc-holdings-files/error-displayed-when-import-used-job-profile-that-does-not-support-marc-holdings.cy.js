@@ -32,18 +32,17 @@ describe('Data Import', () => {
       "Chosen job profile 'Default - Create instance and SRS MARC Bib' does not support 'MARC_HOLDING' record type";
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(
-        filePathForUpload,
-        fileNameForCreateInstance,
-        jobProfileToRun,
-      ).then((response) => {
-        instanceHrid = response[0].instance.hrid;
-        instanceId = response[0].instance.id;
-      });
-
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
+        DataImport.uploadFileViaApi(
+          filePathForUpload,
+          fileNameForCreateInstance,
+          jobProfileToRun,
+        ).then((response) => {
+          instanceHrid = response[0].instance.hrid;
+          instanceId = response[0].instance.id;
+        });
 
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,

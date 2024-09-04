@@ -42,6 +42,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
+    let preconditionUserId;
     let instanceHrid;
     let userId;
     const mappingProfileIds = [];
@@ -133,65 +134,71 @@ describe('Data Import', () => {
     };
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      NewFieldMappingProfile.createInstanceMappingProfileViaApi(
-        instanceMappingProfileForCreate,
-      ).then((mappingProfileResponse) => {
-        mappingProfileIds.push(mappingProfileResponse.body.id);
+      cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        preconditionUserId = userProperties.userId;
 
-        NewActionProfile.createActionProfileViaApi(
-          actionProfilesForCreate[0].actionProfile,
-          mappingProfileResponse.body.id,
-        ).then((actionProfileResponse) => {
-          actionProfileIds.push(actionProfileResponse.body.id);
-        });
-      });
-      NewFieldMappingProfile.createHoldingsMappingProfileViaApi(
-        holdingsMappingProfileForCreate,
-      ).then((mappingProfileResponse) => {
-        mappingProfileIds.push(mappingProfileResponse.body.id);
-
-        NewActionProfile.createActionProfileViaApi(
-          actionProfilesForCreate[1].actionProfile,
-          mappingProfileResponse.body.id,
-        ).then((actionProfileResponse) => {
-          actionProfileIds.push(actionProfileResponse.body.id);
-        });
-      });
-      NewFieldMappingProfile.createItemMappingProfileViaApi(itemMappingProfileForCreate)
-        .then((mappingProfileResponse) => {
+        NewFieldMappingProfile.createInstanceMappingProfileViaApi(
+          instanceMappingProfileForCreate,
+        ).then((mappingProfileResponse) => {
           mappingProfileIds.push(mappingProfileResponse.body.id);
 
           NewActionProfile.createActionProfileViaApi(
-            actionProfilesForCreate[2].actionProfile,
+            actionProfilesForCreate[0].actionProfile,
             mappingProfileResponse.body.id,
           ).then((actionProfileResponse) => {
             actionProfileIds.push(actionProfileResponse.body.id);
           });
-        })
-        .then(() => {
-          NewJobProfile.createJobProfileWithLinkedThreeActionProfilesViaApi(
-            jobProfileForCreate,
-            actionProfileIds[0],
-            actionProfileIds[1],
-            actionProfileIds[2],
-          );
         });
+        NewFieldMappingProfile.createHoldingsMappingProfileViaApi(
+          holdingsMappingProfileForCreate,
+        ).then((mappingProfileResponse) => {
+          mappingProfileIds.push(mappingProfileResponse.body.id);
 
-      // change file to add uniq subject
-      DataImport.editMarcFile(
-        filePathForUpload,
-        editedMarcFileNameForCreate,
-        ['35678123678'],
-        [uniqSubject],
-      );
+          NewActionProfile.createActionProfileViaApi(
+            actionProfilesForCreate[1].actionProfile,
+            mappingProfileResponse.body.id,
+          ).then((actionProfileResponse) => {
+            actionProfileIds.push(actionProfileResponse.body.id);
+          });
+        });
+        NewFieldMappingProfile.createItemMappingProfileViaApi(itemMappingProfileForCreate)
+          .then((mappingProfileResponse) => {
+            mappingProfileIds.push(mappingProfileResponse.body.id);
 
-      DataImport.uploadFileViaApi(
-        editedMarcFileNameForCreate,
-        marcFileForCreate,
-        jobProfileForCreate.name,
-      ).then((response) => {
-        instanceHrid = response[0].instance.hrid;
+            NewActionProfile.createActionProfileViaApi(
+              actionProfilesForCreate[2].actionProfile,
+              mappingProfileResponse.body.id,
+            ).then((actionProfileResponse) => {
+              actionProfileIds.push(actionProfileResponse.body.id);
+            });
+          })
+          .then(() => {
+            NewJobProfile.createJobProfileWithLinkedThreeActionProfilesViaApi(
+              jobProfileForCreate,
+              actionProfileIds[0],
+              actionProfileIds[1],
+              actionProfileIds[2],
+            );
+          });
+
+        // change file to add uniq subject
+        DataImport.editMarcFile(
+          filePathForUpload,
+          editedMarcFileNameForCreate,
+          ['35678123678'],
+          [uniqSubject],
+        );
+
+        DataImport.uploadFileViaApi(
+          editedMarcFileNameForCreate,
+          marcFileForCreate,
+          jobProfileForCreate.name,
+        ).then((response) => {
+          instanceHrid = response[0].instance.hrid;
+        });
       });
 
       cy.createTempUser([
@@ -211,6 +218,7 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(userId);
+        Users.deleteViaApi(preconditionUserId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.name);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);

@@ -5,7 +5,7 @@ import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
-describe('Permissions Tags', () => {
+describe('Users', () => {
   let userData;
   const newTag = getTestEntityValue('tag');
 

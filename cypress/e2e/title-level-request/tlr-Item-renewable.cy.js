@@ -246,7 +246,6 @@ describe('TLR: Item renew', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.disableTLRViaApi();
   });
 
   afterEach('Deleting created entities', () => {
